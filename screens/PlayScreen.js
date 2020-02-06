@@ -54,7 +54,6 @@ function PlayScreen(props) {
           .getStatusAsync()
           .then(async playbackStatus => {
             setSeekPosition(playbackStatus.positionMillis);
-            setLengthMilli(playbackStatus.durationMillis);
           })
       } catch (error) {
         console.log(error)
@@ -68,14 +67,11 @@ function PlayScreen(props) {
         .loadAsync({uri: source}, {progressUpdateIntervalMillis: 1000})
         .then(async playbackStatus => {
           setIsLoaded(playbackStatus.isLoaded);
+          setLengthMilli(playbackStatus.durationMillis);
       }) 
     } catch (error) {
       console.log(error)
     }
-  }
-  
-  function onPlaybackStatusUpdate(playbackStatus) {
-    
   }
 
   //function gets called whenever user taps the play/pause button
@@ -91,6 +87,8 @@ function PlayScreen(props) {
     }
   }
 
+  //function to convert a time in milliseconds to a 
+  //nicely formatted string (for the scrubber)
   function msToTime(duration) {
     var seconds = Math.floor((duration / 1000) % 60);
     var minutes = Math.floor((duration / (1000 * 60)) % 60);
@@ -101,7 +99,9 @@ function PlayScreen(props) {
     return minutes + ":" + seconds;
   }
 
-  function seekHandler() {
+  //when the user releases the, start playing from the position
+  //they release the scrubber at
+  function onSeekRelease() {
     updateSeeker();
     isPlaying ?
     soundObject.setStatusAsync({ shouldPlay: true, positionMillis: seekPosition }) :
@@ -110,9 +110,15 @@ function PlayScreen(props) {
     setShouldSeek(true);
   }
 
-  function dragHandler(value) {
+  //constnatly update the value of the scrubber when the user is scrubbing
+  function onSeekHold(value) {
+    //set the seek position to the new scrubber value
     setSeekPosition(value);
+
+    //pause the audio
     soundObject.setStatusAsync({ shouldPlay: false });
+
+    //stop the scrubber from being able to change values with the music
     setShouldSeek(false);
   }
 
@@ -142,8 +148,8 @@ function PlayScreen(props) {
         <View style={styles.scrubber}>
           <Slider
             value={seekPosition}
-            onSlidingComplete={seekHandler}
-            onValueChange={dragHandler}
+            onSlidingComplete={onSeekRelease}
+            onValueChange={onSeekHold}
             minimumValue={0}
             maximumValue={lengthMilli}
             step={1000} 
