@@ -126,7 +126,7 @@ function PlayScreen(props) {
   }
 
   //dont work yet
-  //test change, let's see if git catches it
+  //don't want to push this, doesn't work
   function skipBehind() {
     setShouldSeek(false);
     soundObject.setStatusAsync({ shouldPlay: false, positionMillis: seekPosition });
