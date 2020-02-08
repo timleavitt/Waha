@@ -1,6 +1,7 @@
 //basic imports
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Button, Text, Slider } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 //sound stuff
 import { Audio } from 'expo-av';
@@ -29,7 +30,7 @@ function PlayScreen(props) {
 
   //update on every api call and every second
   soundObject.setOnPlaybackStatusUpdate(playbackStatus => {
-
+    
   })
 
   ////CONSTRUCTOR////
@@ -120,32 +121,56 @@ function PlayScreen(props) {
 
   return (
     <View style={styles.screen}>
-      <Text style={{ textAlign: "center" }}>Status: {isLoaded ? "Finished loading" : "Loading"}</Text>
-      <View style={styles.scrubberContainer}>
-        <View style={styles.scrubber}>
-          <Slider
-            value={seekPosition}
-            onSlidingComplete={onSeekRelease}
-            onValueChange={onSeekHold}
-            minimumValue={0}
-            maximumValue={lengthMilli}
-            step={1000}
+      <View style={styles.titlesContainer}>
+        <Text style={styles.title}>{props.navigation.getParam("title")}</Text>
+        <Text style={styles.subtitle}>{props.navigation.getParam("subtitle")}</Text>
+      </View>
+      <Text style={{ textAlign: "center", flex: 1 }}>Status: {isLoaded ? "Finished loading" : "Loading"}</Text>
+      <View style={styles.controlsContainer}>
+        <View style={styles.scrubberContainer}>
+          <View style={styles.scrubber}>
+            <Slider
+              value={seekPosition}
+              onSlidingComplete={onSeekRelease}
+              onValueChange={onSeekHold}
+              minimumValue={0}
+              maximumValue={lengthMilli}
+              step={1000}
+            />
+          </View>
+          <View style={styles.timeInfo}>
+            <TimeDisplay style={styles.scrubberInfo} time={seekPosition} max={lengthMilli} />
+            <TimeDisplay style={styles.scrubberInfo} time={lengthMilli} max={lengthMilli} />
+          </View>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Ionicons.Button 
+            name="md-return-left" 
+            size={85} 
+            onPress={skip.bind("this", -5000)} 
+            backgroundColor="rgba(0,0,0,0)"
+            iconStyle={styles.button}
+          />
+          <Ionicons.Button 
+            name={isPlaying ? "ios-pause" : "ios-play"} 
+            size={125} 
+            onPress={playHandler}
+            backgroundColor="rgba(0,0,0,0)"
+            iconStyle={styles.button}
+          />
+          <Ionicons.Button 
+            name="md-return-right" 
+            size={85} 
+            onPress={skip.bind("this", 15000)} 
+            backgroundColor="rgba(0,0,0,0)"
+            iconStyle={styles.button}
           />
         </View>
-        <View style={styles.timeInfo}>
-          <TimeDisplay style={styles.scrubberInfo} time={seekPosition} max={lengthMilli} />
-          <TimeDisplay style={styles.scrubberInfo} time={lengthMilli} max={lengthMilli}/>
-        </View>
-      </View>
-      <View style={styles.controlsContainer}>
-        <Button title="Skip behind" onPress={skip.bind("this", -5000)} />
-        <Button title={isPlaying ? "Pause" : "Play"} onPress={playHandler} />
-        <Button title="Skip ahead" onPress={skip.bind("this", 15000)} />
       </View>
     </View>
   )
 }
-
+//<Button></Button>
 PlayScreen.navigationOptions = navigationData => {
   return {
     headerTitle: navigationData.navigation.getParam("title")
@@ -156,6 +181,15 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1
   },
+  controlsContainer: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    backgroundColor: "#d3d3d3",
+    borderRadius: 20,
+    marginBottom: 50,
+    marginHorizontal: 15,
+    height: 200
+  },
   albumArt: {
     height: 400,
     padding: 50,
@@ -163,14 +197,14 @@ const styles = StyleSheet.create({
     margin: 25
   },
   scrubberContainer: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
     flexDirection: "column",
     width: "100%"
   },
   scrubberInfo: {
     padding: 10
   },
-  controlsContainer: {
+  buttonContainer: {
     flexDirection: "row",
     width: "100%",
     justifyContent: "space-around",
@@ -182,6 +216,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%"
+  },
+  button: {
+    margin: 10,
+    justifyContent: "center",
+    flexDirection: "row",
+    borderRadius: 0
+  },
+  titlesContainer: {
+    flexDirection: "column",
+    marginVertical: 15 
+  },
+  title: {
+    textAlign: "center",
+    fontSize: 30
+  },
+  subtitle: {
+    textAlign: "center",
+    fontSize: 20,
+    color: "#d3d3d3"
   }
 })
 

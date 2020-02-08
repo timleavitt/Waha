@@ -1,6 +1,6 @@
 //basic imports
 import React from 'react';
-import { View, FlatList } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 
 //data import
 import { STUDYSETS } from '../data/dummy-data';
@@ -20,6 +20,7 @@ function LessonListScreen(props) {
             params: {
                 id: item.id,
                 title: item.title,
+                subtitle: item.subtitle,
                 source: item.source
             }
         })
@@ -42,7 +43,7 @@ function LessonListScreen(props) {
     selectedLessonList = selectedStudySetArray[0].lessonList;
 
     return (
-        <View>
+        <View style={styles.screen}>
             <FlatList 
                 data={selectedLessonList}
                 renderItem={renderLessonItem}
@@ -56,5 +57,11 @@ LessonListScreen.navigationOptions = navigationData => {
       headerTitle: navigationData.navigation.getParam("title")
     };
   };
+
+const styles = StyleSheet.create({
+    screen: {
+        flex: 1
+    }
+})
 
 export default LessonListScreen;

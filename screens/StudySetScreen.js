@@ -1,6 +1,6 @@
 //basic imports
 import React from 'react';
-import { View, Text, Button, FlatList } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
 
 //data import
 import { STUDYSETS } from '../data/dummy-data';
@@ -35,7 +35,7 @@ function StudySetScreen(props) {
     }
 
     return(
-        <View>
+        <View style={styles.screen}>
             <FlatList 
                 data={STUDYSETS}
                 renderItem={renderStudySetItem}
@@ -49,5 +49,11 @@ StudySetScreen.navigationOptions = navData => {
       headerTitle: 'Study Sets',
     };
   };
+
+const styles = StyleSheet.create({
+    screen: {
+        flex: 1
+    }
+})
 
 export default StudySetScreen;
