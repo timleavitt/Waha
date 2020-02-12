@@ -1,10 +1,37 @@
 //basic imports
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, AsyncStorage} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 function LessonItem(props) {
+
+    const [isComplete, setIsComplete] = useState(false);
+    
+    useEffect(() => {
+        console.log(props.progressArray);
+        //console.log(isComplete)
+    }, [])
+/* 
+    async function getLessonMark() {
+        try {
+          await AsyncStorage
+            .getItem(props.id)
+            .then(value => {
+              if (value === 'incomplete') {
+                setIsComplete(false);
+              } else {
+                setIsComplete(true);
+              }
+            })
+        } catch (error) {
+          console.log(error);
+        }
+      }  */
+
     return(
         <TouchableOpacity style={styles.lessonItem} onPress={props.onLessonSelect}>
+            <View style={styles.icon}><Ionicons name={isComplete ? "ios-arrow-dropdown-circle" : "ios-arrow-dropdown"} size={30}/></View>
+            
             <View styles={styles.titleContainer}>
                 <Text style={styles.title}>{props.title}</Text>
                 <Text style={styles.subtitle}>{props.subtitle}</Text>
@@ -20,7 +47,8 @@ const styles = StyleSheet.create({
         borderColor: "black",
         borderWidth: 2,
         margin: 5,
-        justifyContent: "center"
+        justifyContent: "flex-start",
+        flexDirection: "row",
     },
     title: {
         fontSize: 22,
@@ -33,7 +61,13 @@ const styles = StyleSheet.create({
         color: "gray"
     },
     titleContainer: {
-        justifyContent: "center"
+        flexDirection: "column",
+        justifyContent: "space-around",
+        
+    },
+    icon: {
+        justifyContent: "center",
+        marginHorizontal: 10
     }
 })
 

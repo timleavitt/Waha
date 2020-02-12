@@ -15,7 +15,7 @@ function StudySetScreen(props) {
     const [isFirstLaunch, setIsFirstLaunch] = useState(false);
 
     async function checkFirstLaunch() {
-        //AsyncStorage.clear()
+        AsyncStorage.clear()
         try {
             await AsyncStorage
                 .getItem('alreadyLaunched')

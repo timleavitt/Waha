@@ -19,7 +19,8 @@ function PlayScreen(props) {
   const isMounted = useRef(true);
   const source = props.navigation.getParam("source");
   const [isComplete, setIsComplete] = useState(false);
-  
+  const [currentLessonID, setCurrentLessonID] = useState(props.navigation.getParam("id"));
+
   //keep track of it audio is currently playing
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -27,11 +28,11 @@ function PlayScreen(props) {
   const [seekPosition, setSeekPosition] = useState(0);
   
   //should the scrubber be updating based on the track position?
+  //only time it shouldn't should be during scrubbing/skipping
   const [shouldTickUpdate, setShouldTickUpdate] = useState(true);
 
   //update on every api call and every second
   soundObject.setOnPlaybackStatusUpdate(playbackStatus => {
-    
   })
 
   ////CONSTRUCTOR////
@@ -41,8 +42,14 @@ function PlayScreen(props) {
     loadAudioFile();
     const interval = setInterval(updateSeekerTick, 1000);
 
-    //figure out if lesson is marked as complete or not
-    setIsComplete(getLessonMark());
+    //console.log(typeof props.navigation.getParam("id"));
+
+    //figure out if lesson is marked as complete or not, 
+    //and send over info to navigation
+    getSetLessonMark();
+    props.navigation.setParams({navIsComplete: isComplete})
+    props.navigation.setParams({navMarkHandler: markHandler})
+
     //when leaving the screen, set ismounted to flase
     //and unload the audio file
     return function cleanup() {
@@ -54,13 +61,12 @@ function PlayScreen(props) {
   }, []);
 
   useEffect(() => {
-    props.navigation.setParams({isComplete: isComplete})
-    props.navigation.setParams({markHandler: markHandler})
+    props.navigation.setParams({navIsComplete: isComplete});
+    props.navigation.setParams({navMarkHandler: markHandler});
   }, [isComplete])
   
   //function to load the audio file
   async function loadAudioFile() {
-    
     try {
       await soundObject
         .loadAsync({uri: source}, {progressUpdateIntervalMillis: 1000})
@@ -74,39 +80,27 @@ function PlayScreen(props) {
   }
 
   //check if lesson is complete or not
-  async function getLessonMark() {
+  async function getSetLessonMark() {
     try {
-        await AsyncStorage
-            .getItem(props.navigation.getParam("id"))
-            .then(value => {
-                if (value === 'incomplete') 
-                  return false
-                else
-                  return true
-            })
+      await AsyncStorage
+        .getItem(currentLessonID)
+        .then(value => {
+          if (value === 'incomplete') {
+            setIsComplete(false);
+          } else {
+            setIsComplete(true);
+          }
+        })
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-}
-
-  function markHandler() {
-    setIsComplete(currentValue => !currentValue)
   }
 
-  async function printAsync() {
-     try {
-         await AsyncStorage
-            .getItem('2.1')
-            .then(value => {
-                console.log(value)
-            }) 
-    } catch (error) {
-        console.log(error);
-    } 
-}
-  /*useEffect(() => {
-    soundObject.playFromPositionAsync(seekPosition);
-  }, [seekPosition])  */ 
+  function markHandler() {
+    //change async storage value
+    isComplete ? AsyncStorage.setItem(currentLessonID, 'incomplete') : AsyncStorage.setItem(currentLessonID, 'complete');
+    getSetLessonMark();
+  }
 
   //gets called every second, and updates the seeker position
   //based on the progress through the audio file
@@ -212,18 +206,18 @@ function PlayScreen(props) {
     </View>
   )
 }
-//<Button></Button>
 
 PlayScreen.navigationOptions = navigationData => {
-  const isComplete = navigationData.navigation.getParam("isComplete");
-  const markHandler = navigationData.navigation.getParam("markHandler");
+  const navIsComplete = navigationData.navigation.getParam("navIsComplete");
+  const navMarkHandler = navigationData.navigation.getParam("navMarkHandler");
+  //console.log(`complete status in navigation: ${navIsComplete}`);
   return {
     headerTitle: navigationData.navigation.getParam("title"),
     headerRight: () =>
       <Ionicons.Button
-        name={isComplete ? "ios-checkmark-circle-outline" : "ios-checkmark-circle"}
+        name={navIsComplete ? "ios-checkmark-circle" : "ios-checkmark-circle-outline"}
         size={20}
-        onPress={markHandler}
+        onPress={navMarkHandler}
         backgroundColor="rgba(0,0,0,0)"
         color="black"
         iconStyle={styles.markButton}
