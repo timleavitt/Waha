@@ -2,107 +2,167 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Button, Text, Slider, AsyncStorage } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useIsFocused, useFocusEffect } from 'react-navigation-hooks';
 
 //sound stuff
 import { Audio } from 'expo-av';
 
 //components
-import TimeDisplay  from "../components/TimeDisplay";
+import TimeDisplay from "../components/TimeDisplay";
 
 function PlayScreen(props) {
+  
 
-  ////STATE////
-  //set early when the screen opens
+  ///////////////////////////
+  ////STATE & CONSTRUCTOR////
+  ///////////////////////////
+
+
+  //sound object for storing/controlling audio file
   const [soundObject, setSoundObject] = useState(new Audio.Sound());
-  const [lengthMilli, setLengthMilli] = useState(null);
+
+  //the length of the current audio file (loaded by sound object)
+  const [audioFileLength, setAudioFileLength] = useState(null);
+
+  //boolean to determine if the audio file has finished loading 
   const [isLoaded, setIsLoaded] = useState(false);
-  const isMounted = useRef(true);
+
+  //get source url for audio file
   const source = props.navigation.getParam("source");
-  const [isComplete, setIsComplete] = useState(false);
-  const [currentLessonID, setCurrentLessonID] = useState(props.navigation.getParam("id"));
 
-  //keep track of it audio is currently playing
+  //boolean to determine if the audio file is currently playing or paused
   const [isPlaying, setIsPlaying] = useState(false);
-  
-  //the current position of the scrubber
-  const [seekPosition, setSeekPosition] = useState(0);
-  
-  //should the scrubber be updating based on the track position?
-  //only time it shouldn't should be during scrubbing/skipping
-  const [shouldTickUpdate, setShouldTickUpdate] = useState(true);
 
-  //update on every api call and every second
+  //the current position of the seeker
+  const [seekPosition, setSeekPosition] = useState(0);
+
+  //boolean to determine if the seeker should update every second
+  //NOTE: only time it shouldn't is during seeking or skipping
+  const [shouldTickUpdate, setShouldTickUpdate] = useState(true);
+  
+
+  //NOT USED CURRENTLY: update something on every api call to audio object and every second
   soundObject.setOnPlaybackStatusUpdate(playbackStatus => {
   })
 
-  ////CONSTRUCTOR////
+  //PURPOSE: constructor on first screen open
   useEffect(() => {
-    //on first open, load audio file and set interval for 
-    //updating scrubber
+
+    //load our audio file
     loadAudioFile();
+
+    //determine complete status of loaded lesson
+    fetchCompleteStatus();
+
+    //set up our timer tick for updating the seeker every second
     const interval = setInterval(updateSeekerTick, 1000);
 
-    //console.log(typeof props.navigation.getParam("id"));
-
-    //figure out if lesson is marked as complete or not, 
-    //and send over info to navigation
-    getSetLessonMark();
-    props.navigation.setParams({navIsComplete: isComplete})
-    props.navigation.setParams({navMarkHandler: markHandler})
-
-    //when leaving the screen, set ismounted to flase
-    //and unload the audio file
+    //when leaving the screen, cancel the interval timer
     return function cleanup() {
-      isMounted.current = false;
       clearInterval(interval);
       soundObject.unloadAsync();
-      setSoundObject(null);
-    } 
+    }
   }, []);
 
-  useEffect(() => {
-    props.navigation.setParams({navIsComplete: isComplete});
-    props.navigation.setParams({navMarkHandler: markHandler});
-  }, [isComplete])
-  
-  //function to load the audio file
-  async function loadAudioFile() {
-    try {
-      await soundObject
-        .loadAsync({uri: source}, {progressUpdateIntervalMillis: 1000})
-        .then(async playbackStatus => {
-          setIsLoaded(playbackStatus.isLoaded);
-          setLengthMilli(playbackStatus.durationMillis);
-      }) 
-    } catch (error) {
-      console.log(error)
-    }
-  }
+ /*    //PURPOSE: constructor on first screen open
+    useEffect(() => {
+      
+      console.log('start timer')
+      const interval = setInterval(updateSeekerTick, 1000);
+      //set up our timer tick for updating the seeker every second
+      //interval = null;
+      if (!isPlaying) {
+        console.log('stop timer')
+        clearInterval(interval);
+      }
+    }, [isPlaying]); */
 
-  //check if lesson is complete or not
-  async function getSetLessonMark() {
+
+  //////////////////////////////////
+  ////PROGRESS STORAGE FUNCTIONS////
+  //////////////////////////////////
+  
+
+  async function fetchCompleteStatus() {
     try {
+      var id = props.navigation.getParam('id');
+      var tempProgress = {}
+      var isCompleteToSend = false
+
       await AsyncStorage
-        .getItem(currentLessonID)
+        .getItem('progress')
         .then(value => {
-          if (value === 'incomplete') {
-            setIsComplete(false);
+          //get complete status of this lesson to send to button
+          tempProgress = JSON.parse(value);
+          if(tempProgress[id] === 'complete') {
+            isCompleteToSend = true;
           } else {
-            setIsComplete(true);
+            isCompleteToSend = false;
           }
+
+          //send stuff over to navigation
+          props.navigation.setParams({ navIsComplete: isCompleteToSend });
+          props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
         })
     } catch (error) {
       console.log(error);
     }
   }
 
-  function markHandler() {
-    //change async storage value
-    isComplete ? AsyncStorage.setItem(currentLessonID, 'incomplete') : AsyncStorage.setItem(currentLessonID, 'complete');
-    getSetLessonMark();
+  async function changeCompleteStatus() {
+    try {
+      //props.navigation.getParam('refresh').call();
+      var id = props.navigation.getParam('id');
+      var temp = {}
+      var tempProgress = {}
+      var isCompleteToSend = false
+
+      await AsyncStorage
+        .getItem('progress')
+        .then(value => {
+          //get complete status of this lesson to send to button
+          tempProgress = JSON.parse(value);
+          if(tempProgress[id] === 'complete') {
+            isCompleteToSend = false;
+            temp[id] = 'incomplete'
+          } else {
+            isCompleteToSend = true;
+            temp[id] = 'complete'
+          }
+
+          //update progress in async
+          AsyncStorage.setItem('progress', JSON.stringify(Object.assign(tempProgress, temp)))
+
+          //send stuff over to navigation
+          props.navigation.setParams({ navIsComplete: isCompleteToSend });
+          props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
+        })
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  //gets called every second, and updates the seeker position
+
+  ///////////////////////////////
+  ////AUDIO CONTROL FUNCTIONS////
+  ///////////////////////////////
+
+  
+  //PURPOSE: load the audio file and set isLoaded and 
+  async function loadAudioFile() {
+    try {
+      await soundObject
+        .loadAsync({ uri: source }, { progressUpdateIntervalMillis: 1000 })
+        .then(async playbackStatus => {
+          setIsLoaded(playbackStatus.isLoaded);
+          setAudioFileLength(playbackStatus.durationMillis);
+        })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  //PURPOSE: gets called every second by our interval, and updates the seeker position
   //based on the progress through the audio file
   async function updateSeekerTick() {
     if (shouldTickUpdate) {
@@ -118,39 +178,39 @@ function PlayScreen(props) {
     }
   }
 
-  //function gets called whenever user taps the play/pause button
-  //if currently playing, pause the track
-  //if currently paused, start playing the track
+  //PURPOSE: when user taps the play button, if the audio is playing, 
+  //pause it; if it's paused, start playing it
   function playHandler() {
-    if(isLoaded) {
+    if (isLoaded) {
       updateSeekerTick();
-      isPlaying ? 
-      soundObject.setStatusAsync({progressUpdateIntervalMillis: 1000, shouldPlay: false}) : 
-      soundObject.setStatusAsync({progressUpdateIntervalMillis: 1000, shouldPlay: true});
+      isPlaying ?
+        soundObject.setStatusAsync({ progressUpdateIntervalMillis: 1000, shouldPlay: false }) :
+        soundObject.setStatusAsync({ progressUpdateIntervalMillis: 1000, shouldPlay: true });
       setIsPlaying(currentStatus => !currentStatus);
     }
   }
 
-  //start playing from the position they release the thumb at
+  //PURPOSE: start playing from the position they release the thumb at
+  //PARAMETERS: the current seeker value
   function onSeekRelease(value) {
     isPlaying ?
-    soundObject.setStatusAsync({ shouldPlay: true, positionMillis: value }) :
-    soundObject.setStatusAsync({ shouldPlay: false, positionMillis: value });
+      soundObject.setStatusAsync({ shouldPlay: true, positionMillis: value }) :
+      soundObject.setStatusAsync({ shouldPlay: false, positionMillis: value });
     setShouldTickUpdate(true);
     setSeekPosition(value);
   }
 
-  //prevent the seeker from updating every second whenever
+  //PURPOSE: prevent the seeker from updating every second whenever
   //the user is dragging the thumb
-  function onSeekHold(value) {
+  function onSeekDrag(value) {
     setShouldTickUpdate(false);
   }
 
-  //skips an amount of milliseconds through the audio track
+  //PURPOSE: skips an amount of milliseconds through the audio track
   function skip(amount) {
     isPlaying ?
-    soundObject.setStatusAsync({ shouldPlay: true, positionMillis: (seekPosition + amount) }) :
-    soundObject.setStatusAsync({ shouldPlay: false, positionMillis: (seekPosition + amount) });
+      soundObject.setStatusAsync({ shouldPlay: true, positionMillis: (seekPosition + amount) }) :
+      soundObject.setStatusAsync({ shouldPlay: false, positionMillis: (seekPosition + amount) });
     setSeekPosition(seekPosition => seekPosition + amount);
   }
 
@@ -168,36 +228,36 @@ function PlayScreen(props) {
             <Slider
               value={seekPosition}
               onSlidingComplete={onSeekRelease}
-              onValueChange={onSeekHold}
+              onValueChange={onSeekDrag}
               minimumValue={0}
-              maximumValue={lengthMilli}
+              maximumValue={audioFileLength}
               step={1000}
             />
           </View>
           <View style={styles.timeInfo}>
-            <TimeDisplay style={styles.scrubberInfo} time={seekPosition} max={lengthMilli} />
-            <TimeDisplay style={styles.scrubberInfo} time={lengthMilli} max={lengthMilli} />
+            <TimeDisplay style={styles.scrubberInfo} time={seekPosition} max={audioFileLength} />
+            <TimeDisplay style={styles.scrubberInfo} time={audioFileLength} max={audioFileLength} />
           </View>
         </View>
         <View style={styles.buttonContainer}>
-          <Ionicons.Button 
-            name="md-return-left" 
-            size={85} 
-            onPress={skip.bind("this", -5000)} 
+          <Ionicons.Button
+            name="md-return-left"
+            size={85}
+            onPress={skip.bind("this", -5000)}
             backgroundColor="rgba(0,0,0,0)"
             iconStyle={styles.button}
           />
-          <Ionicons.Button 
-            name={isPlaying ? "ios-pause" : "ios-play"} 
-            size={125} 
+          <Ionicons.Button
+            name={isPlaying ? "ios-pause" : "ios-play"}
+            size={125}
             onPress={playHandler}
             backgroundColor="rgba(0,0,0,0)"
             iconStyle={styles.button}
           />
-          <Ionicons.Button 
-            name="md-return-right" 
-            size={85} 
-            onPress={skip.bind("this", 15000)} 
+          <Ionicons.Button
+            name="md-return-right"
+            size={85}
+            onPress={skip.bind("this", 15000)}
             backgroundColor="rgba(0,0,0,0)"
             iconStyle={styles.button}
           />
@@ -273,7 +333,7 @@ const styles = StyleSheet.create({
   },
   titlesContainer: {
     flexDirection: "column",
-    marginVertical: 15 
+    marginVertical: 15
   },
   title: {
     textAlign: "center",

@@ -5,7 +5,8 @@ export const STUDYSETS = [
     //Study set 1
     new StudySet('1', 'Study Set 1', [
         new Lesson(
-            '1.1', 
+            '1.1',
+            0, 
             'Lesson 1.1', 
             'Study set 1 cool subtitle', 
             '1', 
@@ -13,6 +14,7 @@ export const STUDYSETS = [
         ),
         new Lesson(
             '1.2', 
+            1,
             'Lesson 1.2', 
             'Perfect subtitle', 
             '1',
@@ -20,6 +22,7 @@ export const STUDYSETS = [
         ),
         new Lesson(
             '1.3', 
+            2,
             'Lesson 1.3', 
             'Terrific subtitle', 
             '1',
@@ -27,6 +30,7 @@ export const STUDYSETS = [
         ),
         new Lesson(
             '1.4', 
+            3,
             'Lesson 1.4', 
             'Super okay subtitle', 
             '1',
@@ -35,6 +39,7 @@ export const STUDYSETS = [
         ),
         new Lesson(
             '1.5', 
+            4,
             'Lesson 1.5', 
             'Meh subtitle', 
             '1',
@@ -46,6 +51,7 @@ export const STUDYSETS = [
     new StudySet('2', 'Study Set 2', [
         new Lesson(
             '2.1', 
+            0,
             'Lesson 2.1', 
             'Cool subtitle', 
             '2',
@@ -53,6 +59,7 @@ export const STUDYSETS = [
         ),
         new Lesson(
             '2.2', 
+            1,
             'Lesson 2.2', 
             'Neat subtitle', 
             '2',
@@ -60,6 +67,7 @@ export const STUDYSETS = [
         ),
         new Lesson(
             '2.3', 
+            2,
             'Lesson 2.3', 
             'Really cool subtitle', 
             '2',
@@ -68,6 +76,7 @@ export const STUDYSETS = [
         ),
         new Lesson(
             '2.4', 
+            3,
             'Lesson 2.4', 
             'Super rad subtitle', 
             '2',
@@ -75,6 +84,7 @@ export const STUDYSETS = [
         ),
         new Lesson(
             '2.5', 
+            4,
             'Lesson 2.5', 
             'Excellent subtitle', 
             '2',

@@ -15,7 +15,10 @@ function StudySetScreen(props) {
     const [isFirstLaunch, setIsFirstLaunch] = useState(false);
 
     async function checkFirstLaunch() {
-        AsyncStorage.clear()
+      /*   const asyncStorageKeys = await AsyncStorage.getAllKeys();
+        if (asyncStorageKeys.length > 0) {
+            AsyncStorage.clear();
+        } */
         try {
             await AsyncStorage
                 .getItem('alreadyLaunched')
@@ -32,13 +35,22 @@ function StudySetScreen(props) {
     }
 
     function setProgress() {
-        var lesson;
+        //old
+        /* var lesson;
         for (i = 0; i < STUDYSETS.length; i++) {
             for (j = 0; j < STUDYSETS[i].lessonList.length; j++) {
                 lesson = STUDYSETS[i].lessonList[j].id
                 setAsyncValue(lesson, 'incomplete');
             }
-        } 
+        }  */
+
+        var progress = {};
+        for (i = 0; i < STUDYSETS.length; i++) {
+            for (j = 0; j < STUDYSETS[i].lessonList.length; j++) {
+                progress[STUDYSETS[i].lessonList[j].id] = 'incomplete'
+            }
+        }
+        setAsyncValue("progress", JSON.stringify(progress));
     }
 
     async function setAsyncValue(key, mark) {
@@ -53,6 +65,7 @@ function StudySetScreen(props) {
     }
 
     useEffect(() => {
+        console.log("study set screen use effect")
         checkFirstLaunch();
     }, [])
 

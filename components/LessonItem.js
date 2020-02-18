@@ -5,28 +5,13 @@ import { Ionicons } from '@expo/vector-icons';
 
 function LessonItem(props) {
 
-    const [isComplete, setIsComplete] = useState(false);
-    
-    useEffect(() => {
-        console.log(props.progressArray);
-        //console.log(isComplete)
-    }, [])
-/* 
-    async function getLessonMark() {
-        try {
-          await AsyncStorage
-            .getItem(props.id)
-            .then(value => {
-              if (value === 'incomplete') {
-                setIsComplete(false);
-              } else {
-                setIsComplete(true);
-              }
-            })
-        } catch (error) {
-          console.log(error);
-        }
-      }  */
+    //console.log(props.isComplete);
+    var isComplete;
+    if(props.isComplete === 'complete') {
+        isComplete = true;
+    } else {
+        isComplete = false;
+    }
 
     return(
         <TouchableOpacity style={styles.lessonItem} onPress={props.onLessonSelect}>

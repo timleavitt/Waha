@@ -1,6 +1,7 @@
 //basic imports
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, FlatList, StyleSheet, AsyncStorage } from 'react-native';
+import { useIsFocused, useFocusEffect } from 'react-navigation-hooks';
 
 //data import
 import { STUDYSETS } from '../data/dummy-data';
@@ -15,21 +16,30 @@ function LessonListScreen(props) {
   //send over array of all the progress for that study set and filter on play screen
   //update it using a function prop passed to play screen that changes the state on 
 
-  const [progressArray, setProgressArray] = useState([]);
+   useFocusEffect(
+    React.useCallback(() => {
+      console.log("useFocus has triggered, refreshing...")
+      fetchCompleteStatuses();
+      return () => {};
+    }, [])
+  ); 
+
+  const [progress, setProgress] = useState({});
+
+  const [refresh, setRefresh] = useState(false);
+
+/*   function refreshments() {
+    console.log('refresh firing')
+    fetchCompleteStatuses();
+  }
+ */
+
 
   //find our specified study set with data taken from the last screen
   selectedStudySetArray = STUDYSETS.filter(studyset => studyset.id === props.navigation.getParam("studySetID"));
 
   //make our data only the array of lessons
   selectedLessonList = selectedStudySetArray[0].lessonList;
-
-  useEffect(() => {
-    getLessonMarks(selectedLessonList)
-  }, [])
-
-  useEffect(() => {
-    console.log("progressArrayChanging");
-  }, [progressArray])
 
   //function to navigate to the play screen
   //props.navigation.navigate takes us to the play screen
@@ -41,48 +51,41 @@ function LessonListScreen(props) {
         id: item.id,
         title: item.title,
         subtitle: item.subtitle,
-        source: item.source
+        source: item.source,
+        //refresh: refreshments
+        //updateProgress: updateProgressArray
       }
     })
   }
 
-  async function getLessonMarks(selectedLessonList) {
-    for (i = 0; i < selectedLessonList.length; i++) {
-      try {
-        await AsyncStorage
-          .getItem(selectedLessonList[i].id)
+  //PURPOSE: get the progress object from async
+  async function fetchCompleteStatuses() {
+    await AsyncStorage
+          .getItem("progress")
           .then(value => {
-            setProgressArray(currentArray => currentArray.concat([value]));
+            setProgress(JSON.parse(value))
           })
-      } catch (error) {
-        console.log(error);
-      }
-    }
   }
 
+  //PURPOSE: function to render each individual lesson item in the flatlist
   function renderLessonItem(LessonList) {
-
     return (
       <LessonItem
         id={LessonList.item.id}
         title={LessonList.item.title}
         subtitle={LessonList.item.subtitle}
         onLessonSelect={() => navigateToPlay(LessonList.item)}
-        progressArray={progressArray}
+        isComplete={progress[LessonList.item.id]}
       />
     )
   }
-
-
-
-
 
   return (
     <View style={styles.screen}>
       <FlatList
         data={selectedLessonList}
         renderItem={renderLessonItem}
-        extraData={progressArray}
+        //extraData={progress}
       />
     </View>
   )
