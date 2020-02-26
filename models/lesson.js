@@ -7,10 +7,6 @@ class Lesson {
         this.subtitle = subtitle;
         this.studySetID = studySetID;
         this.source = source;
-        
-        //more props to come
-            //isDownloaded?
-            //isMarkedAsComplete?
     }
 }
 

@@ -27,9 +27,6 @@ function PlayScreen(props) {
   //boolean to determine if the audio file has finished loading 
   const [isLoaded, setIsLoaded] = useState(false);
 
-  //get source url for audio file
-  //const source = props.navigation.getParam("source");
-
   //boolean to determine if the audio file is currently playing or paused
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -49,7 +46,7 @@ function PlayScreen(props) {
   useEffect(() => {
 
     //check if file is downloaded, then load it
-    checkIsDownloaded();
+    checkIsDownloaded(); // -> loadAudioFile()
  
     //determine complete status of loaded lesson
     fetchCompleteStatus();
@@ -57,7 +54,7 @@ function PlayScreen(props) {
     //set up our timer tick for updating the seeker every second
     const interval = setInterval(updateSeekerTick, 1000);
 
-    //when leaving the screen, cancel the interval timer
+    //when leaving the screen, cancel the interval timer and unload the audio file
     return function cleanup() {
       clearInterval(interval);
       soundObject.unloadAsync();
@@ -87,8 +84,8 @@ function PlayScreen(props) {
   }
 
   //PURPOSE: load the audio file and set isLoaded and 
+  //PARAMETERS: source to load file from
   async function loadAudioFile(source) {
-    //console.log(source)
     try {
       await soundObject
         .loadAsync({ uri: source }, { progressUpdateIntervalMillis: 1000 })
@@ -158,7 +155,9 @@ function PlayScreen(props) {
   ////PROGRESS STORAGE FUNCTIONS////
   //////////////////////////////////
   
-
+  
+  //PURPOSE: get the complete status of the current lesson from async,
+  //then send that to the navigation options to update the button
   async function fetchCompleteStatus() {
     try {
       var id = props.navigation.getParam('id');
@@ -185,6 +184,8 @@ function PlayScreen(props) {
     }
   }
 
+  //PURPOSE: change the complete status of the currently selected lesson
+  //and update the async object accordingly
   async function changeCompleteStatus() {
     try {
       //props.navigation.getParam('refresh').call();
@@ -217,6 +218,12 @@ function PlayScreen(props) {
       console.log(error);
     }
   }
+
+
+  ////////////////////////////////
+  ////RENDER/STYLES/NAVOPTIONS////
+  ////////////////////////////////
+
 
   return (
     <View style={styles.screen}>

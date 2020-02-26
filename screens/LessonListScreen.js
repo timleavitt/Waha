@@ -1,5 +1,5 @@
 //basic imports
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View, FlatList, StyleSheet, AsyncStorage } from 'react-native';
 import { useFocusEffect } from 'react-navigation-hooks';
 import * as FileSystem from 'expo-file-system';
@@ -9,12 +9,9 @@ import { STUDYSETS } from '../data/dummy-data';
 
 //component import
 import LessonItem from '../components/LessonItem';
-import { Audio } from 'expo-av';
-import Lesson from '../models/lesson';
+
 
 function LessonListScreen(props) {
-
-
   useFocusEffect(
     React.useCallback(() => {
       //console.log("useFocus has triggered, refreshing...")
@@ -45,8 +42,6 @@ function LessonListScreen(props) {
         title: item.title,
         subtitle: item.subtitle,
         source: item.source,
-        //refresh: refreshments
-        //updateProgress: updateProgressArray
       }
     })
   }
@@ -59,28 +54,6 @@ function LessonListScreen(props) {
         setProgress(JSON.parse(value))
       })
   }
-
-/*   async function fetchDownloadStatus(id) {
-    var temp = {}
-    await FileSystem
-      .getInfoAsync(FileSystem.documentDirectory + id + '.mp3')
-      .then(({ exists }) => {
-        //console.log(`${id} - ${exists}`)
-        if (exists) {
-          return 'downloaded'
-        } else {
-          return 'notDownloaded'
-        }
-      })
-  }
-
-  async function fetchDownloadStatuses() {
-    var temp = {}
-    for (var i = 0; i < selectedLessonList.length; i++) {
-      temp[selectedLessonList[i].id] = fetchDownloadStatus(selectedLessonList[i].id);
-    }
-    setDownloads(temp);
-  } */
 
   //PURPOSE: function to render each individual lesson item in the flatlist
   function renderLessonItem(LessonList) {
@@ -97,6 +70,7 @@ function LessonListScreen(props) {
     )
   }
 
+  //PURPOSE: download a lesson .mp3 from a specified source
   function downloadLesson(item) {
     try {
     FileSystem.downloadAsync(
@@ -104,7 +78,6 @@ function LessonListScreen(props) {
       FileSystem.documentDirectory + item.id + '.mp3'
     )
       .then(({ uri }) => {
-        console.log('Finished downloading to ', uri);
         setRefresh(old => !old)
       })
       .catch(error => {
@@ -115,6 +88,7 @@ function LessonListScreen(props) {
     }
   }
 
+  //PURPOSE: delete a lesson .mp3 from a specific address
   function deleteLesson(item) {
     FileSystem.deleteAsync(FileSystem.documentDirectory + item.id + '.mp3')
     setRefresh(old => !old)

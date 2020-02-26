@@ -6,14 +6,22 @@ import * as FileSystem from 'expo-file-system';
 
 function LessonItem(props) {
 
+    //state to keep track of whether this lesson is downloaded
+    //NOTE: must be state; don't try it with a normal var
     const [isDownloaded, setIsDownloaded] = useState(false);
+
+    //var to keep track of whether this lesson is complete
+    //NOTE: must be var; don't try with state
     var isComplete;
+
+    //check if our info passed is complete or not and set isComplete accordingly
     if(props.isComplete === 'complete') {
         isComplete = true;
     } else {
         isComplete = false;
     }
 
+    //check if the lesson is downloaded and set isDownloaded accordingly
     FileSystem.getInfoAsync(FileSystem.documentDirectory + props.id + '.mp3')
         .then(({ exists }) => {
             exists ? setIsDownloaded(true) : setIsDownloaded(false)

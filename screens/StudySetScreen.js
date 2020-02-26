@@ -5,20 +5,22 @@ import { View, FlatList, StyleSheet } from 'react-native';
 //data import
 import { STUDYSETS } from '../data/dummy-data';
 import { AsyncStorage } from 'react-native';
-import  * as firebase from 'firebase';
+import * as firebase from 'firebase';
 //other component imports
 import StudySetItem from '../components/StudySetItem';
 import { Ionicons } from '@expo/vector-icons';
 
 function StudySetScreen(props) {
-    
+
+    //state to do stuff on first launch (use for onboarding)
     const [isFirstLaunch, setIsFirstLaunch] = useState(false);
 
     async function checkFirstLaunch() {
-      /*   const asyncStorageKeys = await AsyncStorage.getAllKeys();
+        //UNCOMMENT TO CLEAR ASYNC STORAGE
+        /*  const asyncStorageKeys = await AsyncStorage.getAllKeys();
         if (asyncStorageKeys.length > 0) {
             AsyncStorage.clear();
-        } */
+        }  */
         try {
             await AsyncStorage
                 .getItem('alreadyLaunched')
@@ -26,7 +28,7 @@ function StudySetScreen(props) {
                     if (value == null) {
                         AsyncStorage.setItem('alreadyLaunched', 'true');
                         setIsFirstLaunch(true);
-                        setProgressAndDownloads();
+                        setProgress();
                     }
                 })
         } catch (error) {
@@ -34,44 +36,21 @@ function StudySetScreen(props) {
         }
     }
 
-    function setProgressAndDownloads() {
-        //old
-        /* var lesson;
-        for (i = 0; i < STUDYSETS.length; i++) {
-            for (j = 0; j < STUDYSETS[i].lessonList.length; j++) {
-                lesson = STUDYSETS[i].lessonList[j].id
-                setAsyncValue(lesson, 'incomplete');
-            }
-        }  */
-
+    //Purpose: set status of all lessons to 'incomplete'
+    function setProgress() {
         var progress = {};
-        var downloads = {};
-
         for (i = 0; i < STUDYSETS.length; i++) {
             for (j = 0; j < STUDYSETS[i].lessonList.length; j++) {
                 progress[STUDYSETS[i].lessonList[j].id] = 'incomplete'
-                downloads[STUDYSETS[i].lessonList[j].id] = 'notDownloaded'
             }
         }
-        setAsyncValue("progress", JSON.stringify(progress));
-        setAsyncValue("downloads", JSON.stringify(downloads));
+        AsyncStorage.setItem('progress', JSON.stringify(progress))
     }
 
-    async function setAsyncValue(key, mark) {
-        try {
-            await AsyncStorage
-               .setItem(key, mark)
-               .then(value => {
-               }) 
-       } catch (error) {
-           console.log(error);
-       } 
-    }
-
+    //check if we're on first launch (maybe get better solution later;
+    //this does an async operation every time this screen opens)
     useEffect(() => {
-        console.log("study set screen use effect")
         checkFirstLaunch();
-
     }, [])
 
     //function to navigate to the lesson list screen
@@ -90,17 +69,17 @@ function StudySetScreen(props) {
     //function to render the studyset items
     //includes onSelect which navigates to the appropriate lesson list screen
     function renderStudySetItem(studySetList) {
-        return(
-            <StudySetItem 
+        return (
+            <StudySetItem
                 title={studySetList.item.title}
                 onStudySetSelect={() => navigateToLessonList(studySetList.item)}
             />
         )
     }
 
-    return(
+    return (
         <View style={styles.screen}>
-            <FlatList 
+            <FlatList
                 data={STUDYSETS}
                 renderItem={renderStudySetItem}
             />
@@ -110,9 +89,9 @@ function StudySetScreen(props) {
 
 StudySetScreen.navigationOptions = navData => {
     return {
-      headerTitle: 'Study Sets'
+        headerTitle: 'Study Sets'
     };
-  };
+};
 
 const styles = StyleSheet.create({
     screen: {
