@@ -76,10 +76,10 @@ function PlayScreen(props) {
     FileSystem.getInfoAsync(FileSystem.documentDirectory + props.navigation.getParam('id') + '.mp3')
     .then(({exists}) => {
       if(exists) {
-        console.log('file exists')
+        //console.log('file exists')
         source = (FileSystem.documentDirectory + props.navigation.getParam('id') + '.mp3')
       } else {
-        console.log('file does not exist')
+        //console.log('file does not exist')
         source = props.navigation.getParam('source')
       } 
       loadAudioFile(source);
@@ -88,7 +88,7 @@ function PlayScreen(props) {
 
   //PURPOSE: load the audio file and set isLoaded and 
   async function loadAudioFile(source) {
-    console.log(source)
+    //console.log(source)
     try {
       await soundObject
         .loadAsync({ uri: source }, { progressUpdateIntervalMillis: 1000 })

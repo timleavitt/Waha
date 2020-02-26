@@ -26,7 +26,7 @@ function StudySetScreen(props) {
                     if (value == null) {
                         AsyncStorage.setItem('alreadyLaunched', 'true');
                         setIsFirstLaunch(true);
-                        setProgress();
+                        setProgressAndDownloads();
                     }
                 })
         } catch (error) {
@@ -34,7 +34,7 @@ function StudySetScreen(props) {
         }
     }
 
-    function setProgress() {
+    function setProgressAndDownloads() {
         //old
         /* var lesson;
         for (i = 0; i < STUDYSETS.length; i++) {
@@ -45,12 +45,16 @@ function StudySetScreen(props) {
         }  */
 
         var progress = {};
+        var downloads = {};
+
         for (i = 0; i < STUDYSETS.length; i++) {
             for (j = 0; j < STUDYSETS[i].lessonList.length; j++) {
                 progress[STUDYSETS[i].lessonList[j].id] = 'incomplete'
+                downloads[STUDYSETS[i].lessonList[j].id] = 'notDownloaded'
             }
         }
         setAsyncValue("progress", JSON.stringify(progress));
+        setAsyncValue("downloads", JSON.stringify(downloads));
     }
 
     async function setAsyncValue(key, mark) {
