@@ -5,7 +5,7 @@ import { View, FlatList, StyleSheet } from 'react-native';
 //data import
 import { STUDYSETS } from '../data/dummy-data';
 import { AsyncStorage } from 'react-native';
-
+import  * as firebase from 'firebase';
 //other component imports
 import StudySetItem from '../components/StudySetItem';
 import { Ionicons } from '@expo/vector-icons';
@@ -71,6 +71,7 @@ function StudySetScreen(props) {
     useEffect(() => {
         console.log("study set screen use effect")
         checkFirstLaunch();
+
     }, [])
 
     //function to navigate to the lesson list screen
