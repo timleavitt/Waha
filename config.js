@@ -1,6 +1,7 @@
-import Firebase from 'firebase';
+import firebase from 'firebase';
+import '@firebase/firestore'
 
-let config = {
+const config = {
     apiKey: "***REMOVED***",
     authDomain: "waha-app-db.firebaseapp.com",
     databaseURL: "https://waha-app-db.firebaseio.com",
@@ -11,5 +12,5 @@ let config = {
     measurementId: "G-6SYY2T8DX1"
 };
 
-let app = Firebase.initializeApp(config);
-export const db = app.database();
+firebase.initializeApp(config);
+export const db = firebase.firestore()

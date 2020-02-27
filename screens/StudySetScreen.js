@@ -5,12 +5,43 @@ import { View, FlatList, StyleSheet } from 'react-native';
 //data import
 import { STUDYSETS } from '../data/dummy-data';
 import { AsyncStorage } from 'react-native';
-import * as firebase from 'firebase';
+import firebase from 'firebase';
+require('firebase/firestore');
+
 //other component imports
 import StudySetItem from '../components/StudySetItem';
-import { Ionicons } from '@expo/vector-icons';
+
+const config = {
+    apiKey: "***REMOVED***",
+    authDomain: "waha-app-db.firebaseapp.com",
+    databaseURL: "https://waha-app-db.firebaseio.com",
+    projectId: "waha-app-db",
+    storageBucket: "waha-app-db.appspot.com",
+    messagingSenderId: "831723165603",
+    appId: "1:831723165603:web:21a474da50b2d0511bec16",
+    measurementId: "G-6SYY2T8DX1"
+};
+
+firebase.initializeApp(config);
+const db = firebase.firestore()
 
 function StudySetScreen(props) {
+
+    //Get stuff from database
+    db.collection("languages").doc("english").get().then(doc => {
+        if (doc.exists) {
+            //deal with colors and fonts
+            console.log("Document data:", doc.data());
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }})
+
+    db.collection("languages").doc("english").collection("studySets").get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+            console.log(doc.data())
+        })
+    })
 
     //state to do stuff on first launch (use for onboarding)
     const [isFirstLaunch, setIsFirstLaunch] = useState(false);
