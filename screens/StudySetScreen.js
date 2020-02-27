@@ -27,7 +27,7 @@ const db = firebase.firestore()
 
 function StudySetScreen(props) {
 
-    //Get stuff from database
+     //Get stuff from database
     db.collection("languages").doc("english").get().then(doc => {
         if (doc.exists) {
             //deal with colors and fonts
@@ -41,7 +41,7 @@ function StudySetScreen(props) {
         querySnapshot.forEach(doc => {
             console.log(doc.data())
         })
-    })
+    }) 
 
     //state to do stuff on first launch (use for onboarding)
     const [isFirstLaunch, setIsFirstLaunch] = useState(false);

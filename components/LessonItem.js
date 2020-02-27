@@ -1,6 +1,6 @@
 //basic imports
-import React, { useState} from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, AsyncStorage} from 'react-native';
+import React, { useState, useEffect} from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 
@@ -9,6 +9,9 @@ function LessonItem(props) {
     //state to keep track of whether this lesson is downloaded
     //NOTE: must be state; don't try it with a normal var
     const [isDownloaded, setIsDownloaded] = useState(false);
+
+    //const [downloadProgress, setDownloadProgress] = useState(0);
+    const [isDownloading, setIsDownloading] = useState(false); 
 
     //var to keep track of whether this lesson is complete
     //NOTE: must be var; don't try with state
@@ -21,11 +24,50 @@ function LessonItem(props) {
         isComplete = false;
     }
 
+    //check when our download finishes so we can update icon
+    useEffect(() => {
+        if (props.downloadProgress === 1) {
+            setIsDownloading(false);
+        }
+    }, [props.downloadProgress])
+
+    //calls the download lesson function passed from props
+    //in addition to signalling that this specific lesson is downloading
+    //so that the progress can be shown
+    function downloadLesson() {
+        props.downloadLesson.call();
+        setIsDownloading(true);
+    }
+
     //check if the lesson is downloaded and set isDownloaded accordingly
     FileSystem.getInfoAsync(FileSystem.documentDirectory + props.id + '.mp3')
         .then(({ exists }) => {
             exists ? setIsDownloaded(true) : setIsDownloaded(false)
         })
+
+    function showDeleteAlert() {
+        Alert.alert(
+            'Lesson Delete',
+            'You are about to delete this lesson. Are you sure you\'d like to do so?',
+            [{text: 'No', onPress: () => {}}, {text: 'Yes', onPress: props.deleteLesson}],
+            { cancelable: false }
+        );
+    }
+
+    var downloadedFeedback;
+    if (!isDownloading) {
+        downloadedFeedback = 
+            <Ionicons.Button 
+                name={isDownloaded ? "ios-backspace" : "md-cloud-download"} 
+                size={30}
+                onPress={isDownloaded ? showDeleteAlert : downloadLesson}
+                backgroundColor="rgba(0,0,0,0)"
+                color="black"
+            />
+    } else {
+        downloadedFeedback = 
+            <Text>{Math.ceil(props.downloadProgress * 100).toString() + '%'}</Text>
+    }
 
     return(
         <View style={styles.lessonItem}>
@@ -42,13 +84,7 @@ function LessonItem(props) {
                 </View>
             </TouchableOpacity>
             <View style={styles.icon}>
-                <Ionicons.Button 
-                    name={isDownloaded ? "ios-backspace" : "md-cloud-download"} 
-                    size={30}
-                    onPress={isDownloaded ? props.deleteLesson : props.downloadLesson}
-                    backgroundColor="rgba(0,0,0,0)"
-                    color="black"
-                 />
+                {downloadedFeedback}
             </View>
         </View>
     )
