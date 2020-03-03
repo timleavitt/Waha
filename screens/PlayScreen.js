@@ -86,6 +86,7 @@ function PlayScreen(props) {
   //PURPOSE: load the audio file and set isLoaded and 
   //PARAMETERS: source to load file from
   async function loadAudioFile(source) {
+    console.log(source);
     try {
       await soundObject
         .loadAsync({ uri: source }, { progressUpdateIntervalMillis: 1000 })

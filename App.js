@@ -10,9 +10,16 @@ if (!global.atob) { global.atob = decode }
 //navigation
 import WahaNavigator from './navigation/Navigation';
 
+//redux
+import { Provider } from 'react-redux'
+
+
+
 export default function App() {
   return (
-    <WahaNavigator/>
+    <Provider store={store}>
+      <WahaNavigator/>
+    </Provider>
   );
 }
 
