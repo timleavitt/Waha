@@ -1,6 +1,6 @@
 //basic imports
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, Text } from 'react-native';
 
 //data import
 import { STUDYSETS } from '../data/dummy-data';
@@ -10,6 +10,9 @@ require('firebase/firestore');
 
 //other component imports
 import StudySetItem from '../components/StudySetItem';
+
+//redux
+import { connect } from 'react-redux'
 
 const config = {
     apiKey: "***REMOVED***",
@@ -31,15 +34,15 @@ function StudySetScreen(props) {
     db.collection("languages").doc("english").get().then(doc => {
         if (doc.exists) {
             //deal with colors and fonts
-            console.log("Document data:", doc.data());
+            //console.log("Document data:", doc.data());
         } else {
             // doc.data() will be undefined in this case
-            console.log("No such document!");
+            //console.log("No such document!");
         }})
 
     db.collection("languages").doc("english").collection("studySets").get().then(querySnapshot => {
         querySnapshot.forEach(doc => {
-            console.log(doc.data())
+            //console.log(doc.data())
         })
     }) 
 
@@ -48,10 +51,10 @@ function StudySetScreen(props) {
 
     async function checkFirstLaunch() {
         //UNCOMMENT TO CLEAR ASYNC STORAGE
-        /*  const asyncStorageKeys = await AsyncStorage.getAllKeys();
+          const asyncStorageKeys = await AsyncStorage.getAllKeys();
         if (asyncStorageKeys.length > 0) {
             AsyncStorage.clear();
-        }  */
+        }  
         try {
             await AsyncStorage
                 .getItem('alreadyLaunched')
@@ -114,6 +117,9 @@ function StudySetScreen(props) {
                 data={STUDYSETS}
                 renderItem={renderStudySetItem}
             />
+            <View>
+                <Text>{JSON.stringify(props.downloadProgress)}</Text>
+            </View>
         </View>
     )
 }
@@ -130,4 +136,11 @@ const styles = StyleSheet.create({
     }
 })
 
-export default StudySetScreen;
+function mapStateToProps(state) {
+    return {
+      downloadProgress: state.downloadProgress,
+      somethingDownloading: state.somethingDownloading
+    }
+  };
+
+export default connect(mapStateToProps)(StudySetScreen);

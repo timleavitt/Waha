@@ -35,6 +35,7 @@ function PlayScreen(props) {
 
   //boolean to determine if the seeker should update every second
   //NOTE: only time it shouldn't is during seeking or skipping
+  /////////maybe should switch to useref???
   const [shouldTickUpdate, setShouldTickUpdate] = useState(true);
   
 
