@@ -1,9 +1,9 @@
 //basic imports
 import React, { useState, useEffect} from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
-import AwesomeAlert from 'react-native-awesome-alerts';
+import * as Progress from 'react-native-progress';
 
 function LessonItem(props) {
 
@@ -35,11 +35,11 @@ function LessonItem(props) {
     //calls the download lesson function passed from props
     //in addition to signalling that this specific lesson is downloading
     //so that the progress can be shown
-    function downloadLesson() {
-        props.downloadLesson.call();
+    // function downloadLesson() {
+    //     props.downloadLesson.call();
 
-        setIsDownloading(true);
-    }
+    //     setIsDownloading(true);
+    // }
 
     //check if the lesson is downloaded and set isDownloaded accordingly
     FileSystem.getInfoAsync(FileSystem.documentDirectory + props.id + '.mp3')
@@ -56,43 +56,49 @@ function LessonItem(props) {
         );
     }
 
-/*     var downloadedFeedback;
-    if (!isDownloading) {
+    //component for what to display on the far right of the list
+    //can either be cloud down arrow (click to download), x (click to delete),
+    //a no internet icon, or a spin icon if it's downloading
+    var downloadedFeedback;
+    var progressBar;
+    if (!props.downloadProgress) {
         downloadedFeedback = 
             <Ionicons.Button 
                 name={isDownloaded ? "ios-backspace" : "md-cloud-download"} 
                 size={30}
-                onPress={isDownloaded ? showDeleteAlert : downloadLesson}
+                onPress={isDownloaded ? showDeleteAlert : props.downloadLesson}
                 backgroundColor="rgba(0,0,0,0)"
                 color="black"
             />
+        progressBar = null;
     } else {
-        downloadedFeedback = 
-            <Text>{Math.ceil(props.downloadProgress * 100).toString() + '%'}</Text>
-    }  */
+        downloadedFeedback = <ActivityIndicator size="small" color="black" />
+        
+        progressBar = <Progress.Bar progress={props.downloadProgress} width={400} color="black" borderColor="black"/>
+    }  
 
-    return(
+    //<Text>{Math.ceil(props.downloadProgress * 100).toString() + '%'}</Text>
+    return (
         <View style={styles.lessonItem}>
-            <TouchableOpacity style={styles.progresAndTitle} onPress={props.onLessonSelect}>
+            <View style={styles.mainDisplay}>
+                <TouchableOpacity style={styles.progresAndTitle} onPress={props.onLessonSelect}>
+                    <View style={styles.icon}>
+                        <Ionicons
+                            name={isComplete ? "ios-arrow-dropdown-circle" : "ios-arrow-dropdown"}
+                            size={30}
+                        />
+                    </View>
+                    <View styles={styles.titleContainer}>
+                        <Text style={styles.title}>{props.title}</Text>
+                        <Text style={styles.subtitle}>{props.subtitle}</Text>
+                    </View>
+                </TouchableOpacity>
                 <View style={styles.icon}>
-                    <Ionicons 
-                        name={isComplete ? "ios-arrow-dropdown-circle" : "ios-arrow-dropdown"} 
-                        size={30}
-                    />
+                    {downloadedFeedback}
                 </View>
-                <View styles={styles.titleContainer}>
-                    <Text style={styles.title}>{props.title}</Text>
-                    <Text style={styles.subtitle}>{props.subtitle}</Text>
-                </View>
-            </TouchableOpacity>
-            <View style={styles.icon}>
-                <Ionicons.Button 
-                    name={isDownloaded ? "ios-backspace" : "md-cloud-download"} 
-                    size={30}
-                    onPress={isDownloaded ? showDeleteAlert : downloadLesson}
-                    backgroundColor="rgba(0,0,0,0)"
-                    color="black"
-                />
+            </View>
+            <View style={styles.progressBar}>
+                {progressBar}
             </View>
         </View>
     )
@@ -106,7 +112,10 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         margin: 5,
         justifyContent: "space-between",
-        flexDirection: "row",
+        flexDirection: "column",
+    },
+    mainDisplay: {
+        flexDirection: "row"
     },
     title: {
         fontSize: 22,
@@ -133,7 +142,8 @@ const styles = StyleSheet.create({
         alignContent: "center",
         flex: 1
     },
-    downloadButton: {
+    progressBar: {
+        width: "100%"
     }
 })
 
