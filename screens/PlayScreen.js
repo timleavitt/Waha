@@ -1,6 +1,6 @@
 //basic imports
-import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Button, Text, Slider, AsyncStorage } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Text, Slider } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 
@@ -9,6 +9,10 @@ import { Audio } from 'expo-av';
 
 //components
 import TimeDisplay from "../components/TimeDisplay";
+
+//redux
+import { toggleComplete } from '../redux/actions'
+import { connect } from 'react-redux'
 
 function PlayScreen(props) {
   
@@ -50,7 +54,11 @@ function PlayScreen(props) {
     checkIsDownloaded(); // -> loadAudioFile()
  
     //determine complete status of loaded lesson
-    fetchCompleteStatus();
+    var id = props.navigation.getParam('id');
+
+    //send completion info over to navigation (appProgress is from redux)
+    props.navigation.setParams({ navIsComplete: (id in props.appProgress) });
+    props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
 
     //set up our timer tick for updating the seeker every second
     const interval = setInterval(updateSeekerTick, 1000);
@@ -157,68 +165,19 @@ function PlayScreen(props) {
   ////PROGRESS STORAGE FUNCTIONS////
   //////////////////////////////////
   
-  
-  //PURPOSE: get the complete status of the current lesson from async,
-  //then send that to the navigation options to update the button
-  async function fetchCompleteStatus() {
-    try {
-      var id = props.navigation.getParam('id');
-      var tempProgress = {}
-      var isCompleteToSend = false
 
-      await AsyncStorage
-        .getItem('progress')
-        .then(value => {
-          //get complete status of this lesson to send to button
-          tempProgress = JSON.parse(value);
-          if(tempProgress[id] === 'complete') {
-            isCompleteToSend = true;
-          } else {
-            isCompleteToSend = false;
-          }
+  function changeCompleteStatus() {
+    var id = props.navigation.getParam('id');
 
-          //send stuff over to navigation
-          props.navigation.setParams({ navIsComplete: isCompleteToSend });
-          props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
-        })
-    } catch (error) {
-      console.log(error);
-    }
-  }
+    //redux action: change the complete status
+    props.toggleComplete(id)
 
-  //PURPOSE: change the complete status of the currently selected lesson
-  //and update the async object accordingly
-  async function changeCompleteStatus() {
-    try {
-      //props.navigation.getParam('refresh').call();
-      var id = props.navigation.getParam('id');
-      var temp = {}
-      var tempProgress = {}
-      var isCompleteToSend = false
-
-      await AsyncStorage
-        .getItem('progress')
-        .then(value => {
-          //get complete status of this lesson to send to button
-          tempProgress = JSON.parse(value);
-          if(tempProgress[id] === 'complete') {
-            isCompleteToSend = false;
-            temp[id] = 'incomplete'
-          } else {
-            isCompleteToSend = true;
-            temp[id] = 'complete'
-          }
-
-          //update progress in async
-          AsyncStorage.setItem('progress', JSON.stringify(Object.assign(tempProgress, temp)))
-
-          //send stuff over to navigation
-          props.navigation.setParams({ navIsComplete: isCompleteToSend });
-          props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
-        })
-    } catch (error) {
-      console.log(error);
-    }
+    //send new info over to navigation for header button (appProgress is from redux)
+    //TODO: navIsComplete isn't updating after toggle, probably because it takes a bit to 
+    //update the state in redux; need to figure out how to make it wait until state
+    //is finished updating to send over to nav
+    props.navigation.setParams({ navIsComplete: (id in props.appProgress)});
+    props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
   }
 
 
@@ -362,4 +321,17 @@ const styles = StyleSheet.create({
   }
 })
 
-export default PlayScreen;
+function mapStateToProps(state) {
+  console.log(state)
+  return {
+    appProgress: state.appProgress
+  }
+};
+
+function mapDispatchToProps(dispatch) {
+  return {
+    toggleComplete: lessonID => {dispatch(toggleComplete(lessonID))}
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PlayScreen);
