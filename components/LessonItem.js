@@ -28,6 +28,11 @@ function LessonItem(props) {
         props.setShowDeleteLessonModal.call();
     }
 
+    function showLessonOptionsModal() {
+        props.setIDToDownload.call();
+        props.setShowLessonOptionsModal.call();
+    }
+
     //component for what to display on the far right of the list
     //can either be cloud down arrow (click to download), x (click to delete),
     //a no internet icon, or a spin icon if it's downloading
@@ -51,7 +56,11 @@ function LessonItem(props) {
     return (
         <View style={styles.lessonItem}>
             <View style={styles.mainDisplay}>
-                <TouchableOpacity style={styles.progresAndTitle} onPress={props.onLessonSelect}>
+                <TouchableOpacity 
+                    style={styles.progresAndTitle} 
+                    onPress={props.onLessonSelect}
+                    onLongPress={showLessonOptionsModal}
+                >
                     <View style={styles.icon}>
                         <Ionicons
                             name={props.isComplete ? "ios-arrow-dropdown-circle" : "ios-arrow-dropdown"}

@@ -1,6 +1,6 @@
 //basic imports
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Slider } from 'react-native';
+import { View, StyleSheet, Text, Slider, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 
@@ -168,16 +168,29 @@ function PlayScreen(props) {
 
   function changeCompleteStatus() {
     var id = props.navigation.getParam('id');
-
+    var isComplete = (id in props.appProgress)
     //redux action: change the complete status
     props.toggleComplete(id)
 
-    //send new info over to navigation for header button (appProgress is from redux)
-    //TODO: navIsComplete isn't updating after toggle, probably because it takes a bit to 
-    //update the state in redux; need to figure out how to make it wait until state
-    //is finished updating to send over to nav
-    props.navigation.setParams({ navIsComplete: (id in props.appProgress)});
-    props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
+    if (isComplete) {
+      Alert.alert('Lesson marked as incomplete!', 
+      'Don\' forget to select when your next lesson is!',
+      [{
+        text: 'OK', 
+        onPress: () => {props.navigation.goBack();}
+      }])
+    } else {
+      Alert.alert('Lesson marked as complete!', 
+      'Don\' forget to select when your next lesson is!',
+      [{
+        text: 'OK', 
+        onPress: () => {props.navigation.goBack();}
+      }])
+    } 
+
+    //don't need to update button anymore
+    // props.navigation.setParams({ navIsComplete: (id in props.appProgress)});
+    // props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
   }
 
 
