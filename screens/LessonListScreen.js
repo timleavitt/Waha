@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
-  console.log(state)
+  //console.log(state)
   return {
     downloads: state.downloads,
     appProgress: state.appProgress

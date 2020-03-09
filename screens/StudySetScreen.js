@@ -1,50 +1,37 @@
 //basic imports
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, Text } from 'react-native';
+import { View, FlatList, StyleSheet, Button } from 'react-native';
 
 //data import
 import { STUDYSETS } from '../data/dummy-data';
 import { AsyncStorage } from 'react-native';
-import firebase from 'firebase';
-require('firebase/firestore');
+import db from '../config'
 
 //other component imports
 import StudySetItem from '../components/StudySetItem';
 
 //redux
 import { connect } from 'react-redux'
-
-const config = {
-    apiKey: "***REMOVED***",
-    authDomain: "waha-app-db.firebaseapp.com",
-    databaseURL: "https://waha-app-db.firebaseio.com",
-    projectId: "waha-app-db",
-    storageBucket: "waha-app-db.appspot.com",
-    messagingSenderId: "831723165603",
-    appId: "1:831723165603:web:21a474da50b2d0511bec16",
-    measurementId: "G-6SYY2T8DX1"
-};
-
-firebase.initializeApp(config);
-const db = firebase.firestore()
+import { fetchData } from '../redux/actions/databaseActions'
 
 function StudySetScreen(props) {
 
-     //Get stuff from database
-    db.collection("languages").doc("english").get().then(doc => {
-        if (doc.exists) {
-            //deal with colors and fonts
-            //console.log("Document data:", doc.data());
-        } else {
-            // doc.data() will be undefined in this case
-            //console.log("No such document!");
-        }})
+    // //Get stuff from database
+    // db.collection("languages").doc("english").get().then(doc => {
+    //     if (doc.exists) {
+    //         //deal with colors and fonts
+    //         //console.log("Document data:", doc.data());
+    //     } else {
+    //         // doc.data() will be undefined in this case
+    //         //console.log("No such document!");
+    //     }})
 
-    db.collection("languages").doc("english").collection("studySets").get().then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-            //console.log(doc.data())
-        })
-    }) 
+    // db.collection("languages").doc("english").collection("studySets").get().then(querySnapshot => {
+    //     querySnapshot.forEach(doc => {
+    //         //console.log(doc.data())
+    //     })
+    // }) 
+    //console.log(db)
 
     //state to do stuff on first launch (use for onboarding)
     const [isFirstLaunch, setIsFirstLaunch] = useState(false);
@@ -118,7 +105,7 @@ function StudySetScreen(props) {
                 renderItem={renderStudySetItem}
             />
             <View>
-                <Text>{JSON.stringify(props.downloadProgress)}</Text>
+                <Button title="fetch data" onPress={props.fetchData}/>
             </View>
         </View>
     )
@@ -137,10 +124,16 @@ const styles = StyleSheet.create({
 })
 
 function mapStateToProps(state) {
+    console.log(state)
     return {
-      downloadProgress: state.downloadProgress,
-      somethingDownloading: state.somethingDownloading
+        database: state.database
     }
   };
 
-export default connect(mapStateToProps)(StudySetScreen);
+  function mapDispatchToProps(dispatch) {
+    return {
+      fetchData: () => dispatch(fetchData())
+    }
+  };
+
+export default connect(mapStateToProps, mapDispatchToProps)(StudySetScreen);
