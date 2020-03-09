@@ -2,27 +2,7 @@ export const ADD_UPDATE_DOWNLOAD = 'ADD_UPDATE_DOWNLOAD'
 export const REMOVE_DOWNLOAD = 'REMOVE_DOWNLOAD'
 export const PURGE = 'PURGE'
 
-export const TOGGLE_COMPLETE = 'TOGGLE_COMPLETE'
-export const RESET_PROGRESS = 'RESET_PROGRESS'
-
 import * as FileSystem from 'expo-file-system';
-
-//progress actions
-
-export function toggleComplete(lessonID) {
-    return {
-        type: TOGGLE_COMPLETE,
-        lessonID
-    }
-}
-
-export function resetProgress() {
-    return {
-        type: RESET_PROGRESS
-    }
-}
-
-//download actions
 
 export function addUpdateDownload(progress, lessonID) {
     return {
@@ -45,6 +25,7 @@ export function purge() {
     }
 }
 
+//thunk function for async downloading
 export function downloadLesson(lessonID) {
     return dispatch => {
 

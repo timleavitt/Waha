@@ -7,7 +7,8 @@ import { useFocusEffect } from 'react-navigation-hooks';
 import * as FileSystem from 'expo-file-system';
 
 //redux imports
-import { downloadLesson, toggleComplete } from '../redux/actions'
+import { downloadLesson } from '../redux/actions/downloadActions'
+import { toggleComplete } from '../redux/actions/appProgressActions'
 import { connect } from 'react-redux'
 
 //data import
