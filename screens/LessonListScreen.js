@@ -1,9 +1,7 @@
-//normal imports imports
+//imports
 import React, { useState } from 'react';
 import { View, FlatList, StyleSheet, Button, Modal } from 'react-native';
-//import Modal from 'react-native-modal'
 import LessonItem from '../components/LessonItem';
-import { useFocusEffect } from 'react-navigation-hooks';
 import * as FileSystem from 'expo-file-system';
 
 //redux imports
@@ -28,7 +26,6 @@ function LessonListScreen(props) {
   const [showSaveLessonModal, setShowSaveLessonModal] = useState(false);
   const [showDeleteLessonModal, setShowDeleteLessonModal] = useState(false);
   const [showLessonOptionsModal, setShowLessonOptionsModal] = useState(false);
-
 
   //find our specified study set with data taken from the last screen
   selectedStudySetArray = props.database[props.database.currentLanguage].studySets.filter(studyset => studyset.id === props.navigation.getParam("studySetID"));
@@ -79,6 +76,7 @@ function LessonListScreen(props) {
     setShowLessonOptionsModal(false);
   }
   
+  //PURPOSE: change the complete status via redux dispatch
   function toggleComplete(whatToMark) {
     if (idToDownload in props.appProgress && whatToMark === 'incomplete') {
       props.toggleComplete(idToDownload);

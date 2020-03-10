@@ -187,10 +187,6 @@ function PlayScreen(props) {
         onPress: () => {props.navigation.goBack();}
       }])
     } 
-
-    //don't need to update button anymore
-    // props.navigation.setParams({ navIsComplete: (id in props.appProgress)});
-    // props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
   }
 
 
@@ -254,7 +250,6 @@ function PlayScreen(props) {
 PlayScreen.navigationOptions = navigationData => {
   const navIsComplete = navigationData.navigation.getParam("navIsComplete");
   const navMarkHandler = navigationData.navigation.getParam("navMarkHandler");
-  //console.log(`complete status in navigation: ${navIsComplete}`);
   return {
     headerTitle: navigationData.navigation.getParam("title"),
     headerRight: () =>
@@ -333,6 +328,12 @@ const styles = StyleSheet.create({
     alignContent: "center"
   }
 })
+
+
+/////////////
+////REDUX////
+/////////////
+
 
 function mapStateToProps(state) {
   console.log(state)

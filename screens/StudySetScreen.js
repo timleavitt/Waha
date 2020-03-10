@@ -1,11 +1,6 @@
 //basic imports
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, Text, ActivityIndicator } from 'react-native';
-import { purgeStoredState } from 'redux-persist'
-
-//data import
-import { AsyncStorage } from 'react-native';
-
 
 //other component imports
 import StudySetItem from '../components/StudySetItem';
@@ -16,34 +11,9 @@ import { addLanguage, changeLanguage } from '../redux/actions/databaseActions'
 
 function StudySetScreen(props) {
 
-    //state to do stuff on first launch (use for onboarding)
-    const [isFirstLaunch, setIsFirstLaunch] = useState(false);
-
-    async function checkFirstLaunch() {
-        //UNCOMMENT TO CLEAR ASYNC STORAGE
-        //   const asyncStorageKeys = await AsyncStorage.getAllKeys();
-        // if (asyncStorageKeys.length > 0) {
-        //     AsyncStorage.clear();
-        // }  
-        try {
-            await AsyncStorage
-                .getItem('alreadyLaunched')
-                .then(value => {
-                    if (value == null) {
-                        AsyncStorage.setItem('alreadyLaunched', 'true');
-                        setIsFirstLaunch(true);
-                    }
-                })
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-
     //check if we're on first launch (maybe get better solution later;
     //this does an async operation every time this screen opens)
     useEffect(() => {
-        checkFirstLaunch();
         props.changeLanguage("english");
         props.addLanguage("english");
     }, [])
@@ -61,6 +31,12 @@ function StudySetScreen(props) {
         })
     }
 
+
+    ////////////////////////////////
+    ////RENDER/STYLES/NAVOPTIONS////
+    ////////////////////////////////
+
+    
     //function to render the studyset items
     //includes onSelect which navigates to the appropriate lesson list screen
     function renderStudySetItem(studySetList) {
@@ -72,6 +48,7 @@ function StudySetScreen(props) {
         )
     }
 
+    //if we're not fetching data, render the flatlist. if we are, render a loading screen
     if (!props.isFetching) {
         return (
             <View style={styles.screen}>
@@ -109,8 +86,11 @@ const styles = StyleSheet.create({
     }
 })
 
+/////////////
+////REDUX////
+/////////////
+
 function mapStateToProps(state) {
-    console.log(state)
     if(!state.database.isFetching)
         return {
             database: state.database,

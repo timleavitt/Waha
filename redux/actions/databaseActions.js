@@ -4,8 +4,6 @@ export const STORE_DATA = 'STORE_DATA'
 export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE'
 export const SET_IS_FETCHING = 'SET_IS_FETCHING'
 
-//export const CHOOSE_LANGUAGE = 'CHOOSE_LANGUAGE'
-
 import firebase from 'firebase';
 import '@firebase/firestore'
 
@@ -46,9 +44,12 @@ export function fetchError() {
     }
 }
 
+//thunk function for fetching a language from the database
 export function addLanguage(language) {
     return dispatch => {
+        //set isFetching to true to signal that we're fetching data from firebase
         dispatch(setIsFetching(true));
+
         //Get stuff from database and throw it in redux
         db.collection("languages").doc(language).get().then(doc => {
             if (doc.exists) {
@@ -61,7 +62,6 @@ export function addLanguage(language) {
 }
 
 export function changeLanguage(newLanguage) {
-    console.log('change language action creator firing')
     return {
         type: CHANGE_LANGUAGE,
         newLanguage
