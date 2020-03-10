@@ -1,19 +1,18 @@
 //basic imports
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, Button } from 'react-native';
-import { AppLoading } from 'expo'
+import { View, FlatList, StyleSheet, Text, ActivityIndicator } from 'react-native';
+import { purgeStoredState } from 'redux-persist'
+
 //data import
-import { STUDYSETS } from '../data/dummy-data';
 import { AsyncStorage } from 'react-native';
-import db from '../config'
+
 
 //other component imports
 import StudySetItem from '../components/StudySetItem';
 
 //redux
 import { connect } from 'react-redux'
-import { addLanguage } from '../redux/actions/databaseActions'
-import { changeLanguage } from '../redux/actions/currentLanguageActions'
+import { addLanguage, changeLanguage } from '../redux/actions/databaseActions'
 
 function StudySetScreen(props) {
 
@@ -45,6 +44,8 @@ function StudySetScreen(props) {
     //this does an async operation every time this screen opens)
     useEffect(() => {
         checkFirstLaunch();
+        props.changeLanguage("english");
+        props.addLanguage("english");
     }, [])
 
     //function to navigate to the lesson list screen
@@ -55,7 +56,7 @@ function StudySetScreen(props) {
             routeName: "LessonList",
             params: {
                 title: item.title,
-                studySetID: item.id
+                studySetID: item.id,
             }
         })
     }
@@ -71,22 +72,25 @@ function StudySetScreen(props) {
         )
     }
 
-    function dummyLanguageSetup() {
-        props.changeLanguage("english")
-        props.addLanguage("english");
-    }
-
-    return (
-        <View style={styles.screen}>
-            <FlatList
-                data={STUDYSETS}
-                renderItem={renderStudySetItem}
-            />
-            <View style={{height: 100}}>
-                <Button title="fetch data" onPress={dummyLanguageSetup}/>
+    if (!props.isFetching) {
+        return (
+            <View style={styles.screen}>
+                <FlatList
+                    data={props.database[props.database.currentLanguage].studySets}
+                    renderItem={renderStudySetItem}
+                />
+                <Text style={{...styles.text, color: props.primaryColor}}>This text is the primary color from the database! How cool!</Text>
+                <Text style={{...styles.text, color: props.secondaryColor}}>This text is the secondary color from the database! Radical!</Text>
             </View>
-        </View>
-    )
+        )
+    } else {
+        return (
+            <View style={{flex: 1, justifyContent: "center"}}>
+                <Text style={{textAlign: "center", fontSize: 30, marginVertical: 20}}>Hang on, we're setting things up...</Text>
+                <ActivityIndicator size="large" color="black" />
+            </View>
+        )
+    }
 }
 
 StudySetScreen.navigationOptions = navData => {
@@ -98,14 +102,25 @@ StudySetScreen.navigationOptions = navData => {
 const styles = StyleSheet.create({
     screen: {
         flex: 1
+    },
+    text: {
+        textAlign: "center",
+        margin: 40
     }
 })
 
 function mapStateToProps(state) {
     console.log(state)
-    return {
-        database: state.database,
-        currentLanguage: state.language.currentLanguage
+    if(!state.database.isFetching)
+        return {
+            database: state.database,
+            primaryColor: state.database[state.database.currentLanguage].colors.primaryColor,
+            secondaryColor: state.database[state.database.currentLanguage].colors.secondaryColor
+        }
+    else {
+        return {
+            isFetching: state.database.isFetching,
+        }
     }
 };
 

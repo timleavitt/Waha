@@ -1,6 +1,6 @@
 //normal imports imports
 import React, { useState } from 'react';
-import { View, FlatList, StyleSheet, AsyncStorage, Button, Modal } from 'react-native';
+import { View, FlatList, StyleSheet, Button, Modal } from 'react-native';
 //import Modal from 'react-native-modal'
 import LessonItem from '../components/LessonItem';
 import { useFocusEffect } from 'react-navigation-hooks';
@@ -10,9 +10,6 @@ import * as FileSystem from 'expo-file-system';
 import { downloadLesson } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/appProgressActions'
 import { connect } from 'react-redux'
-
-//data import
-import { STUDYSETS } from '../data/dummy-data';
 
 function LessonListScreen(props) {
 
@@ -34,10 +31,10 @@ function LessonListScreen(props) {
 
 
   //find our specified study set with data taken from the last screen
-  selectedStudySetArray = STUDYSETS.filter(studyset => studyset.id === props.navigation.getParam("studySetID"));
+  selectedStudySetArray = props.database[props.database.currentLanguage].studySets.filter(studyset => studyset.id === props.navigation.getParam("studySetID"));
 
   //make our data only the array of lessons
-  selectedLessonList = selectedStudySetArray[0].lessonList;
+  selectedLessonList = selectedStudySetArray[0].lessons;
 
   //function to navigate to the play screen
   //props.navigation.navigate takes us to the play screen
@@ -69,7 +66,9 @@ function LessonListScreen(props) {
 
   //PURPOSE: download a lesson .mp3 of id set by an individual flatlist item
   function downloadLesson() {
-    props.downloadLesson(idToDownload);
+    const currentLesson = selectedLessonList.filter(lesson => lesson.id === idToDownload)
+    const source = currentLesson[0].source
+    props.downloadLesson(idToDownload, source);
     hideModals();
   }
 
@@ -182,13 +181,14 @@ function mapStateToProps(state) {
   //console.log(state)
   return {
     downloads: state.downloads,
-    appProgress: state.appProgress
+    appProgress: state.appProgress,
+    database: state.database
   }
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    downloadLesson: lessonID => {dispatch(downloadLesson(lessonID))},
+    downloadLesson: (lessonID, source) => {dispatch(downloadLesson(lessonID, source))},
     toggleComplete: lessonID => {dispatch(toggleComplete(lessonID))}
   }
 }

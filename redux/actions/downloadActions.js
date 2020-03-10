@@ -26,7 +26,8 @@ export function purge() {
 }
 
 //thunk function for async downloading
-export function downloadLesson(lessonID) {
+export function downloadLesson(lessonID, source) {
+    console.log(source)
     return dispatch => {
 
         //callback function
@@ -40,7 +41,7 @@ export function downloadLesson(lessonID) {
 
         //create our download object
         const downloadResumable = FileSystem.createDownloadResumable(
-            'https://dl.airtable.com/.attachments/153694f4bc874577dda5bb4ccfe70187/aeb2055d/Acolyte.mp3',
+            source,
             FileSystem.documentDirectory + lessonID + '.mp3',
             {},
             callback

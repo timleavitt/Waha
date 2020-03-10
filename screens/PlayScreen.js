@@ -180,8 +180,8 @@ function PlayScreen(props) {
         onPress: () => {props.navigation.goBack();}
       }])
     } else {
-      Alert.alert('Lesson marked as complete!', 
-      'Don\' forget to select when your next lesson is!',
+      Alert.alert(props.translations['completeMessageTitle'], 
+        props.translations['completeMessageBody'],
       [{
         text: 'OK', 
         onPress: () => {props.navigation.goBack();}
@@ -337,7 +337,10 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
   console.log(state)
   return {
-    appProgress: state.appProgress
+    appProgress: state.appProgress,
+    database: state.database,
+    currentLanguage: state.database.currentLanguage,
+    translations: state.database[state.database.currentLanguage].translations
   }
 };
 
