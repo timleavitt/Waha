@@ -1,7 +1,7 @@
 //basic imports
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Slider, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, StyleSheet, Text, Slider, Alert, Button, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 
 //sound stuff
@@ -30,7 +30,7 @@ function PlayScreen(props) {
 
   //boolean to determine if the audio file has finished loading 
   const [isLoaded, setIsLoaded] = useState(false);
-
+  const [isBuffering, setIsBuffering] = useState(true);
   //boolean to determine if the audio file is currently playing or paused
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -41,10 +41,20 @@ function PlayScreen(props) {
   //NOTE: only time it shouldn't is during seeking or skipping
   /////////maybe should switch to useref???
   const [shouldTickUpdate, setShouldTickUpdate] = useState(true);
-  
 
-  //NOT USED CURRENTLY: update something on every api call to audio object and every second
+  const [activeChapter, setActiveChapter] = useState('fellowship')
+
+  //PURPOSE: update something on every api call to audio object and every second
   soundObject.setOnPlaybackStatusUpdate(playbackStatus => {
+    if (playbackStatus.isLoaded) {
+      setIsLoaded(true)
+    } 
+
+    if (playbackStatus.isBuffering) {
+      setIsBuffering(true)
+    } else {
+      setIsBuffering(false)
+    }
   })
 
   //PURPOSE: constructor on first screen open
@@ -83,7 +93,7 @@ function PlayScreen(props) {
     .then(({exists}) => {
       if(exists) {
         //console.log('file exists')
-        source = (FileSystem.documentDirectory + props.navigation.getParam('id') + '.mp3')
+        source = (FileSystem.documentDirectory + props.navigation.getParam('id') + '.mp3')  
       } else {
         //console.log('file does not exist')
         source = props.navigation.getParam('source')
@@ -100,7 +110,6 @@ function PlayScreen(props) {
       await soundObject
         .loadAsync({ uri: source }, { progressUpdateIntervalMillis: 1000 })
         .then(async playbackStatus => {
-          setIsLoaded(playbackStatus.isLoaded);
           setAudioFileLength(playbackStatus.durationMillis);
         })
     } catch (error) {
@@ -139,9 +148,12 @@ function PlayScreen(props) {
   //PURPOSE: start playing from the position they release the thumb at
   //PARAMETERS: the current seeker value
   function onSeekRelease(value) {
-    isPlaying ?
-      soundObject.setStatusAsync({ shouldPlay: true, positionMillis: value }) :
-      soundObject.setStatusAsync({ shouldPlay: false, positionMillis: value });
+    if (isPlaying) {
+      soundObject.setStatusAsync({ shouldPlay: false, positionMillis: value })
+      soundObject.setStatusAsync({ shouldPlay: true, positionMillis: value })
+    } else {
+      soundObject.setStatusAsync({ shouldPlay: false, positionMillis: value })
+    }
     setShouldTickUpdate(true);
     setSeekPosition(value);
   }
@@ -158,6 +170,10 @@ function PlayScreen(props) {
       soundObject.setStatusAsync({ shouldPlay: true, positionMillis: (seekPosition + amount) }) :
       soundObject.setStatusAsync({ shouldPlay: false, positionMillis: (seekPosition + amount) });
     setSeekPosition(seekPosition => seekPosition + amount);
+  }
+
+  function changeChapter(chapter) {
+    setActiveChapter(chapter)
   }
 
 
@@ -189,6 +205,67 @@ function PlayScreen(props) {
     } 
   }
 
+  var playButton;
+  if (!isBuffering) {
+    playButton = 
+    <Ionicons.Button
+      name={isPlaying ? "ios-pause" : "ios-play"}
+      size={125}
+      onPress={playHandler}
+      backgroundColor="rgba(0,0,0,0)"
+      iconStyle={styles.button}
+    />
+  } else {
+    playButton = 
+     <ActivityIndicator size="large" color="black" />
+  }
+
+  var controlsContainer;
+  if (!isLoaded) {
+    controlsContainer = 
+      <View style={{...styles.controlsContainer, justifyContent: "center"}}>
+        <ActivityIndicator size="large" color="black" />
+      </View>
+    } else {
+    controlsContainer =
+      <View style={styles.controlsContainer}>
+          <View style={styles.scrubberContainer}>
+            <View style={styles.scrubber}>
+              <Slider
+                value={seekPosition}
+                onSlidingComplete={onSeekRelease}
+                onValueChange={onSeekDrag}
+                minimumValue={0}
+                maximumValue={audioFileLength}
+                step={1000}
+              />
+            </View>
+            <View style={styles.timeInfo}>
+              <TimeDisplay style={styles.scrubberInfo} time={seekPosition} max={audioFileLength} />
+              <TimeDisplay style={styles.scrubberInfo} time={audioFileLength} max={audioFileLength} />
+            </View>
+          </View>
+          <View style={styles.buttonContainer}>
+            <Ionicons.Button
+              name="md-return-left"
+              size={85}
+              onPress={skip.bind("this", -5000)}
+              backgroundColor="rgba(0,0,0,0)"
+              iconStyle={styles.button}
+            />
+            {playButton}
+            <Ionicons.Button
+              name="md-return-right"
+              size={85}
+              onPress={skip.bind("this", 15000)}
+              backgroundColor="rgba(0,0,0,0)"
+              iconStyle={styles.button}
+            />
+          </View>
+        </View>
+        
+  }
+
 
   ////////////////////////////////
   ////RENDER/STYLES/NAVOPTIONS////
@@ -199,50 +276,24 @@ function PlayScreen(props) {
     <View style={styles.screen}>
       <View style={styles.titlesContainer}>
         <Text style={styles.title}>{props.navigation.getParam("title")}</Text>
-        <Text style={styles.subtitle}>{props.navigation.getParam("subtitle")}</Text>
+        <Text style={styles.subtitle}>{props.navigation.getParam("scripture")}</Text>
       </View>
       <Text style={{ textAlign: "center", flex: 1 }}>Status: {isLoaded ? "Finished loading" : "Loading"}</Text>
-      <View style={styles.controlsContainer}>
-        <View style={styles.scrubberContainer}>
-          <View style={styles.scrubber}>
-            <Slider
-              value={seekPosition}
-              onSlidingComplete={onSeekRelease}
-              onValueChange={onSeekDrag}
-              minimumValue={0}
-              maximumValue={audioFileLength}
-              step={1000}
-            />
-          </View>
-          <View style={styles.timeInfo}>
-            <TimeDisplay style={styles.scrubberInfo} time={seekPosition} max={audioFileLength} />
-            <TimeDisplay style={styles.scrubberInfo} time={audioFileLength} max={audioFileLength} />
-          </View>
+      <View style={styles.chapterSelectContainer}>
+          <TouchableOpacity style={styles.chapterSelect} onPress={() => changeChapter('fellowship')}>
+            <MaterialCommunityIcons name={(activeChapter === 'fellowship') ? "numeric-1-box" : "numeric-1"} size={30}/>
+            <Text style={{color: "white", fontSize: 18, flex: 1}}>Fellowship</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.chapterSelect} onPress={() => changeChapter('passage')}>
+            <MaterialCommunityIcons name={(activeChapter === 'passage') ? "numeric-2-box" : "numeric-2"} size={30}/>
+            <Text style={{color: "white", fontSize: 18, flex: 1}}>Passage</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.chapterSelect} onPress={() => changeChapter('application')}>
+            <MaterialCommunityIcons name={(activeChapter === 'application') ? "numeric-3-box" : "numeric-3"} size={30}/>
+            <Text style={{color: "white", fontSize: 18, flex: 1}}>Application</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.buttonContainer}>
-          <Ionicons.Button
-            name="md-return-left"
-            size={85}
-            onPress={skip.bind("this", -5000)}
-            backgroundColor="rgba(0,0,0,0)"
-            iconStyle={styles.button}
-          />
-          <Ionicons.Button
-            name={isPlaying ? "ios-pause" : "ios-play"}
-            size={125}
-            onPress={playHandler}
-            backgroundColor="rgba(0,0,0,0)"
-            iconStyle={styles.button}
-          />
-          <Ionicons.Button
-            name="md-return-right"
-            size={85}
-            onPress={skip.bind("this", 15000)}
-            backgroundColor="rgba(0,0,0,0)"
-            iconStyle={styles.button}
-          />
-        </View>
-      </View>
+      {controlsContainer}
     </View>
   )
 }
@@ -275,7 +326,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 50,
     marginHorizontal: 15,
-    height: 200
+    height: 200,
   },
   albumArt: {
     height: 400,
@@ -286,7 +337,22 @@ const styles = StyleSheet.create({
   scrubberContainer: {
     paddingHorizontal: 8,
     flexDirection: "column",
-    width: "100%"
+    justifyContent: "space-between"
+  },
+  chapterSelectContainer: {
+    flexDirection: "row",
+    margin: 20,
+    justifyContent: "space-between"
+  },
+  chapterSelect: {
+    backgroundColor: "gray",
+    borderRadius: 5,
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    height: 50,
+    margin: 2,
+    justifyContent: "center"
   },
   scrubberInfo: {
     padding: 10
@@ -336,7 +402,7 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
-  console.log(state)
+  //console.log(state)
   return {
     appProgress: state.appProgress,
     database: state.database,

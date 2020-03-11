@@ -44,6 +44,7 @@ function LessonListScreen(props) {
         title: item.title,
         subtitle: item.subtitle,
         source: item.source,
+        scripture: item.scripture
       }
     })
   }
