@@ -64,6 +64,7 @@ function LessonListScreen(props) {
 
   //PURPOSE: download a lesson .mp3 of id set by an individual flatlist item
   function downloadLesson() {
+    //get our source from our array of lessons in this study set
     const currentLesson = selectedLessonList.filter(lesson => lesson.id === idToDownload)
     const source = currentLesson[0].source
     props.downloadLesson(idToDownload, source);
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
-  //console.log(state)
+  console.log(state.downloads)
   return {
     downloads: state.downloads,
     appProgress: state.appProgress,

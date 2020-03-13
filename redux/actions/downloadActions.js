@@ -1,6 +1,5 @@
 export const ADD_UPDATE_DOWNLOAD = 'ADD_UPDATE_DOWNLOAD'
 export const REMOVE_DOWNLOAD = 'REMOVE_DOWNLOAD'
-export const PURGE = 'PURGE'
 
 import * as FileSystem from 'expo-file-system';
 
@@ -19,21 +18,15 @@ export function removeDownload(lessonID) {
     }
 }
 
-export function purge() {
-    return {
-        type: PURGE
-    }
-}
-
 //thunk function for async downloading
 export function downloadLesson(lessonID, source) {
-    console.log(source)
+    //console.log(source)
     return dispatch => {
 
         //callback function
         function callback({ totalBytesWritten, totalBytesExpectedToWrite }) {
             progress = totalBytesWritten / totalBytesExpectedToWrite
-            if (progress >= 1) 
+            if (progress >= 0.99) 
                 dispatch(removeDownload(lessonID))
             else
                 dispatch(addUpdateDownload(progress, lessonID))
