@@ -3,6 +3,7 @@ export const FETCH_ERROR = 'FETCH_ERROR'
 export const STORE_DATA = 'STORE_DATA'
 export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE'
 export const SET_IS_FETCHING = 'SET_IS_FETCHING'
+export const SET_FIRST_OPEN = 'SET_FIRST_OPEN'
 
 import firebase from 'firebase';
 import '@firebase/firestore'
@@ -37,6 +38,13 @@ export function setIsFetching(isFetching) {
     return {
         type: SET_IS_FETCHING,
         isFetching
+    }
+}
+
+export function setFirstOpen(isFirstOpen) {
+    return {
+        type: SET_FIRST_OPEN,
+        isFirstOpen
     }
 }
 

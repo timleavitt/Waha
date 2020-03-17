@@ -1,6 +1,3 @@
-//basic imports
-import react from 'react';
-
 //navigation imports
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from 'react-navigation';
@@ -9,7 +6,9 @@ import { createAppContainer } from 'react-navigation';
 import StudySetScreen from '../screens/StudySetScreen';
 import LessonListScreen from '../screens/LessonListScreen';
 import PlayScreen from '../screens/PlayScreen'
-
+import LanguageSelectScreen from '../screens/LanguageSelectScreen';
+import OnboardingSlidesScreen from '../screens/OnboardingSlidesScreen';
+import LoadingScreen from '../screens/LoadingScreen'
 
 const DefaultWahaNavigatorOptions = {
     headerStyle: {
@@ -20,14 +19,23 @@ const DefaultWahaNavigatorOptions = {
 const WahaNavigator = createStackNavigator(
     {
         StudySet: {
-            screen: StudySetScreen
+            screen: StudySetScreen 
         },
         LessonList: {
             screen: LessonListScreen
         },
         Play: {
             screen: PlayScreen
-        }
+        },
+        LanguageSelect: {
+            screen: LanguageSelectScreen
+        },
+        OnboardingSlides: {
+            screen: OnboardingSlidesScreen
+        }, 
+        Loading: {
+            screen: LoadingScreen
+        },
     },
     {
         defaultNavigationOptions: DefaultWahaNavigatorOptions

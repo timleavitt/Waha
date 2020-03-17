@@ -9,13 +9,20 @@ import StudySetItem from '../components/StudySetItem';
 //redux
 import { connect } from 'react-redux'
 import { addLanguage, changeLanguage } from '../redux/actions/databaseActions'
+import { setFirstOpen } from '../redux/actions/databaseActions'
 
 function StudySetScreen(props) {
 
     //check if we're on first launch (maybe get better solution later;
     //this does an async operation every time this screen opens)
     useEffect(() => {
-        props.changeLanguage("english");
+        if (props.isFirstOpen) {
+            console.log('true')
+            props.navigation.replace("LanguageSelect")
+        } else {
+            console.log(':(')
+        }
+        //props.changeLanguage("english");
         //props.addLanguage("english");
     }, [])
 
@@ -41,6 +48,7 @@ function StudySetScreen(props) {
     }
 
 
+
     ////////////////////////////////
     ////RENDER/STYLES/NAVOPTIONS////
     ////////////////////////////////
@@ -58,7 +66,7 @@ function StudySetScreen(props) {
     }
 
     //if we're not fetching data, render the flatlist. if we are, render a loading screen
-    if (!props.isFetching) {
+    if (!props.isFirstOpen) {
         return (
             <View style={styles.screen}>
                 <FlatList
@@ -72,8 +80,8 @@ function StudySetScreen(props) {
     } else {
         return (
             <View style={{flex: 1, justifyContent: "center"}}>
-                <Text style={{textAlign: "center", fontSize: 30, marginVertical: 20}}>Hang on, we're setting things up...</Text>
-                <ActivityIndicator size="large" color="black" />
+                {/* <Text style={{textAlign: "center", fontSize: 30, marginVertical: 20}}>Hang on, we're setting things up...</Text>
+                <ActivityIndicator size="large" color="black" /> */}
             </View>
         )
     }
@@ -109,6 +117,7 @@ function mapStateToProps(state) {
     else {
         return {
             isFetching: state.database.isFetching,
+            isFirstOpen: state.database.isFirstOpen
         }
     }
 };
@@ -116,7 +125,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 return {
     addLanguage: language => dispatch(addLanguage(language)),
-    changeLanguage: language => dispatch(changeLanguage(language))
+    changeLanguage: language => dispatch(changeLanguage(language)),
+    setFirstOpen: toSet => dispatch(setFirstOpen(toSet))
 }
 };
 

@@ -20,7 +20,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={<LoadingView />} persistor={persistor}>
-        <WahaNavigator />
+        <WahaNavigator/>
       </PersistGate>
     </Provider>
   );
