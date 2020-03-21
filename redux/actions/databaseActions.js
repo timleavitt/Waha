@@ -62,6 +62,8 @@ export function addLanguage(language) {
         //set isFetching to true to signal that we're fetching data from firebase
         dispatch(setIsFetching(true));
 
+        //console.log(`typeof language passed in: ${typeof language}`)
+
         var chapter1Downloaded = false;
         var chapter3Downloaded = false;
 
