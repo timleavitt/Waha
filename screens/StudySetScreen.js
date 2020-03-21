@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import * as FileSystem from 'expo-file-system';
+import i18n from 'i18n-js';
 
 //other component imports
 import StudySetItem from '../components/StudySetItem';
@@ -44,6 +45,15 @@ function StudySetScreen(props) {
         })
     }
 
+    i18n.translations = {
+        en: { 
+          loadingMessage: "Hang on, we're setting things up..."
+        },
+        es: {
+          loadingMessage: "Espera, estamos preparando las cosas..."
+        }
+      };
+
 
 
     ////////////////////////////////
@@ -77,7 +87,7 @@ function StudySetScreen(props) {
     } else {
         return (
             <View style={{flex: 1, justifyContent: "center"}}>
-                <Text style={{textAlign: "center", fontSize: 30, marginVertical: 20}}>Hang on, we're setting things up...</Text>
+                <Text style={{textAlign: "center", fontSize: 30, marginVertical: 20}}>{i18n.t('loadingMessage')}</Text>
                 <ActivityIndicator size="large" color="black" />
             </View>
         )
