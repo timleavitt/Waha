@@ -25,8 +25,8 @@ function OnboardingSlidesScreen(props) {
   useEffect(() => {
     props.setFirstOpen(false)
     var language = props.navigation.getParam("selectedLanguage")
-    //props.changeLanguage(language)
-    //props.addLanguage(language)
+    props.changeLanguage(language)
+    props.addLanguage(language)
   }, [])
 
   const [pageNumber, setPageNumber] = useState(0)

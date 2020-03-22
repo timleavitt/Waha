@@ -1,9 +1,10 @@
 //basic imports
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, Slider, Alert, Button, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, Slider, Alert, Button, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Progress from 'react-native-progress';
+import * as Sharing from 'expo-sharing';
 
 //sound stuff
 import { Audio } from 'expo-av';
@@ -51,6 +52,9 @@ function PlayScreen(props) {
   const [chapter2Source, setChapter2Source] = useState(FileSystem.documentDirectory + props.navigation.getParam('id') + '.mp3');
   const [chapter3Source, setChapter3Source] = useState(FileSystem.documentDirectory + props.currentLanguage + 'chapter3.mp3');
 
+  //share modal
+  const [showShareLessonModal, setShowShareLessonModal] = useState(false);
+
   //PURPOSE: update something on every api call to audio object and every second
   soundObject.setOnPlaybackStatusUpdate(playbackStatus => {
     if (playbackStatus.isLoaded) {
@@ -95,6 +99,7 @@ function PlayScreen(props) {
     //send completion info over to navigation (appProgress is from redux)
     props.navigation.setParams({ navIsComplete: (id in props.appProgress) });
     props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
+    props.navigation.setParams({ setShowShareLessonModal: setShowShareLessonModal })
 
     //set up our timer tick for updating the seeker every second
     const interval = setInterval(updateSeekerTick, 1000);
@@ -236,8 +241,6 @@ function PlayScreen(props) {
     } else if (chapter === 'application') {
       loadAudioFile(chapter3Source)
     }
-
-
   }
 
 
@@ -267,6 +270,27 @@ function PlayScreen(props) {
         onPress: () => {props.navigation.goBack();}
       }])
     } 
+  }
+
+
+  ///////////////////////
+  ////SHARE FUNCTIONS////
+  ///////////////////////
+
+
+  function shareLesson(chapter) {
+    switch (chapter) {
+      case 'fellowship':
+        Sharing.shareAsync(chapter1Source).catch(error => console.log(error))
+        break;
+      case 'passage':
+        Sharing.shareAsync(chapter2Source)
+        break;
+      case 'application':
+        Sharing.shareAsync(chapter3Source)
+        break;
+    }
+    //setShowShareLessonModal(false)
   }
 
 
@@ -369,24 +393,53 @@ function PlayScreen(props) {
           </TouchableOpacity>
         </View>
       {controlsContainer}
+
+      <Modal
+        visible={showShareLessonModal}
+        animationType="slide"
+        presentationStyle="overFullScreen"
+        transparent={true}
+      >
+        <View style={{flex: 1, flexDirection: "column", justifyContent: "flex-end"}}>
+          <View style={{backgroundColor: "white", paddingBottom: 20, paddingTop: 10}}>
+            <Button title="Share Chapter 1: Fellowship" onPress={() => shareLesson('fellowship')} />
+            <Button title="Share Chapter 2: Passage" onPress={() => shareLesson('passage')} />
+            <Button title="Share Chapter 3: Application" onPress={() => shareLesson('application')} />
+            <Button title="Close" onPress={() => setShowShareLessonModal(false)} />
+          </View>
+        </View>
+      </Modal>
     </View>
+
   )
 }
 
 PlayScreen.navigationOptions = navigationData => {
   const navIsComplete = navigationData.navigation.getParam("navIsComplete");
   const navMarkHandler = navigationData.navigation.getParam("navMarkHandler");
+  const setShowShareLessonModal = navigationData.navigation.getParam("setShowShareLessonModal");
+
   return {
     headerTitle: navigationData.navigation.getParam("title"),
     headerRight: () =>
-      <Ionicons.Button
-        name={navIsComplete ? "ios-checkmark-circle" : "ios-checkmark-circle-outline"}
-        size={20}
-        onPress={navMarkHandler}
-        backgroundColor="rgba(0,0,0,0)"
-        color="black"
-        iconStyle={styles.markButton}
-      />
+      <View style={{flexDirection: "row"}}>
+        <Ionicons.Button
+          name="md-share"
+          size={20}
+          onPress={() => setShowShareLessonModal(true)}
+          backgroundColor="rgba(0,0,0,0)"
+          color="black"
+          iconStyle={styles.markButton}
+        />
+        <Ionicons.Button
+          name={navIsComplete ? "ios-checkmark-circle" : "ios-checkmark-circle-outline"}
+          size={20}
+          onPress={navMarkHandler}
+          backgroundColor="rgba(0,0,0,0)"
+          color="black"
+          iconStyle={styles.markButton}
+        />
+      </View>
   }
 };
 

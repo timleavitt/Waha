@@ -1,8 +1,9 @@
 //imports
 import React, { useState } from 'react';
-import { View, FlatList, StyleSheet, Button, Modal } from 'react-native';
+import { View, FlatList, StyleSheet, Button, Modal, Alert } from 'react-native';
 import LessonItem from '../components/LessonItem';
 import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 //redux imports
 import { downloadLesson } from '../redux/actions/downloadActions'
@@ -88,6 +89,32 @@ function LessonListScreen(props) {
     hideModals();
   }
 
+  //share lesson functionality
+  function shareLesson(chapter) {
+    switch (chapter) {
+      case 'fellowship':
+        Sharing.shareAsync(FileSystem.documentDirectory + props.currentLanguage + 'chapter1.mp3')
+        break;
+      case 'passage':
+        FileSystem.getInfoAsync(FileSystem.documentDirectory + idToDownload + '.mp3')
+        .then(({ exists }) => {
+            exists ? 
+              Sharing.shareAsync(FileSystem.documentDirectory + idToDownload + '.mp3') : 
+              Alert.alert('Error', 
+              'Lesson must be downloaded before share is enabled!',
+              [{
+                text: 'OK', 
+                onPress: () => {}
+              }])
+        })
+        
+        break;
+      case 'application':
+        Sharing.shareAsync(FileSystem.documentDirectory + props.currentLanguage + 'chapter3.mp3')
+        break;
+    }
+  }
+
   
   ////////////////////////////////
   ////RENDER/STYLES/NAVOPTIONS////
@@ -152,7 +179,11 @@ function LessonListScreen(props) {
         <View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-end", paddingBottom: "5%"}}>
           <Button title="Mark lesson as complete" onPress={() => toggleComplete('complete')} />
           <Button title="Mark lesson as incomplete" onPress={() => toggleComplete('incomplete')} />
-          <Button title="Cancel" onPress={hideModals} />
+          <Button title="Share Chapter 1: Fellowship" onPress={() => shareLesson('fellowship')} />
+          <Button title="Share Chapter 2: Passage" onPress={() => shareLesson('passage')} />
+          <Button title="Share Chapter 3: Application" onPress={() => shareLesson('application')} />
+          <Button title="Mark lesson as incomplete" onPress={() => toggleComplete('incomplete')} />
+          <Button title="Close" onPress={hideModals} />
         </View>
       </Modal>
     </View>
@@ -161,7 +192,7 @@ function LessonListScreen(props) {
 
 LessonListScreen.navigationOptions = navigationData => {
   return {
-    headerTitle: navigationData.navigation.getParam("title")
+    headerTitle: "waha"
   };
 };
 
@@ -182,7 +213,8 @@ function mapStateToProps(state) {
   return {
     downloads: state.downloads,
     appProgress: state.appProgress,
-    database: state.database
+    database: state.database,
+    currentLanguage: state.database.currentLanguage
   }
 };
 
