@@ -1,11 +1,9 @@
 //basic imports
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, Slider, Alert, TouchableOpacity, ActivityIndicator, ScrollView, FlatList, Dimensions } from 'react-native';
-import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { View, StyleSheet, Text, Alert, TouchableOpacity, ActivityIndicator, ScrollView, FlatList, Dimensions } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
-import * as Progress from 'react-native-progress';
 import * as Sharing from 'expo-sharing';
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
 //sound stuff
 import { Audio } from 'expo-av';
@@ -389,7 +387,6 @@ function PlayScreen(props) {
             <ChapterSelect
                activeChapter={activeChapter}
                lessonID={props.navigation.getParam('id')}
-               downloads={props.downloads}
                onPress={chapter => changeChapter(chapter)}
             />
             {audioControlContainer}

@@ -18,10 +18,6 @@ function OnboardingSlidesScreen(props) {
   //////////////////////////////////////////
 
 
-  function navigateToLoading() {
-    props.navigation.replace("StudySet")
-  }
-
   useEffect(() => {
     props.setFirstOpen(false)
     var language = props.navigation.getParam("selectedLanguage")

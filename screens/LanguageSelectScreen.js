@@ -116,7 +116,7 @@ function LanguageSelectScreen(props) {
             mode="dropdown"
           >
             <Picker.Item label="🇺🇸English" value="en" />
-            <Picker.Item label="🇪🇸Spanish" value="es" />
+            <Picker.Item label="🇪🇸Spanish (don't use, has no data)" value="es" />
           </Picker>
         </View>
         <View style={{}}>

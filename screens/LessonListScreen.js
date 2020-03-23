@@ -160,14 +160,12 @@ function LessonListScreen(props) {
             iconName={props.navigation.getParam("iconName")}
         />
       </View>
-      <View style={styles.lessonListContainer}>
         <FlatList
           data={selectedLessonList}
           renderItem={renderLessonItem}
           extraData={refresh}
           ItemSeparatorComponent = {FlatListSeparator}
         />
-      </View>
       <WahaModal isVisible={showSaveLessonModal}>
         <ModalButton title="Download lesson" onPress={downloadLesson} />
         <ModalButton title="Cancel" onPress={hideModals} style={{color: "red"}}/>
@@ -215,7 +213,6 @@ const styles = StyleSheet.create({
     height: 150,
   },
   lessonListContainer: {
-    width: "100%"
   }
 })
 

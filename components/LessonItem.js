@@ -64,7 +64,7 @@ function LessonItem(props) {
     }  
 
     return (
-        <View style={styles.lessonItem}>
+        <View style={{...styles.lessonItem, ...props.isComplete ? {backgroundColor: "#D3D3D3"} : null}}>
             <View style={styles.mainDisplay}>
                 <TouchableOpacity 
                     style={styles.progresAndTitle} 
@@ -96,9 +96,8 @@ function LessonItem(props) {
 
 const styles = StyleSheet.create({
     lessonItem: {
-        flex: 1,
         height: 75,
-        margin: 5,
+        padding: 5,
         justifyContent: "center",
         flexDirection: "column",
         alignContent: "center"
