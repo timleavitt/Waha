@@ -1,9 +1,13 @@
 //imports
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Button, Modal, Alert } from 'react-native';
 import LessonItem from '../components/LessonItem';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import StudySetItem from '../components/StudySetItem';
+import FlatListSeparator from '../components/FlatListSeparator'
+import WahaModal from '../components/WahaModal'
+import ModalButton from '../components/ModalButton'
 
 //redux imports
 import { downloadLesson } from '../redux/actions/downloadActions'
@@ -12,7 +16,6 @@ import { connect } from 'react-redux'
 
 function LessonListScreen(props) {
 
-  
   //////////////////////////////////////////
   ////STATE, CONSTRUCTOR, AND NAVIGATION////
   //////////////////////////////////////////
@@ -34,6 +37,10 @@ function LessonListScreen(props) {
   //make our data only the array of lessons
   selectedLessonList = selectedStudySetArray[0].lessons;
 
+  useEffect(() => {
+    props.navigation.setParams({primaryColor: props.colors.primaryColor})
+  }, [])
+
   //function to navigate to the play screen
   //props.navigation.navigate takes us to the play screen
   //params is the information we want to pass to play screen
@@ -45,7 +52,8 @@ function LessonListScreen(props) {
         title: item.title,
         subtitle: item.subtitle,
         source: item.source,
-        scripture: item.scripture
+        scripture: item.scripture,
+        iconName: props.navigation.getParam("iconName")
       }
     })
   }
@@ -142,63 +150,72 @@ function LessonListScreen(props) {
   //create modal in here, pass state to show it to lesson item so lesson item
   //can change it and show the modal on this screen
   return (
-    <View style={styles.screen}>
-      <FlatList
-        data={selectedLessonList}
-        renderItem={renderLessonItem}
-        extraData={refresh}
-      />
-      <Modal 
-        visible={showSaveLessonModal}
-        animationType="slide"
-        presentationStyle="overFullScreen"
-        transparent={true}
-      >
-        <View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-end", paddingBottom: "5%"}}>
-          <Button title="Download lesson" onPress={downloadLesson} />
-          <Button title="Cancel" onPress={hideModals} />
-        </View>
-      </Modal>
-      <Modal 
-        visible={showDeleteLessonModal}
-        animationType="slide"
-        presentationStyle="overFullScreen"
-        transparent={true}
-      >
-        <View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-end", paddingBottom: "5%"}}>
-          <Button title="Delete lesson" onPress={deleteLesson} />
-          <Button title="Cancel" onPress={hideModals} />
-        </View>
-      </Modal>
-      <Modal 
-        visible={showLessonOptionsModal}
-        animationType="slide"
-        presentationStyle="overFullScreen"
-        transparent={true}
-      >
-        <View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-end", paddingBottom: "5%"}}>
-          <Button title="Mark lesson as complete" onPress={() => toggleComplete('complete')} />
-          <Button title="Mark lesson as incomplete" onPress={() => toggleComplete('incomplete')} />
-          <Button title="Share Chapter 1: Fellowship" onPress={() => shareLesson('fellowship')} />
-          <Button title="Share Chapter 2: Passage" onPress={() => shareLesson('passage')} />
-          <Button title="Share Chapter 3: Application" onPress={() => shareLesson('application')} />
-          <Button title="Mark lesson as incomplete" onPress={() => toggleComplete('incomplete')} />
-          <Button title="Close" onPress={hideModals} />
-        </View>
-      </Modal>
+    <View style={{...styles.screen, ...{backgroundColor: props.colors.lessonListScreenBG}}}>
+      <View style={styles.studySetItemContainer}>
+        <StudySetItem
+            title={props.navigation.getParam("title")}
+            subtitle={props.navigation.getParam("subtitle")}
+            onStudySetSelect={() => {}}
+            id={props.navigation.getParam("studySetID")}
+            iconName={props.navigation.getParam("iconName")}
+        />
+      </View>
+      <View style={styles.lessonListContainer}>
+        <FlatList
+          data={selectedLessonList}
+          renderItem={renderLessonItem}
+          extraData={refresh}
+          ItemSeparatorComponent = {FlatListSeparator}
+        />
+      </View>
+      <WahaModal isVisible={showSaveLessonModal}>
+        <ModalButton title="Download lesson" onPress={downloadLesson} />
+        <ModalButton title="Cancel" onPress={hideModals} style={{color: "red"}}/>
+      </WahaModal>
+      <WahaModal isVisible={showDeleteLessonModal}>
+        <ModalButton title="Delete lesson" onPress={deleteLesson} />
+        <ModalButton title="Cancel" onPress={hideModals} style={{color: "red"}}/>
+      </WahaModal>
+      <WahaModal isVisible={showLessonOptionsModal}>
+          <ModalButton title="Mark lesson as complete" onPress={() => toggleComplete('complete')} />
+          <ModalButton title="Mark lesson as incomplete" onPress={() => toggleComplete('incomplete')} />
+          <ModalButton title="Share Chapter 1: Fellowship" onPress={() => shareLesson('fellowship')} />
+          <ModalButton title="Share Chapter 2: Passage" onPress={() => shareLesson('passage')} />
+          <ModalButton title="Share Chapter 3: Application" onPress={() => shareLesson('application')} />
+          <ModalButton title="Mark to this point at complete" onPress={() => {}} />
+          <ModalButton title="Close" onPress={hideModals} style={{color: "red"}}/>
+      </WahaModal>
     </View>
   )
 }
 
 LessonListScreen.navigationOptions = navigationData => {
+  const primaryColor = navigationData.navigation.getParam("primaryColor");
+
   return {
-    headerTitle: "waha"
+      headerTitle: "waha",
+      headerBackTitle: "Back",
+      headerStyle: {
+          backgroundColor: primaryColor
+      },
+      headerTitleStyle: {
+          color: "#fff",
+          fontFamily: 'open-sans-bold'
+      }
   };
 };
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1
+    flex: 1,
+    flexDirection: "column"
+  },
+  studySetItemContainer: {
+    width: "100%",
+    height: 150,
+  },
+  lessonListContainer: {
+    width: "100%"
   }
 })
 
@@ -209,12 +226,12 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
-  console.log(state.downloads)
   return {
     downloads: state.downloads,
     appProgress: state.appProgress,
     database: state.database,
-    currentLanguage: state.database.currentLanguage
+    currentLanguage: state.database.currentLanguage,
+    colors: state.database[state.database.currentLanguage].colors
   }
 };
 

@@ -1,16 +1,19 @@
 //basic imports
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, Slider, Alert, Button, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { View, StyleSheet, Text, Slider, Alert, TouchableOpacity, ActivityIndicator, ScrollView, FlatList, Dimensions } from 'react-native';
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Progress from 'react-native-progress';
 import * as Sharing from 'expo-sharing';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
 //sound stuff
 import { Audio } from 'expo-av';
 
 //components
 import TimeDisplay from "../components/TimeDisplay";
+import WahaModal from '../components/WahaModal'
+import ModalButton from '../components/ModalButton'
 
 //redux
 import { toggleComplete } from '../redux/actions/appProgressActions'
@@ -19,7 +22,7 @@ import { downloadLesson } from '../redux/actions/downloadActions'
 console.disableYellowBox = true;
 
 function PlayScreen(props) {
-  
+
 
   ///////////////////////////
   ////STATE & CONSTRUCTOR////
@@ -55,11 +58,35 @@ function PlayScreen(props) {
   //share modal
   const [showShareLessonModal, setShowShareLessonModal] = useState(false);
 
+
+  //ALBUM ART SLIDER STUFF
+  const [flatListRef, setFlatListRef] = useState()
+
+  const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 })
+
+  const albumSlidesData = [
+    {
+      key: '0',
+      type: 'text',
+      body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    },
+    {
+      key: '1',
+      type: 'image',
+      iconName: props.navigation.getParam("iconName")
+    },
+    {
+      key: '2',
+      type: 'text',
+      body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    },
+  ]
+
   //PURPOSE: update something on every api call to audio object and every second
   soundObject.setOnPlaybackStatusUpdate(playbackStatus => {
     if (playbackStatus.isLoaded) {
       setIsLoaded(true)
-    } 
+    }
 
     if (playbackStatus.isBuffering) {
       setIsBuffering(true)
@@ -71,7 +98,7 @@ function PlayScreen(props) {
     //toggle the whole lesson as complete
     if (playbackStatus.didJustFinish) {
       if (activeChapter === 'fellowship') {
-        changeChapter('passage') 
+        changeChapter('passage')
       } else if (activeChapter === 'passage') {
         changeChapter('application')
       } else if (activeChapter === 'application') {
@@ -92,14 +119,15 @@ function PlayScreen(props) {
 
     //check if file is downloaded, then load it
     checkIsDownloaded(); // -> loadAudioFile()
- 
+
     //determine complete status of loaded lesson
     var id = props.navigation.getParam('id');
 
     //send completion info over to navigation (appProgress is from redux)
-    props.navigation.setParams({ navIsComplete: (id in props.appProgress) });
+    props.navigation.setParams({ navIsComplete: (id in props.progress) });
     props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
     props.navigation.setParams({ setShowShareLessonModal: setShowShareLessonModal })
+    props.navigation.setParams({ primaryColor: props.colors.primaryColor })
 
     //set up our timer tick for updating the seeker every second
     const interval = setInterval(updateSeekerTick, 1000);
@@ -107,24 +135,29 @@ function PlayScreen(props) {
     //when leaving the screen, cancel the interval timer and unload the audio file
     return function cleanup() {
       clearInterval(interval);
-      soundObject.unloadAsync();
+      if (soundObject) {
+        soundObject.unloadAsync();
+        setSoundObject(null);
+      }
     }
   }, []);
+
+
 
 
   ///////////////////////////////
   ////AUDIO CONTROL FUNCTIONS////
   ///////////////////////////////
 
-  
+
   //PURPOSE: check if the lesson is downloaded or not
   async function checkIsDownloaded() {
     FileSystem.getInfoAsync(FileSystem.documentDirectory + props.navigation.getParam('id') + '.mp3')
-    .then(({exists}) => {
-      if (!exists && !(props.navigation.getParam('id') in props.downloads)){
-        props.downloadLesson(props.navigation.getParam('id'), props.navigation.getParam('source'));
-      } 
-    })
+      .then(({ exists }) => {
+        if (!exists && !(props.navigation.getParam('id') in props.downloads)) {
+          props.downloadLesson(props.navigation.getParam('id'), props.navigation.getParam('source'));
+        }
+      })
   }
 
   //PURPOSE: load the audio file and set isLoaded and 
@@ -156,7 +189,7 @@ function PlayScreen(props) {
           .then(playbackStatus => {
             setSeekPosition(playbackStatus.positionMillis);
           })
-          //.catch(err => console.log(err))
+        //.catch(err => console.log(err))
       } catch (error) {
         console.log(error)
       }
@@ -181,25 +214,25 @@ function PlayScreen(props) {
   //that doesn't seem to affect any functionality. it's being ignored
   function onSeekRelease(value) {
     if (isPlaying) {
-      soundObject.setStatusAsync({ 
-        shouldPlay: false, 
+      soundObject.setStatusAsync({
+        shouldPlay: false,
         positionMillis: value,
         seekMillisToleranceBefore: 10000,
         seekMillisToleranceAfter: 10000
-     }).catch(err => {})
-     soundObject.setStatusAsync({ 
-      shouldPlay: true, 
-      positionMillis: value,
-      seekMillisToleranceBefore: 10000,
-      seekMillisToleranceAfter: 10000
-   }).catch(err => {})
+      }).catch(err => { })
+      soundObject.setStatusAsync({
+        shouldPlay: true,
+        positionMillis: value,
+        seekMillisToleranceBefore: 10000,
+        seekMillisToleranceAfter: 10000
+      }).catch(err => { })
     } else {
-      soundObject.setStatusAsync({ 
-        shouldPlay: false, 
+      soundObject.setStatusAsync({
+        shouldPlay: false,
         positionMillis: value,
         seekMillisToleranceBefore: 10000,
         seekMillisToleranceAfter: 10000
-     }).catch(err => {})
+      }).catch(err => { })
     }
     shouldTickUpdate.current = true;
     setSeekPosition(value);
@@ -228,7 +261,7 @@ function PlayScreen(props) {
     setSeekPosition(0)
 
     //unload whatever old sound object was loaded
-    soundObject.unloadAsync();  
+    soundObject.unloadAsync();
 
     //set the button to show the new active chapter
     setActiveChapter(chapter)
@@ -247,29 +280,29 @@ function PlayScreen(props) {
   //////////////////////////////////
   ////PROGRESS STORAGE FUNCTIONS////
   //////////////////////////////////
-  
+
 
   function changeCompleteStatus() {
     var id = props.navigation.getParam('id');
-    var isComplete = (id in props.appProgress)
+    var isComplete = (id in props.progress)
     //redux action: change the complete status
     props.toggleComplete(id)
 
     if (isComplete) {
-      Alert.alert('Lesson marked as incomplete!', 
-      'Don\' forget to select when your next lesson is!',
-      [{
-        text: 'OK', 
-        onPress: () => {props.navigation.goBack();}
-      }])
+      Alert.alert('Lesson marked as incomplete!',
+        'Don\' forget to select when your next lesson is!',
+        [{
+          text: 'OK',
+          onPress: () => { props.navigation.goBack(); }
+        }])
     } else {
-      Alert.alert(props.translations['completeMessageTitle'], 
+      Alert.alert(props.translations['completeMessageTitle'],
         props.translations['completeMessageBody'],
-      [{
-        text: 'OK', 
-        onPress: () => {props.navigation.goBack();}
-      }])
-    } 
+        [{
+          text: 'OK',
+          onPress: () => { props.navigation.goBack(); }
+        }])
+    }
   }
 
 
@@ -299,78 +332,110 @@ function PlayScreen(props) {
   ////////////////////////////////
 
 
-  var playButton;
-  if (!isBuffering) {
-    playButton = 
-    <Ionicons.Button
-      name={isPlaying ? "ios-pause" : "ios-play"}
-      size={125}
-      onPress={playHandler}
-      backgroundColor="rgba(0,0,0,0)"
-      iconStyle={styles.button}
-    />
-  } else {
-    playButton = 
-     <ActivityIndicator size="large" color="black" />
+  function renderAlbumSlide(slideList) {
+    var content;
+    if (slideList.item.type === 'text') {
+      content = <Text style={{ flexWrap: "wrap", fontFamily: 'open-sans-regular' }}>{slideList.item.body}</Text>
+    } else {
+      content = <MaterialCommunityIcons name={slideList.item.iconName} size={350} />
+    }
+    return (
+      <ScrollView style={{...styles.albumArtContainer, ...{backgroundColor: props.colors.lessonSetScreenBG, }}}>
+        {content}
+      </ScrollView>
+    )
   }
 
-  var controlsContainer;
+
+  //PLAY/PAUSE/SKIP CONTAINER
+  var audioControlContainer;
   if (!isLoaded) {
-    controlsContainer = 
-      <View style={{...styles.controlsContainer, justifyContent: "center"}}>
+    audioControlContainer =
+      <View style={styles.audioControlContainer}>
         <ActivityIndicator size="large" color="black" />
       </View>
-    } else {
-    controlsContainer =
-      <View style={styles.controlsContainer}>
-          <View style={styles.scrubberContainer}>
-            <View style={styles.scrubber}>
-              <Slider
-                value={seekPosition}
-                onSlidingComplete={onSeekRelease}
-                onValueChange={onSeekDrag}
-                minimumValue={0}
-                maximumValue={audioFileLength}
-                step={1000}
-              />
-            </View>
-            <View style={styles.timeInfo}>
-              <TimeDisplay style={styles.scrubberInfo} time={seekPosition} max={audioFileLength} />
-              <TimeDisplay style={styles.scrubberInfo} time={audioFileLength} max={audioFileLength} />
-            </View>
+  } else {
+    audioControlContainer =
+      <View style={styles.audioControlContainer}>
+        <View style={styles.scrubberContainer}>
+          <View style={styles.scrubber}>
+            <Slider
+              value={seekPosition}
+              onSlidingComplete={onSeekRelease}
+              onValueChange={onSeekDrag}
+              minimumValue={0}
+              maximumValue={audioFileLength}
+              step={1000}
+              minimumTrackTintColor={props.colors.primaryColor}
+              thumbTintColor={props.colors.accentColor}
+            />
           </View>
-          <View style={styles.buttonContainer}>
-            <Ionicons.Button
-              name="md-return-left"
-              size={85}
-              onPress={skip.bind("this", -5000)}
-              backgroundColor="rgba(0,0,0,0)"
-              iconStyle={styles.button}
-            />
-            {playButton}
-            <Ionicons.Button
-              name="md-return-right"
-              size={85}
-              onPress={skip.bind("this", 15000)}
-              backgroundColor="rgba(0,0,0,0)"
-              iconStyle={styles.button}
-            />
+          <View style={styles.timeInfo}>
+            <TimeDisplay style={styles.scrubberInfo} time={seekPosition} max={audioFileLength} />
+            <TimeDisplay style={styles.scrubberInfo} time={audioFileLength} max={audioFileLength} />
           </View>
         </View>
-        
+        <View style={styles.playPauseSkipContainer}>
+          <TouchableOpacity
+            style={styles.playPauseSkipButton}
+            onPress={skip.bind("this", -10000)}
+          >
+            <MaterialIcons name="replay-10" size={60} />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.playPauseSkipButton}
+            onPress={playHandler}
+          >
+            <MaterialCommunityIcons 
+              name={isPlaying ? "pause-circle" : "play-circle"} 
+              size={125} 
+              color={props.colors.accentColor}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.playPauseSkipButton}
+            onPress={skip.bind("this", 10000)}
+          >
+            <MaterialIcons name="forward-10" size={60} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
   }
 
+  //CHAPTE 2 BUTTON ICON
+  var chapter2IconName
+  if (activeChapter === 'fellowship') {
+    chapter2IconName = 'numeric-2'
+  } else if (activeChapter === 'passage') {
+    chapter2IconName = 'numeric-2-box'
+  } else {
+    chapter2IconName = 'checkbox-marked'
+  }
+    
+  //CHAPTER 2 BUTTON
   if ((props.navigation.getParam('id') in props.downloads)) {
-    chapter2Button = 
-      <View style={{...styles.chapterSelect, flexDirection: "column", backgroundColor: "#3D4849"}}>
-        <Text style={{color: "gray", fontSize: 18, flex: 1}}>Passage</Text>
-        <Progress.Bar progress={props.downloads[props.navigation.getParam("id")]} color="black" borderColor="black" width={40}/>
+    chapter2Button =
+      <View style={{ ...styles.chapterSelect, flexDirection: "row", borderColor: props.colors.grayedOut }}>
+        <AnimatedCircularProgress
+          size={20}
+          width={4}
+          fill={(props.downloads[props.navigation.getParam("id")] * 100)}
+          tintColor={props.colors.grayedOut}
+          rotation={0}
+          backgroundColor="white"
+        />
+        <Text style={{...styles.chapterSelectText, ...{color: props.colors.grayedOut}}}>Passage</Text>
       </View>
   } else {
-    chapter2Button = 
-      <TouchableOpacity style={styles.chapterSelect} onPress={() => changeChapter('passage')}>
-        <MaterialCommunityIcons name={(activeChapter === 'passage') ? "numeric-2-box" : "numeric-2"} size={30}/>
-        <Text style={{color: "white", fontSize: 18, flex: 1}}>Passage</Text>
+    chapter2Button =
+      <TouchableOpacity style={{...styles.chapterSelect, ...{borderColor: props.colors.accentColor}}} onPress={() => changeChapter('passage')}>
+        <MaterialCommunityIcons 
+          name={chapter2IconName} 
+          size={30} 
+          color={props.colors.accentColor}
+        />
+        <Text style={{...styles.chapterSelectText, ...{color: props.colors.accentColor}}}>Passage</Text>
       </TouchableOpacity>
   }
 
@@ -380,35 +445,46 @@ function PlayScreen(props) {
         <Text style={styles.title}>{props.navigation.getParam("title")}</Text>
         <Text style={styles.subtitle}>{props.navigation.getParam("scripture")}</Text>
       </View>
-      <Text style={{ textAlign: "center", flex: 1 }}>Status: {isLoaded ? "Finished loading" : "Loading"}</Text>
-      <View style={styles.chapterSelectContainer}>
-          <TouchableOpacity style={styles.chapterSelect} onPress={() => changeChapter('fellowship')}>
-            <MaterialCommunityIcons name={(activeChapter === 'fellowship') ? "numeric-1-box" : "numeric-1"} size={30}/>
-            <Text style={{color: "white", fontSize: 18, flex: 1}}>Fellowship</Text>
+      <FlatList
+        renderItem={renderAlbumSlide}
+        data={albumSlidesData}
+        ref={(ref) => { setFlatListRef(ref) }}
+        horizontal={true}
+        pagingEnabled={true}
+        snapToAlignment={"start"}
+        snapToInterval={Dimensions.get('window').width}
+        decelerationRate={"fast"}
+        viewabilityConfig={viewConfigRef.current}
+        initialScrollIndex={0}
+      />
+      <View style={styles.controlsContainer}>
+        <View style={styles.chapterSelectContainer}>
+          <TouchableOpacity style={{...styles.chapterSelect, ...{borderColor: props.colors.accentColor}}} onPress={() => changeChapter('fellowship')}>
+            <MaterialCommunityIcons 
+              name={(activeChapter === 'fellowship')   ? "numeric-1-box" : "checkbox-marked"} 
+              size={30} 
+              color={props.colors.accentColor}
+            />
+            <Text style={{...styles.chapterSelectText, ...{color: props.colors.accentColor}}}>Fellowship</Text>
           </TouchableOpacity>
-          {chapter2Button}
-          <TouchableOpacity style={styles.chapterSelect} onPress={() => changeChapter('application')}>
-            <MaterialCommunityIcons name={(activeChapter === 'application') ? "numeric-3-box" : "numeric-3"} size={30}/>
-            <Text style={{color: "white", fontSize: 18, flex: 1}}>Application</Text>
+            {chapter2Button}
+          <TouchableOpacity style={{...styles.chapterSelect, ...{borderColor: props.colors.accentColor}}} onPress={() => changeChapter('application')}>
+            <MaterialCommunityIcons 
+              name={(activeChapter === 'application') ? "numeric-3-box" : "numeric-3"} 
+              size={30} 
+              color={props.colors.accentColor}
+            />
+            <Text style={{...styles.chapterSelectText, ...{color: props.colors.accentColor}}}>Application</Text>
           </TouchableOpacity>
         </View>
-      {controlsContainer}
-
-      <Modal
-        visible={showShareLessonModal}
-        animationType="slide"
-        presentationStyle="overFullScreen"
-        transparent={true}
-      >
-        <View style={{flex: 1, flexDirection: "column", justifyContent: "flex-end"}}>
-          <View style={{backgroundColor: "white", paddingBottom: 20, paddingTop: 10}}>
-            <Button title="Share Chapter 1: Fellowship" onPress={() => shareLesson('fellowship')} />
-            <Button title="Share Chapter 2: Passage" onPress={() => shareLesson('passage')} />
-            <Button title="Share Chapter 3: Application" onPress={() => shareLesson('application')} />
-            <Button title="Close" onPress={() => setShowShareLessonModal(false)} />
-          </View>
-        </View>
-      </Modal>
+        {audioControlContainer}
+      </View>
+      <WahaModal isVisible={showShareLessonModal}>
+        <ModalButton title="Share Chapter 1: Fellowship" onPress={() => shareLesson('fellowship')} />
+        <ModalButton title="Share Chapter 2: Passage" onPress={() => shareLesson('passage')} />
+        <ModalButton title="Share Chapter 3: Application" onPress={() => shareLesson('application')} />
+        <ModalButton title="Close" onPress={() => setShowShareLessonModal(false)} style={{color: "red"}}/>
+      </WahaModal>
     </View>
 
   )
@@ -418,108 +494,138 @@ PlayScreen.navigationOptions = navigationData => {
   const navIsComplete = navigationData.navigation.getParam("navIsComplete");
   const navMarkHandler = navigationData.navigation.getParam("navMarkHandler");
   const setShowShareLessonModal = navigationData.navigation.getParam("setShowShareLessonModal");
+  const primaryColor = navigationData.navigation.getParam("primaryColor");
 
   return {
-    headerTitle: navigationData.navigation.getParam("title"),
+    headerTitle: navigationData.navigation.getParam("subtitle"),
+    headerBackTitle: "Back",
+    headerStyle: {
+      backgroundColor: primaryColor
+    },
+    headerTitleStyle: {
+      color: "#fff",
+      fontFamily: 'open-sans-bold'
+    },
+    gestureEnabled: false,
     headerRight: () =>
-      <View style={{flexDirection: "row"}}>
-        <Ionicons.Button
-          name="md-share"
-          size={20}
-          onPress={() => setShowShareLessonModal(true)}
-          backgroundColor="rgba(0,0,0,0)"
-          color="black"
-          iconStyle={styles.markButton}
-        />
-        <Ionicons.Button
-          name={navIsComplete ? "ios-checkmark-circle" : "ios-checkmark-circle-outline"}
-          size={20}
-          onPress={navMarkHandler}
-          backgroundColor="rgba(0,0,0,0)"
-          color="black"
-          iconStyle={styles.markButton}
-        />
+      <View style={styles.headerButtonsContainer}>
+        <TouchableOpacity 
+            style={styles.headerButton}
+            onPress={() => setShowShareLessonModal(true)}
+          >
+            <Ionicons 
+              name='md-share'
+              size={30} 
+              color="white"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.headerButton}
+            onPress={navMarkHandler}
+          >
+            <Ionicons 
+              name={navIsComplete ? "ios-checkmark-circle" : "ios-checkmark-circle-outline"}
+              size={30} 
+              color='white'
+            />
+          </TouchableOpacity>
       </View>
   }
 };
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1
+    flex: 1,
+    justifyContent: "space-between"
+  },
+  titlesContainer: {
+    flexDirection: "column",
+    marginTop: 10
+  },
+  title: {
+    textAlign: "center",
+    fontSize: 30,
+    fontFamily: 'open-sans-bold'
+  },
+  subtitle: {
+    textAlign: "center",
+    fontSize: 20,
+    fontFamily: 'open-sans-light'
+  },
+  albumArtContainer: { 
+    width: (Dimensions.get('window').width - 40), 
+    padding: 20, 
+    margin: 20, 
+    borderRadius: 10 
   },
   controlsContainer: {
     flexDirection: "column",
     justifyContent: "space-between",
-    backgroundColor: "#d3d3d3",
-    borderRadius: 20,
-    marginBottom: 50,
-    marginHorizontal: 15,
-    height: 200,
-  },
-  albumArt: {
-    height: 400,
-    padding: 50,
-    backgroundColor: "black",
-    margin: 25
-  },
-  scrubberContainer: {
-    paddingHorizontal: 8,
-    flexDirection: "column",
-    justifyContent: "space-between"
+    alignItems: "center",
+    width: "100%",
   },
   chapterSelectContainer: {
     flexDirection: "row",
-    margin: 20,
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   chapterSelect: {
-    backgroundColor: "gray",
-    borderRadius: 5,
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     height: 50,
-    margin: 2,
-    justifyContent: "center"
+    justifyContent: "center",
+    borderTopWidth: 2,
+    borderBottomWidth: 2
+  },
+  chapterSelectText: {
+    fontFamily: 'open-sans-regular',
+    fontSize: 16
+  },
+  audioControlContainer: {
+    justifyContent: "space-around",
+    flexDirection: "column",
+    marginBottom: 5,
+    marginHorizontal: 10,
+    width: "100%",
+    height: 200
+  },
+  scrubberContainer: {
+    paddingHorizontal: 8,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%"
+  },
+  scrubber: {
+    width: "100%"
   },
   scrubberInfo: {
     padding: 10
   },
-  buttonContainer: {
+  playPauseSkipContainer: {
     flexDirection: "row",
-    width: "100%",
     justifyContent: "space-around",
-  },
-  scrubber: {
+    alignItems: "center",
     width: "100%",
+  },
+  playPauseSkipButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1
   },
   timeInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%"
   },
-  button: {
-    margin: 10,
-    justifyContent: "center",
+  headerButtonsContainer: {
     flexDirection: "row",
-    borderRadius: 0
+    width: 80
   },
-  titlesContainer: {
-    flexDirection: "column",
-    marginVertical: 15
-  },
-  title: {
-    textAlign: "center",
-    fontSize: 30
-  },
-  subtitle: {
-    textAlign: "center",
-    fontSize: 20,
-    color: "#d3d3d3"
-  },
-  markButton: {
+  headerButton: {
+    alignItems: "center",
     justifyContent: "center",
-    alignContent: "center"
+    flex: 1
   }
 })
 
@@ -532,18 +638,19 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
   //console.log(state.downloads)
   return {
-    appProgress: state.appProgress,
+    progress: state.appProgress,
     database: state.database,
     currentLanguage: state.database.currentLanguage,
     translations: state.database[state.database.currentLanguage].translations,
     downloads: state.downloads,
+    colors: state.database[state.database.currentLanguage].colors
   }
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    toggleComplete: lessonID => {dispatch(toggleComplete(lessonID))},
-    downloadLesson: (lessonID, source) => {dispatch(downloadLesson(lessonID, source))},
+    toggleComplete: lessonID => { dispatch(toggleComplete(lessonID)) },
+    downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
   }
 }
 

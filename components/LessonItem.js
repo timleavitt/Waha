@@ -1,9 +1,10 @@
 //imports
 import React, { useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Progress from 'react-native-progress';
+import { connect } from 'react-redux'
 
 function LessonItem(props) {
 
@@ -36,6 +37,7 @@ function LessonItem(props) {
     }
 
 
+
     ////////////////////////////////
     ////RENDER/STYLES/NAVOPTIONS////
     ////////////////////////////////
@@ -49,11 +51,11 @@ function LessonItem(props) {
     if (!props.downloadProgress) {
         downloadedFeedback = 
             <Ionicons.Button 
-                name={isDownloaded ? "ios-backspace" : "md-cloud-download"} 
+                name={isDownloaded ? "md-cloud-done" : "md-cloud-download"} 
+                color={isDownloaded ? props.grayedOut : "black"}
                 size={30}
                 onPress={isDownloaded ? showDeleteModal : showSaveModal}
                 backgroundColor="rgba(0,0,0,0)"
-                color="black"
             />
         progressBar = null;
     } else {
@@ -70,13 +72,14 @@ function LessonItem(props) {
                     onLongPress={showLessonOptionsModal}
                 >
                     <View style={styles.icon}>
-                        <Ionicons
-                            name={props.isComplete ? "ios-arrow-dropdown-circle" : "ios-arrow-dropdown"}
+                        <MaterialCommunityIcons
+                            name={props.isComplete ? "play-circle" : "play-box-outline"}
+                            color={props.isComplete ? props.grayedOut : props.accentColor}
                             size={30}
                         />
                     </View>
                     <View styles={styles.titleContainer}>
-                        <Text style={styles.title}>{props.title}</Text>
+                        <Text style={{...styles.title,...{color: props.isComplete ? props.grayedOut : "black"}}}>{props.title}</Text>
                         <Text style={styles.subtitle}>{props.subtitle}</Text>
                     </View>
                 </TouchableOpacity>
@@ -95,11 +98,10 @@ const styles = StyleSheet.create({
     lessonItem: {
         flex: 1,
         height: 75,
-        borderColor: "black",
-        borderWidth: 2,
         margin: 5,
-        justifyContent: "space-between",
+        justifyContent: "center",
         flexDirection: "column",
+        alignContent: "center"
     },
     mainDisplay: {
         flexDirection: "row"
@@ -107,17 +109,17 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 22,
         textAlignVertical: "center",
-        paddingHorizontal: 10
+        paddingHorizontal: 10,
+        fontFamily: 'open-sans-regular'
     },
     subtitle: {
         fontSize: 15,
         paddingHorizontal: 10,
-        color: "gray"
+        fontFamily: 'open-sans-light'
     },
     titleContainer: {
         flexDirection: "column",
         justifyContent: "space-around",
-        
     },
     icon: {
         justifyContent: "center",
@@ -134,4 +136,19 @@ const styles = StyleSheet.create({
     }
 })
 
-export default LessonItem;
+function mapStateToProps(state) {
+    return {
+      grayedOut: state.database[state.database.currentLanguage].colors.grayedOut,
+      accentColor: state.database[state.database.currentLanguage].colors.accentColor,
+      progress: state.appProgress,
+    }
+  };
+  
+  function mapDispatchToProps(dispatch) {
+    return {
+      downloadLesson: (lessonID, source) => {dispatch(downloadLesson(lessonID, source))},
+      toggleComplete: lessonID => {dispatch(toggleComplete(lessonID))}
+    }
+  }
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(LessonItem);

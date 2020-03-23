@@ -5,9 +5,9 @@ import * as FileSystem from 'expo-file-system';
 import i18n from 'i18n-js';
 
 
-
 //other component imports
 import StudySetItem from '../components/StudySetItem';
+import FlatListSeparator from '../components/FlatListSeparator'
 
 //redux
 import { connect } from 'react-redux'
@@ -16,16 +16,35 @@ import { setFirstOpen } from '../redux/actions/databaseActions'
 
 function StudySetScreen(props) {
 
+    
     //check if we're on first launch (maybe get better solution later;
     //this does an async operation every time this screen opens)
     useEffect(() => {
         if (props.isFirstOpen) {
             props.navigation.replace("LanguageSelect")
+        } else {
+            try {
+                props.navigation.setParams({primaryColor: props.colors.primaryColor})
+            } catch (error) {
+                props.addLanguage(props.database[props.database.currentLanguage])
+            }
         }
-        console.log(props.appProgress)
-        //props.changeLanguage("english");
-        //props.addLanguage("english");
     }, [])
+
+    if (props.database)
+
+    useEffect(() => {
+        if (props.database) {
+        if (!props.isFirstOpen) {
+            
+        } else {
+            if (!props.database.colors) {
+                
+            }
+        }
+    }
+    }, [props.isFirstOpen])
+
 
     FileSystem.getFreeDiskStorageAsync().then(freeDiskStorage => {
         //console.log(freeDiskStorage)
@@ -44,6 +63,8 @@ function StudySetScreen(props) {
             params: {
                 title: item.title,
                 studySetID: item.id,
+                subtitle: item.subtitle,
+                iconName: item.iconName
             }
         })
     }
@@ -58,9 +79,11 @@ function StudySetScreen(props) {
       };
 
 
+
     ////////////////////////////////
     ////RENDER/STYLES/NAVOPTIONS////
     ////////////////////////////////
+
 
     
     //function to render the studyset items
@@ -69,8 +92,10 @@ function StudySetScreen(props) {
         return (
             <StudySetItem
                 title={studySetList.item.title}
+                subtitle={studySetList.item.subtitle}
                 onStudySetSelect={() => navigateToLessonList(studySetList.item)}
                 id={studySetList.item.id}
+                iconName={studySetList.item.iconName}
             />
         )
     }
@@ -79,14 +104,12 @@ function StudySetScreen(props) {
     //if we're not fetching data, render the flatlist. if we are, render a loading screen
     if (!props.isFetching) {
         return (
-            <View style={styles.screen}>
+            <View style={{...styles.screen, ...{backgroundColor: props.colors.lessonSetScreenBG}}}>
                 <FlatList
                     data={props.database[props.database.currentLanguage].studySets}
                     renderItem={renderStudySetItem}
-                    extraData={props.appProgress}
+                    ItemSeparatorComponent = {FlatListSeparator}
                 />
-                <Text style={{...styles.text, color: props.primaryColor}}>This text is the primary color from the database! How cool!</Text>
-                <Text style={{...styles.text, color: props.secondaryColor}}>This text is the secondary color from the database! Radical!</Text>
             </View>
         )
     } else {
@@ -99,15 +122,25 @@ function StudySetScreen(props) {
     }
 }
 
-StudySetScreen.navigationOptions = navData => {
+StudySetScreen.navigationOptions = navigationData => {
+    const primaryColor = navigationData.navigation.getParam("primaryColor");
+
     return {
-        headerTitle: "waha"
+        headerTitle: "waha",
+        headerBackTitle: "Back",
+        headerStyle: {
+            backgroundColor: primaryColor
+        },
+        headerTitleStyle: {
+            color: "#fff",
+            fontFamily: 'open-sans-bold'
+        }
     };
 };
 
 const styles = StyleSheet.create({
     screen: {
-        flex: 1
+        flex: 1,
     },
     text: {
         textAlign: "center",
@@ -120,12 +153,11 @@ const styles = StyleSheet.create({
 /////////////
 
 function mapStateToProps(state) {
-    //console.log(state.appProgress)
+    //console.log(state.database)
     if(!state.database.isFetching)
         return {
             database: state.database,
-            primaryColor: state.database[state.database.currentLanguage].colors.primaryColor,
-            secondaryColor: state.database[state.database.currentLanguage].colors.secondaryColor,
+            colors: state.database[state.database.currentLanguage].colors,
             appProgress: state.appProgress
         }
     else {

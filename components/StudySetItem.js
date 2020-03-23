@@ -8,8 +8,9 @@ import { connect } from 'react-redux'
 function StudySetItem(props) {
 
     const [numCompleted, setNumCompleted] = useState(0)
+    const [fullyCompleted, setFullyCompleted] = useState(false)
 
-    console.log(props.id)
+    var numLessons = 5
 
     useEffect(() => {
         var localNumCompleted = 0
@@ -19,9 +20,15 @@ function StudySetItem(props) {
             }
         }
         setNumCompleted(localNumCompleted)
-    }, [])
-    
+    }, [props.progress])
 
+    useEffect(() => {
+        if(numCompleted === numLessons) {
+            setFullyCompleted(true)
+        } else {
+            setFullyCompleted(false)
+        }
+    }, [numCompleted])
     
 
     return(
@@ -31,16 +38,17 @@ function StudySetItem(props) {
                     <AnimatedCircularProgress
                         size={120}
                         width={15}
-                        fill={(numCompleted / 5) * 100}
-                        tintColor="#00e0ff"
-                        onAnimationComplete={() => console.log('onAnimationComplete')}
-                        backgroundColor="#3d5875"
+                        fill={(numCompleted / numLessons) * 100}
+                        tintColor={fullyCompleted ? props.grayedOut : props.primaryColor}
+                        rotation={0}
+                        backgroundColor="#fff"
                     >
-                        {(fill) => (<MaterialCommunityIcons name='pine-tree' size={80}/>)}
+                        {(fill) => (<MaterialCommunityIcons name={props.iconName} size={70} color={fullyCompleted ? props.grayedOut : props.primaryColor}/>)}
                     </AnimatedCircularProgress>
                 </View>
                 <View style={styles.titleContainer}>
-                 <Text style={styles.title}>{props.title}</Text>
+                    <Text style={{...styles.subtitle,...{color: fullyCompleted ? props.grayedOut : "black"}}}>{props.subtitle}</Text>
+                    <Text style={{...styles.title,...{color: fullyCompleted ? props.grayedOut : "black"}}}>{props.title}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -51,8 +59,6 @@ const styles = StyleSheet.create({
     studySetItem: {
         flex: 1,
         height: 150,
-        borderColor: "black",
-        borderWidth: 2,
         margin: 5,
         justifyContent: "center"
     },
@@ -61,10 +67,19 @@ const styles = StyleSheet.create({
         textAlignVertical: "center",
         paddingHorizontal: 10,
         flexWrap: "wrap",
+        fontFamily: 'open-sans-bold'
+    },
+    subtitle: {
+        fontSize: 14,
+        textAlignVertical: "center",
+        paddingHorizontal: 10,
+        flexWrap: "wrap",
+        fontFamily: 'open-sans-light'
     },
     titleContainer: {
         flex: 1,
-        justifyContent: "center"
+        justifyContent: "center",
+        flexDirection: "column",
     },
     progressImage: {
         margin: 5
@@ -75,7 +90,9 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
     
     return {
-        progress: state.appProgress
+        progress: state.appProgress,
+        primaryColor: state.database[state.database.currentLanguage].colors.primaryColor,
+        grayedOut: state.database[state.database.currentLanguage].colors.grayedOut,
     }
 };
 
