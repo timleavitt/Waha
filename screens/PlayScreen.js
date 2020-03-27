@@ -14,6 +14,7 @@ import ModalButton from '../components/ModalButton'
 import Scrubber from '../components/Scrubber'
 import PlayPauseSkip from '../components/PlayPauseSkip';
 import ChapterSelect from '../components/ChapterSelect'
+import HeaderButtons from '../components/HeaderButtons'
 
 //redux
 import { toggleComplete } from '../redux/actions/appProgressActions'
@@ -422,28 +423,13 @@ PlayScreen.navigationOptions = navigationData => {
       },
       gestureEnabled: false,
       headerRight: () =>
-         <View style={styles.headerButtonsContainer}>
-            <TouchableOpacity
-               style={styles.headerButton}
-               onPress={() => setShowShareLessonModal(true)}
-            >
-               <Ionicons
-                  name='md-share'
-                  size={30}
-                  color="white"
-               />
-            </TouchableOpacity>
-            <TouchableOpacity
-               style={styles.headerButton}
-               onPress={navMarkHandler}
-            >
-               <Ionicons
-                  name={navIsComplete ? "ios-checkmark-circle" : "ios-checkmark-circle-outline"}
-                  size={30}
-                  color='white'
-               />
-            </TouchableOpacity>
-         </View>
+         <HeaderButtons
+            name='md-share'
+            onPress1={() => setShowShareLessonModal(true)}
+            hasCompleteButton={true}
+            completeOnPress={navMarkHandler}
+            completeCondition={navIsComplete}
+         />
    }
 };
 
@@ -486,15 +472,7 @@ const styles = StyleSheet.create({
       width: "100%",
       height: 200
    },
-   headerButtonsContainer: {
-      flexDirection: "row",
-      width: 80
-   },
-   headerButton: {
-      alignItems: "center",
-      justifyContent: "center",
-      flex: 1
-   }
+
 })
 
 

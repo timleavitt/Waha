@@ -8,16 +8,16 @@ import { connect } from 'react-redux'
 
 function LessonItem(props) {
 
-    //state to keep track of whether this lesson is downloaded
-    //NOTE: must be state; don't try it with a normal var
-    const [isDownloaded, setIsDownloaded] = useState(false);
 
-    //check if the lesson is downloaded and set isDownloaded accordingly
-    FileSystem.getInfoAsync(FileSystem.documentDirectory + props.id + '.mp3')
-        .then(({ exists }) => {
-            exists ? setIsDownloaded(true) : setIsDownloaded(false)
-        })
+   const [isDownloaded, setIsDownloaded] = useState(false)
 
+   //check if the lesson is downloaded and set isDownloaded accordingly
+   FileSystem.getInfoAsync(FileSystem.documentDirectory + props.id + '.mp3')
+   .then(({ exists }) => {
+      exists ? setIsDownloaded(true) : setIsDownloaded(false)
+      props.setRefresh(old => !old)
+      }
+   )
 
     //functions to call modals from lessonlistscreen
     //function are setState functions passed from lessonlistscreen
@@ -36,6 +36,7 @@ function LessonItem(props) {
         props.setShowLessonOptionsModal.call();
     }
 
+      //console.log(props.isDownloaded)
 
 
     ////////////////////////////////
@@ -73,7 +74,7 @@ function LessonItem(props) {
                 >
                     <View style={styles.icon}>
                         <MaterialCommunityIcons
-                            name={props.isComplete ? "play-circle" : "play-box-outline"}
+                            name={props.isComplete ? "check-circle" : "play-box-outline"}
                             color={props.isComplete ? props.grayedOut : props.accentColor}
                             size={30}
                         />
