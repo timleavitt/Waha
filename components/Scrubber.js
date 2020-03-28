@@ -1,6 +1,6 @@
 //basic imports
 import React from 'react';
-import { View, StyleSheet, Slider } from 'react-native';
+import { View, StyleSheet, Slider, Platform } from 'react-native';
 import TimeDisplay from "../components/TimeDisplay";
 import { connect } from 'react-redux'
 
@@ -16,7 +16,7 @@ function Scrubber(props) {
                maximumValue={props.maximumValue}
                step={1000}
                minimumTrackTintColor={props.colors.primaryColor}
-               thumbTintColor={props.colors.accentColor}
+               thumbTintColor={props.colors.primaryColor}
             />
          </View>
          <View style={styles.timeInfo}>
@@ -33,13 +33,11 @@ const styles = StyleSheet.create({
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      width: "100%"
+      width: "100%",
+      marginTop: 10
    },
    scrubber: {
       width: "100%"
-   },
-   scrubberInfo: {
-      padding: 10
    },
    timeInfo: {
       flexDirection: "row",

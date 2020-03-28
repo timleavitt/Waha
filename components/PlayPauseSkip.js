@@ -11,7 +11,7 @@ function PlayPauseSkip(props) {
             style={styles.playPauseSkipButton}
             onPress={() => props.onSkipPress(-10000)}
          >
-            <MaterialIcons name="replay-10" size={60} />
+            <MaterialIcons name="replay-10" size={69} />
          </TouchableOpacity>
          <TouchableOpacity
             style={styles.playPauseSkipButton}
@@ -19,7 +19,7 @@ function PlayPauseSkip(props) {
          >
             <MaterialCommunityIcons
                name={props.isPlaying ? "pause-circle" : "play-circle"}
-               size={125}
+               size={100}
                color={props.colors.accentColor}
             />
          </TouchableOpacity>
@@ -27,7 +27,7 @@ function PlayPauseSkip(props) {
             style={styles.playPauseSkipButton}
             onPress={() => props.onSkipPress(10000)}
          >
-            <MaterialIcons name="forward-10" size={60} />
+            <MaterialIcons name="forward-10" size={69} />
          </TouchableOpacity>
       </View>
    )
@@ -36,14 +36,14 @@ function PlayPauseSkip(props) {
 const styles = StyleSheet.create({
    playPauseSkipContainer: {
       flexDirection: "row",
-      justifyContent: "space-around",
+      justifyContent: "center",
       alignItems: "center",
       width: "100%",
+      marginTop: -15
    },
    playPauseSkipButton: {
       alignItems: "center",
       justifyContent: "center",
-      flex: 1
    }
 })
 

@@ -4,7 +4,7 @@ import { View, FlatList, StyleSheet, Button, Modal, Alert } from 'react-native';
 import LessonItem from '../components/LessonItem';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import StudySetItem from '../components/StudySetItem';
+import StudySetItemSmall from '../components/StudySetItemSmall';
 import FlatListSeparator from '../components/FlatListSeparator'
 import WahaModal from '../components/WahaModal'
 import ModalButton from '../components/ModalButton'
@@ -154,14 +154,14 @@ function LessonListScreen(props) {
    return (
       <View style={{ ...styles.screen, ...{ backgroundColor: props.colors.lessonListScreenBG } }}>
          <View style={styles.studySetItemContainer}>
-            <StudySetItem
+            <StudySetItemSmall
                title={props.navigation.getParam("title")}
                subtitle={props.navigation.getParam("subtitle")}
-               onStudySetSelect={() => { }}
                id={props.navigation.getParam("studySetID")}
                iconName={props.navigation.getParam("iconName")}
             />
          </View>
+         <FlatListSeparator/>
          <FlatList
             data={selectedLessonList}
             renderItem={renderLessonItem}
@@ -200,14 +200,20 @@ LessonListScreen.navigationOptions = navigationData => {
       },
       headerTitleStyle: {
          color: "#fff",
-         fontFamily: 'open-sans-bold'
+         fontFamily: 'bold'
       },
       headerRight: () =>
          <HeaderButtons
             name='md-settings'
             onPress1={() => navigationData.navigation.navigate("Settings")}
             hasCompleteButton={false}
-         />
+         />,
+      headerLeft: () => 
+         <HeaderButtons
+            name='ios-arrow-back'
+            onPress1={() => navigationData.navigation.goBack()}
+            hasCompleteButton={false}
+         />,
    };
 };
 
@@ -218,7 +224,7 @@ const styles = StyleSheet.create({
    },
    studySetItemContainer: {
       width: "100%",
-      height: 150,
+      height: 80
    },
    lessonListContainer: {
    }

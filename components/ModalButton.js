@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     },
     text: {
         textAlign: "center",
-        fontFamily: 'open-sans-regular',
+        fontFamily: 'medium',
         fontSize: 21
     }
   })

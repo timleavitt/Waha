@@ -51,13 +51,13 @@ function LessonItem(props) {
     var progressBar;
     if (!props.downloadProgress) {
         downloadedFeedback = 
-            <Ionicons.Button 
-                name={isDownloaded ? "md-cloud-done" : "md-cloud-download"} 
-                color={isDownloaded ? props.grayedOut : "black"}
-                size={30}
-                onPress={isDownloaded ? showDeleteModal : showSaveModal}
-                backgroundColor="rgba(0,0,0,0)"
-            />
+            <TouchableOpacity onPress={isDownloaded ? showDeleteModal : showSaveModal} style={styles.downloadButtonContainer}>
+               <Ionicons 
+                  name={isDownloaded ? "md-cloud-done" : "md-cloud-download"} 
+                  color={isDownloaded ? props.grayedOut : "black"}
+                  size={25}
+               />
+            </TouchableOpacity>
         progressBar = null;
     } else {
         downloadedFeedback = <ActivityIndicator size="small" color="black" />
@@ -65,28 +65,27 @@ function LessonItem(props) {
     }  
 
     return (
-        <View style={{...styles.lessonItem, ...props.isComplete ? {backgroundColor: "#D3D3D3"} : null}}>
+        <View style={styles.lessonItem}>
             <View style={styles.mainDisplay}>
-                <TouchableOpacity 
-                    style={styles.progresAndTitle} 
+               <TouchableOpacity 
+                    style={styles.progressAndTitle} 
                     onPress={props.onLessonSelect}
                     onLongPress={showLessonOptionsModal}
-                >
-                    <View style={styles.icon}>
-                        <MaterialCommunityIcons
-                            name={props.isComplete ? "check-circle" : "play-box-outline"}
-                            color={props.isComplete ? props.grayedOut : props.accentColor}
-                            size={30}
-                        />
-                    </View>
-                    <View styles={styles.titleContainer}>
-                        <Text style={{...styles.title,...{color: props.isComplete ? props.grayedOut : "black"}}}>{props.title}</Text>
-                        <Text style={styles.subtitle}>{props.subtitle}</Text>
-                    </View>
+               >
+                  <View style={styles.completeStatusContainer}>
+                     <MaterialCommunityIcons
+                        name={props.isComplete ? "check-circle" : "play-box-outline"}
+                        size={30}
+                        color={props.isComplete ? props.grayedOut : props.accentColor}
+                     />
+                  </View>
+                  <View style={styles.titleContainer}>
+                     <Text style={{...styles.title,...{color: props.isComplete ? "#9FA5AD" : "black"}}}>{props.title}</Text>
+                     <Text style={{...styles.subtitle,...{color: props.isComplete ? "#9FA5AD" : "black"}}}>{props.subtitle}</Text>
+                  </View>
+                    
                 </TouchableOpacity>
-                <View style={styles.icon}>
-                    {downloadedFeedback}
-                </View>
+               {downloadedFeedback}
             </View>
             <View style={styles.progressBar}>
                 {progressBar}
@@ -97,39 +96,44 @@ function LessonItem(props) {
 
 const styles = StyleSheet.create({
     lessonItem: {
-        height: 75,
-        padding: 5,
+        height: 64,
         justifyContent: "center",
         flexDirection: "column",
-        alignContent: "center"
+        alignContent: "center",
     },
     mainDisplay: {
-        flexDirection: "row"
+        flexDirection: "row",
     },
+    progressAndTitle: {
+      justifyContent: "flex-start",
+      flexDirection: 'row',
+      alignContent: "center",
+      flex: 1,
+   },
+   completeStatusContainer: {
+      justifyContent: "center",
+      marginHorizontal: 10,
+ },
+   titleContainer: {
+      flexDirection: "column",
+      justifyContent: "center",
+      flex: 1
+  },
     title: {
-        fontSize: 22,
+        fontSize: 18,
         textAlignVertical: "center",
         paddingHorizontal: 10,
-        fontFamily: 'open-sans-regular'
+        fontFamily: 'medium'
     },
     subtitle: {
-        fontSize: 15,
+        fontSize: 14,
         paddingHorizontal: 10,
-        fontFamily: 'open-sans-light'
+        fontFamily: 'regular'
     },
-    titleContainer: {
-        flexDirection: "column",
-        justifyContent: "space-around",
-    },
-    icon: {
-        justifyContent: "center",
-        marginHorizontal: 10
-    },
-    progresAndTitle: {
-        justifyContent: "flex-start",
-        flexDirection: 'row',
-        alignContent: "center",
-        flex: 1
+    downloadButtonContainer: {
+      justifyContent: "center",
+      marginLeft: 5,
+      marginRight: 15
     },
     progressBar: {
         width: "100%"

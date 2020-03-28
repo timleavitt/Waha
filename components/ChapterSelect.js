@@ -11,7 +11,7 @@ function ChapterSelect(props) {
    var chapter2IconName;
 
    if (props.activeChapter === 'fellowship') {
-      chapter2IconName = 'numeric-2'
+      chapter2IconName = 'numeric-2-box'
    } else if (props.activeChapter === 'passage') {
       chapter2IconName = 'numeric-2-box'
    } else {
@@ -36,38 +36,53 @@ function ChapterSelect(props) {
          </View>
    } else {
       chapter2Button =
-         <TouchableOpacity 
-            style={{ ...styles.chapterSelect, ...{ borderColor: props.colors.accentColor } }} 
-            onPress={() => props.onPress('passage')}
-         >
-            <MaterialCommunityIcons
-               name={chapter2IconName}
-               size={30}
-               color={props.colors.accentColor}
-            />
-            <Text style={{ ...styles.chapterSelectText, ...{ color: props.colors.accentColor } }}>Passage</Text>
-         </TouchableOpacity>
+      <TouchableOpacity 
+         style={{ ...styles.chapterSelect, ...{ 
+            borderColor: props.colors.accentColor,
+            backgroundColor: (props.activeChapter === 'passage') ? props.colors.accentColor : "#EFF2F4"},
+         }} 
+         onPress={() => props.onPress('passage')}
+      >
+         <MaterialCommunityIcons
+            name={chapter2IconName}
+            size={25}
+            color={(props.activeChapter === 'passage') ? "white" : props.colors.accentColor}
+         />
+         <Text style={{ ...styles.chapterSelectText, ...{ color: (props.activeChapter === 'passage') ? "white" : props.colors.accentColor } }}>Passage</Text>
+      </TouchableOpacity>
    }
 
 
    return (
       <View style={styles.chapterSelectContainer}>
-         <TouchableOpacity style={{ ...styles.chapterSelect, ...{ borderColor: props.colors.accentColor } }} onPress={() => props.onPress('fellowship')}>
+         <TouchableOpacity 
+            style={{ ...styles.chapterSelect, ...{ 
+               borderColor: props.colors.accentColor,
+               backgroundColor: (props.activeChapter === 'fellowship') ? props.colors.accentColor : "#EFF2F4"},
+            }} 
+            onPress={() => props.onPress('fellowship')}
+         >
             <MaterialCommunityIcons
                name={(props.activeChapter === 'fellowship') ? "numeric-1-box" : "checkbox-marked"}
-               size={30}
-               color={props.colors.accentColor}
+               size={25}
+               color={(props.activeChapter === 'fellowship') ? "white" : props.colors.accentColor}
             />
-            <Text style={{ ...styles.chapterSelectText, ...{ color: props.colors.accentColor } }}>Fellowship</Text>
+            <Text style={{ ...styles.chapterSelectText, ...{ color: (props.activeChapter === 'fellowship') ? "white" : props.colors.accentColor } }}>Fellowship</Text>
          </TouchableOpacity>
          {chapter2Button}
-         <TouchableOpacity style={{ ...styles.chapterSelect, ...{ borderColor: props.colors.accentColor } }} onPress={() => props.onPress('application')}>
+         <TouchableOpacity 
+            style={{ ...styles.chapterSelect, ...{ 
+               borderColor: props.colors.accentColor , 
+               backgroundColor: (props.activeChapter === 'application') ? props.colors.accentColor : "#EFF2F4"}, 
+            }} 
+            onPress={() => props.onPress('application')}
+         >
             <MaterialCommunityIcons
-               name={(props.activeChapter === 'application') ? "numeric-3-box" : "numeric-3"}
-               size={30}
-               color={props.colors.accentColor}
+               name="numeric-3-box"
+               size={25}
+               color={(props.activeChapter === 'application') ? "white" : props.colors.accentColor}
             />
-            <Text style={{ ...styles.chapterSelectText, ...{ color: props.colors.accentColor } }}>Application</Text>
+            <Text style={{ ...styles.chapterSelectText, ...{ color: (props.activeChapter === 'application') ? "white" : props.colors.accentColor } }}>Fellowship</Text>
          </TouchableOpacity>
       </View>
    )
@@ -84,11 +99,10 @@ const styles = StyleSheet.create({
       alignItems: "center",
       height: 50,
       justifyContent: "center",
-      borderTopWidth: 2,
-      borderBottomWidth: 2
+      borderWidth: 2
    },
    chapterSelectText: {
-      fontFamily: 'open-sans-regular',
+      fontFamily: 'black',
       fontSize: 16
    },
 })

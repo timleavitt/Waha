@@ -328,7 +328,7 @@ function PlayScreen(props) {
    function renderAlbumSlide(slideList) {
       var content;
       if (slideList.item.type === 'text') {
-         content = <Text style={{ flexWrap: "wrap", fontFamily: 'open-sans-regular' }}>{slideList.item.body}</Text>
+         content = <Text style={{ flexWrap: "wrap", fontFamily: 'regular' }}>{slideList.item.body}</Text>
       } else {
          content = <MaterialCommunityIcons name={slideList.item.iconName} size={350} />
       }
@@ -346,7 +346,7 @@ function PlayScreen(props) {
       //special case when audio is still loading
       audioControlContainer =
          <View style={styles.audioControlContainer}>
-            <ActivityIndicator size="large" color={props.colors.grayedOut} />
+            <ActivityIndicator size="large" color="black" />
          </View>
    } else {
       //general case which shows scrubber/play controls
@@ -373,17 +373,19 @@ function PlayScreen(props) {
             <Text style={styles.title}>{props.navigation.getParam("title")}</Text>
             <Text style={styles.subtitle}>{props.navigation.getParam("scripture")}</Text>
          </View>
-         <FlatList
-            renderItem={renderAlbumSlide}
-            data={albumSlidesData}
-            horizontal={true}
-            pagingEnabled={true}
-            snapToAlignment={"start"}
-            snapToInterval={Dimensions.get('window').width}
-            decelerationRate={"fast"}
-            viewabilityConfig={viewConfigRef.current}
-            initialScrollIndex={0}
-         />
+         <View>
+            <FlatList
+               renderItem={renderAlbumSlide}
+               data={albumSlidesData}
+               horizontal={true}
+               pagingEnabled={true}
+               snapToAlignment={"start"}
+               snapToInterval={Dimensions.get('window').width}
+               decelerationRate={"fast"}
+               viewabilityConfig={viewConfigRef.current}
+               initialScrollIndex={0}
+            />
+         </View>
          <View style={styles.controlsContainer}>
             <ChapterSelect
                activeChapter={activeChapter}
@@ -419,7 +421,7 @@ PlayScreen.navigationOptions = navigationData => {
       },
       headerTitleStyle: {
          color: "#fff",
-         fontFamily: 'open-sans-bold'
+         fontFamily: 'bold'
       },
       gestureEnabled: false,
       headerRight: () =>
@@ -429,7 +431,13 @@ PlayScreen.navigationOptions = navigationData => {
             hasCompleteButton={true}
             completeOnPress={navMarkHandler}
             completeCondition={navIsComplete}
-         />
+         />,
+      headerLeft: () => 
+      <HeaderButtons
+            name='ios-arrow-back'
+            onPress1={() => navigationData.navigation.goBack()}
+            hasCompleteButton={false}
+         />,
    }
 };
 
@@ -445,32 +453,33 @@ const styles = StyleSheet.create({
    title: {
       textAlign: "center",
       fontSize: 30,
-      fontFamily: 'open-sans-bold'
+      fontFamily: 'black'
    },
    subtitle: {
       textAlign: "center",
-      fontSize: 20,
-      fontFamily: 'open-sans-light'
+      fontSize: 18,
+      fontFamily: 'regular'
    },
    albumArtContainer: {
       width: (Dimensions.get('window').width - 40),
+      height: (Dimensions.get('window').width - 40),
       padding: 20,
       margin: 20,
-      borderRadius: 10
+      borderRadius: 10,
    },
    controlsContainer: {
       flexDirection: "column",
-      justifyContent: "space-between",
+      justifyContent: "center",
       alignItems: "center",
       width: "100%",
+      marginBottom: 10
    },
    audioControlContainer: {
-      justifyContent: "space-around",
+      justifyContent: "center",
       flexDirection: "column",
-      marginBottom: 5,
       marginHorizontal: 10,
       width: "100%",
-      height: 200
+      height: 160
    },
 
 })

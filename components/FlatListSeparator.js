@@ -7,7 +7,7 @@ function FlatListSeparator(props) {
         style={{
             height: 1,
             width: "100%",
-            backgroundColor: "#000",
+            backgroundColor: "#9FA5AD",
         }}
         />
 
