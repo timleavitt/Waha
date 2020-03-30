@@ -9,6 +9,7 @@ import FlatListSeparator from '../components/FlatListSeparator'
 import WahaModal from '../components/WahaModal'
 import ModalButton from '../components/ModalButton'
 import HeaderButtons from '../components/HeaderButtons'
+import NetInfo from '@react-native-community/netinfo';
 
 //redux imports
 import { downloadLesson } from '../redux/actions/downloadActions'
@@ -25,6 +26,7 @@ function LessonListScreen(props) {
    //simple state to switch back and forth whenever we want to re-render
    //the screen. attached to the extraData prop on the flatlist
    const [refresh, setRefresh] = useState(false);
+   const [isConnected, setIsConnected] = useState(false);
 
    //modal states
    const [idToDownload, setIDToDownload] = useState(null);
@@ -40,6 +42,12 @@ function LessonListScreen(props) {
 
    useEffect(() => {
       props.navigation.setParams({ primaryColor: props.colors.primaryColor })
+      const unsubscribe = NetInfo.addEventListener(state => {
+         setIsConnected(state.isConnected)
+      });
+      return function cleanup() {
+         unsubscribe();
+      }
    }, [])
 
    //function to navigate to the play screen
@@ -124,6 +132,20 @@ function LessonListScreen(props) {
       }
    }
 
+   function markUpToThisPointAsComplete(id) {
+      languageAndStudySet = id.substr(0, 4)
+      markToLesson = id.substr(4,5)
+
+      for (var i = 1; i <= parseInt(markToLesson); i++) {
+         var formattedID = ("0" + i).slice(-2);
+         idToMark = languageAndStudySet + formattedID
+         if (!(idToMark in props.appProgress)) {
+            props.toggleComplete(idToMark)
+         }  
+      }
+      hideModals();
+   }
+
 
    ////////////////////////////////
    ////RENDER/STYLES/NAVOPTIONS////
@@ -145,6 +167,7 @@ function LessonListScreen(props) {
             setIDToDownload={() => setIDToDownload(LessonList.item.id)}
             setShowLessonOptionsModal={() => setShowLessonOptionsModal(true)}
             setRefresh={() => setRefresh()}
+            isConnected={isConnected}
          />
       )
    }
@@ -182,7 +205,7 @@ function LessonListScreen(props) {
             <ModalButton title="Share Chapter 1: Fellowship" onPress={() => shareLesson('fellowship')} />
             <ModalButton title="Share Chapter 2: Passage" onPress={() => shareLesson('passage')} />
             <ModalButton title="Share Chapter 3: Application" onPress={() => shareLesson('application')} />
-            <ModalButton title="Mark to this point at complete" onPress={() => { }} />
+            <ModalButton title="Mark to this point at complete" onPress={() => markUpToThisPointAsComplete(idToDownload)} />
             <ModalButton title="Close" onPress={hideModals} style={{ color: "red" }} />
          </WahaModal>
       </View>

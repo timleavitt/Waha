@@ -1,10 +1,11 @@
 //imports
-import React, { useState, useEffect} from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Progress from 'react-native-progress';
 import { connect } from 'react-redux'
+import { toggleComplete } from '../redux/actions/appProgressActions'
 
 function LessonItem(props) {
 
@@ -13,98 +14,114 @@ function LessonItem(props) {
 
    //check if the lesson is downloaded and set isDownloaded accordingly
    FileSystem.getInfoAsync(FileSystem.documentDirectory + props.id + '.mp3')
-   .then(({ exists }) => {
-      exists ? setIsDownloaded(true) : setIsDownloaded(false)
-      props.setRefresh(old => !old)
+      .then(({ exists }) => {
+         exists ? setIsDownloaded(true) : setIsDownloaded(false)
+         props.setRefresh(old => !old)
       }
-   )
+      )
 
-    //functions to call modals from lessonlistscreen
-    //function are setState functions passed from lessonlistscreen
-    function showSaveModal() {
-        props.setIDToDownload.call();
-        props.setShowSaveLessonModal.call();
-    }
+   //functions to call modals from lessonlistscreen
+   //function are setState functions passed from lessonlistscreen
+   function showSaveModal() {
+      props.setIDToDownload.call();
+      props.setShowSaveLessonModal.call();
+   }
 
-    function showDeleteModal() {
-        props.setIDToDownload.call();
-        props.setShowDeleteLessonModal.call();
-    }
+   function showDeleteModal() {
+      props.setIDToDownload.call();
+      props.setShowDeleteLessonModal.call();
+   }
 
-    function showLessonOptionsModal() {
-        props.setIDToDownload.call();
-        props.setShowLessonOptionsModal.call();
-    }
+   function showLessonOptionsModal() {
+      props.setIDToDownload.call();
+      props.setShowLessonOptionsModal.call();
+   }
 
-      //console.log(props.isDownloaded)
-
-
-    ////////////////////////////////
-    ////RENDER/STYLES/NAVOPTIONS////
-    ////////////////////////////////
+   //console.log(props.isDownloaded)
 
 
-    //component for what to display on the far right of the list
-    //can either be cloud down arrow (click to download), x (click to delete),
-    //a no internet icon, or a spin icon if it's downloading
-    var downloadedFeedback;
-    var progressBar;
-    if (!props.downloadProgress) {
-        downloadedFeedback = 
-            <TouchableOpacity onPress={isDownloaded ? showDeleteModal : showSaveModal} style={styles.downloadButtonContainer}>
-               <Ionicons 
-                  name={isDownloaded ? "md-cloud-done" : "md-cloud-download"} 
-                  color={isDownloaded ? props.grayedOut : "black"}
-                  size={25}
-               />
+   ////////////////////////////////
+   ////RENDER/STYLES/NAVOPTIONS////
+   ////////////////////////////////
+
+
+   //component for what to display on the far right of the list
+   //can either be cloud down arrow (click to download), x (click to delete),
+   //a no internet icon, or a spin icon if it's downloading
+   var downloadedFeedback;
+   var progressBar;
+   if (!props.downloadProgress) {
+      downloadedFeedback =
+         <TouchableOpacity
+            onPress={
+               isDownloaded ? showDeleteModal :
+                  (props.isConnected ? showSaveModal : 
+                     () => Alert.alert(
+                     'Error',
+                     'Internet connection is required to download lessons',
+                     [{ text: 'OK', onPress: () => { } }]))}
+            style={styles.downloadButtonContainer}
+         >
+            <MaterialCommunityIcons
+               name={isDownloaded ? "cloud-check" : (props.isConnected ? "cloud-download" : "cloud-off-outline")}
+               color={isDownloaded ? props.grayedOut : "black"}
+               size={25}
+            />
+         </TouchableOpacity>
+      progressBar = null;
+   } else {
+      downloadedFeedback = <View style={styles.downloadButtonContainer}><ActivityIndicator size="small" color="black" /></View>
+      progressBar = <Progress.Bar progress={props.downloadProgress} width={400} color="black" borderColor="black" />
+   }
+
+   return (
+      <View style={styles.lessonItem}>
+         <View style={styles.mainDisplay}>
+            <TouchableOpacity
+               style={styles.progressAndTitle}
+               onPress={
+                  (!props.isConnected && !isDownloaded) ?
+                     () => Alert.alert(
+                        'Error',
+                        'Internet connection is required to listen to undownloaded lessons',
+                        [{ text: 'OK', onPress: () => { } }]) :
+                     props.onLessonSelect
+               }
+               onLongPress={showLessonOptionsModal}
+            >
+               <TouchableOpacity style={styles.completeStatusContainer} onPress={() => props.toggleComplete(props.id)}>
+                  <MaterialCommunityIcons
+                     name={props.isComplete ? "check-circle" : "play-box-outline"}
+                     size={30}
+                     color={props.isComplete ? props.grayedOut : props.accentColor}
+                  />
+               </TouchableOpacity>
+               <View style={styles.titleContainer}>
+                  <Text style={{ ...styles.title, ...{ color: props.isComplete ? "#9FA5AD" : "black" } }}>{props.title}</Text>
+                  <Text style={{ ...styles.subtitle, ...{ color: props.isComplete ? "#9FA5AD" : "black" } }}>{props.subtitle}</Text>
+               </View>
+
             </TouchableOpacity>
-        progressBar = null;
-    } else {
-        downloadedFeedback = <ActivityIndicator size="small" color="black" />
-        progressBar = <Progress.Bar progress={props.downloadProgress} width={400} color="black" borderColor="black"/>
-    }  
-
-    return (
-        <View style={styles.lessonItem}>
-            <View style={styles.mainDisplay}>
-               <TouchableOpacity 
-                    style={styles.progressAndTitle} 
-                    onPress={props.onLessonSelect}
-                    onLongPress={showLessonOptionsModal}
-               >
-                  <View style={styles.completeStatusContainer}>
-                     <MaterialCommunityIcons
-                        name={props.isComplete ? "check-circle" : "play-box-outline"}
-                        size={30}
-                        color={props.isComplete ? props.grayedOut : props.accentColor}
-                     />
-                  </View>
-                  <View style={styles.titleContainer}>
-                     <Text style={{...styles.title,...{color: props.isComplete ? "#9FA5AD" : "black"}}}>{props.title}</Text>
-                     <Text style={{...styles.subtitle,...{color: props.isComplete ? "#9FA5AD" : "black"}}}>{props.subtitle}</Text>
-                  </View>
-                    
-                </TouchableOpacity>
-               {downloadedFeedback}
-            </View>
-            <View style={styles.progressBar}>
-                {progressBar}
-            </View>
-        </View>
-    )
+            {downloadedFeedback}
+         </View>
+         <View style={styles.progressBar}>
+            {progressBar}
+         </View>
+      </View>
+   )
 }
 
 const styles = StyleSheet.create({
-    lessonItem: {
-        height: 64,
-        justifyContent: "center",
-        flexDirection: "column",
-        alignContent: "center",
-    },
-    mainDisplay: {
-        flexDirection: "row",
-    },
-    progressAndTitle: {
+   lessonItem: {
+      height: 64,
+      justifyContent: "center",
+      flexDirection: "column",
+      alignContent: "center",
+   },
+   mainDisplay: {
+      flexDirection: "row",
+   },
+   progressAndTitle: {
       justifyContent: "flex-start",
       flexDirection: 'row',
       alignContent: "center",
@@ -113,46 +130,46 @@ const styles = StyleSheet.create({
    completeStatusContainer: {
       justifyContent: "center",
       marginHorizontal: 10,
- },
+   },
    titleContainer: {
       flexDirection: "column",
       justifyContent: "center",
       flex: 1
-  },
-    title: {
-        fontSize: 18,
-        textAlignVertical: "center",
-        paddingHorizontal: 10,
-        fontFamily: 'medium'
-    },
-    subtitle: {
-        fontSize: 14,
-        paddingHorizontal: 10,
-        fontFamily: 'regular'
-    },
-    downloadButtonContainer: {
+   },
+   title: {
+      fontSize: 18,
+      textAlignVertical: "center",
+      paddingHorizontal: 10,
+      fontFamily: 'medium',
+   },
+   subtitle: {
+      fontSize: 14,
+      paddingHorizontal: 10,
+      fontFamily: 'regular'
+   },
+   downloadButtonContainer: {
       justifyContent: "center",
       marginLeft: 5,
       marginRight: 15
-    },
-    progressBar: {
-        width: "100%"
-    }
+   },
+   progressBar: {
+      width: "100%"
+   }
 })
 
 function mapStateToProps(state) {
-    return {
+   return {
       grayedOut: state.database[state.database.currentLanguage].colors.grayedOut,
       accentColor: state.database[state.database.currentLanguage].colors.accentColor,
       progress: state.appProgress,
-    }
-  };
-  
-  function mapDispatchToProps(dispatch) {
-    return {
-      downloadLesson: (lessonID, source) => {dispatch(downloadLesson(lessonID, source))},
-      toggleComplete: lessonID => {dispatch(toggleComplete(lessonID))}
-    }
-  }
-  
-  export default connect(mapStateToProps, mapDispatchToProps)(LessonItem);
+   }
+};
+
+function mapDispatchToProps(dispatch) {
+   return {
+      downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
+      toggleComplete: lessonID => { dispatch(toggleComplete(lessonID)) }
+   }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LessonItem);

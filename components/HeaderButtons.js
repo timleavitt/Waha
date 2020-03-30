@@ -20,9 +20,9 @@ function HeaderButtons(props) {
       secondButton = null
    }
    return (
-      <View style={styles.headerButtonsContainer}>
+      <View style={{...styles.headerButtonsContainer, ...{justifyContent: props.name === 'ios-arrow-back' ? "flex-start" : "flex-end"}}}>
          <TouchableOpacity
-            style={styles.headerButton}
+            style={{...styles.headerButton, ...{width: props.name === 'ios-arrow-back' ? 50 : null}}}
             onPress={props.onPress1}
          >
             <Ionicons
@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
       justifyContent: "flex-end",
    },
    headerButton: {
-      alignItems: "center",
-      marginHorizontal: 10
+      alignItems: "flex-start",
+      marginHorizontal: 10,
    }
 })
 
