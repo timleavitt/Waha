@@ -10,7 +10,7 @@ function StudySetItem(props) {
    const [numCompleted, setNumCompleted] = useState(0)
    const [fullyCompleted, setFullyCompleted] = useState(false)
 
-   var numLessons = 5
+   var numLessons = 13
 
    useEffect(() => {
       var localNumCompleted = 0
@@ -45,7 +45,7 @@ function StudySetItem(props) {
                   {(fill) => (<MaterialCommunityIcons name={props.iconName} size={50} color={fullyCompleted ? props.grayedOut : props.primaryColor} />)}
                </AnimatedCircularProgress>
                <View style={styles.percentageTextContainer}>
-                  <Text style={styles.percentageText}>{(numCompleted / numLessons) * 100}%</Text>
+                  <Text style={styles.percentageText}>{Math.round((numCompleted / numLessons) * 100)}%</Text>
                </View>
             </View>
             <View style={styles.titleContainer}>

@@ -10,7 +10,7 @@ function StudySetItemSmall(props) {
    const [numCompleted, setNumCompleted] = useState(0)
    const [fullyCompleted, setFullyCompleted] = useState(false)
 
-   var numLessons = 5
+   var numLessons = 13
 
    useEffect(() => {
       var localNumCompleted = 0
