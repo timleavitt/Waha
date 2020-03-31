@@ -6,6 +6,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Progress from 'react-native-progress';
 import { connect } from 'react-redux'
 import { toggleComplete } from '../redux/actions/appProgressActions'
+import { scaleMultiplier } from '../constants'
 
 function LessonItem(props) {
 
@@ -64,8 +65,8 @@ function LessonItem(props) {
          >
             <MaterialCommunityIcons
                name={isDownloaded ? "cloud-check" : (props.isConnected ? "cloud-download" : "cloud-off-outline")}
-               color={isDownloaded ? props.grayedOut : "black"}
-               size={25}
+               color={isDownloaded ? "#9FA5AD" : "#3A3C3F"}
+               size={25 * scaleMultiplier}
             />
          </TouchableOpacity>
       progressBar = null;
@@ -93,7 +94,7 @@ function LessonItem(props) {
                   <MaterialCommunityIcons
                      name={props.isComplete ? "check-circle" : "play-box-outline"}
                      size={30}
-                     color={props.isComplete ? props.grayedOut : props.accentColor}
+                     color={props.isComplete ? "#828282" : props.colors.primaryColor}
                   />
                </TouchableOpacity>
                <View style={styles.titleContainer}>
@@ -113,7 +114,7 @@ function LessonItem(props) {
 
 const styles = StyleSheet.create({
    lessonItem: {
-      height: 64,
+      height: 72 * scaleMultiplier,
       justifyContent: "center",
       flexDirection: "column",
       alignContent: "center",
@@ -137,13 +138,13 @@ const styles = StyleSheet.create({
       flex: 1
    },
    title: {
-      fontSize: 18,
+      fontSize: 18 * scaleMultiplier,
       textAlignVertical: "center",
       paddingHorizontal: 10,
       fontFamily: 'medium',
    },
    subtitle: {
-      fontSize: 14,
+      fontSize: 14 * scaleMultiplier,
       paddingHorizontal: 10,
       fontFamily: 'regular'
    },
@@ -159,8 +160,7 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    return {
-      grayedOut: state.database[state.database.currentLanguage].colors.grayedOut,
-      accentColor: state.database[state.database.currentLanguage].colors.accentColor,
+      colors: state.database[state.database.currentLanguage].colors,
       progress: state.appProgress,
    }
 };

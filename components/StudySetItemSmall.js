@@ -4,8 +4,24 @@ import { View, Text, StyleSheet } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { connect } from 'react-redux'
+import { scaleMultiplier } from '../constants'
 
 function StudySetItemSmall(props) {
+
+   function chooseAccentColor() {
+
+      value = parseInt(props.id.substr(2,4)) % 4
+
+      if (value === 1) {
+         return props.colors.primaryColor
+      } else if (value === 2) {
+         return props.colors.accentColor1
+      } else if (value === 3) {
+         return props.colors.accentColor3
+      } else {
+         return props.colors.accentColor4
+      }
+   }
 
    const [numCompleted, setNumCompleted] = useState(0)
    const [fullyCompleted, setFullyCompleted] = useState(false)
@@ -36,14 +52,14 @@ function StudySetItemSmall(props) {
          <View style={{ flexDirection: "row" }}>
             <View style={styles.progressImage}>
                <AnimatedCircularProgress
-                  size={65}
-                  width={5}
+                  size={65 * scaleMultiplier}
+                  width={5 * scaleMultiplier}
                   fill={(numCompleted / numLessons) * 100}
-                  tintColor={fullyCompleted ? props.grayedOut : props.primaryColor}
+                  tintColor={fullyCompleted ? "#828282" : "#1D1E20"}
                   rotation={0}
-                  backgroundColor="#fff"
+                  backgroundColor="#FFFFFF"
                >
-                  {(fill) => (<MaterialCommunityIcons name={props.iconName} size={40} color={fullyCompleted ? props.grayedOut : props.primaryColor} />)}
+                  {(fill) => (<View style={{backgroundColor: chooseAccentColor(), width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}><MaterialCommunityIcons name={props.iconName} size={40 * scaleMultiplier} color={fullyCompleted ? "#828282" : "#1D1E20"} /></View>)}
                </AnimatedCircularProgress>
             </View>
             <View style={styles.titleContainer}>
@@ -58,7 +74,7 @@ function StudySetItemSmall(props) {
 const styles = StyleSheet.create({
    studySetItem: {
       flex: 1,
-      height: 75,
+      height: 75 * scaleMultiplier,
       margin: 5,
       justifyContent: "center"
    },
@@ -73,13 +89,13 @@ const styles = StyleSheet.create({
       marginRight: 5
    },
    title: {
-      fontSize: 14,
+      fontSize: 14 * scaleMultiplier,
       textAlignVertical: "center",
       flexWrap: "wrap",
       fontFamily: 'medium'
    },
    subtitle: {
-      fontSize: 10,
+      fontSize: 10 * scaleMultiplier, 
       textAlignVertical: "center",
       flexWrap: "wrap",
       fontFamily: 'light'
@@ -91,8 +107,7 @@ function mapStateToProps(state) {
 
    return {
       progress: state.appProgress,
-      primaryColor: state.database[state.database.currentLanguage].colors.primaryColor,
-      grayedOut: state.database[state.database.currentLanguage].colors.grayedOut,
+      colors: state.database[state.database.currentLanguage].colors,
    }
 };
 

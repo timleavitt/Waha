@@ -1,6 +1,7 @@
 //basic imports
 import React from 'react';
 import { View, Text, StyleSheet} from 'react-native';
+import { scaleMultiplier } from '../constants'
 
 function TimeDisplay(props) {
 

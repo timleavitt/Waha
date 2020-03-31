@@ -1,17 +1,19 @@
 //basic imports
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux'
+import { scaleMultiplier } from '../constants'
 
 function PlayPauseSkip(props) {
+   //console.log((Dimensions.get('window').width / 380))
    return (
       <View style={styles.playPauseSkipContainer}>
          <TouchableOpacity
             style={styles.playPauseSkipButton}
             onPress={() => props.onSkipPress(-10000)}
          >
-            <MaterialIcons name="replay-10" size={69} />
+            <MaterialIcons name="replay-10" size={69 * scaleMultiplier} />
          </TouchableOpacity>
          <TouchableOpacity
             style={styles.playPauseSkipButton}
@@ -19,15 +21,15 @@ function PlayPauseSkip(props) {
          >
             <MaterialCommunityIcons
                name={props.isPlaying ? "pause-circle" : "play-circle"}
-               size={100}
-               color={props.colors.accentColor}
+               size={100 * scaleMultiplier}
+               color={props.colors.primaryColor}
             />
          </TouchableOpacity>
          <TouchableOpacity
             style={styles.playPauseSkipButton}
             onPress={() => props.onSkipPress(10000)}
          >
-            <MaterialIcons name="forward-10" size={69} />
+            <MaterialIcons name="forward-10" size={69 * scaleMultiplier} />
          </TouchableOpacity>
       </View>
    )
@@ -39,7 +41,8 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       alignItems: "center",
       width: "100%",
-      marginTop: -15
+      marginTop: -15,
+
    },
    playPauseSkipButton: {
       alignItems: "center",

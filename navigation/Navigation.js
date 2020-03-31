@@ -1,7 +1,7 @@
 //navigation imports
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from 'react-navigation';
-
+import { scaleMultiplier } from '../constants'
 //screen imports
 import StudySetScreen from '../screens/StudySetScreen';
 import LessonListScreen from '../screens/LessonListScreen';
@@ -13,8 +13,9 @@ import LanguageInstancesScreen from '../screens/LanguageInstancesScreen';
 
 const DefaultWahaNavigatorOptions = {
     headerStyle: {
-        backgroundColor: "white"
-    }
+        height: 90 * scaleMultiplier,
+    },
+    headerTitleAlign: "center",
 }
 
 const WahaNavigator = createStackNavigator(

@@ -1,6 +1,6 @@
 //imports
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Button, Modal, Alert } from 'react-native';
+import { View, FlatList, StyleSheet, Alert, Image } from 'react-native';
 import LessonItem from '../components/LessonItem';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -10,6 +10,7 @@ import WahaModal from '../components/WahaModal'
 import ModalButton from '../components/ModalButton'
 import HeaderButtons from '../components/HeaderButtons'
 import NetInfo from '@react-native-community/netinfo';
+import { scaleMultiplier } from '../constants'
 
 //redux imports
 import { downloadLesson } from '../redux/actions/downloadActions'
@@ -175,7 +176,7 @@ function LessonListScreen(props) {
    //create modal in here, pass state to show it to lesson item so lesson item
    //can change it and show the modal on this screen
    return (
-      <View style={{ ...styles.screen, ...{ backgroundColor: props.colors.lessonListScreenBG } }}>
+      <View style={styles.screen}>
          <View style={styles.studySetItemContainer}>
             <StudySetItemSmall
                title={props.navigation.getParam("title")}
@@ -216,14 +217,10 @@ LessonListScreen.navigationOptions = navigationData => {
    const primaryColor = navigationData.navigation.getParam("primaryColor");
 
    return {
-      headerTitle: "waha",
+      headerTitle:  <Image style={styles.headerImage} source={require('../assets/headerLogo.png')}/>,
       headerBackTitle: "Back",
       headerStyle: {
-         backgroundColor: primaryColor
-      },
-      headerTitleStyle: {
-         color: "#fff",
-         fontFamily: 'bold'
+         backgroundColor: "#F7F9FA",
       },
       headerLeft: () => 
          <HeaderButtons
@@ -237,13 +234,17 @@ LessonListScreen.navigationOptions = navigationData => {
 const styles = StyleSheet.create({
    screen: {
       flex: 1,
-      flexDirection: "column"
+      flexDirection: "column",
+      backgroundColor: "#F7F9FA"
    },
    studySetItemContainer: {
       width: "100%",
-      height: 80
+      height: 80 * scaleMultiplier
    },
-   lessonListContainer: {
+   headerImage: {
+      resizeMode: "center",
+      width: 120,
+      height: 40,
    }
 })
 

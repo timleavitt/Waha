@@ -4,8 +4,24 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { connect } from 'react-redux'
+import { scaleMultiplier } from '../constants'
 
 function StudySetItem(props) {
+
+   function chooseAccentColor() {
+
+      value = parseInt(props.id.substr(2,4)) % 4
+
+      if (value === 1) {
+         return props.colors.primaryColor
+      } else if (value === 2) {
+         return props.colors.accentColor1
+      } else if (value === 3) {
+         return props.colors.accentColor3
+      } else {
+         return props.colors.accentColor4
+      }
+   }
 
    const [numCompleted, setNumCompleted] = useState(0)
    const [fullyCompleted, setFullyCompleted] = useState(false)
@@ -35,22 +51,22 @@ function StudySetItem(props) {
       <TouchableOpacity style={styles.studySetItem} onPress={props.onStudySetSelect}>
             <View style={styles.progressContainer}>
                <AnimatedCircularProgress
-                  size={85}
-                  width={8}
+                  size={85 * scaleMultiplier}
+                  width={8 * scaleMultiplier}
                   fill={(numCompleted / numLessons) * 100}
-                  tintColor={fullyCompleted ? props.grayedOut : props.primaryColor}
+                  tintColor={fullyCompleted ? "#828282" : "#1D1E20"}
                   rotation={0}
-                  backgroundColor="#fff"
+                  backgroundColor="#FFFFFF"
                >
-                  {(fill) => (<MaterialCommunityIcons name={props.iconName} size={50} color={fullyCompleted ? props.grayedOut : props.primaryColor} />)}
+                  {(fill) => (<View style={{backgroundColor: chooseAccentColor(), width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}><MaterialCommunityIcons name={props.iconName} size={50 * scaleMultiplier} color={fullyCompleted ? "#828282" : "#1D1E20"} /></View>)}
                </AnimatedCircularProgress>
                <View style={styles.percentageTextContainer}>
                   <Text style={styles.percentageText}>{Math.round((numCompleted / numLessons) * 100)}%</Text>
                </View>
             </View>
             <View style={styles.titleContainer}>
-               <Text style={{ ...styles.subtitle, ...{ color: fullyCompleted ? props.grayedOut : "black" } }}>{props.subtitle}</Text>
-               <Text style={{ ...styles.title, ...{ color: fullyCompleted ? props.grayedOut : "black" } }}>{props.title}</Text>
+               <Text style={{ ...styles.subtitle, ...{ color: fullyCompleted ? "#9FA5AD" : "black" } }}>{props.subtitle}</Text>
+               <Text style={{ ...styles.title, ...{ color: fullyCompleted ? "#9FA5AD" : "black" } }}>{props.title}</Text>
             </View>
             <View style={styles.iconContainer}>
                <Entypo
@@ -67,7 +83,7 @@ const styles = StyleSheet.create({
    studySetItem: {
       flexDirection: "row",
       flex: 1,
-      height: 128,
+      height: 128 * scaleMultiplier,
       margin: 5,
       justifyContent: "center"
    },
@@ -94,13 +110,13 @@ const styles = StyleSheet.create({
       marginRight: 5
    },
    title: {
-      fontSize: 18,
+      fontSize: 18 * scaleMultiplier,
       textAlignVertical: "center",
       flexWrap: "wrap",
       fontFamily: 'bold'
    },
    subtitle: {
-      fontSize: 12,
+      fontSize: 12 * scaleMultiplier,
       textAlignVertical: "center",
       flexWrap: "wrap",
       fontFamily: 'light'
@@ -113,11 +129,9 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
-
    return {
       progress: state.appProgress,
-      primaryColor: state.database[state.database.currentLanguage].colors.primaryColor,
-      grayedOut: state.database[state.database.currentLanguage].colors.grayedOut,
+      colors: state.database[state.database.currentLanguage].colors,
    }
 };
 

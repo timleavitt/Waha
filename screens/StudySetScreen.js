@@ -1,20 +1,17 @@
 //basic imports
-import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, FlatList, StyleSheet, Text, ActivityIndicator, Image } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import i18n from 'i18n-js';
-import { Ionicons } from '@expo/vector-icons';
-
+import { scaleMultiplier } from '../constants'
 
 //other component imports
 import StudySetItem from '../components/StudySetItem';
-import FlatListSeparator from '../components/FlatListSeparator'
 
 //redux
 import { connect } from 'react-redux'
 import { addLanguage, changeLanguage } from '../redux/actions/databaseActions'
 import { setFirstOpen } from '../redux/actions/databaseActions'
-import { Header } from 'react-native/Libraries/NewAppScreen';
 import HeaderButtons from '../components/HeaderButtons';
 
 function StudySetScreen(props) {
@@ -95,7 +92,7 @@ function StudySetScreen(props) {
    //if we're not fetching data, render the flatlist. if we are, render a loading screen
    if (!props.isFetching) {
       return (
-         <View style={{ ...styles.screen, ...{ backgroundColor: props.colors.lessonSetScreenBG } }}>
+         <View style={styles.screen}>
             <FlatList
                data={props.database[props.database.currentLanguage].studySets}
                renderItem={renderStudySetItem}
@@ -116,15 +113,11 @@ StudySetScreen.navigationOptions = navigationData => {
    const primaryColor = navigationData.navigation.getParam("primaryColor");
 
    return {
-      headerTitle: "waha",
+      headerTitle:  <Image style={styles.headerImage} source={require('../assets/headerLogo.png')}/>,
       headerBackTitle: "Back",
       headerStyle: {
-         backgroundColor: primaryColor
-      },
-      headerTitleStyle: {
-         color: "#fff",
-         fontFamily: 'bold'
-      },
+         backgroundColor: "#EAEEF0",
+      }, 
       headerRight: () =>
          <HeaderButtons
             name='md-settings'
@@ -137,6 +130,7 @@ StudySetScreen.navigationOptions = navigationData => {
 const styles = StyleSheet.create({
    screen: {
       flex: 1,
+      backgroundColor: "#EAEEF0"
    },
    text: {
       textAlign: "center",
@@ -150,6 +144,12 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "center",
       flex: 1
+   },
+   headerImage: {
+      resizeMode: "center",
+      width: 120,
+      height: 40,
+      alignSelf: "center",
    }
 })
 
