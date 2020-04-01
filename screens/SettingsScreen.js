@@ -5,7 +5,7 @@ import * as FileSystem from 'expo-file-system';
 import { Ionicons } from '@expo/vector-icons';
 import SettingsItem from '../components/SettingsItem'
 import * as WebBrowser from 'expo-web-browser';
-import HeaderButtons from '../components/HeaderButtons'
+import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
 
 //redux imports
@@ -108,13 +108,13 @@ function SettingsScreen(props) {
       <SettingsItem
          text="View Credits"
          onPress={() => openBrowser('https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif')}
-      />
-
+      /> 
     </ScrollView>
   )
 }
 
 SettingsScreen.navigationOptions = navigationData => {
+   const isRTL = navigationData.navigation.getParam("isRTL");
    const primaryColor = navigationData.navigation.getParam("primaryColor");
 
    return {
@@ -127,13 +127,20 @@ SettingsScreen.navigationOptions = navigationData => {
            color: primaryColor,
            fontFamily: 'bold'
        },
-       headerLeft: () => 
-         <HeaderButtons
-            name='ios-arrow-back'
-            onPress1={() => navigationData.navigation.goBack()}
-            hasCompleteButton={false}
+       headerRight: isRTL ? () =>
+         <BackButton
+            isRTL={isRTL}
+            onPress={() => navigationData.navigation.goBack()}
+         /> :
+         () => <View></View>,
+      headerLeft: isRTL ? () =>
+         <View></View> :
+         () =>
+         <BackButton
+            isRTL={isRTL}
+            onPress={() => navigationData.navigation.goBack()}
          />,
-       
+      gestureDirection: isRTL ? 'horizontal-inverted' : 'horizontal',
    };
 };
 

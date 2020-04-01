@@ -10,7 +10,6 @@ import { scaleMultiplier } from '../constants'
 
 function LessonItem(props) {
 
-
    const [isDownloaded, setIsDownloaded] = useState(false)
 
    //check if the lesson is downloaded and set isDownloaded accordingly
@@ -76,7 +75,7 @@ function LessonItem(props) {
    }
 
    return (
-      <View style={styles.lessonItem}>
+      <View style={[styles.lessonItem, {direction: props.isRTL ? "rtl" : "ltr"}]}>
          <View style={styles.mainDisplay}>
             <TouchableOpacity
                style={styles.progressAndTitle}
@@ -142,11 +141,13 @@ const styles = StyleSheet.create({
       textAlignVertical: "center",
       paddingHorizontal: 10,
       fontFamily: 'medium',
+      textAlign: "left"
    },
    subtitle: {
       fontSize: 14 * scaleMultiplier,
       paddingHorizontal: 10,
-      fontFamily: 'regular'
+      fontFamily: 'regular',
+      textAlign: "left"
    },
    downloadButtonContainer: {
       justifyContent: "center",
@@ -162,6 +163,7 @@ function mapStateToProps(state) {
    return {
       colors: state.database[state.database.currentLanguage].colors,
       progress: state.appProgress,
+      isRTL: state.database[state.database.currentLanguage].isRTL,
    }
 };
 

@@ -7,7 +7,7 @@ import { AsyncStorage } from 'react-native';
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    blacklist: ['downloads']
+    blacklist: ['downloads',]
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

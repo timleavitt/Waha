@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import { scaleMultiplier, isRTL } from '../constants'
 
 function StudySetItem(props) {
 
@@ -48,7 +48,7 @@ function StudySetItem(props) {
 
 
    return (
-      <TouchableOpacity style={styles.studySetItem} onPress={props.onStudySetSelect}>
+      <TouchableOpacity style={[styles.studySetItem, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={props.onStudySetSelect}>
             <View style={styles.progressContainer}>
                <AnimatedCircularProgress
                   size={85 * scaleMultiplier}
@@ -65,12 +65,12 @@ function StudySetItem(props) {
                </View>
             </View>
             <View style={styles.titleContainer}>
-               <Text style={{ ...styles.subtitle, ...{ color: fullyCompleted ? "#9FA5AD" : "black" } }}>{props.subtitle}</Text>
-               <Text style={{ ...styles.title, ...{ color: fullyCompleted ? "#9FA5AD" : "black" } }}>{props.title}</Text>
+               <Text style={[styles.subtitle, { color: fullyCompleted ? "#9FA5AD" : "black" }]}>{props.subtitle}</Text>
+               <Text style={[styles.title, { color: fullyCompleted ? "#9FA5AD" : "black" }]}>{props.title}</Text>
             </View>
             <View style={styles.iconContainer}>
                <Entypo
-                  name='triangle-right'
+                  name= {props.isRTL ? 'triangle-left' : 'triangle-right'}
                   size={40}
                   color="gray"
                />
@@ -113,13 +113,15 @@ const styles = StyleSheet.create({
       fontSize: 18 * scaleMultiplier,
       textAlignVertical: "center",
       flexWrap: "wrap",
-      fontFamily: 'bold'
+      fontFamily: 'bold',
+      textAlign: "left"
    },
    subtitle: {
       fontSize: 12 * scaleMultiplier,
       textAlignVertical: "center",
       flexWrap: "wrap",
-      fontFamily: 'light'
+      fontFamily: 'light',
+      textAlign: "left"
    },
    iconContainer: {
       justifyContent: "center",
@@ -132,6 +134,7 @@ function mapStateToProps(state) {
    return {
       progress: state.appProgress,
       colors: state.database[state.database.currentLanguage].colors,
+      isRTL: state.database[state.database.currentLanguage].isRTL
    }
 };
 

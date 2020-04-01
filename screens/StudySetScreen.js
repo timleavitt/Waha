@@ -13,6 +13,7 @@ import { connect } from 'react-redux'
 import { addLanguage, changeLanguage } from '../redux/actions/databaseActions'
 import { setFirstOpen } from '../redux/actions/databaseActions'
 import HeaderButtons from '../components/HeaderButtons';
+import { fromRight, fromLeft } from 'react-navigation-transitions';
 
 function StudySetScreen(props) {
 
@@ -27,7 +28,7 @@ function StudySetScreen(props) {
 
    useEffect(() => {
       if (!props.isFirstOpen && !props.isFetching) {
-         props.navigation.setParams({ primaryColor: props.colors.primaryColor })
+         props.navigation.setParams({ primaryColor: props.colors.primaryColor, isRTL: props.isRTL })
       }
    }, [props.isFirstOpen])
 
@@ -52,7 +53,8 @@ function StudySetScreen(props) {
             title: item.title,
             studySetID: item.id,
             subtitle: item.subtitle,
-            iconName: item.iconName
+            iconName: item.iconName,
+            isRTL: props.isRTL
          }
       })
    }
@@ -110,7 +112,7 @@ function StudySetScreen(props) {
 }
 
 StudySetScreen.navigationOptions = navigationData => {
-   const primaryColor = navigationData.navigation.getParam("primaryColor");
+   const isRTL = navigationData.navigation.getParam("isRTL");
 
    return {
       headerTitle:  () => <Image style={styles.headerImage} source={require('../assets/headerLogo.png')}/>,
@@ -121,9 +123,19 @@ StudySetScreen.navigationOptions = navigationData => {
       headerRight: () =>
          <HeaderButtons
             name='md-settings'
-            onPress1={() => navigationData.navigation.navigate("Settings")}
+            onPress1={() => navigationData.navigation.navigate({
+               routeName: "Settings",
+               params: {
+                  isRTL: isRTL
+               }
+            })}
             hasCompleteButton={false}
-         />
+         />,
+      // gestureDirection: isRTL ? 'horizontal-inverted' : 'horizontal',
+      // transitionSpec: {
+      //    open: () => fromRight(),
+      //    close: () => fromRight(),
+      // }
    };
 };
 
@@ -162,7 +174,8 @@ function mapStateToProps(state) {
       return {
          database: state.database,
          colors: state.database[state.database.currentLanguage].colors,
-         appProgress: state.appProgress
+         appProgress: state.appProgress,
+         isRTL: state.database[state.database.currentLanguage].isRTL,
       }
    else {
       return {

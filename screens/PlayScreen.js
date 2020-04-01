@@ -16,6 +16,7 @@ import Scrubber from '../components/Scrubber'
 import PlayPauseSkip from '../components/PlayPauseSkip';
 import ChapterSelect from '../components/ChapterSelect'
 import HeaderButtons from '../components/HeaderButtons'
+import BackButton from '../components/BackButton'
 
 //redux
 import { toggleComplete } from '../redux/actions/appProgressActions'
@@ -108,7 +109,7 @@ function PlayScreen(props) {
       props.navigation.setParams({ navIsComplete: (id in props.progress) });
       props.navigation.setParams({ navMarkHandler: changeCompleteStatus });
       props.navigation.setParams({ setShowShareLessonModal: setShowShareLessonModal })
-      props.navigation.setParams({ primaryColor: props.colors.primaryColor })
+      // props.navigation.setParams({ isRTL: props.isRTL })
 
       //set up our timer tick for updating the seeker every second
       const interval = setInterval(updateSeekerTick, 1000);
@@ -431,7 +432,7 @@ PlayScreen.navigationOptions = navigationData => {
    const navIsComplete = navigationData.navigation.getParam("navIsComplete");
    const navMarkHandler = navigationData.navigation.getParam("navMarkHandler");
    const setShowShareLessonModal = navigationData.navigation.getParam("setShowShareLessonModal");
-   const primaryColor = navigationData.navigation.getParam("primaryColor");
+   const isRTL = navigationData.navigation.getParam("isRTL");
 
    return {
       headerTitle: navigationData.navigation.getParam("subtitle"),
@@ -444,21 +445,38 @@ PlayScreen.navigationOptions = navigationData => {
          fontFamily: 'bold'
       },
       gestureEnabled: false,
-      headerRight: () =>
-         <HeaderButtons
-            name='md-share'
-            onPress1={() => setShowShareLessonModal(true)}
-            hasCompleteButton={true}
-            completeOnPress={navMarkHandler}
-            completeCondition={navIsComplete}
-         />,
+
       headerLeft: () =>
          <HeaderButtons
             name='ios-arrow-back'
             onPress1={() => navigationData.navigation.goBack()}
             hasCompleteButton={false}
          />,
-      //gestureDirection: 'horizontal-inverted',
+      headerRight: isRTL ? () =>
+         <BackButton
+            isRTL={isRTL}
+            onPress={() => navigationData.navigation.goBack()}
+         /> :
+         () => <HeaderButtons
+            name='md-share'
+            onPress1={() => setShowShareLessonModal(true)}
+            hasCompleteButton={true}
+            completeOnPress={navMarkHandler}
+            completeCondition={navIsComplete}
+         />,
+      headerLeft: isRTL ? 
+         () => <HeaderButtons
+            name='md-share'
+            onPress1={() => setShowShareLessonModal(true)}
+            hasCompleteButton={true}
+            completeOnPress={navMarkHandler}
+            completeCondition={navIsComplete}
+         /> : 
+            () => <BackButton
+               isRTL={isRTL}
+               onPress={() => navigationData.navigation.goBack()}
+            />,
+      gestureDirection: isRTL ? 'horizontal-inverted' : 'horizontal'
    }
 };
 
@@ -533,7 +551,8 @@ function mapStateToProps(state) {
       currentLanguage: state.database.currentLanguage,
       translations: state.database[state.database.currentLanguage].translations,
       downloads: state.downloads,
-      colors: state.database[state.database.currentLanguage].colors
+      colors: state.database[state.database.currentLanguage].colors,
+      isRTL: state.database[state.database.currentLanguage].isRTL,
    }
 };
 

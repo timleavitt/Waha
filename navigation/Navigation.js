@@ -16,6 +16,7 @@ const DefaultWahaNavigatorOptions = {
         height: 90 * scaleMultiplier,
     },
     headerTitleAlign: "center",
+    //gestureDirection: "horizontal-inverted"
 }
 
 const WahaNavigator = createStackNavigator(

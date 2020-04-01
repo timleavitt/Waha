@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import { scaleMultiplier, isRTL } from '../constants'
 
 function StudySetItemSmall(props) {
 
@@ -48,7 +48,7 @@ function StudySetItemSmall(props) {
 
 
    return (
-      <View style={styles.studySetItem}>
+      <View style={[styles.studySetItem, {direction: props.isRTL ? "rtl" : "ltr"}]}>
          <View style={{ flexDirection: "row" }}>
             <View style={styles.progressImage}>
                <AnimatedCircularProgress
@@ -92,13 +92,15 @@ const styles = StyleSheet.create({
       fontSize: 14 * scaleMultiplier,
       textAlignVertical: "center",
       flexWrap: "wrap",
-      fontFamily: 'medium'
+      fontFamily: 'medium',
+      textAlign: "left"
    },
    subtitle: {
       fontSize: 10 * scaleMultiplier, 
       textAlignVertical: "center",
       flexWrap: "wrap",
-      fontFamily: 'light'
+      fontFamily: 'light',
+      textAlign: "left"
    },
 })
 
@@ -108,6 +110,7 @@ function mapStateToProps(state) {
    return {
       progress: state.appProgress,
       colors: state.database[state.database.currentLanguage].colors,
+      isRTL: state.database[state.database.currentLanguage].isRTL
    }
 };
 

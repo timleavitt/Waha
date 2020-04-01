@@ -11,6 +11,7 @@ import ModalButton from '../components/ModalButton'
 import HeaderButtons from '../components/HeaderButtons'
 import NetInfo from '@react-native-community/netinfo';
 import { scaleMultiplier } from '../constants'
+import BackButton from '../components/BackButton'
 
 //redux imports
 import { downloadLesson } from '../redux/actions/downloadActions'
@@ -63,7 +64,8 @@ function LessonListScreen(props) {
             subtitle: item.subtitle,
             source: item.source,
             scripture: item.scripture,
-            iconName: props.navigation.getParam("iconName")
+            iconName: props.navigation.getParam("iconName"),
+            isRTL: props.navigation.getParam("isRTL")
          }
       })
    }
@@ -135,14 +137,14 @@ function LessonListScreen(props) {
 
    function markUpToThisPointAsComplete(id) {
       languageAndStudySet = id.substr(0, 4)
-      markToLesson = id.substr(4,5)
+      markToLesson = id.substr(4, 5)
 
       for (var i = 1; i <= parseInt(markToLesson); i++) {
          var formattedID = ("0" + i).slice(-2);
          idToMark = languageAndStudySet + formattedID
          if (!(idToMark in props.appProgress)) {
             props.toggleComplete(idToMark)
-         }  
+         }
       }
       hideModals();
    }
@@ -185,7 +187,7 @@ function LessonListScreen(props) {
                iconName={props.navigation.getParam("iconName")}
             />
          </View>
-         <FlatListSeparator/>
+         <FlatListSeparator />
          <FlatList
             data={selectedLessonList}
             renderItem={renderLessonItem}
@@ -214,20 +216,32 @@ function LessonListScreen(props) {
 }
 
 LessonListScreen.navigationOptions = navigationData => {
-   const primaryColor = navigationData.navigation.getParam("primaryColor");
+   const isRTL = navigationData.navigation.getParam("isRTL");
 
    return {
-      headerTitle: () => <Image style={styles.headerImage} source={require('../assets/headerLogo.png')}/>,
+      headerTitle: () => <Image style={styles.headerImage} source={require('../assets/headerLogo.png')} />,
       headerBackTitle: "Back",
       headerStyle: {
          backgroundColor: "#F7F9FA",
       },
-      headerLeft: () => 
-         <HeaderButtons
-            name='ios-arrow-back'
-            onPress1={() => navigationData.navigation.goBack()}
-            hasCompleteButton={false}
+      headerRight: isRTL ? () =>
+         <BackButton
+            isRTL={isRTL}
+            onPress={() => navigationData.navigation.goBack()}
+         /> :
+         () => <View></View>,
+      headerLeft: isRTL ? () =>
+         <View></View> :
+         () =>
+         <BackButton
+            isRTL={isRTL}
+            onPress={() => navigationData.navigation.goBack()}
          />,
+      gestureDirection: isRTL ? 'horizontal-inverted' : 'horizontal',
+      // transitionSpec: {
+      //    open: () => fromRight(),
+      //    close: () => fromRight(),
+      // }
    };
 };
 
@@ -260,7 +274,8 @@ function mapStateToProps(state) {
       appProgress: state.appProgress,
       database: state.database,
       currentLanguage: state.database.currentLanguage,
-      colors: state.database[state.database.currentLanguage].colors
+      colors: state.database[state.database.currentLanguage].colors,
+      isRTL: state.database[state.database.currentLanguage].isRTL,
    }
 };
 

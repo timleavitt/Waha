@@ -20,9 +20,9 @@ function HeaderButtons(props) {
       secondButton = null
    }
    return (
-      <View style={{...styles.headerButtonsContainer, ...{justifyContent: props.name === 'ios-arrow-back' ? "flex-start" : "flex-end"}}}>
+      <View style={styles.headerButtonsContainer}>
          <TouchableOpacity
-            style={{...styles.headerButton, ...{width: props.name === 'ios-arrow-back' ? 120 : null}}}
+            style={styles.headerButton}
             onPress={props.onPress1}
          >
             <Ionicons
