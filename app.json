@@ -2,6 +2,7 @@
   "expo": {
     "name": "Waha",
     "slug": "Waha",
+    "description": "Our app is an audio-based DBS system that facilitates the entire discovery bible study format and encourages group conversation after each question. Unlike other apps, our app is audio based first and has all the elements of a discovery bible study, meaning fellowship, story, and application.",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
@@ -11,7 +12,6 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -25,6 +25,8 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "githubUrl": "https://github.com/trentcowden/Waha",
+    "icon": "./assets/wahaIcon.png"
   }
 }
