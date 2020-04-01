@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { connect } from 'react-redux'
-import { scaleMultiplier, isRTL } from '../constants'
+import { scaleMultiplier} from '../constants'
 
 function StudySetItem(props) {
 
@@ -18,7 +18,7 @@ function StudySetItem(props) {
          return props.colors.accentColor1
       } else if (value === 3) {
          return props.colors.accentColor3
-      } else {
+      } else { 
          return props.colors.accentColor4
       }
    }
