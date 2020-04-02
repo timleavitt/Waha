@@ -12,6 +12,7 @@ import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
 import { addLanguage, changeLanguage } from '../redux/actions/databaseActions'
 import { resetProgress } from '../redux/actions/appProgressActions';
+import { getActiveChildNavigationOptions } from 'react-navigation';
 
 function SettingsScreen(props) {
 
@@ -24,9 +25,26 @@ function SettingsScreen(props) {
   
   //set language based on user's language vs user's location?
   useEffect(() => {
-   props.navigation.setParams({primaryColor: props.colors.primaryColor})
+     props.navigation.setOptions(getNavOptions())
   }, [])
 
+  function getNavOptions() {
+   return {
+       headerRight: props.route.params.isRTL ? () =>
+         <BackButton
+            isRTL={props.route.params.isRTL}
+            onPress={() => props.navigation.goBack()}
+         /> :
+         () => <View></View>,
+      headerLeft: props.route.params.isRTL ? () =>
+         <View></View> :
+         () =>
+         <BackButton
+            isRTL={props.route.params.isRTL}
+            onPress={() => props.navigation.goBack()}
+         />,
+   }
+}
 
   ///////////////////////
   ////OTHER FUNCTIONS////
@@ -113,36 +131,7 @@ function SettingsScreen(props) {
   )
 }
 
-SettingsScreen.navigationOptions = navigationData => {
-   const isRTL = navigationData.navigation.getParam("isRTL");
-   const primaryColor = navigationData.navigation.getParam("primaryColor");
 
-   return {
-       headerTitle: "Settings",
-       headerBackTitle: "Back",
-       headerStyle: {
-           backgroundColor: "#F7F7F7",
-       },
-       headerTitleStyle: {
-           color: primaryColor,
-           fontFamily: 'bold'
-       },
-       headerRight: isRTL ? () =>
-         <BackButton
-            isRTL={isRTL}
-            onPress={() => navigationData.navigation.goBack()}
-         /> :
-         () => <View></View>,
-      headerLeft: isRTL ? () =>
-         <View></View> :
-         () =>
-         <BackButton
-            isRTL={isRTL}
-            onPress={() => navigationData.navigation.goBack()}
-         />,
-      gestureDirection: isRTL ? 'horizontal-inverted' : 'horizontal',
-   };
-};
 
 const styles = StyleSheet.create({
    screen: {

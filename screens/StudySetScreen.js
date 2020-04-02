@@ -24,11 +24,30 @@ function StudySetScreen(props) {
       if (props.isFirstOpen) {
          props.navigation.replace("LanguageSelect")
       }
+      props.navigation.setOptions(getNavOptions())
    }, [])
+
+   function getNavOptions() {
+      return {
+         headerRight: props.isRTL ? 
+         () =>
+            <HeaderButtons
+               name='ios-people'
+               onPress1={() => props.navigation.toggleDrawer()}
+               hasCompleteButton={false}
+            /> : null,
+         headerLeft: props.isRTL ? null : () =>
+            <HeaderButtons
+               name='ios-people'
+               onPress1={() => props.navigation.toggleDrawer()}
+               hasCompleteButton={false}
+            />,
+      }
+   }
 
    useEffect(() => {
       if (!props.isFirstOpen && !props.isFetching) {
-         props.navigation.setParams({ primaryColor: props.colors.primaryColor, isRTL: props.isRTL })
+         //props.navigation.setParams({ primaryColor: props.colors.primaryColor, isRTL: props.isRTL })
       }
    }, [props.isFirstOpen])
 
@@ -47,16 +66,14 @@ function StudySetScreen(props) {
    //props.navigation.navigate takes us to lessonlist screen
    //params is the information we want to pass to lessonlist screen
    function navigateToLessonList(item) {
-      props.navigation.navigate({
-         routeName: "LessonList",
-         params: {
-            title: item.title,
-            studySetID: item.id,
-            subtitle: item.subtitle,
-            iconName: item.iconName,
-            isRTL: props.isRTL
-         }
-      })
+      props.navigation.navigate('LessonList', {
+         title: item.title,
+         studySetID: item.id,
+         subtitle: item.subtitle,
+         iconName: item.iconName,
+         isRTL: props.isRTL
+      }
+      )
    }
 
    i18n.translations = {
@@ -115,22 +132,7 @@ StudySetScreen.navigationOptions = navigationData => {
    const isRTL = navigationData.navigation.getParam("isRTL");
 
    return {
-      headerTitle:  () => <Image style={styles.headerImage} source={require('../assets/headerLogo.png')}/>,
-      headerBackTitle: "Back",
-      headerStyle: {
-         backgroundColor: "#EAEEF0",
-      }, 
-      headerRight: () =>
-         <HeaderButtons
-            name='md-settings'
-            onPress1={() => navigationData.navigation.navigate({
-               routeName: "Settings",
-               params: {
-                  isRTL: isRTL
-               }
-            })}
-            hasCompleteButton={false}
-         />,
+
       // gestureDirection: isRTL ? 'horizontal-inverted' : 'horizontal',
       // transitionSpec: {
       //    open: () => fromRight(),

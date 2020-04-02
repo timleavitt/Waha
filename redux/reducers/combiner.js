@@ -3,11 +3,13 @@
 import { downloads } from '../reducers/downloads'
 import { appProgress } from '../reducers/appProgress'
 import { database } from '../reducers/database'
+import { groups } from '../reducers/groups'
 
 import { combineReducers } from 'redux'
 
 export default rootReducer = combineReducers({
     downloads,
     appProgress,
-    database
+    database,
+    groups
 })
