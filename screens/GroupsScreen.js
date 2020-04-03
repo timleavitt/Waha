@@ -18,21 +18,25 @@ function GroupsScreen(props) {
    ////STATE, CONSTRUCTOR, AND NAVIGATION////
    //////////////////////////////////////////
 
-
+   const [isEditing, setIsEditing] = useState(false)
 
    //set language based on user's language vs user's location?
    useEffect(() => {
       props.navigation.setOptions(getNavOptions())
-   }, [])
+   }, [isEditing])
 
    function getNavOptions() {
       return {
-         headerRight: props.isRTL ? () =>
-            <BackButton
-               isRTL={props.isRTL}
-               onPress={() => props.navigation.goBack()}
-            /> :
-            () => <View></View>,
+         headerRight: props.isRTL ? 
+            () =>
+               <BackButton
+                  isRTL={props.isRTL}
+                  onPress={() => props.navigation.goBack()}
+               /> :
+            () => 
+               <TouchableOpacity style={styles.editButtonContainer} onPress={() => setIsEditing(old => !old)}>
+                  <Text style={styles.editButtonText}>{isEditing ? 'Done' : 'Edit'}</Text>
+               </TouchableOpacity>,
          headerLeft: props.isRTL ? () =>
             <View></View> :
             () =>
@@ -47,6 +51,19 @@ function GroupsScreen(props) {
    ////OTHER FUNCTIONS////
    ///////////////////////
 
+   function getInstalledLanguageInstances() {
+      var installedLanguageInstances = []
+      for (key in props.database) {
+         if (key.length === 2) {
+            var languageObject = {};
+            languageObject['languageName'] = props.database[key].displayName
+            languageObject['languageID'] = key
+            installedLanguageInstances.push(languageObject)
+         }
+      }
+      return installedLanguageInstances
+   }
+
 
 
    ////////////////////////////////
@@ -56,8 +73,10 @@ function GroupsScreen(props) {
    function renderLanguageInstanceItem(languageInstances) {
       return (
          <LanguageInstanceHeader
-            languageInstance={languageInstances.item}
-            goToAddNewGroupScreen={() => props.navigation.navigate('AddNewGroup', {languageInstance: languageInstances.item})}
+            languageName={languageInstances.item.languageName}
+            languageID={languageInstances.item.languageID}
+            goToAddNewGroupScreen={() => props.navigation.navigate('AddNewGroup', {languageID: languageInstances.item.languageID})}
+            isEditing={isEditing}
          />
       )
    }
@@ -67,13 +86,13 @@ function GroupsScreen(props) {
    return (
       <View style={styles.screen}>
          <View style={styles.languageList}>
-         <FlatList
-            data={Object.keys(props.database)}
+         <FlatList   
+            data={getInstalledLanguageInstances()}
             renderItem={renderLanguageInstanceItem}
-            keyExtractor={item => item}
+            keyExtractor={item => item.languageID}
          />
          </View>
-         <TouchableOpacity style={styles.addNewLanguageContainer} onPress={() => props.addLanguage('TestLanguageOne')}>
+         <TouchableOpacity style={styles.addNewLanguageContainer} onPress={() => props.navigation.navigate('AddNewLanguage', {installedLanguageInstances: getInstalledLanguageInstances()})}>
             <Text style={styles.addNewLanguageText}>Add new language</Text>
          </TouchableOpacity>
       </View>
@@ -92,13 +111,26 @@ const styles = StyleSheet.create({
    },
    addNewLanguageContainer: {
       width: "100%",
-      height: 50
+      height: 70,
+      justifyContent: "center",
+      borderTopWidth: 2,
+      borderTopColor: '#EFF2F4'
    },
    addNewLanguageText: {
       fontFamily: 'regular',
       fontSize: 18,
       color: '#9FA5AD',
       marginHorizontal: 15
+   },
+   editButtonContainer: {
+      width: 80,
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center"
+   },
+   editButtonText: {
+      fontFamily: 'regular',
+      fontSize: 18
    }
 })
 
@@ -109,7 +141,7 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
-   console.log(state.database)
+   //console.log(state.activeGroup)
    return {
       downloads: state.downloads,
       appProgress: state.appProgress,

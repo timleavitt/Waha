@@ -5,9 +5,9 @@ import i18n from 'i18n-js';
 
 //redux imports
 import { toggleComplete } from '../redux/actions/appProgressActions'
-import { setFirstOpen, setIsReadyToStart } from '../redux/actions/databaseActions'
+import { setFirstOpen, setIsReadyToStart, addLanguage, changeLanguage } from '../redux/actions/databaseActions'
 import { connect } from 'react-redux'
-import { addLanguage, changeLanguage } from '../redux/actions/databaseActions'
+import { createGroup, changeActiveGroup } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
 
 
@@ -24,6 +24,8 @@ function OnboardingSlidesScreen(props) {
       var language = props.route.params.selectedLanguage
       props.changeLanguage(language)
       props.addLanguage(language)
+      props.createGroup('Group 1', language)
+      props.changeActiveGroup('Group 1')
    }, [])
 
    const [pageNumber, setPageNumber] = useState(0)
@@ -232,7 +234,9 @@ function mapDispatchToProps(dispatch) {
       setFirstOpen: toSet => dispatch(setFirstOpen(toSet)),
       addLanguage: language => dispatch(addLanguage(language)),
       changeLanguage: language => dispatch(changeLanguage(language)),
-      setIsReadyToStart: toSet => dispatch(setIsReadyToStart(toSet))
+      setIsReadyToStart: toSet => dispatch(setIsReadyToStart(toSet)),
+      createGroup: (groupName, language) => dispatch(createGroup(groupName, language)),
+      changeActiveGroup: name => { dispatch(changeActiveGroup(name))}
    }
 }
 

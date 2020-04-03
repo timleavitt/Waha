@@ -19,14 +19,14 @@ function WahaDrawer(props) {
          style={styles.container}
          forceInset={{ top: 'always', horizontal: 'never' }}
       >
-         <View style={[styles.drawerHeaderContainer, { backgroundColor: props.isFetching ? null : props.colors.primaryColor }]}>
+         <View style={[styles.drawerHeaderContainer, { backgroundColor: props.colors.primaryColor }]}>
             <View style={styles.groupIconContainer}>
                <Ionicons
                   name="ios-people"
                   size={100}
                />
             </View>
-            <Text style={styles.groupName}>Hard-coded group name</Text>
+            <Text style={styles.groupName}>{props.activeGroup}</Text>
          </View>
          <View style={styles.bigDrawerItemsContainer}>
             <DrawerItem
@@ -103,19 +103,13 @@ const styles = StyleSheet.create({
 /////////////
 
 function mapStateToProps(state) {
-   if (!state.database.isFetching) {
-      return {
-         database: state.database,
-         colors: state.database[state.database.currentLanguage].colors,
-         appProgress: state.appProgress,
-         isRTL: state.database[state.database.currentLanguage].isRTL,
-      }
-   }
-   else {
-      return {
-         isFetching: state.database.isFetching,
-         isFirstOpen: state.database.isFirstOpen
-      }
+   var activeLanguage = state.groups.filter(item => item.name === state.activeGroup)[0].language
+   return {
+      database: state.database,
+      colors: state.database[activeLanguage].colors,
+      appProgress: state.appProgress,
+      isRTL: state.database[activeLanguage].isRTL,
+      activeGroup: state.activeGroup
    }
 };
 

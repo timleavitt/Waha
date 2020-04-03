@@ -103,7 +103,36 @@ function PlayScreen(props) {
       }
    }, []);
 
-   
+   function getNavOptions() {
+      return {
+         headerTitle: props.route.params.subtitle,
+         headerRight: props.route.params.isRTL ? () =>
+            <BackButton
+               isRTL={props.route.params.isRTL}
+               onPress={() => props.navigation.goBack()}
+            /> :
+            () => <HeaderButtons
+               name='md-share'
+               onPress1={() => setShowShareLessonModal(true)}
+               hasCompleteButton={true}
+               completeOnPress={changeCompleteStatus}
+               completeCondition={props.route.params.id in props.progress}
+            />,
+         headerLeft: props.route.params.isRTL ?
+            () => <HeaderButtons
+               name='md-share'
+               onPress1={() => setShowShareLessonModal(true)}
+               hasCompleteButton={true}
+               completeOnPress={changeCompleteStatus}
+               completeCondition={props.route.params.id in props.progress}
+            /> :
+            () => <BackButton
+               isRTL={props.route.params.isRTL}
+               onPress={() => props.navigation.goBack()}
+            />,
+            //gestureDirection: props.route.params.isRTL ? 'horizontal-inverted' : 'horizontal'
+      }
+   }
 
       ///////////////////////////////
       ////AUDIO CONTROL FUNCTIONS////
@@ -275,14 +304,14 @@ function PlayScreen(props) {
                'Don\' forget to select when your next lesson is!',
                [{
                   text: 'OK',
-                  onPress: () => console.log('test')
+                  onPress: () => props.navigation.goBack()
                }])
          } else {
             Alert.alert(props.translations['completeMessageTitle'],
                props.translations['completeMessageBody'],
                [{
                   text: 'OK',
-                  onPress: () => console.log('test')
+                  onPress: () => props.navigation.goBack()
                }])
          }
       }
@@ -301,37 +330,6 @@ function PlayScreen(props) {
                break;
          }
       }
-
-      function getNavOptions() {
-         return {
-            headerTitle: props.route.params.subtitle,
-            headerRight: props.route.params.isRTL ? () =>
-               <BackButton
-                  isRTL={props.route.params.isRTL}
-                  onPress={() => props.navigation.goBack()}
-               /> :
-               () => <HeaderButtons
-                  name='md-share'
-                  onPress1={() => setShowShareLessonModal(true)}
-                  hasCompleteButton={true}
-                  completeOnPress={changeCompleteStatus}
-                  completeCondition={props.route.params.id in props.progress}
-               />,
-            headerLeft: props.route.params.isRTL ?
-               () => <HeaderButtons
-                  name='md-share'
-                  onPress1={() => setShowShareLessonModal(true)}
-                  hasCompleteButton={true}
-                  completeOnPress={changeCompleteStatus}
-                  completeCondition={props.route.params.id in props.progress}
-               /> :
-               () => <BackButton
-                  isRTL={props.route.params.isRTL}
-                  onPress={() => props.navigation.goBack()}
-               />,
-         }
-      }
-
 
       ////////////////////////////////
       ////RENDER/STYLES/NAVOPTIONS////
@@ -483,15 +481,15 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
-   //console.log(state.downloads)
+   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
       progress: state.appProgress,
       database: state.database,
       currentLanguage: state.database.currentLanguage,
-      translations: state.database[state.database.currentLanguage].translations,
+      translations: state.database[activeGroup.language].translations,
       downloads: state.downloads,
-      colors: state.database[state.database.currentLanguage].colors,
-      isRTL: state.database[state.database.currentLanguage].isRTL,
+      colors: state.database[activeGroup.language].colors,
+      isRTL: state.database[activeGroup.language].isRTL,
    }
 };
 

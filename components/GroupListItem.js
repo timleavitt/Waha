@@ -1,11 +1,11 @@
 //imports
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Progress from 'react-native-progress';
 import { connect } from 'react-redux'
-import { toggleComplete } from '../redux/actions/appProgressActions'
+import { deleteGroup, changeActiveGroup } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
 
 function GroupListItem(props) {
@@ -13,14 +13,58 @@ function GroupListItem(props) {
    ////////////////////////////////
    ////RENDER/STYLES/NAVOPTIONS////
    ////////////////////////////////
+   var deleteButton;
+   if (props.isEditing) {
+      deleteButton =
+         <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => props.deleteGroup(props.name)}
+         >
+            <MaterialCommunityIcons name='minus-circle' size={30} color="#FF0800" />
+         </TouchableOpacity>
+   } else {
+      deleteButton = null
+   }
+
+   var rightButton;
+   if (props.activeGroup === props.name) {
+      rightButton = 
+         <View style={styles.iconContainer}>
+            <Ionicons
+               name="md-checkmark"
+               size={24}
+               color="black"
+            />
+         </View>
+   }
+   if (props.isEditing) {
+      rightButton =
+         <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => { }}
+         >
+            <Ionicons
+               name={props.isRTL ? 'ios-arrow-back' : 'ios-arrow-forward'}
+               size={50}
+               color="gray"
+            />
+         </TouchableOpacity>
+   }
 
    return (
-      <View style={[styles.groupListItemContainer, { direction: props.isRTL ? "rtl" : "ltr" }]}>
+      <TouchableOpacity 
+         style={[styles.groupListItemContainer, { direction: props.isRTL ? "rtl" : "ltr" }]}
+         onPress={() => {props.changeActiveGroup(props.name)}}
+      >
+         {deleteButton}
          <View style={styles.iconContainer}>
             <Ionicons name='ios-people' size={50} />
          </View>
-         <Text style={styles.groupNameText}>{props.name}</Text>
-      </View>
+         <View style={styles.groupNameContainer}>
+            <Text style={styles.groupNameText}>{props.name}</Text>
+         </View>
+         {rightButton}
+      </TouchableOpacity>
    )
 }
 
@@ -31,13 +75,19 @@ const styles = StyleSheet.create({
       flexDirection: "row",
       alignItems: "center",
       backgroundColor: "#FFFFFF",
-      margin: 5
+      margin: 5,
    },
    iconContainer: {
       justifyContent: "center",
       alignItems: "center",
-      marginHorizontal: 15
+      marginHorizontal: 15,
+      height: "100%"
    },
+   groupNameContainer: {
+      flex: 1, 
+      height: "100%",
+      justifyContent: "center"
+   }, 
    groupNameText: {
       color: "#3A3C3F",
       fontSize: 18,
@@ -46,17 +96,20 @@ const styles = StyleSheet.create({
 })
 
 function mapStateToProps(state) {
+   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      colors: state.database[state.database.currentLanguage].colors,
+      colors: state.database[activeGroup.language].colors,
       progress: state.appProgress,
-      isRTL: state.database[state.database.currentLanguage].isRTL,
+      isRTL: state.database[activeGroup.language].isRTL,
+      groups: state.groups,
+      activeGroup: state.activeGroup
    }
 };
 
 function mapDispatchToProps(dispatch) {
    return {
-      downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
-      toggleComplete: lessonID => { dispatch(toggleComplete(lessonID)) }
+      deleteGroup: name => { dispatch(deleteGroup(name)) },
+      changeActiveGroup: name => { dispatch(changeActiveGroup(name))}
    }
 }
 

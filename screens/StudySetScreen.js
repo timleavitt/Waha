@@ -1,19 +1,14 @@
 //basic imports
 import React, { useEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, ActivityIndicator, Image } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import i18n from 'i18n-js';
-import { scaleMultiplier } from '../constants'
 
 //other component imports
 import StudySetItem from '../components/StudySetItem';
 
 //redux
 import { connect } from 'react-redux'
-import { addLanguage, changeLanguage } from '../redux/actions/databaseActions'
-import { setFirstOpen } from '../redux/actions/databaseActions'
 import HeaderButtons from '../components/HeaderButtons';
-import { fromRight, fromLeft } from 'react-navigation-transitions';
 
 function StudySetScreen(props) {
    useEffect(() => {
@@ -22,19 +17,13 @@ function StudySetScreen(props) {
 
    function getNavOptions() {
       return {
-         headerRight: props.isRTL ?
-            () =>
-               <HeaderButtons
-                  name='ios-people'
-                  onPress1={() => props.navigation.toggleDrawer()}
-                  hasCompleteButton={false}
-               /> : null,
-         headerLeft: props.isRTL ? null : () =>
+         headerLeft: () =>
             <HeaderButtons
                name='ios-people'
                onPress1={() => props.navigation.toggleDrawer()}
                hasCompleteButton={false}
             />,
+         //gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal'
       }
    }
 
@@ -83,7 +72,7 @@ function StudySetScreen(props) {
    return (
       <View style={styles.screen}>
          <FlatList
-            data={props.database[props.database.currentLanguage].studySets}
+            data={props.studySets}
             renderItem={renderStudySetItem}
          />
       </View>
@@ -121,10 +110,12 @@ const styles = StyleSheet.create({
 /////////////
 
 function mapStateToProps(state) {
+   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      database: state.database,
-      colors: state.database[state.database.currentLanguage].colors,
-      isRTL: state.database[state.database.currentLanguage].isRTL,
+      database: state.database[activeGroup.language],
+      colors: state.database[activeGroup.language].colors,
+      isRTL: state.database[activeGroup.language].isRTL,
+      studySets: state.database[activeGroup.language].studySets
    }
 };
 

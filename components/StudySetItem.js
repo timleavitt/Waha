@@ -131,10 +131,11 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
+   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
       progress: state.appProgress,
-      colors: state.database[state.database.currentLanguage].colors,
-      isRTL: state.database[state.database.currentLanguage].isRTL
+      colors: state.database[activeGroup.language].colors,
+      isRTL: state.database[activeGroup.language].isRTL
    }
 };
 

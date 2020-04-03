@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
 })
 
 function mapStateToProps(state) {
-   //console.log(state.downloads)
+   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      colors: state.database[state.database.currentLanguage].colors
+      colors: state.database[activeGroup.language].colors
    }
 };
 

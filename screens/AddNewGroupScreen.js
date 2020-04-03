@@ -47,7 +47,7 @@ function AddNewGroupScreen(props) {
    ///////////////////////
 
    function addNewGroup() {
-      props.createGroup(groupName, props.route.params.languageInstance)
+      props.createGroup(groupName, props.route.params.languageID)
       props.navigation.goBack()
    }
 
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
-   console.log(state.groups)
+   //console.log(state.groups)
    return {
       downloads: state.downloads,
       appProgress: state.appProgress,
