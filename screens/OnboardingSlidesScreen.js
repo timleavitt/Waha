@@ -5,7 +5,7 @@ import i18n from 'i18n-js';
 
 //redux imports
 import { toggleComplete } from '../redux/actions/appProgressActions'
-import { setFirstOpen } from '../redux/actions/databaseActions'
+import { setFirstOpen, setIsReadyToStart } from '../redux/actions/databaseActions'
 import { connect } from 'react-redux'
 import { addLanguage, changeLanguage } from '../redux/actions/databaseActions'
 import { scaleMultiplier } from '../constants'
@@ -21,7 +21,7 @@ function OnboardingSlidesScreen(props) {
 
    useEffect(() => {
       props.setFirstOpen(false)
-      var language = props.navigation.getParam("selectedLanguage")
+      var language = props.route.params.selectedLanguage
       props.changeLanguage(language)
       props.addLanguage(language)
    }, [])
@@ -69,21 +69,7 @@ function OnboardingSlidesScreen(props) {
          next: 'Next',
          finish: 'Finish'
       },
-      es: {
-         title0: 'Bienvenido a la aplicación!',
-         body0: 'Jeff sigue agregando nuevas funciones para que yo haga :)',
-         title1: 'Aunque lo disfruto',
-         body1: 'Aquí hay una foto mía de niño',
-         title2: 'A veces cuando codifico,',
-         body2: 'Me frustro y hago la cara de este gato',
-         title3: 'Y luego me pregunto',
-         body3: '¿Por qué lo hago?',
-         prev: 'Previo',
-         next: 'Siguiente',
-         finish: 'Terminar'
-      }
    };
-
 
    ////////////////////////////////
    ////RENDER/STYLES/NAVOPTIONS////
@@ -115,6 +101,11 @@ function OnboardingSlidesScreen(props) {
          body: i18n.t('body3'),
       }
    ]
+
+   function finishOnboarding() {
+      props.setIsReadyToStart(true)
+      props.navigation.navigate('Loading')
+   }
 
    function renderOnboardingSlide(slideList) {
       return (
@@ -154,19 +145,13 @@ function OnboardingSlidesScreen(props) {
                   {pageNumber > 0 ? <Button title={i18n.t('prev')} onPress={() => incrementPageNumber("prev")} /> : null}
                </View>
                <View>
-                  <Button title={pageNumber !== 3 ? i18n.t('next') : i18n.t('finish')} onPress={pageNumber !== 3 ? () => incrementPageNumber("next") : () => props.navigation.replace("StudySet")} />
+                  <Button title={pageNumber !== 3 ? i18n.t('next') : i18n.t('finish')} onPress={pageNumber !== 3 ? () => incrementPageNumber("next") : finishOnboarding} />
                </View>
             </View>
          </View>
       </View>
    )
 }
-
-OnboardingSlidesScreen.navigationOptions = navigationData => {
-   return {
-      headerShown: false
-   };
-};
 
 const styles = StyleSheet.create({
    screen: {
@@ -237,8 +222,8 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
-   //console.log(state)
    return {
+      isFetching: state.database.isFetching
    }
 };
 
@@ -247,6 +232,7 @@ function mapDispatchToProps(dispatch) {
       setFirstOpen: toSet => dispatch(setFirstOpen(toSet)),
       addLanguage: language => dispatch(addLanguage(language)),
       changeLanguage: language => dispatch(changeLanguage(language)),
+      setIsReadyToStart: toSet => dispatch(setIsReadyToStart(toSet))
    }
 }
 

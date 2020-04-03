@@ -1,17 +1,17 @@
 import React from 'react';
 import { StyleSheet, Image } from 'react-native';
-import HeaderButtons from './components/HeaderButtons'
-import { scaleMultiplier } from './constants'
-import WahaDrawer from './components/WahaDrawer'
+import HeaderButtons from '../components/HeaderButtons'
+import { scaleMultiplier } from '../constants'
+import WahaDrawer from '../components/WahaDrawer'
 
-import LessonListScreen from './screens/LessonListScreen';
-import PlayScreen from './screens/PlayScreen'
-import LanguageSelectScreen from './screens/LanguageSelectScreen';
-import OnboardingSlidesScreen from './screens/OnboardingSlidesScreen';
-import SettingsScreen from './screens/SettingsScreen'
-import StudySetScreen from './screens/StudySetScreen';
-import GroupsScreen from './screens/GroupsScreen';
-import AddNewGroupScreen from './screens/AddNewGroupScreen';
+import LessonListScreen from '../screens/LessonListScreen';
+import PlayScreen from '../screens/PlayScreen'
+import LanguageSelectScreen from '../screens/LanguageSelectScreen';
+import OnboardingSlidesScreen from '../screens/OnboardingSlidesScreen';
+import SettingsScreen from '../screens/SettingsScreen'
+import StudySetScreen from '../screens/StudySetScreen';
+import GroupsScreen from '../screens/GroupsScreen';
+import AddNewGroupScreen from '../screens/AddNewGroupScreen';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -39,25 +39,38 @@ function getGestureEnabled(route) {
 }
 
 //Drawer navigator contains stack navigator as only screen
-function DrawerNavigator(props) {
-   
+
+
+
+const styles = StyleSheet.create({
+   headerImage: {
+      resizeMode: "center",
+      width: 120,
+      height: 40,
+      alignSelf: "center",
+   }
+})
+
+function MainNavigator(props) {
    //main navigator through all app screens
    function StackNavigator() {
       return (
          //global navigation options
-         <Stack.Navigator initialRouteName="Groups" screenOptions={{
-            headerStyle: {
-               height: 90 * scaleMultiplier,
-            },
-            gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
-         }}>
+         <Stack.Navigator
+            initialRouteName='StudySet'
+            screenOptions={{
+               headerStyle: {
+                  height: 90 * scaleMultiplier,
+               },
+               //gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
+            }}>
 
             {/* Study Set Screen */}
             <Stack.Screen
                name="StudySet"
                component={StudySetScreen}
                options={{
-                  headerTitle: <Image style={styles.headerImage} source={require('./assets/headerLogo.png')} />,
+                  headerTitle: <Image style={styles.headerImage} source={require('../assets/headerLogo.png')} />,
                   headerStyle: {
                      backgroundColor: "#EAEEF0",
                   },
@@ -71,8 +84,8 @@ function DrawerNavigator(props) {
                name="LessonList"
                component={LessonListScreen}
                options={{
-                  gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
-                  headerTitle: () => <Image style={styles.headerImage} source={require('./assets/headerLogo.png')} />,
+                  //gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
+                  headerTitle: () => <Image style={styles.headerImage} source={require('../assets/headerLogo.png')} />,
                   headerStyle: {
                      backgroundColor: "#F7F9FA",
                   },
@@ -95,18 +108,6 @@ function DrawerNavigator(props) {
                   gestureEnabled: false
                }}
             />
-
-            {/* Language Select Screen (Onboarding) */}
-            <Stack.Screen
-               name="LanguageSelect"
-               component={LanguageSelectScreen}
-            />
-
-            {/* Onboarding Slides Screen */}
-            <Stack.Screen
-               name="OnboardingSlides"
-               component={OnboardingSlidesScreen}
-            />
             <Stack.Screen
                name="Settings"
                component={SettingsScreen}
@@ -116,7 +117,7 @@ function DrawerNavigator(props) {
                      backgroundColor: "#F7F7F7",
                   },
                   headerTitleStyle: {
-                     color: props.colors.primaryColor,
+                     //color: props.colors.primaryColor,
                      fontFamily: 'bold'
                   },
                }}
@@ -154,40 +155,23 @@ function DrawerNavigator(props) {
    }
    return (
       <NavigationContainer>
-         <Drawer.Navigator drawerContent={props => <WahaDrawer {...props}/>}>
+         <Drawer.Navigator drawerContent={props => <WahaDrawer {...props} />}>
             <Drawer.Screen options={({ route }) => ({ gestureEnabled: getGestureEnabled(route) })} name="StackNavigator" component={StackNavigator} />
          </Drawer.Navigator>
       </NavigationContainer>
    )
 }
 
-
-const styles = StyleSheet.create({
-   headerImage: {
-      resizeMode: "center",
-      width: 120,
-      height: 40,
-      alignSelf: "center",
-   }
-})
-
 /////////////
 ////REDUX////
 /////////////
 
 function mapStateToProps(state) {
-   if (!state.database.isFetching)
-      return {
-         database: state.database,
-         colors: state.database[state.database.currentLanguage].colors,
-         appProgress: state.appProgress,
-         isRTL: state.database[state.database.currentLanguage].isRTL,
-      }
-   else {
-      return {
-         isFetching: state.database.isFetching,
-         isFirstOpen: state.database.isFirstOpen
-      }
+   return {
+      database: state.database,
+      colors: state.database[state.database.currentLanguage].colors,
+      appProgress: state.appProgress,
+      isRTL: state.database[state.database.currentLanguage].isRTL,
    }
 };
 
@@ -196,4 +180,4 @@ function mapDispatchToProps(dispatch) {
    }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DrawerNavigator);
+export default connect(mapStateToProps, mapDispatchToProps)(MainNavigator);

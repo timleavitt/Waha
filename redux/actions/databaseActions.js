@@ -4,6 +4,7 @@ export const STORE_DATA = 'STORE_DATA'
 export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE'
 export const SET_IS_FETCHING = 'SET_IS_FETCHING'
 export const SET_FIRST_OPEN = 'SET_FIRST_OPEN'
+export const SET_IS_READY_TO_START = 'SET_IS_READY_TO_START'
 
 import firebase from 'firebase';
 import '@firebase/firestore'
@@ -46,6 +47,13 @@ export function setFirstOpen(isFirstOpen) {
         type: SET_FIRST_OPEN,
         isFirstOpen
     }
+}
+
+export function setIsReadyToStart(isReadyToStart) {
+   return {
+      type: SET_IS_READY_TO_START,
+      isReadyToStart
+   }
 }
 
 export function fetchError() {

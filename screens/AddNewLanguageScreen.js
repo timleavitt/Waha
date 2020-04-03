@@ -9,14 +9,12 @@ import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
 import { createGroup } from '../redux/actions/groupsActions'
 
-function AddNewGroupScreen(props) {
+function AddNewLanguageScreen(props) {
 
 
    //////////////////////////////////////////
    ////STATE, CONSTRUCTOR, AND NAVIGATION////
    //////////////////////////////////////////
-
-   const [groupName, setGroupName] = useState('')
 
 
    //set language based on user's language vs user's location?
@@ -158,4 +156,4 @@ function mapDispatchToProps(dispatch) {
    }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddNewGroupScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(AddNewLanguageScreen);

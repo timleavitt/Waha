@@ -1,6 +1,6 @@
 //imports
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Alert, Image } from 'react-native';
+import { View, FlatList, StyleSheet, Alert } from 'react-native';
 import LessonItem from '../components/LessonItem';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -8,7 +8,6 @@ import StudySetItemSmall from '../components/StudySetItemSmall';
 import FlatListSeparator from '../components/FlatListSeparator'
 import WahaModal from '../components/WahaModal'
 import ModalButton from '../components/ModalButton'
-import HeaderButtons from '../components/HeaderButtons'
 import NetInfo from '@react-native-community/netinfo';
 import { scaleMultiplier } from '../constants'
 import BackButton from '../components/BackButton'
@@ -35,12 +34,6 @@ function LessonListScreen(props) {
    const [showSaveLessonModal, setShowSaveLessonModal] = useState(false);
    const [showDeleteLessonModal, setShowDeleteLessonModal] = useState(false);
    const [showLessonOptionsModal, setShowLessonOptionsModal] = useState(false);
-
-   //find our specified study set with data taken from the last screen
-   selectedStudySetArray = props.database[props.database.currentLanguage].studySets.filter(studyset => studyset.id === props.route.params.studySetID);
-
-   //make our data only the array of lessons
-   selectedLessonList = selectedStudySetArray[0].lessons;
 
    useEffect(() => {
       props.navigation.setOptions(getNavOptions())
@@ -74,13 +67,13 @@ function LessonListScreen(props) {
    //params is the information we want to pass to play screen
    function navigateToPlay(item) {
       props.navigation.navigate('Play', {
-            id: item.id,
-            title: item.title,
-            subtitle: item.subtitle,
-            source: item.source,
-            scripture: item.scripture,
-            iconName: props.route.params.iconName,
-            isRTL: props.route.params.isRTL
+         id: item.id,
+         title: item.title,
+         subtitle: item.subtitle,
+         source: item.source,
+         scripture: item.scripture,
+         iconName: props.route.params.iconName,
+         isRTL: props.route.params.isRTL
       })
    }
 
@@ -203,7 +196,7 @@ function LessonListScreen(props) {
          </View>
          <FlatListSeparator />
          <FlatList
-            data={selectedLessonList}
+            data={props.database[props.database.currentLanguage].studySets.filter(studyset => studyset.id === props.route.params.studySetID)[0].lessons}
             renderItem={renderLessonItem}
             extraData={refresh}
             ItemSeparatorComponent={FlatListSeparator}

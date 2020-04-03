@@ -46,12 +46,7 @@ function LanguageSelectScreen(props) {
    function navigateToOnboarding() {
       // console.log(`type of language parameter passed: ${typeof selectedLanguage}`)
       // console.log(`language parameter passed: ${selectedLanguage}`)
-      props.navigation.replace({
-         routeName: "OnboardingSlides",
-         params: {
-            selectedLanguage: selectedLanguage
-         }
-      })
+      props.navigation.navigate('OnboardingSlides', {selectedLanguage: selectedLanguage})
    }
 
    async function playAudio() {
@@ -172,7 +167,6 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
-   //console.log(state.database)
    return {
       downloads: state.downloads,
       appProgress: state.appProgress,

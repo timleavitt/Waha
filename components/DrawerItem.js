@@ -14,7 +14,7 @@ function DrawerItem(props) {
    ////////////////////////////////
 
    return (
-      <TouchableOpacity style={[styles.settingsItem, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={props.onPress}>
+      <TouchableOpacity style={[styles.settingsItem, { direction: props.isRTL ? "rtl" : "ltr" }]} onPress={props.onPress}>
          <View style={styles.iconContainer}>
             <Ionicons
                name={props.name}
@@ -52,11 +52,14 @@ const styles = StyleSheet.create({
 })
 
 function mapStateToProps(state) {
-   return {
-      grayedOut: state.database[state.database.currentLanguage].colors.grayedOut,
-      accentColor: state.database[state.database.currentLanguage].colors.accentColor,
-      progress: state.appProgress,
-      isRTL: state.database[state.database.currentLanguage].isRTL,
+   if (!state.database.isFetching) {
+      return {
+         isRTL: state.database[state.database.currentLanguage].isRTL,
+      }
+   } else {
+      return {
+         isFetching: state.database.isFetching,
+      }
    }
 };
 

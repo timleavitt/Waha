@@ -14,52 +14,52 @@ function WahaDrawer(props) {
       await WebBrowser.openBrowserAsync(url);
    }
 
-   return(
-   <SafeAreaView
-      style={styles.container}
-      forceInset={{ top: 'always', horizontal: 'never' }}
-   >
-      <View style={[styles.drawerHeaderContainer, {backgroundColor: props.colors.primaryColor}]}>
-         <View style={styles.groupIconContainer}>
-            <Ionicons 
+   return (
+      <SafeAreaView
+         style={styles.container}
+         forceInset={{ top: 'always', horizontal: 'never' }}
+      >
+         <View style={[styles.drawerHeaderContainer, { backgroundColor: props.isFetching ? null : props.colors.primaryColor }]}>
+            <View style={styles.groupIconContainer}>
+               <Ionicons
+                  name="ios-people"
+                  size={100}
+               />
+            </View>
+            <Text style={styles.groupName}>Hard-coded group name</Text>
+         </View>
+         <View style={styles.bigDrawerItemsContainer}>
+            <DrawerItem
                name="ios-people"
-               size={100}
+               text="Groups & Languages"
+               onPress={() => props.navigation.navigate('Groups', { isRTL: props.isFetching ? null : props.isRTL })}
+            />
+            <DrawerItem
+               name="md-glasses"
+               text="Incognito Mode (todo)"
+            />
+            <DrawerItem
+               name="ios-mail"
+               text="Submit Feedback"
+               onPress={() => openBrowser('https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif')}
+            />
+            <DrawerItem
+               name="ios-save"
+               text="Storage (todo)"
             />
          </View>
-         <Text style={styles.groupName}>Hard-coded group name</Text>
-      </View>
-      <View style={styles.bigDrawerItemsContainer}>
-      <DrawerItem 
-         name="ios-people"
-         text="Groups & Languages"
-         onPress={() => props.navigation.navigate('Groups', {isRTL: props.isRTL})}
-      />
-      <DrawerItem 
-         name="md-glasses"
-         text="Incognito Mode (todo)"
-      />
-      <DrawerItem 
-         name="ios-mail"
-         text="Submit Feedback"
-         onPress={() => openBrowser('https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif')}
-      />
-      <DrawerItem 
-         name="ios-save"
-         text="Storage (todo)"
-      />
-      </View>
-      <View style={styles.smallDrawerItemsContainer}>
-         <TouchableOpacity style={styles.smallDrawerItemContainer} onPress={() => {}}>
-            <Text style={styles.smallDrawerItemText}>Coaching Tools (todo)</Text>
-         </TouchableOpacity>
-         <TouchableOpacity style={styles.smallDrawerItemContainer} onPress={() => openBrowser('https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif')}>
-            <Text style={styles.smallDrawerItemText}>Privacy Policy</Text>
-         </TouchableOpacity>
-         <TouchableOpacity style={styles.smallDrawerItemContainer} onPress={() => openBrowser('https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif')}>
-            <Text style={styles.smallDrawerItemText}>View Credits</Text>
-         </TouchableOpacity>
-      </View>
-   </SafeAreaView >
+         <View style={styles.smallDrawerItemsContainer}>
+            <TouchableOpacity style={styles.smallDrawerItemContainer} onPress={() => { }}>
+               <Text style={styles.smallDrawerItemText}>Coaching Tools (todo)</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.smallDrawerItemContainer} onPress={() => openBrowser('https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif')}>
+               <Text style={styles.smallDrawerItemText}>Privacy Policy</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.smallDrawerItemContainer} onPress={() => openBrowser('https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif')}>
+               <Text style={styles.smallDrawerItemText}>View Credits</Text>
+            </TouchableOpacity>
+         </View>
+      </SafeAreaView >
    )
 }
 
@@ -103,12 +103,20 @@ const styles = StyleSheet.create({
 /////////////
 
 function mapStateToProps(state) {
+   if (!state.database.isFetching) {
       return {
          database: state.database,
          colors: state.database[state.database.currentLanguage].colors,
          appProgress: state.appProgress,
          isRTL: state.database[state.database.currentLanguage].isRTL,
       }
+   }
+   else {
+      return {
+         isFetching: state.database.isFetching,
+         isFirstOpen: state.database.isFirstOpen
+      }
+   }
 };
 
 function mapDispatchToProps(dispatch) {

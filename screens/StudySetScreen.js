@@ -16,26 +16,19 @@ import HeaderButtons from '../components/HeaderButtons';
 import { fromRight, fromLeft } from 'react-navigation-transitions';
 
 function StudySetScreen(props) {
-
-
-   //check if we're on first launch (maybe get better solution later;
-   //this does an async operation every time this screen opens)
    useEffect(() => {
-      if (props.isFirstOpen) {
-         props.navigation.replace("LanguageSelect")
-      }
       props.navigation.setOptions(getNavOptions())
    }, [])
 
    function getNavOptions() {
       return {
-         headerRight: props.isRTL ? 
-         () =>
-            <HeaderButtons
-               name='ios-people'
-               onPress1={() => props.navigation.toggleDrawer()}
-               hasCompleteButton={false}
-            /> : null,
+         headerRight: props.isRTL ?
+            () =>
+               <HeaderButtons
+                  name='ios-people'
+                  onPress1={() => props.navigation.toggleDrawer()}
+                  hasCompleteButton={false}
+               /> : null,
          headerLeft: props.isRTL ? null : () =>
             <HeaderButtons
                name='ios-people'
@@ -44,15 +37,6 @@ function StudySetScreen(props) {
             />,
       }
    }
-
-   useEffect(() => {
-      if (!props.isFirstOpen && !props.isFetching) {
-         //props.navigation.setParams({ primaryColor: props.colors.primaryColor, isRTL: props.isRTL })
-      }
-   }, [props.isFirstOpen])
-
-
-
 
    FileSystem.getFreeDiskStorageAsync().then(freeDiskStorage => {
       //console.log(freeDiskStorage)
@@ -76,21 +60,10 @@ function StudySetScreen(props) {
       )
    }
 
-   i18n.translations = {
-      en: {
-         loadingMessage: "Hang on, we're setting things up..."
-      },
-      es: {
-         loadingMessage: "Espera, estamos preparando las cosas..."
-      }
-   };
-
-
 
    ////////////////////////////////
    ////RENDER/STYLES/NAVOPTIONS////
    ////////////////////////////////
-
 
 
    //function to render the studyset items
@@ -107,39 +80,15 @@ function StudySetScreen(props) {
       )
    }
 
-
-   //if we're not fetching data, render the flatlist. if we are, render a loading screen
-   if (!props.isFetching) {
-      return (
-         <View style={styles.screen}>
-            <FlatList
-               data={props.database[props.database.currentLanguage].studySets}
-               renderItem={renderStudySetItem}
-            />
-         </View>
-      )
-   } else {
-      return (
-         <View style={{ flex: 1, justifyContent: "center" }}>
-            <Text style={{ textAlign: "center", fontSize: 30, padding: 10, fontFamily: "medium" }}>{i18n.t('loadingMessage')}</Text>
-            <ActivityIndicator size="large" color="black" />
-         </View>
-      )
-   }
+   return (
+      <View style={styles.screen}>
+         <FlatList
+            data={props.database[props.database.currentLanguage].studySets}
+            renderItem={renderStudySetItem}
+         />
+      </View>
+   )
 }
-
-StudySetScreen.navigationOptions = navigationData => {
-   const isRTL = navigationData.navigation.getParam("isRTL");
-
-   return {
-
-      // gestureDirection: isRTL ? 'horizontal-inverted' : 'horizontal',
-      // transitionSpec: {
-      //    open: () => fromRight(),
-      //    close: () => fromRight(),
-      // }
-   };
-};
 
 const styles = StyleSheet.create({
    screen: {
@@ -172,26 +121,15 @@ const styles = StyleSheet.create({
 /////////////
 
 function mapStateToProps(state) {
-   if (!state.database.isFetching)
-      return {
-         database: state.database,
-         colors: state.database[state.database.currentLanguage].colors,
-         appProgress: state.appProgress,
-         isRTL: state.database[state.database.currentLanguage].isRTL,
-      }
-   else {
-      return {
-         isFetching: state.database.isFetching,
-         isFirstOpen: state.database.isFirstOpen
-      }
+   return {
+      database: state.database,
+      colors: state.database[state.database.currentLanguage].colors,
+      isRTL: state.database[state.database.currentLanguage].isRTL,
    }
 };
 
 function mapDispatchToProps(dispatch) {
    return {
-      addLanguage: language => dispatch(addLanguage(language)),
-      changeLanguage: language => dispatch(changeLanguage(language)),
-      setFirstOpen: toSet => dispatch(setFirstOpen(toSet))
    }
 };
 
