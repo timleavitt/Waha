@@ -4,7 +4,6 @@ import { View, StyleSheet, Text, Button, Image, FlatList, Dimensions } from 'rea
 import i18n from 'i18n-js';
 
 //redux imports
-import { toggleComplete } from '../redux/actions/appProgressActions'
 import { setFirstOpen, setIsReadyToStart, addLanguage, changeLanguage } from '../redux/actions/databaseActions'
 import { connect } from 'react-redux'
 import { createGroup, changeActiveGroup } from '../redux/actions/groupsActions'

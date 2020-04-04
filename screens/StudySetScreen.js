@@ -23,7 +23,6 @@ function StudySetScreen(props) {
                onPress1={() => props.navigation.toggleDrawer()}
                hasCompleteButton={false}
             />,
-         //gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal'
       }
    }
 

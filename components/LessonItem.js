@@ -5,7 +5,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Progress from 'react-native-progress';
 import { connect } from 'react-redux'
-import { toggleComplete } from '../redux/actions/appProgressActions'
+import { toggleComplete } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
 
 function LessonItem(props) {
@@ -89,7 +89,7 @@ function LessonItem(props) {
                }
                onLongPress={showLessonOptionsModal}
             >
-               <TouchableOpacity style={styles.completeStatusContainer} onPress={() => props.toggleComplete(props.id)}>
+               <TouchableOpacity style={styles.completeStatusContainer} onPress={() => props.toggleComplete(props.activeGroupName, props.id)}>
                   <MaterialCommunityIcons
                      name={props.isComplete ? "check-circle" : "play-box-outline"}
                      size={30}
@@ -165,13 +165,14 @@ function mapStateToProps(state) {
       colors: state.database[activeGroup.language].colors,
       progress: state.appProgress,
       isRTL: state.database[activeGroup.language].isRTL,
+      activeGroupName: state.activeGroup
    }
 };
 
 function mapDispatchToProps(dispatch) {
    return {
       downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
-      toggleComplete: lessonID => { dispatch(toggleComplete(lessonID)) }
+      toggleComplete: (groupName, lessonID) => { dispatch(toggleComplete(groupName, lessonID)) }
    }
 }
 

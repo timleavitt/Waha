@@ -14,7 +14,7 @@ import BackButton from '../components/BackButton'
 
 //redux imports
 import { downloadLesson } from '../redux/actions/downloadActions'
-import { toggleComplete } from '../redux/actions/appProgressActions'
+import { toggleComplete } from '../redux/actions/groupsActions'
 import { connect } from 'react-redux'
 
 function LessonListScreen(props) {
@@ -109,10 +109,10 @@ function LessonListScreen(props) {
 
    //PURPOSE: change the complete status via redux dispatch
    function toggleComplete(whatToMark) {
-      if (idToDownload in props.appProgress && whatToMark === 'incomplete') {
-         props.toggleComplete(idToDownload);
-      } else if (!(idToDownload in props.appProgress) && whatToMark === 'complete') {
-         props.toggleComplete(idToDownload);
+      if (props.currentProgress.includes(idToDownload) && whatToMark === 'incomplete') {
+         props.toggleComplete(props.activeGroupName, idToDownload);
+      } else if (!props.currentProgress.includes(idToDownload) && whatToMark === 'complete') {
+         props.toggleComplete(props.activeGroupName, idToDownload);
       }
       hideModals();
    }
@@ -144,14 +144,14 @@ function LessonListScreen(props) {
    }
 
    function markUpToThisPointAsComplete(id) {
-      languageAndStudySet = id.substr(0, 4)
-      markToLesson = id.substr(4, 5)
+      var languageAndStudySet = id.substr(0, 4)
+      var markToLesson = id.substr(4, 5)
 
       for (var i = 1; i <= parseInt(markToLesson); i++) {
          var formattedID = ("0" + i).slice(-2);
          idToMark = languageAndStudySet + formattedID
-         if (!(idToMark in props.appProgress)) {
-            props.toggleComplete(idToMark)
+         if (!props.currentProgress.includes(idToMark)) {
+            props.toggleComplete(props.activeGroupName, idToMark)
          }
       }
       hideModals();
@@ -171,7 +171,7 @@ function LessonListScreen(props) {
             title={LessonList.item.title}
             subtitle={LessonList.item.subtitle}
             onLessonSelect={() => navigateToPlay(LessonList.item)}
-            isComplete={(LessonList.item.id in props.appProgress)}
+            isComplete={props.currentProgress.includes(LessonList.item.id)}
             downloadProgress={props.downloads[LessonList.item.id]}
             setShowSaveLessonModal={() => setShowSaveLessonModal(true)}
             setShowDeleteLessonModal={() => setShowDeleteLessonModal(true)}
@@ -197,7 +197,7 @@ function LessonListScreen(props) {
          </View>
          <FlatListSeparator />
          <FlatList
-            data={props.database[props.database.currentLanguage].studySets.filter(studyset => studyset.id === props.route.params.studySetID)[0].lessons}
+            data={props.database[props.currentLanguage].studySets.filter(studyset => studyset.id === props.route.params.studySetID)[0].lessons}
             renderItem={renderLessonItem}
             extraData={refresh}
             ItemSeparatorComponent={FlatListSeparator}
@@ -247,20 +247,24 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
+   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
+   console.log(activeGroup.progress)
+
    return {
       downloads: state.downloads,
-      appProgress: state.appProgress,
+      currentProgress: activeGroup.progress,
       database: state.database,
-      currentLanguage: state.database.currentLanguage,
-      colors: state.database[state.database.currentLanguage].colors,
-      isRTL: state.database[state.database.currentLanguage].isRTL,
+      currentLanguage: activeGroup.language,
+      colors: state.database[activeGroup.language].colors,
+      isRTL: state.database[activeGroup.language].isRTL,
+      activeGroupName: state.activeGroup
    }
 };
 
 function mapDispatchToProps(dispatch) {
    return {
       downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
-      toggleComplete: lessonID => { dispatch(toggleComplete(lessonID)) }
+      toggleComplete: (groupName, lessonID) => { dispatch(toggleComplete(groupName, lessonID)) }
    }
 }
 
