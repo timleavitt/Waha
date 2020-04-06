@@ -21,7 +21,6 @@ function OnboardingSlidesScreen(props) {
    useEffect(() => {
       props.setFirstOpen(false)
       var language = props.route.params.selectedLanguage
-      props.changeLanguage(language)
       props.addLanguage(language)
       props.createGroup('Group 1', language)
       props.changeActiveGroup('Group 1')

@@ -1,13 +1,13 @@
 //imports
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TextInput, Text, TouchableOpacity, Alert } from 'react-native';
 
 import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
 
 //redux imports
 import { connect } from 'react-redux'
-import { createGroup, deleteGroup } from '../redux/actions/groupsActions'
+import { editGroup, deleteGroup, resetProgress } from '../redux/actions/groupsActions'
 
 function EditGroupScreen(props) {
 
@@ -18,13 +18,12 @@ function EditGroupScreen(props) {
 
    const [groupName, setGroupName] = useState(props.route.params.groupName)
 
+   const [isActive, setIsActive] = useState(props.activeGroupName === props.route.params.groupName)
 
    //set language based on user's language vs user's location?
    useEffect(() => {
       props.navigation.setOptions(getNavOptions())
    }, [])
-
-   console.log(props.route.params.groupName)
 
    function getNavOptions() {
       return {
@@ -48,8 +47,8 @@ function EditGroupScreen(props) {
    ////OTHER FUNCTIONS////
    ///////////////////////
 
-   function addNewGroup() {
-      props.createGroup(groupName, props.route.params.languageID)
+   function editGroup() {
+      props.editGroup(props.route.params.groupName, groupName)
       props.navigation.goBack()
    }
 
@@ -57,6 +56,10 @@ function EditGroupScreen(props) {
    ////RENDER/STYLES/NAVOPTIONS////
    ////////////////////////////////
 
+   var deleteButton = isActive ? <Text style={styles.cantDeleteText}>Can't delete currently selected group</Text> :
+   <TouchableOpacity style={styles.deleteGroupButtonContainer} onPress={() => {props.deleteGroup(props.route.params.groupName); props.navigation.goBack();}}>
+      <Text style={styles.deleteGroupButtonText}>Delete Group</Text>
+   </TouchableOpacity> 
 
    //create modal in here, pass state to show it to lesson item so lesson item
    //can change it and show the modal on this screen
@@ -77,14 +80,28 @@ function EditGroupScreen(props) {
                   maxLength={50}
                   returnKeyType='done'
                />
-               <TouchableOpacity style={styles.resetProgressButtonContainer} onPress={() => {}}>
+               <TouchableOpacity 
+                  style={styles.resetProgressButtonContainer} 
+                  onPress={
+                     () => Alert.alert(
+                        'Warning',
+                        "Are you sure you'd like to reset your progress for this group?",
+                        [{
+                           text: 'Cancel',
+                           onPress: () => { }
+                        },
+                        {
+                           text: 'OK',
+                           onPress: () => {props.resetProgress(props.route.params.groupName); props.navigation.goBack()}
+                        }]
+                     )
+                  }
+               >
                   <Text style={styles.resetProgressButtonText}>Reset Progress</Text>
                </TouchableOpacity>
-               <TouchableOpacity style={styles.deleteGroupButtonContainer} onPress={() => {props.deleteGroup(props.route.params.groupName); props.navigation.goBack();}}>
-                  <Text style={styles.deleteGroupButtonText}>Delete Group</Text>
-               </TouchableOpacity>
+               {deleteButton}
             </View>
-            <TouchableOpacity style={styles.saveButtonContainer} onPress={addNewGroup}>
+            <TouchableOpacity style={styles.saveButtonContainer} onPress={editGroup}>
                <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
          </View>
@@ -153,6 +170,11 @@ const styles = StyleSheet.create({
       fontFamily: 'regular',
       fontSize: 18
    },
+   cantDeleteText: {
+      fontFamily: 'regular',
+      fontSize: 14,
+      color: '#9FA5AD'
+   },
    saveButtonContainer: {
       width: 127,
       height: 52,
@@ -166,7 +188,7 @@ const styles = StyleSheet.create({
    saveButtonText: {
       fontSize: 18,
       fontFamily: 'bold',
-      color: "#FFFFFF"
+      color: "#FFFFFF",
    },
 })
 
@@ -181,13 +203,15 @@ function mapStateToProps(state) {
    return {
       colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,
+      activeGroupName: activeGroup.name
    }
 };
 
 function mapDispatchToProps(dispatch) {
    return {
-      createGroup: (groupName, language) => dispatch(createGroup(groupName, language)),
+      editGroup: (oldGroupName, newGroupName) => dispatch(editGroup(oldGroupName, newGroupName)),
       deleteGroup: name => { dispatch(deleteGroup(name)) },
+      resetProgress: name => { dispatch(resetProgress(name)) },
    }
 }
 

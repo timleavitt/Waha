@@ -94,7 +94,7 @@ function LessonListScreen(props) {
    //PURPOSE: download a lesson .mp3 of id set by an individual flatlist item
    function downloadLesson() {
       //get our source from our array of lessons in this study set
-      const currentLesson = selectedLessonList.filter(lesson => lesson.id === idToDownload)
+      const currentLesson = props.currentDatabase.studySets.filter(studyset => studyset.id === props.route.params.studySetID)[0].lessons.filter(lesson => lesson.id === idToDownload)
       const source = currentLesson[0].source
       props.downloadLesson(idToDownload, source);
       hideModals();
@@ -197,7 +197,7 @@ function LessonListScreen(props) {
          </View>
          <FlatListSeparator />
          <FlatList
-            data={props.database[props.currentLanguage].studySets.filter(studyset => studyset.id === props.route.params.studySetID)[0].lessons}
+            data={props.currentDatabase.studySets.filter(studyset => studyset.id === props.route.params.studySetID)[0].lessons}
             renderItem={renderLessonItem}
             extraData={refresh}
             ItemSeparatorComponent={FlatListSeparator}
@@ -248,12 +248,10 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
-   console.log(activeGroup.progress)
-
    return {
       downloads: state.downloads,
       currentProgress: activeGroup.progress,
-      database: state.database,
+      currentDatabase: state.database[activeGroup.language],
       currentLanguage: activeGroup.language,
       colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,

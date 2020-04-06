@@ -39,6 +39,9 @@ export default function App() {
       await Font.loadAsync({
          'light': require('./assets/fonts/Roboto-Light.ttf'),
       });
+      await Font.loadAsync({
+         'medium-italic': require('./assets/fonts/Roboto-MediumItalic.ttf'),
+      });
       setFontsLoaded(true);
    }
 

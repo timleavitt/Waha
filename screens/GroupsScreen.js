@@ -93,7 +93,7 @@ function GroupsScreen(props) {
          />
          </View>
          <TouchableOpacity style={styles.addNewLanguageContainer} onPress={() => props.navigation.navigate('AddNewLanguage', {installedLanguageInstances: getInstalledLanguageInstances()})}>
-            <Text style={styles.addNewLanguageText}>Add new language</Text>
+            <Text style={styles.addNewLanguageText}>+ New language</Text>
          </TouchableOpacity>
       </View>
    )
@@ -111,13 +111,13 @@ const styles = StyleSheet.create({
    },
    addNewLanguageContainer: {
       width: "100%",
-      height: 70,
+      height: 80 * scaleMultiplier,
       justifyContent: "center",
       borderTopWidth: 2,
       borderTopColor: '#EFF2F4'
    },
    addNewLanguageText: {
-      fontFamily: 'regular',
+      fontFamily: 'medium',
       fontSize: 18,
       color: '#9FA5AD',
       marginHorizontal: 15
@@ -142,6 +142,7 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    //console.log(state.groups)
+   console.log(state.database)
    return {
       downloads: state.downloads,
       appProgress: state.appProgress,
