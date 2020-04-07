@@ -1,13 +1,13 @@
 //imports
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux'
 import { deleteGroup, changeActiveGroup } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
+import AvatarImage from '../components/AvatarImage'
 
 function GroupListItem(props) {
-
    function getBookmarkText() {
       var bookmarkInt = 0;
       var thisGroupProgress = props.groups.filter(item => item.name === props.name)[0].progress
@@ -69,7 +69,7 @@ function GroupListItem(props) {
             style={styles.minusButtonContainer}
             onPress={() => props.deleteGroup(props.name)}
          >
-            <MaterialCommunityIcons name='minus-circle' size={24} color="#FF0800" />
+            <MaterialCommunityIcons name='minus-circle' size={24 * scaleMultiplier} color="#FF0800" />
          </TouchableOpacity>
    } else if (props.isEditing && props.activeGroup === props.name) {
       deleteButton =
@@ -77,7 +77,7 @@ function GroupListItem(props) {
             style={styles.minusButtonContainer}
             onPress={() => props.deleteGroup(props.name)}
          >
-            <MaterialCommunityIcons name='minus-circle' size={24} color="#DEE3E9" />
+            <MaterialCommunityIcons name='minus-circle' size={24 * scaleMultiplier} color="#DEE3E9" />
          </View>
    }
 
@@ -90,7 +90,7 @@ function GroupListItem(props) {
          >
             <Ionicons
                name={props.isRTL ? 'ios-arrow-back' : 'ios-arrow-forward'}
-               size={36}
+               size={36 * scaleMultiplier}
                color="gray"
             />
          </View>
@@ -99,8 +99,8 @@ function GroupListItem(props) {
          <View style={styles.iconContainer}>
             <Ionicons
                name="md-checkmark"
-               size={24}
-               color="black"
+               size={24 * scaleMultiplier}
+               color="#2D9CDB"
             />
          </View>
    } else {
@@ -114,9 +114,8 @@ function GroupListItem(props) {
          style={[styles.touchableContainer, { direction: props.isRTL ? "rtl" : "ltr" }]}
          onPress={props.isEditing ? () => props.goToEditGroupScreen(props.name) : () => { props.changeActiveGroup(props.name) }}
       >
-         <View style={styles.iconContainer}>
-            <MaterialIcons name='group' size={49} />
-         </View>
+         <AvatarImage size={50} onPress={() => {}} source={props.avatarSource} isActive={props.activeGroup === props.name}/>
+        
          <View style={styles.groupNameContainer}>
             <Text style={styles.groupNameText}>{props.name}</Text>
             <Text style={styles.checkpointText}>{getBookmarkText()}</Text>
@@ -137,7 +136,7 @@ const styles = StyleSheet.create({
       margin: 3
    },
    touchableContainer: {
-      width: "100%",
+      flex: 1,
       height: "100%",
       justifyContent: "flex-start",
       flexDirection: "row",
@@ -164,13 +163,15 @@ const styles = StyleSheet.create({
    },
    groupNameText: {
       color: "#3A3C3F",
-      fontSize: 18,
-      fontFamily: 'bold'
+      fontSize: 18 * scaleMultiplier,
+      fontFamily: 'bold',
+      textAlign: "left"
    },
    checkpointText: {
       fontFamily: 'regular',
-      fontSize: 12,
-      color: '#9FA5AD'
+      fontSize: 12 * scaleMultiplier,
+      color: '#9FA5AD',
+      textAlign: "left"
    }
 })
 

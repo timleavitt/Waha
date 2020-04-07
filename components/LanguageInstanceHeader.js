@@ -33,16 +33,13 @@ function LanguageInstanceHeader(props) {
       props.deleteLanguage(props.languageID)
    }
 
-   FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
-      console.log(contents)
-   });
-
    function renderGroupItem(groups) {
       return (
          <GroupListItem
             name={groups.item.name}
             isEditing={props.isEditing}
             goToEditGroupScreen={props.goToEditGroupScreen}
+            avatarSource={groups.item.imageSource}
          />
       )
    }
@@ -65,7 +62,7 @@ function LanguageInstanceHeader(props) {
             )
          }
       >
-         <Ionicons name='md-trash' size={29} color='#FF0800'/>
+         <Ionicons name='md-trash' size={25 * scaleMultiplier} color='#FF0800'/>
       </TouchableOpacity> : null
    
    return (
@@ -79,8 +76,8 @@ function LanguageInstanceHeader(props) {
             renderItem={renderGroupItem}
             keyExtractor={item => item.name}
          />
-         <TouchableOpacity style={styles.addGroupContainer} onPress={props.goToAddNewGroupScreen}>
-            <MaterialIcons name='group-add' size={49} color='#DEE3E9' style={{marginLeft: 10}}/>
+         <TouchableOpacity style={[styles.addGroupContainer, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={props.goToAddNewGroupScreen}>
+            <MaterialIcons name='group-add' size={30 * scaleMultiplier} color='#DEE3E9' style={{marginLeft: 10}}/>
             <Text style={styles.addGroupText}>New group</Text>
          </TouchableOpacity>
       </View>
@@ -90,19 +87,21 @@ function LanguageInstanceHeader(props) {
 const styles = StyleSheet.create({
    languageHeaderListContainer: {
       width: "100%",
-      marginBottom: 15
+      marginBottom: 15,
+      marginTop: 3
    },
    languageHeaderContainer: {
       flexDirection: 'row',
-      alignItems: 'center'
+      alignItems: 'center',
    }, 
    trashButtonContainer: {
       justifyContent: 'center',
       alignItems: 'center',
-      marginLeft: 15
+      marginLeft: 15,
+      marginRight: -15
    }, 
    languageHeaderText: {
-      fontSize: 18,
+      fontSize: 18 * scaleMultiplier,
       fontFamily: "regular",
       color: "#9FA5AD",
       marginLeft: 30
@@ -117,9 +116,10 @@ const styles = StyleSheet.create({
    },
    addGroupText: {
       color: "#2D9CDB",
-      fontSize: 18,
+      fontSize: 18 * scaleMultiplier,
       fontFamily: 'medium-italic',
-      marginLeft: 15
+      marginLeft: 15,
+      textAlign: 'left'
    }
 })
 function mapStateToProps(state) {

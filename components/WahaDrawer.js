@@ -8,6 +8,7 @@ import DrawerItem from '../components/DrawerItem'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { scaleMultiplier } from '../constants'
 import * as WebBrowser from 'expo-web-browser';
+import AvatarImage from '../components/AvatarImage'
 
 function WahaDrawer(props) {
    async function openBrowser(url) {
@@ -21,12 +22,9 @@ function WahaDrawer(props) {
       >
          <View style={[styles.drawerHeaderContainer, { backgroundColor: props.colors.primaryColor }]}>
             <View style={styles.groupIconContainer}>
-               <Ionicons
-                  name="ios-people"
-                  size={100}
-               />
+               <AvatarImage source={props.activeGroupImageSource} size={120}/>
             </View>
-            <Text style={styles.groupName}>{props.activeGroup}</Text>
+            <Text style={styles.groupName}>{props.activeGroupName}</Text>
          </View>
          <View style={styles.bigDrawerItemsContainer}>
             <DrawerItem
@@ -76,6 +74,7 @@ const styles = StyleSheet.create({
    },
    groupIconContainer: {
       alignItems: "center",
+      marginVertical: 10
    },
    groupName: {
       color: "white",
@@ -103,13 +102,14 @@ const styles = StyleSheet.create({
 /////////////
 
 function mapStateToProps(state) {
-   var activeLanguage = state.groups.filter(item => item.name === state.activeGroup)[0].language
+   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
       database: state.database,
-      colors: state.database[activeLanguage].colors,
+      colors: state.database[activeGroup.language].colors,
       appProgress: state.appProgress,
-      isRTL: state.database[activeLanguage].isRTL,
-      activeGroup: state.activeGroup
+      isRTL: state.database[activeGroup.language].isRTL,
+      activeGroupName: activeGroup.name,
+      activeGroupImageSource: activeGroup.imageSource,
    }
 };
 

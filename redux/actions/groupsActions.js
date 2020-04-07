@@ -12,19 +12,21 @@ export function changeActiveGroup(groupName) {
    }
 }
 
-export function createGroup(groupName, language) {
+export function createGroup(groupName, language, imageSource) {
    return {
       type: CREATE_GROUP,
       groupName,
-      language
+      language,
+      imageSource
    }
 }
 
-export function editGroup(oldGroupName, newGroupName) {
+export function editGroup(oldGroupName, newGroupName, imageSource) {
    return {
       type: EDIT_GROUP,
       oldGroupName,
-      newGroupName   
+      newGroupName,
+      imageSource   
    }
 }
 

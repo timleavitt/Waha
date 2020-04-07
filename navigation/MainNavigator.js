@@ -1,23 +1,12 @@
 import React from 'react';
 import { StyleSheet, Image } from 'react-native';
-import HeaderButtons from '../components/HeaderButtons'
 import { scaleMultiplier } from '../constants'
 import WahaDrawer from '../components/WahaDrawer'
 
-import LessonListScreen from '../screens/LessonListScreen';
-import PlayScreen from '../screens/PlayScreen'
-import LanguageSelectScreen from '../screens/LanguageSelectScreen';
-import OnboardingSlidesScreen from '../screens/OnboardingSlidesScreen';
-import SettingsScreen from '../screens/SettingsScreen'
-import StudySetScreen from '../screens/StudySetScreen';
-import GroupsScreen from '../screens/GroupsScreen';
-import AddNewGroupScreen from '../screens/AddNewGroupScreen';
 import StackNavigator from '../navigation/StackNavigator'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import {AsyncStorage} from 'react-native';
-import AddNewLanguageScreen from '../screens/AddNewLanguageScreen';
 import { connect } from 'react-redux'
 
 const Stack = createStackNavigator();
@@ -65,7 +54,7 @@ function MainNavigator(props) {
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      isRTL: state.database[activeGroup.language].isRTL,
+      //isRTL: state.database[activeGroup.language].isRTL,
    }
 };
 

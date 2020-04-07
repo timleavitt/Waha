@@ -137,8 +137,6 @@ function mapStateToProps(state) {
       downloads: state.downloads,
       appProgress: state.appProgress,
       database: state.database,
-      colors: state.database[state.database.currentLanguage].colors,
-      isRTL: state.database[state.database.currentLanguage].isRTL,
    }
 };
 

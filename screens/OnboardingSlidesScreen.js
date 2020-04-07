@@ -22,7 +22,7 @@ function OnboardingSlidesScreen(props) {
       props.setFirstOpen(false)
       var language = props.route.params.selectedLanguage
       props.addLanguage(language)
-      props.createGroup('Group 1', language)
+      props.createGroup('Group 1', language, '')
       props.changeActiveGroup('Group 1')
    }, [])
 
@@ -233,7 +233,7 @@ function mapDispatchToProps(dispatch) {
       addLanguage: language => dispatch(addLanguage(language)),
       changeLanguage: language => dispatch(changeLanguage(language)),
       setIsReadyToStart: toSet => dispatch(setIsReadyToStart(toSet)),
-      createGroup: (groupName, language) => dispatch(createGroup(groupName, language)),
+      createGroup: (groupName, language, imageSource) => dispatch(createGroup(groupName, language, imageSource)),
       changeActiveGroup: name => { dispatch(changeActiveGroup(name))}
    }
 }

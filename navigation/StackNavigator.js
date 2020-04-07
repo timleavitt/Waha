@@ -4,13 +4,11 @@ import { scaleMultiplier } from '../constants'
 
 import LessonListScreen from '../screens/LessonListScreen';
 import PlayScreen from '../screens/PlayScreen'
-import SettingsScreen from '../screens/SettingsScreen'
 import StudySetScreen from '../screens/StudySetScreen';
 import GroupsScreen from '../screens/GroupsScreen';
 import AddNewGroupScreen from '../screens/AddNewGroupScreen';
 import AddNewLanguageScreen from '../screens/AddNewLanguageScreen';
 import EditGroupScreen from '../screens/EditGroupScreen'
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { connect } from 'react-redux'
 
@@ -76,22 +74,7 @@ function StackNavigator(props) {
                   },
                   headerTitleStyle: {
                      color: "#82868D",
-                     fontFamily: 'bold'
-                  },
-                  gestureEnabled: false
-               }}
-            />
-            <Stack.Screen
-               name="Settings"
-               component={SettingsScreen}
-               options={{
-                  headerTitle: "Settings",
-                  headerStyle: {
-                     backgroundColor: "#F7F7F7",
-                  },
-                  headerTitleStyle: {
-                     //color: props.colors.primaryColor,
-                     fontFamily: 'bold'
+                     fontFamily: 'medium'
                   },
                }}
             />
@@ -101,11 +84,11 @@ function StackNavigator(props) {
                options={{
                   headerTitle: "Groups & Languages",
                   headerStyle: {
-                     backgroundColor: "#F7F7F7",
+                     backgroundColor: "#EFF2F4",
                   },
                   headerTitleStyle: {
                      color: "#000000",
-                     fontFamily: 'bold'
+                     fontFamily: 'medium'
                   },
                }}
             />
@@ -115,11 +98,11 @@ function StackNavigator(props) {
                options={{
                   headerTitle: "Add New Group",
                   headerStyle: {
-                     backgroundColor: "#F7F7F7",
+                     backgroundColor: "#FFFFFF",
                   },
                   headerTitleStyle: {
                      color: "#000000",
-                     fontFamily: 'bold'
+                     fontFamily: 'medium'
                   },
                }}
             />
@@ -133,7 +116,7 @@ function StackNavigator(props) {
                   },
                   headerTitleStyle: {
                      color: "#000000",
-                     fontFamily: 'bold'
+                     fontFamily: 'medium'
                   },
                }}
             />

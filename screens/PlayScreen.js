@@ -485,12 +485,11 @@ function mapStateToProps(state) {
    return {
       currentProgress: activeGroup.progress,
       database: state.database,
-      currentLanguage: state.database.currentLanguage,
+      currentLanguage: activeGroup.language,
       translations: state.database[activeGroup.language].translations,
       downloads: state.downloads,
       colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,
-      activeGroupName: state.activeGroup
    }
 };
 

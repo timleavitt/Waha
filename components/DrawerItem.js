@@ -52,16 +52,9 @@ const styles = StyleSheet.create({
 })
 
 function mapStateToProps(state) {
-   
-   if (!state.database.isFetching) {
-      var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0];
-      return {
-         isRTL: state.database[activeGroup.language].isRTL,
-      }
-   } else {
-      return {
-         isFetching: state.database.isFetching,
-      }
+   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0];
+   return {
+      isRTL: state.database[activeGroup.language].isRTL,
    }
 };
 

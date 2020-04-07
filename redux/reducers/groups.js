@@ -9,12 +9,12 @@ import { CREATE_GROUP, DELETE_GROUP, TOGGLE_COMPLETE, RESET_PROGRESS, EDIT_GROUP
 export function groups(state = [], action) {
    switch (action.type) {
       case CREATE_GROUP:
-         return [...state, { name: action.groupName, progress: [], language: action.language }]
+         return [...state, { name: action.groupName, progress: [], language: action.language, imageSource: action.imageSource }]
       //return { ...state, [action.groupName]: { progress: {}, language: action.language } }
       case EDIT_GROUP:
          return state.map(group => {
             if (group.name === action.oldGroupName) {
-               return {...group, name: action.newGroupName}
+               return {...group, name: action.newGroupName, imageSource: action.imageSource}
             }
             return group
          })

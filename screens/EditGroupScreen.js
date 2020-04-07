@@ -4,10 +4,14 @@ import { View, StyleSheet, TextInput, Text, TouchableOpacity, Alert } from 'reac
 
 import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
+import * as ImagePicker from 'expo-image-picker';
 
 //redux imports
 import { connect } from 'react-redux'
-import { editGroup, deleteGroup, resetProgress } from '../redux/actions/groupsActions'
+import { editGroup, deleteGroup, resetProgress, changeActiveGroup } from '../redux/actions/groupsActions'
+import WahaModal from '../components/WahaModal'
+import ModalButton from '../components/ModalButton'
+import AvatarImage from '../components/AvatarImage'
 
 function EditGroupScreen(props) {
 
@@ -19,6 +23,9 @@ function EditGroupScreen(props) {
    const [groupName, setGroupName] = useState(props.route.params.groupName)
 
    const [isActive, setIsActive] = useState(props.activeGroupName === props.route.params.groupName)
+
+   const [avatarSource, setAvatarSource] = useState(props.activeGroupImageSource)
+   const [showImagePickerModal, setShowImagePickerModal] = useState(false)
 
    //set language based on user's language vs user's location?
    useEffect(() => {
@@ -48,8 +55,69 @@ function EditGroupScreen(props) {
    ///////////////////////
 
    function editGroup() {
-      props.editGroup(props.route.params.groupName, groupName)
+      props.changeActiveGroup(groupName)
+      props.editGroup(props.route.params.groupName, groupName, avatarSource)
       props.navigation.goBack()
+   }
+
+   async function openImageLibraryHandler() {
+      var permissionGranted = false
+      await ImagePicker.getCameraRollPermissionsAsync()
+         .then((permissionResponse) => {
+            //console.log(permissionResponse)
+            if (permissionResponse.status !== 'granted') {
+               console.log('not granted')
+               // console.log('not granted')
+               ImagePicker.requestCameraRollPermissionsAsync()
+                  .then(permissionResponse => {
+                     if (permissionResponse.status === 'granted') {
+                        openImageLibraryHandler()
+                     }
+                  })
+            }
+            else {
+               permissionGranted = true
+            }
+         })
+      if (permissionGranted) {
+         ImagePicker.launchImageLibraryAsync({})
+            .then(returnObject => {
+               if (returnObject.cancelled !== true) {
+                  setAvatarSource(returnObject.uri)
+               }
+               setShowImagePickerModal(false)
+            })
+      }
+   }
+
+   async function openCameraHandler() {
+      var permissionGranted = false
+      await ImagePicker.getCameraPermissionsAsync()
+         .then((permissionResponse) => {
+            //console.log(permissionResponse)
+            if (permissionResponse.status !== 'granted') {
+               console.log('not granted')
+               // console.log('not granted')
+               ImagePicker.requestCameraPermissionsAsync()
+                  .then(permissionResponse => {
+                     if (permissionResponse.status === 'granted') {
+                        openCameraHandler()
+                     }
+                  })
+            }
+            else {
+               permissionGranted = true
+            }
+         })
+      if (permissionGranted) {
+         ImagePicker.launchCameraAsync({})
+            .then(returnObject => {
+               if (returnObject.cancelled !== true) {
+                  setAvatarSource(returnObject.uri)
+               }
+               setShowImagePickerModal(false)
+            })
+      }
    }
 
    ////////////////////////////////
@@ -66,7 +134,7 @@ function EditGroupScreen(props) {
    return (
       <View style={styles.screen}>
          <View style={styles.photoContainer}>
-            <Text>Todo: photo stuff</Text>
+            <AvatarImage source={avatarSource} onPress={() => setShowImagePickerModal(true)} size={120} />
          </View>
          <View style={styles.bottomHalfContainer}>
             <View style={styles.inputContainer}>
@@ -105,6 +173,11 @@ function EditGroupScreen(props) {
                <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
          </View>
+         <WahaModal isVisible={showImagePickerModal}>
+            <ModalButton title='Take Photo' onPress={openCameraHandler} />
+            <ModalButton title='Choose from Library...' onPress={openImageLibraryHandler} />
+            <ModalButton title='Cancel' onPress={() => setShowImagePickerModal(false)} />
+         </WahaModal>
       </View>
    )
 }
@@ -112,7 +185,7 @@ function EditGroupScreen(props) {
 const styles = StyleSheet.create({
    screen: {
       flex: 1,
-      backgroundColor: "#F7F7F7"
+      backgroundColor: "#FFFFFF"
       //justifyContent: "flex-start"
    },
    photoContainer: {
@@ -131,15 +204,14 @@ const styles = StyleSheet.create({
    },
    groupNameLabel: {
       fontFamily: "regular",
-      fontSize: 14,
+      fontSize: 14 * scaleMultiplier,
       color: '#9FA5AD'
    },
    addNewGroupContainer: {
       borderBottomColor: '#EFF2F4',
       borderBottomWidth: 2,
-      height: 40,
-
-      fontSize: 18,
+      height: 40 * scaleMultiplier,
+      fontSize: 18 * scaleMultiplier,
       fontFamily: 'regular'
    },
    resetProgressButtonContainer: {
@@ -147,7 +219,7 @@ const styles = StyleSheet.create({
       borderColor: '#FF0800',
       borderWidth: 1,
       borderRadius: 5,
-      height: 55,
+      height: 55 * scaleMultiplier,
       marginVertical: 20,
       justifyContent: "center",
       paddingLeft: 15
@@ -155,12 +227,12 @@ const styles = StyleSheet.create({
    resetProgressButtonText: {
       color: '#FF0800',
       fontFamily: 'regular',
-      fontSize: 18
+      fontSize: 18 * scaleMultiplier,
    },
    deleteGroupButtonContainer: {
       width: "100%",
       borderRadius: 5,
-      height: 55,
+      height: 55 * scaleMultiplier,
       justifyContent: "center",
       paddingLeft: 15,
       backgroundColor: '#FF0800'
@@ -168,16 +240,16 @@ const styles = StyleSheet.create({
    deleteGroupButtonText: {
       color: '#FFFFFF',
       fontFamily: 'regular',
-      fontSize: 18
+      fontSize: 18 * scaleMultiplier
    },
    cantDeleteText: {
       fontFamily: 'regular',
-      fontSize: 14,
+      fontSize: 14 * scaleMultiplier,
       color: '#9FA5AD'
    },
    saveButtonContainer: {
-      width: 127,
-      height: 52,
+      width: 127 * scaleMultiplier,
+      height: 52 * scaleMultiplier,
       borderRadius: 5,
       backgroundColor: "#60C239",
       justifyContent: "center",
@@ -186,7 +258,7 @@ const styles = StyleSheet.create({
       margin: 30,
    },
    saveButtonText: {
-      fontSize: 18,
+      fontSize: 18 * scaleMultiplier,
       fontFamily: 'bold',
       color: "#FFFFFF",
    },
@@ -203,15 +275,18 @@ function mapStateToProps(state) {
    return {
       colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,
-      activeGroupName: activeGroup.name
+      activeGroupName: activeGroup.name,
+      activeGroupImageSource: activeGroup.imageSource
+
    }
 };
 
 function mapDispatchToProps(dispatch) {
    return {
-      editGroup: (oldGroupName, newGroupName) => dispatch(editGroup(oldGroupName, newGroupName)),
+      editGroup: (oldGroupName, newGroupName, imageSource) => dispatch(editGroup(oldGroupName, newGroupName, imageSource)),
       deleteGroup: name => { dispatch(deleteGroup(name)) },
       resetProgress: name => { dispatch(resetProgress(name)) },
+      changeActiveGroup: name => { dispatch(changeActiveGroup(name)) }
    }
 }
 

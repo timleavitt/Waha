@@ -5,6 +5,7 @@ import * as FileSystem from 'expo-file-system';
 
 //other component imports
 import StudySetItem from '../components/StudySetItem';
+import AvatarImage from '../components/AvatarImage'
 
 //redux
 import { connect } from 'react-redux'
@@ -13,15 +14,15 @@ import HeaderButtons from '../components/HeaderButtons';
 function StudySetScreen(props) {
    useEffect(() => {
       props.navigation.setOptions(getNavOptions())
-   }, [])
+   }, [props])
 
    function getNavOptions() {
       return {
          headerLeft: () =>
-            <HeaderButtons
-               name='ios-people'
-               onPress1={() => props.navigation.toggleDrawer()}
-               hasCompleteButton={false}
+            <AvatarImage
+               source={props.activeGroupImageSource}
+               size={40}
+               onPress={() => props.navigation.toggleDrawer()}
             />,
       }
    }
@@ -114,7 +115,8 @@ function mapStateToProps(state) {
       database: state.database[activeGroup.language],
       colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,
-      studySets: state.database[activeGroup.language].studySets
+      studySets: state.database[activeGroup.language].studySets,
+      activeGroupImageSource: activeGroup.imageSource
    }
 };
 
