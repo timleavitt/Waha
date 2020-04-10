@@ -1,6 +1,6 @@
 //imports
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Alert } from 'react-native';
+import { View, FlatList, StyleSheet, Alert, Image } from 'react-native';
 import LessonItem from '../components/LessonItem';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -9,7 +9,7 @@ import FlatListSeparator from '../components/FlatListSeparator'
 import WahaModal from '../components/WahaModal'
 import ModalButton from '../components/ModalButton'
 import NetInfo from '@react-native-community/netinfo';
-import { scaleMultiplier } from '../constants'
+import { scaleMultiplier, headerImages } from '../constants'
 import BackButton from '../components/BackButton'
 
 //redux imports
@@ -46,7 +46,9 @@ function LessonListScreen(props) {
    }, [])
 
    function getNavOptions() {
+
       return {
+         headerTitle: () => <Image style={styles.headerImage} source={headerImages[props.activeGroupLanguage]} />,
          headerRight: props.route.params.isRTL ? () =>
             <BackButton
                isRTL={props.route.params.isRTL}
@@ -200,7 +202,6 @@ function LessonListScreen(props) {
             data={props.currentDatabase.studySets.filter(studyset => studyset.id === props.route.params.studySetID)[0].lessons}
             renderItem={renderLessonItem}
             extraData={refresh}
-            ItemSeparatorComponent={FlatListSeparator}
          />
          <WahaModal isVisible={showSaveLessonModal}>
             <ModalButton title="Download lesson" onPress={downloadLesson} />
@@ -231,12 +232,13 @@ const styles = StyleSheet.create({
    },
    studySetItemContainer: {
       width: "100%",
-      height: 80 * scaleMultiplier
+      height: 90 * scaleMultiplier
    },
    headerImage: {
       resizeMode: "center",
       width: 120,
       height: 40,
+      alignSelf: "center",
    }
 })
 
@@ -255,7 +257,8 @@ function mapStateToProps(state) {
       currentLanguage: activeGroup.language,
       colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,
-      activeGroupName: state.activeGroup
+      activeGroupName: activeGroup.name,
+      activeGroupLanguage: activeGroup.language
    }
 };
 

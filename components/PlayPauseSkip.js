@@ -1,7 +1,6 @@
 //basic imports
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 
@@ -13,14 +12,14 @@ function PlayPauseSkip(props) {
             style={styles.playPauseSkipButton}
             onPress={() => props.onSkipPress(-10000)}
          >
-            <MaterialIcons name="replay-10" size={69 * scaleMultiplier} />
+            <Icon name="skip-back" size={69 * scaleMultiplier} />
          </TouchableOpacity>
          <TouchableOpacity
             style={styles.playPauseSkipButton}
             onPress={props.onPlayPress}
          >
-            <MaterialCommunityIcons
-               name={props.isPlaying ? "pause-circle" : "play-circle"}
+            <Icon
+               name={props.isPlaying ? "pause-filled" : "play-filled"}
                size={100 * scaleMultiplier}
                color={props.colors.primaryColor}
             />
@@ -29,7 +28,7 @@ function PlayPauseSkip(props) {
             style={styles.playPauseSkipButton}
             onPress={() => props.onSkipPress(10000)}
          >
-            <MaterialIcons name="forward-10" size={69 * scaleMultiplier} />
+            <Icon name="skip-forward" size={69 * scaleMultiplier} />
          </TouchableOpacity>
       </View>
    )

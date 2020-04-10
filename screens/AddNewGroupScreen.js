@@ -1,6 +1,6 @@
 //imports
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Text, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TextInput, Text, TouchableOpacity, Alert } from 'react-native';
 
 import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
@@ -28,7 +28,7 @@ function AddNewGroupScreen(props) {
    //set language based on user's language vs user's location?
    useEffect(() => {
       props.navigation.setOptions(getNavOptions())
-   }, [])
+   }, [props.isRTL])
 
    function getNavOptions() {
       return {
@@ -53,6 +53,36 @@ function AddNewGroupScreen(props) {
    ///////////////////////
 
    function addNewGroup() {
+      var isDuplicate = false
+      props.groups.map(group => {
+         if (group.name === groupName) {
+            isDuplicate = true
+            return
+         }
+         return
+      })
+      if (isDuplicate) {
+         Alert.alert(
+            'Error',
+            "Group name cannot be the same as another group's",
+            [{
+               text: 'OK',
+               onPress: () => { }
+            }]
+         )
+         return
+      }
+      if (groupName === '') {
+         Alert.alert(
+            'Error',
+            "Group name cannot be blank",
+            [{
+               text: 'OK',
+               onPress: () => { }
+            }]
+         )
+         return
+      }
       props.createGroup(groupName, props.route.params.languageID, avatarSource)
       props.navigation.goBack()
    }
@@ -128,13 +158,13 @@ function AddNewGroupScreen(props) {
    return (
       <View style={styles.screen}>
          <View style={styles.photoContainer}>
-            <AvatarImage source={avatarSource} onPress={() => setShowImagePickerModal(true)} size={120} />
+            <AvatarImage source={avatarSource} onPress={() => setShowImagePickerModal(true)} size={120} isChangeable={true}/>
          </View>
          <View style={styles.bottomHalfContainer}>
             <View style={styles.inputContainer}>
-               <Text style={styles.groupNameLabel}>Group Name</Text>
+               <Text style={[styles.groupNameLabel, {textAlign: props.isRTL ? 'right' : 'left'}]}>Group Name</Text>
                <TextInput
-                  style={styles.addNewGroupContainer}
+                  style={[styles.addNewGroupContainer, {textAlign: props.isRTL ? 'right' : 'left'}]}
                   onChangeText={text => setGroupName(text)} value={groupName}
                   autoCapitalize='words'
                   autoCorrect={false}
@@ -144,7 +174,7 @@ function AddNewGroupScreen(props) {
                   returnKeyType='done'
                />
             </View>
-            <TouchableOpacity style={styles.saveButtonContainer} onPress={addNewGroup}>
+            <TouchableOpacity style={[styles.saveButtonContainer, {alignSelf: props.isRTL ? 'flex-start' : "flex-end",}]} onPress={addNewGroup}>
                <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
          </View>
@@ -169,7 +199,6 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       alignItems: "center"
    },
-
    bottomHalfContainer: {
       flex: 1,
       justifyContent: "space-between",
@@ -187,7 +216,6 @@ const styles = StyleSheet.create({
       borderBottomColor: '#EFF2F4',
       borderBottomWidth: 2,
       height: 40 * scaleMultiplier,
-
       fontSize: 18 * scaleMultiplier,
       fontFamily: 'regular'
    },
@@ -198,7 +226,6 @@ const styles = StyleSheet.create({
       backgroundColor: "#60C239",
       justifyContent: "center",
       alignItems: "center",
-      alignSelf: "flex-end",
       margin: 30,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
@@ -219,11 +246,13 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
-   //console.log(state.groups)
+   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      downloads: state.downloads,
-      appProgress: state.appProgress,
-      database: state.database
+      groups: state.groups,
+      colors: state.database[activeGroup.language].colors,
+      isRTL: state.database[activeGroup.language].isRTL,
+      activeGroupName: activeGroup.name,
+      activeGroupImageSource: activeGroup.imageSource
    }
 };
 

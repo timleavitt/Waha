@@ -1,6 +1,6 @@
 //basic imports
 import React, { useEffect } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, Image } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 
 //other component imports
@@ -9,7 +9,7 @@ import AvatarImage from '../components/AvatarImage'
 
 //redux
 import { connect } from 'react-redux'
-import HeaderButtons from '../components/HeaderButtons';
+import { headerImages } from '../constants'
 
 function StudySetScreen(props) {
    useEffect(() => {
@@ -18,12 +18,25 @@ function StudySetScreen(props) {
 
    function getNavOptions() {
       return {
-         headerLeft: () =>
-            <AvatarImage
-               source={props.activeGroupImageSource}
-               size={40}
-               onPress={() => props.navigation.toggleDrawer()}
-            />,
+         headerTitle: () => <Image style={styles.headerImage} source={headerImages[props.activeGroupLanguage]} />,
+         headerLeft: props.isRTL ?
+            () => <View></View> :
+            () =>
+               <AvatarImage
+                  source={props.activeGroupImageSource}
+                  size={40}
+                  onPress={() => props.navigation.toggleDrawer()}
+                  isActive={true}
+               />,
+         headerRight: props.isRTL ?
+            () =>
+               <AvatarImage
+                  source={props.activeGroupImageSource}
+                  size={40}
+                  onPress={() => props.navigation.toggleDrawer()}
+                  isActive={true}
+               /> :
+            () => <View></View>
       }
    }
 
@@ -110,13 +123,15 @@ const styles = StyleSheet.create({
 /////////////
 
 function mapStateToProps(state) {
+   //console.log(state.groups)
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
       database: state.database[activeGroup.language],
       colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,
       studySets: state.database[activeGroup.language].studySets,
-      activeGroupImageSource: activeGroup.imageSource
+      activeGroupImageSource: activeGroup.imageSource,
+      activeGroupLanguage: activeGroup.language
    }
 };
 

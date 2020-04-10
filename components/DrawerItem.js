@@ -1,7 +1,6 @@
 //imports
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Progress from 'react-native-progress';
 import { connect } from 'react-redux'
@@ -16,7 +15,7 @@ function DrawerItem(props) {
    return (
       <TouchableOpacity style={[styles.settingsItem, { direction: props.isRTL ? "rtl" : "ltr" }]} onPress={props.onPress}>
          <View style={styles.iconContainer}>
-            <Ionicons
+            <Icon
                name={props.name}
                size={50 * scaleMultiplier}
                color="#3A3C3F"

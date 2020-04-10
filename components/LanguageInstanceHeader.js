@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Text, FlatList, Alert } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, FlatList, Alert, Image } from 'react-native';
 import { connect } from 'react-redux'
 import GroupListItem from '../components/GroupListItem'
-import {scaleMultiplier} from '../constants'
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { scaleMultiplier, headerImages } from '../constants'
 import { deleteGroup } from '../redux/actions/groupsActions'
 import { deleteLanguage } from '../redux/actions/databaseActions'
 import * as FileSystem from 'expo-file-system';
@@ -62,14 +61,15 @@ function LanguageInstanceHeader(props) {
             )
          }
       >
-         <Ionicons name='md-trash' size={25 * scaleMultiplier} color='#FF0800'/>
+         <Icon name='trash' size={25 * scaleMultiplier} color='#FF0800'/>
       </TouchableOpacity> : null
    
    return (
       <View style={styles.languageHeaderListContainer}>
-         <View style={styles.languageHeaderContainer}>
+         <View style={[styles.languageHeaderContainer, {direction: props.isRTL ? 'rtl' : 'ltr'}]}>
             {trashButton}
             <Text style={styles.languageHeaderText}>{props.languageName}</Text>
+            <Image style={styles.languageLogo} source={headerImages[props.languageID]} />
          </View>
          <FlatList
             data={props.groups.filter(group => group.language === props.languageID)}
@@ -77,7 +77,7 @@ function LanguageInstanceHeader(props) {
             keyExtractor={item => item.name}
          />
          <TouchableOpacity style={[styles.addGroupContainer, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={props.goToAddNewGroupScreen}>
-            <MaterialIcons name='group-add' size={30 * scaleMultiplier} color='#DEE3E9' style={{marginLeft: 10}}/>
+            <Icon name='group-add' size={35 * scaleMultiplier} color='#DEE3E9' style={{marginHorizontal: 15}}/>
             <Text style={styles.addGroupText}>New group</Text>
          </TouchableOpacity>
       </View>
@@ -93,6 +93,8 @@ const styles = StyleSheet.create({
    languageHeaderContainer: {
       flexDirection: 'row',
       alignItems: 'center',
+      width: '100%',
+      height: 30,
    }, 
    trashButtonContainer: {
       justifyContent: 'center',
@@ -104,7 +106,16 @@ const styles = StyleSheet.create({
       fontSize: 18 * scaleMultiplier,
       fontFamily: "regular",
       color: "#9FA5AD",
-      marginLeft: 30
+      marginHorizontal: 30,
+      flex: 1,
+      textAlign: 'left'
+   },
+   languageLogo: {
+      resizeMode: "stretch",
+      width: 96 * scaleMultiplier,
+      height: 32 * scaleMultiplier,
+      alignSelf: "flex-end",
+      marginRight: 10
    },
    addGroupContainer: {
       height: 80 * scaleMultiplier,
@@ -118,9 +129,8 @@ const styles = StyleSheet.create({
       color: "#2D9CDB",
       fontSize: 18 * scaleMultiplier,
       fontFamily: 'medium-italic',
-      marginLeft: 15,
       textAlign: 'left'
-   }
+   },
 })
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
@@ -130,7 +140,8 @@ function mapStateToProps(state) {
       isRTL: state.database[activeGroup.language].isRTL,
       groups: state.groups,
       activeLanguage: activeGroup.language,
-      database: state.database
+      database: state.database,
+      activeGroupLanguage: activeGroup.language
    }
 };
 

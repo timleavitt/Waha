@@ -5,6 +5,7 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { connect } from 'react-redux'
 import { scaleMultiplier} from '../constants'
+import Icon from '../assets/fonts/icons'
 
 function StudySetItem(props) {
 
@@ -58,7 +59,10 @@ function StudySetItem(props) {
                   rotation={0}
                   backgroundColor="#FFFFFF"
                >
-                  {(fill) => (<View style={{backgroundColor: chooseAccentColor(), width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}><MaterialCommunityIcons name={props.iconName} size={50 * scaleMultiplier} color={fullyCompleted ? "#828282" : "#1D1E20"} /></View>)}
+                  {(fill) => (
+                     <View style={{backgroundColor: chooseAccentColor(), width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}>
+                        <MaterialCommunityIcons name={props.iconName} size={50 * scaleMultiplier} color={fullyCompleted ? "#828282" : "#1D1E20"} />
+                     </View>)}
                </AnimatedCircularProgress>
                <View style={styles.percentageTextContainer}>
                   <Text style={styles.percentageText}>{Math.round((numCompleted / numLessons) * 100)}%</Text>
@@ -69,10 +73,10 @@ function StudySetItem(props) {
                <Text style={[styles.title, { color: fullyCompleted ? "#9FA5AD" : "black" }]}>{props.title}</Text>
             </View>
             <View style={styles.iconContainer}>
-               <Entypo
+               <Icon
                   name= {props.isRTL ? 'triangle-left' : 'triangle-right'}
-                  size={40}
-                  color="gray"
+                  size={37 * scaleMultiplier}
+                  color="#828282"
                />
             </View>
       </TouchableOpacity>

@@ -28,8 +28,9 @@ export function downloadLesson(lessonID, source) {
             progress = totalBytesWritten / totalBytesExpectedToWrite
             if (progress >= 0.99) 
                 dispatch(removeDownload(lessonID))
-            else
-                dispatch(addUpdateDownload(progress, lessonID))
+            else if (Math.round(progress * 100) % 10 === 0){
+               dispatch(addUpdateDownload(progress, lessonID))
+            }
         }
 
         //create our download object

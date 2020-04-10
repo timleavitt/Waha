@@ -6,7 +6,7 @@ function FlatListSeparator(props) {
         <View
         style={{
             height: 1,
-            width: "100%",
+            flex: 1,
             backgroundColor: "#9FA5AD",
         }}
         />

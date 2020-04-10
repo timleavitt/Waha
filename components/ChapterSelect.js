@@ -1,7 +1,6 @@
 //basic imports
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Text, Dimensions } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux'
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { scaleMultiplier } from '../constants'
@@ -12,11 +11,11 @@ function ChapterSelect(props) {
    var chapter2IconName;
 
    if (props.activeChapter === 'fellowship') {
-      chapter2IconName = 'numeric-2-box'
+      chapter2IconName = '2-filled'
    } else if (props.activeChapter === 'passage') {
-      chapter2IconName = 'numeric-2-box'
+      chapter2IconName = '2-unfilled'
    } else {
-      chapter2IconName = 'checkbox-marked'
+      chapter2IconName = 'check-filled'
    }
 
    var chapter2Button;   
@@ -44,7 +43,7 @@ function ChapterSelect(props) {
          }} 
          onPress={() => props.onPress('passage')}
       >
-         <MaterialCommunityIcons
+         <Icon
             name={chapter2IconName}
             size={25}
             color={(props.activeChapter === 'passage') ? "white" : props.colors.primaryColor}
@@ -63,8 +62,8 @@ function ChapterSelect(props) {
             }} 
             onPress={() => props.onPress('fellowship')}
          >
-            <MaterialCommunityIcons
-               name={(props.activeChapter === 'fellowship') ? "numeric-1-box" : "checkbox-marked"}
+            <Icon
+               name={(props.activeChapter === 'fellowship') ? "1-unfilled" : "check-filled"}
                size={25}
                color={(props.activeChapter === 'fellowship') ? "white" : props.colors.primaryColor}
             />
@@ -78,8 +77,8 @@ function ChapterSelect(props) {
             }} 
             onPress={() => props.onPress('application')}
          >
-            <MaterialCommunityIcons
-               name="numeric-3-box"
+            <Icon
+               name={props.activeChapter === 'application' ? "3-unfilled" : '3-filled'}
                size={25}
                color={(props.activeChapter === 'application') ? "white" : props.colors.primaryColor}
             />

@@ -1,7 +1,6 @@
 //imports
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Progress from 'react-native-progress';
 import { connect } from 'react-redux'
@@ -62,8 +61,8 @@ function LessonItem(props) {
                      [{ text: 'OK', onPress: () => { } }]))}
             style={styles.downloadButtonContainer}
          >
-            <MaterialCommunityIcons
-               name={isDownloaded ? "cloud-check" : (props.isConnected ? "cloud-download" : "cloud-off-outline")}
+            <Icon
+               name={isDownloaded ? "downloaded" : (props.isConnected ? "download" : "download")}
                color={isDownloaded ? "#9FA5AD" : "#3A3C3F"}
                size={25 * scaleMultiplier}
             />
@@ -90,9 +89,9 @@ function LessonItem(props) {
                onLongPress={showLessonOptionsModal}
             >
                <TouchableOpacity style={styles.completeStatusContainer} onPress={() => props.toggleComplete(props.activeGroupName, props.id)}>
-                  <MaterialCommunityIcons
-                     name={props.isComplete ? "check-circle" : "play-box-outline"}
-                     size={30}
+                  <Icon
+                     name={props.isComplete ? "check-unfilled" : "triangle-right"}
+                     size={30 * scaleMultiplier}
                      color={props.isComplete ? "#828282" : props.colors.primaryColor}
                   />
                </TouchableOpacity>

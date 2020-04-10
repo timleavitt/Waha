@@ -1,50 +1,70 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
 import { scaleMultiplier } from '../constants'
+import Icon from '../assets/fonts/icons'
 
 function AvatarImage(props) {
 
+   var cameraIcon = props.isChangeable ?
+      <View style={{
+         width: 40 * scaleMultiplier,
+         height: 40 * scaleMultiplier,
+         alignSelf: 'flex-start',
+         alignItems: 'center',
+         justifyContent: 'center',
+         marginLeft: -10
+      }}>
+         <Icon name='camera' size={35 * scaleMultiplier} color='#FF0800' />
+      </View> : null
+
    var avatarImage = (props.source === '') ?
-      <MaterialIcons name='group' size={props.size / 2 * scaleMultiplier} /> :
-      <Image style={{...styles.avatarContainer, 
+      <Icon name='group' size={props.size / 2 * scaleMultiplier} /> :
+      <Image style={{
+         ...styles.avatarContainer,
          ...{
-            width: props.size * scaleMultiplier, 
-            height: props.size * scaleMultiplier, 
+            width: props.size * scaleMultiplier,
+            height: props.size * scaleMultiplier,
             borderRadius: props.size * scaleMultiplier / 2
-         }}} source={{ uri: props.source }} />
+         }
+      }} source={{ uri: props.source }} />
 
    return (
-      <View style={{
-         borderColor: props.isActive ? '#2D9CDB' : null,
-         borderWidth: props.isActive ? 5 : null,
-         width: props.size * scaleMultiplier + 5, 
-         height: props.size * scaleMultiplier + 5,
-         borderRadius: props.size * scaleMultiplier / 2 + 5,
-         alignItems: "center",
-         justifyContent: "center",
-         marginHorizontal: 10,
+      <View>
+         <View style={{
+            borderColor: props.isActive ? '#2D9CDB' : null,
+            borderWidth: props.isActive ? 5 : null,
+            width: props.size * scaleMultiplier + 5,
+            height: props.size * scaleMultiplier + 5,
+            borderRadius: props.size * scaleMultiplier / 2 + 5,
+            alignItems: "center",
+            justifyContent: "center",
+            marginHorizontal: 10,
+            marginBottom: props.isChangeable ? -30 : null,
+            marginLeft: props.isChangeable ? -5 : null
          }}
-      >
-      <TouchableOpacity style={{...styles.avatarContainer, 
-         ...{
-            width: props.size * scaleMultiplier, 
-            height: props.size * scaleMultiplier, 
-            borderRadius: props.size * scaleMultiplier / 2,
-            
-         }}} source={{ uri: props.source }} onPress={props.onPress}>
-         {avatarImage}
-      </TouchableOpacity>
+         >
+            <TouchableOpacity style={{
+               ...styles.avatarContainer,
+               ...{
+                  width: props.size * scaleMultiplier,
+                  height: props.size * scaleMultiplier,
+                  borderRadius: props.size * scaleMultiplier / 2,
+               }
+            }} source={{ uri: props.source }} onPress={props.onPress}>
+               {avatarImage}
+            </TouchableOpacity>
+         </View>
+         {cameraIcon}
       </View>
    )
 }
 
 const styles = StyleSheet.create({
    avatarContainer: {
-      backgroundColor: '#a5a8ad',
+      backgroundColor: '#DEE3E9',
       justifyContent: "center",
       alignItems: "center",
-   }, 
+   },
 })
 
 export default AvatarImage

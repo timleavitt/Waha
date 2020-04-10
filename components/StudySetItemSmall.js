@@ -74,7 +74,7 @@ function StudySetItemSmall(props) {
 const styles = StyleSheet.create({
    studySetItem: {
       flex: 1,
-      height: 75 * scaleMultiplier,
+      height: 85 * scaleMultiplier,
       margin: 5,
       justifyContent: "center"
    },
@@ -89,14 +89,14 @@ const styles = StyleSheet.create({
       marginRight: 5
    },
    title: {
-      fontSize: 14 * scaleMultiplier,
+      fontSize: 24 * scaleMultiplier,
       textAlignVertical: "center",
       flexWrap: "wrap",
-      fontFamily: 'medium',
+      fontFamily: 'black',
       textAlign: "left"
    },
    subtitle: {
-      fontSize: 10 * scaleMultiplier, 
+      fontSize: 14 * scaleMultiplier, 
       textAlignVertical: "center",
       flexWrap: "wrap",
       fontFamily: 'light',

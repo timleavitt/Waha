@@ -1,9 +1,9 @@
 //imports
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, FlatList, Text, TouchableOpacity, Alert, Image } from 'react-native';
 
 import BackButton from '../components/BackButton'
-import { scaleMultiplier } from '../constants'
+import { scaleMultiplier, headerImages } from '../constants'
 
 //redux imports
 import { connect } from 'react-redux'
@@ -74,7 +74,7 @@ function AddNewLanguageScreen(props) {
    function renderLanguageInstanceItem(languageInstanceList) {
       return (
          <TouchableOpacity
-            style={styles.languageInstanceItem}
+            style={[styles.languageInstanceItem, {direction: props.isRTL ? 'rtl' : 'ltr'}]}
             onPress={() => Alert.alert
                ("Are you sure you'd like to add a new language instance?",
                   "You will not be able to use the app until the language instance is added",
@@ -88,6 +88,7 @@ function AddNewLanguageScreen(props) {
                   }
                   ])}>
             <Text style={styles.languageInstanceText}>{languageInstanceList.item.displayName}</Text>
+            <Image style={styles.languageLogo} source={headerImages[languageInstanceList.item.id]} />
          </TouchableOpacity>
       )
    }
@@ -112,6 +113,7 @@ const styles = StyleSheet.create({
    },
    languageInstanceItem: {
       flexDirection: "row",
+      justifyContent: 'space-between',
       alignItems: "center",
       height: 60,
       margin: 5,
@@ -123,6 +125,12 @@ const styles = StyleSheet.create({
       paddingLeft: 10,
       fontSize: 18,
       fontFamily: 'regular'
+   },
+   languageLogo: {
+      resizeMode: "stretch",
+      width: 96 * scaleMultiplier,
+      height: 32 * scaleMultiplier,
+      marginRight: 10
    }
 })
 
@@ -133,10 +141,11 @@ const styles = StyleSheet.create({
 
 
 function mapStateToProps(state) {
+   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      downloads: state.downloads,
-      appProgress: state.appProgress,
+      isRTL: state.database[activeGroup.language].isRTL,
       database: state.database,
+      activeGroupLanguage: activeGroup.language
    }
 };
 

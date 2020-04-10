@@ -43,9 +43,17 @@ const styles = StyleSheet.create({
 })
 
 function MainNavigator(props) {
+   var direction = props.isRTL ? 'right' : 'left'
    return (
       <NavigationContainer>
-         <Drawer.Navigator drawerContent={props => <WahaDrawer {...props} />}>
+         <Drawer.Navigator 
+            drawerPosition={direction} 
+            drawerType='back' 
+            drawerContent={props => <WahaDrawer {...props} />}
+            drawerStyle={{
+               width: '80%',
+             }}
+         >
             <Drawer.Screen options={({ route }) => ({ gestureEnabled: getGestureEnabled(route)})} name="StackNavigator" component={StackNavigator} />
          </Drawer.Navigator>
       </NavigationContainer>
@@ -54,7 +62,7 @@ function MainNavigator(props) {
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      //isRTL: state.database[activeGroup.language].isRTL,
+      isRTL: state.database[activeGroup.language].isRTL,
    }
 };
 
