@@ -4,7 +4,7 @@ import { View, FlatList, StyleSheet, Alert, Image } from 'react-native';
 import LessonItem from '../components/LessonItem';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import StudySetItemSmall from '../components/StudySetItemSmall';
+import StudySetItem from '../components/StudySetItem';
 import FlatListSeparator from '../components/FlatListSeparator'
 import WahaModal from '../components/WahaModal'
 import ModalButton from '../components/ModalButton'
@@ -190,11 +190,12 @@ function LessonListScreen(props) {
    return (
       <View style={styles.screen}>
          <View style={styles.studySetItemContainer}>
-            <StudySetItemSmall
+            <StudySetItem
                title={props.route.params.title}
                subtitle={props.route.params.subtitle}
                id={props.route.params.studySetID}
                iconName={props.route.params.iconName}
+               isSmall={true}
             />
          </View>
          <FlatListSeparator />

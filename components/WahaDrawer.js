@@ -46,14 +46,14 @@ function WahaDrawer(props) {
             />
          </View>
          <View style={styles.smallDrawerItemsContainer}>
-            <TouchableOpacity style={[styles.smallDrawerItemContainer, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={() => { }}>
-               {/* <Text style={styles.smallDrawerItemText}>Coaching Tools (todo)</Text> */}
+            <TouchableOpacity style={styles.smallDrawerItemContainer} onPress={() => { }}>
+               {/* <Text style={[styles.smallDrawerItemText, {textAlign: props.isRTL ? 'right' : 'left'}]}>Coaching Tools (todo)</Text> */}
             </TouchableOpacity>
             <TouchableOpacity style={[styles.smallDrawerItemContainer, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={() => openBrowser('https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif')}>
-               <Text style={styles.smallDrawerItemText}>Privacy Policy</Text>
+               <Text style={[styles.smallDrawerItemText, {textAlign: props.isRTL ? 'right' : 'left'}]}>Privacy Policy</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.smallDrawerItemContainer, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={() => openBrowser('https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif')}>
-               <Text style={styles.smallDrawerItemText}>View Credits</Text>
+               <Text style={[styles.smallDrawerItemText, {textAlign: props.isRTL ? 'right' : 'left'}]}>View Credits</Text>
             </TouchableOpacity>
          </View>
       </SafeAreaView >

@@ -95,7 +95,7 @@ function GroupsScreen(props) {
                keyExtractor={item => item.languageID}
                ListFooterComponent={
                   <TouchableOpacity style={[styles.addNewLanguageContainer, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={() => props.navigation.navigate('AddNewLanguage', { installedLanguageInstances: getInstalledLanguageInstances() })}>
-                     <Text style={styles.addNewLanguageText}>+ New language</Text>
+                     <Text style={[styles.addNewLanguageText, {textAlign: props.isRTL ? 'right' : 'left'}]}>+ New language</Text>
                   </TouchableOpacity>
                }
             />

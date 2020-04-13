@@ -67,14 +67,14 @@ function GroupListItem(props) {
    if (props.isEditing && props.activeGroup != props.name) {
       deleteButton =
          <TouchableOpacity
-            style={styles.minusButtonContainer}
+            style={[styles.minusButtonContainer, { marginLeft: props.isRTL ? -5 : 10, marginRight: props.isRTL ? 10 : -5,}]}
             onPress={() => props.deleteGroup(props.name)}
          >
             <Icon name='minus-filled' size={24 * scaleMultiplier} color="#FF0800" />
          </TouchableOpacity>
    } else if (props.isEditing && props.activeGroup === props.name) {
       deleteButton =
-         <View style={styles.minusButtonContainer}>
+         <View style={[styles.minusButtonContainer, { marginLeft: props.isRTL ? -5 : 10, marginRight: props.isRTL ? 10 : -5,}]}>
             <Icon
                name="check"
                size={24 * scaleMultiplier}
@@ -110,16 +110,16 @@ function GroupListItem(props) {
    }
 
    return (
-      <View style={[styles.groupListItemContainer, { direction: props.isRTL ? "rtl" : "ltr" }]}>
+      <View style={[styles.groupListItemContainer, { flexDirection: props.isRTL ? "row-reverse" : "row" }]}>
       {deleteButton}
       <TouchableOpacity
-         style={[styles.touchableContainer, { direction: props.isRTL ? "rtl" : "ltr" }]}
+         style={[styles.touchableContainer, { flexDirection: props.isRTL ? "row-reverse" : "row" }]}
          onPress={props.isEditing ? () => props.goToEditGroupScreen(props.name) : () => { props.changeActiveGroup(props.name) }}
       >
          <AvatarImage size={50 * scaleMultiplier} onPress={() => {}} source={props.avatarSource} isActive={props.activeGroup === props.name}/>
          <View style={styles.groupNameContainer}>
-            <Text style={styles.groupNameText}>{props.name}</Text>
-            <Text style={styles.checkpointText}>{getBookmarkText()}</Text>
+            <Text style={[styles.groupNameText, {textAlign: props.isRTL ? 'right' :'left'}]}>{props.name}</Text>
+            <Text style={[styles.checkpointText, {textAlign: props.isRTL ? 'right' :'left'}]}>{getBookmarkText()}</Text>
          </View>
          {rightButton}
       </TouchableOpacity>
@@ -152,8 +152,6 @@ const styles = StyleSheet.create({
    minusButtonContainer: {
       justifyContent: "center",
       alignItems: "center",
-      marginLeft: 10,
-      marginRight: -5,
       height: "100%",
       width: 30
    },

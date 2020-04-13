@@ -74,10 +74,10 @@ function LessonItem(props) {
    }
 
    return (
-      <View style={[styles.lessonItem, {direction: props.isRTL ? "rtl" : "ltr"}]}>
-         <View style={styles.mainDisplay}>
+      <View style={styles.lessonItem}>
+         <View style={[styles.mainDisplay, {flexDirection: props.isRTL ? "row-reverse" : "row"}]}>
             <TouchableOpacity
-               style={styles.progressAndTitle}
+               style={[styles.progressAndTitle, {flexDirection: props.isRTL ? "row-reverse" : "row"}]}
                onPress={
                   (!props.isConnected && !isDownloaded) ?
                      () => Alert.alert(
@@ -96,8 +96,8 @@ function LessonItem(props) {
                   />
                </TouchableOpacity>
                <View style={styles.titleContainer}>
-                  <Text style={{ ...styles.title, ...{ color: props.isComplete ? "#9FA5AD" : "black" } }}>{props.title}</Text>
-                  <Text style={{ ...styles.subtitle, ...{ color: props.isComplete ? "#9FA5AD" : "black" } }}>{props.subtitle}</Text>
+                  <Text style={{ ...styles.title, ...{ color: props.isComplete ? "#9FA5AD" : "black", textAlign: props.isRTL ? 'right' : 'left' } }}>{props.title}</Text>
+                  <Text style={{ ...styles.subtitle, ...{ color: props.isComplete ? "#9FA5AD" : "black", textAlign: props.isRTL ? 'right' : 'left' } }}>{props.subtitle}</Text>
                </View>
 
             </TouchableOpacity>
@@ -140,18 +140,15 @@ const styles = StyleSheet.create({
       textAlignVertical: "center",
       //paddingHorizontal: 10,
       fontFamily: 'medium',
-      textAlign: "left"
    },
    subtitle: {
       fontSize: 14 * scaleMultiplier,
       //paddingHorizontal: 10,
       fontFamily: 'regular',
-      textAlign: "left"
    },
    downloadButtonContainer: {
       justifyContent: "center",
-      marginLeft: 5,
-      marginRight: 15
+      marginHorizontal: 15
    },
    progressBar: {
       width: "100%"

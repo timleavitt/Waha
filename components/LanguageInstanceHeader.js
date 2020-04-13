@@ -45,7 +45,7 @@ function LanguageInstanceHeader(props) {
 
    var trashButton = (props.isEditing && !(props.activeLanguage === props.languageID)) ?
       <TouchableOpacity
-         style={styles.trashButtonContainer}
+         style={[styles.trashButtonContainer, {marginRight: props.isRTL ? 15 : -15, marginLeft: props.isRTL ? -15 : 15}]}
          onPress={
             () => Alert.alert(
                'Warning',
@@ -66,9 +66,9 @@ function LanguageInstanceHeader(props) {
    
    return (
       <View style={styles.languageHeaderListContainer}>
-         <View style={[styles.languageHeaderContainer, {direction: props.isRTL ? 'rtl' : 'ltr'}]}>
+         <View style={[styles.languageHeaderContainer, {flexDirection: props.isRTL ? 'row-reverse' : 'row'}]}>
             {trashButton}
-            <Text style={styles.languageHeaderText}>{props.languageName}</Text>
+            <Text style={[styles.languageHeaderText, {textAlign: props.isRTL ? 'right' :'left'}]}>{props.languageName}</Text>
             <Image style={styles.languageLogo} source={headerImages[props.languageID]} />
          </View>
          <FlatList
@@ -76,9 +76,9 @@ function LanguageInstanceHeader(props) {
             renderItem={renderGroupItem}
             keyExtractor={item => item.name}
          />
-         <TouchableOpacity style={[styles.addGroupContainer, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={props.goToAddNewGroupScreen}>
+         <TouchableOpacity style={[styles.addGroupContainer, {flexDirection: props.isRTL ? "row-reverse" : "row"}]} onPress={props.goToAddNewGroupScreen}>
             <Icon name='group-add' size={35 * scaleMultiplier} color='#DEE3E9' style={{marginHorizontal: 15}}/>
-            <Text style={styles.addGroupText}>New group</Text>
+            <Text style={[styles.addGroupText, {textAlign: props.isRTL ? 'right' :'left'}]}>New group</Text>
          </TouchableOpacity>
       </View>
    )
@@ -99,8 +99,6 @@ const styles = StyleSheet.create({
    trashButtonContainer: {
       justifyContent: 'center',
       alignItems: 'center',
-      marginLeft: 15,
-      marginRight: -15
    }, 
    languageHeaderText: {
       fontSize: 18 * scaleMultiplier,
@@ -108,14 +106,13 @@ const styles = StyleSheet.create({
       color: "#9FA5AD",
       marginHorizontal: 30,
       flex: 1,
-      textAlign: 'left'
    },
    languageLogo: {
       resizeMode: "stretch",
       width: 96 * scaleMultiplier,
       height: 32 * scaleMultiplier,
       alignSelf: "flex-end",
-      marginRight: 10
+      marginHorizontal: 10
    },
    addGroupContainer: {
       height: 80 * scaleMultiplier,

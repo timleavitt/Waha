@@ -23,8 +23,9 @@ function EditGroupScreen(props) {
    const [groupName, setGroupName] = useState(props.route.params.groupName)
 
    const [isActive, setIsActive] = useState(props.activeGroupName === props.route.params.groupName)
+   const [editingGroup, setEditingGroup] = useState(props.groups.filter(item => item.name === props.route.params.groupName)[0])
 
-   const [avatarSource, setAvatarSource] = useState(props.activeGroupImageSource)
+   const [avatarSource, setAvatarSource] = useState(editingGroup.imageSource)
    const [showImagePickerModal, setShowImagePickerModal] = useState(false)
 
    //set language based on user's language vs user's location?
@@ -124,7 +125,7 @@ function EditGroupScreen(props) {
    ////RENDER/STYLES/NAVOPTIONS////
    ////////////////////////////////
 
-   var deleteButton = isActive ? <Text style={styles.cantDeleteText}>Can't delete currently selected group</Text> :
+   var deleteButton = isActive ? <Text style={[styles.cantDeleteText, {textAlign: props.isRTL ? 'right' : 'left'}]}>Can't delete currently selected group</Text> :
    <TouchableOpacity style={styles.deleteGroupButtonContainer} onPress={() => {props.deleteGroup(props.route.params.groupName); props.navigation.goBack();}}>
       <Text style={[styles.deleteGroupButtonText, {textAlign: props.isRTL ? 'right' : 'left'}]}>Delete Group</Text>
    </TouchableOpacity> 
@@ -273,6 +274,7 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
+      groups: state.groups,
       colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,
       activeGroupName: activeGroup.name,

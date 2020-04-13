@@ -30,7 +30,7 @@ function AvatarImage(props) {
 
    return (
       <View>
-         <View style={{
+         <TouchableOpacity style={{
             borderColor: props.isActive ? '#2D9CDB' : null,
             borderWidth: props.isActive ? 5 : null,
             width: props.size * scaleMultiplier + 5,
@@ -39,22 +39,27 @@ function AvatarImage(props) {
             alignItems: "center",
             justifyContent: "center",
             marginHorizontal: 10,
-            marginBottom: props.isChangeable ? -30 : null,
-            marginLeft: props.isChangeable ? -5 : null
          }}
+            source={{ uri: props.source }} 
+            onPress={props.onPress}
          >
-            <TouchableOpacity style={{
+            <View style={{
                ...styles.avatarContainer,
                ...{
                   width: props.size * scaleMultiplier,
                   height: props.size * scaleMultiplier,
                   borderRadius: props.size * scaleMultiplier / 2,
                }
-            }} source={{ uri: props.source }} onPress={props.onPress}>
+            }} >
                {avatarImage}
-            </TouchableOpacity>
-         </View>
-         {cameraIcon}
+            </View>
+            <View style={{
+               marginTop: props.isChangeable ? -30 : 0,
+               width: '100%'
+            }}>
+               {cameraIcon}
+            </View>
+         </TouchableOpacity>
       </View>
    )
 }

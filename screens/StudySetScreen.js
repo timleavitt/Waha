@@ -78,6 +78,7 @@ function StudySetScreen(props) {
             onStudySetSelect={() => navigateToLessonList(studySetList.item)}
             id={studySetList.item.id}
             iconName={studySetList.item.iconName}
+            isSmall={false}
          />
       )
    }

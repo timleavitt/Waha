@@ -13,7 +13,7 @@ function DrawerItem(props) {
    ////////////////////////////////
 
    return (
-      <TouchableOpacity style={[styles.settingsItem, { direction: props.isRTL ? "rtl" : "ltr" }]} onPress={props.onPress}>
+      <TouchableOpacity style={[styles.settingsItem, { flexDirection: props.isRTL ? "row-reverse" : "row" }]} onPress={props.onPress}>
          <View style={styles.iconContainer}>
             <Icon
                name={props.name}
@@ -21,7 +21,7 @@ function DrawerItem(props) {
                color="#3A3C3F"
             />
          </View>
-         <Text style={styles.title}>{props.text}</Text>
+         <Text style={[styles.title, {textAlign: props.isRTL ? 'right' : 'left'}]}>{props.text}</Text>
       </TouchableOpacity>
    )
 }
