@@ -93,7 +93,7 @@ function AddNewGroupScreen(props) {
          .then((permissionResponse) => {
             //console.log(permissionResponse)
             if (permissionResponse.status !== 'granted') {
-               console.log('not granted')
+               //console.log('not granted')
                // console.log('not granted')
                ImagePicker.requestCameraRollPermissionsAsync()
                   .then(permissionResponse => {
@@ -123,7 +123,7 @@ function AddNewGroupScreen(props) {
          .then((permissionResponse) => {
             //console.log(permissionResponse)
             if (permissionResponse.status !== 'granted') {
-               console.log('not granted')
+               //console.log('not granted')
                // console.log('not granted')
                ImagePicker.requestCameraPermissionsAsync()
                   .then(permissionResponse => {

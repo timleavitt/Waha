@@ -1,11 +1,21 @@
 //basic imports
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet, Text, Dimensions } from 'react-native';
 import { connect } from 'react-redux'
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { scaleMultiplier } from '../constants'
 
 function ChapterSelect(props) {
+
+   // const interval = setInterval(setChapter2Button, 1000);
+
+   // function setChapter2Button() {
+   //    if ()
+   // }
+
+   console.log('re-rendering')
+
+   const [localDownloadProgress, setLocalDownloadProgress] = useState(0)
 
    //CHAPTE 2 BUTTON ICON
    var chapter2IconName;

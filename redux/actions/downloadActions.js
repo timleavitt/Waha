@@ -20,15 +20,26 @@ export function removeDownload(lessonID) {
 
 //thunk function for async downloading
 export function downloadLesson(lessonID, source) {
+
     //console.log(source)
     return dispatch => {
 
+      // function updateSeconds(sec) {
+      //    sec += 1
+      // }
+
+      // var seconds = {time: 0}
+      // const interval = setInterval(updateSeconds(seconds.time), 1000);
+
+      // console.log(seconds)
+
         //callback function
         function callback({ totalBytesWritten, totalBytesExpectedToWrite }) {
+           var check = Math.floor(Math.random() * 200)
             progress = totalBytesWritten / totalBytesExpectedToWrite
             if (progress >= 0.99) 
                 dispatch(removeDownload(lessonID))
-            else if (Math.round(progress * 100) % 10 === 0){
+            else  if (Math.round(progress * 100) % check === 0){
                dispatch(addUpdateDownload(progress, lessonID))
             }
         }
@@ -46,7 +57,8 @@ export function downloadLesson(lessonID, source) {
 
         //attempt to download file
         try {
-            downloadResumable.downloadAsync().then(({uri}) => console.log('Finished downloading to ', uri))
+            downloadResumable.downloadAsync()
+            // .then(({uri}) => console.log('Finished downloading to ', uri))
         } catch (error) {
             console.error(error);
         }

@@ -62,7 +62,7 @@ function LessonItem(props) {
             style={styles.downloadButtonContainer}
          >
             <Icon
-               name={isDownloaded ? "downloaded" : (props.isConnected ? "download" : "download")}
+               name={isDownloaded ? "cloud-check" : (props.isConnected ? "cloud-download" : "cloud-slash")}
                color={isDownloaded ? "#9FA5AD" : "#3A3C3F"}
                size={25 * scaleMultiplier}
             />
@@ -90,7 +90,7 @@ function LessonItem(props) {
             >
                <TouchableOpacity style={styles.completeStatusContainer} onPress={() => props.toggleComplete(props.activeGroupName, props.id)}>
                   <Icon
-                     name={props.isComplete ? "check-unfilled" : "triangle-right"}
+                     name={props.isComplete ? "check-unfilled" : props.isRTL ? 'triangle-left' : "triangle-right"}
                      size={30 * scaleMultiplier}
                      color={props.isComplete ? "#828282" : props.colors.primaryColor}
                   />
@@ -138,13 +138,13 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 18 * scaleMultiplier,
       textAlignVertical: "center",
-      paddingHorizontal: 10,
+      //paddingHorizontal: 10,
       fontFamily: 'medium',
       textAlign: "left"
    },
    subtitle: {
       fontSize: 14 * scaleMultiplier,
-      paddingHorizontal: 10,
+      //paddingHorizontal: 10,
       fontFamily: 'regular',
       textAlign: "left"
    },

@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { scaleMultiplier } from '../constants'
+import { connect } from 'react-redux'
 
-function HeaderButtons(props) {
+function PlayScreenHeaderButtons(props) {
    return (
-      <View style={styles.headerButtonsContainer}>
+      <View style={[styles.headerButtonsContainer, {direction: props.isRTL ? 'rtl' : 'ltr'}]}>
          <TouchableOpacity
             onPress={props.shareOnPress}
          >
@@ -15,7 +16,7 @@ function HeaderButtons(props) {
             />
          </TouchableOpacity>
          <TouchableOpacity
-            style={{marginHorizontal: 5}}
+            style={{marginLeft: 5, marginRight: 10}}
             onPress={props.completeOnPress}
          >
             <Icon
@@ -33,10 +34,13 @@ const styles = StyleSheet.create({
       flexDirection: "row",
       justifyContent: "flex-end",
    },
-   headerButton: {
-      alignItems: "flex-start",
-      marginHorizontal: 5,
-   }
 })
 
-export default HeaderButtons
+function mapStateToProps(state) {
+   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
+   return {
+      isRTL: state.database[activeGroup.language].isRTL
+   }
+};
+
+export default connect(mapStateToProps)(PlayScreenHeaderButtons);

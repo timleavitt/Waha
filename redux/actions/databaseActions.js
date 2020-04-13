@@ -90,7 +90,7 @@ export function addLanguage(language) {
             )
             try {
                downloadResumable.downloadAsync().then(({ uri }) => {
-                  console.log('Finished downloading to ', uri);
+                  //console.log('Finished downloading to ', uri);
                   chapter1Downloaded = true;
                   if (chapter1Downloaded && chapter3Downloaded)
                      dispatch(setIsFetching(false));
@@ -107,7 +107,7 @@ export function addLanguage(language) {
             )
             try {
                downloadResumable.downloadAsync().then(({ uri }) => {
-                  console.log('Finished downloading to ', uri);
+                  //console.log('Finished downloading to ', uri);
                   chapter3Downloaded = true;
                   if (chapter1Downloaded && chapter3Downloaded)
                      dispatch(setIsFetching(false));

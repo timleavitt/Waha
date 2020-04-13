@@ -74,7 +74,7 @@ function StudySetItemSmall(props) {
 const styles = StyleSheet.create({
    studySetItem: {
       flex: 1,
-      height: 85 * scaleMultiplier,
+      height: 90 * scaleMultiplier,
       margin: 5,
       justifyContent: "center"
    },
