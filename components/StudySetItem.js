@@ -26,12 +26,17 @@ function StudySetItem(props) {
 
    const [numCompleted, setNumCompleted] = useState(0)
    const [fullyCompleted, setFullyCompleted] = useState(false)
-
-   var numLessons = 13
-
+   const [numLessons, setNumLessons] = useState(0)
+   
    useEffect(() => {
+     
+      for (const studySet of props.database.studySets) {
+         if (studySet.id === props.id) {
+            setNumLessons(studySet.lessons.length)
+         }
+      }
       var localNumCompleted = 0
-      for (lesson in props.progress) {
+      for (const lesson of props.progress) {
          if (lesson.startsWith(props.id)) {
             localNumCompleted += 1
          }
@@ -137,9 +142,10 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      progress: state.appProgress,
+      progress: activeGroup.progress,
       colors: state.database[activeGroup.language].colors,
-      isRTL: state.database[activeGroup.language].isRTL
+      isRTL: state.database[activeGroup.language].isRTL,
+      database: state.database[activeGroup.language]
    }
 };
 
