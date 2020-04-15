@@ -84,7 +84,7 @@ export function addLanguage(language) {
 
             //create our download object for chapter 1
             var downloadResumable = FileSystem.createDownloadResumable(
-               doc.data().chapter1,
+               doc.data().chapter1source,
                FileSystem.documentDirectory + language + 'chapter1.mp3',
                {},
             )
@@ -101,7 +101,7 @@ export function addLanguage(language) {
 
             //create our download object for chapter 3
             downloadResumable = FileSystem.createDownloadResumable(
-               doc.data().chapter3,
+               doc.data().chapter3source,
                FileSystem.documentDirectory + language + 'chapter3.mp3',
                {},
             )

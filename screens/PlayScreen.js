@@ -383,8 +383,8 @@ function PlayScreen(props) {
                   >
                      <View style={{ ...styles.albumArtContainer, ...{ marginLeft: 30 } }}>
                         <ScrollView>
-                           <Text style={{ flexWrap: "wrap", fontFamily: 'regular', textAlign: "center" }}>{props.route.params.scripture}</Text>
-                           <Text style={{ flexWrap: "wrap", fontFamily: 'regular' }}>dummy text</Text>
+                           <Text style={{ flexWrap: "wrap", fontFamily: 'regular', textAlign: "center" }}>{props.route.params.scriptureHeader}</Text>
+                           <Text style={{ flexWrap: "wrap", fontFamily: 'regular' }}>{props.route.params.scriptureText}</Text>
                         </ScrollView>
                      </View>
                      <View style={{ ...styles.albumArtContainer, ...{ justifyContent: "center", alignItems: "center" } }}>
@@ -454,13 +454,6 @@ const styles = StyleSheet.create({
       paddingHorizontal: 10,
       backgroundColor: "#DEE3E9"
    },
-   // controlsContainer: {
-   //    flexDirection: "column",
-   //    justifyContent: "space-between",
-   //    alignItems: "center",
-   //    width: "100%",
-   //    marginBottom: 10,
-   // },
    audioControlContainer: {
       justifyContent: "space-evenly",
       flexDirection: "column",

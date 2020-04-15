@@ -3,6 +3,7 @@ export const CREATE_GROUP = 'CREATE_GROUP'
 export const EDIT_GROUP = 'EDIT_GROUP'
 export const DELETE_GROUP = 'DELETE_GROUP'
 export const TOGGLE_COMPLETE = 'TOGGLE_COMPLETE'
+export const SET_BOOKMARK = 'SET_BOOKMARK'
 export const RESET_PROGRESS = 'RESET_PROGRESS'
 
 export function changeActiveGroup(groupName) {
@@ -43,6 +44,13 @@ export function toggleComplete(groupName, lessonID) {
         groupName,
         lessonID
     }
+}
+
+export function setBookmark(groupName) {
+   return {
+      type: SET_BOOKMARK,
+      groupName
+   }
 }
 
 export function resetProgress(groupName) {

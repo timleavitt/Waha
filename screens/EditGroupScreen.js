@@ -154,7 +154,7 @@ function EditGroupScreen(props) {
                   onPress={
                      () => Alert.alert(
                         'Warning',
-                        "Are you sure you'd like to reset your progress for this group?",
+                        "`Are you sure you'd like to reset your progress for this group?`",
                         [{
                            text: 'Cancel',
                            onPress: () => { }

@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } fr
 import * as FileSystem from 'expo-file-system';
 import * as Progress from 'react-native-progress';
 import { connect } from 'react-redux'
-import { toggleComplete } from '../redux/actions/groupsActions'
+import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
 
 function LessonItem(props) {
@@ -35,9 +35,6 @@ function LessonItem(props) {
       props.setIDToDownload.call();
       props.setShowLessonOptionsModal.call();
    }
-
-   //console.log(props.isDownloaded)
-
 
    ////////////////////////////////
    ////RENDER/STYLES/NAVOPTIONS////
@@ -88,9 +85,9 @@ function LessonItem(props) {
                }
                onLongPress={showLessonOptionsModal}
             >
-               <TouchableOpacity style={styles.completeStatusContainer} onPress={() => props.toggleComplete(props.activeGroupName, props.id)}>
+               <TouchableOpacity style={styles.completeStatusContainer} onPress={() => {props.toggleComplete(props.activeGroupName, props.id); props.setBookmark(props.activeGroupName)}}>
                   <Icon
-                     name={props.isComplete ? "check-unfilled" : props.isRTL ? 'triangle-left' : "triangle-right"}
+                     name={props.isComplete ? "check-unfilled" : props.currentLesson === props.id ? props.isRTL ? 'triangle-left' : "triangle-right" : null}
                      size={30 * scaleMultiplier}
                      color={props.isComplete ? "#828282" : props.colors.primaryColor}
                   />
@@ -129,6 +126,7 @@ const styles = StyleSheet.create({
    completeStatusContainer: {
       justifyContent: "center",
       marginHorizontal: 10,
+      width: 35 * scaleMultiplier
    },
    titleContainer: {
       flexDirection: "column",
@@ -168,7 +166,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
    return {
       downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
-      toggleComplete: (groupName, lessonID) => { dispatch(toggleComplete(groupName, lessonID)) }
+      toggleComplete: (groupName, lessonID) => { dispatch(toggleComplete(groupName, lessonID)) },
+      setBookmark: groupName => {dispatch(setBookmark(groupName))}
    }
 }
 

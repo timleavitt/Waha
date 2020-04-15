@@ -8,56 +8,57 @@ import AvatarImage from '../components/AvatarImage'
 
 function GroupListItem(props) {
    function getBookmarkText() {
-      var thisGroup = props.groups.filter(item => item.name === props.name)[0]
-      var thisGroupDatabase = props.database[thisGroup.language]
-      var bookmarkInt = 0;
-      var thisGroupProgress = props.groups.filter(item => item.name === props.name)[0].progress
+      // var thisGroup = props.groups.filter(item => item.name === props.name)[0]
+      // var thisGroupDatabase = props.database[thisGroup.language]
+      // var bookmarkInt = 0;
+      // var thisGroupProgress = props.groups.filter(item => item.name === props.name)[0].progress
 
-      //if a group has no progress, return the first lesson in the first study set
-      if (thisGroupProgress.length === 0) {
-         var firstLesson = thisGroupDatabase.studySets[0].lessons[0]
-         return (firstLesson.subtitle + ' ' + firstLesson.title)
-      }
-      thisGroupProgress.map(lessonID => {
-         if (parseInt(lessonID.slice(-4)) > bookmarkInt)
-            bookmarkInt = parseInt(lessonID.slice(-4))
-         return null;
-      })
+      // //if a group has no progress, return the first lesson in the first study set
+      // if (thisGroupProgress.length === 0) {
+      //    var firstLesson = thisGroupDatabase.studySets[0].lessons[0]
+      //    return (firstLesson.subtitle + ' ' + firstLesson.title)
+      // }
+      // thisGroupProgress.map(lessonID => {
+      //    if (parseInt(lessonID.slice(-4)) > bookmarkInt)
+      //       bookmarkInt = parseInt(lessonID.slice(-4))
+      //    return null;
+      // })
 
-      //string of the id of the last completed lesson 
-      var bookmarkString = bookmarkInt.toString();
-      var extraZero = ''
-      if (bookmarkString.length < 4)
-         extraZero = '0'
-      bookmarkString = extraZero + bookmarkString
+      // //string of the id of the last completed lesson 
+      // var bookmarkString = bookmarkInt.toString();
+      // var extraZero = ''
+      // if (bookmarkString.length < 4)
+      //    extraZero = '0'
+      // bookmarkString = extraZero + bookmarkString
 
-      var lessonListOfBookmarkStudySet = thisGroupDatabase.studySets.filter(
-         studySet => (studySet.id).slice(2, 4) === bookmarkString.slice(0, 2)
-      )[0].lessons
+      // var lessonListOfBookmarkStudySet = thisGroupDatabase.studySets.filter(
+      //    studySet => (studySet.id).slice(2, 4) === bookmarkString.slice(0, 2)
+      // )[0].lessons
 
-      //edge case: the last completed lesson is the last in a study set
-      if (parseInt(bookmarkString.slice(-2)) === lessonListOfBookmarkStudySet.length) {
-         //edge case: the last completed lesson is the last available lesson in any study set
-         if (parseInt(bookmarkString.slice(0, 2)) === thisGroupDatabase.studySets.length) {
-            return ('Contact us for more study sets!')
-         } else {
-            bookmarkString = (extraZero + (parseInt(bookmarkString.slice(0, 2)) + 1)).toString().concat(bookmarkString.slice(-2))
-            lessonListOfBookmarkStudySet = thisGroupDatabase.studySets.filter(
-               studySet => (studySet.id).slice(2, 4) === bookmarkString.slice(0, 2)
-            )[0].lessons
-            bookmarkLesson = lessonListOfBookmarkStudySet.filter(
-               lesson => lesson.id === (lesson.id).slice(0, 2).concat(bookmarkString.slice(0, 2), '01')
-            )
-         }
+      // //edge case: the last completed lesson is the last in a study set
+      // if (parseInt(bookmarkString.slice(-2)) === lessonListOfBookmarkStudySet.length) {
+      //    //edge case: the last completed lesson is the last available lesson in any study set
+      //    if (parseInt(bookmarkString.slice(0, 2)) === thisGroupDatabase.studySets.length) {
+      //       return ('Contact us for more study sets!')
+      //    } else {
+      //       bookmarkString = (extraZero + (parseInt(bookmarkString.slice(0, 2)) + 1)).toString().concat(bookmarkString.slice(-2))
+      //       lessonListOfBookmarkStudySet = thisGroupDatabase.studySets.filter(
+      //          studySet => (studySet.id).slice(2, 4) === bookmarkString.slice(0, 2)
+      //       )[0].lessons
+      //       bookmarkLesson = lessonListOfBookmarkStudySet.filter(
+      //          lesson => lesson.id === (lesson.id).slice(0, 2).concat(bookmarkString.slice(0, 2), '01')
+      //       )
+      //    }
 
-         //normal case
-      } else {
-         //get the lesson AFTER the last completed lesson 
-         bookmarkLesson = lessonListOfBookmarkStudySet.filter(
-            lesson => lesson.id === (lesson.id).slice(0, 2).concat(extraZero, (parseInt(bookmarkString) + 1).toString())
-         )
-      }
-      return (bookmarkLesson[0].subtitle + ' ' + bookmarkLesson[0].title)
+      //    //normal case
+      // } else {
+      //    //get the lesson AFTER the last completed lesson 
+      //    bookmarkLesson = lessonListOfBookmarkStudySet.filter(
+      //       lesson => lesson.id === (lesson.id).slice(0, 2).concat(extraZero, (parseInt(bookmarkString) + 1).toString())
+      //    )
+      // }
+      // return (bookmarkLesson[0].subtitle + ' ' + bookmarkLesson[0].title)
+      return 'dummy text'
    }
 
    ////////////////////////////////

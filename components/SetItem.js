@@ -2,46 +2,31 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 import Icon from '../assets/fonts/icons'
 
-function StudySetItem(props) {
-
-   function chooseAccentColor() {
-
-      value = parseInt(props.id.substr(2, 4)) % 4
-
-      if (value === 1) {
-         return props.colors.primaryColor
-      } else if (value === 2) {
-         return props.colors.accentColor1
-      } else if (value === 3) {
-         return props.colors.accentColor3
-      } else {
-         return props.colors.accentColor4
-      }
-   }
+function SetItem(props) {
 
    const [numCompleted, setNumCompleted] = useState(0)
-   const [fullyCompleted, setFullyCompleted] = useState(false)
    const [numLessons, setNumLessons] = useState(1)
+   const [fullyCompleted, setFullyCompleted] = useState(false)
 
    useEffect(() => {
 
-      for (const studySet of props.database.studySets) {
-         if (studySet.id === props.id) {
-            setNumLessons(studySet.lessons.length)
+      for (const set of props.database.sets) {
+         if (set.id === props.id) {
+            setNumLessons(set.length)
          }
       }
-      var localNumCompleted = 0
-      for (const lesson of props.progress) {
-         if (lesson.startsWith(props.id)) {
-            localNumCompleted += 1
-         }
-      }
-      setNumCompleted(localNumCompleted)
+      // var localNumCompleted = 0
+      // for (const lesson of props.progress) {
+      //    if (lesson.startsWith(props.id)) {
+      //       localNumCompleted += 1
+      //    }
+      // }
+      // setNumCompleted(localNumCompleted)
    }, [props.progress])
 
    useEffect(() => {
@@ -68,7 +53,7 @@ function StudySetItem(props) {
 
 
    return (
-      <TouchableOpacity style={[styles.studySetItem, { flexDirection: props.isRTL ? "row-reverse" : "row" }]} onPress={props.onStudySetSelect}>
+      <TouchableOpacity style={[styles.studySetItem, { flexDirection: props.isRTL ? "row-reverse" : "row" }]} onPress={props.onSetSelect}>
          <View style={styles.progressContainer}>
             <AnimatedCircularProgress
                size={props.isSmall ? 70 * scaleMultiplier : 85 * scaleMultiplier}
@@ -79,7 +64,7 @@ function StudySetItem(props) {
                backgroundColor="#FFFFFF"
             >
                {(fill) => (
-                  <View style={{ backgroundColor: chooseAccentColor(), width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
+                  <View style={{ backgroundColor: props.color, width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
                      <MaterialCommunityIcons name={props.iconName} size={props.isSmall ? 40 * scaleMultiplier : 50 * scaleMultiplier} color={fullyCompleted ? "#828282" : "#1D1E20"} />
                   </View>)}
             </AnimatedCircularProgress>
@@ -138,12 +123,6 @@ const styles = StyleSheet.create({
       marginLeft: 10,
       marginRight: 5
    },
-   title: {
-
-   },
-   subtitle: {
- 
-   },
    iconContainer: {
       justifyContent: "center",
       marginRight: 15
@@ -155,10 +134,9 @@ function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
       progress: activeGroup.progress,
-      colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,
       database: state.database[activeGroup.language]
    }
 };
 
-export default connect(mapStateToProps)(StudySetItem);
+export default connect(mapStateToProps)(SetItem);
