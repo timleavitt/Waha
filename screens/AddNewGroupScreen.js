@@ -1,12 +1,8 @@
-//imports
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TextInput, Text, TouchableOpacity, Alert } from 'react-native';
-
 import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
 import * as ImagePicker from 'expo-image-picker';
-
-//redux imports
 import { connect } from 'react-redux'
 import { createGroup } from '../redux/actions/groupsActions'
 import WahaModal from '../components/WahaModal'
@@ -15,45 +11,42 @@ import AvatarImage from '../components/AvatarImage'
 
 function AddNewGroupScreen(props) {
 
+   //// STATE
 
-   //////////////////////////////////////////
-   ////STATE, CONSTRUCTOR, AND NAVIGATION////
-   //////////////////////////////////////////
-
+   // keeps track of the group name text input value
    const [groupName, setGroupName] = useState('')
 
+   // keeps track of the source for the avatar image
    const [avatarSource, setAvatarSource] = useState('')
+
+   // shows the image picker modal
    const [showImagePickerModal, setShowImagePickerModal] = useState(false)
 
-   //set language based on user's language vs user's location?
+   //// CONSTRUCTOR
+
    useEffect(() => {
       props.navigation.setOptions(getNavOptions())
    }, [props.isRTL])
 
+   //// NAV OPTIONS
+
    function getNavOptions() {
       return {
-         headerRight: props.isRTL ? () =>
-            <BackButton
-               isRTL={props.isRTL}
-               onPress={() => props.navigation.goBack()}
-            /> :
+         headerRight: props.isRTL ?
+            () => <BackButton onPress={() => props.navigation.goBack()} /> :
             () => <View></View>,
-         headerLeft: props.isRTL ? () =>
-            <View></View> :
-            () =>
-               <BackButton
-                  isRTL={props.isRTL}
-                  onPress={() => props.navigation.goBack()}
-               />,
+         headerLeft: props.isRTL ?
+            () => <View></View> :
+            () => <BackButton onPress={() => props.navigation.goBack()} />,
       }
    }
 
-   ///////////////////////
-   ////OTHER FUNCTIONS////
-   ///////////////////////
+   //// FUNCTIONS
 
+   // adds a group to redux if it passes all error checking
    function addNewGroup() {
       var isDuplicate = false
+
       props.groups.map(group => {
          if (group.name === groupName) {
             isDuplicate = true
@@ -61,48 +54,43 @@ function AddNewGroupScreen(props) {
          }
          return
       })
+
       if (isDuplicate) {
          Alert.alert(
-            'Error',
-            "Group name cannot be the same as another group's",
-            [{
-               text: 'OK',
-               onPress: () => { }
-            }]
+            props.translations.alerts.sameGroupName.header,
+            props.translations.alerts.sameGroupName.body,
+            [{ text: props.translations.alerts.options.ok, onPress: () => { } }]
          )
          return
       }
+
       if (groupName === '') {
          Alert.alert(
-            'Error',
-            "Group name cannot be blank",
-            [{
-               text: 'OK',
-               onPress: () => { }
-            }]
+            props.translations.alerts.blankGroupName.header,
+            props.translations.alerts.blankGroupName.body,
+            [{ text: props.translations.alerts.options.ok, onPress: () => { } }]
          )
          return
       }
+
       props.createGroup(groupName, props.route.params.languageID, avatarSource)
       props.navigation.goBack()
    }
 
+   // opens image library after checking for permission, then set the avatarSource state
+   // to the uri of the image the user selected
    async function openImageLibraryHandler() {
       var permissionGranted = false
       await ImagePicker.getCameraRollPermissionsAsync()
          .then((permissionResponse) => {
-            //console.log(permissionResponse)
             if (permissionResponse.status !== 'granted') {
-               //console.log('not granted')
-               // console.log('not granted')
                ImagePicker.requestCameraRollPermissionsAsync()
                   .then(permissionResponse => {
                      if (permissionResponse.status === 'granted') {
                         openImageLibraryHandler()
                      }
                   })
-            }
-            else {
+            } else {
                permissionGranted = true
             }
          })
@@ -117,22 +105,20 @@ function AddNewGroupScreen(props) {
       }
    }
 
+   // opens camera  after checking for permission, then set the avatarSource state
+   // to the uri of the picture the user takes
    async function openCameraHandler() {
       var permissionGranted = false
       await ImagePicker.getCameraPermissionsAsync()
          .then((permissionResponse) => {
-            //console.log(permissionResponse)
             if (permissionResponse.status !== 'granted') {
-               //console.log('not granted')
-               // console.log('not granted')
                ImagePicker.requestCameraPermissionsAsync()
                   .then(permissionResponse => {
                      if (permissionResponse.status === 'granted') {
                         openCameraHandler()
                      }
                   })
-            }
-            else {
+            } else {
                permissionGranted = true
             }
          })
@@ -146,52 +132,47 @@ function AddNewGroupScreen(props) {
             })
       }
    }
-   ////////////////////////////////
-   ////RENDER/STYLES/NAVOPTIONS////
-   ////////////////////////////////
 
+   //// RENDER
 
-
-
-   //create modal in here, pass state to show it to lesson item so lesson item
-   //can change it and show the modal on this screen
    return (
       <View style={styles.screen}>
          <View style={styles.photoContainer}>
-            <AvatarImage source={avatarSource} onPress={() => setShowImagePickerModal(true)} size={120} isChangeable={true}/>
+            <AvatarImage source={avatarSource} onPress={() => setShowImagePickerModal(true)} size={120} isChangeable={true} />
          </View>
          <View style={styles.bottomHalfContainer}>
             <View style={styles.inputContainer}>
-               <Text style={[styles.groupNameLabel, {textAlign: props.isRTL ? 'right' : 'left'}]}>Group Name</Text>
+               <Text style={[styles.groupNameLabel, { textAlign: props.isRTL ? 'right' : 'left' }]}>{props.translations.labels.groupName}</Text>
                <TextInput
-                  style={[styles.addNewGroupContainer, {textAlign: props.isRTL ? 'right' : 'left'}]}
+                  style={[styles.addNewGroupContainer, { textAlign: props.isRTL ? 'right' : 'left' }]}
                   onChangeText={text => setGroupName(text)} value={groupName}
                   autoCapitalize='words'
                   autoCorrect={false}
-                  placeholder='Group name here'
+                  placeholder={props.translations.labels.groupNamePlaceholder}
                   placeholderTextColor='#9FA5AD'
                   maxLength={50}
                   returnKeyType='done'
                />
             </View>
-            <TouchableOpacity style={[styles.saveButtonContainer, {alignSelf: props.isRTL ? 'flex-start' : "flex-end",}]} onPress={addNewGroup}>
-               <Text style={styles.saveButtonText}>Save</Text>
+            <TouchableOpacity style={[styles.saveButtonContainer, { alignSelf: props.isRTL ? 'flex-start' : "flex-end", }]} onPress={addNewGroup}>
+               <Text style={styles.saveButtonText}>{props.translations.labels.save}</Text>
             </TouchableOpacity>
          </View>
          <WahaModal isVisible={showImagePickerModal}>
-            <ModalButton title='Take Photo' onPress={openCameraHandler} />
-            <ModalButton title='Choose from Library...' onPress={openImageLibraryHandler} />
-            <ModalButton title='Cancel' onPress={() => setShowImagePickerModal(false)} />
+            <ModalButton title={props.translations.modals.cameraOptions.takePhoto} onPress={openCameraHandler} />
+            <ModalButton title={props.translations.modals.cameraOptions.chooseFromLibrary} onPress={openImageLibraryHandler} />
+            <ModalButton title={props.translations.modals.cameraOptions.cancel} onPress={() => setShowImagePickerModal(false)} />
          </WahaModal>
       </View>
    )
 }
 
+//// STYLES
+
 const styles = StyleSheet.create({
    screen: {
       flex: 1,
       backgroundColor: "#FFFFFF"
-      //justifyContent: "flex-start"
    },
    photoContainer: {
       width: "100%",
@@ -239,20 +220,14 @@ const styles = StyleSheet.create({
    },
 })
 
-
-/////////////
-////REDUX////
-/////////////
-
+//// REDUX
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
       groups: state.groups,
-      colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,
-      activeGroupName: activeGroup.name,
-      activeGroupImageSource: activeGroup.imageSource
+      translations: state.database[activeGroup.language].translations,
    }
 };
 

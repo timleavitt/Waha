@@ -18,22 +18,13 @@ export function removeDownload(lessonID) {
     }
 }
 
-//thunk function for async downloading
+// thunk function for async downloading
 export function downloadLesson(lessonID, source) {
 
-    //console.log(source)
+    // console.log(source)
     return dispatch => {
 
-      // function updateSeconds(sec) {
-      //    sec += 1
-      // }
-
-      // var seconds = {time: 0}
-      // const interval = setInterval(updateSeconds(seconds.time), 1000);
-
-      // console.log(seconds)
-
-        //callback function
+        // callback function
         function callback({ totalBytesWritten, totalBytesExpectedToWrite }) {
            var check = Math.floor(Math.random() * 200)
             progress = totalBytesWritten / totalBytesExpectedToWrite
@@ -44,7 +35,7 @@ export function downloadLesson(lessonID, source) {
             }
         }
 
-        //create our download object
+        // create our download object
         const downloadResumable = FileSystem.createDownloadResumable(
             source,
             FileSystem.documentDirectory + lessonID + '.mp3',
@@ -52,13 +43,12 @@ export function downloadLesson(lessonID, source) {
             callback
         )
 
-        //add our download to state with progress 0
+        // add our download to state with progress 0
         dispatch(addUpdateDownload(0, lessonID))
 
-        //attempt to download file
+        // attempt to download file
         try {
             downloadResumable.downloadAsync()
-            // .then(({uri}) => console.log('Finished downloading to ', uri))
         } catch (error) {
             console.error(error);
         }

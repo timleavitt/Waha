@@ -1,57 +1,42 @@
-//imports
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, Text, ScrollView } from 'react-native';
-
+import { View, StyleSheet, TouchableOpacity, FlatList, Text } from 'react-native';
 import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
-
-//redux imports
 import { connect } from 'react-redux'
-import { addLanguage, changeLanguage } from '../redux/actions/databaseActions'
 import LanguageInstanceHeader from '../components/LanguageInstanceHeader';
 
 function GroupsScreen(props) {
 
-
-   //////////////////////////////////////////
-   ////STATE, CONSTRUCTOR, AND NAVIGATION////
-   //////////////////////////////////////////
+   //// STATE
 
    const [isEditing, setIsEditing] = useState(false)
 
-   //set language based on user's language vs user's location?
+   //// CONSTRUCTOR
+
    useEffect(() => {
       props.navigation.setOptions(getNavOptions())
    }, [isEditing, props])
 
+   //// NAV OPTIONS
+
    function getNavOptions() {
       return {
          headerRight: props.isRTL ? 
-            () =>
-               <BackButton
-                  isRTL={props.isRTL}
-                  onPress={() => props.navigation.goBack()}
-               /> :
+            () => <BackButton onPress={() => props.navigation.goBack()}/> :
             () => 
                <TouchableOpacity style={styles.editButtonContainer} onPress={() => setIsEditing(old => !old)}>
-                  <Text style={styles.editButtonText}>{isEditing ? 'Done' : 'Edit'}</Text>
+                  <Text style={styles.editButtonText}>{isEditing ? props.translations.labels.done : props.translations.labels.edit}</Text>
                </TouchableOpacity>,
          headerLeft: props.isRTL ? 
             () =>
                <TouchableOpacity style={styles.editButtonContainer} onPress={() => setIsEditing(old => !old)}>
-                  <Text style={styles.editButtonText}>{isEditing ? 'Done' : 'Edit'}</Text>
+                  <Text style={styles.editButtonText}>{isEditing ? props.translations.labels.done : props.translations.labels.edit}</Text>
                </TouchableOpacity> :
-            () =>
-               <BackButton
-                  isRTL={props.isRTL}
-                  onPress={() => props.navigation.goBack()}
-               />,
+            () => <BackButton onPress={() => props.navigation.goBack()}/>,
       }
    }
 
-   ///////////////////////
-   ////OTHER FUNCTIONS////
-   ///////////////////////
+   //// FUNCTIONS
 
    function getInstalledLanguageInstances() {
       var installedLanguageInstances = []
@@ -66,11 +51,7 @@ function GroupsScreen(props) {
       return installedLanguageInstances
    }
 
-
-
-   ////////////////////////////////
-   ////RENDER/STYLES/NAVOPTIONS////
-   ////////////////////////////////
+   //// RENDER
 
    function renderLanguageInstanceItem(languageInstances) {
       return (
@@ -84,8 +65,6 @@ function GroupsScreen(props) {
       )
    }
 
-   //create modal in here, pass state to show it to lesson item so lesson item
-   //can change it and show the modal on this screen
    return (
       <View style={styles.screen}>
          <View style={styles.languageList}>
@@ -95,21 +74,21 @@ function GroupsScreen(props) {
                keyExtractor={item => item.languageID}
                ListFooterComponent={
                   <TouchableOpacity style={[styles.addNewLanguageContainer, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={() => props.navigation.navigate('AddNewLanguage', { installedLanguageInstances: getInstalledLanguageInstances() })}>
-                     <Text style={[styles.addNewLanguageText, {textAlign: props.isRTL ? 'right' : 'left'}]}>+ New language</Text>
+                     <Text style={[styles.addNewLanguageText, {textAlign: props.isRTL ? 'right' : 'left'}]}>{props.translations.labels.newLanguage}</Text>
                   </TouchableOpacity>
                }
             />
          </View>
-
       </View>
    )
 }
+
+//// STYLES
 
 const styles = StyleSheet.create({
    screen: {
       flex: 1,
       backgroundColor: "#EFF2F4",
-      //justifyContent: "flex-start"
    },
    languageList: {
       flex: 1
@@ -139,28 +118,15 @@ const styles = StyleSheet.create({
    }
 })
 
-
-/////////////
-////REDUX////
-/////////////
-
+//// REDUX
 
 function mapStateToProps(state) {
-   //console.log(state.groups)
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      downloads: state.downloads,
-      appProgress: state.appProgress,
       database: state.database,
-      colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,
+      translations: state.database[activeGroup.language].translations
    }
 };
 
-function mapDispatchToProps(dispatch) {
-   return {
-      addLanguage: language => dispatch(addLanguage(language)),
-   }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(GroupsScreen);
+export default connect(mapStateToProps)(GroupsScreen);

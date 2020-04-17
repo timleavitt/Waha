@@ -1,29 +1,34 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { scaleMultiplier } from '../constants'
 
 function ModalButton(props) {
-    return (
-        <TouchableOpacity 
-            style={styles.modalButtonStyle}
-            onPress={props.onPress}
-        >
-            <Text style={{...styles.text, ...props.style}}>{props.title}</Text>
-        </TouchableOpacity>
-    )
+
+   //// RETURN
+
+   return (
+      <TouchableOpacity
+         style={styles.modalButtonStyle}
+         onPress={props.onPress}
+      >
+         <Text style={{ ...styles.text, ...props.style }}>{props.title}</Text>
+      </TouchableOpacity>
+   )
 }
 
+//// STYLES
+
 const styles = StyleSheet.create({
-    modalButtonStyle: {
+   modalButtonStyle: {
       width: "100%",
       height: 60 * scaleMultiplier,
       justifyContent: "center"
-    },
-    text: {
-        textAlign: "center",
-        fontFamily: 'medium',
-        fontSize: 21 * scaleMultiplier
-    }
-  })
+   },
+   text: {
+      textAlign: "center",
+      fontFamily: 'medium',
+      fontSize: 21 * scaleMultiplier
+   }
+})
 
 export default ModalButton

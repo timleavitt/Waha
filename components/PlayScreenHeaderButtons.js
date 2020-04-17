@@ -4,6 +4,9 @@ import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
 
 function PlayScreenHeaderButtons(props) {
+
+   //// RENDER
+
    return (
       <View style={[styles.headerButtonsContainer, {flexDirection: props.isRTL ? 'row-reverse' : 'row', marginHorizonal: 5}]}>
          <TouchableOpacity
@@ -29,12 +32,16 @@ function PlayScreenHeaderButtons(props) {
    )
 }
 
+//// STYLES
+
 const styles = StyleSheet.create({
    headerButtonsContainer: {
       flexDirection: "row",
       justifyContent: "flex-end",
    },
 })
+
+//// REDUX
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]

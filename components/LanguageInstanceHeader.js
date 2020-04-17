@@ -9,33 +9,35 @@ import * as FileSystem from 'expo-file-system';
 
 function LanguageInstanceHeader(props) {
 
+   //// FUNCTIONS
+   
+   // deletes all material for a language
    function deleteLanguageInstance() {
-
-      //1. delete all groups w/ this language
+      // delete all groups w/ this language
       props.groups.map(group => {
          if (group.language === props.languageID) {
             props.deleteGroup(group.name)
          }
       })
 
-      //2. delete all downloaded files for this language
+      // delete all downloaded files for this language
       FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
-         //only delete the lessons which are 6 digit ids
-         for (var i = 0; i < contents.length; i++) {
-            if (contents[i].slice(0, 2) === props.database[props.languageID].studySets[0].id.slice(0,2) ||
-            contents[i].slice(0, 2) === props.languageID)
-            FileSystem.deleteAsync(FileSystem.documentDirectory + contents[i])
+         for (const item of contents) {
+            if (item.slice(0, 2) === props.activeGroup.language)
+               FileSystem.deleteAsync(FileSystem.documentDirectory + item)
          }
-      });
+      })
 
-      //3. delete section of database for this language
+      // delete section of database for this language
       props.deleteLanguage(props.languageID)
    }
+
+   //// RENDER
 
    function renderGroupItem(groups) {
       return (
          <GroupListItem
-            name={groups.item.name}
+            groupName={groups.item.name}
             isEditing={props.isEditing}
             goToEditGroupScreen={props.goToEditGroupScreen}
             avatarSource={groups.item.imageSource}
@@ -43,32 +45,30 @@ function LanguageInstanceHeader(props) {
       )
    }
 
-   var trashButton = (props.isEditing && !(props.activeLanguage === props.languageID)) ?
+   // render trash button conditionally because it's only shown when editting mode is active
+   var trashButton = (props.isEditing && !(props.activeGroup.language === props.languageID)) ?
       <TouchableOpacity
-         style={[styles.trashButtonContainer, {marginRight: props.isRTL ? 15 : -15, marginLeft: props.isRTL ? -15 : 15}]}
-         onPress={
-            () => Alert.alert(
-               'Warning',
-               "Are you sure you'd like to delete all data for this language instance? This includes, downloaded lessons, groups, and progress.",
-               [{
-                  text: 'Cancel',
-                  onPress: () => { }
-               },
-               {
-                  text: 'OK',
-                  onPress: deleteLanguageInstance
-               }]
-            )
-         }
+         style={[styles.trashButtonContainer, { marginRight: props.isRTL ? 15 : -15, marginLeft: props.isRTL ? -15 : 15 }]}
+         onPress={() => Alert.alert(
+            props.translations.alerts.deleteLanguage.header,
+            props.translations.alerts.deleteLanguage.body,
+            [{
+               text: props.translations.alerts.options.cancel,
+               onPress: () => { }
+            }, {
+               text: props.translations.alerts.options.ok,
+               onPress: deleteLanguageInstance
+            }]
+         )}
       >
-         <Icon name='trash' size={25 * scaleMultiplier} color='#FF0800'/>
+         <Icon name='trash' size={25 * scaleMultiplier} color='#FF0800' />
       </TouchableOpacity> : null
-   
+
    return (
       <View style={styles.languageHeaderListContainer}>
-         <View style={[styles.languageHeaderContainer, {flexDirection: props.isRTL ? 'row-reverse' : 'row'}]}>
+         <View style={[styles.languageHeaderContainer, { flexDirection: props.isRTL ? 'row-reverse' : 'row' }]}>
             {trashButton}
-            <Text style={[styles.languageHeaderText, {textAlign: props.isRTL ? 'right' :'left'}]}>{props.languageName}</Text>
+            <Text style={[styles.languageHeaderText, { textAlign: props.isRTL ? 'right' : 'left' }]}>{props.languageName}</Text>
             <Image style={styles.languageLogo} source={headerImages[props.languageID]} />
          </View>
          <FlatList
@@ -76,13 +76,15 @@ function LanguageInstanceHeader(props) {
             renderItem={renderGroupItem}
             keyExtractor={item => item.name}
          />
-         <TouchableOpacity style={[styles.addGroupContainer, {flexDirection: props.isRTL ? "row-reverse" : "row"}]} onPress={props.goToAddNewGroupScreen}>
-            <Icon name='group-add' size={35 * scaleMultiplier} color='#DEE3E9' style={{marginHorizontal: 15}}/>
-            <Text style={[styles.addGroupText, {textAlign: props.isRTL ? 'right' :'left'}]}>New group</Text>
+         <TouchableOpacity style={[styles.addGroupContainer, { flexDirection: props.isRTL ? "row-reverse" : "row" }]} onPress={props.goToAddNewGroupScreen}>
+            <Icon name='group-add' size={35 * scaleMultiplier} color='#DEE3E9' style={{ marginHorizontal: 15 }} />
+            <Text style={[styles.addGroupText, { textAlign: props.isRTL ? 'right' : 'left' }]}>{props.translations.labels.newGroup}</Text>
          </TouchableOpacity>
       </View>
    )
 }
+
+//// STYLES
 
 const styles = StyleSheet.create({
    languageHeaderListContainer: {
@@ -95,11 +97,11 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       width: '100%',
       height: 30,
-   }, 
+   },
    trashButtonContainer: {
       justifyContent: 'center',
       alignItems: 'center',
-   }, 
+   },
    languageHeaderText: {
       fontSize: 18 * scaleMultiplier,
       fontFamily: "regular",
@@ -129,23 +131,23 @@ const styles = StyleSheet.create({
       textAlign: 'left'
    },
 })
+
+// REDUX
+
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      colors: state.database[activeGroup.language].colors,
-      progress: state.appProgress,
       isRTL: state.database[activeGroup.language].isRTL,
       groups: state.groups,
-      activeLanguage: activeGroup.language,
-      database: state.database,
-      activeGroupLanguage: activeGroup.language
+      activeGroup: activeGroup,
+      translations: state.database[activeGroup.language].translations
    }
 };
 
 function mapDispatchToProps(dispatch) {
    return {
       deleteGroup: name => { dispatch(deleteGroup(name)) },
-      deleteLanguage: language => { dispatch(deleteLanguage(language))},
+      deleteLanguage: language => { dispatch(deleteLanguage(language)) },
    }
 }
 

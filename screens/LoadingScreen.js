@@ -1,4 +1,3 @@
-//imports
 import React from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
 import i18n from 'i18n-js';

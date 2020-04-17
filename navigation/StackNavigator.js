@@ -26,7 +26,7 @@ function StackNavigator(props) {
                },
                gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
                gestureResponseDistance: {horizontal: 300 * scaleMultiplier, vertical: 135},
-               headerTitleAlign: 'center'
+               headerTitleAlign: 'center',
             }}>
 
             {/* Study Set Screen */}
@@ -38,7 +38,6 @@ function StackNavigator(props) {
                      backgroundColor: "#EAEEF0",
                   },
                   headerTitleAlign: "center",
-                  gestureEnabled: 'true'
                }}
             />
 

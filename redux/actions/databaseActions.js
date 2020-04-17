@@ -6,13 +6,11 @@ export const SET_IS_FETCHING = 'SET_IS_FETCHING'
 export const SET_FIRST_OPEN = 'SET_FIRST_OPEN'
 export const SET_IS_READY_TO_START = 'SET_IS_READY_TO_START'
 export const DELETE_LANGUAGE = 'DELETE_LANGUAGE'
-
 import firebase from 'firebase';
 import '@firebase/firestore'
-
 import * as FileSystem from 'expo-file-system';
 
-//firebase initializing
+// firebase initializing
 const config = {
    apiKey: "***REMOVED***",
    authDomain: "waha-app-db.firebaseapp.com",
@@ -23,11 +21,9 @@ const config = {
    appId: "1:831723165603:web:21a474da50b2d0511bec16",
    measurementId: "G-6SYY2T8DX1"
 };
-
 firebase.initializeApp(config);
 const db = firebase.firestore();
 
-//action creators
 export function storeData(data, language) {
    return {
       type: STORE_DATA,
@@ -63,26 +59,24 @@ export function fetchError() {
    }
 }
 
-//thunk function for fetching a language from the database
-//this includes colors, translations, study sets, lessons, and chapter 1
-//and 3 audio files
+// thunk function for fetching a language from the database
+// this includes colors, translations, sets, lessons, and urls 
+// to all chapter 1 and 3 audio files
 export function addLanguage(language) {
-   return (dispatch, getState) => {
-      //set isFetching to true to signal that we're fetching data from firebase
+   return (dispatch) => {
+      // set isFetching to true to signal that we're fetching data from firebase
       dispatch(setIsFetching(true));
-
-      //console.log(`typeof language passed in: ${typeof language}`)
 
       var chapter1Downloaded = false;
       var chapter3Downloaded = false;
 
-      //Get stuff from database and throw it in redux
+      // get stuff from database and throw it in redux
       db.collection("languages").doc(language).get().then(doc => {
          if (doc.exists) {
             dispatch(storeData(doc.data(), language));
-            //after we get our firebase data, we can download chapters 1 and 3
 
-            //create our download object for chapter 1
+            // after we get our firebase data, we can download chapters 1 and 3
+            // create our download object for chapter 1
             var downloadResumable = FileSystem.createDownloadResumable(
                doc.data().chapter1source,
                FileSystem.documentDirectory + language + 'chapter1.mp3',
@@ -90,7 +84,6 @@ export function addLanguage(language) {
             )
             try {
                downloadResumable.downloadAsync().then(({ uri }) => {
-                  //console.log('Finished downloading to ', uri);
                   chapter1Downloaded = true;
                   if (chapter1Downloaded && chapter3Downloaded)
                      dispatch(setIsFetching(false));
@@ -99,7 +92,7 @@ export function addLanguage(language) {
                console.error(error);
             }
 
-            //create our download object for chapter 3
+            // create our download object for chapter 3
             downloadResumable = FileSystem.createDownloadResumable(
                doc.data().chapter3source,
                FileSystem.documentDirectory + language + 'chapter3.mp3',

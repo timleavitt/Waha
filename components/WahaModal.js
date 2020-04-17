@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Modal } from 'react-native';
 
 function WahaModal(props) {
+
+   //// RENDER
     return (
         <Modal
             visible={props.isVisible}

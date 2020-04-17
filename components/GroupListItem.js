@@ -1,4 +1,3 @@
-//imports
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { connect } from 'react-redux'
@@ -7,73 +6,32 @@ import { scaleMultiplier } from '../constants'
 import AvatarImage from '../components/AvatarImage'
 
 function GroupListItem(props) {
+
+   //// FUNCTIONS
+
+   // gets a formatted string of this group's bookmark lesson
    function getBookmarkText() {
-      // var thisGroup = props.groups.filter(item => item.name === props.name)[0]
-      // var thisGroupDatabase = props.database[thisGroup.language]
-      // var bookmarkInt = 0;
-      // var thisGroupProgress = props.groups.filter(item => item.name === props.name)[0].progress
-
-      // //if a group has no progress, return the first lesson in the first study set
-      // if (thisGroupProgress.length === 0) {
-      //    var firstLesson = thisGroupDatabase.studySets[0].lessons[0]
-      //    return (firstLesson.subtitle + ' ' + firstLesson.title)
-      // }
-      // thisGroupProgress.map(lessonID => {
-      //    if (parseInt(lessonID.slice(-4)) > bookmarkInt)
-      //       bookmarkInt = parseInt(lessonID.slice(-4))
-      //    return null;
-      // })
-
-      // //string of the id of the last completed lesson 
-      // var bookmarkString = bookmarkInt.toString();
-      // var extraZero = ''
-      // if (bookmarkString.length < 4)
-      //    extraZero = '0'
-      // bookmarkString = extraZero + bookmarkString
-
-      // var lessonListOfBookmarkStudySet = thisGroupDatabase.studySets.filter(
-      //    studySet => (studySet.id).slice(2, 4) === bookmarkString.slice(0, 2)
-      // )[0].lessons
-
-      // //edge case: the last completed lesson is the last in a study set
-      // if (parseInt(bookmarkString.slice(-2)) === lessonListOfBookmarkStudySet.length) {
-      //    //edge case: the last completed lesson is the last available lesson in any study set
-      //    if (parseInt(bookmarkString.slice(0, 2)) === thisGroupDatabase.studySets.length) {
-      //       return ('Contact us for more study sets!')
-      //    } else {
-      //       bookmarkString = (extraZero + (parseInt(bookmarkString.slice(0, 2)) + 1)).toString().concat(bookmarkString.slice(-2))
-      //       lessonListOfBookmarkStudySet = thisGroupDatabase.studySets.filter(
-      //          studySet => (studySet.id).slice(2, 4) === bookmarkString.slice(0, 2)
-      //       )[0].lessons
-      //       bookmarkLesson = lessonListOfBookmarkStudySet.filter(
-      //          lesson => lesson.id === (lesson.id).slice(0, 2).concat(bookmarkString.slice(0, 2), '01')
-      //       )
-      //    }
-
-      //    //normal case
-      // } else {
-      //    //get the lesson AFTER the last completed lesson 
-      //    bookmarkLesson = lessonListOfBookmarkStudySet.filter(
-      //       lesson => lesson.id === (lesson.id).slice(0, 2).concat(extraZero, (parseInt(bookmarkString) + 1).toString())
-      //    )
-      // }
-      // return (bookmarkLesson[0].subtitle + ' ' + bookmarkLesson[0].title)
-      return 'dummy text'
+      var thisGroup = props.groups.filter(group => group.name === props.groupName)[0]
+      if (thisGroup.bookmark === props.database[thisGroup.language].lessons.length + 1) 
+         return 'Contact us for more study sets!'
+      var bookmarkLesson = props.database[thisGroup.language].lessons.filter(lesson => lesson.index === thisGroup.bookmark)[0]
+      return bookmarkLesson.subtitle + ' ' + bookmarkLesson.title
    }
 
-   ////////////////////////////////
-   ////RENDER/STYLES/NAVOPTIONS////
-   ////////////////////////////////
+   //// RENDER
+
+   // render the delete button conditionally as we can only delete in edit mode and 
+   // can't delete the active group
    var deleteButton;
-   if (props.isEditing && props.activeGroup != props.name) {
+   if (props.isEditing && props.activeGroup != props.groupName) {
       deleteButton =
          <TouchableOpacity
             style={[styles.minusButtonContainer, { marginLeft: props.isRTL ? -5 : 10, marginRight: props.isRTL ? 10 : -5,}]}
-            onPress={() => props.deleteGroup(props.name)}
+            onPress={() => props.deleteGroup(props.groupName)}
          >
             <Icon name='minus-filled' size={24 * scaleMultiplier} color="#FF0800" />
          </TouchableOpacity>
-   } else if (props.isEditing && props.activeGroup === props.name) {
+   } else if (props.isEditing && props.activeGroup === props.groupName) {
       deleteButton =
          <View style={[styles.minusButtonContainer, { marginLeft: props.isRTL ? -5 : 10, marginRight: props.isRTL ? 10 : -5,}]}>
             <Icon
@@ -84,6 +42,8 @@ function GroupListItem(props) {
          </View>
    }
 
+   // render right button conditionally; can be either right arrow when in edit mode, 
+   // checkmark if in edit mode and this group is active, or nothing
    var rightButton;
    if (props.isEditing) {
       rightButton =
@@ -97,7 +57,7 @@ function GroupListItem(props) {
                color="gray"
             />
          </View>
-   } else if (props.activeGroup === props.name) {
+   } else if (props.activeGroup === props.groupName) {
       rightButton =
          <View style={styles.iconContainer}>
             <Icon
@@ -115,11 +75,11 @@ function GroupListItem(props) {
       {deleteButton}
       <TouchableOpacity
          style={[styles.touchableContainer, { flexDirection: props.isRTL ? "row-reverse" : "row" }]}
-         onPress={props.isEditing ? () => props.goToEditGroupScreen(props.name) : () => { props.changeActiveGroup(props.name) }}
+         onPress={props.isEditing ? () => props.goToEditGroupScreen(props.groupName) : () => { props.changeActiveGroup(props.groupName) }}
       >
-         <AvatarImage size={50 * scaleMultiplier} onPress={() => {}} source={props.avatarSource} isActive={props.activeGroup === props.name}/>
+         <AvatarImage size={50 * scaleMultiplier} onPress={() => {}} source={props.avatarSource} isActive={props.activeGroup === props.groupName}/>
          <View style={styles.groupNameContainer}>
-            <Text style={[styles.groupNameText, {textAlign: props.isRTL ? 'right' :'left'}]}>{props.name}</Text>
+            <Text style={[styles.groupNameText, {textAlign: props.isRTL ? 'right' :'left'}]}>{props.groupName}</Text>
             <Text style={[styles.checkpointText, {textAlign: props.isRTL ? 'right' :'left'}]}>{getBookmarkText()}</Text>
          </View>
          {rightButton}
@@ -127,6 +87,8 @@ function GroupListItem(props) {
       </View>
    )
 }
+
+//// STYLES
 
 const styles = StyleSheet.create({
    groupListItemContainer: {
@@ -176,15 +138,15 @@ const styles = StyleSheet.create({
    }
 })
 
+//// REDUX
+
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      colors: state.database[activeGroup.language].colors,
-      currentProgress: activeGroup.progress,
+      database: state.database,
       isRTL: state.database[activeGroup.language].isRTL,
       groups: state.groups,
       activeGroup: state.activeGroup,
-      database: state.database
    }
 };
 

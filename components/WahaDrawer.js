@@ -1,38 +1,42 @@
 import SafeAreaView from 'react-native-safe-area-view';
 import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux'
 import DrawerItem from '../components/DrawerItem'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import SmallDrawerItem from '../components/SmallDrawerItem'
 import { scaleMultiplier } from '../constants'
 import * as WebBrowser from 'expo-web-browser';
 import AvatarImage from '../components/AvatarImage'
 
 function WahaDrawer(props) {
+
+   //// FUNCTIONS
+
+   // opens a local browser 
    async function openBrowser(url) {
       await WebBrowser.openBrowserAsync(url);
    }
 
+   //// RENDER
+
    return (
-      <SafeAreaView
-         style={styles.container}
-         forceInset={{ top: 'always', horizontal: 'never' }}
-      >
+      <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
          <View style={[styles.drawerHeaderContainer, { backgroundColor: props.colors.primaryColor }]}>
             <View style={styles.groupIconContainer}>
-               <AvatarImage source={props.activeGroupImageSource} size={120}/>
+               <AvatarImage source={props.activeGroup.imageSource} size={120} />
             </View>
-            <Text style={styles.groupName}>{props.activeGroupName}</Text>
+            <Text style={styles.groupName}>{props.activeGroup.name}</Text>
          </View>
          <View style={styles.bigDrawerItemsContainer}>
             <DrawerItem
                name="group"
                text="Groups & Languages"
-               onPress={() => props.navigation.navigate('Groups', { isRTL: props.isFetching ? null : props.isRTL })}
+               onPress={() => props.navigation.navigate('Groups')}
             />
             {/* <DrawerItem
-               name="md-glasses"
-               text="Incognito Mode (todo)"
+               name="security"
+               text="Security Mode"
+               onPress={() => {}}
             /> */}
             <DrawerItem
                name="email"
@@ -46,19 +50,24 @@ function WahaDrawer(props) {
             />
          </View>
          <View style={styles.smallDrawerItemsContainer}>
-            <TouchableOpacity style={styles.smallDrawerItemContainer} onPress={() => { }}>
-               {/* <Text style={[styles.smallDrawerItemText, {textAlign: props.isRTL ? 'right' : 'left'}]}>Coaching Tools (todo)</Text> */}
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.smallDrawerItemContainer, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={() => openBrowser('https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif')}>
-               <Text style={[styles.smallDrawerItemText, {textAlign: props.isRTL ? 'right' : 'left'}]}>Privacy Policy</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.smallDrawerItemContainer, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={() => openBrowser('https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif')}>
-               <Text style={[styles.smallDrawerItemText, {textAlign: props.isRTL ? 'right' : 'left'}]}>View Credits</Text>
-            </TouchableOpacity>
+            <SmallDrawerItem
+               onPress={() => { }}
+               label={props.translations.navigation.drawer.coaching}
+            />
+            <SmallDrawerItem
+               onPress={() => openBrowser('https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif')}
+               label={props.translations.navigation.drawer.privacy}
+            />
+            <SmallDrawerItem
+               onPress={() => openBrowser('https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif')}
+               label={props.translations.navigation.drawer.credits}
+            />
          </View>
       </SafeAreaView >
    )
 }
+
+//// REDUX
 
 const styles = StyleSheet.create({
    container: {
@@ -86,37 +95,18 @@ const styles = StyleSheet.create({
       flex: 1,
       marginBottom: 20
    },
-   smallDrawerItemContainer: {
-      margin: 5,
-      padding: 5,
-   },
-   smallDrawerItemText: {
-      fontFamily: 'medium',
-      fontSize: 18 * scaleMultiplier,
-      color: '#82868D',
-      textAlign: 'left'
-   }
 });
 
-/////////////
-////REDUX////
-/////////////
+//// REDUX
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      database: state.database,
       colors: state.database[activeGroup.language].colors,
-      appProgress: state.appProgress,
       isRTL: state.database[activeGroup.language].isRTL,
-      activeGroupName: activeGroup.name,
-      activeGroupImageSource: activeGroup.imageSource,
+      activeGroup: activeGroup,
+      translations: state.database[activeGroup.language].translations
    }
 };
 
-function mapDispatchToProps(dispatch) {
-   return {
-   }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(WahaDrawer);
+export default connect(mapStateToProps)(WahaDrawer);

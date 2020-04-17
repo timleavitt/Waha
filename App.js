@@ -1,12 +1,7 @@
-//standard stuff
 import React, { useEffect, useState } from 'react';
 import * as Font from 'expo-font'
-
-//navigation
 import WahaNavigator from './navigation/WahaNavigator';
 import LoadingView from './components/LoadingView';
-
-//redux
 import { Provider } from 'react-redux'
 import { persistor, store } from './redux/store'
 import { PersistGate } from 'redux-persist/lib/integration/react';
@@ -17,12 +12,21 @@ if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
 
 export default function App() {
+
+   //// STATE
+
+   // keeps track of whether fonts are loaded
+   const [fontsLoaded, setFontsLoaded] = useState(false)
+
+   //// CONSTRUCTOR
+
    useEffect(() => {
       loadFonts();
    }, [])
 
-   const [fontsLoaded, setFontsLoaded] = useState(false)
+   //// FUNCTIONS
 
+   // loads up all the fonts
    async function loadFonts() {
       await Font.loadAsync({
          'icomoon': require('./assets/fonts/icomoon.ttf'),
@@ -48,11 +52,13 @@ export default function App() {
       setFontsLoaded(true);
    }
 
+   //// RENDER
+
    if (fontsLoaded) {
       return (
          <Provider store={store}>
             <PersistGate loading={<LoadingView />} persistor={persistor}>
-               <WahaNavigator/>
+               <WahaNavigator />
             </PersistGate>
          </Provider>
       );

@@ -7,18 +7,23 @@ import { connect } from 'react-redux'
 import { headerImages } from '../constants'
 
 function SetScreen(props) {
+
+   //// CONSTRUCTOR
+
    useEffect(() => {
       props.navigation.setOptions(getNavOptions())
    }, [props.isRTL])
 
+   //// NAV OPTIONS
+
    function getNavOptions() {
       return {
-         headerTitle: () => <Image style={styles.headerImage} source={headerImages[props.activeGroupLanguage]} />,
+         headerTitle: () => <Image style={styles.headerImage} source={headerImages[props.activeGroup.language]} />,
          headerLeft: props.isRTL ?
             () => <View></View> :
             () =>
                <AvatarImage
-                  source={props.activeGroupImageSource}
+                  source={props.activeGroup.imageSource}
                   size={40}
                   onPress={() => props.navigation.toggleDrawer()}
                   isActive={true}
@@ -26,7 +31,7 @@ function SetScreen(props) {
          headerRight: props.isRTL ?
             () =>
                <AvatarImage
-                  source={props.activeGroupImageSource}
+                  source={props.activeGroup.imageSource}
                   size={40}
                   onPress={() => props.navigation.toggleDrawer()}
                   isActive={true}
@@ -35,14 +40,8 @@ function SetScreen(props) {
       }
    }
 
+   //// RENDER
 
-   ////////////////////////////////
-   ////RENDER/STYLES/NAVOPTIONS////
-   ////////////////////////////////
-
-
-   //function to render the studyset items
-   //includes onSelect which navigates to the appropriate lesson list screen
    function renderStudySetItem(setList) {
       return (
          <SetItem
@@ -56,7 +55,6 @@ function SetScreen(props) {
                   title: setList.item.title,
                   subtitle: setList.item.subtitle,
                   color: setList.item.color,
-                  isRTL: props.isRTL
                })
             }
             isSmall={false}
@@ -74,6 +72,8 @@ function SetScreen(props) {
    )
 }
 
+//// STYLES
+
 const styles = StyleSheet.create({
    screen: {
       flex: 1,
@@ -87,17 +87,14 @@ const styles = StyleSheet.create({
    }
 })
 
-/////////////
-////REDUX////
-/////////////
+//// REDUX
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
       activeDatabase: state.database[activeGroup.language],
       isRTL: state.database[activeGroup.language].isRTL,
-      activeGroupImageSource: activeGroup.imageSource,
-      activeGroupLanguage: activeGroup.language
+      activeGroup: activeGroup,
    }
 };
 

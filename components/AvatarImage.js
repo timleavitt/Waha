@@ -5,6 +5,10 @@ import Icon from '../assets/fonts/icons'
 
 function AvatarImage(props) {
 
+   //// RENDER
+
+   // render camer icon conditionally because we only want it to show when we can change the image
+   // note: can only change image on add group screen or edit group screen
    var cameraIcon = props.isChangeable ?
       <View style={{
          width: 40 * scaleMultiplier,
@@ -17,6 +21,8 @@ function AvatarImage(props) {
          <Icon name='camera' size={35 * scaleMultiplier} color='#FF0800' />
       </View> : null
 
+   // render the image conditionally because if no source is provided, we want to use the 
+   // default image (the group icon)
    var avatarImage = (props.source === '') ?
       <Icon name='group' size={props.size / 2 * scaleMultiplier} /> :
       <Image style={{
@@ -40,7 +46,7 @@ function AvatarImage(props) {
             justifyContent: "center",
             marginHorizontal: 10,
          }}
-            source={{ uri: props.source }} 
+            source={{ uri: props.source }}
             onPress={props.onPress}
          >
             <View style={{
@@ -63,6 +69,8 @@ function AvatarImage(props) {
       </View>
    )
 }
+
+//// STYLES
 
 const styles = StyleSheet.create({
    avatarContainer: {

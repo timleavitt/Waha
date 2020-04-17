@@ -1,9 +1,3 @@
-//reducer for all actions related to downloading lessons
-//ADD_UPDATE_DOWNLOAD: store download progress of a download in redux to track its progress
-//globally
-//REMOVE_DOWNLOAD: deletes a download from the object once it's finished
-
-//action imports
 import { ADD_UPDATE_DOWNLOAD, REMOVE_DOWNLOAD, PURGE } from '../actions/downloadActions'
 
 export function downloads(state = {}, action) {

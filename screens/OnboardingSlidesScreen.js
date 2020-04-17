@@ -1,9 +1,6 @@
-//imports
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Button, Image, FlatList, Dimensions } from 'react-native';
 import i18n from 'i18n-js';
-
-//redux imports
 import { setFirstOpen, setIsReadyToStart, addLanguage, changeLanguage } from '../redux/actions/databaseActions'
 import { connect } from 'react-redux'
 import { createGroup, changeActiveGroup } from '../redux/actions/groupsActions'
@@ -12,49 +9,15 @@ import { scaleMultiplier } from '../constants'
 
 function OnboardingSlidesScreen(props) {
 
+   //// STATE
 
-   //////////////////////////////////////////
-   ////STATE, CONSTRUCTOR, AND NAVIGATION////
-   //////////////////////////////////////////
-
-
-   useEffect(() => {
-      props.setFirstOpen(false)
-      var language = props.route.params.selectedLanguage
-      props.addLanguage(language)
-      props.createGroup('Group 1', language, '')
-      props.changeActiveGroup('Group 1')
-   }, [])
-
+   // keeps track of current onboarding page number
    const [pageNumber, setPageNumber] = useState(0)
+
+   // reference to change flatlist
    const [flatListRef, setFlatListRef] = useState()
 
-   const onViewRef = React.useRef(({ viewableItems }) => {
-      if (viewableItems) {
-         setPageNumber(viewableItems[0].index)
-      }
-   })
-
-   const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 })
-
-   useEffect(() => {
-      if (flatListRef) {
-         flatListRef.scrollToIndex({ index: pageNumber })
-      }
-   }, [pageNumber])
-
-   ///////////////////////
-   ////OTHER FUNCTIONS////
-   ///////////////////////
-
-   function incrementPageNumber(direction) {
-      if (direction === "next") {
-         setPageNumber(oldPageNumber => oldPageNumber += 1)
-      } else {
-         setPageNumber(oldPageNumber => oldPageNumber -= 1)
-      }
-   }
-
+   // translations
    i18n.translations = {
       en: {
          title0: 'Welcome!',
@@ -71,9 +34,50 @@ function OnboardingSlidesScreen(props) {
       },
    };
 
-   ////////////////////////////////
-   ////RENDER/STYLES/NAVOPTIONS////
-   ////////////////////////////////
+   // stuff for flatlist
+   const onViewRef = React.useRef(({ viewableItems }) => {
+      if (viewableItems) {
+         setPageNumber(viewableItems[0].index)
+      }
+   })
+   const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 })
+
+   //// CONSTRUCTOR
+
+   useEffect(() => {
+      props.setFirstOpen(false)
+      var language = props.route.params.selectedLanguage
+      props.addLanguage(language)
+      props.createGroup('Group 1', language, '')
+      props.changeActiveGroup('Group 1')
+   }, [])
+
+
+   //// FUNCTIONS
+
+   // updates scroll when page number updates
+   useEffect(() => {
+      if (flatListRef) {
+         flatListRef.scrollToIndex({ index: pageNumber })
+      }
+   }, [pageNumber])
+
+   // decrements / increments page number
+   function incrementPageNumber(direction) {
+      if (direction === "next") {
+         setPageNumber(oldPageNumber => oldPageNumber += 1)
+      } else {
+         setPageNumber(oldPageNumber => oldPageNumber -= 1)
+      }
+   }
+
+   // tells redux that we're ready to go to loading screen once onboarding is finished
+   function finishOnboarding() {
+      props.setIsReadyToStart(true)
+      props.navigation.navigate('Loading')
+   }
+
+   //// RENDER
 
    const onboardingData = [
       {
@@ -102,11 +106,6 @@ function OnboardingSlidesScreen(props) {
       }
    ]
 
-   function finishOnboarding() {
-      props.setIsReadyToStart(true)
-      props.navigation.navigate('Loading')
-   }
-
    function renderOnboardingSlide(slideList) {
       return (
          <View style={styles.pageContainer}>
@@ -123,15 +122,13 @@ function OnboardingSlidesScreen(props) {
       )
    }
 
-   //create modal in here, pass state to show it to lesson item so lesson item
-   //can change it and show the modal on this screen
    return (
       <View style={styles.screen}>
          <View style={styles.onboardingSequence}>
             <FlatList
                renderItem={renderOnboardingSlide}
                data={onboardingData}
-               ref={(ref) => { setFlatListRef(ref) }}
+               ref={(ref) => {setFlatListRef(ref)}}
                horizontal={true}
                pagingEnabled={true}
                snapToAlignment={"start"}
@@ -152,6 +149,8 @@ function OnboardingSlidesScreen(props) {
       </View>
    )
 }
+
+//// STYLES
 
 const styles = StyleSheet.create({
    screen: {
@@ -215,11 +214,7 @@ const styles = StyleSheet.create({
    }
 })
 
-
-/////////////
-////REDUX////
-/////////////
-
+////REDUX
 
 function mapStateToProps(state) {
    return {
@@ -234,7 +229,7 @@ function mapDispatchToProps(dispatch) {
       changeLanguage: language => dispatch(changeLanguage(language)),
       setIsReadyToStart: toSet => dispatch(setIsReadyToStart(toSet)),
       createGroup: (groupName, language, imageSource) => dispatch(createGroup(groupName, language, imageSource)),
-      changeActiveGroup: name => { dispatch(changeActiveGroup(name))}
+      changeActiveGroup: name => { dispatch(changeActiveGroup(name)) }
    }
 }
 

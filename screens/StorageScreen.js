@@ -1,4 +1,3 @@
-//imports
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Alert, FlatList, Image } from 'react-native';
 import { connect } from 'react-redux'
@@ -9,48 +8,40 @@ import FlatListSeparator from '../components/FlatListSeparator'
 
 function StorageScreen(props) {
 
+   //// STATE
 
-   //////////////////////////////////////////
-   ////STATE, CONSTRUCTOR, AND NAVIGATION////
-   //////////////////////////////////////////
-
+   // keeps track of storage size of each language's downloaded chapter 2s
    const [storageObject, setStorageObject] = useState({})
-   const [totalStorage, setTotalStorage] = useState(0)
-   //const [isLoading, setIsLoading] = useState(true)
 
-   //set language based on user's language vs user's location?
+   // keeps track of total storage for all downloaded chapter 2s
+   const [totalStorage, setTotalStorage] = useState(0)
+
+   //// CONSTRUCTOR
+
    useEffect(() => {
       props.navigation.setOptions(getNavOptions())
       getAllStorageUsed()
    }, [])
 
+   //// NAV OPTIONS
+
    function getNavOptions() {
       return {
-         headerRight: props.isRTL ? () =>
-            <BackButton
-               isRTL={props.isRTL}
-               onPress={() => props.navigation.goBack()}
-            /> :
+         headerRight: props.isRTL ?
+            () => <BackButton onPress={() => props.navigation.goBack()} /> :
             () => <View></View>,
-         headerLeft: props.isRTL ? () =>
-            <View></View> :
-            () =>
-               <BackButton
-                  isRTL={props.isRTL}
-                  onPress={() => props.navigation.goBack()}
-               />,
+         headerLeft: props.isRTL ?
+            () => <View></View> :
+            () => <BackButton onPress={() => props.navigation.goBack()} />,
       }
    }
 
-   // async function getStoragedUsedLoop(contents, storageUsed, language) {
-   //    var storageUsed = 0
+   //// FUNCTIONS
 
-   //    return storageUsed
-   // }
-
+   // gets the storage size in megabytes for all the downloaded chapter 2s for a specific language
    async function getStorageUsedByLanguage(language) {
       var storageUsed = 0
-      var regex = new RegExp('[a-z]{2}[0-9]{4}\..*');
+      var regex = new RegExp('[a-z]{2}[0-9]{3}\..*');
       return await FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
          .then(async contents => {
             for (const item of contents) {
@@ -64,10 +55,9 @@ function StorageScreen(props) {
             }
          })
          .then(() => { return storageUsed })
-      //console.log(storageUsed)
-      //return storageUsed
    }
 
+   // get the storage size in megabytes of all downloaded chapter 2s
    function getAllStorageUsed() {
       setTotalStorage(0)
       setStorageObject({})
@@ -82,10 +72,12 @@ function StorageScreen(props) {
 
    }
 
+   // deletes all downloaded chapter 2s for a specific language
+   // note: if no language specified, deletes all chapter 2s
    async function deleteDownloadedLessons(language) {
       await FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
          .then(contents => {
-            var regex = new RegExp('[a-z]{2}[0-9]{4}\..*');
+            var regex = new RegExp('[a-z]{2}[0-9]{3}\..*');
             for (const item of contents) {
                var hasMatch = regex.exec(item);
                if (hasMatch) {
@@ -97,9 +89,10 @@ function StorageScreen(props) {
                }
             }
          })
-         .then(() => {getAllStorageUsed()})
+         .then(() => { getAllStorageUsed() })
    }
 
+   // gets all the installed languages
    function getInstalledLanguageInstances() {
       var installedLanguageInstances = []
       for (key in props.database) {
@@ -113,37 +106,26 @@ function StorageScreen(props) {
       return installedLanguageInstances
    }
 
-   //console.log(getStorageUsed('en'))
-
-
-   ///////////////////////
-   ////OTHER FUNCTIONS////
-   ///////////////////////
-
-
-   ////////////////////////////////
-   ////RENDER/STYLES/NAVOPTIONS////
-   ////////////////////////////////
+   //// RENDER
 
    function renderLanguageInstance(languageInstanceList) {
       return (
          <TouchableOpacity style={styles.storageContainerFlatList} onPress={
             () => Alert.alert(
-               'Warning',
-               "Are you sure you'd like to delete all downloaded lessons of this language?",
+               props.translations.alerts.deleteDownloadedLessonsPerLanguage.header,
+               props.translations.alerts.deleteDownloadedLessonsPerLanguage.body,
                [{
-                  text: 'Cancel',
+                  text: props.translations.alerts.options.cancel,
                   onPress: () => { }
-               },
-               {
-                  text: 'OK',
+               }, {
+                  text: props.translations.alerts.options.ok,
                   onPress: () => deleteDownloadedLessons(languageInstanceList.item.languageID)
                }]
             )
          }>
             <Text style={styles.mbText}>{languageInstanceList.item.languageName}</Text>
             <Image style={styles.languageLogo} source={headerImages[languageInstanceList.item.languageID]} />
-            <Text style={styles.mbText}>{storageObject[languageInstanceList.item.languageID]}MB</Text>
+            <Text style={styles.mbText}>{storageObject[languageInstanceList.item.languageID]}{props.translations.labels.mb}</Text>
          </TouchableOpacity>
       )
    }
@@ -159,39 +141,40 @@ function StorageScreen(props) {
                ListHeaderComponent={
                   <View style={styles.storageHeader}>
                      <View style={styles.headerItems}>
-                     <View style={styles.headerItemContainer}>
-                        <Text style={styles.storageUsedText}>Storage Used</Text>
-                        <Text style={styles.mbText}>{totalStorage} MB</Text>
+                        <View style={styles.headerItemContainer}>
+                           <Text style={styles.storageUsedText}>{props.translations.labels.storageUsed}</Text>
+                           <Text style={styles.mbText}>{totalStorage} {props.translations.labels.mb}</Text>
+                        </View>
+                        <TouchableOpacity
+                           style={[styles.headerItemContainer, { borderTopWidth: 0 }]}
+                           onPress={
+                              () => Alert.alert(
+                                 props.translations.alerts.deleteAllDownloadedLessons.header,
+                                 props.translations.alerts.deleteAllDownloadedLessons.body,
+                                 [{
+                                    text: props.translations.alerts.options.cancel,
+                                    onPress: () => {}
+                                 }, {
+                                    text: props.translations.alerts.options.ok,
+                                    onPress: () => deleteDownloadedLessons()
+                                 }]
+                              )
+                           }>
+                           <Text style={styles.deleteText}>{props.translations.labels.deleteAllDownloadedLessons}</Text>
+                        </TouchableOpacity>
                      </View>
-                     <TouchableOpacity
-                        style={[styles.headerItemContainer, { borderTopWidth: 0 }]}
-                        onPress={
-                           () => Alert.alert(
-                              'Warning',
-                              "Are you sure you'd like to delete all downloaded lessons off your device?",
-                              [{
-                                 text: 'Cancel',
-                                 onPress: () => { }
-                              },
-                              {
-                                 text: 'OK',
-                                 onPress: () => deleteDownloadedLessons()
-                              }]
-                           )
-                        }>
-                        <Text style={styles.deleteText}>Delete All Downloaded Lessons</Text>
-                     </TouchableOpacity>
-                     </View>
-                     <Text style={styles.downloadedLessonsText}>Downloaded Lessons</Text>
-                     <View style={{height: 2, flex: 1, backgroundColor: "#9FA5AD"}}/>
+                     <Text style={styles.downloadedLessonsText}>{props.translations.labels.downloadedLessons}</Text>
+                     <View style={{ height: 2, flex: 1, backgroundColor: "#9FA5AD" }} />
                   </View>
                }
-               ListFooterComponent={<View style={{height: 2, flex: 1, backgroundColor: "#9FA5AD"}}/>}
+               ListFooterComponent={<View style={{ height: 2, flex: 1, backgroundColor: "#9FA5AD" }} />}
             />
          </View>
       </View>
    )
 }
+
+//// STYLES
 
 const styles = StyleSheet.create({
    screen: {
@@ -201,9 +184,6 @@ const styles = StyleSheet.create({
    storageList: {
       flex: 1,
       marginHorizontal: 15
-   },
-   storageHeader: {
-      
    },
    headerItems: {
       marginBottom: 40
@@ -255,27 +235,15 @@ const styles = StyleSheet.create({
    }
 })
 
-
-/////////////
-////REDUX////
-/////////////
-
+////REDUX
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
-      groups: state.groups,
-      colors: state.database[activeGroup.language].colors,
       isRTL: state.database[activeGroup.language].isRTL,
-      activeGroupName: activeGroup.name,
-      activeGroupImageSource: activeGroup.imageSource,
-      database: state.database
+      database: state.database,
+      translations: state.database[activeGroup.language].translations
    }
 };
 
-function mapDispatchToProps(dispatch) {
-   return {
-   }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(StorageScreen);
+export default connect(mapStateToProps)(StorageScreen);

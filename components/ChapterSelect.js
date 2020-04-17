@@ -1,21 +1,15 @@
-//basic imports
-import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text, Dimensions } from 'react-native';
+import React from 'react';
+import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { connect } from 'react-redux'
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { scaleMultiplier } from '../constants'
 
 function ChapterSelect(props) {
 
-   // const interval = setInterval(setChapter2Button, 1000);
+   //// RENDER 
 
-   // function setChapter2Button() {
-   //    if ()
-   // }
-
-   //CHAPTE 2 BUTTON ICON
+   // render chapter 2 icon conditionally based off if it's not active, active, or completed
    var chapter2IconName;
-
    if (props.activeChapter === 'fellowship') {
       chapter2IconName = '2-filled'
    } else if (props.activeChapter === 'passage') {
@@ -24,29 +18,26 @@ function ChapterSelect(props) {
       chapter2IconName = 'check-filled'
    }
 
-   var chapter2Button;   
-
-   //CHAPTER 2 BUTTON
-   if (props.lessonID in props.downloads) {
-      chapter2Button =
-         <View style={{ ...styles.chapterSelect, flexDirection: "row", borderColor: "#82868D" }}>
-            <AnimatedCircularProgress
-               size={20}
-               width={4}
-               fill={(props.downloads[props.lessonID] * 100)}
-               tintColor="#82868D"
-               rotation={0}
-               backgroundColor="white"
-            />
-            <Text style={{ ...styles.chapterSelectText, ...{ color: "#82868D"  } }}>Passage</Text>
-         </View>
-   } else {
-      chapter2Button =
-      <TouchableOpacity 
-         style={{ ...styles.chapterSelect, ...{ 
-            borderColor: props.colors.primaryColor,
-            backgroundColor: (props.activeChapter === 'passage') ? props.colors.primaryColor : "#EFF2F4"},
-         }} 
+   // render chapter 2 button conditionally based off whether it's downloaded or not
+   var chapter2Button = props.lessonID in props.dowloads ?
+      <View style={{ ...styles.chapterSelect, flexDirection: "row", borderColor: "#82868D" }}>
+         <AnimatedCircularProgress
+            size={20}
+            width={4}
+            fill={(props.downloads[props.lessonID] * 100)}
+            tintColor="#82868D"
+            rotation={0}
+            backgroundColor="white"
+         />
+         <Text style={{ ...styles.chapterSelectText, ...{ color: "#82868D" } }}>Passage</Text>
+      </View> :
+      <TouchableOpacity
+         style={{
+            ...styles.chapterSelect, ...{
+               borderColor: props.colors.primaryColor,
+               backgroundColor: (props.activeChapter === 'passage') ? props.colors.primaryColor : "#EFF2F4"
+            },
+         }}
          onPress={() => props.onPress('passage')}
       >
          <Icon
@@ -56,16 +47,16 @@ function ChapterSelect(props) {
          />
          <Text style={{ ...styles.chapterSelectText, ...{ color: (props.activeChapter === 'passage') ? "white" : props.colors.primaryColor } }}>Passage</Text>
       </TouchableOpacity>
-   }
-
 
    return (
       <View style={styles.chapterSelectContainer}>
-         <TouchableOpacity 
-            style={{ ...styles.chapterSelect, ...{ 
-               borderColor: props.colors.primaryColor,
-               backgroundColor: (props.activeChapter === 'fellowship') ? props.colors.primaryColor : "#EFF2F4"},
-            }} 
+         <TouchableOpacity
+            style={{
+               ...styles.chapterSelect, ...{
+                  borderColor: props.colors.primaryColor,
+                  backgroundColor: (props.activeChapter === 'fellowship') ? props.colors.primaryColor : "#EFF2F4"
+               },
+            }}
             onPress={() => props.onPress('fellowship')}
          >
             <Icon
@@ -76,11 +67,13 @@ function ChapterSelect(props) {
             <Text style={{ ...styles.chapterSelectText, ...{ color: (props.activeChapter === 'fellowship') ? "white" : props.colors.primaryColor } }}>Fellowship</Text>
          </TouchableOpacity>
          {chapter2Button}
-         <TouchableOpacity 
-            style={{ ...styles.chapterSelect, ...{ 
-               borderColor: props.colors.primaryColor , 
-               backgroundColor: (props.activeChapter === 'application') ? props.colors.primaryColor : "#EFF2F4"}, 
-            }} 
+         <TouchableOpacity
+            style={{
+               ...styles.chapterSelect, ...{
+                  borderColor: props.colors.primaryColor,
+                  backgroundColor: (props.activeChapter === 'application') ? props.colors.primaryColor : "#EFF2F4"
+               },
+            }}
             onPress={() => props.onPress('application')}
          >
             <Icon
@@ -93,6 +86,8 @@ function ChapterSelect(props) {
       </View>
    )
 }
+
+//// STYLES
 
 const styles = StyleSheet.create({
    chapterSelectContainer: {
@@ -112,6 +107,8 @@ const styles = StyleSheet.create({
       fontSize: 16 * scaleMultiplier
    },
 })
+
+//// REDUX
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]

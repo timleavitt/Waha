@@ -1,11 +1,12 @@
-//basic imports
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 
 function PlayPauseSkip(props) {
-   //console.log((Dimensions.get('window').width / 380))
+
+   //// RENDER
+
    return (
       <View style={styles.playPauseSkipContainer}>
          <TouchableOpacity
@@ -34,6 +35,8 @@ function PlayPauseSkip(props) {
    )
 }
 
+//// STYLES
+
 const styles = StyleSheet.create({
    playPauseSkipContainer: {
       flexDirection: "row",
@@ -48,6 +51,8 @@ const styles = StyleSheet.create({
       justifyContent: "center",
    }
 })
+
+//// REDUX
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]

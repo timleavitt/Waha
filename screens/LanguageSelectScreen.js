@@ -1,31 +1,22 @@
-//imports
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Picker, TouchableOpacity } from 'react-native';
-import * as FileSystem from 'expo-file-system';
 import { Ionicons } from '@expo/vector-icons';
 import * as Localization from 'expo-localization';
 import i18n from 'i18n-js';
 import { Audio } from 'expo-av';
 import { scaleMultiplier } from '../constants'
 
-//redux imports
-import { connect } from 'react-redux'
-
 function LanguageSelectScreen(props) {
 
+   //// STATE
 
-   //////////////////////////////////////////
-   ////STATE, CONSTRUCTOR, AND NAVIGATION////
-   //////////////////////////////////////////
-
-
-   //state for our selected language; set default to english
+   // keeps track of language selected in picker (TODO: change default to user's default language)
    const [selectedLanguage, setSelectedLanguage] = useState('en')
 
-   //sound for the text to speech
+   // sound for the text to speech
    const soundObject = new Audio.Sound();
 
-   //onboarding translations for language select screen
+   // translations for language select
    i18n.translations = {
       en: {
          welcome: 'Hello and welcome!',
@@ -34,21 +25,16 @@ function LanguageSelectScreen(props) {
       },
    };
 
-   //set language based on user's language vs user's location?
+   //// CONSTRUCTOR
+
    useEffect(() => {
       i18n.locale = Localization.locale;
       i18n.fallbacks = true;
    }, [])
 
-   //function to navigate to the play screen
-   //props.navigation.navigate takes us to the play screen
-   //params is the information we want to pass to play screen
-   function navigateToOnboarding() {
-      // console.log(`type of language parameter passed: ${typeof selectedLanguage}`)
-      // console.log(`language parameter passed: ${selectedLanguage}`)
-      props.navigation.navigate('OnboardingSlides', {selectedLanguage: selectedLanguage})
-   }
+   //// FUNCTIONS
 
+   // plays text-to-speech audio file of language
    async function playAudio() {
       soundObject.unloadAsync();
       switch (i18n.locale) {
@@ -60,32 +46,16 @@ function LanguageSelectScreen(props) {
                })
             break;
       }
-      //await soundObject.playAsync();
    }
 
-
-
-
+   // updates language on picker change
    function onPickerChange(language) {
-      //console.log(language)
       setSelectedLanguage(language)
       i18n.locale = language
    }
 
-   //console.log(i18n.locale)
+   //// RENDER
 
-   ///////////////////////
-   ////OTHER FUNCTIONS////
-   ///////////////////////
-
-
-   ////////////////////////////////
-   ////RENDER/STYLES/NAVOPTIONS////
-   ////////////////////////////////
-
-
-   //create modal in here, pass state to show it to lesson item so lesson item
-   //can change it and show the modal on this screen
    return (
       <View style={styles.screen}>
          <View>
@@ -110,22 +80,17 @@ function LanguageSelectScreen(props) {
                   backgroundColor="rgba(0,0,0,0)"
                   color="black"
                   onPress={playAudio}
-               // style={{width: 20}}
                />
             </View>
          </View>
-         <TouchableOpacity onPress={navigateToOnboarding} style={styles.button}>
+         <TouchableOpacity onPress={props.navigation.navigate('OnboardingSlides', {selectedLanguage: selectedLanguage})} style={styles.button}>
             <Text style={styles.buttonTitle}>{i18n.t('letsBegin')} </Text>
          </TouchableOpacity>
       </View>
    )
 }
 
-LanguageSelectScreen.navigationOptions = navigationData => {
-   return {
-      headerShown: false
-   };
-};
+//// STYLES
 
 const styles = StyleSheet.create({
    screen: {
@@ -161,25 +126,4 @@ const styles = StyleSheet.create({
    }
 })
 
-
-/////////////
-////REDUX////
-/////////////
-
-
-function mapStateToProps(state) {
-   return {
-      downloads: state.downloads,
-      appProgress: state.appProgress,
-      database: state.database
-   }
-};
-
-function mapDispatchToProps(dispatch) {
-   return {
-      addLanguage: language => dispatch(addLanguage(language)),
-      changeLanguage: language => dispatch(changeLanguage(language)),
-   }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(LanguageSelectScreen);
+export default LanguageSelectScreen

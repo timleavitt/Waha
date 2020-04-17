@@ -1,11 +1,12 @@
 //basic imports
 import React from 'react';
-import { View, StyleSheet, Slider, Platform } from 'react-native';
+import { View, StyleSheet, Slider } from 'react-native';
 import TimeDisplay from "../components/TimeDisplay";
-import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
 
 function Scrubber(props) {
+
+   //// RENDER
+
    return (
       <View style={styles.scrubberContainer}>
          <View style={styles.scrubber}>
@@ -28,6 +29,8 @@ function Scrubber(props) {
    )
 }
 
+//// STYLES
+
 const styles = StyleSheet.create({
    scrubberContainer: {
       paddingHorizontal: 8,
@@ -47,11 +50,4 @@ const styles = StyleSheet.create({
    },
 })
 
-function mapStateToProps(state) {
-   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
-   return {
-      colors: state.database[activeGroup.language].colors
-   }
-};
-
-export default connect(mapStateToProps)(Scrubber);
+export default Scrubber;
