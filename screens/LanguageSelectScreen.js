@@ -11,7 +11,7 @@ function LanguageSelectScreen(props) {
    //// STATE
 
    // keeps track of language selected in picker (TODO: change default to user's default language)
-   const [selectedLanguage, setSelectedLanguage] = useState('en')
+   const [selectedLanguage, setSelectedLanguage] = useState(i18n.locale)
 
    // sound for the text to speech
    const soundObject = new Audio.Sound();
@@ -23,6 +23,11 @@ function LanguageSelectScreen(props) {
          selectLanguage: 'Please select your language.',
          letsBegin: 'Let\'s begin!'
       },
+      te: {
+         welcome: 'morbi tristique senectus et!',
+         selectLanguage: 'eget nulla facilisi etiam.',
+         letsBegin: 'nibh ipsum!'
+      }
    };
 
    //// CONSTRUCTOR
@@ -69,8 +74,9 @@ function LanguageSelectScreen(props) {
                   onValueChange={(language) => onPickerChange(language)}
                   mode="dropdown"
                >
+                  <Picker.Item label="Test" value="te" />
                   <Picker.Item label="🇺🇸English" value="en" />
-                  <Picker.Item label="⭐️Klingon" value="kl" />
+                  <Picker.Item label="⭐️Test Language" value="te" />
                </Picker>
             </View>
             <View style={{}}>
@@ -83,7 +89,7 @@ function LanguageSelectScreen(props) {
                />
             </View>
          </View>
-         <TouchableOpacity onPress={props.navigation.navigate('OnboardingSlides', {selectedLanguage: selectedLanguage})} style={styles.button}>
+         <TouchableOpacity onPress={() => props.navigation.navigate('OnboardingSlides', {selectedLanguage: selectedLanguage})} style={styles.button}>
             <Text style={styles.buttonTitle}>{i18n.t('letsBegin')} </Text>
          </TouchableOpacity>
       </View>

@@ -33,8 +33,8 @@ function AddNewLanguageScreen(props) {
          displayName: 'English'
       },
       {
-         id: 'kl',
-         displayName: 'Klingon'
+         id: 'te',
+         displayName: 'Test Language'
       },
    ]
 
