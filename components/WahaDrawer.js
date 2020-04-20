@@ -29,8 +29,8 @@ function WahaDrawer(props) {
          </View>
          <View style={styles.bigDrawerItemsContainer}>
             <DrawerItem
-               name="group"
-               text="Groups & Languages"
+               iconName="group"
+               text={props.translations.navigation.drawer.groups}
                onPress={() => props.navigation.navigate('Groups')}
             />
             {/* <DrawerItem
@@ -39,13 +39,13 @@ function WahaDrawer(props) {
                onPress={() => {}}
             /> */}
             <DrawerItem
-               name="email"
-               text="Submit Feedback"
+               iconName="email"
+               text={props.translations.navigation.drawer.feedback}
                onPress={() => openBrowser('https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif')}
             />
             <DrawerItem
-               name="storage"
-               text="Storage"
+               iconName="storage"
+               text={props.translations.navigation.drawer.storage}
                onPress={() => props.navigation.navigate('Storage', { isRTL: props.isFetching ? null : props.isRTL })}
             />
          </View>

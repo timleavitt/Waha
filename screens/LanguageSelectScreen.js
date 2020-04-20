@@ -74,7 +74,6 @@ function LanguageSelectScreen(props) {
                   onValueChange={(language) => onPickerChange(language)}
                   mode="dropdown"
                >
-                  <Picker.Item label="Test" value="te" />
                   <Picker.Item label="🇺🇸English" value="en" />
                   <Picker.Item label="⭐️Test Language" value="te" />
                </Picker>

@@ -11,7 +11,7 @@ function DrawerItem(props) {
       <TouchableOpacity style={[styles.settingsItem, { flexDirection: props.isRTL ? "row-reverse" : "row" }]} onPress={props.onPress}>
          <View style={styles.iconContainer}>
             <Icon
-               name={props.name}
+               name={props.iconName}
                size={50 * scaleMultiplier}
                color="#3A3C3F"
             />

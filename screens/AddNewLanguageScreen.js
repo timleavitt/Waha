@@ -117,6 +117,7 @@ function mapStateToProps(state) {
    return {
       isRTL: state.database[activeGroup.language].isRTL,
       database: state.database,
+      translations: state.database[activeGroup.language].translations,
    }
 };
 

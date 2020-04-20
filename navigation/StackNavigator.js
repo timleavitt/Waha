@@ -72,7 +72,7 @@ function StackNavigator(props) {
                name="Groups"
                component={GroupsScreen}
                options={{
-                  headerTitle: "Groups & Languages",
+                  headerTitle: props.translations.navigation.headers.groupScreen,
                   headerStyle: {
                      backgroundColor: "#EFF2F4",
                   },
@@ -86,7 +86,7 @@ function StackNavigator(props) {
                name="AddNewGroup"
                component={AddNewGroupScreen}
                options={{
-                  headerTitle: "Add New Group",
+                  headerTitle: props.translations.navigation.headers.addNewGroupScreen,
                   headerStyle: {
                      backgroundColor: "#FFFFFF",
                   },
@@ -100,7 +100,7 @@ function StackNavigator(props) {
                name="AddNewLanguage"
                component={AddNewLanguageScreen}
                options={{
-                  headerTitle: "Add New Language",
+                  headerTitle: props.translations.navigation.headers.addNewLanguageScreen,
                   headerStyle: {
                      backgroundColor: "#F7F7F7",
                   },
@@ -114,7 +114,7 @@ function StackNavigator(props) {
                name="EditGroup"
                component={EditGroupScreen}
                options={{
-                  headerTitle: "Edit Group",
+                  headerTitle: props.translations.navigation.headers.editGroupScreen,
                   headerStyle: {
                      backgroundColor: "#F7F7F7",
                   },
@@ -128,7 +128,7 @@ function StackNavigator(props) {
                name="Storage"
                component={StorageScreen}
                options={{
-                  headerTitle: "Storage",
+                  headerTitle: props.translations.navigation.headers.storageScreen,
                   headerStyle: {
                      backgroundColor: "#FFFFFF",
                   },
@@ -146,6 +146,7 @@ function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
       isRTL: state.database[activeGroup.language].isRTL,
+      translations: state.database[activeGroup.language].translations
    }
 };
 

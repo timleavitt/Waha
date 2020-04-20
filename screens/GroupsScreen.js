@@ -73,7 +73,7 @@ function GroupsScreen(props) {
                renderItem={renderLanguageInstanceItem}
                keyExtractor={item => item.languageID}
                ListFooterComponent={
-                  <TouchableOpacity style={[styles.addNewLanguageContainer, {direction: props.isRTL ? "rtl" : "ltr"}]} onPress={() => props.navigation.navigate('AddNewLanguage', { installedLanguageInstances: getInstalledLanguageInstances() })}>
+                  <TouchableOpacity style={styles.addNewLanguageContainer} onPress={() => props.navigation.navigate('AddNewLanguage', { installedLanguageInstances: getInstalledLanguageInstances() })}>
                      <Text style={[styles.addNewLanguageText, {textAlign: props.isRTL ? 'right' : 'left'}]}>{props.translations.labels.newLanguage}</Text>
                   </TouchableOpacity>
                }
@@ -97,14 +97,13 @@ const styles = StyleSheet.create({
       width: "100%",
       height: 80 * scaleMultiplier,
       justifyContent: "center",
-      borderTopColor: '#EFF2F4'
+      borderTopColor: '#EFF2F4',
    },
    addNewLanguageText: {
       fontFamily: 'medium',
       fontSize: 18  * scaleMultiplier,
       color: '#9FA5AD',
       marginHorizontal: 15,
-      textAlign: "left"
    },
    editButtonContainer: {
       width: 80,

@@ -5,6 +5,9 @@ import i18n from 'i18n-js';
 function LoadingScreen(props) {
    i18n.translations = {
       en: {
+         loadingMessage: "Hang on, we're setting things up..."
+      },
+      te: {
          loadingMessage: "aliquet eget sit amet tellus cras..."
       },
    };
