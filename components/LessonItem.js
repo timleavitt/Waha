@@ -1,11 +1,11 @@
 //imports
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import * as Progress from 'react-native-progress';
 import { connect } from 'react-redux'
 import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
 function LessonItem(props) {
 
@@ -21,6 +21,11 @@ function LessonItem(props) {
          exists ? setIsDownloaded(true) : setIsDownloaded(false)
          props.setRefresh(old => !old)
       })
+
+   // refresh lesson items when a download finishes
+   useEffect(() => {
+      props.setRefresh()
+   }, [props.downloadProgress])
 
    // calls the various modal functions on lessonlistscreen
    function showSaveModal() {
@@ -40,7 +45,16 @@ function LessonItem(props) {
 
    // renders cloud icon conditionally as statuses can be downloaded, undownloaded, downloading, and no internet
    var downloadStatus = props.downloadProgress ?
-      <View style={styles.downloadButtonContainer}><ActivityIndicator size="small" color="black" /></View> :
+      <View style={styles.downloadButtonContainer}>
+         <AnimatedCircularProgress
+            size={25 * scaleMultiplier}
+            width={6 * scaleMultiplier}
+            fill={props.downloadProgress * 100}
+            tintColor={"#828282"}
+            rotation={0}
+            backgroundColor="#FFFFFF"
+         />
+      </View> :
       <TouchableOpacity
          onPress={
             isDownloaded ? showDeleteModal :
@@ -59,50 +73,39 @@ function LessonItem(props) {
          />
       </TouchableOpacity>
 
-   // renders component for progress bar if the lesson is downloading
-   var progressBar = props.downloadProgress ?
-      <Progress.Bar progress={props.downloadProgress} width={400} color="black" borderColor="black" /> :
-      null
-
    return (
-      <View style={styles.lessonItem}>
-         <View style={[styles.mainDisplay, { flexDirection: props.isRTL ? "row-reverse" : "row" }]}>
-            <TouchableOpacity
-               style={[styles.progressAndTitle, { flexDirection: props.isRTL ? "row-reverse" : "row" }]}
-               onPress={
-                  (!props.isConnected && !isDownloaded) ?
-                     () => Alert.alert(
-                        props.translations.alerts.playUndownloadedNoInternet.header,
-                        props.translations.alerts.playUndownloadedNoInternet.body,
-                        [{ text: props.translations.alerts.options.ok, onPress: () => { } }]) :
-                     props.onLessonSelect
-               }
-               onLongPress={showLessonOptionsModal}
+      <View style={[styles.lessonItem, { flexDirection: props.isRTL ? "row-reverse" : "row" }]}>
+         <TouchableOpacity
+            style={[styles.progressAndTitle, { flexDirection: props.isRTL ? "row-reverse" : "row" }]}
+            onPress={
+               (!props.isConnected && !isDownloaded) ?
+                  () => Alert.alert(
+                     props.translations.alerts.playUndownloadedNoInternet.header,
+                     props.translations.alerts.playUndownloadedNoInternet.body,
+                     [{ text: props.translations.alerts.options.ok, onPress: () => { } }]) :
+                  props.onLessonSelect
+            }
+            onLongPress={showLessonOptionsModal}
+         >
+            <View
+               style={styles.completeStatusContainer}
+               onPress={() => {
+                 
+               }}
             >
-               <TouchableOpacity
-                  style={styles.completeStatusContainer}
-                  onPress={() => {
-                     props.toggleComplete(props.activeGroup.name, props.lesson.index)
-                     props.setBookmark(props.activeGroup.name)
-                  }}
-               >
-                  <Icon
-                     name={props.isComplete ? "check-unfilled" : props.activeGroup.bookmark === props.lesson.index ? props.isRTL ? 'triangle-left' : "triangle-right" : null}
-                     size={30 * scaleMultiplier}
-                     color={props.isComplete ? "#828282" : props.colors.primaryColor}
-                  />
-               </TouchableOpacity>
-               <View style={styles.titleContainer}>
-                  <Text style={{ ...styles.title, ...{ color: props.isComplete ? "#9FA5AD" : "black", textAlign: props.isRTL ? 'right' : 'left' } }}>{props.lesson.title}</Text>
-                  <Text style={{ ...styles.subtitle, ...{ color: props.isComplete ? "#9FA5AD" : "black", textAlign: props.isRTL ? 'right' : 'left' } }}>{props.lesson.subtitle}</Text>
-               </View>
+               <Icon
+                  name={props.isComplete ? "check-unfilled" : props.activeGroup.bookmark === props.lesson.index ? props.isRTL ? 'triangle-left' : "triangle-right" : null}
+                  size={30 * scaleMultiplier}
+                  color={props.isComplete ? "#828282" : props.colors.primaryColor}
+               />
+            </View>
+            <View style={styles.titleContainer}>
+               <Text style={{ ...styles.title, ...{ color: props.isComplete ? "#9FA5AD" : "black", textAlign: props.isRTL ? 'right' : 'left' } }}>{props.lesson.title}</Text>
+               <Text style={{ ...styles.subtitle, ...{ color: props.isComplete ? "#9FA5AD" : "black", textAlign: props.isRTL ? 'right' : 'left' } }}>{props.lesson.subtitle}</Text>
+            </View>
 
-            </TouchableOpacity>
-            {downloadStatus}
-         </View>
-         <View style={styles.progressBar}>
-            {progressBar}
-         </View>
+         </TouchableOpacity>
+         {downloadStatus}
       </View>
    )
 }
@@ -113,11 +116,9 @@ const styles = StyleSheet.create({
    lessonItem: {
       height: 72 * scaleMultiplier,
       justifyContent: "center",
-      flexDirection: "column",
-      alignContent: "center",
-   },
-   mainDisplay: {
       flexDirection: "row",
+      alignContent: "center",
+      backgroundColor: "#F7F9FA"
    },
    progressAndTitle: {
       justifyContent: "flex-start",
@@ -148,9 +149,6 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       marginHorizontal: 15
    },
-   progressBar: {
-      width: "100%"
-   }
 })
 
 //// REDUX

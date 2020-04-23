@@ -4,7 +4,6 @@ import * as FileSystem from 'expo-file-system';
 import SetItem from '../components/SetItem';
 import AvatarImage from '../components/AvatarImage'
 import { connect } from 'react-redux'
-import { headerImages } from '../constants'
 
 function SetScreen(props) {
 
@@ -18,7 +17,7 @@ function SetScreen(props) {
 
    function getNavOptions() {
       return {
-         headerTitle: () => <Image style={styles.headerImage} source={headerImages[props.activeGroup.language]} />,
+         headerTitle: () => <Image style={styles.headerImage} source={{ uri: FileSystem.documentDirectory + props.activeGroup.language + 'header.png'}} />,
          headerLeft: props.isRTL ?
             () => <View></View> :
             () =>
@@ -80,7 +79,7 @@ const styles = StyleSheet.create({
       backgroundColor: "#EAEEF0"
    },
    headerImage: {
-      resizeMode: "center",
+      resizeMode: "contain",
       width: 120,
       height: 40,
       alignSelf: "center",

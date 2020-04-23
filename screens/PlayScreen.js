@@ -12,7 +12,7 @@ import PlayPauseSkip from '../components/PlayPauseSkip';
 import ChapterSelect from '../components/ChapterSelect'
 import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
 import BackButton from '../components/BackButton'
-import { toggleComplete } from '../redux/actions/groupsActions'
+import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { connect } from 'react-redux'
 import { downloadLesson } from '../redux/actions/downloadActions'
 
@@ -66,7 +66,7 @@ function PlayScreen(props) {
       }
 
       //check if chapter 2 is downloaded, then load it
-      checkIsDownloaded(); // -> loadAudioFile()
+      checkIsDownloaded();
 
       //set up our timer tick for updating the seeker every second
       const interval = setInterval(updateSeekerTick, 1000);
@@ -117,10 +117,14 @@ function PlayScreen(props) {
          if (activeChapter === 'fellowship') {
             changeChapter('passage')
          } else if (activeChapter === 'passage') {
-            changeChapter('application')
+            FileSystem.getInfoAsync(FileSystem.documentDirectory + props.route.params.id + '.mp3')
+               .then(({ exists }) => {
+                  // only switch to chapter 2 if it's downloaded
+                  if (exists && !(props.route.params.id in props.downloads))
+                     changeChapter('application')
+               })
          } else if (activeChapter === 'application') {
-            var id = props.route.params.id;
-            var isComplete = (props.activeGroup.progress.includes(id))
+            var isComplete = (props.activeGroup.progress.includes(props.route.params.id))
             if (!isComplete)
                changeCompleteStatus();
          }
@@ -247,17 +251,18 @@ function PlayScreen(props) {
    function changeCompleteStatus() {
       var isComplete = (props.activeGroup.progress.includes(props.route.params.index))
       props.toggleComplete(props.activeGroup.name, props.route.params.index)
+      props.setBookmark(props.activeGroup.name)
 
       if (isComplete) {
-         Alert.alert(props.translations.alerts.markedAsComplete.header,
-            props.translations.alerts.markedAsComplete.body,
+         Alert.alert(props.translations.alerts.markedAsIncomplete.header,
+            props.translations.alerts.markedAsIncomplete.body,
             [{
                text: props.translations.alerts.ok,
                onPress: () => props.navigation.goBack()
             }])
       } else {
-         Alert.alert(props.translations.alerts.markedAsIncomplete.header,
-            props.translations.alerts.markedAsIncomplete.body,
+         Alert.alert(props.translations.alerts.markedAsComplete.header,
+            props.translations.alerts.markedAsComplete.body,
             [{
                text: props.translations.alerts.ok,
                onPress: () => props.navigation.goBack()
@@ -344,11 +349,14 @@ function PlayScreen(props) {
          {audioControlContainer}
 
          {/* MODALS */}
-         <WahaModal isVisible={showShareLessonModal}>
+         <WahaModal 
+            isVisible={showShareLessonModal}
+            hideModal={() => setShowShareLessonModal(false)}
+            closeText={props.translations.modals.lessonOptions.close}
+         >
             <ModalButton title={props.translations.modals.lessonOptions.shareChapter1} onPress={() => shareLesson('fellowship')} />
             <ModalButton title={props.translations.modals.lessonOptions.shareChapter2} onPress={() => shareLesson('passage')} />
-            <ModalButton title={props.translations.modals.lessonOptions.shareChapter3} onPress={() => shareLesson('application')} />
-            <ModalButton title={props.translations.modals.lessonOptions.close} onPress={() => setShowShareLessonModal(false)} style={{ color: "red" }} />
+            <ModalButton isLast={true} title={props.translations.modals.lessonOptions.shareChapter3} onPress={() => shareLesson('application')} />
          </WahaModal>
       </View>
 
@@ -425,6 +433,7 @@ function mapDispatchToProps(dispatch) {
    return {
       toggleComplete: (groupName, lessonIndex) => { dispatch(toggleComplete(groupName, lessonIndex)) },
       downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
+      setBookmark: groupName => { dispatch(setBookmark(groupName)) }
    }
 }
 

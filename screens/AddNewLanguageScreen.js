@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, FlatList, Text, TouchableOpacity, Alert, Image } from 'react-native';
 import BackButton from '../components/BackButton'
-import { scaleMultiplier, headerImages } from '../constants'
+import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
 import { addLanguage } from '../redux/actions/databaseActions'
+import * as FileSystem from 'expo-file-system';
 
 function AddNewLanguageScreen(props) {
 
@@ -65,7 +66,7 @@ function AddNewLanguageScreen(props) {
             )}
          >
             <Text style={styles.languageInstanceText}>{languageInstanceList.item.displayName}</Text>
-            <Image style={styles.languageLogo} source={headerImages[languageInstanceList.item.id]} />
+            <Image style={styles.languageLogo} source={{ uri: FileSystem.documentDirectory + languageInstanceList.item.id + 'header.png'}} />
          </TouchableOpacity>
       )
    }
@@ -118,6 +119,7 @@ function mapStateToProps(state) {
       isRTL: state.database[activeGroup.language].isRTL,
       database: state.database,
       translations: state.database[activeGroup.language].translations,
+      activeGroup: activeGroup
    }
 };
 

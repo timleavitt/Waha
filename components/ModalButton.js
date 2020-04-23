@@ -8,7 +8,7 @@ function ModalButton(props) {
 
    return (
       <TouchableOpacity
-         style={styles.modalButtonStyle}
+         style={[styles.modalButtonStyle, {borderBottomWidth: props.isLast ? 0 : 1}]}
          onPress={props.onPress}
       >
          <Text style={{ ...styles.text, ...props.style }}>{props.title}</Text>
@@ -21,13 +21,14 @@ function ModalButton(props) {
 const styles = StyleSheet.create({
    modalButtonStyle: {
       width: "100%",
-      height: 60 * scaleMultiplier,
-      justifyContent: "center"
+      height: 70 * scaleMultiplier,
+      justifyContent: "center",
+      borderBottomColor: "#dedede"
    },
    text: {
       textAlign: "center",
-      fontFamily: 'medium',
-      fontSize: 21 * scaleMultiplier
+      fontFamily: 'regular',
+      fontSize: 19.5 * scaleMultiplier
    }
 })
 

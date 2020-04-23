@@ -1,23 +1,44 @@
 import React from 'react';
-import { View, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import Modal from 'react-native-modal'
+import { scaleMultiplier } from '../constants';
 
 function WahaModal(props) {
 
    //// RENDER
-    return (
-        <Modal
-            visible={props.isVisible}
-            animationType="slide"
-            presentationStyle="overFullScreen"
-            transparent={true}
-        >
-            <View style={{flex: 1, flexDirection: "column", justifyContent: "flex-end"}}>
-                <View style={{backgroundColor: "white", paddingBottom: 20, paddingTop: 5}}>
-                    {props.children}
-                </View>
+   return (
+      <Modal
+         isVisible={props.isVisible}
+         hasBackdrop={true}
+         onBackdropPress={props.hideModal}
+         backdropOpacity={0.3}
+         style={{ justifyContent: "flex-end" }}
+      >
+         <View>
+            <View style={styles.buttonsContainer}>
+            {props.children}
             </View>
-        </Modal>
-    )
+            <TouchableOpacity onPress={props.hideModal} style={styles.closeButtonContainer}>
+               <Text style={{textAlign: 'center', fontFamily: 'medium', fontSize: 21 * scaleMultiplier, color: "#FF0800"}}>{props.closeText}</Text>
+            </TouchableOpacity>
+         </View>
+      </Modal>
+   )
 }
+
+const styles = StyleSheet.create({
+   buttonsContainer: {
+      backgroundColor: "#FFFFFF",
+      borderRadius: 10
+   },
+   closeButtonContainer: {
+      width: "100%",
+      height: 70 * scaleMultiplier,
+      justifyContent: "center",
+      backgroundColor: "#FFFFFF",
+      borderRadius: 10,
+      marginVertical: 5
+   },
+})
 
 export default WahaModal

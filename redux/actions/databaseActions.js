@@ -67,6 +67,7 @@ export function addLanguage(language) {
       // set isFetching to true to signal that we're fetching data from firebase
       dispatch(setIsFetching(true));
 
+      var headerImageDownloaded = false;
       var chapter1Downloaded = false;
       var chapter3Downloaded = false;
 
@@ -75,7 +76,23 @@ export function addLanguage(language) {
          if (doc.exists) {
             dispatch(storeData(doc.data(), language));
 
-            // after we get our firebase data, we can download chapters 1 and 3
+            // download stuff
+            // download header image
+            var downloadResumable = FileSystem.createDownloadResumable(
+               doc.data().headerImageSource,
+               FileSystem.documentDirectory + language + 'header.png',
+               {},
+            )
+            try {
+               downloadResumable.downloadAsync().then(({ uri }) => {
+                  headerImageDownloaded = true;
+                  if (chapter1Downloaded && chapter3Downloaded && headerImageDownloaded)
+                     dispatch(setIsFetching(false));
+               })
+            } catch (error) {
+               console.error(error);
+            }
+
             // create our download object for chapter 1
             var downloadResumable = FileSystem.createDownloadResumable(
                doc.data().chapter1source,
@@ -85,7 +102,7 @@ export function addLanguage(language) {
             try {
                downloadResumable.downloadAsync().then(({ uri }) => {
                   chapter1Downloaded = true;
-                  if (chapter1Downloaded && chapter3Downloaded)
+                  if (chapter1Downloaded && chapter3Downloaded && headerImageDownloaded)
                      dispatch(setIsFetching(false));
                })
             } catch (error) {
@@ -102,7 +119,7 @@ export function addLanguage(language) {
                downloadResumable.downloadAsync().then(({ uri }) => {
                   //console.log('Finished downloading to ', uri);
                   chapter3Downloaded = true;
-                  if (chapter1Downloaded && chapter3Downloaded)
+                  if (chapter1Downloaded && chapter3Downloaded && headerImageDownloaded)
                      dispatch(setIsFetching(false));
                })
             } catch (error) {

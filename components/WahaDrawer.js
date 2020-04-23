@@ -20,48 +20,50 @@ function WahaDrawer(props) {
    //// RENDER
 
    return (
-      <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
-         <View style={[styles.drawerHeaderContainer, { backgroundColor: props.colors.primaryColor }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: props.colors.primaryColor }]} forceInset={{ top: 'always', bottom: 'never', horizontal: 'never' }}>
+         <View style={styles.drawerHeaderContainer}>
             <View style={styles.groupIconContainer}>
                <AvatarImage source={props.activeGroup.imageSource} size={120} />
             </View>
             <Text style={styles.groupName}>{props.activeGroup.name}</Text>
          </View>
-         <View style={styles.bigDrawerItemsContainer}>
-            <DrawerItem
-               iconName="group"
-               text={props.translations.navigation.drawer.groups}
-               onPress={() => props.navigation.navigate('Groups')}
-            />
-            {/* <DrawerItem
+         <View style={{ backgroundColor: "#FFFFFF", flex: 1 }}>
+            <View>
+               <DrawerItem
+                  iconName="group"
+                  text={props.translations.navigation.drawer.groups}
+                  onPress={() => props.navigation.navigate('Groups')}
+               />
+               {/* <DrawerItem
                name="security"
                text="Security Mode"
                onPress={() => {}}
             /> */}
-            <DrawerItem
-               iconName="email"
-               text={props.translations.navigation.drawer.feedback}
-               onPress={() => openBrowser('https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif')}
-            />
-            <DrawerItem
-               iconName="storage"
-               text={props.translations.navigation.drawer.storage}
-               onPress={() => props.navigation.navigate('Storage', { isRTL: props.isFetching ? null : props.isRTL })}
-            />
-         </View>
-         <View style={styles.smallDrawerItemsContainer}>
-            <SmallDrawerItem
-               onPress={() => { }}
-               label={props.translations.navigation.drawer.coaching}
-            />
-            <SmallDrawerItem
-               onPress={() => openBrowser('https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif')}
-               label={props.translations.navigation.drawer.privacy}
-            />
-            <SmallDrawerItem
-               onPress={() => openBrowser('https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif')}
-               label={props.translations.navigation.drawer.credits}
-            />
+               <DrawerItem
+                  iconName="email"
+                  text={props.translations.navigation.drawer.feedback}
+                  onPress={() => openBrowser('https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif')}
+               />
+               <DrawerItem
+                  iconName="storage"
+                  text={props.translations.navigation.drawer.storage}
+                  onPress={() => props.navigation.navigate('Storage', { isRTL: props.isFetching ? null : props.isRTL })}
+               />
+            </View>
+            <View style={styles.smallDrawerItemsContainer}>
+               <SmallDrawerItem
+                  onPress={() => { }}
+                  label={props.translations.navigation.drawer.coaching}
+               />
+               <SmallDrawerItem
+                  onPress={() => openBrowser('https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif')}
+                  label={props.translations.navigation.drawer.privacy}
+               />
+               <SmallDrawerItem
+                  onPress={() => openBrowser('https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif')}
+                  label={props.translations.navigation.drawer.credits}
+               />
+            </View>
          </View>
       </SafeAreaView >
    )
@@ -79,6 +81,9 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       alignContent: "center",
       padding: 15
+   },
+   bigDrawerItemsContainer: {
+      backgroundColor: "#FFFFFF"
    },
    groupIconContainer: {
       alignItems: "center",

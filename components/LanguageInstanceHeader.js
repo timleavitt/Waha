@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Text, FlatList, Alert, Image } from 'react-native';
 import { connect } from 'react-redux'
 import GroupListItem from '../components/GroupListItem'
-import { scaleMultiplier, headerImages } from '../constants'
+import { scaleMultiplier } from '../constants'
 import { deleteGroup } from '../redux/actions/groupsActions'
 import { deleteLanguage } from '../redux/actions/databaseActions'
 import * as FileSystem from 'expo-file-system';
@@ -63,13 +63,12 @@ function LanguageInstanceHeader(props) {
       >
          <Icon name='trash' size={25 * scaleMultiplier} color='#FF0800' />
       </TouchableOpacity> : null
-
    return (
       <View style={styles.languageHeaderListContainer}>
          <View style={[styles.languageHeaderContainer, { flexDirection: props.isRTL ? 'row-reverse' : 'row' }]}>
             {trashButton}
             <Text style={[styles.languageHeaderText, { textAlign: props.isRTL ? 'right' : 'left' }]}>{props.languageName}</Text>
-            <Image style={styles.languageLogo} source={headerImages[props.languageID]} />
+            <Image style={styles.languageLogo} source={{ uri: FileSystem.documentDirectory + props.languageID + 'header.png'}} />
          </View>
          <FlatList
             data={props.groups.filter(group => group.language === props.languageID)}

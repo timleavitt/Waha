@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Alert, Image } from 'react-native';
+import { View, FlatList, StyleSheet, Alert, Image, Button, Text } from 'react-native';
 import LessonItem from '../components/LessonItem';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -7,7 +7,7 @@ import SetItem from '../components/SetItem';
 import WahaModal from '../components/WahaModal'
 import ModalButton from '../components/ModalButton'
 import NetInfo from '@react-native-community/netinfo';
-import { scaleMultiplier, headerImages } from '../constants'
+import { scaleMultiplier } from '../constants'
 import BackButton from '../components/BackButton'
 import { downloadLesson } from '../redux/actions/downloadActions'
 import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
@@ -31,9 +31,11 @@ function LessonListScreen(props) {
    const [showSaveLessonModal, setShowSaveLessonModal] = useState(false);
    const [showDeleteLessonModal, setShowDeleteLessonModal] = useState(false);
    const [showLessonOptionsModal, setShowLessonOptionsModal] = useState(false);
+   
+
 
    //// CONSTRUCTOR
-   
+
    useEffect(() => {
       props.navigation.setOptions(getNavOptions())
       const unsubscribe = NetInfo.addEventListener(state => {
@@ -48,7 +50,7 @@ function LessonListScreen(props) {
 
    function getNavOptions() {
       return {
-         headerTitle: () => <Image style={styles.headerImage} source={headerImages[props.activeGroup.language]} />,
+         headerTitle: () => <Image style={styles.headerImage} source={{ uri: FileSystem.documentDirectory + props.activeGroup.language + 'header.png' }} />,
          headerRight: props.isRTL ?
             () => <BackButton onPress={() => props.navigation.goBack()} /> :
             () => <View></View>,
@@ -98,6 +100,15 @@ function LessonListScreen(props) {
       props.setBookmark(props.activeGroup.name)
    }
 
+   function swipeGestureEnded(data) {
+      //   if (data.translateX === Dimensions.get('window').width / 2) {
+      //      //console.log('test')
+      //   }
+      console.log(data)
+   }
+
+   function test() { console.log('testing') }
+
 
    // hides all the modals 
    function hideModals() {
@@ -122,7 +133,7 @@ function LessonListScreen(props) {
                      Alert.alert(
                         props.translations.alerts.shareUndownloaded.header,
                         props.translations.alerts.shareUndownloaded.body,
-                        [{text: props.translations.alerts.options.ok, onPress: () => {}}]
+                        [{ text: props.translations.alerts.options.ok, onPress: () => { } }]
                      )
                })
             break;
@@ -173,26 +184,34 @@ function LessonListScreen(props) {
          <FlatList
             data={props.activeDatabase.lessons.filter(lesson => props.route.params.setID === lesson.setid)}
             renderItem={renderLessonItem}
-            extraData={refresh}
+            keyExtractor={item => item.id}
          />
-
          {/* MODALS */}
-         <WahaModal isVisible={showSaveLessonModal}>
-            <ModalButton title={props.activeDatabase.translations.modals.downloadLessonOptions.downloadLesson} onPress={downloadLessonFromModal} />
-            <ModalButton title={props.activeDatabase.translations.modals.downloadLessonOptions.cancel} onPress={hideModals} style={{ color: "red" }} />
+         <WahaModal 
+            isVisible={showSaveLessonModal} 
+            hideModal={hideModals}
+            closeText={props.activeDatabase.translations.modals.downloadLessonOptions.cancel}
+         > 
+            <ModalButton isLast={true}title={props.activeDatabase.translations.modals.downloadLessonOptions.downloadLesson} onPress={downloadLessonFromModal} />
          </WahaModal>
-         <WahaModal isVisible={showDeleteLessonModal}>
-            <ModalButton title={props.activeDatabase.translations.modals.deleteLessonOptions.deleteLesson} onPress={deleteLessonFromModal} />
-            <ModalButton title={props.activeDatabase.translations.modals.deleteLessonOptions.cancel} onPress={hideModals} style={{ color: "red" }} />
+         <WahaModal 
+            isVisible={showDeleteLessonModal} 
+            hideModal={hideModals}
+            closeText={props.activeDatabase.translations.modals.deleteLessonOptions.cancel}
+         >
+            <ModalButton isLast={true} title={props.activeDatabase.translations.modals.deleteLessonOptions.deleteLesson} onPress={deleteLessonFromModal} />
          </WahaModal>
-         <WahaModal isVisible={showLessonOptionsModal}>
+         <WahaModal 
+            isVisible={showLessonOptionsModal} 
+            hideModal={hideModals}
+            closeText={props.activeDatabase.translations.modals.lessonOptions.close}
+         >
             <ModalButton title={props.activeDatabase.translations.modals.lessonOptions.markLessonComplete} onPress={() => toggleCompleteFromModal('complete')} />
             <ModalButton title={props.activeDatabase.translations.modals.lessonOptions.markLessonIncomplete} onPress={() => toggleCompleteFromModal('incomplete')} />
             <ModalButton title={props.activeDatabase.translations.modals.lessonOptions.shareChapter1} onPress={() => shareLesson('fellowship')} />
             <ModalButton title={props.activeDatabase.translations.modals.lessonOptions.shareChapter2} onPress={() => shareLesson('passage')} />
             <ModalButton title={props.activeDatabase.translations.modals.lessonOptions.shareChapter3} onPress={() => shareLesson('application')} />
-            <ModalButton title={props.activeDatabase.translations.modals.lessonOptions.markUpToPointAsComplete} onPress={markUpToThisPointAsCompleteFromModal} />
-            <ModalButton title={props.activeDatabase.translations.modals.lessonOptions.close} onPress={hideModals} style={{ color: "red" }} />
+            <ModalButton isLast={true} title={props.activeDatabase.translations.modals.lessonOptions.markUpToPointAsComplete} onPress={markUpToThisPointAsCompleteFromModal} />
          </WahaModal>
       </View>
    )
@@ -211,10 +230,15 @@ const styles = StyleSheet.create({
       height: 90 * scaleMultiplier
    },
    headerImage: {
-      resizeMode: "center",
+      resizeMode: "contain",
       width: 120,
       height: 40,
       alignSelf: "center",
+   },
+   hiddenItemContainer: {
+      justifyContent: "space-between",
+      flexDirection: "row",
+
    }
 })
 
