@@ -114,7 +114,7 @@ function EditGroupScreen(props) {
    //// RENDER
 
    // renders the delete group button conditionally because the currently active group can't be deleted
-   var deleteButton = isActive ? <Text style={[styles.cantDeleteText, { textAlign: props.isRTL ? 'right' : 'left' }]}>{props.translations.labels.cantDeleteGroup}}</Text> :
+   var deleteButton = isActive ? <Text style={[styles.cantDeleteText, { textAlign: props.isRTL ? 'right' : 'left' }]}>{props.translations.labels.cantDeleteGroup}</Text> :
       <TouchableOpacity style={styles.deleteGroupButtonContainer} onPress={() => { props.deleteGroup(props.route.params.groupName); props.navigation.goBack(); }}>
          <Text style={[styles.deleteGroupButtonText, { textAlign: props.isRTL ? 'right' : 'left' }]}>{props.translations.labels.deleteGroup}</Text>
       </TouchableOpacity>
