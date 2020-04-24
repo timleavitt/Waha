@@ -112,7 +112,6 @@ function LessonListScreen(props) {
    function shareLesson(chapter) {
       switch (chapter) {
          case 'fellowship':
-            console.log(props.activeGroup.language + 'chapter1.mp3')
             Sharing.shareAsync(FileSystem.documentDirectory + props.activeGroup.language + 'chapter1.mp3')
             break;
          case 'passage':
@@ -238,7 +237,6 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
-   console.log(state.downloads)
    return {
       downloads: state.downloads,
       activeDatabase: state.database[activeGroup.language],

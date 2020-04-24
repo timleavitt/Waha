@@ -144,9 +144,9 @@ function PlayScreen(props) {
                      changeChapter('application')
                })
          } else if (activeChapter === 'application') {
-            var isComplete = (props.activeGroup.progress.includes(props.route.params.id))
-            if (!isComplete)
+            if (!props.activeGroup.progress.includes(props.route.params.index)) {
                changeCompleteStatus();
+            }
          }
       }
    })
@@ -185,7 +185,6 @@ function PlayScreen(props) {
 
    // gets called every second by our timer and updates the seeker position based on the progress through the audio file
    async function updateSeekerTick() {
-      //console.log(shouldTickUpdate.current)
       if (shouldTickUpdate.current) {
          try {
             await soundObject
@@ -484,6 +483,7 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
+   console.log(activeGroup.progress)
    return {
       database: state.database,
       activeGroup: activeGroup,

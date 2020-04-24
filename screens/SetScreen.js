@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 
 function SetScreen(props) {
 
-   FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => { console.log(contents) })
+   // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => { console.log(contents) })
 
    //// CONSTRUCTOR
 

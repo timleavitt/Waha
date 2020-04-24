@@ -66,6 +66,7 @@ function StackNavigator(props) {
                      color: "#82868D",
                      fontFamily: 'medium'
                   },
+                  gestureEnabled: false
                }}
             />
             <Stack.Screen

@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Localization from 'expo-localization';
 import i18n from 'i18n-js';
 import { Audio } from 'expo-av';
-import { scaleMultiplier } from '../constants'
+import { scaleMultiplier, languageT2S } from '../constants'
 
 function LanguageSelectScreen(props) {
 
@@ -42,15 +42,7 @@ function LanguageSelectScreen(props) {
    // plays text-to-speech audio file of language
    async function playAudio() {
       soundObject.unloadAsync();
-      switch (i18n.locale) {
-         case 'en':
-            await soundObject
-               .loadAsync(require('../assets/language_mp3s/en.mp3'))
-               .then(() => {
-                  soundObject.playAsync()
-               })
-            break;
-      }
+      await soundObject.loadAsync(languageT2S[i18n.locale]).then(() => {soundObject.playAsync()})
    }
 
    // updates language on picker change
