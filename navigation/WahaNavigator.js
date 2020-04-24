@@ -1,14 +1,12 @@
 import React from 'react';
-
-import MainNavigator from './MainNavigator'
+import DrawerNavigator from './DrawerNavigator'
 import OnboardingNavigator from './OnboaringNavigator'
 import LoadingScreen from '../screens/LoadingScreen'
-
 import { connect } from 'react-redux'
 
 function WahaNavigator(props) {
    if (!props.isFirstOpen && !props.isFetching && props.isReadyToStart)
-      return <MainNavigator />
+      return <DrawerNavigator />
    else if (!props.isFirstOpen && props.isFetching && props.isReadyToStart)
       return <LoadingScreen/>
    else

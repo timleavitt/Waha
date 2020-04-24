@@ -151,6 +151,7 @@ function LessonListScreen(props) {
             lesson={lessonList.item}
             onLessonSelect={() => props.navigation.navigate('Play', {
                id: lessonList.item.id,
+               setid: lessonList.item.setid,
                index: lessonList.item.index,
                title: lessonList.item.title,
                subtitle: lessonList.item.subtitle,

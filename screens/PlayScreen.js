@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, Alert, ActivityIndicator, ScrollView, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, Alert, ActivityIndicator, FlatList, Dimensions, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { scaleMultiplier } from '../constants'
+import { scaleMultiplier, setImages } from '../constants'
 import { Audio } from 'expo-av';
 import WahaModal from '../components/WahaModal'
 import ModalButton from '../components/ModalButton'
@@ -15,7 +15,6 @@ import BackButton from '../components/BackButton'
 import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { connect } from 'react-redux'
 import { downloadLesson } from '../redux/actions/downloadActions'
-
 console.disableYellowBox = true;
 
 function PlayScreen(props) {
@@ -51,6 +50,27 @@ function PlayScreen(props) {
 
    //share modal
    const [showShareLessonModal, setShowShareLessonModal] = useState(false);
+
+   // data for album art flatlist
+   const albumArtData = [
+      {
+         key: '0',
+         type: 'text',
+         header: props.translations.questionsHeader,
+         body: props.translations.questionsBody
+      },
+      {
+         key: '1',
+         type: 'image',
+         iconName: setImages[props.activeDatabase.sets.filter(set => set.id === props.route.params.setid)[0].index]
+      },
+      {
+         key: '2',
+         type: 'text',
+         header: props.route.params.scriptureHeader,
+         body: props.route.params.scriptureText
+      },
+   ]
 
    //// CONSTRUCTOR
 
@@ -287,6 +307,34 @@ function PlayScreen(props) {
 
    //// RENDER
 
+   function renderAlbumArtItem({ item }) {
+      if (item.type === 'text') {
+         var scrollBarLeft = item.key === '0' ? null : <View style={styles.scrollBar} />
+         var scrollBarRight = item.key === '0' ? <View style={styles.scrollBar} /> : null
+         return (
+            <View style={[styles.albumArtContainer, { marginLeft: item.key === '0' ? 30 : 10, marginRight: item.key === '2' ? 30 : 10 }]}>
+               {scrollBarLeft}
+               <ScrollView style={[styles.textContainer, { marginLeft: item.key === '2' ? 5 : 0, marginRight: item.key === '0' ? 5 : 0 }]}>
+                  <Text style={styles.albumTextHeader}>{item.header}</Text>
+                  <Text style={styles.albumTextBody}>{item.body}</Text>
+               </ScrollView>
+               {scrollBarRight}
+            </View>
+         )
+      }
+      else {
+         return (
+            <View style={[styles.albumArtContainer, { justifyContent: 'center', alignItems: 'center' }]}>
+               <MaterialCommunityIcons
+                  name={item.iconName}
+                  size={300 * scaleMultiplier}
+                  color={props.activeDatabase.sets.filter(set => set.id === props.route.params.setid)[0].color}
+               />
+            </View>
+         )
+      }
+   }
+
    // renders the play/pause/skip container conditionally because we don't want to show controls when the audio is loading
    // if we're loading, render a loading circle; otherwise load the audio controls
    var audioControlContainer = isLoaded ?
@@ -320,36 +368,53 @@ function PlayScreen(props) {
                <Text style={styles.title}>{props.route.params.title}</Text>
             </View>
             <View style={styles.albumArtListContainer}>
-               <ScrollView
+               <FlatList
+                  data={albumArtData}
+                  renderItem={renderAlbumArtItem}
                   horizontal={true}
                   pagingEnabled={true}
                   snapToAlignment={"start"}
                   snapToInterval={Dimensions.get('window').width - 70}
                   decelerationRate={"fast"}
+                  showsHorizontalScrollIndicator={false}
+                  getItemLayout={(data, index) => (
+                     { length: Dimensions.get('window').width - 70, offset: Dimensions.get('window').width - 70 * index, index }
+                  )}
                   initialScrollIndex={1}
-                  contentOffset={{ x: Dimensions.get('window').width - 70, y: 0 }}
+               />
+               {/* <ScrollView
+                  // contentContainerStyle={{paddingRight: Dimensions.get('window').width - 70}}
+                  horizontal={true}
+                  pagingEnabled={true}
+                  snapToAlignment={"start"}
+                  snapToInterval={Dimensions.get('window').width - 70}
+                  decelerationRate={"fast"}
+                  //contentOffset={{ x: Dimensions.get('window').width - 70, y: 0 }}
+                  showsHorizontalScrollIndicator={false}
                >
                   <View style={{ ...styles.albumArtContainer, ...{ marginLeft: 30 } }}>
                      <ScrollView>
-                        <Text style={{ flexWrap: "wrap", fontFamily: 'regular', textAlign: "center" }}>{props.route.params.scriptureHeader}</Text>
+                        <Text style={{ flexWrap: "wrap", fontFamily: 'bold', textAlign: "center", margin: 5}}>{props.route.params.scriptureHeader}</Text>
                         <Text style={{ flexWrap: "wrap", fontFamily: 'regular' }}>{props.route.params.scriptureText}</Text>
                      </ScrollView>
+                     <View style={styles.scrollBar} />
                   </View>
                   <View style={{ ...styles.albumArtContainer, ...{ justifyContent: "center", alignItems: "center" } }}>
                      <MaterialCommunityIcons name={props.route.params.iconName} size={200} />
                   </View>
                   <View style={{ ...styles.albumArtContainer, ...{ marginRight: 30 } }}>
+                     <View style={styles.scrollBar} />
                      <ScrollView>
-                        <Text style={{ flexWrap: "wrap", fontFamily: 'regular' }}>questions</Text>
+                        <Text style={{ flexWrap: "wrap", fontFamily: 'bold', textAlign: "center", margin: 5 }}>Questions</Text>
                      </ScrollView>
                   </View>
-               </ScrollView>
+               </ScrollView> */}
             </View>
          </View>
          {audioControlContainer}
 
          {/* MODALS */}
-         <WahaModal 
+         <WahaModal
             isVisible={showShareLessonModal}
             hideModal={() => setShowShareLessonModal(false)}
             closeText={props.translations.modals.lessonOptions.close}
@@ -404,7 +469,29 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       marginHorizontal: 10,
       paddingHorizontal: 10,
-      backgroundColor: "#DEE3E9"
+      backgroundColor: "#DEE3E9",
+      flexDirection: "row"
+   },
+   textContainer: {
+      flexDirection: "column",
+      flex: 1,
+   },
+   albumTextHeader: {
+      flexWrap: "wrap",
+      fontFamily: 'bold',
+      textAlign: "center",
+      margin: 5
+   },
+   albumTextBody: {
+      flexWrap: "wrap",
+      fontFamily: 'regular'
+   },
+   scrollBar: {
+      width: 4,
+      height: 150 * scaleMultiplier,
+      backgroundColor: "#9FA5AD",
+      borderRadius: 10,
+      alignSelf: "center",
    },
    audioControlContainer: {
       justifyContent: "space-evenly",
@@ -422,6 +509,7 @@ function mapStateToProps(state) {
    return {
       database: state.database,
       activeGroup: activeGroup,
+      activeDatabase: state.database[activeGroup.language],
       translations: state.database[activeGroup.language].translations,
       downloads: state.downloads,
       colors: state.database[activeGroup.language].colors,

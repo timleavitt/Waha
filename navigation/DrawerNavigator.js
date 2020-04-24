@@ -3,7 +3,7 @@ import { StyleSheet, Image } from 'react-native';
 import { scaleMultiplier } from '../constants'
 import WahaDrawer from '../components/WahaDrawer'
 
-import StackNavigator from '../navigation/StackNavigator'
+import StackNavigator from './StackNavigator'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -22,27 +22,14 @@ function getGestureEnabled(route) {
       route.state.routes[route.state.index].name
       : // If state doesn't exist, we need to default to `screen` param if available, or the initial screen
       // In our case, it's "Feed" as that's the first screen inside the navigator
-      route.params?.screen || 'StudySet';
-   if (routeName === 'StudySet')
+      route.params?.screen || 'Set';
+   if (routeName === 'Set')
       return true
    else
       return false
 }
 
-//Drawer navigator contains stack navigator as only screen
-
-
-
-const styles = StyleSheet.create({
-   headerImage: {
-      resizeMode: "center",
-      width: 120,
-      height: 40,
-      alignSelf: "center",
-   }
-})
-
-function MainNavigator(props) {
+function DrawerNavigator(props) {
    var direction = props.isRTL ? 'right' : 'left'
    return (
       <NavigationContainer>
@@ -72,4 +59,4 @@ function mapDispatchToProps(dispatch) {
    }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MainNavigator);
+export default connect(mapStateToProps, mapDispatchToProps)(DrawerNavigator);
