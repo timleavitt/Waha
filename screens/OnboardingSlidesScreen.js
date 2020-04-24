@@ -150,6 +150,7 @@ function OnboardingSlidesScreen(props) {
                decelerationRate={"fast"}
                onViewableItemsChanged={onViewRef.current}
                viewabilityConfig={viewConfigRef.current}
+               showsHorizontalScrollIndicator={false}
             />
             <View style={styles.buttonsContainer}>
                <View>
@@ -196,9 +197,8 @@ const styles = StyleSheet.create({
    },
    image: {
       resizeMode: "center",
-      width: 321,
-      height: 272,
-      padding: 100
+      width: 321 * scaleMultiplier,
+      height: 272 * scaleMultiplier, 
    },
    titleContainer: {
       width: "100%",
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
    },
    title: {
       textAlign: "center",
-      fontSize: 24,
+      fontSize: 24 * scaleMultiplier,
       flexWrap: "wrap",
       fontFamily: "bold"
    },
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
    },
    body: {
       textAlign: "center",
-      fontSize: 18,
+      fontSize: 18 * scaleMultiplier,
       flexWrap: "wrap",
       fontFamily: "regular"
    },
