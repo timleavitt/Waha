@@ -7,6 +7,8 @@ import { connect } from 'react-redux'
 
 function SetScreen(props) {
 
+   FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => { console.log(contents) })
+
    //// CONSTRUCTOR
 
    useEffect(() => {
@@ -17,7 +19,7 @@ function SetScreen(props) {
 
    function getNavOptions() {
       return {
-         headerTitle: () => <Image style={styles.headerImage} source={{ uri: FileSystem.documentDirectory + props.activeGroup.language + 'header.png'}} />,
+         headerTitle: () => <Image style={styles.headerImage} source={{ uri: FileSystem.documentDirectory + props.activeGroup.language + 'header.png' }} />,
          headerLeft: props.isRTL ?
             () => <View></View> :
             () =>
@@ -52,6 +54,7 @@ function SetScreen(props) {
             onSetSelect={
                () => props.navigation.navigate('LessonList', {
                   setID: setList.item.id,
+                  index: setList.item.index,
                   title: setList.item.title,
                   subtitle: setList.item.subtitle,
                   color: setList.item.color,

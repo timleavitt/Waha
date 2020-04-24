@@ -23,7 +23,7 @@ function LanguageInstanceHeader(props) {
       // delete all downloaded files for this language
       FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
          for (const item of contents) {
-            if (item.slice(0, 2) === props.activeGroup.language)
+            if (item.slice(0, 2) === props.languageID)
                FileSystem.deleteAsync(FileSystem.documentDirectory + item)
          }
       })

@@ -100,16 +100,6 @@ function LessonListScreen(props) {
       props.setBookmark(props.activeGroup.name)
    }
 
-   function swipeGestureEnded(data) {
-      //   if (data.translateX === Dimensions.get('window').width / 2) {
-      //      //console.log('test')
-      //   }
-      console.log(data)
-   }
-
-   function test() { console.log('testing') }
-
-
    // hides all the modals 
    function hideModals() {
       setShowSaveLessonModal(false);
@@ -175,6 +165,7 @@ function LessonListScreen(props) {
       <View style={styles.screen}>
          <View style={styles.studySetItemContainer}>
             <SetItem
+               index={props.route.params.index}
                title={props.route.params.title}
                subtitle={props.route.params.subtitle}
                id={props.route.params.studySetID}
@@ -247,6 +238,7 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
+   console.log(state.downloads)
    return {
       downloads: state.downloads,
       activeDatabase: state.database[activeGroup.language],
@@ -259,7 +251,7 @@ function mapDispatchToProps(dispatch) {
    return {
       downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
       toggleComplete: (groupName, lessonIndex) => { dispatch(toggleComplete(groupName, lessonIndex)) },
-      setBookmark: groupName => { dispatch(setBookmark(groupName)) }
+      setBookmark: groupName => { dispatch(setBookmark(groupName)) },
    }
 }
 

@@ -14,7 +14,7 @@ import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
 import BackButton from '../components/BackButton'
 import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { connect } from 'react-redux'
-import { downloadLesson } from '../redux/actions/downloadActions'
+import { downloadLesson, removeDownload } from '../redux/actions/downloadActions'
 console.disableYellowBox = true;
 
 function PlayScreen(props) {
@@ -160,6 +160,11 @@ function PlayScreen(props) {
             }
          })
    }
+
+   useEffect(() => {
+      if (props.downloads[props.route.params.id] == 1)
+         props.removeDownload(props.route.params.id)
+   }, [props.downloads[props.route.params.id]])
 
    // loads an audio file, sets the length, and starts playing it 
    async function loadAudioFile(source) {
@@ -382,33 +387,6 @@ function PlayScreen(props) {
                   )}
                   initialScrollIndex={1}
                />
-               {/* <ScrollView
-                  // contentContainerStyle={{paddingRight: Dimensions.get('window').width - 70}}
-                  horizontal={true}
-                  pagingEnabled={true}
-                  snapToAlignment={"start"}
-                  snapToInterval={Dimensions.get('window').width - 70}
-                  decelerationRate={"fast"}
-                  //contentOffset={{ x: Dimensions.get('window').width - 70, y: 0 }}
-                  showsHorizontalScrollIndicator={false}
-               >
-                  <View style={{ ...styles.albumArtContainer, ...{ marginLeft: 30 } }}>
-                     <ScrollView>
-                        <Text style={{ flexWrap: "wrap", fontFamily: 'bold', textAlign: "center", margin: 5}}>{props.route.params.scriptureHeader}</Text>
-                        <Text style={{ flexWrap: "wrap", fontFamily: 'regular' }}>{props.route.params.scriptureText}</Text>
-                     </ScrollView>
-                     <View style={styles.scrollBar} />
-                  </View>
-                  <View style={{ ...styles.albumArtContainer, ...{ justifyContent: "center", alignItems: "center" } }}>
-                     <MaterialCommunityIcons name={props.route.params.iconName} size={200} />
-                  </View>
-                  <View style={{ ...styles.albumArtContainer, ...{ marginRight: 30 } }}>
-                     <View style={styles.scrollBar} />
-                     <ScrollView>
-                        <Text style={{ flexWrap: "wrap", fontFamily: 'bold', textAlign: "center", margin: 5 }}>Questions</Text>
-                     </ScrollView>
-                  </View>
-               </ScrollView> */}
             </View>
          </View>
          {audioControlContainer}
@@ -521,7 +499,8 @@ function mapDispatchToProps(dispatch) {
    return {
       toggleComplete: (groupName, lessonIndex) => { dispatch(toggleComplete(groupName, lessonIndex)) },
       downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
-      setBookmark: groupName => { dispatch(setBookmark(groupName)) }
+      setBookmark: groupName => { dispatch(setBookmark(groupName)) },
+      removeDownload: lessonID => {dispatch(removeDownload(lessonID))}
    }
 }
 

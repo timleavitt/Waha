@@ -110,7 +110,7 @@ function StorageScreen(props) {
 
    function renderLanguageInstance(languageInstanceList) {
       return (
-         <TouchableOpacity style={styles.storageContainerFlatList} onPress={
+         <TouchableOpacity style={[styles.storageContainerFlatList, {flexDirection: props.isRTL ? "row-reverse" : "row"}]} onPress={
             () => Alert.alert(
                props.translations.alerts.deleteDownloadedLessonsPerLanguage.header,
                props.translations.alerts.deleteDownloadedLessonsPerLanguage.body,
@@ -124,8 +124,10 @@ function StorageScreen(props) {
             )
          }>
             <Text style={styles.mbText}>{languageInstanceList.item.languageName}</Text>
-            <Image style={styles.languageLogo} source={headerImages[languageInstanceList.item.languageID]} />
-            <Text style={styles.mbText}>{storageObject[languageInstanceList.item.languageID]}{props.translations.labels.mb}</Text>
+            <View style={{ flex: 1, flexDirection: "row", justifyContent: props.isRTL ? "flex-start" : "flex-end" }}>
+               <Image style={styles.languageLogo} source={{ uri: FileSystem.documentDirectory + languageInstanceList.item.languageID + 'header.png' }} />
+               <Text style={styles.mbText}>{storageObject[languageInstanceList.item.languageID]}{props.translations.labels.mb}</Text>
+            </View>
          </TouchableOpacity>
       )
    }
@@ -141,19 +143,19 @@ function StorageScreen(props) {
                ListHeaderComponent={
                   <View style={styles.storageHeader}>
                      <View style={styles.headerItems}>
-                        <View style={styles.headerItemContainer}>
+                        <View style={[styles.headerItemContainer, {flexDirection: props.isRTL ? "row-reverse" : "row"}]}>
                            <Text style={styles.storageUsedText}>{props.translations.labels.storageUsed}</Text>
                            <Text style={styles.mbText}>{totalStorage} {props.translations.labels.mb}</Text>
                         </View>
                         <TouchableOpacity
-                           style={[styles.headerItemContainer, { borderTopWidth: 0 }]}
+                           style={[styles.headerItemContainer, { flexDirection: props.isRTL ? "row-reverse" : "row", borderTopWidth: 0 }]}
                            onPress={
                               () => Alert.alert(
                                  props.translations.alerts.deleteAllDownloadedLessons.header,
                                  props.translations.alerts.deleteAllDownloadedLessons.body,
                                  [{
                                     text: props.translations.alerts.options.cancel,
-                                    onPress: () => {}
+                                    onPress: () => { }
                                  }, {
                                     text: props.translations.alerts.options.ok,
                                     onPress: () => deleteDownloadedLessons()
@@ -163,7 +165,7 @@ function StorageScreen(props) {
                            <Text style={styles.deleteText}>{props.translations.labels.deleteAllDownloadedLessons}</Text>
                         </TouchableOpacity>
                      </View>
-                     <Text style={styles.downloadedLessonsText}>{props.translations.labels.downloadedLessons}</Text>
+                     <Text style={[styles.downloadedLessonsText, {textAlign: props.isRTL ? "right" : "left"}]}>{props.translations.labels.downloadedLessons}</Text>
                      <View style={{ height: 2, flex: 1, backgroundColor: "#9FA5AD" }} />
                   </View>
                }
@@ -195,7 +197,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingHorizontal: 5,
+      paddingHorizontal: 10,
    },
    downloadedLessonsText: {
       color: '#9FA5AD',
@@ -210,7 +212,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingHorizontal: 5,
+      paddingHorizontal: 10,
    },
    storageUsedText: {
       fontFamily: 'medium',
@@ -220,7 +222,8 @@ const styles = StyleSheet.create({
    mbText: {
       fontFamily: 'regular',
       fontSize: 18,
-      color: '#82868D'
+      color: '#82868D',
+      alignSelf: "center"
    },
    deleteText: {
       fontFamily: 'regular',
@@ -231,7 +234,7 @@ const styles = StyleSheet.create({
       resizeMode: "stretch",
       width: 96 * scaleMultiplier,
       height: 32 * scaleMultiplier,
-      marginRight: 10
+      marginRight: 20,
    }
 })
 

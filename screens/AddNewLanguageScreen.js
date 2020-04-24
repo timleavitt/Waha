@@ -4,7 +4,6 @@ import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
 import { addLanguage } from '../redux/actions/databaseActions'
-import * as FileSystem from 'expo-file-system';
 
 function AddNewLanguageScreen(props) {
 
@@ -52,13 +51,13 @@ function AddNewLanguageScreen(props) {
    function renderLanguageInstanceItem(languageInstanceList) {
       return (
          <TouchableOpacity
-            style={[styles.languageInstanceItem, { direction: props.isRTL ? 'rtl' : 'ltr' }]}
+            style={[styles.languageInstanceItem, { flexDirection: props.isRTL ? 'row-reverse' : 'row' }]}
             onPress={() => Alert.alert(
                props.translations.alerts.addNewLanguage.header,
                props.translations.alerts.addNewLanguage.body,
                [{
                   text: props.translations.alerts.options.cancel,
-                  onPress: () => {}
+                  onPress: () => { }
                }, {
                   text: props.translations.alerts.options.ok,
                   onPress: () => props.addLanguage(languageInstanceList.item.id)
@@ -66,17 +65,21 @@ function AddNewLanguageScreen(props) {
             )}
          >
             <Text style={styles.languageInstanceText}>{languageInstanceList.item.displayName}</Text>
-            <Image style={styles.languageLogo} source={{ uri: FileSystem.documentDirectory + languageInstanceList.item.id + 'header.png'}} />
+            {/* <Image style={styles.languageLogo} source={{ uri: FileSystem.documentDirectory + languageInstanceList.item.id + 'header.png' }} /> */}
          </TouchableOpacity>
       )
    }
 
+   var languageListComponent = (languageInstanceList.filter(item => !installedLanguageInstances.includes(item.id)).length != 0) ?
+      <FlatList
+         data={languageInstanceList.filter(item => !installedLanguageInstances.includes(item.id))}
+         renderItem={renderLanguageInstanceItem}
+      /> :
+      <Text style={styles.noMoreLanguagesText}>{props.translations.labels.noMoreLanguages}</Text>
+      
    return (
       <View style={styles.screen}>
-         <FlatList
-            data={languageInstanceList.filter(item => !installedLanguageInstances.includes(item.id))}
-            renderItem={renderLanguageInstanceItem}
-         />
+         {languageListComponent}
       </View>
    )
 }
@@ -99,7 +102,7 @@ const styles = StyleSheet.create({
    },
    languageInstanceText: {
       color: '#82868D',
-      paddingLeft: 10,
+      paddingHorizontal: 10,
       fontSize: 18,
       fontFamily: 'regular'
    },
@@ -107,7 +110,15 @@ const styles = StyleSheet.create({
       resizeMode: "stretch",
       width: 96 * scaleMultiplier,
       height: 32 * scaleMultiplier,
-      marginRight: 10
+      marginHorizontal: 10
+   },
+   noMoreLanguagesText: {
+      color: '#82868D',
+      paddingLeft: 10,
+      fontSize: 18,
+      fontFamily: 'regular',
+      textAlign: 'center',
+      marginTop: 20
    }
 })
 

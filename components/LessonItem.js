@@ -6,6 +6,8 @@ import { connect } from 'react-redux'
 import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import { removeDownload } from '../redux/actions/downloadActions'
+
 
 function LessonItem(props) {
 
@@ -15,16 +17,18 @@ function LessonItem(props) {
 
    //// FUNCTIONS
 
-   // checks if the lesson is downloaded and set isDownloaded accordingly
-   FileSystem.getInfoAsync(FileSystem.documentDirectory + props.lesson.id + '.mp3')
-      .then(({ exists }) => {
-         exists ? setIsDownloaded(true) : setIsDownloaded(false)
-         props.setRefresh(old => !old)
-      })
+
 
    // refresh lesson items when a download finishes
    useEffect(() => {
-      props.setRefresh()
+      if (props.downloadProgress == 1)
+         props.removeDownload(props.lesson.id)
+      // checks if the lesson is downloaded and set isDownloaded accordingly
+      FileSystem.getInfoAsync(FileSystem.documentDirectory + props.lesson.id + '.mp3')
+         .then(({ exists }) => {
+            exists ? setIsDownloaded(true) : setIsDownloaded(false)
+            props.setRefresh(old => !old)
+         })
    }, [props.downloadProgress])
 
    // calls the various modal functions on lessonlistscreen
@@ -90,7 +94,7 @@ function LessonItem(props) {
             <View
                style={styles.completeStatusContainer}
                onPress={() => {
-                 
+
                }}
             >
                <Icon
@@ -167,7 +171,8 @@ function mapDispatchToProps(dispatch) {
    return {
       downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
       toggleComplete: (groupName, lessonIndex) => { dispatch(toggleComplete(groupName, lessonIndex)) },
-      setBookmark: groupName => { dispatch(setBookmark(groupName)) }
+      setBookmark: groupName => { dispatch(setBookmark(groupName)) },
+      removeDownload: lessonID => { dispatch(removeDownload(lessonID)) }
    }
 }
 
