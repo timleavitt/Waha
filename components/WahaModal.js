@@ -16,11 +16,13 @@ function WahaModal(props) {
       >
          <View>
             <View style={styles.buttonsContainer}>
-            {props.children}
+               {props.children}
             </View>
-            <TouchableOpacity onPress={props.hideModal} style={styles.closeButtonContainer}>
-               <Text style={{textAlign: 'center', fontFamily: 'medium', fontSize: 21 * scaleMultiplier, color: "#FF0800"}}>{props.closeText}</Text>
-            </TouchableOpacity>
+            <View style={styles.closeButtonContainer}>
+               <TouchableOpacity onPress={props.hideModal} style={styles.closeButtonContainer}>
+                  <Text style={{ textAlign: 'center', fontFamily: 'medium', fontSize: 21 * scaleMultiplier, color: "#FF0800" }}>{props.closeText}</Text>
+               </TouchableOpacity>
+            </View>
          </View>
       </Modal>
    )
