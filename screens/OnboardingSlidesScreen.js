@@ -31,7 +31,6 @@ function OnboardingSlidesScreen(props) {
          prev: 'Previous',
          next: 'Next',
          finish: 'Finish',
-         defaultGroupName: "Group 1"
       },
       te: {
          title0: 'sed!',
@@ -45,7 +44,6 @@ function OnboardingSlidesScreen(props) {
          prev: 'nulla',
          next: 'interdum',
          finish: 'nunc',
-         defaultGroupName: 'facilisis 1'
       },
    };
 
@@ -63,8 +61,6 @@ function OnboardingSlidesScreen(props) {
       props.setFirstOpen(false)
       var language = props.route.params.selectedLanguage
       props.addLanguage(language)
-      props.createGroup(i18n.t('defaultGroupName'), language, '')
-      props.changeActiveGroup(i18n.t('defaultGroupName'))
    }, [])
 
    //// FUNCTIONS

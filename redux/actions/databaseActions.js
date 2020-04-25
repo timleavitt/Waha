@@ -6,9 +6,14 @@ export const SET_IS_FETCHING = 'SET_IS_FETCHING'
 export const SET_FIRST_OPEN = 'SET_FIRST_OPEN'
 export const SET_IS_READY_TO_START = 'SET_IS_READY_TO_START'
 export const DELETE_LANGUAGE = 'DELETE_LANGUAGE'
+export const ADD_SCRIPT = 'ADD_SCRIPT'
+export const REMOVE_SCRIPT = 'REMOVE_SCRIPT'
+
 import firebase from 'firebase';
 import '@firebase/firestore'
 import * as FileSystem from 'expo-file-system';
+import { createGroup, changeActiveGroup } from '../actions/groupsActions'
+import i18n from 'i18n-js';
 
 // firebase initializing
 const config = {
@@ -23,6 +28,11 @@ const config = {
 };
 firebase.initializeApp(config);
 const db = firebase.firestore();
+
+const groupNames = {
+   en: "Group 1",
+   te: "facilisis 1"
+}
 
 export function storeData(data, language) {
    return {
@@ -59,72 +69,88 @@ export function fetchError() {
    }
 }
 
-// thunk function for fetching a language from the database
-// this includes colors, translations, sets, lessons, and urls 
-// to all chapter 1 and 3 audio files
+export function addScript(script) {
+   return {
+      type: ADD_SCRIPT,
+      script
+   }
+}
+
+export function removeScript(script) {
+   return {
+      type: REMOVE_SCRIPT,
+      script
+   }
+}
+
+// thunk function for adding a language
+// data to add during fetch:
+// 1. firebase data (translations, sets, lessons, urls for downloads, colors)
+// 2. lesson 1 chapter 1 mp3 
+// 3. lesson 1 chapter 3 mp3
+// 4. generic chapter 1 mp3
+// 5. generic chapter 3 mp3
+// 6. header image
+// 7. fonts
+
 export function addLanguage(language) {
-   return (dispatch) => {
-      // set isFetching to true to signal that we're fetching data from firebase
+   return (dispatch, getState) => {
+
+      
+      // set the i18n language for loading screen translations
+      i18n.locale = language;
+
+      // set isFetching to true to signal that we're doing stuff and don't want to load the rest of the app
       dispatch(setIsFetching(true));
 
-      var headerImageDownloaded = false;
-      var chapter1Downloaded = false;
-      var chapter3Downloaded = false;
+      // tracking what's downloaded
+
+      //// FIREBASE FETCH
 
       // get stuff from database and throw it in redux
       db.collection("languages").doc(language).get().then(doc => {
          if (doc.exists) {
             dispatch(storeData(doc.data(), language));
 
-            // download stuff
-            // download header image
-            var downloadResumable = FileSystem.createDownloadResumable(
-               doc.data().headerImageSource,
-               FileSystem.documentDirectory + language + 'header.png',
-               {},
-            )
-            try {
-               downloadResumable.downloadAsync().then(({ uri }) => {
-                  headerImageDownloaded = true;
-                  if (chapter1Downloaded && chapter3Downloaded && headerImageDownloaded)
-                     dispatch(setIsFetching(false));
-               })
-            } catch (error) {
-               console.error(error);
+            // downloads a file from url into local storage
+            function downloadSomething(source, fileName) {
+               var downloadResumable = FileSystem.createDownloadResumable(
+                  doc.data()[source],
+                  FileSystem.documentDirectory + language + fileName,
+                  {},
+               )
+               return downloadResumable.downloadAsync().then(() => 'done')
             }
 
-            // create our download object for chapter 1
-            var downloadResumable = FileSystem.createDownloadResumable(
-               doc.data().chapter1source,
-               FileSystem.documentDirectory + language + 'chapter1.mp3',
-               {},
-            )
-            try {
-               downloadResumable.downloadAsync().then(({ uri }) => {
-                  chapter1Downloaded = true;
-                  if (chapter1Downloaded && chapter3Downloaded && headerImageDownloaded)
-                     dispatch(setIsFetching(false));
-               })
-            } catch (error) {
-               console.error(error);
+            function downloadFonts() {
+               // check if script is already downloaded by checking scripts in getstate
+
+               // if script is not, download fonts, add script to redux, and return promise
+
+               // if script is, return and do nothing 
+
+               // to still think about: deleting a language and deleting fonts
             }
 
-            // create our download object for chapter 3
-            downloadResumable = FileSystem.createDownloadResumable(
-               doc.data().chapter3source,
-               FileSystem.documentDirectory + language + 'chapter3.mp3',
-               {},
-            )
-            try {
-               downloadResumable.downloadAsync().then(({ uri }) => {
-                  //console.log('Finished downloading to ', uri);
-                  chapter3Downloaded = true;
-                  if (chapter1Downloaded && chapter3Downloaded && headerImageDownloaded)
-                     dispatch(setIsFetching(false));
-               })
-            } catch (error) {
-               console.error(error);
+            // downloads everything we need
+            function downloadEverything() {
+               return Promise.all([
+                  downloadSomething('headerImageSource', 'header.png'),
+                  downloadSomething('chapter1source', 'chapter1.mp3'),
+                  downloadSomething('chapter3source', 'chapter3.mp3'),
+                  downloadSomething('lesson1chapter1source', 'lesson1chapter1.mp3'),
+                  downloadSomething('lesson1chapter3source', 'lesson1chapter3.mp3'),
+                  downloadFonts()
+               ])
             }
+
+            // actually download everything, then create a group, set the active group to the
+            // new group, and finally set isfetching to false so we can go into the app
+            downloadEverything().then(() => {
+               dispatch(createGroup(groupNames[language], language, ''))
+               dispatch(changeActiveGroup(groupNames[language]))
+               dispatch(setIsFetching(false));
+            })
          } else {
             console.log("error: doc doesn't exist")
          }
