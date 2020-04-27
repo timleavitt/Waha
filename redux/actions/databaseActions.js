@@ -69,20 +69,6 @@ export function fetchError() {
    }
 }
 
-export function addScript(script) {
-   return {
-      type: ADD_SCRIPT,
-      script
-   }
-}
-
-export function removeScript(script) {
-   return {
-      type: REMOVE_SCRIPT,
-      script
-   }
-}
-
 // thunk function for adding a language
 // data to add during fetch:
 // 1. firebase data (translations, sets, lessons, urls for downloads, colors)
@@ -94,20 +80,17 @@ export function removeScript(script) {
 // 7. fonts
 
 export function addLanguage(language) {
-   return (dispatch, getState) => {
-
-      
+   return (dispatch) => {     
+       
       // set the i18n language for loading screen translations
       i18n.locale = language;
 
       // set isFetching to true to signal that we're doing stuff and don't want to load the rest of the app
       dispatch(setIsFetching(true));
 
-      // tracking what's downloaded
-
       //// FIREBASE FETCH
 
-      // get stuff from database and throw it in redux
+      // get language object from database and throw it in redux
       db.collection("languages").doc(language).get().then(doc => {
          if (doc.exists) {
             dispatch(storeData(doc.data(), language));
@@ -122,16 +105,6 @@ export function addLanguage(language) {
                return downloadResumable.downloadAsync().then(() => 'done')
             }
 
-            function downloadFonts() {
-               // check if script is already downloaded by checking scripts in getstate
-
-               // if script is not, download fonts, add script to redux, and return promise
-
-               // if script is, return and do nothing 
-
-               // to still think about: deleting a language and deleting fonts
-            }
-
             // downloads everything we need
             function downloadEverything() {
                return Promise.all([
@@ -140,7 +113,6 @@ export function addLanguage(language) {
                   downloadSomething('chapter3source', 'chapter3.mp3'),
                   downloadSomething('lesson1chapter1source', 'lesson1chapter1.mp3'),
                   downloadSomething('lesson1chapter3source', 'lesson1chapter3.mp3'),
-                  downloadFonts()
                ])
             }
 

@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
    addGroupText: {
       color: "#2D9CDB",
       fontSize: 18 * scaleMultiplier,
-      fontFamily: 'medium-italic',
+      fontFamily: 'medium_italic',
       textAlign: 'left'
    },
 })

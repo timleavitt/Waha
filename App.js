@@ -6,7 +6,7 @@ import { Provider } from 'react-redux'
 import { persistor, store } from './redux/store'
 import { PersistGate } from 'redux-persist/lib/integration/react';
 
-//only here because of wack errors, DON'T DELETE
+// only here because of wack errors, DON'T DELETE
 import { encode, decode } from 'base-64';
 if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
@@ -47,7 +47,7 @@ export default function App() {
          'light': require('./assets/fonts/Roboto-Light.ttf'),
       });
       await Font.loadAsync({
-         'medium-italic': require('./assets/fonts/Roboto-MediumItalic.ttf'),
+         'medium_italic': require('./assets/fonts/Roboto-MediumItalic.ttf'),
       });
       setFontsLoaded(true);
    }
