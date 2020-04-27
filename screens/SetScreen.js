@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 
 function SetScreen(props) {
 
-   FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => { console.log(contents) })
+   //FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => { console.log(contents) })
 
    //// CONSTRUCTOR
 
@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
-   console.log(state.database.scripts)
    return {
       activeDatabase: state.database[activeGroup.language],
       isRTL: state.database[activeGroup.language].isRTL,

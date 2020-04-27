@@ -11,25 +11,22 @@ import { removeDownload } from '../redux/actions/downloadActions'
 
 function LessonItem(props) {
 
-   //// STATE
-
-   const [isDownloaded, setIsDownloaded] = useState(false)
-
    //// FUNCTIONS
 
-
-
    // refresh lesson items when a download finishes
-   useEffect(() => {
-      if (props.downloadProgress == 1)
-         props.removeDownload(props.lesson.id)
-      // checks if the lesson is downloaded and set isDownloaded accordingly
-      FileSystem.getInfoAsync(FileSystem.documentDirectory + props.lesson.id + '.mp3')
-         .then(({ exists }) => {
-            exists ? setIsDownloaded(true) : setIsDownloaded(false)
-            props.setRefresh(old => !old)
-         })
-   }, [props.downloadProgress])
+   // useEffect(() => {
+   //    if (props.downloadProgress == 1) {
+   //       props.removeDownload(props.lesson.id)
+   //       // checks if the lesson is downloaded and set isDownloaded accordingly
+   //       // FileSystem.getInfoAsync(FileSystem.documentDirectory + props.lesson.id + '.mp3')
+   //       //    .then(({ exists }) => {
+   //       //       console.log(exists)
+   //       //       exists ? setIsDownloaded(true) : setIsDownloaded(false)
+   //       //       props.setRefresh(old => !old)
+   //       //    })
+   //    }
+
+   // }, [props.downloadProgress])
 
    // calls the various modal functions on lessonlistscreen
    function showSaveModal() {
@@ -48,7 +45,7 @@ function LessonItem(props) {
    //// RENDER
 
    // renders cloud icon conditionally as statuses can be downloaded, undownloaded, downloading, and no internet
-   var downloadStatus = props.downloadProgress ?
+   var downloadStatus = props.downloads[props.lesson.id] && props.downloads[props.lesson.id] < 1 ?
       <View style={styles.downloadButtonContainer}>
          <AnimatedCircularProgress
             size={25 * scaleMultiplier}
@@ -61,7 +58,7 @@ function LessonItem(props) {
       </View> :
       <TouchableOpacity
          onPress={
-            isDownloaded ? showDeleteModal :
+            props.downloads[props.lesson.id] == 1 ? showDeleteModal :
                (props.isConnected ? showSaveModal :
                   () => Alert.alert(
                      props.translations.alerts.downloadNoInternet.header,
@@ -71,8 +68,8 @@ function LessonItem(props) {
          style={styles.downloadButtonContainer}
       >
          <Icon
-            name={isDownloaded ? "cloud-check" : (props.isConnected ? "cloud-download" : "cloud-slash")}
-            color={isDownloaded ? "#9FA5AD" : "#3A3C3F"}
+            name={props.downloads[props.lesson.id] == 1 ? "cloud-check" : (props.isConnected ? "cloud-download" : "cloud-slash")}
+            color={props.downloads[props.lesson.id] == 1 ? "#9FA5AD" : "#3A3C3F"}
             size={25 * scaleMultiplier}
          />
       </TouchableOpacity>
@@ -82,7 +79,7 @@ function LessonItem(props) {
          <TouchableOpacity
             style={[styles.progressAndTitle, { flexDirection: props.isRTL ? "row-reverse" : "row" }]}
             onPress={
-               (!props.isConnected && !isDownloaded) ?
+               (!props.isConnected && !props.downloads[props.lesson.id]) ?
                   () => Alert.alert(
                      props.translations.alerts.playUndownloadedNoInternet.header,
                      props.translations.alerts.playUndownloadedNoInternet.body,
@@ -164,6 +161,7 @@ function mapStateToProps(state) {
       progress: state.appProgress,
       isRTL: state.database[activeGroup.language].isRTL,
       activeGroup: activeGroup,
+      downloads: state.downloads
    }
 };
 

@@ -9,11 +9,13 @@ import ModalButton from '../components/ModalButton'
 import NetInfo from '@react-native-community/netinfo';
 import { scaleMultiplier } from '../constants'
 import BackButton from '../components/BackButton'
-import { downloadLesson } from '../redux/actions/downloadActions'
+import { downloadLesson, removeDownload } from '../redux/actions/downloadActions'
 import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { connect } from 'react-redux'
 
 function LessonListScreen(props) {
+
+   FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => { console.log(contents) })
 
    //// STATE
 
@@ -31,7 +33,7 @@ function LessonListScreen(props) {
    const [showSaveLessonModal, setShowSaveLessonModal] = useState(false);
    const [showDeleteLessonModal, setShowDeleteLessonModal] = useState(false);
    const [showLessonOptionsModal, setShowLessonOptionsModal] = useState(false);
-   
+
 
 
    //// CONSTRUCTOR
@@ -72,8 +74,8 @@ function LessonListScreen(props) {
    // deletes a lesson's chapter 2 mp3 via modal press
    function deleteLessonFromModal() {
       FileSystem.deleteAsync(FileSystem.documentDirectory + activeLessonInModal.id + '.mp3')
+      props.removeDownload(activeLessonInModal.id)
       hideModals();
-      setRefresh(old => !old)
    }
 
    // changes the complete status of a lesson via modal press
@@ -150,12 +152,11 @@ function LessonListScreen(props) {
             })}
             isComplete={props.activeGroup.progress.includes(lessonList.item.index)}
             isConnected={isConnected}
-            downloadProgress={props.downloads[lessonList.item.id]}
             setShowSaveLessonModal={() => setShowSaveLessonModal(true)}
             setShowDeleteLessonModal={() => setShowDeleteLessonModal(true)}
             setActiveLessonInModal={() => setActiveLessonInModal(lessonList.item)}
             setShowLessonOptionsModal={() => setShowLessonOptionsModal(true)}
-            setRefresh={() => setRefresh()}
+            setRefresh={() => setRefresh(old => !old)}
          />
       )
    }
@@ -174,26 +175,27 @@ function LessonListScreen(props) {
          </View>
          <FlatList
             data={props.activeDatabase.lessons.filter(lesson => props.route.params.setID === lesson.setid)}
+            extraData={props.downloads}
             renderItem={renderLessonItem}
             keyExtractor={item => item.id}
          />
          {/* MODALS */}
-         <WahaModal 
-            isVisible={showSaveLessonModal} 
+         <WahaModal
+            isVisible={showSaveLessonModal}
             hideModal={hideModals}
             closeText={props.activeDatabase.translations.modals.downloadLessonOptions.cancel}
-         > 
-            <ModalButton isLast={true}title={props.activeDatabase.translations.modals.downloadLessonOptions.downloadLesson} onPress={downloadLessonFromModal} />
+         >
+            <ModalButton isLast={true} title={props.activeDatabase.translations.modals.downloadLessonOptions.downloadLesson} onPress={downloadLessonFromModal} />
          </WahaModal>
-         <WahaModal 
-            isVisible={showDeleteLessonModal} 
+         <WahaModal
+            isVisible={showDeleteLessonModal}
             hideModal={hideModals}
             closeText={props.activeDatabase.translations.modals.deleteLessonOptions.cancel}
          >
             <ModalButton isLast={true} title={props.activeDatabase.translations.modals.deleteLessonOptions.deleteLesson} onPress={deleteLessonFromModal} />
          </WahaModal>
-         <WahaModal 
-            isVisible={showLessonOptionsModal} 
+         <WahaModal
+            isVisible={showLessonOptionsModal}
             hideModal={hideModals}
             closeText={props.activeDatabase.translations.modals.lessonOptions.close}
          >
@@ -237,6 +239,7 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
+   console.log(state.downloads)
    return {
       downloads: state.downloads,
       activeDatabase: state.database[activeGroup.language],
@@ -250,6 +253,7 @@ function mapDispatchToProps(dispatch) {
       downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
       toggleComplete: (groupName, lessonIndex) => { dispatch(toggleComplete(groupName, lessonIndex)) },
       setBookmark: groupName => { dispatch(setBookmark(groupName)) },
+      removeDownload: lessonID => { dispatch(removeDownload(lessonID)) }
    }
 }
 

@@ -19,7 +19,7 @@ function ChapterSelect(props) {
    }
 
    // render chapter 2 button conditionally based off whether it's downloaded or not
-   var chapter2Button = props.lessonID in props.downloads ?
+   var chapter2Button = props.downloads[props.lessonID] && props.downloads[props.lessonID] < 1  ?
       <View style={{ ...styles.chapterSelect, flexDirection: "row", borderColor: "#82868D", backgroundColor: "#EFF2F4" }}>
          <AnimatedCircularProgress
             size={20}
@@ -46,7 +46,7 @@ function ChapterSelect(props) {
             size={25}
             color={(props.activeChapter === 'passage') ? "white" : props.colors.primaryColor}
          />
-         <Text style={{ ...styles.chapterSelectText, ...{ color: (props.activeChapter === 'passage') ? "white" : props.colors.primaryColor } }}>Passage</Text>
+         <Text style={{ ...styles.chapterSelectText, ...{ color: (props.activeChapter === 'passage') ? "white" : props.colors.primaryColor } }}>{props.translations.labels.passage}</Text>
       </TouchableOpacity>
 
    return (
@@ -65,7 +65,7 @@ function ChapterSelect(props) {
                size={25}
                color={(props.activeChapter === 'fellowship') ? "white" : props.colors.primaryColor}
             />
-            <Text style={{ ...styles.chapterSelectText, ...{ color: (props.activeChapter === 'fellowship') ? "white" : props.colors.primaryColor } }}>Fellowship</Text>
+            <Text style={{ ...styles.chapterSelectText, ...{ color: (props.activeChapter === 'fellowship') ? "white" : props.colors.primaryColor } }}>{props.translations.labels.fellowship}</Text>
          </TouchableOpacity>
          {chapter2Button}
          <TouchableOpacity
@@ -82,7 +82,7 @@ function ChapterSelect(props) {
                size={25}
                color={(props.activeChapter === 'application') ? "white" : props.colors.primaryColor}
             />
-            <Text style={{ ...styles.chapterSelectText, ...{ color: (props.activeChapter === 'application') ? "white" : props.colors.primaryColor } }}>Application</Text>
+            <Text style={{ ...styles.chapterSelectText, ...{ color: (props.activeChapter === 'application') ? "white" : props.colors.primaryColor } }}>{props.translations.labels.application}</Text>
          </TouchableOpacity>
       </View>
    )
@@ -116,6 +116,8 @@ function mapStateToProps(state) {
    return {
       colors: state.database[activeGroup.language].colors,
       downloads: state.downloads,
+     translations: state.database[activeGroup.language].translations,
+
    }
 };
 
