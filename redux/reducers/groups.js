@@ -31,20 +31,11 @@ export function groups(state = [], action) {
       case SET_BOOKMARK:
          var thisGroup = state.filter(group => group.name === action.groupName)[0]
          var bookmarkIndex = 0
-
-         // if a group has no progress, return the first lesson in the first study set
-         if (thisGroup.progress.length === 0) {
-            bookmarkIndex = 0
-         }
-
-         // set the bookmark first to whatever the highest completed lesson is
-         thisGroup.progress.forEach(lessonIndex => {
-            if (lessonIndex > bookmarkIndex)
-               bookmarkIndex = lessonIndex
-         })
-
-         // make bookmarkIndex the lesson after the last completed one
-         bookmarkIndex += 1
+         
+         // increase bookmark index until we get to a lesson that isn't completed
+         do {
+            bookmarkIndex += 1;
+         } while (thisGroup.progress.includes(bookmarkIndex));  
 
          return state.map(group => {
             if (group.name === action.groupName) {
