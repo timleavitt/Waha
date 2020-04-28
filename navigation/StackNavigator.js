@@ -143,6 +143,8 @@ function StackNavigator(props) {
       )
 }
 
+//// REDUX
+
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
@@ -151,9 +153,4 @@ function mapStateToProps(state) {
    }
 };
 
-function mapDispatchToProps(dispatch) {
-   return {
-   }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(StackNavigator);
+export default connect(mapStateToProps)(StackNavigator);
