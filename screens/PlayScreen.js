@@ -88,7 +88,6 @@ function PlayScreen(props) {
          setChapter3Source(FileSystem.documentDirectory + props.activeGroup.language + 'chapter3.mp3')
       }
 
-
       //check if chapter 2 is downloaded
       if (!props.downloads[props.route.params.id]) {
          props.downloadLesson(props.route.params.id, props.route.params.source);
