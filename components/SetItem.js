@@ -97,7 +97,7 @@ function SetItem(props) {
                fontSize: props.isSmall ? 14 * scaleMultiplier : 12 * scaleMultiplier,
                textAlignVertical: "center",
                flexWrap: "wrap",
-               fontFamily: 'regular',
+               fontFamily: 'light',
             }}>{props.subtitle}</Text>
             <Text style={{
                color: fullyCompleted ? "#9FA5AD" : "black",
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
       marginTop: 5
    },
    percentageText: {
-      fontFamily: 'regular',
+      fontFamily: 'light',
       color: "#9FA5AD",
       fontSize: 10
    },

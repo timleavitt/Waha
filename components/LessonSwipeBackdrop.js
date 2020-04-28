@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
    },
    label: {
       color: "#FFFFFF",
-      fontFamily: 'regular',
+      fontFamily: 'light',
       fontSize: 10 * scaleMultiplier,
       margin: 2
    }

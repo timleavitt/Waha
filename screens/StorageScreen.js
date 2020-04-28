@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
    downloadedLessonsText: {
       color: '#9FA5AD',
       fontSize: 18 * scaleMultiplier,
-      fontFamily: 'regular'
+      fontFamily: 'light'
    },
    storageContainerFlatList: {
       height: 55 * scaleMultiplier,
@@ -223,13 +223,13 @@ const styles = StyleSheet.create({
       color: '#3A3C3F'
    },
    mbText: {
-      fontFamily: 'regular',
+      fontFamily: 'light',
       fontSize: 18,
       color: '#82868D',
       alignSelf: "center"
    },
    deleteText: {
-      fontFamily: 'regular',
+      fontFamily: 'light',
       fontSize: 18,
       color: '#E74D3D'
    },

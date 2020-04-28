@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
    subtitle: {
       textAlign: "center",
       fontSize: 18 * scaleMultiplier,
-      fontFamily: 'regular'
+      fontFamily: 'light'
    },
    albumArtListContainer: {
       width: "100%",
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
    },
    albumTextBody: {
       flexWrap: "wrap",
-      fontFamily: 'regular'
+      fontFamily: 'light'
    },
    scrollBar: {
       width: 4,

@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
       alignItems: "center",
    },
    editButtonText: {
-      fontFamily: 'regular',
+      fontFamily: 'light',
       fontSize: 18 * scaleMultiplier
    }
 })

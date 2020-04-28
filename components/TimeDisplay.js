@@ -32,7 +32,7 @@ function TimeDisplay(props) {
 
 const styles = StyleSheet.create({
    timeText: {
-      fontFamily: 'regular',
+      fontFamily: 'light',
       fontSize: 12 * scaleMultiplier
    }
 })

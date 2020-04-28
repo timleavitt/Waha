@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
    },
    languageHeaderText: {
       fontSize: 18 * scaleMultiplier,
-      fontFamily: "regular",
+      fontFamily: "light",
       color: "#9FA5AD",
       marginHorizontal: 30,
       flex: 1,
