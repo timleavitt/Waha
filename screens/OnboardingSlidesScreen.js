@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    return {
-      isFetching: state.database.isFetching
+      isFetching: state.database.isFetching,
    }
 };
 

@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, ActivityIndicator, Text } from 'react-native';
+import { View, StyleSheet, Text, Dimensions } from 'react-native';
 import i18n from 'i18n-js';
+import { connect } from 'react-redux'
+import * as Progress from 'react-native-progress';
 
 function LoadingScreen(props) {
    i18n.translations = {
@@ -12,11 +14,44 @@ function LoadingScreen(props) {
       },
    };
    return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-         <Text style={{ textAlign: "center", fontSize: 30, padding: 10, fontFamily: "medium" }}>{i18n.t('loadingMessage')}</Text>
-         <ActivityIndicator size="large" color="black" />
+      <View style={styles.screen}>
+         <Text style={styles.loadingMessageText}>{i18n.t('loadingMessage')}</Text>
+         <View style={styles.progressBarContainer}>
+            <Progress.Bar 
+               progress={props.progress} 
+               width={Dimensions.get('window').width - 50} 
+               color={"black"}
+            />
+         </View>
+         {/* <ActivityIndicator size="large" color="black" /> */}
       </View>
    )
 }
 
-export default LoadingScreen
+//// STYLES
+
+const styles = StyleSheet.create({
+   screen: {
+      flex: 1,
+      justifyContent: "center",
+   },
+   loadingMessageText: {
+      textAlign: "center",
+      fontSize: 30,
+      padding: 10,
+      fontFamily: "medium"
+   },
+   progressBarContainer: {
+      width: "100%",
+      justifyContent: 'center',
+      alignItems: 'center'
+   }
+})
+
+function mapStateToProps(state) {
+   return {
+      progress: state.database.currentFetchProgress
+   }
+};
+
+export default connect(mapStateToProps)(LoadingScreen);
