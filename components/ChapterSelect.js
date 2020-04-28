@@ -30,7 +30,7 @@ function ChapterSelect(props) {
             backgroundColor="#FFFFFF"
             style={{margin: 5}}
          />
-         <Text style={{ ...styles.chapterSelectText, ...{ color: "#82868D" } }}>Passage</Text>
+         <Text style={{ ...styles.chapterSelectText, ...{ color: "#82868D" } }}>{props.translations.labels.passage}</Text>
       </View> :
       <TouchableOpacity
          style={{

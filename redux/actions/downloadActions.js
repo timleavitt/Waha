@@ -20,19 +20,20 @@ export function removeDownload(lessonID) {
 
 // thunk function for async downloading
 export function downloadLesson(lessonID, source) {
+   var counter = 0;
 
    // console.log(source)
    return dispatch => {
 
       // callback function
       function callback({ totalBytesWritten, totalBytesExpectedToWrite }) {
-         var check = Math.floor(Math.random() * 200)
          progress = totalBytesWritten / totalBytesExpectedToWrite
          if (progress == 1)   
             dispatch(addUpdateDownload(progress, lessonID))
-         else if (Math.round(progress * 100) % check === 0) {
+         else if (counter % 10 == 0) {
             dispatch(addUpdateDownload(progress, lessonID))
          }
+         counter += 1;
       }
 
       // create our download object

@@ -6,6 +6,7 @@ import { scaleMultiplier } from '../constants'
 import { deleteGroup } from '../redux/actions/groupsActions'
 import { deleteLanguage } from '../redux/actions/databaseActions'
 import * as FileSystem from 'expo-file-system';
+import { removeDownload } from '../redux/actions/downloadActions'
 
 function LanguageInstanceHeader(props) {
 
@@ -23,8 +24,10 @@ function LanguageInstanceHeader(props) {
       // delete all downloaded files for this language
       FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
          for (const item of contents) {
-            if (item.slice(0, 2) === props.languageID)
+            if (item.slice(0, 2) === props.languageID) {
                FileSystem.deleteAsync(FileSystem.documentDirectory + item)
+               props.removeDownload(item.slice(0,5))
+            }
          }
       })
 
@@ -147,6 +150,7 @@ function mapDispatchToProps(dispatch) {
    return {
       deleteGroup: name => { dispatch(deleteGroup(name)) },
       deleteLanguage: language => { dispatch(deleteLanguage(language)) },
+      removeDownload: lessonID => { dispatch(removeDownload(lessonID)) }
    }
 }
 
