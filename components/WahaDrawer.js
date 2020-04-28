@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
    groupName: {
       color: "white",
       textAlign: "center",
-      fontFamily: "bold",
+      fontFamily: "black",
       fontSize: 25 * scaleMultiplier
    },
    smallDrawerItemsContainer: {

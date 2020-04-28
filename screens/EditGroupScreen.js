@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
    },
    saveButtonText: {
       fontSize: 18 * scaleMultiplier,
-      fontFamily: 'bold',
+      fontFamily: 'medium',
       color: "#FFFFFF",
    },
 })

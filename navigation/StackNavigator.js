@@ -121,7 +121,7 @@ function StackNavigator(props) {
                   },
                   headerTitleStyle: {
                      color: "#000000",
-                     fontFamily: 'bold'
+                     fontFamily: 'medium'
                   },
                }}
             />
@@ -135,7 +135,7 @@ function StackNavigator(props) {
                   },
                   headerTitleStyle: {
                      color: "#000000",
-                     fontFamily: 'bold'
+                     fontFamily: 'medium'
                   },
                }}
             />

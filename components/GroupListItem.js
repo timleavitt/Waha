@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
    groupNameText: {
       color: "#3A3C3F",
       fontSize: 18 * scaleMultiplier,
-      fontFamily: 'bold',
+      fontFamily: 'black',
       textAlign: "left"
    },
    checkpointText: {

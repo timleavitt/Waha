@@ -168,7 +168,7 @@ function LessonListScreen(props) {
                index={props.route.params.index}
                title={props.route.params.title}
                subtitle={props.route.params.subtitle}
-               id={props.route.params.studySetID}
+               id={props.route.params.setID}
                isSmall={true}
                color={props.route.params.color}
             />

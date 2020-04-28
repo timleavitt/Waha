@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
    title: {
       textAlign: "center",
       fontSize: 36 * scaleMultiplier,
-      fontFamily: 'bold',
+      fontFamily: 'black',
       margin: 5
    },
    subtitle: {

@@ -35,19 +35,10 @@ export default function App() {
          'black': require('./assets/fonts/Roboto-Black.ttf'),
       });
       await Font.loadAsync({
-         'bold': require('./assets/fonts/Roboto-Bold.ttf'),
-      });
-      await Font.loadAsync({
          'medium': require('./assets/fonts/Roboto-Medium.ttf'),
       });
       await Font.loadAsync({
          'regular': require('./assets/fonts/Roboto-Regular.ttf'),
-      });
-      await Font.loadAsync({
-         'light': require('./assets/fonts/Roboto-Light.ttf'),
-      });
-      await Font.loadAsync({
-         'medium_italic': require('./assets/fonts/Roboto-MediumItalic.ttf'),
       });
       setFontsLoaded(true);
    }
