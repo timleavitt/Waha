@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
       color: '#82868D',
       paddingHorizontal: 10,
       fontSize: 18,
-      fontFamily: 'light'
+      fontFamily: 'regular'
    },
    languageLogo: {
       resizeMode: "stretch",
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
       color: '#82868D',
       paddingLeft: 10,
       fontSize: 18,
-      fontFamily: 'light',
+      fontFamily: 'regular',
       textAlign: 'center',
       marginTop: 20
    }

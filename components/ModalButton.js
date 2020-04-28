@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
    },
    text: {
       textAlign: "center",
-      fontFamily: 'light',
+      fontFamily: 'regular',
       fontSize: 19.5 * scaleMultiplier
    }
 })

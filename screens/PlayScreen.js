@@ -48,6 +48,8 @@ function PlayScreen(props) {
    const [chapter2Source, setChapter2Source] = useState(FileSystem.documentDirectory + props.route.params.id + '.mp3');
    const [chapter3Source, setChapter3Source] = useState(FileSystem.documentDirectory + props.activeGroup.language + 'chapter3.mp3');
 
+   // if lesson.isunique is true, update the chapter 1 and 3 sources to match
+
    //share modal
    const [showShareLessonModal, setShowShareLessonModal] = useState(false);
 
@@ -427,7 +429,7 @@ const styles = StyleSheet.create({
    subtitle: {
       textAlign: "center",
       fontSize: 18 * scaleMultiplier,
-      fontFamily: 'light'
+      fontFamily: 'regular'
    },
    albumArtListContainer: {
       width: "100%",
@@ -453,7 +455,7 @@ const styles = StyleSheet.create({
    },
    albumTextBody: {
       flexWrap: "wrap",
-      fontFamily: 'light'
+      fontFamily: 'regular'
    },
    scrollBar: {
       width: 4,

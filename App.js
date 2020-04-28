@@ -38,7 +38,7 @@ export default function App() {
          'medium': require('./assets/fonts/Roboto-Medium.ttf'),
       });
       await Font.loadAsync({
-         'light': require('./assets/fonts/Roboto-Light.ttf'),
+         'regular': require('./assets/fonts/Roboto-Regular.ttf'),
       });
       setFontsLoaded(true);
    }

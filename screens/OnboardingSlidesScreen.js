@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
       textAlign: "center",
       fontSize: 18 * scaleMultiplier,
       flexWrap: "wrap",
-      fontFamily: "light"
+      fontFamily: "regular"
    },
    buttonsContainer: {
       flexDirection: "row",

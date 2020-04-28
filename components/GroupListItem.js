@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
       textAlign: "left"
    },
    checkpointText: {
-      fontFamily: 'light',
+      fontFamily: 'regular',
       fontSize: 12 * scaleMultiplier,
       color: '#9FA5AD',
       textAlign: "left"
