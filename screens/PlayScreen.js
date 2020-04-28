@@ -44,11 +44,9 @@ function PlayScreen(props) {
    const [activeChapter, setActiveChapter] = useState('fellowship')
 
    // sources for all 3 audio files
-   const [chapter1Source, setChapter1Source] = useState(FileSystem.documentDirectory + props.activeGroup.language + 'chapter1.mp3');
+   const [chapter1Source, setChapter1Source] = useState();
    const [chapter2Source, setChapter2Source] = useState(FileSystem.documentDirectory + props.route.params.id + '.mp3');
-   const [chapter3Source, setChapter3Source] = useState(FileSystem.documentDirectory + props.activeGroup.language + 'chapter3.mp3');
-
-   // if lesson.isunique is true, update the chapter 1 and 3 sources to match
+   const [chapter3Source, setChapter3Source] = useState();
 
    //share modal
    const [showShareLessonModal, setShowShareLessonModal] = useState(false);
@@ -80,15 +78,21 @@ function PlayScreen(props) {
       //set nav options
       props.navigation.setOptions(getNavOptions())
 
-      //load up chapter 1 initially
-      try {
-         loadAudioFile(chapter1Source);
-      } catch (error) {
-         console.log(error)
+      // set chapters 1 and 3 according to if we have a special case (first lesson, leadership questions, etc.)
+      if (props.route.params.chapter1and3Type === 'firstLesson') {
+         setChapter1Source(FileSystem.documentDirectory + props.activeGroup.language + 'lesson1chapter1.mp3')
+         setChapter3Source(FileSystem.documentDirectory + props.activeGroup.language + 'lesson1chapter3.mp3')
+      // regular
+      } else {
+         setChapter1Source(FileSystem.documentDirectory + props.activeGroup.language + 'chapter1.mp3')
+         setChapter3Source(FileSystem.documentDirectory + props.activeGroup.language + 'chapter3.mp3')
       }
 
-      //check if chapter 2 is downloaded, then load it
-      checkIsDownloaded();
+
+      //check if chapter 2 is downloaded
+      if (!props.downloads[props.route.params.id]) {
+         props.downloadLesson(props.route.params.id, props.route.params.source);
+      }
 
       //set up our timer tick for updating the seeker every second
       const interval = setInterval(updateSeekerTick, 1000);
@@ -102,6 +106,16 @@ function PlayScreen(props) {
          }
       }
    }, []);
+
+   useEffect(() => {
+      if (chapter1Source) {
+         try {
+            loadAudioFile(chapter1Source);
+         } catch (error) {
+            console.log(error)
+         }
+      }
+   }, [chapter1Source])
 
    //// NAV OPTIONS
 
@@ -152,13 +166,6 @@ function PlayScreen(props) {
          }
       }
    })
-
-   // checks if the lesson is downloaded or not
-   async function checkIsDownloaded() {
-      if(!props.downloads[props.route.params.id]) {
-         props.downloadLesson(props.route.params.id, props.route.params.source);
-      }
-   }
 
    // loads an audio file, sets the length, and starts playing it 
    async function loadAudioFile(source) {
@@ -477,7 +484,6 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
-   console.log(activeGroup.progress)
    return {
       database: state.database,
       activeGroup: activeGroup,
@@ -494,7 +500,7 @@ function mapDispatchToProps(dispatch) {
       toggleComplete: (groupName, lessonIndex) => { dispatch(toggleComplete(groupName, lessonIndex)) },
       downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
       setBookmark: groupName => { dispatch(setBookmark(groupName)) },
-      removeDownload: lessonID => {dispatch(removeDownload(lessonID))}
+      removeDownload: lessonID => { dispatch(removeDownload(lessonID)) }
    }
 }
 

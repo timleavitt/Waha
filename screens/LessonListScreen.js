@@ -149,6 +149,7 @@ function LessonListScreen(props) {
                source: lessonList.item.source,
                scriptureHeader: lessonList.item.scriptureHeader,
                scriptureText: lessonList.item.scriptureText,
+               chapter1and3Type: lessonList.item.chapter1and3Type
             })}
             isComplete={props.activeGroup.progress.includes(lessonList.item.index)}
             isConnected={isConnected}
