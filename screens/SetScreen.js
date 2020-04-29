@@ -50,21 +50,13 @@ function SetScreen(props) {
    function renderStudySetItem(setList) {
       return (
          <SetItem
-            id={setList.item.id}
-            index={setList.item.index}
-            title={setList.item.title}
-            subtitle={setList.item.subtitle}
-            color={setList.item.color}
+            thisSet={setList.item}
+            isSmall={false}
             onSetSelect={
                () => props.navigation.navigate('LessonList', {
-                  setID: setList.item.id,
-                  index: setList.item.index,
-                  title: setList.item.title,
-                  subtitle: setList.item.subtitle,
-                  color: setList.item.color,
+                  thisSet: setList.item,
                })
             }
-            isSmall={false}
          />
       )
    }

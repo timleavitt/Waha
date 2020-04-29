@@ -45,7 +45,7 @@ function PlayScreen(props) {
 
    // sources for all 3 audio files
    const [chapter1Source, setChapter1Source] = useState();
-   const [chapter2Source, setChapter2Source] = useState(FileSystem.documentDirectory + props.route.params.id + '.mp3');
+   const [chapter2Source, setChapter2Source] = useState(FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3');
    const [chapter3Source, setChapter3Source] = useState();
 
    //share modal
@@ -62,13 +62,13 @@ function PlayScreen(props) {
       {
          key: '1',
          type: 'image',
-         iconName: setImages[props.activeDatabase.sets.filter(set => set.id === props.route.params.setid)[0].index]
+         iconName: setImages[props.activeDatabase.sets.filter(set => set.id === props.route.params.thisLesson.setid)[0].index]
       },
       {
          key: '2',
          type: 'text',
-         header: props.route.params.scriptureHeader,
-         body: props.route.params.scriptureText
+         header: props.route.params.thisLesson.scriptureHeader,
+         body: props.route.params.thisLesson.scriptureText
       },
    ]
 
@@ -79,7 +79,7 @@ function PlayScreen(props) {
       props.navigation.setOptions(getNavOptions())
 
       // set chapters 1 and 3 according to if we have a special case (first lesson, leadership questions, etc.)
-      if (props.route.params.chapter1and3Type === 'firstLesson') {
+      if (props.route.params.thisLesson.chapter1and3Type === 'firstLesson') {
          setChapter1Source(FileSystem.documentDirectory + props.activeGroup.language + 'lesson1chapter1.mp3')
          setChapter3Source(FileSystem.documentDirectory + props.activeGroup.language + 'lesson1chapter3.mp3')
       // regular
@@ -89,8 +89,8 @@ function PlayScreen(props) {
       }
 
       //check if chapter 2 is downloaded
-      if (!props.downloads[props.route.params.id]) {
-         props.downloadLesson(props.route.params.id, props.route.params.source);
+      if (!props.downloads[props.route.params.thisLesson.id]) {
+         props.downloadLesson(props.route.params.thisLesson.id, props.route.params.thisLesson.source);
       }
 
       //set up our timer tick for updating the seeker every second
@@ -120,19 +120,19 @@ function PlayScreen(props) {
 
    function getNavOptions() {
       return {
-         headerTitle: props.route.params.subtitle,
+         headerTitle: props.route.params.thisLesson.subtitle,
          headerRight: props.isRTL ?
             () => <BackButton onPress={() => props.navigation.goBack()} /> :
             () => <PlayScreenHeaderButtons
                shareOnPress={() => setShowShareLessonModal(true)}
                completeOnPress={changeCompleteStatus}
-               completeCondition={props.activeGroup.progress.includes(props.route.params.index)}
+               completeCondition={props.activeGroup.progress.includes(props.route.params.thisLesson.index)}
             />,
          headerLeft: props.isRTL ?
             () => <PlayScreenHeaderButtons
                shareOnPress={() => setShowShareLessonModal(true)}
                completeOnPress={changeCompleteStatus}
-               completeCondition={props.activeGroup.progress.includes(props.route.params.index)}
+               completeCondition={props.activeGroup.progress.includes(props.route.params.thisLesson.iindex)}
             /> :
             () => <BackButton onPress={() => props.navigation.goBack()} />,
       }
@@ -152,14 +152,14 @@ function PlayScreen(props) {
          if (activeChapter === 'fellowship') {
             changeChapter('passage')
          } else if (activeChapter === 'passage') {
-            FileSystem.getInfoAsync(FileSystem.documentDirectory + props.route.params.id + '.mp3')
+            FileSystem.getInfoAsync(FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3')
                .then(({ exists }) => {
                   // only switch to chapter 2 if it's downloaded
-                  if (exists && !(props.route.params.id in props.downloads))
+                  if (exists && !(props.route.params.thisLesson.id in props.downloads))
                      changeChapter('application')
                })
          } else if (activeChapter === 'application') {
-            if (!props.activeGroup.progress.includes(props.route.params.index)) {
+            if (!props.activeGroup.progress.includes(props.route.params.thisLesson.index)) {
                changeCompleteStatus();
             }
          }
@@ -273,8 +273,8 @@ function PlayScreen(props) {
    // switches the complete status of a lesson to the opposite of its current status
    // and alerts the user of the change
    function changeCompleteStatus() {
-      var isComplete = (props.activeGroup.progress.includes(props.route.params.index))
-      props.toggleComplete(props.activeGroup.name, props.route.params.index)
+      var isComplete = (props.activeGroup.progress.includes(props.route.params.thisLesson.index))
+      props.toggleComplete(props.activeGroup.name, props.route.params.thisLesson.index)
       props.setBookmark(props.activeGroup.name)
 
       if (isComplete) {
@@ -332,7 +332,7 @@ function PlayScreen(props) {
                <MaterialCommunityIcons
                   name={item.iconName}
                   size={300 * scaleMultiplier}
-                  color={props.activeDatabase.sets.filter(set => set.id === props.route.params.setid)[0].color}
+                  color={props.activeDatabase.sets.filter(set => set.id === props.route.params.thisLesson.setid)[0].color}
                />
             </View>
          )
@@ -345,7 +345,7 @@ function PlayScreen(props) {
       <View style={styles.audioControlContainer}>
          <ChapterSelect
             activeChapter={activeChapter}
-            lessonID={props.route.params.id}
+            lessonID={props.route.params.thisLesson.id}
             onPress={chapter => changeChapter(chapter)}
          />
          <Scrubber
@@ -369,7 +369,7 @@ function PlayScreen(props) {
       <View style={styles.screen}>
          <View style={styles.topHalfContainer}>
             <View style={styles.titlesContainer}>
-               <Text style={styles.title}>{props.route.params.title}</Text>
+               <Text style={styles.title}>{props.route.params.thisLesson.title}</Text>
             </View>
             <View style={styles.albumArtListContainer}>
                <FlatList

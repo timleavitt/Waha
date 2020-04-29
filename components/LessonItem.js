@@ -13,21 +13,6 @@ function LessonItem(props) {
 
    //// FUNCTIONS
 
-   // refresh lesson items when a download finishes
-   // useEffect(() => {
-   //    if (props.downloadProgress == 1) {
-   //       props.removeDownload(props.lesson.id)
-   //       // checks if the lesson is downloaded and set isDownloaded accordingly
-   //       // FileSystem.getInfoAsync(FileSystem.documentDirectory + props.lesson.id + '.mp3')
-   //       //    .then(({ exists }) => {
-   //       //       console.log(exists)
-   //       //       exists ? setIsDownloaded(true) : setIsDownloaded(false)
-   //       //       props.setRefresh(old => !old)
-   //       //    })
-   //    }
-
-   // }, [props.downloadProgress])
-
    // calls the various modal functions on lessonlistscreen
    function showSaveModal() {
       props.setActiveLessonInModal.call();
@@ -45,12 +30,12 @@ function LessonItem(props) {
    //// RENDER
 
    // renders cloud icon conditionally as statuses can be downloaded, undownloaded, downloading, and no internet
-   var downloadStatus = props.downloads[props.lesson.id] && props.downloads[props.lesson.id] < 1 ?
+   var downloadStatus = props.downloads[props.thisLesson.id] && props.downloads[props.thisLesson.id] < 1 ?
       <View style={styles.downloadButtonContainer}>
          <AnimatedCircularProgress
             size={25 * scaleMultiplier}
             width={6 * scaleMultiplier}
-            fill={ props.downloads[props.lesson.id] * 100}
+            fill={ props.downloads[props.thisLesson.id] * 100}
             tintColor={"#828282"}
             rotation={0}
             backgroundColor="#FFFFFF"
@@ -58,7 +43,7 @@ function LessonItem(props) {
       </View> :
       <TouchableOpacity
          onPress={
-            props.downloads[props.lesson.id] == 1 ? showDeleteModal :
+            props.downloads[props.thisLesson.id] == 1 ? showDeleteModal :
                (props.isConnected ? showSaveModal :
                   () => Alert.alert(
                      props.translations.alerts.downloadNoInternet.header,
@@ -68,8 +53,8 @@ function LessonItem(props) {
          style={styles.downloadButtonContainer}
       >
          <Icon
-            name={props.downloads[props.lesson.id] == 1 ? "cloud-check" : (props.isConnected ? "cloud-download" : "cloud-slash")}
-            color={props.downloads[props.lesson.id] == 1 ? "#9FA5AD" : "#3A3C3F"}
+            name={props.downloads[props.thisLesson.id] == 1 ? "cloud-check" : (props.isConnected ? "cloud-download" : "cloud-slash")}
+            color={props.downloads[props.thisLesson.id] == 1 ? "#9FA5AD" : "#3A3C3F"}
             size={25 * scaleMultiplier}
          />
       </TouchableOpacity>
@@ -79,7 +64,7 @@ function LessonItem(props) {
          <TouchableOpacity
             style={[styles.progressAndTitle, { flexDirection: props.isRTL ? "row-reverse" : "row" }]}
             onPress={
-               (!props.isConnected && !props.downloads[props.lesson.id]) ?
+               (!props.isConnected && !props.downloads[props.thisLesson.id]) ?
                   () => Alert.alert(
                      props.translations.alerts.playUndownloadedNoInternet.header,
                      props.translations.alerts.playUndownloadedNoInternet.body,
@@ -95,14 +80,14 @@ function LessonItem(props) {
                }}
             >
                <Icon
-                  name={props.isComplete ? "check-unfilled" : props.activeGroup.bookmark === props.lesson.index ? props.isRTL ? 'triangle-left' : "triangle-right" : null}
+                  name={props.isComplete ? "check-unfilled" : props.activeGroup.bookmark === props.thisLesson.index ? props.isRTL ? 'triangle-left' : "triangle-right" : null}
                   size={30 * scaleMultiplier}
                   color={props.isComplete ? "#828282" : props.colors.primaryColor}
                />
             </View>
             <View style={styles.titleContainer}>
-               <Text style={{ ...styles.title, ...{ color: props.isComplete ? "#9FA5AD" : "black", textAlign: props.isRTL ? 'right' : 'left' } }}>{props.lesson.title}</Text>
-               <Text style={{ ...styles.subtitle, ...{ color: props.isComplete ? "#9FA5AD" : "black", textAlign: props.isRTL ? 'right' : 'left' } }}>{props.lesson.subtitle}</Text>
+               <Text style={{ ...styles.title, ...{ color: props.isComplete ? "#9FA5AD" : "black", textAlign: props.isRTL ? 'right' : 'left' } }}>{props.thisLesson.title}</Text>
+               <Text style={{ ...styles.subtitle, ...{ color: props.isComplete ? "#9FA5AD" : "black", textAlign: props.isRTL ? 'right' : 'left' } }}>{props.thisLesson.subtitle}</Text>
             </View>
 
          </TouchableOpacity>

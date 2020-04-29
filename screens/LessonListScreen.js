@@ -15,13 +15,7 @@ import { connect } from 'react-redux'
 
 function LessonListScreen(props) {
 
-   // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => { console.log(contents) })
-
    //// STATE
-
-   // switches back and forth whenever we want to re-render
-   // the screen (attached to the extraData prop on the flatlist)
-   const [refresh, setRefresh] = useState(false);
 
    // keeps track of whether the user has internet connection
    const [isConnected, setIsConnected] = useState(false);
@@ -33,8 +27,6 @@ function LessonListScreen(props) {
    const [showSaveLessonModal, setShowSaveLessonModal] = useState(false);
    const [showDeleteLessonModal, setShowDeleteLessonModal] = useState(false);
    const [showLessonOptionsModal, setShowLessonOptionsModal] = useState(false);
-
-
 
    //// CONSTRUCTOR
 
@@ -94,7 +86,7 @@ function LessonListScreen(props) {
    // marks every lesson in current set as complete up until the selected lesson via modal press
    function markUpToThisPointAsCompleteFromModal() {
       for (var i = 1; i <= activeLessonInModal.index; i++) {
-         if (!props.activeGroup.progress.includes(i) && props.activeDatabase.lessons[i - 1].setid === props.route.params.setID) {
+         if (!props.activeGroup.progress.includes(i) && props.activeDatabase.lessons[i - 1].setid === props.route.params.thisSet.id) {
             props.toggleComplete(props.activeGroup.name, i)
          }
       }
@@ -139,25 +131,16 @@ function LessonListScreen(props) {
    function renderLessonItem(lessonList) {
       return (
          <LessonItem
-            lesson={lessonList.item}
+            thisLesson={lessonList.item}
             onLessonSelect={() => props.navigation.navigate('Play', {
-               id: lessonList.item.id,
-               setid: lessonList.item.setid,
-               index: lessonList.item.index,
-               title: lessonList.item.title,
-               subtitle: lessonList.item.subtitle,
-               source: lessonList.item.source,
-               scriptureHeader: lessonList.item.scriptureHeader,
-               scriptureText: lessonList.item.scriptureText,
-               chapter1and3Type: lessonList.item.chapter1and3Type
+               thisLesson: lessonList.item
             })}
             isComplete={props.activeGroup.progress.includes(lessonList.item.index)}
             isConnected={isConnected}
+            setActiveLessonInModal={() => setActiveLessonInModal(lessonList.item)}
             setShowSaveLessonModal={() => setShowSaveLessonModal(true)}
             setShowDeleteLessonModal={() => setShowDeleteLessonModal(true)}
-            setActiveLessonInModal={() => setActiveLessonInModal(lessonList.item)}
             setShowLessonOptionsModal={() => setShowLessonOptionsModal(true)}
-            setRefresh={() => setRefresh(old => !old)}
          />
       )
    }
@@ -166,20 +149,16 @@ function LessonListScreen(props) {
       <View style={styles.screen}>
          <View style={styles.studySetItemContainer}>
             <SetItem
-               index={props.route.params.index}
-               title={props.route.params.title}
-               subtitle={props.route.params.subtitle}
-               id={props.route.params.setID}
+               thisSet={props.route.params.thisSet}
                isSmall={true}
-               color={props.route.params.color}
             />
          </View>
          <FlatList
-            data={props.activeDatabase.lessons.filter(lesson => props.route.params.setID === lesson.setid)}
-            extraData={props.downloads}
+            data={props.activeDatabase.lessons.filter(lesson => props.route.params.thisSet.id === lesson.setid)}
             renderItem={renderLessonItem}
             keyExtractor={item => item.id}
          />
+
          {/* MODALS */}
          <WahaModal
             isVisible={showSaveLessonModal}
@@ -232,7 +211,6 @@ const styles = StyleSheet.create({
    hiddenItemContainer: {
       justifyContent: "space-between",
       flexDirection: "row",
-
    }
 })
 

@@ -23,13 +23,13 @@ function SetItem(props) {
 
    useEffect(() => {
       for (const set of props.activeDatabase.sets) {
-         if (set.id === props.id) {
+         if (set.id === props.thisSet.id) {
             setNumLessons(set.length)
          }
       }
       setNumCompleted(0);
       for (const lessonIndex of props.activeProgress) {
-         if (props.activeDatabase.lessons.filter(lesson => lesson.index === lessonIndex)[0].setid === props.id) {
+         if (props.activeDatabase.lessons.filter(lesson => lesson.index === lessonIndex)[0].setid === props.thisSet.id) {
             setNumCompleted(numCompleted => numCompleted + 1)
          }
       }
@@ -84,8 +84,8 @@ function SetItem(props) {
                backgroundColor="#FFFFFF"
             >
                {(fill) => (
-                  <View style={{ backgroundColor: fullyCompleted ? null : props.color, width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
-                     <MaterialCommunityIcons name={setImages[props.index]} size={props.isSmall ? 40 * scaleMultiplier : 50 * scaleMultiplier} color={fullyCompleted ? "#828282" : "#1D1E20"} />
+                  <View style={{ backgroundColor: fullyCompleted ? null : props.thisSet.color, width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
+                     <MaterialCommunityIcons name={setImages[props.thisSet.index]} size={props.isSmall ? 40 * scaleMultiplier : 50 * scaleMultiplier} color={fullyCompleted ? "#828282" : "#1D1E20"} />
                   </View>)}
             </AnimatedCircularProgress>
             {percentageText}
@@ -98,7 +98,7 @@ function SetItem(props) {
                textAlignVertical: "center",
                flexWrap: "wrap",
                fontFamily: 'regular',
-            }}>{props.subtitle}</Text>
+            }}>{props.thisSet.subtitle}</Text>
             <Text style={{
                color: fullyCompleted ? "#9FA5AD" : "black",
                textAlign: props.isRTL ? 'right' : 'left',
@@ -106,7 +106,7 @@ function SetItem(props) {
                textAlignVertical: "center",
                flexWrap: "wrap",
                fontFamily: 'black',
-            }}>{props.title}</Text>
+            }}>{props.thisSet.title}</Text>
          </View>
          {triangleIcon}
       </TouchableOpacity>
