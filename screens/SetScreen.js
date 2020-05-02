@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
-import { View, FlatList, StyleSheet, Image } from 'react-native';
+import { View, FlatList, StyleSheet, Image, AsyncStorage } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import SetItem from '../components/SetItem';
 import AvatarImage from '../components/AvatarImage'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants';
+import { resumeDownload } from '../redux/actions/downloadActions'
 
 function SetScreen(props) {
 
    //// STUFF FOR TESTING
-   
+
    // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => { console.log(contents) })
    // console.log(scaleMultiplier)
 
@@ -90,11 +91,17 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
+   console.log(state.network.isConnected)
    return {
       activeDatabase: state.database[activeGroup.language],
       isRTL: state.database[activeGroup.language].isRTL,
       activeGroup: activeGroup,
    }
 };
+function mapDispatchToProps(dispatch) {
+   return {
+      resumeDownload: (lessonID, downloadSnapshotJSON) => { dispatch(resumeDownload(lessonID, downloadSnapshotJSON)) }
+   }
+}
 
-export default connect(mapStateToProps)(SetScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(SetScreen);

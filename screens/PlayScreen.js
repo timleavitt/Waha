@@ -88,8 +88,8 @@ function PlayScreen(props) {
          setChapter3Source(FileSystem.documentDirectory + props.activeGroup.language + 'chapter3.mp3')
       }
 
-      //check if chapter 2 is downloaded
-      if (!props.downloads[props.route.params.thisLesson.id]) {
+      // check if chapter 2 is downloaded or downloading, and if neither, start to download it
+      if (!props.route.params.isDownloaded && !(props.route.params.thisLesson.id in props.downloads)) {
          props.downloadLesson(props.route.params.thisLesson.id, props.route.params.thisLesson.source);
       }
 
@@ -106,6 +106,7 @@ function PlayScreen(props) {
       }
    }, []);
 
+   // once we set a chapter 1 source, load it up
    useEffect(() => {
       if (chapter1Source) {
          try {
@@ -115,6 +116,13 @@ function PlayScreen(props) {
          }
       }
    }, [chapter1Source])
+
+   // if a download finishes, remove it from download tracking object
+   useEffect(() => {
+      if (props.downloads[props.route.params.thisLesson.id] == 1) {
+         props.removeDownload(props.route.params.thisLesson.id)
+      }
+   }, [props.downloads])
 
    //// NAV OPTIONS
 

@@ -1,18 +1,15 @@
-import React from 'react';
-import { StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import NetInfo from '@react-native-community/netinfo';
+import { AsyncStorage } from 'react-native'
 import { scaleMultiplier } from '../constants'
 import WahaDrawer from '../components/WahaDrawer'
-
+import { updateConnectionStatus } from '../redux/actions/networkActions'
 import StackNavigator from './StackNavigator'
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { connect } from 'react-redux'
-
-const Stack = createStackNavigator();
+import { resumeDownload } from '../redux/actions/downloadActions'
 const Drawer = createDrawerNavigator();
-
-
 
 //allows only accessing hamburger swipe from study set screen
 function getGestureEnabled(route) {
@@ -29,7 +26,38 @@ function getGestureEnabled(route) {
       return false
 }
 
+
 function DrawerNavigator(props) {
+
+   // add listener for connection status and update it accordingly
+   useEffect(() => {
+      const unsubscribe = NetInfo.addEventListener(state => {
+         props.updateConnectionStatus(state.isConnected)
+      });
+
+      return function cleanup() {
+         unsubscribe();
+      }
+   }, [])
+
+   // if we connect to internet, check to see if we have any paused downloads
+   useEffect(() => {
+      if(props.isConnected) {
+         checkPausedDownloads();
+      }
+   }, [props.isConnected])
+
+   //// FUNCTIONS
+   async function checkPausedDownloads() {
+      props.activeDatabase.lessons.forEach(async lesson => {
+         await AsyncStorage.getItem(lesson.id).then(async value => {
+            if (value) {
+               props.resumeDownload(lesson.id, value)
+            }
+         })
+      })
+   }
+
    var direction = props.isRTL ? 'right' : 'left'
    return (
       <NavigationContainer>
@@ -51,11 +79,16 @@ function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
    return {
       isRTL: state.database[activeGroup.language].isRTL,
+      activeDatabase: state.database[activeGroup.language],
+      isConnected: state.network.isConnected
    }
 };
 
 function mapDispatchToProps(dispatch) {
    return {
+      updateConnectionStatus: status => {dispatch(updateConnectionStatus(status))},
+      resumeDownload: (lessonID, downloadSnapshotJSON) => { dispatch(resumeDownload(lessonID, downloadSnapshotJSON)) }
+
    }
 };
 

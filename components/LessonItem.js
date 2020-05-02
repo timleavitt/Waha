@@ -1,16 +1,21 @@
 //imports
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, AsyncStorage } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import { connect } from 'react-redux'
 import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { removeDownload } from '../redux/actions/downloadActions'
-
+import { removeDownload, resumeDownload } from '../redux/actions/downloadActions'
+import DownloadStatusIndicator from '../components/DownloadStatusIndicator'
 
 function LessonItem(props) {
 
+   useEffect(() => {
+      if (props.downloads[props.thisLesson.id] == 1) {
+         props.removeDownload(props.thisLesson.id)
+      }
+   }, [props.downloads])
+   
    //// FUNCTIONS
 
    // calls the various modal functions on lessonlistscreen
@@ -29,42 +34,13 @@ function LessonItem(props) {
 
    //// RENDER
 
-   // renders cloud icon conditionally as statuses can be downloaded, undownloaded, downloading, and no internet
-   var downloadStatus = props.downloads[props.thisLesson.id] && props.downloads[props.thisLesson.id] < 1 ?
-      <View style={styles.downloadButtonContainer}>
-         <AnimatedCircularProgress
-            size={25 * scaleMultiplier}
-            width={6 * scaleMultiplier}
-            fill={ props.downloads[props.thisLesson.id] * 100}
-            tintColor={"#828282"}
-            rotation={0}
-            backgroundColor="#FFFFFF"
-         />
-      </View> :
-      <TouchableOpacity
-         onPress={
-            props.downloads[props.thisLesson.id] == 1 ? showDeleteModal :
-               (props.isConnected ? showSaveModal :
-                  () => Alert.alert(
-                     props.translations.alerts.downloadNoInternet.header,
-                     props.translations.alerts.downloadNoInternet.body,
-                     [{ text: props.translations.alerts.options.ok, onPress: () => { } }]
-                  ))}
-         style={styles.downloadButtonContainer}
-      >
-         <Icon
-            name={props.downloads[props.thisLesson.id] == 1 ? "cloud-check" : (props.isConnected ? "cloud-download" : "cloud-slash")}
-            color={props.downloads[props.thisLesson.id] == 1 ? "#9FA5AD" : "#3A3C3F"}
-            size={25 * scaleMultiplier}
-         />
-      </TouchableOpacity>
 
    return (
       <View style={[styles.lessonItem, { flexDirection: props.isRTL ? "row-reverse" : "row" }]}>
          <TouchableOpacity
             style={[styles.progressAndTitle, { flexDirection: props.isRTL ? "row-reverse" : "row" }]}
             onPress={
-               (!props.isConnected && !props.downloads[props.thisLesson.id]) ?
+               (!props.isConnected && !props.isDownloaded) ?
                   () => Alert.alert(
                      props.translations.alerts.playUndownloadedNoInternet.header,
                      props.translations.alerts.playUndownloadedNoInternet.body,
@@ -73,12 +49,7 @@ function LessonItem(props) {
             }
             onLongPress={showLessonOptionsModal}
          >
-            <View
-               style={styles.completeStatusContainer}
-               onPress={() => {
-
-               }}
-            >
+            <View style={styles.completeStatusContainer}>
                <Icon
                   name={props.isComplete ? "check-unfilled" : props.activeGroup.bookmark === props.thisLesson.index ? props.isRTL ? 'triangle-left' : "triangle-right" : null}
                   size={30 * scaleMultiplier}
@@ -91,7 +62,13 @@ function LessonItem(props) {
             </View>
 
          </TouchableOpacity>
-         {downloadStatus}
+         <DownloadStatusIndicator 
+            isDownloaded={props.isDownloaded} 
+            isConnected={props.isConnected}
+            showDeleteModal={showDeleteModal}
+            showSaveModal={showSaveModal}
+            lessonID={props.thisLesson.id}
+         />
       </View>
    )
 }
@@ -131,10 +108,7 @@ const styles = StyleSheet.create({
       fontSize: 14 * scaleMultiplier,
       fontFamily: 'regular',
    },
-   downloadButtonContainer: {
-      justifyContent: "center",
-      marginHorizontal: 15
-   },
+   
 })
 
 //// REDUX
@@ -146,7 +120,9 @@ function mapStateToProps(state) {
       progress: state.appProgress,
       isRTL: state.database[activeGroup.language].isRTL,
       activeGroup: activeGroup,
-      downloads: state.downloads
+      downloads: state.downloads,
+      translations: state.database[activeGroup.language].translations,
+      isConnected: state.network.isConnected
    }
 };
 
@@ -155,7 +131,8 @@ function mapDispatchToProps(dispatch) {
       downloadLesson: (lessonID, source) => { dispatch(downloadLesson(lessonID, source)) },
       toggleComplete: (groupName, lessonIndex) => { dispatch(toggleComplete(groupName, lessonIndex)) },
       setBookmark: groupName => { dispatch(setBookmark(groupName)) },
-      removeDownload: lessonID => { dispatch(removeDownload(lessonID)) }
+      removeDownload: lessonID => { dispatch(removeDownload(lessonID)) },
+      resumeDownload: (lessonID, downloadSnapshotJSON) => { dispatch(resumeDownload(lessonID, downloadSnapshotJSON))}
    }
 }
 
