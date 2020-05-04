@@ -5,6 +5,8 @@ import * as Localization from 'expo-localization';
 import i18n from 'i18n-js';
 import { Audio } from 'expo-av';
 import { scaleMultiplier, languageT2S } from '../constants'
+import NetInfo from '@react-native-community/netinfo';
+
 
 function LanguageSelectScreen(props) {
 
@@ -12,6 +14,9 @@ function LanguageSelectScreen(props) {
 
    // keeps track of language selected in picker (TODO: change default to user's default language)
    const [selectedLanguage, setSelectedLanguage] = useState(i18n.locale)
+
+   // keeps track of whether the uesr has an internet connection
+   const [isConnected, setIsConnected] = useState(true)
 
    // sound for the text to speech
    const soundObject = new Audio.Sound();
@@ -21,12 +26,14 @@ function LanguageSelectScreen(props) {
       en: {
          welcome: 'Hello and welcome!',
          selectLanguage: 'Please select your language.',
-         letsBegin: 'Let\'s begin!'
+         letsBegin: 'Let\'s begin!',
+         noInternet: 'Error: an internet connection is required to set up the app'
       },
       te: {
          welcome: 'morbi tristique senectus et!',
          selectLanguage: 'eget nulla facilisi etiam.',
-         letsBegin: 'nibh ipsum!'
+         letsBegin: 'nibh ipsum!',
+         noInternet: 'morbi tristique senectus et eget nulla facilisi etiam'
       }
    };
 
@@ -35,6 +42,14 @@ function LanguageSelectScreen(props) {
    useEffect(() => {
       i18n.locale = Localization.locale;
       i18n.fallbacks = true;
+
+      const unsubscribe = NetInfo.addEventListener(state => {
+         setIsConnected(state.isConnected)
+      });
+
+      return function cleanup() {
+         unsubscribe();
+      }
    }, [])
 
    //// FUNCTIONS
@@ -42,7 +57,7 @@ function LanguageSelectScreen(props) {
    // plays text-to-speech audio file of language
    async function playAudio() {
       soundObject.unloadAsync();
-      await soundObject.loadAsync(languageT2S[i18n.locale]).then(() => {soundObject.playAsync()})
+      await soundObject.loadAsync(languageT2S[i18n.locale]).then(() => { soundObject.playAsync() })
    }
 
    // updates language on picker change
@@ -52,6 +67,22 @@ function LanguageSelectScreen(props) {
    }
 
    //// RENDER
+
+   // render start button conditionally as the user can't start if they don't have internet
+   var startButton = isConnected ?
+      <TouchableOpacity onPress={() => props.navigation.navigate('OnboardingSlides', { selectedLanguage: selectedLanguage })} style={styles.button}>
+         <Text style={styles.buttonTitle}>{i18n.t('letsBegin')} </Text>
+      </TouchableOpacity> :
+      <View style={[styles.button, { backgroundColor: "#828282" }]}>
+         <Text style={styles.buttonTitle}>{i18n.t('letsBegin')} </Text>
+      </View>
+
+   var errorMessage = isConnected ?
+      <View style={styles.errorMessageContainer}></View> :
+      <View style={styles.errorMessageContainer}>
+         <Text style={styles.errorMessage}>{i18n.t('noInternet')}</Text>
+      </View>
+
 
    return (
       <View style={styles.screen}>
@@ -80,9 +111,8 @@ function LanguageSelectScreen(props) {
                />
             </View>
          </View>
-         <TouchableOpacity onPress={() => props.navigation.navigate('OnboardingSlides', {selectedLanguage: selectedLanguage})} style={styles.button}>
-            <Text style={styles.buttonTitle}>{i18n.t('letsBegin')} </Text>
-         </TouchableOpacity>
+         {startButton}
+         {errorMessage}
       </View>
    )
 }
@@ -120,6 +150,17 @@ const styles = StyleSheet.create({
       fontSize: 24 * scaleMultiplier,
       fontFamily: 'medium',
       color: "#FFFFFF"
+   },
+   errorMessageContainer: {
+      height: "10%",
+      width: "100%"
+   },
+   errorMessage: {
+      textAlign: "center",
+      fontSize: 16 * scaleMultiplier,
+      fontFamily: 'regular',
+      color: "#828282",
+      marginTop: 10
    }
 })
 

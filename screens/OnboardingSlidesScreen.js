@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Button, Image, FlatList, Dimensions } from 'react-native';
 import i18n from 'i18n-js';
-import { setFirstOpen, setIsReadyToStart, addLanguage, changeLanguage } from '../redux/actions/databaseActions'
+import { setFinishedOnboarding, addLanguage, changeLanguage } from '../redux/actions/databaseActions'
 import { connect } from 'react-redux'
 import { createGroup, changeActiveGroup } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
@@ -58,7 +58,6 @@ function OnboardingSlidesScreen(props) {
    //// CONSTRUCTOR
 
    useEffect(() => {
-      props.setFirstOpen(false)
       var language = props.route.params.selectedLanguage
       props.addLanguage(language)
    }, [])
@@ -83,7 +82,7 @@ function OnboardingSlidesScreen(props) {
 
    // tells redux that we're ready to go to loading screen once onboarding is finished
    function finishOnboarding() {
-      props.setIsReadyToStart(true)
+      props.setFinishedOnboarding(true)
       props.navigation.navigate('Loading')
    }
 
@@ -234,10 +233,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
    return {
-      setFirstOpen: toSet => dispatch(setFirstOpen(toSet)),
       addLanguage: language => dispatch(addLanguage(language)),
       changeLanguage: language => dispatch(changeLanguage(language)),
-      setIsReadyToStart: toSet => dispatch(setIsReadyToStart(toSet)),
+      setFinishedOnboarding: toSet => dispatch(setFinishedOnboarding(toSet)),
       createGroup: (groupName, language, imageSource) => dispatch(createGroup(groupName, language, imageSource)),
       changeActiveGroup: name => { dispatch(changeActiveGroup(name)) }
    }

@@ -13,6 +13,8 @@ function GroupsScreen(props) {
 
    //// CONSTRUCTOR
 
+   
+
    useEffect(() => {
       props.navigation.setOptions(getNavOptions())
    }, [isEditing, props])

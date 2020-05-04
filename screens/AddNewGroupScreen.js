@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
       padding: 3,
    },
    groupNameLabel: {
-      fontFamily: "light",
+      fontFamily: "regular",
       fontSize: 14 * scaleMultiplier,
       color: '#9FA5AD'
    },
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
       borderBottomWidth: 2,
       height: 40 * scaleMultiplier,
       fontSize: 18 * scaleMultiplier,
-      fontFamily: 'light'
+      fontFamily: 'regular'
    },
    saveButtonContainer: {
       width: 127 * scaleMultiplier,

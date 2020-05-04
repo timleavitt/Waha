@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet, Text, FlatList, Alert, Image } from 'react-native';
 import { connect } from 'react-redux'
 import GroupListItem from '../components/GroupListItem'
@@ -11,7 +11,20 @@ import { removeDownload } from '../redux/actions/downloadActions'
 function LanguageInstanceHeader(props) {
 
    //// FUNCTIONS
-   
+
+   useEffect(() => {
+      // check if there was a failed language add, i.e. if the app crashed/user quit during a fetch
+      FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
+         if (
+            !contents.includes(props.languageID + 'chapter1.mp3') ||
+            !contents.includes(props.languageID + 'chapter3.mp3') ||
+            !contents.includes(props.languageID + 'lesson1chapter1.mp3') ||
+            !contents.includes(props.languageID + 'lesson1chapter3.mp3') ||
+            !contents.includes(props.languageID + 'header.png')
+         ) { deleteLanguageInstance(); }
+      })
+   }, [])
+
    // deletes all material for a language
    function deleteLanguageInstance() {
       // delete all groups w/ this language
@@ -26,7 +39,7 @@ function LanguageInstanceHeader(props) {
          for (const item of contents) {
             if (item.slice(0, 2) === props.languageID) {
                FileSystem.deleteAsync(FileSystem.documentDirectory + item)
-               props.removeDownload(item.slice(0,5))
+               props.removeDownload(item.slice(0, 5))
             }
          }
       })
@@ -71,7 +84,7 @@ function LanguageInstanceHeader(props) {
          <View style={[styles.languageHeaderContainer, { flexDirection: props.isRTL ? 'row-reverse' : 'row' }]}>
             {trashButton}
             <Text style={[styles.languageHeaderText, { textAlign: props.isRTL ? 'right' : 'left' }]}>{props.languageName}</Text>
-            <Image style={styles.languageLogo} source={{ uri: FileSystem.documentDirectory + props.languageID + 'header.png'}} />
+            <Image style={styles.languageLogo} source={{ uri: FileSystem.documentDirectory + props.languageID + 'header.png' }} />
          </View>
          <FlatList
             data={props.groups.filter(group => group.language === props.languageID)}
