@@ -7,6 +7,7 @@ import SmallDrawerItem from '../components/SmallDrawerItem'
 import { scaleMultiplier } from '../constants'
 import * as WebBrowser from 'expo-web-browser';
 import AvatarImage from '../components/AvatarImage'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 function WahaDrawer(props) {
 
@@ -26,6 +27,9 @@ function WahaDrawer(props) {
                <AvatarImage source={props.activeGroup.imageSource} size={120} />
             </View>
             <Text style={styles.groupName}>{props.activeGroup.name}</Text>
+            <TouchableOpacity style={styles.pencilIconContainer} onPress={() => props.navigation.navigate('EditGroup', {groupName: props.activeGroup.name})}>
+               <Icon name='pencil' size={25 * scaleMultiplier} color='#FFFFFF'/>
+            </TouchableOpacity>
          </View>
          <View style={{ backgroundColor: "#FFFFFF", flex: 1 }}>
             <View>
@@ -96,17 +100,20 @@ const styles = StyleSheet.create({
       fontFamily: "black",
       fontSize: 25 * scaleMultiplier
    },
+   pencilIconContainer: {
+      alignSelf: "flex-end",
+   },
    smallDrawerItemsContainer: {
       justifyContent: "flex-end",
       flex: 1,
       marginBottom: 20
    },
    versionText: {
-      fontFamily: 'regular', 
-      fontSize: 10, 
-      marginHorizontal: 13, 
-      color: "#9FA5AD", 
-      justifyContent: "center", 
+      fontFamily: 'regular',
+      fontSize: 10,
+      marginHorizontal: 13,
+      color: "#9FA5AD",
+      justifyContent: "center",
       alignItems: "center"
    }
 });

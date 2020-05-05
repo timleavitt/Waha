@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
    var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
-   console.log(state.network.isConnected)
    return {
       activeDatabase: state.database[activeGroup.language],
       isRTL: state.database[activeGroup.language].isRTL,

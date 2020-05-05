@@ -30,7 +30,7 @@ export default function App() {
    // loads up all the fonts
    async function loadFonts() {
       await Font.loadAsync({
-         'icomoon': require('./assets/fonts/icomoon.ttf'),
+         'waha': require('./assets/fonts/waha.ttf'),
       });
       await Font.loadAsync({
          'black': require('./assets/fonts/Roboto-Black.ttf'),

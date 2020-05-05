@@ -51,7 +51,7 @@ function LessonItem(props) {
          >
             <View style={styles.completeStatusContainer}>
                <Icon
-                  name={props.isComplete ? "check-unfilled" : props.activeGroup.bookmark === props.thisLesson.index ? props.isRTL ? 'triangle-left' : "triangle-right" : null}
+                  name={props.isComplete ? "check-outline" : props.activeGroup.bookmark === props.thisLesson.index ? props.isRTL ? 'triangle-left' : "triangle-right" : null}
                   size={30 * scaleMultiplier}
                   color={props.isComplete ? "#828282" : props.colors.primaryColor}
                />

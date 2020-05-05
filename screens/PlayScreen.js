@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Text, Alert, ActivityIndicator, FlatList, Dimensions, ScrollView } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { scaleMultiplier, setImages } from '../constants'
@@ -324,7 +323,7 @@ function PlayScreen(props) {
          var scrollBarLeft = item.key === '0' ? null : <View style={styles.scrollBar} />
          var scrollBarRight = item.key === '0' ? <View style={styles.scrollBar} /> : null
          return (
-            <View style={[styles.albumArtContainer, { marginLeft: item.key === '0' ? 30 : 10, marginRight: item.key === '2' ? 30 : 10 }]}>
+            <View style={[styles.albumArtContainer, { marginLeft: item.key === '0' ? 30 : 10, marginRight: item.key === '2' ? 30 : 10, paddingHorizontal: item.key === '1' ? 0 : 10 }]}>
                {scrollBarLeft}
                <ScrollView style={[styles.textContainer, { marginLeft: item.key === '2' ? 5 : 0, marginRight: item.key === '0' ? 5 : 0 }]}>
                   <Text style={styles.albumTextHeader}>{item.header}</Text>
@@ -337,9 +336,9 @@ function PlayScreen(props) {
       else {
          return (
             <View style={[styles.albumArtContainer, { justifyContent: 'center', alignItems: 'center' }]}>
-               <MaterialCommunityIcons
+               <Icon
                   name={item.iconName}
-                  size={300 * scaleMultiplier}
+                  size={340 * scaleMultiplier}
                   color={props.activeDatabase.sets.filter(set => set.id === props.route.params.thisLesson.setid)[0].color}
                />
             </View>
@@ -453,7 +452,6 @@ const styles = StyleSheet.create({
       height: (Dimensions.get('window').width - 80),
       borderRadius: 10,
       marginHorizontal: 10,
-      paddingHorizontal: 10,
       backgroundColor: "#DEE3E9",
       flexDirection: "row"
    },

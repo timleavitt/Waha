@@ -29,11 +29,14 @@ function getGestureEnabled(route) {
 
 function DrawerNavigator(props) {
 
-   // add listener for connection status and update it accordingly
+   
    useEffect(() => {
+      // add listener for connection status and update it accordingly
       const unsubscribe = NetInfo.addEventListener(state => {
          props.updateConnectionStatus(state.isConnected)
       });
+
+      // TODO: add firebase listener to check for updates to database
 
       return function cleanup() {
          unsubscribe();

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux'
 import { scaleMultiplier, setImages } from '../constants'
 import Icon from '../assets/fonts/icons'
@@ -59,7 +58,7 @@ function SetItem(props) {
    var triangleIcon = props.isSmall ? null : fullyCompleted ?
       <View style={styles.iconContainer}>
          <Icon
-            name='check-unfilled'
+            name='check-outline'
             size={37 * scaleMultiplier}
             color="#828282"
          />
@@ -79,13 +78,13 @@ function SetItem(props) {
                size={props.isSmall ? 70 * scaleMultiplier : 85 * scaleMultiplier}
                width={props.isSmall ? 5 * scaleMultiplier : 8 * scaleMultiplier}
                fill={(numCompleted / numLessons) * 100}
-               tintColor={fullyCompleted ? "#828282" : "#1D1E20"}
+               tintColor={fullyCompleted ? "#828282" : props.colors.primaryColor}
                rotation={0}
                backgroundColor="#FFFFFF"
             >
                {(fill) => (
-                  <View style={{ backgroundColor: fullyCompleted ? null : props.thisSet.color, width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
-                     <MaterialCommunityIcons name={setImages[props.thisSet.index]} size={props.isSmall ? 40 * scaleMultiplier : 50 * scaleMultiplier} color={fullyCompleted ? "#828282" : "#1D1E20"} />
+                  <View style={{ width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
+                     <Icon name={setImages[props.thisSet.index]} size={props.isSmall ? 60 * scaleMultiplier : 70 * scaleMultiplier} />
                   </View>)}
             </AnimatedCircularProgress>
             {percentageText}
@@ -158,7 +157,8 @@ function mapStateToProps(state) {
    return {
       activeProgress: activeGroup.progress,
       isRTL: state.database[activeGroup.language].isRTL,
-      activeDatabase: state.database[activeGroup.language]
+      activeDatabase: state.database[activeGroup.language],
+      colors: state.database[activeGroup.language].colors
    }
 };
 

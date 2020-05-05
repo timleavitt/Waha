@@ -4,8 +4,8 @@ import * as FileSystem from 'expo-file-system';
 export const scaleMultiplier = (Dimensions.get('window').width / 430)
 
 export const setImages = {
-   1: 'tree',
-   2: 'book',
+   1: 'set1',
+   2: 'set2',
 }
 
 export const languageT2S = {
