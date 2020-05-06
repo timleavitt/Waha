@@ -339,7 +339,6 @@ function PlayScreen(props) {
                <Icon
                   name={item.iconName}
                   size={340 * scaleMultiplier}
-                  color={props.activeDatabase.sets.filter(set => set.id === props.route.params.thisLesson.setid)[0].color}
                />
             </View>
          )

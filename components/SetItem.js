@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { connect } from 'react-redux'
-import { scaleMultiplier, setImages } from '../constants'
+import { scaleMultiplier } from '../constants'
 import Icon from '../assets/fonts/icons'
+import SVG from '../assets/svg.js'
 
 function SetItem(props) {
 
@@ -59,7 +60,7 @@ function SetItem(props) {
       <View style={styles.iconContainer}>
          <Icon
             name='check-outline'
-            size={37 * scaleMultiplier}
+            size={30 * scaleMultiplier}
             color="#828282"
          />
       </View> :
@@ -78,20 +79,25 @@ function SetItem(props) {
                size={props.isSmall ? 70 * scaleMultiplier : 85 * scaleMultiplier}
                width={props.isSmall ? 5 * scaleMultiplier : 8 * scaleMultiplier}
                fill={(numCompleted / numLessons) * 100}
-               tintColor={fullyCompleted ? "#828282" : props.colors.primaryColor}
+               tintColor={fullyCompleted ? props.colors.primaryColor + '50' : props.colors.primaryColor}
                rotation={0}
                backgroundColor="#FFFFFF"
             >
-               {(fill) => (
+               {() => (
                   <View style={{ width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
-                     <Icon name={setImages[props.thisSet.index]} size={props.isSmall ? 60 * scaleMultiplier : 70 * scaleMultiplier} />
+                     <SVG 
+                        name={'set' + props.thisSet.index}  
+                        width={props.isSmall ? 60 * scaleMultiplier : 70 * scaleMultiplier} 
+                        height={props.isSmall ? 60 * scaleMultiplier : 70 * scaleMultiplier} 
+                        fill={fullyCompleted ? '#9FA5AD' : '#1D1E20'}
+                     />
                   </View>)}
             </AnimatedCircularProgress>
             {percentageText}
          </View>
          <View style={styles.titleContainer}>
             <Text style={{
-               color: fullyCompleted ? "#9FA5AD" : "black",
+               color: fullyCompleted ? "#9FA5AD" : "#1D1E20",
                textAlign: props.isRTL ? 'right' : 'left',
                fontSize: props.isSmall ? 14 * scaleMultiplier : 12 * scaleMultiplier,
                textAlignVertical: "center",
@@ -99,7 +105,7 @@ function SetItem(props) {
                fontFamily: 'regular',
             }}>{props.thisSet.subtitle}</Text>
             <Text style={{
-               color: fullyCompleted ? "#9FA5AD" : "black",
+               color: fullyCompleted ? "#9FA5AD" : "#3A3C3F",
                textAlign: props.isRTL ? 'right' : 'left',
                fontSize: props.isSmall ? 24 * scaleMultiplier : 18 * scaleMultiplier,
                textAlignVertical: "center",
