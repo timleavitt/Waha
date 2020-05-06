@@ -15,13 +15,16 @@ function LanguageInstanceHeader(props) {
    useEffect(() => {
       // check if there was a failed language add, i.e. if the app crashed/user quit during a fetch
       FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
+         console.log(contents)
          if (
             !contents.includes(props.languageID + 'chapter1.mp3') ||
             !contents.includes(props.languageID + 'chapter3.mp3') ||
             !contents.includes(props.languageID + 'lesson1chapter1.mp3') ||
             !contents.includes(props.languageID + 'lesson1chapter3.mp3') ||
             !contents.includes(props.languageID + 'header.png')
-         ) { deleteLanguageInstance(); }
+         ) { 
+            deleteLanguageInstance(); 
+         }
       })
    }, [])
 

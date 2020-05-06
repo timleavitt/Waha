@@ -170,6 +170,7 @@ export function addLanguage(language) {
                // new group, and finally set isfetching to false so we can go into the app
                downloadEverything()
                   .then(() => {
+                     console.log('test')
                      dispatch(createGroup(groupNames[language], language, ''));
                      dispatch(changeActiveGroup(groupNames[language]));
                      dispatch(setIsFetching(false));

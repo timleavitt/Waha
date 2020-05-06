@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, FlatList, Text, Alert } from 'react-native';
 import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
@@ -75,7 +75,19 @@ function GroupsScreen(props) {
                renderItem={renderLanguageInstanceItem}
                keyExtractor={item => item.languageID}
                ListFooterComponent={
-                  <TouchableOpacity style={styles.addNewLanguageContainer} onPress={() => props.navigation.navigate('AddNewLanguage', { installedLanguageInstances: getInstalledLanguageInstances() })}>
+                  <TouchableOpacity 
+                     style={styles.addNewLanguageContainer} 
+                     onPress={props.isConnected ? 
+                        () => props.navigation.navigate('AddNewLanguage', { installedLanguageInstances: getInstalledLanguageInstances()}) :
+                        () => Alert.alert(
+                           props.translations.alerts.addLanguageNoInternet.header,
+                           props.translations.alerts.addLanguageNoInternet.body,
+                           [{
+                              text: props.translations.alerts.options.ok,
+                              onPress: () => { }
+                           }]
+                        )}
+                  >
                      <Text style={[styles.addNewLanguageText, {textAlign: props.isRTL ? 'right' : 'left'}]}>{props.translations.labels.newLanguage}</Text>
                   </TouchableOpacity>
                }
@@ -126,7 +138,8 @@ function mapStateToProps(state) {
    return {
       database: state.database,
       isRTL: state.database[activeGroup.language].isRTL,
-      translations: state.database[activeGroup.language].translations
+      translations: state.database[activeGroup.language].translations,
+      isConnected: state.network.isConnected
    }
 };
 
