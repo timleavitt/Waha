@@ -8,10 +8,10 @@ import { network } from '../reducers/network'
 import { combineReducers } from 'redux'
 
 export default rootReducer = combineReducers({
-    downloads,
-    database,
-    groups,
-    activeGroup,
-    network,
-    fetchingStatus
+  downloads,
+  database,
+  groups,
+  activeGroup,
+  network,
+  fetchingStatus
 })

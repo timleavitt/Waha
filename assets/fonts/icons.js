@@ -1,63 +1,121 @@
-import { createIconSet } from 'react-native-vector-icons';
+import { createIconSet } from 'react-native-vector-icons'
 const glyphMap = {
-   "group-add": "\uea01",
-   "archive": "\ea02",
-   "arrow-left": "\uea03",
-   "arrow-right": "\uea04",
-   "cancel": "\uea05",
-   "check": "\uea06",
-   "check-filled": "\uea07",
-   "check-outline": "\uea08",
-   "cloud-check-outline": "\uea09",
-   "cloud-download-outline": "\uea0a",
-   "email": "\uea0b",
-   "group": "\uea0c",
-   "set1": "\uea0d",
-   "set2": "\uea0e",
-   "camera": "\uea0f",
-   "1-filled": "\uea10",
-   "1-outline": "\uea11",
-   "2-filled": "\uea12",
-   "2-outline": "\uea13",
-   "3-filled": "\uea14",
-   "3-outline": "\uea15",
-   "pencil": "\uea16",
-   "triangle-right": "\uea17",
-   "playlist-add": "\uea18",
-   "playlist-check": "\uea19",
-   "minus-filled": "\uea1a",
-   "security": "\uea1b",
-   "share-android": "\uea1c",
-   "storage": "\uea1d",
-   "plus-filled": "\uea1e",
-   "announcement": "\uea1f",
-   "backspace": "\uea20",
-   "camera": "\uea21",
-   "cloud-check-filled": "\uea22",
-   "cloud-download-filled": "\uea23",
-   "cloud-slash-outline": "\uea24",
-   "trash": "\uea25",
-   "description": "\uea26",
-   "error-filled": "\uea27",
-   "error-outline": "\uea28",
-   "record": "\uea29",
-   "skip-forward": "\uea2a",
-   "fullscreen-enter": "\uea2b",
-   "fullscreen-exit": "\uea2c",
-   "help": "\uea2d",
-   "info": "\uea2e",
-   "language": "\uea2f",
-   "menu": "\uea30",
-   "notes": "\uea31",
-   "quad-arrow": "\uea32",
-   "pause-filled": "\uea33",
-   "play-filled": "\uea34",
-   "minus-outline": "\uea35",
-   "skip-back": "\uea36",
-   "settings": "\uea37",
-   "share-ios": "\uea38",
-   "triangle-left": "\uea39",
-   "volume": "\uea3a",
-   "key": "\uea3b",
-};
-export default Icon = createIconSet(glyphMap, 'waha', require('../fonts/waha.ttf'));
+  'group-add': '\uea01',
+
+  'archive': '\uea02',
+
+  'arrow-left': '\uea03',
+
+  'arrow-right': '\uea04',
+
+  'cancel': '\uea05',
+
+  'check': '\uea06',
+
+  'check-filled': '\uea07',
+
+  'check-outline': '\uea08',
+
+  'cloud-check-outline': '\uea09',
+
+  'cloud-download-outline': '\uea0a',
+
+  'email': '\uea0b',
+
+  'group': '\uea0c',
+
+  'camera': '\uea0d',
+
+  '1-filled': '\uea0e',
+
+  '1-outline': '\uea0f',
+
+  '2-filled': '\uea10',
+
+  '2-outline': '\uea11',
+
+  '3-filled': '\uea12',
+
+  '3-outline': '\uea13',
+
+  'pencil': '\uea14',
+
+  'triangle-right': '\uea15',
+
+  'playlist-add': '\uea16',
+
+  'playlist-check': '\uea17',
+
+  'minus-filled': '\uea18',
+
+  'security': '\uea19',
+
+  'share-android': '\uea1a',
+
+  'storage': '\uea1b',
+
+  'plus-filled': '\uea1c',
+
+  'announcement': '\uea1d',
+
+  'backspace': '\uea1e',
+
+  'camera': '\uea1f',
+
+  'cloud-check-filled': '\uea20',
+
+  'cloud-download-filled': '\uea21',
+
+  'cloud-slash-outline': '\uea22',
+
+  'trash': '\uea23',
+
+  'description': '\uea24',
+
+  'error-filled': '\uea25',
+
+  'error-outline': '\uea26',
+
+  'record': '\uea27',
+
+  'skip-forward': '\uea28',
+
+  'fullscreen-enter': '\uea29',
+
+  'fullscreen-exit': '\uea2a',
+
+  'help': '\uea2b',
+
+  'info': '\uea2c',
+
+  'language': '\uea2d',
+
+  'menu': '\uea2e',
+
+  'notes': '\uea2f',
+
+  'quad-arrow': '\uea30',
+
+  'pause-filled': '\uea31',
+
+  'play-filled': '\uea32',
+
+  'minus-outline': '\uea33',
+
+  'skip-back': '\uea34',
+
+  'settings': '\uea35',
+
+  'share-ios': '\uea36',
+
+  'triangle-left': '\uea37',
+
+  'volume': '\uea38',
+
+  'key': '\uea39'
+}
+export default Icon = createIconSet(
+  glyphMap,
+  'waha',
+  require('../fonts/waha.ttf')
+)

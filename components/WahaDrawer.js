@@ -1,133 +1,168 @@
-import SafeAreaView from 'react-native-safe-area-view';
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view'
+import React from 'react'
+import { View, Text, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import DrawerItem from '../components/DrawerItem'
 import SmallDrawerItem from '../components/SmallDrawerItem'
 import { scaleMultiplier } from '../constants'
-import * as WebBrowser from 'expo-web-browser';
+import * as WebBrowser from 'expo-web-browser'
 import AvatarImage from '../components/AvatarImage'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
-function WahaDrawer(props) {
+function WahaDrawer (props) {
+  //// FUNCTIONS
 
-   //// FUNCTIONS
+  // opens a local browser
+  async function openBrowser (url) {
+    await WebBrowser.openBrowserAsync(url)
+  }
 
-   // opens a local browser 
-   async function openBrowser(url) {
-      await WebBrowser.openBrowserAsync(url);
-   }
+  //// RENDER
 
-   //// RENDER
-
-   return (
-      <SafeAreaView style={[styles.container, { backgroundColor: props.colors.primaryColor }]} forceInset={{ top: 'always', bottom: 'never', horizontal: 'never' }}>
-         <View style={styles.drawerHeaderContainer}>
-            <View style={styles.groupIconContainer}>
-               <AvatarImage source={props.activeGroup.imageSource} size={120} />
-            </View>
-            <Text style={styles.groupName}>{props.activeGroup.name}</Text>
-            <TouchableOpacity style={styles.pencilIconContainer} onPress={() => props.navigation.navigate('EditGroup', {groupName: props.activeGroup.name})}>
-               <Icon name='pencil' size={25 * scaleMultiplier} color='#FFFFFF'/>
-            </TouchableOpacity>
-         </View>
-         <View style={{ backgroundColor: "#FFFFFF", flex: 1 }}>
-            <View>
-               <DrawerItem
-                  iconName="group"
-                  text={props.translations.navigation.drawer.groups}
-                  onPress={() => props.navigation.navigate('Groups')}
-               />
-               {/* <DrawerItem
+  return (
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: props.colors.primary }]}
+      forceInset={{ top: 'always', bottom: 'never', horizontal: 'never' }}
+    >
+      <View style={styles.drawerHeaderContainer}>
+        <View style={styles.groupIconContainer}>
+          <AvatarImage source={props.activeGroup.imageSource} size={120} />
+        </View>
+        <Text style={[styles.groupName, { fontFamily: props.font + '-black' }]}>
+          {props.activeGroup.name}
+        </Text>
+        <TouchableOpacity
+          style={styles.pencilIconContainer}
+          onPress={() =>
+            props.navigation.navigate('EditGroup', {
+              groupName: props.activeGroup.name
+            })
+          }
+        >
+          <Icon name='pencil' size={25 * scaleMultiplier} color='#FFFFFF' />
+        </TouchableOpacity>
+      </View>
+      <View style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
+        <View>
+          <DrawerItem
+            iconName='group'
+            text={props.translations.navigation.drawer.groups}
+            onPress={() => props.navigation.navigate('Groups')}
+          />
+          {/* <DrawerItem
                name="security"
                text="Security Mode"
                onPress={() => {}}
             /> */}
-               <DrawerItem
-                  iconName="email"
-                  text={props.translations.navigation.drawer.feedback}
-                  onPress={() => openBrowser('https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif')}
-               />
-               <DrawerItem
-                  iconName="storage"
-                  text={props.translations.navigation.drawer.storage}
-                  onPress={() => props.navigation.navigate('Storage', { isRTL: props.isFetching ? null : props.isRTL })}
-               />
-            </View>
-            <View style={styles.smallDrawerItemsContainer}>
-               <SmallDrawerItem
-                  onPress={() => { }}
-                  label={props.translations.navigation.drawer.coaching}
-               />
-               <SmallDrawerItem
-                  onPress={() => openBrowser('https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif')}
-                  label={props.translations.navigation.drawer.privacy}
-               />
-               <SmallDrawerItem
-                  onPress={() => openBrowser('https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif')}
-                  label={props.translations.navigation.drawer.credits}
-               />
-               <Text style={styles.versionText}>v0.2.6</Text>
-            </View>
-         </View>
-      </SafeAreaView >
-   )
+          <DrawerItem
+            iconName='email'
+            text={props.translations.navigation.drawer.feedback}
+            onPress={() =>
+              openBrowser(
+                'https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif'
+              )
+            }
+          />
+          <DrawerItem
+            iconName='storage'
+            text={props.translations.navigation.drawer.storage}
+            onPress={() =>
+              props.navigation.navigate('Storage', {
+                isRTL: props.isFetching ? null : props.isRTL
+              })
+            }
+          />
+        </View>
+        <View style={styles.smallDrawerItemsContainer}>
+          <SmallDrawerItem
+            onPress={() => {}}
+            label={props.translations.navigation.drawer.coaching}
+          />
+          <SmallDrawerItem
+            onPress={() =>
+              openBrowser(
+                'https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif'
+              )
+            }
+            label={props.translations.navigation.drawer.privacy}
+          />
+          <SmallDrawerItem
+            onPress={() =>
+              openBrowser(
+                'https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif'
+              )
+            }
+            label={props.translations.navigation.drawer.credits}
+          />
+          <Text
+            style={[
+              styles.versionText,
+              { fontFamily: props.font + '-regular' }
+            ]}
+          >
+            v0.2.6
+          </Text>
+        </View>
+      </View>
+    </SafeAreaView>
+  )
 }
 
 //// REDUX
 
 const styles = StyleSheet.create({
-   container: {
-      flex: 1,
-   },
-   drawerHeaderContainer: {
-      width: "100%",
-      height: 233 * scaleMultiplier,
-      justifyContent: "center",
-      alignContent: "center",
-      padding: 15
-   },
-   bigDrawerItemsContainer: {
-      backgroundColor: "#FFFFFF"
-   },
-   groupIconContainer: {
-      alignItems: "center",
-      marginVertical: 10
-   },
-   groupName: {
-      color: "white",
-      textAlign: "center",
-      fontFamily: "black",
-      fontSize: 25 * scaleMultiplier
-   },
-   pencilIconContainer: {
-      alignSelf: "flex-end",
-   },
-   smallDrawerItemsContainer: {
-      justifyContent: "flex-end",
-      flex: 1,
-      marginBottom: 20
-   },
-   versionText: {
-      fontFamily: 'regular',
-      fontSize: 10,
-      marginHorizontal: 13,
-      color: "#9FA5AD",
-      justifyContent: "center",
-      alignItems: "center"
-   }
-});
+  container: {
+    flex: 1
+  },
+  drawerHeaderContainer: {
+    width: '100%',
+    height: 233 * scaleMultiplier,
+    justifyContent: 'center',
+    alignContent: 'center',
+    padding: 15
+  },
+  bigDrawerItemsContainer: {
+    backgroundColor: '#FFFFFF'
+  },
+  groupIconContainer: {
+    alignItems: 'center',
+    marginVertical: 10
+  },
+  groupName: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 25 * scaleMultiplier
+  },
+  pencilIconContainer: {
+    alignSelf: 'flex-end'
+  },
+  smallDrawerItemsContainer: {
+    justifyContent: 'flex-end',
+    flex: 1,
+    marginBottom: 20
+  },
+  versionText: {
+    fontSize: 10,
+    marginHorizontal: 13,
+    color: '#9FA5AD',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+})
 
 //// REDUX
 
-function mapStateToProps(state) {
-   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
-   return {
-      colors: state.database[activeGroup.language].colors,
-      isRTL: state.database[activeGroup.language].isRTL,
-      activeGroup: activeGroup,
-      translations: state.database[activeGroup.language].translations
-   }
-};
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    colors: state.database[activeGroup.language].colors,
+    isRTL: state.database[activeGroup.language].isRTL,
+    activeGroup: activeGroup,
+    translations: state.database[activeGroup.language].translations,
+    font: state.database[activeGroup.language].font
+  }
+}
 
-export default connect(mapStateToProps)(WahaDrawer);
+export default connect(mapStateToProps)(WahaDrawer)

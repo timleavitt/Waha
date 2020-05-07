@@ -1,146 +1,205 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, Text, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react'
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Text,
+  Alert
+} from 'react-native'
 import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
-import LanguageInstanceHeader from '../components/LanguageInstanceHeader';
+import LanguageInstanceHeader from '../components/LanguageInstanceHeader'
 
-function GroupsScreen(props) {
+function GroupsScreen (props) {
+  //// STATE
 
-   //// STATE
+  const [isEditing, setIsEditing] = useState(false)
 
-   const [isEditing, setIsEditing] = useState(false)
+  //// CONSTRUCTOR
 
-   //// CONSTRUCTOR
+  useEffect(() => {
+    props.navigation.setOptions(getNavOptions())
+  }, [isEditing, props])
 
-   
+  //// NAV OPTIONS
 
-   useEffect(() => {
-      props.navigation.setOptions(getNavOptions())
-   }, [isEditing, props])
+  function getNavOptions () {
+    return {
+      headerRight: props.isRTL
+        ? () => <BackButton onPress={() => props.navigation.goBack()} />
+        : () => (
+            <TouchableOpacity
+              style={styles.editButtonContainer}
+              onPress={() => setIsEditing(old => !old)}
+            >
+              <Text
+                style={[
+                  styles.editButtonText,
+                  {
+                    fontFamily: props.font + '-regular'
+                  }
+                ]}
+              >
+                {isEditing
+                  ? props.translations.labels.done
+                  : props.translations.labels.edit}
+              </Text>
+            </TouchableOpacity>
+          ),
+      headerLeft: props.isRTL
+        ? () => (
+            <TouchableOpacity
+              style={styles.editButtonContainer}
+              onPress={() => setIsEditing(old => !old)}
+            >
+              <Text
+                style={[
+                  styles.editButtonText,
+                  {
+                    fontFamily: props.font + '-regular'
+                  }
+                ]}
+              >
+                {isEditing
+                  ? props.translations.labels.done
+                  : props.translations.labels.edit}
+              </Text>
+            </TouchableOpacity>
+          )
+        : () => <BackButton onPress={() => props.navigation.goBack()} />
+    }
+  }
 
-   //// NAV OPTIONS
+  //// FUNCTIONS
 
-   function getNavOptions() {
-      return {
-         headerRight: props.isRTL ? 
-            () => <BackButton onPress={() => props.navigation.goBack()}/> :
-            () => 
-               <TouchableOpacity style={styles.editButtonContainer} onPress={() => setIsEditing(old => !old)}>
-                  <Text style={styles.editButtonText}>{isEditing ? props.translations.labels.done : props.translations.labels.edit}</Text>
-               </TouchableOpacity>,
-         headerLeft: props.isRTL ? 
-            () =>
-               <TouchableOpacity style={styles.editButtonContainer} onPress={() => setIsEditing(old => !old)}>
-                  <Text style={styles.editButtonText}>{isEditing ? props.translations.labels.done : props.translations.labels.edit}</Text>
-               </TouchableOpacity> :
-            () => <BackButton onPress={() => props.navigation.goBack()}/>,
+  function getInstalledLanguageInstances () {
+    var installedLanguageInstances = []
+    for (key in props.database) {
+      if (key.length === 2) {
+        var languageObject = {}
+        languageObject['languageName'] = props.database[key].displayName
+        languageObject['languageID'] = key
+        installedLanguageInstances.push(languageObject)
       }
-   }
+    }
+    return installedLanguageInstances
+  }
 
-   //// FUNCTIONS
+  //// RENDER
 
-   function getInstalledLanguageInstances() {
-      var installedLanguageInstances = []
-      for (key in props.database) {
-         if (key.length === 2) {
-            var languageObject = {};
-            languageObject['languageName'] = props.database[key].displayName
-            languageObject['languageID'] = key
-            installedLanguageInstances.push(languageObject)
-         }
-      }
-      return installedLanguageInstances
-   }
+  function renderLanguageInstanceItem (languageInstances) {
+    return (
+      <LanguageInstanceHeader
+        languageName={languageInstances.item.languageName}
+        languageID={languageInstances.item.languageID}
+        goToAddNewGroupScreen={() =>
+          props.navigation.navigate('AddNewGroup', {
+            languageID: languageInstances.item.languageID
+          })
+        }
+        goToEditGroupScreen={groupName =>
+          props.navigation.navigate('EditGroup', { groupName: groupName })
+        }
+        isEditing={isEditing}
+      />
+    )
+  }
 
-   //// RENDER
-
-   function renderLanguageInstanceItem(languageInstances) {
-      return (
-         <LanguageInstanceHeader
-            languageName={languageInstances.item.languageName}
-            languageID={languageInstances.item.languageID}
-            goToAddNewGroupScreen={() => props.navigation.navigate('AddNewGroup', {languageID: languageInstances.item.languageID})}
-            goToEditGroupScreen={groupName => props.navigation.navigate('EditGroup', {groupName: groupName})}
-            isEditing={isEditing}
-         />
-      )
-   }
-
-   return (
-      <View style={styles.screen}>
-         <View style={styles.languageList}>
-            <FlatList
-               data={getInstalledLanguageInstances()}
-               renderItem={renderLanguageInstanceItem}
-               keyExtractor={item => item.languageID}
-               ListFooterComponent={
-                  <TouchableOpacity 
-                     style={styles.addNewLanguageContainer} 
-                     onPress={props.isConnected ? 
-                        () => props.navigation.navigate('AddNewLanguage', { installedLanguageInstances: getInstalledLanguageInstances()}) :
-                        () => Alert.alert(
-                           props.translations.alerts.addLanguageNoInternet.header,
-                           props.translations.alerts.addLanguageNoInternet.body,
-                           [{
-                              text: props.translations.alerts.options.ok,
-                              onPress: () => { }
-                           }]
-                        )}
-                  >
-                     <Text style={[styles.addNewLanguageText, {textAlign: props.isRTL ? 'right' : 'left'}]}>{props.translations.labels.newLanguage}</Text>
-                  </TouchableOpacity>
-               }
-            />
-         </View>
+  return (
+    <View style={styles.screen}>
+      <View style={styles.languageList}>
+        <FlatList
+          data={getInstalledLanguageInstances()}
+          renderItem={renderLanguageInstanceItem}
+          keyExtractor={item => item.languageID}
+          ListFooterComponent={
+            <TouchableOpacity
+              style={styles.addNewLanguageContainer}
+              onPress={
+                props.isConnected
+                  ? () =>
+                      props.navigation.navigate('AddNewLanguage', {
+                        installedLanguageInstances: getInstalledLanguageInstances()
+                      })
+                  : () =>
+                      Alert.alert(
+                        props.translations.alerts.addLanguageNoInternet.header,
+                        props.translations.alerts.addLanguageNoInternet.body,
+                        [
+                          {
+                            text: props.translations.alerts.options.ok,
+                            onPress: () => {}
+                          }
+                        ]
+                      )
+              }
+            >
+              <Text
+                style={[
+                  styles.addNewLanguageText,
+                  {
+                    textAlign: props.isRTL ? 'right' : 'left',
+                    fontFamily: props.font + '-medium'
+                  }
+                ]}
+              >
+                {props.translations.labels.newLanguage}
+              </Text>
+            </TouchableOpacity>
+          }
+        />
       </View>
-   )
+    </View>
+  )
 }
 
 //// STYLES
 
 const styles = StyleSheet.create({
-   screen: {
-      flex: 1,
-      backgroundColor: "#EFF2F4",
-   },
-   languageList: {
-      flex: 1
-   },
-   addNewLanguageContainer: {
-      width: "100%",
-      height: 80 * scaleMultiplier,
-      justifyContent: "center",
-      borderTopColor: '#EFF2F4',
-   },
-   addNewLanguageText: {
-      fontFamily: 'medium',
-      fontSize: 18  * scaleMultiplier,
-      color: '#9FA5AD',
-      marginHorizontal: 15,
-   },
-   editButtonContainer: {
-      width: 80,
-      height: "100%",
-      justifyContent: "center",
-      alignItems: "center",
-   },
-   editButtonText: {
-      fontFamily: 'regular',
-      fontSize: 18 * scaleMultiplier
-   }
+  screen: {
+    flex: 1,
+    backgroundColor: '#EFF2F4'
+  },
+  languageList: {
+    flex: 1
+  },
+  addNewLanguageContainer: {
+    width: '100%',
+    height: 80 * scaleMultiplier,
+    justifyContent: 'center',
+    borderTopColor: '#EFF2F4'
+  },
+  addNewLanguageText: {
+    fontSize: 18 * scaleMultiplier,
+    color: '#9FA5AD',
+    marginHorizontal: 15
+  },
+  editButtonContainer: {
+    width: 80,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  editButtonText: {
+    fontSize: 18 * scaleMultiplier
+  }
 })
 
 //// REDUX
 
-function mapStateToProps(state) {
-   var activeGroup = state.groups.filter(item => item.name === state.activeGroup)[0]
-   return {
-      database: state.database,
-      isRTL: state.database[activeGroup.language].isRTL,
-      translations: state.database[activeGroup.language].translations,
-      isConnected: state.network.isConnected
-   }
-};
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    database: state.database,
+    isRTL: state.database[activeGroup.language].isRTL,
+    translations: state.database[activeGroup.language].translations,
+    isConnected: state.network.isConnected,
+    font: state.database[activeGroup.language].font
+  }
+}
 
-export default connect(mapStateToProps)(GroupsScreen);
+export default connect(mapStateToProps)(GroupsScreen)
