@@ -111,6 +111,7 @@ export function addLanguage (language) {
           var isFirstCallBackObject = {}
           var totalToDownload = 0
           var counter = 0
+
           // callback function
           function callback ({ totalBytesWritten, totalBytesExpectedToWrite }) {
             var allGood = true
@@ -179,7 +180,6 @@ export function addLanguage (language) {
           // new group, and finally set isfetching to false so we can go into the app
           downloadEverything()
             .then(() => {
-              console.log('test')
               dispatch(createGroup(groupNames[language], language, ''))
               dispatch(changeActiveGroup(groupNames[language]))
               dispatch(setIsFetching(false))
@@ -190,7 +190,7 @@ export function addLanguage (language) {
               dispatch(setFetchError(true, language))
             })
         } else {
-          console.log("error: doc doesn't exist")
+          dispatch(setFetchError(true, language))
         }
       })
       .catch(() => dispatch(setFetchError(true, language)))

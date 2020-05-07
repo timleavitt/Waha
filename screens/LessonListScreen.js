@@ -6,7 +6,9 @@ import {
   Alert,
   Image,
   Button,
-  Text
+  Text,
+  Share,
+  Platform
 } from 'react-native'
 import LessonItem from '../components/LessonItem'
 import * as FileSystem from 'expo-file-system'
@@ -146,16 +148,25 @@ function LessonListScreen (props) {
   }
 
   // opens the share sheet to share a chapter of a lesson
-  function shareLesson (chapter) {
-    switch (chapter) {
-      case 'fellowship':
-        Sharing.shareAsync(
-          FileSystem.documentDirectory +
-            props.activeGroup.language +
-            'chapter1.mp3'
-        )
+  function share (type) {
+    switch (type) {
+      case 'app':
+        Share.share({
+          message:
+            Platform.OS === 'ios'
+              ? 'www.appstorelink.com'
+              : 'www.playstorelink.com'
+        })
         break
-      case 'passage':
+      case 'text':
+        Share.share({
+          message:
+            activeLessonInModal.scriptureHeader +
+            ': ' +
+            activeLessonInModal.scriptureText
+        })
+        break
+      case 'audio':
         FileSystem.getInfoAsync(
           FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
         ).then(({ exists }) => {
@@ -174,13 +185,6 @@ function LessonListScreen (props) {
                 ]
               )
         })
-        break
-      case 'application':
-        Sharing.shareAsync(
-          FileSystem.documentDirectory +
-            props.activeGroup.language +
-            'chapter3.mp3'
-        )
         break
     }
   }
@@ -274,21 +278,23 @@ function LessonListScreen (props) {
         />
         <ModalButton
           title={
-            props.activeDatabase.translations.modals.lessonOptions.shareChapter1
+            props.activeDatabase.translations.modals.lessonOptions.shareApp
           }
-          onPress={() => shareLesson('fellowship')}
+          onPress={() => share('app')}
         />
         <ModalButton
           title={
-            props.activeDatabase.translations.modals.lessonOptions.shareChapter2
+            props.activeDatabase.translations.modals.lessonOptions
+              .sharePassageText
           }
-          onPress={() => shareLesson('passage')}
+          onPress={() => share('text')}
         />
         <ModalButton
           title={
-            props.activeDatabase.translations.modals.lessonOptions.shareChapter3
+            props.activeDatabase.translations.modals.lessonOptions
+              .sharePassageAudio
           }
-          onPress={() => shareLesson('application')}
+          onPress={() => share('audio')}
         />
         <ModalButton
           isLast={true}
@@ -337,7 +343,8 @@ function mapStateToProps (state) {
     downloads: state.downloads,
     activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    translations: state.database[activeGroup.language].translations
   }
 }
 

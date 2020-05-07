@@ -7,7 +7,8 @@ import {
   ActivityIndicator,
   FlatList,
   Dimensions,
-  ScrollView
+  ScrollView,
+  Share
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
@@ -26,6 +27,8 @@ import {
   downloadLesson,
   removeDownload
 } from '../redux/actions/downloadActions'
+import SVG from '../assets/svg'
+
 console.disableYellowBox = true
 
 function PlayScreen (props) {
@@ -74,12 +77,11 @@ function PlayScreen (props) {
     {
       key: '1',
       type: 'image',
-      iconName:
-        setImages[
-          props.activeDatabase.sets.filter(
-            set => set.id === props.route.params.thisLesson.setid
-          )[0].index
-        ]
+      svgName:
+        'set' +
+        props.activeDatabase.sets.filter(
+          set => set.id === props.route.params.thisLesson.setid
+        )[0].index
     },
     {
       key: '2',
@@ -388,17 +390,48 @@ function PlayScreen (props) {
     }
   }
 
-  // opens the share sheet to share a chapter
-  function shareLesson (chapter) {
-    switch (chapter) {
-      case 'fellowship':
-        Sharing.shareAsync(chapter1Source).catch(error => console.log(error))
+  // opens the share sheet to share a chapter of a lesson
+  function share (type) {
+    switch (type) {
+      case 'app':
+        Share.share({
+          message:
+            Platform.OS === 'ios'
+              ? 'www.appstorelink.com'
+              : 'www.playstorelink.com'
+        })
         break
-      case 'passage':
-        Sharing.shareAsync(chapter2Source)
+      case 'text':
+        Share.share({
+          message:
+            props.route.params.thisLesson.scriptureHeader +
+            ': ' +
+            props.route.params.thisLesson.scriptureText
+        })
         break
-      case 'application':
-        Sharing.shareAsync(chapter3Source)
+      case 'audio':
+        FileSystem.getInfoAsync(
+          FileSystem.documentDirectory +
+            props.route.params.thisLesson.id +
+            '.mp3'
+        ).then(({ exists }) => {
+          exists
+            ? Sharing.shareAsync(
+                FileSystem.documentDirectory +
+                  props.route.params.thisLesson.id +
+                  '.mp3'
+              )
+            : Alert.alert(
+                props.translations.alerts.shareUndownloaded.header,
+                props.translations.alerts.shareUndownloaded.body,
+                [
+                  {
+                    text: props.translations.alerts.options.ok,
+                    onPress: () => {}
+                  }
+                ]
+              )
+        })
         break
     }
   }
@@ -460,7 +493,12 @@ function PlayScreen (props) {
             { justifyContent: 'center', alignItems: 'center' }
           ]}
         >
-          <Icon name={item.iconName} size={340 * scaleMultiplier} />
+          <SVG
+            name={item.svgName}
+            width={Dimensions.get('window').width - 80}
+            height={Dimensions.get('window').width - 80}
+            color='#1D1E20'
+          />
         </View>
       )
     }
@@ -532,17 +570,17 @@ function PlayScreen (props) {
         closeText={props.translations.modals.lessonOptions.close}
       >
         <ModalButton
-          title={props.translations.modals.lessonOptions.shareChapter1}
-          onPress={() => shareLesson('fellowship')}
+          title={props.translations.modals.lessonOptions.shareApp}
+          onPress={() => share('app')}
         />
         <ModalButton
-          title={props.translations.modals.lessonOptions.shareChapter2}
-          onPress={() => shareLesson('passage')}
+          title={props.translations.modals.lessonOptions.sharePassageText}
+          onPress={() => share('text')}
         />
         <ModalButton
           isLast={true}
-          title={props.translations.modals.lessonOptions.shareChapter3}
-          onPress={() => shareLesson('application')}
+          title={props.translations.modals.lessonOptions.sharePassageAudio}
+          onPress={() => share('audio')}
         />
       </WahaModal>
     </View>
@@ -584,7 +622,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 10,
     backgroundColor: '#DEE3E9',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    overflow: 'hidden'
   },
   textContainer: {
     flexDirection: 'column',
