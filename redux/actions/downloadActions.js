@@ -56,7 +56,7 @@ export function downloadLesson (lessonID, source) {
       AsyncStorage.setItem(
         lessonID,
         JSON.stringify(downloadResumable.savable())
-      )
+      ).catch(err => removeDownload(lessonID))
     })
   }
 }

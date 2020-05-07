@@ -8,7 +8,11 @@ import StackNavigator from './StackNavigator'
 import { NavigationContainer } from '@react-navigation/native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { connect } from 'react-redux'
-import { resumeDownload } from '../redux/actions/downloadActions'
+import {
+  resumeDownload,
+  removeDownload
+} from '../redux/actions/downloadActions'
+import * as FileSystem from 'expo-file-system'
 import { db, storeData } from '../redux/actions/databaseActions'
 
 const Drawer = createDrawerNavigator()
@@ -55,11 +59,24 @@ function DrawerNavigator (props) {
   //// FUNCTIONS
   async function checkPausedDownloads () {
     props.activeDatabase.lessons.forEach(async lesson => {
-      await AsyncStorage.getItem(lesson.id).then(async value => {
-        if (value) {
-          props.resumeDownload(lesson.id, value)
-        }
-      })
+      await AsyncStorage.getItem(lesson.id)
+        .then(async value => {
+          if (value) {
+            // error checking for if the async storage object was not deleted before
+            // if we have a resumable download stored but the lesson is already downloaded,
+            // we don't want to resume it
+            FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+              contents => {
+                if (!contents.includes(lesson.id + '.mp3')) {
+                  props.resumeDownload(lesson.id, value)
+                } else {
+                  AsyncStorage.removeItem(lesson.id)
+                }
+              }
+            )
+          }
+        })
+        .catch(err => props.removeDownload(lesson.id))
     })
   }
 
@@ -105,6 +122,9 @@ function mapDispatchToProps (dispatch) {
     },
     resumeDownload: (lessonID, downloadSnapshotJSON) => {
       dispatch(resumeDownload(lessonID, downloadSnapshotJSON))
+    },
+    removeDownload: lessonID => {
+      dispatch(removeDownload(lessonID))
     },
     storeData: (data, language) => {
       dispatch(storeData(data, language))
