@@ -15,7 +15,8 @@ import {
   editGroup,
   deleteGroup,
   resetProgress,
-  changeActiveGroup
+  changeActiveGroup,
+  setBookmark
 } from '../redux/actions/groupsActions'
 import WahaModal from '../components/WahaModal'
 import ModalButton from '../components/ModalButton'
@@ -214,6 +215,7 @@ function EditGroupScreen (props) {
                     text: props.translations.alerts.options.ok,
                     onPress: () => {
                       props.resetProgress(props.route.params.groupName)
+                      props.setBookmark(props.route.params.groupName)
                       props.navigation.goBack()
                     }
                   }
@@ -375,6 +377,9 @@ function mapDispatchToProps (dispatch) {
     },
     changeActiveGroup: name => {
       dispatch(changeActiveGroup(name))
+    },
+    setBookmark: groupName => {
+      dispatch(setBookmark(groupName))
     }
   }
 }

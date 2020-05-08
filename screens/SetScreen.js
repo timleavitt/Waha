@@ -17,7 +17,7 @@ function SetScreen (props) {
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
-  }, [props.isRTL])
+  }, [props.isRTL, props.activeGroup])
 
   //// NAV OPTIONS
 
