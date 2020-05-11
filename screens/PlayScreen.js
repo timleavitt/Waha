@@ -456,32 +456,24 @@ function PlayScreen (props) {
           ]}
         >
           {scrollBarLeft}
-          <ScrollView
+          <FlatList
             style={[
               styles.textContainer,
               {
-                marginLeft: item.key === '2' ? 5 : 0,
-                marginRight: item.key === '0' ? 5 : 0
+                marginLeft: item.key === '2' ? 10 : 0,
+                marginRight: item.key === '0' ? 10 : 0,
+                marginVertical: 10
               }
             ]}
-          >
-            <Text
-              style={[
-                styles.albumTextHeader,
-                { fontFamily: props.font + '-medium' }
-              ]}
-            >
-              {item.header}
-            </Text>
-            <Text
-              style={[
-                styles.albumTextBody,
-                { fontFamily: props.font + '-regular' }
-              ]}
-            >
-              {item.body}
-            </Text>
-          </ScrollView>
+            data={
+              item.key === '0'
+                ? props.activeDatabase.lessonQuestions
+                : props.route.params.thisLesson.scripture
+            }
+            renderItem={renderTextContent}
+            keyExtractor={item => item.header}
+            showsVerticalScrollIndicator={false}
+          />
           {scrollBarRight}
         </View>
       )
@@ -502,6 +494,23 @@ function PlayScreen (props) {
         </View>
       )
     }
+  }
+
+  function renderTextContent (textList) {
+    return (
+      <View>
+        <Text
+          style={[styles.albumArtText, { fontFamily: props.font + '-medium' }]}
+        >
+          {textList.item.header}
+        </Text>
+        <Text
+          style={[styles.albumArtText, { fontFamily: props.font + '-regular' }]}
+        >
+          {textList.item.text + '\n'}
+        </Text>
+      </View>
+    )
   }
 
   // renders the play/pause/skip container conditionally because we don't want to show controls when the audio is loading
@@ -629,13 +638,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flex: 1
   },
-  albumTextHeader: {
-    flexWrap: 'wrap',
-    textAlign: 'center',
-    margin: 5
-  },
-  albumTextBody: {
-    flexWrap: 'wrap'
+  albumArtText: {
+    fontSize: 18 * scaleMultiplier,
+    textAlign: 'justify'
   },
   scrollBar: {
     width: 4,
@@ -665,7 +670,7 @@ function mapStateToProps (state) {
     activeDatabase: state.database[activeGroup.language],
     translations: state.database[activeGroup.language].translations,
     downloads: state.downloads,
-    colors: state.database[activeGroup.language].colors,
+    primaryColor: state.database[activeGroup.language].primaryColor,
     isRTL: state.database[activeGroup.language].isRTL,
     font: state.database[activeGroup.language].font
   }

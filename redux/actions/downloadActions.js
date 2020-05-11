@@ -52,6 +52,8 @@ export function downloadLesson (lessonID, source) {
       // if we get an error, set our progress back to 0
       dispatch(addUpdateDownload(0, lessonID))
 
+      console.log('error')
+
       // then, store the download resumable object so we can start it later
       AsyncStorage.setItem(
         lessonID,

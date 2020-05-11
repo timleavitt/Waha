@@ -21,7 +21,7 @@ function PlayPauseSkip (props) {
         <Icon
           name={props.isPlaying ? 'pause-filled' : 'play-filled'}
           size={100 * scaleMultiplier}
-          color={props.colors.primary}
+          color={props.primaryColor}
         />
       </TouchableOpacity>
       <TouchableOpacity
@@ -57,7 +57,7 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    colors: state.database[activeGroup.language].colors
+    primaryColor: state.database[activeGroup.language].primaryColor
   }
 }
 

@@ -92,7 +92,7 @@ function SetItem (props) {
           width={props.isSmall ? 5 * scaleMultiplier : 8 * scaleMultiplier}
           fill={(numCompleted / numLessons) * 100}
           tintColor={
-            fullyCompleted ? props.colors.primary + '50' : props.colors.primary
+            fullyCompleted ? props.primaryColor + '50' : props.primaryColor
           }
           rotation={0}
           backgroundColor='#FFFFFF'
@@ -203,7 +203,7 @@ function mapStateToProps (state) {
     activeProgress: activeGroup.progress,
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],
-    colors: state.database[activeGroup.language].colors,
+    primaryColor: state.database[activeGroup.language].primaryColor,
     font: state.database[activeGroup.language].font
   }
 }

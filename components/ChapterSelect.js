@@ -34,7 +34,7 @@ function ChapterSelect (props) {
           size={20}
           width={4}
           fill={props.downloads[props.lessonID] * 100}
-          tintColor={props.colors.primary}
+          tintColor={props.primaryColor}
           rotation={0}
           backgroundColor='#FFFFFF'
           style={{ margin: 5 }}
@@ -56,11 +56,9 @@ function ChapterSelect (props) {
         style={[
           styles.chapterSelect,
           {
-            borderColor: props.colors.primary,
+            borderColor: props.primaryColor,
             backgroundColor:
-              props.activeChapter === 'passage'
-                ? props.colors.primary
-                : '#EFF2F4'
+              props.activeChapter === 'passage' ? props.primaryColor : '#EFF2F4'
           }
         ]}
         onPress={() => props.onPress('passage')}
@@ -69,7 +67,7 @@ function ChapterSelect (props) {
           name={chapter2IconName}
           size={25}
           color={
-            props.activeChapter === 'passage' ? 'white' : props.colors.primary
+            props.activeChapter === 'passage' ? 'white' : props.primaryColor
           }
         />
         <Text
@@ -79,7 +77,7 @@ function ChapterSelect (props) {
               color:
                 props.activeChapter === 'passage'
                   ? 'white'
-                  : props.colors.primary,
+                  : props.primaryColor,
               fontFamily: props.font + '-black'
             }
           ]}
@@ -95,10 +93,10 @@ function ChapterSelect (props) {
         style={[
           styles.chapterSelect,
           {
-            borderColor: props.colors.primary,
+            borderColor: props.primaryColor,
             backgroundColor:
               props.activeChapter === 'fellowship'
-                ? props.colors.primary
+                ? props.primaryColor
                 : '#EFF2F4'
           }
         ]}
@@ -110,9 +108,7 @@ function ChapterSelect (props) {
           }
           size={25}
           color={
-            props.activeChapter === 'fellowship'
-              ? 'white'
-              : props.colors.primary
+            props.activeChapter === 'fellowship' ? 'white' : props.primaryColor
           }
         />
         <Text
@@ -122,7 +118,7 @@ function ChapterSelect (props) {
               color:
                 props.activeChapter === 'fellowship'
                   ? 'white'
-                  : props.colors.primary,
+                  : props.primaryColor,
               fontFamily: props.font + '-black'
             }
           ]}
@@ -135,10 +131,10 @@ function ChapterSelect (props) {
         style={[
           styles.chapterSelect,
           {
-            borderColor: props.colors.primary,
+            borderColor: props.primaryColor,
             backgroundColor:
               props.activeChapter === 'application'
-                ? props.colors.primary
+                ? props.primaryColor
                 : '#EFF2F4'
           }
         ]}
@@ -150,9 +146,7 @@ function ChapterSelect (props) {
           }
           size={25}
           color={
-            props.activeChapter === 'application'
-              ? 'white'
-              : props.colors.primary
+            props.activeChapter === 'application' ? 'white' : props.primaryColor
           }
         />
         <Text
@@ -162,7 +156,7 @@ function ChapterSelect (props) {
               color:
                 props.activeChapter === 'application'
                   ? 'white'
-                  : props.colors.primary,
+                  : props.primaryColor,
               fontFamily: props.font + '-black'
             }
           ]}
@@ -201,7 +195,7 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    colors: state.database[activeGroup.language].colors,
+    primaryColor: state.database[activeGroup.language].primaryColor,
     downloads: state.downloads,
     translations: state.database[activeGroup.language].translations,
     font: state.database[activeGroup.language].font

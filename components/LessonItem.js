@@ -84,7 +84,7 @@ function LessonItem (props) {
                 : null
             }
             size={30 * scaleMultiplier}
-            color={props.isComplete ? '#828282' : props.colors.primary}
+            color={props.isComplete ? '#828282' : props.primaryColor}
           />
         </View>
         <View style={styles.titleContainer}>
@@ -167,7 +167,7 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    colors: state.database[activeGroup.language].colors,
+    primaryColor: state.database[activeGroup.language].primaryColor,
     progress: state.appProgress,
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
