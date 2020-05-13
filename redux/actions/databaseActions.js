@@ -106,6 +106,7 @@ export function addLanguage (language) {
       .then(doc => {
         if (doc.exists) {
           dispatch(storeData(doc.data(), language))
+          console.log(doc.data())
 
           var totalProgressObject = {}
           var isFirstCallBackObject = {}
@@ -155,8 +156,8 @@ export function addLanguage (language) {
           // downloads a file from url into local storage
           function downloadSomething (source, fileName) {
             var downloadResumable = FileSystem.createDownloadResumable(
-              doc.data()[source],
-              FileSystem.documentDirectory + language + fileName,
+              doc.data().sources[source],
+              FileSystem.documentDirectory + language + '-' + fileName,
               {},
               callback
             )
@@ -168,11 +169,11 @@ export function addLanguage (language) {
           // downloads everything we need
           function downloadEverything () {
             return Promise.all([
-              downloadSomething('headerImageSource', 'header.png'),
-              downloadSomething('chapter1source', 'chapter1.mp3'),
-              downloadSomething('chapter3source', 'chapter3.mp3'),
-              downloadSomething('lesson1chapter1source', 'lesson1chapter1.mp3'),
-              downloadSomething('lesson1chapter3source', 'lesson1chapter3.mp3')
+              downloadSomething('header', 'header.png'),
+              downloadSomething('regular-chapter1', 'regular-chapter1.mp3'),
+              downloadSomething('regular-chapter3', 'regular-chapter3.mp3'),
+              downloadSomething('first-chapter1', 'first-chapter1.mp3'),
+              downloadSomething('first-chapter3', 'first-chapter3.mp3')
             ])
           }
 

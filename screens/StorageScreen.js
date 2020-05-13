@@ -168,7 +168,7 @@ function StorageScreen (props) {
               uri:
                 FileSystem.documentDirectory +
                 languageInstanceList.item.languageID +
-                'header.png'
+                '-header.png'
             }}
           />
           <Text

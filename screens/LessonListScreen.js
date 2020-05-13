@@ -76,7 +76,7 @@ function LessonListScreen (props) {
             uri:
               FileSystem.documentDirectory +
               props.activeGroup.language +
-              'header.png'
+              '-header.png'
           }}
         />
       ),

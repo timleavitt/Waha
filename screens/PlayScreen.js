@@ -70,9 +70,7 @@ function PlayScreen (props) {
   const albumArtData = [
     {
       key: '0',
-      type: 'text',
-      header: props.translations.questionsHeader,
-      body: props.translations.questionsBody
+      type: 'text'
     },
     {
       key: '1',
@@ -85,9 +83,7 @@ function PlayScreen (props) {
     },
     {
       key: '2',
-      type: 'text',
-      header: props.route.params.thisLesson.scriptureHeader,
-      body: props.route.params.thisLesson.scriptureText
+      type: 'text'
     }
   ]
 
@@ -97,31 +93,21 @@ function PlayScreen (props) {
     //set nav options
     props.navigation.setOptions(getNavOptions())
 
-    // set chapters 1 and 3 according to if we have a special case (first lesson, leadership questions, etc.)
-    if (props.route.params.thisLesson.chapter1and3Type === 'firstLesson') {
-      setChapter1Source(
-        FileSystem.documentDirectory +
-          props.activeGroup.language +
-          'lesson1chapter1.mp3'
-      )
-      setChapter3Source(
-        FileSystem.documentDirectory +
-          props.activeGroup.language +
-          'lesson1chapter3.mp3'
-      )
-      // regular
-    } else {
-      setChapter1Source(
-        FileSystem.documentDirectory +
-          props.activeGroup.language +
-          'chapter1.mp3'
-      )
-      setChapter3Source(
-        FileSystem.documentDirectory +
-          props.activeGroup.language +
-          'chapter3.mp3'
-      )
-    }
+    // set chapters 1 and 3 according the questions type of this lesson
+    setChapter1Source(
+      FileSystem.documentDirectory +
+        props.activeGroup.language +
+        '-' +
+        props.route.params.thisLesson.questionsType +
+        '-chapter1.mp3'
+    )
+    setChapter3Source(
+      FileSystem.documentDirectory +
+        props.activeGroup.language +
+        '-' +
+        props.route.params.thisLesson.questionsType +
+        '-chapter3.mp3'
+    )
 
     // check if chapter 2 is downloaded or downloading, and if neither, start to download it
     if (
@@ -467,7 +453,9 @@ function PlayScreen (props) {
             ]}
             data={
               item.key === '0'
-                ? props.activeDatabase.lessonQuestions
+                ? props.activeDatabase.questions[
+                    props.route.params.thisLesson.questionsType
+                  ]
                 : props.route.params.thisLesson.scripture
             }
             renderItem={renderTextContent}

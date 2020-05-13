@@ -25,11 +25,11 @@ function LanguageInstanceHeader (props) {
       contents => {
         console.log(contents)
         if (
-          !contents.includes(props.languageID + 'chapter1.mp3') ||
-          !contents.includes(props.languageID + 'chapter3.mp3') ||
-          !contents.includes(props.languageID + 'lesson1chapter1.mp3') ||
-          !contents.includes(props.languageID + 'lesson1chapter3.mp3') ||
-          !contents.includes(props.languageID + 'header.png')
+          !contents.includes(props.languageID + '-regular-chapter1.mp3') ||
+          !contents.includes(props.languageID + '-regular-chapter3.mp3') ||
+          !contents.includes(props.languageID + '-first-chapter1.mp3') ||
+          !contents.includes(props.languageID + '-first-chapter3.mp3') ||
+          !contents.includes(props.languageID + '-header.png')
         ) {
           deleteLanguageInstance()
         }
@@ -129,7 +129,7 @@ function LanguageInstanceHeader (props) {
         <Image
           style={styles.languageLogo}
           source={{
-            uri: FileSystem.documentDirectory + props.languageID + 'header.png'
+            uri: FileSystem.documentDirectory + props.languageID + '-header.png'
           }}
         />
       </View>
