@@ -1,68 +1,27 @@
 import React from 'react'
 import { scaleMultiplier } from '../constants'
-
-import { createStackNavigator } from '@react-navigation/stack'
+import SetScreen from '../screens/SetScreen'
 import { connect } from 'react-redux'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 
 const Tab = createMaterialTopTabNavigator()
 
-function TabNavigator (props) {
+function AddNewSetTabNavigator (props) {
   return (
     //global navigation options
     <Tab.Navigator
       initialRouteName='Core'
-      screenOptions={{
-        headerStyle: {
-          height: 90 * scaleMultiplier
-        },
-        gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
-        gestureResponseDistance: {
-          horizontal: 50 * scaleMultiplier,
-          vertical: 135
-        },
-        headerTitleAlign: 'center'
-      }}
+      swipeEnabled={false}
+      screenOptions={{}}
     >
       {/* Study Set Screen */}
-      <Tab.Screen
-        name='Set'
-        component={SetScreen}
-        options={{
-          headerStyle: {
-            backgroundColor: '#EAEEF0'
-          },
-          headerTitleAlign: 'center'
-        }}
-      />
+      <Tab.Screen name='core' component={SetScreen} />
 
       {/* Lesson List Screen */}
-      <Tab.Screen
-        name='LessonList'
-        component={LessonListScreen}
-        options={{
-          //gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
-          headerStyle: {
-            backgroundColor: '#F7F9FA'
-          },
-          headerTitleAlign: 'center'
-        }}
-      />
+      <Tab.Screen name='folder' component={SetScreen} options={{}} />
 
       {/* Play Screen */}
-      <Tab.Screen
-        name='Play'
-        component={PlayScreen}
-        options={{
-          headerStyle: {
-            backgroundColor: '#FFFFFF'
-          },
-          headerTitleStyle: {
-            color: '#82868D',
-            fontFamily: props.font + '-medium'
-          },
-          gestureEnabled: false
-        }}
-      />
+      <Tab.Screen name='toolkit' component={SetScreen} options={{}} />
     </Tab.Navigator>
   )
 }
@@ -80,4 +39,4 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(TabNavigator)
+export default connect(mapStateToProps)(AddNewSetTabNavigator)

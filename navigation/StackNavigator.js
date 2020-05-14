@@ -1,17 +1,20 @@
 import React from 'react'
+import { View, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import { scaleMultiplier } from '../constants'
+import * as FileSystem from 'expo-file-system'
 
 import LessonListScreen from '../screens/LessonListScreen'
 import PlayScreen from '../screens/PlayScreen'
-import SetScreen from '../screens/SetScreen'
 import GroupsScreen from '../screens/GroupsScreen'
 import AddNewGroupScreen from '../screens/AddNewGroupScreen'
 import AddNewLanguageScreen from '../screens/AddNewLanguageScreen'
 import EditGroupScreen from '../screens/EditGroupScreen'
 import StorageScreen from '../screens/StorageScreen'
+import VisibleSetsTabNavigator from '../navigation/VisibleSetsTabNavigator'
+import AddNewSetTabNavigator from '../navigation/AddNewSetTabNavigator'
 import { createStackNavigator } from '@react-navigation/stack'
 import { connect } from 'react-redux'
-
+import AvatarImage from '../components/AvatarImage'
 const Stack = createStackNavigator()
 
 function StackNavigator (props) {
@@ -33,11 +36,70 @@ function StackNavigator (props) {
     >
       {/* Study Set Screen */}
       <Stack.Screen
-        name='Set'
-        component={SetScreen}
+        name='Sets'
+        component={VisibleSetsTabNavigator}
         options={{
+          headerTitle: () => (
+            <Image
+              style={styles.headerImage}
+              source={{
+                uri:
+                  FileSystem.documentDirectory +
+                  props.activeGroup.language +
+                  '-header.png'
+              }}
+            />
+          ),
+          headerLeft: props.isRTL
+            ? () => (
+                <TouchableOpacity
+                  onPress={() => props.navigation.navigate('AddNewSet')}
+                >
+                  <Icon
+                    name='playlist-add'
+                    size={40 * scaleMultiplier}
+                    color='#82868D'
+                  />
+                </TouchableOpacity>
+              )
+            : () => (
+                <AvatarImage
+                  source={props.activeGroup.imageSource}
+                  size={40}
+                  onPress={() => props.navigation.toggleDrawer()}
+                  isActive={true}
+                />
+              ),
+          headerRight: props.isRTL
+            ? () => (
+                <AvatarImage
+                  source={props.activeGroup.imageSource}
+                  size={40}
+                  onPress={() => props.navigation.toggleDrawer()}
+                  isActive={true}
+                />
+              )
+            : () => (
+                <TouchableOpacity
+                  onPress={() => props.navigation.navigate('AddNewSet')}
+                >
+                  <Icon
+                    name='playlist-add'
+                    size={40 * scaleMultiplier}
+                    color='#82868D'
+                  />
+                </TouchableOpacity>
+              )
+        }}
+      />
+
+      <Stack.Screen
+        name='AddNewSet'
+        component={AddNewSetTabNavigator}
+        options={{
+          //gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
           headerStyle: {
-            backgroundColor: '#EAEEF0'
+            backgroundColor: '#F7F9FA'
           },
           headerTitleAlign: 'center'
         }}
@@ -146,6 +208,15 @@ function StackNavigator (props) {
   )
 }
 
+const styles = StyleSheet.create({
+  headerImage: {
+    resizeMode: 'contain',
+    width: 120,
+    height: 40,
+    alignSelf: 'center'
+  }
+})
+
 //// REDUX
 
 function mapStateToProps (state) {
@@ -155,7 +226,8 @@ function mapStateToProps (state) {
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    activeGroup: activeGroup
   }
 }
 

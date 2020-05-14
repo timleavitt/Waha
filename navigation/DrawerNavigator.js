@@ -25,8 +25,8 @@ function getGestureEnabled (route) {
       route.state.routes[route.state.index].name
     : // If state doesn't exist, we need to default to `screen` param if available, or the initial screen
       // In our case, it's "Feed" as that's the first screen inside the navigator
-      route.params?.screen || 'Set'
-  if (routeName === 'Set') return true
+      route.params?.screen || 'Sets'
+  if (routeName === 'Sets') return true
   else return false
 }
 

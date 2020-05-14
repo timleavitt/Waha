@@ -107,7 +107,8 @@ function SetItem (props) {
               }}
             >
               <SVG
-                name={'set' + props.thisSet.index}
+                // name={'set' + props.thisSet.index}
+                name={''}
                 width={
                   props.isSmall ? 60 * scaleMultiplier : 70 * scaleMultiplier
                 }

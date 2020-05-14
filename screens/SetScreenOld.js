@@ -7,19 +7,57 @@ import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 import { resumeDownload } from '../redux/actions/downloadActions'
 
-function CoreStorySetsScreen (props) {
+function SetScreen (props) {
   //// STUFF FOR TESTING
 
-  // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
-  //   console.log(contents)
-  // })
+  FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
+    console.log(contents)
+  })
   // console.log(scaleMultiplier)
 
   //// CONSTRUCTOR
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    props.navigation.setOptions(getNavOptions())
+  }, [props.isRTL, props.activeGroup])
 
   //// NAV OPTIONS
+
+  function getNavOptions () {
+    return {
+      headerTitle: () => (
+        <Image
+          style={styles.headerImage}
+          source={{
+            uri:
+              FileSystem.documentDirectory +
+              props.activeGroup.language +
+              '-header.png'
+          }}
+        />
+      ),
+      headerLeft: props.isRTL
+        ? () => <View></View>
+        : () => (
+            <AvatarImage
+              source={props.activeGroup.imageSource}
+              size={40}
+              onPress={() => props.navigation.toggleDrawer()}
+              isActive={true}
+            />
+          ),
+      headerRight: props.isRTL
+        ? () => (
+            <AvatarImage
+              source={props.activeGroup.imageSource}
+              size={40}
+              onPress={() => props.navigation.toggleDrawer()}
+              isActive={true}
+            />
+          )
+        : () => <View></View>
+    }
+  }
 
   //// RENDER
 
@@ -82,4 +120,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CoreStorySetsScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(SetScreen)

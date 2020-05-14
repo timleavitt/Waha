@@ -1,5 +1,12 @@
 import React, { useEffect } from 'react'
-import { View, FlatList, StyleSheet, Image, AsyncStorage } from 'react-native'
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  Image,
+  AsyncStorage,
+  Text
+} from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import SetItem from '../components/SetItem'
 import AvatarImage from '../components/AvatarImage'
@@ -10,54 +17,18 @@ import { resumeDownload } from '../redux/actions/downloadActions'
 function SetScreen (props) {
   //// STUFF FOR TESTING
 
-  FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
-    console.log(contents)
-  })
+  // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
+  //   console.log(contents)
+  // })
   // console.log(scaleMultiplier)
 
   //// CONSTRUCTOR
 
   useEffect(() => {
-    props.navigation.setOptions(getNavOptions())
-  }, [props.isRTL, props.activeGroup])
+    console.log(props.route.name)
+  }, [])
 
   //// NAV OPTIONS
-
-  function getNavOptions () {
-    return {
-      headerTitle: () => (
-        <Image
-          style={styles.headerImage}
-          source={{
-            uri:
-              FileSystem.documentDirectory +
-              props.activeGroup.language +
-              '-header.png'
-          }}
-        />
-      ),
-      headerLeft: props.isRTL
-        ? () => <View></View>
-        : () => (
-            <AvatarImage
-              source={props.activeGroup.imageSource}
-              size={40}
-              onPress={() => props.navigation.toggleDrawer()}
-              isActive={true}
-            />
-          ),
-      headerRight: props.isRTL
-        ? () => (
-            <AvatarImage
-              source={props.activeGroup.imageSource}
-              size={40}
-              onPress={() => props.navigation.toggleDrawer()}
-              isActive={true}
-            />
-          )
-        : () => <View></View>
-    }
-  }
 
   //// RENDER
 
@@ -78,8 +49,11 @@ function SetScreen (props) {
   return (
     <View style={styles.screen}>
       <FlatList
-        data={props.activeDatabase.sets}
+        data={props.activeDatabase.sets.filter(
+          set => set.category === props.route.name
+        )}
         renderItem={renderStudySetItem}
+        ListEmptyComponent={<Text>NO SETS HERE BUDDY</Text>}
       />
     </View>
   )
