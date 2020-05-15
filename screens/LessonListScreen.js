@@ -214,7 +214,11 @@ function LessonListScreen (props) {
   return (
     <View style={styles.screen}>
       <View style={styles.studySetItemContainer}>
-        <SetItem thisSet={props.route.params.thisSet} isSmall={true} />
+        <SetItem
+          thisSet={props.route.params.thisSet}
+          isSmall={true}
+          mode='small'
+        />
       </View>
       <FlatList
         data={props.activeDatabase.lessons.filter(

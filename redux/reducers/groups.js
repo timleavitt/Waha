@@ -4,7 +4,8 @@ import {
   TOGGLE_COMPLETE,
   RESET_PROGRESS,
   EDIT_GROUP,
-  SET_BOOKMARK
+  SET_BOOKMARK,
+  ADD_SET
 } from '../actions/groupsActions'
 
 export function groups (state = [], action) {
@@ -19,7 +20,8 @@ export function groups (state = [], action) {
           progress: [],
           language: action.language,
           imageSource: action.imageSource,
-          bookmark: 1
+          bookmark: 1,
+          addedSets: []
         }
       ]
     case EDIT_GROUP:
@@ -54,6 +56,7 @@ export function groups (state = [], action) {
         }
         return group
       })
+
     case SET_BOOKMARK:
       var thisGroup = state.filter(group => group.name === action.groupName)[0]
       var bookmarkIndex = 0
@@ -77,6 +80,15 @@ export function groups (state = [], action) {
         }
         return group
       })
+
+    case ADD_SET:
+      return state.map(group => {
+        if (group.name === action.groupName) {
+          return { ...group, addedSets: [...group.addedSets, action.setID] }
+        }
+        return group
+      })
+
     default:
       return state
   }

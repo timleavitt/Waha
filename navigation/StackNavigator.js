@@ -10,11 +10,11 @@ import AddNewGroupScreen from '../screens/AddNewGroupScreen'
 import AddNewLanguageScreen from '../screens/AddNewLanguageScreen'
 import EditGroupScreen from '../screens/EditGroupScreen'
 import StorageScreen from '../screens/StorageScreen'
-import VisibleSetsTabNavigator from '../navigation/VisibleSetsTabNavigator'
-import AddNewSetTabNavigator from '../navigation/AddNewSetTabNavigator'
+import SetTabNavigator from './SetTabNavigator'
 import { createStackNavigator } from '@react-navigation/stack'
 import { connect } from 'react-redux'
 import AvatarImage from '../components/AvatarImage'
+
 const Stack = createStackNavigator()
 
 function StackNavigator (props) {
@@ -33,11 +33,12 @@ function StackNavigator (props) {
         },
         headerTitleAlign: 'center'
       }}
+      mode='modal'
     >
       {/* Study Set Screen */}
       <Stack.Screen
         name='Sets'
-        component={VisibleSetsTabNavigator}
+        component={SetTabNavigator}
         options={{
           headerTitle: () => (
             <Image
@@ -51,17 +52,7 @@ function StackNavigator (props) {
             />
           ),
           headerLeft: props.isRTL
-            ? () => (
-                <TouchableOpacity
-                  onPress={() => props.navigation.navigate('AddNewSet')}
-                >
-                  <Icon
-                    name='playlist-add'
-                    size={40 * scaleMultiplier}
-                    color='#82868D'
-                  />
-                </TouchableOpacity>
-              )
+            ? () => <View></View>
             : () => (
                 <AvatarImage
                   source={props.activeGroup.imageSource}
@@ -79,29 +70,7 @@ function StackNavigator (props) {
                   isActive={true}
                 />
               )
-            : () => (
-                <TouchableOpacity
-                  onPress={() => props.navigation.navigate('AddNewSet')}
-                >
-                  <Icon
-                    name='playlist-add'
-                    size={40 * scaleMultiplier}
-                    color='#82868D'
-                  />
-                </TouchableOpacity>
-              )
-        }}
-      />
-
-      <Stack.Screen
-        name='AddNewSet'
-        component={AddNewSetTabNavigator}
-        options={{
-          //gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
-          headerStyle: {
-            backgroundColor: '#F7F9FA'
-          },
-          headerTitleAlign: 'center'
+            : () => <View></View>
         }}
       />
 

@@ -5,6 +5,7 @@ export const DELETE_GROUP = 'DELETE_GROUP'
 export const TOGGLE_COMPLETE = 'TOGGLE_COMPLETE'
 export const SET_BOOKMARK = 'SET_BOOKMARK'
 export const RESET_PROGRESS = 'RESET_PROGRESS'
+export const ADD_SET = 'ADD_SET'
 
 export function changeActiveGroup (groupName) {
   return {
@@ -57,5 +58,13 @@ export function resetProgress (groupName) {
   return {
     type: RESET_PROGRESS,
     groupName
+  }
+}
+
+export function addSet (groupName, setID) {
+  return {
+    type: ADD_SET,
+    groupName,
+    setID
   }
 }

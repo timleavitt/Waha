@@ -1,14 +1,16 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   View,
   FlatList,
   StyleSheet,
   Image,
   AsyncStorage,
-  Text
+  Text,
+  TouchableOpacity
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import SetItem from '../components/SetItem'
+import AddNewSetModal from '../components/AddNewSetModal'
 import AvatarImage from '../components/AvatarImage'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
@@ -22,10 +24,20 @@ function SetScreen (props) {
   // })
   // console.log(scaleMultiplier)
 
+  //// STATE
+
+  // shows the add new set modal
+  const [showAddNewSetModal, setShowAddNewSetModal] = useState(false)
+  const [addNewSetLabel, setAddNewSetLabel] = useState('')
   //// CONSTRUCTOR
 
   useEffect(() => {
-    console.log(props.route.name)
+    // console.log(props.route.name)
+    if (props.route.name === 'core') {
+      setAddNewSetLabel(props.translations.labels.addNewCoreStorySet)
+    } else if (props.route.name === 'topical') {
+      setAddNewSetLabel(props.translations.labels.addNewTopicalSet)
+    }
   }, [])
 
   //// NAV OPTIONS
@@ -37,6 +49,7 @@ function SetScreen (props) {
       <SetItem
         thisSet={setList.item}
         isSmall={false}
+        mode='shown'
         onSetSelect={() =>
           props.navigation.navigate('LessonList', {
             thisSet: setList.item
@@ -53,7 +66,36 @@ function SetScreen (props) {
           set => set.category === props.route.name
         )}
         renderItem={renderStudySetItem}
-        ListEmptyComponent={<Text>NO SETS HERE BUDDY</Text>}
+        ListFooterComponent={
+          <TouchableOpacity
+            style={[
+              styles.addNewSetContainer,
+              { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+            ]}
+            onPress={() => setShowAddNewSetModal(true)}
+          >
+            <Icon
+              name='plus-filled'
+              size={50 * scaleMultiplier}
+              color='#9FA5AD'
+              style={styles.addNewSetIcon}
+            />
+            <Text
+              style={[
+                styles.addNewSetText,
+                { fontFamily: props.font + '-regular' }
+              ]}
+            >
+              {addNewSetLabel}
+            </Text>
+          </TouchableOpacity>
+        }
+      />
+      <AddNewSetModal
+        isVisible={showAddNewSetModal}
+        hideModal={() => setShowAddNewSetModal(false)}
+        category={props.route.name}
+        goNested={() => props.navigation.navigate('Sets')}
       />
     </View>
   )
@@ -71,6 +113,20 @@ const styles = StyleSheet.create({
     width: 120,
     height: 40,
     alignSelf: 'center'
+  },
+  addNewSetContainer: {
+    width: '100%',
+    height: 80 * scaleMultiplier,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    flexDirection: 'row'
+  },
+  addNewSetIcon: {
+    marginHorizontal: 25
+  },
+  addNewSetText: {
+    fontSize: 14 * scaleMultiplier,
+    color: '#9FA5AD'
   }
 })
 
@@ -83,7 +139,9 @@ function mapStateToProps (state) {
   return {
     activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    translations: state.database[activeGroup.language].translations,
+    font: state.database[activeGroup.language].font
   }
 }
 function mapDispatchToProps (dispatch) {

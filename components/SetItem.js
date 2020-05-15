@@ -18,14 +18,187 @@ function SetItem (props) {
   // keeps track of whether the set is fully completed or not
   const [fullyCompleted, setFullyCompleted] = useState(false)
 
+  // dynamic set components
+  const [icon, setIcon] = useState()
+  const [info, setInfo] = useState()
+  const [action, setAction] = useState()
+
   //// CONSTRUCTOR
 
   useEffect(() => {
+    setProgress()
+
+    switch (props.mode) {
+      case 'shown':
+        setIcon(
+          <View style={styles.iconContainer}>
+            <AnimatedCircularProgress
+              size={85 * scaleMultiplier}
+              width={8 * scaleMultiplier}
+              fill={(numCompleted / numLessons) * 100}
+              tintColor={
+                fullyCompleted ? props.primaryColor + '50' : props.primaryColor
+              }
+              rotation={0}
+              backgroundColor='#FFFFFF'
+            >
+              {() => (
+                <View
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                >
+                  <SVG
+                    // name={'set' + props.thisSet.index}
+                    name={''}
+                    width={70 * scaleMultiplier}
+                    height={70 * scaleMultiplier}
+                    fill={fullyCompleted ? '#9FA5AD' : '#1D1E20'}
+                  />
+                </View>
+              )}
+            </AnimatedCircularProgress>
+            <View style={styles.percentageTextContainer}>
+              <Text
+                style={[
+                  styles.percentageText,
+                  { fontFamily: props.font + '-regular' }
+                ]}
+              >
+                {Math.round((numCompleted / numLessons) * 100)}%
+              </Text>
+            </View>
+          </View>
+        )
+        setAction(
+          fullyCompleted ? (
+            <View style={styles.actionContainer}>
+              <Icon
+                name='check-outline'
+                size={30 * scaleMultiplier}
+                color='#828282'
+              />
+            </View>
+          ) : (
+            <View style={styles.actionContainer}>
+              <Icon
+                name={props.isRTL ? 'triangle-left' : 'triangle-right'}
+                size={37 * scaleMultiplier}
+                color='#828282'
+              />
+            </View>
+          )
+        )
+        break
+      case 'small':
+        setIcon(
+          <View style={styles.iconContainer}>
+            <AnimatedCircularProgress
+              size={70 * scaleMultiplier}
+              width={5 * scaleMultiplier}
+              fill={(numCompleted / numLessons) * 100}
+              tintColor={
+                fullyCompleted ? props.primaryColor + '50' : props.primaryColor
+              }
+              rotation={0}
+              backgroundColor='#FFFFFF'
+            >
+              {() => (
+                <View
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                >
+                  <SVG
+                    // name={'set' + props.thisSet.index}
+                    name={''}
+                    width={60 * scaleMultiplier}
+                    height={60 * scaleMultiplier}
+                    fill={fullyCompleted ? '#9FA5AD' : '#1D1E20'}
+                  />
+                </View>
+              )}
+            </AnimatedCircularProgress>
+            <View style={styles.percentageTextContainer}>
+              <Text
+                style={[
+                  styles.percentageText,
+                  { fontFamily: props.font + '-regular' }
+                ]}
+              >
+                {Math.round((numCompleted / numLessons) * 100)}%
+              </Text>
+            </View>
+          </View>
+        )
+        setAction(null)
+        break
+      case 'hidden':
+        setIcon(
+          <View style={[styles.iconContainer, { backgroundColor: '#1D1E20' }]}>
+            <SVG
+              // name={'set' + props.thisSet.index}
+              name={''}
+              width={101 * scaleMultiplier}
+              height={101 * scaleMultiplier}
+              fill='#FFFFFF'
+            />
+          </View>
+        )
+        setAction(
+          <View style={styles.actionContainer}>
+            <Icon
+              name='playlist-add'
+              size={30 * scaleMultiplier}
+              color={props.primaryColor}
+            />
+          </View>
+        )
+        break
+      case 'folder':
+        setIcon(
+          <View style={[styles.iconContainer, { backgroundColor: '#1D1E20' }]}>
+            <SVG
+              // name={'set' + props.thisSet.index}
+              name={''}
+              width={101 * scaleMultiplier}
+              height={101 * scaleMultiplier}
+              fill='#FFFFFF'
+            />
+          </View>
+        )
+        setAction(
+          <View style={styles.actionContainer}>
+            <Icon
+              name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+              size={40 * scaleMultiplier}
+              color={props.primaryColor}
+            />
+          </View>
+        )
+        break
+    }
+  }, [numCompleted, fullyCompleted])
+
+  useEffect(() => {
+    setProgress()
+  }, [props.activeProgress])
+
+  //// FUNCTIONS
+
+  function setProgress () {
     for (const set of props.activeDatabase.sets) {
       if (set.id === props.thisSet.id) {
         setNumLessons(set.length)
       }
     }
+
     setNumCompleted(0)
     for (const lessonIndex of props.activeProgress) {
       if (
@@ -36,47 +209,14 @@ function SetItem (props) {
         setNumCompleted(numCompleted => numCompleted + 1)
       }
     }
-  }, [props.activeProgress])
-
-  //// FUNCTIONS
-
-  // changes a set as completed
-  useEffect(() => {
     if (numCompleted === numLessons) {
       setFullyCompleted(true)
     } else {
       setFullyCompleted(false)
     }
-  }, [numCompleted])
+  }
 
   //// RENDER
-
-  // render the percentage text conditionally as we don't need it for the small set items
-  // note: small item appears on lesson list screen
-  var percentageText = props.isSmall ? null : (
-    <View style={styles.percentageTextContainer}>
-      <Text
-        style={[styles.percentageText, { fontFamily: props.font + '-regular' }]}
-      >
-        {Math.round((numCompleted / numLessons) * 100)}%
-      </Text>
-    </View>
-  )
-
-  // render the triangle icon conditionally as we don't need it for small set items
-  var triangleIcon = props.isSmall ? null : fullyCompleted ? (
-    <View style={styles.iconContainer}>
-      <Icon name='check-outline' size={30 * scaleMultiplier} color='#828282' />
-    </View>
-  ) : (
-    <View style={styles.iconContainer}>
-      <Icon
-        name={props.isRTL ? 'triangle-left' : 'triangle-right'}
-        size={37 * scaleMultiplier}
-        color='#828282'
-      />
-    </View>
-  )
 
   return (
     <TouchableOpacity
@@ -86,42 +226,7 @@ function SetItem (props) {
       ]}
       onPress={props.onSetSelect}
     >
-      <View style={styles.progressContainer}>
-        <AnimatedCircularProgress
-          size={props.isSmall ? 70 * scaleMultiplier : 85 * scaleMultiplier}
-          width={props.isSmall ? 5 * scaleMultiplier : 8 * scaleMultiplier}
-          fill={(numCompleted / numLessons) * 100}
-          tintColor={
-            fullyCompleted ? props.primaryColor + '50' : props.primaryColor
-          }
-          rotation={0}
-          backgroundColor='#FFFFFF'
-        >
-          {() => (
-            <View
-              style={{
-                width: '100%',
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <SVG
-                // name={'set' + props.thisSet.index}
-                name={''}
-                width={
-                  props.isSmall ? 60 * scaleMultiplier : 70 * scaleMultiplier
-                }
-                height={
-                  props.isSmall ? 60 * scaleMultiplier : 70 * scaleMultiplier
-                }
-                fill={fullyCompleted ? '#9FA5AD' : '#1D1E20'}
-              />
-            </View>
-          )}
-        </AnimatedCircularProgress>
-        {percentageText}
-      </View>
+      {icon}
       <View style={styles.titleContainer}>
         <Text
           style={{
@@ -152,7 +257,7 @@ function SetItem (props) {
           {props.thisSet.title}
         </Text>
       </View>
-      {triangleIcon}
+      {action}
     </TouchableOpacity>
   )
 }
@@ -163,11 +268,12 @@ const styles = StyleSheet.create({
   studySetItem: {
     flexDirection: 'row',
     flex: 1,
-    height: 128 * scaleMultiplier,
-    margin: 5,
+    height: 101 * scaleMultiplier,
+    marginHorizontal: 5,
+    marginTop: 10,
     justifyContent: 'center'
   },
-  progressContainer: {
+  iconContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
     margin: 5
@@ -188,7 +294,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 5
   },
-  iconContainer: {
+  actionContainer: {
     justifyContent: 'center',
     marginRight: 15
   }
