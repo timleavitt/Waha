@@ -10,18 +10,19 @@ import AddNewGroupScreen from '../screens/AddNewGroupScreen'
 import AddNewLanguageScreen from '../screens/AddNewLanguageScreen'
 import EditGroupScreen from '../screens/EditGroupScreen'
 import StorageScreen from '../screens/StorageScreen'
-import SetTabNavigator from './SetTabNavigator'
+import SetTabNavigator from './SetTabs'
 import { createStackNavigator } from '@react-navigation/stack'
 import { connect } from 'react-redux'
 import AvatarImage from '../components/AvatarImage'
+import SetsRoot from './SetsRoot'
 
 const Stack = createStackNavigator()
 
-function StackNavigator (props) {
+function MainStack (props) {
   return (
     //global navigation options
     <Stack.Navigator
-      initialRouteName='StudySet'
+      initialRouteName='SetsRoot'
       screenOptions={{
         headerStyle: {
           height: 90 * scaleMultiplier
@@ -33,45 +34,13 @@ function StackNavigator (props) {
         },
         headerTitleAlign: 'center'
       }}
-      mode='modal'
+      mode='card'
     >
       {/* Study Set Screen */}
       <Stack.Screen
-        name='Sets'
-        component={SetTabNavigator}
-        options={{
-          headerTitle: () => (
-            <Image
-              style={styles.headerImage}
-              source={{
-                uri:
-                  FileSystem.documentDirectory +
-                  props.activeGroup.language +
-                  '-header.png'
-              }}
-            />
-          ),
-          headerLeft: props.isRTL
-            ? () => <View></View>
-            : () => (
-                <AvatarImage
-                  source={props.activeGroup.imageSource}
-                  size={40}
-                  onPress={() => props.navigation.toggleDrawer()}
-                  isActive={true}
-                />
-              ),
-          headerRight: props.isRTL
-            ? () => (
-                <AvatarImage
-                  source={props.activeGroup.imageSource}
-                  size={40}
-                  onPress={() => props.navigation.toggleDrawer()}
-                  isActive={true}
-                />
-              )
-            : () => <View></View>
-        }}
+        name='SetsRoot'
+        component={SetsRoot}
+        options={{ headerShown: false }}
       />
 
       {/* Lesson List Screen */}
@@ -200,4 +169,4 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(StackNavigator)
+export default connect(mapStateToProps)(MainStack)
