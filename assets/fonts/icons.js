@@ -38,7 +38,7 @@ const glyphMap = {
   description: '\uea24',
   'error-filled': '\uea25',
   'error-outline': '\uea26',
-  'record: ntuent': '\uea27',
+  record: '\uea27',
   'skip-forward': '\uea28',
   'fullscreen-enter': '\uea29',
   'fullscreen-exit': '\uea2a',

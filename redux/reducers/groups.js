@@ -21,7 +21,8 @@ export function groups (state = [], action) {
           language: action.language,
           imageSource: action.imageSource,
           bookmark: 1,
-          addedSets: []
+          addedSets: [action.language + '01', action.language + '02'],
+          showToolkit: false
         }
       ]
     case EDIT_GROUP:

@@ -55,13 +55,9 @@ function WahaDrawer (props) {
                onPress={() => {}}
             /> */}
           <DrawerItem
-            iconName='email'
-            text={props.translations.navigation.drawer.feedback}
-            onPress={() =>
-              openBrowser(
-                'https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif'
-              )
-            }
+            iconName='record'
+            text={props.translations.navigation.drawer.toolkit}
+            onPress={() => props.navigation.navigate('ToolkitEnable')}
           />
           <DrawerItem
             iconName='storage'
@@ -76,7 +72,7 @@ function WahaDrawer (props) {
         <View style={styles.smallDrawerItemsContainer}>
           <SmallDrawerItem
             onPress={() => {}}
-            label={props.translations.navigation.drawer.coaching}
+            label={props.translations.navigation.drawer.feedback}
           />
           <SmallDrawerItem
             onPress={() =>

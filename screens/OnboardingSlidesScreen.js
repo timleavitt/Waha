@@ -15,10 +15,7 @@ import {
   changeLanguage
 } from '../redux/actions/databaseActions'
 import { connect } from 'react-redux'
-import {
-  initializeGroup,
-  changeActiveGroup
-} from '../redux/actions/groupsActions'
+import { createGroup, changeActiveGroup } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
 
 function OnboardingSlidesScreen (props) {
@@ -267,8 +264,8 @@ function mapDispatchToProps (dispatch) {
     addLanguage: language => dispatch(addLanguage(language)),
     changeLanguage: language => dispatch(changeLanguage(language)),
     setFinishedOnboarding: toSet => dispatch(setFinishedOnboarding(toSet)),
-    initializeGroup: (groupName, language, imageSource) =>
-      dispatch(initializeGroup(groupName, language, imageSource)),
+    createGroup: (groupName, language, imageSource) =>
+      dispatch(createGroup(groupName, language, imageSource)),
     changeActiveGroup: name => {
       dispatch(changeActiveGroup(name))
     }

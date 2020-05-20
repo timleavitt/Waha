@@ -11,7 +11,7 @@ import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
 import * as ImagePicker from 'expo-image-picker'
 import { connect } from 'react-redux'
-import { initializeGroup } from '../redux/actions/groupsActions'
+import { createGroup } from '../redux/actions/groupsActions'
 import WahaModal from '../components/WahaModal'
 import ModalButton from '../components/ModalButton'
 import AvatarImage from '../components/AvatarImage'
@@ -79,11 +79,7 @@ function AddNewGroupScreen (props) {
       return
     }
 
-    props.initializeGroup(
-      groupName,
-      props.route.params.languageID,
-      avatarSource
-    )
+    props.createGroup(groupName, props.route.params.languageID, avatarSource)
     props.navigation.goBack()
   }
 
@@ -286,8 +282,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    initializeGroup: (groupName, language, imageSource) =>
-      dispatch(initializeGroup(groupName, language, imageSource))
+    createGroup: (groupName, language, imageSource) =>
+      dispatch(createGroup(groupName, language, imageSource))
   }
 }
 
