@@ -141,12 +141,20 @@ function SetItem (props) {
         break
       case 'hidden':
         setIcon(
-          <View style={[styles.iconContainer, { backgroundColor: '#1D1E20' }]}>
+          <View
+            style={[
+              styles.iconContainer,
+              {
+                backgroundColor: '#1D1E20',
+                borderRadius: (101 * scaleMultiplier) / 2
+              }
+            ]}
+          >
             <SVG
               // name={'set' + props.thisSet.index}
               name={''}
-              width={101 * scaleMultiplier}
-              height={101 * scaleMultiplier}
+              width={80 * scaleMultiplier}
+              height={80 * scaleMultiplier}
               fill='#FFFFFF'
             />
           </View>
@@ -163,14 +171,32 @@ function SetItem (props) {
         break
       case 'folder':
         setIcon(
-          <View style={[styles.iconContainer, { backgroundColor: '#1D1E20' }]}>
-            <SVG
-              // name={'set' + props.thisSet.index}
-              name={''}
-              width={101 * scaleMultiplier}
-              height={101 * scaleMultiplier}
-              fill='#FFFFFF'
-            />
+          <View
+            style={{
+              backgroundColor: '#1D1E20',
+              width: 101 * scaleMultiplier,
+              height: 101 * scaleMultiplier
+            }}
+          >
+            <View
+              style={[
+                styles.iconContainer,
+                {
+                  //backgroundColor: '#1D1E20'
+                  overflow: 'hidden',
+                  borderRadius: (101 * scaleMultiplier) / 2,
+                  margin: 0
+                }
+              ]}
+            >
+              <SVG
+                // name={'set' + props.thisSet.index}
+                name={''}
+                width={80 * scaleMultiplier}
+                height={80 * scaleMultiplier}
+                fill='#FFFFFF'
+              />
+            </View>
           </View>
         )
         setAction(
@@ -269,19 +295,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     height: 101 * scaleMultiplier,
-    marginHorizontal: 5,
-    marginTop: 10,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginVertical: 2
   },
   iconContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
-    margin: 5
+    alignItems: 'center',
+    // padding: 5,
+    width: 101 * scaleMultiplier,
+    height: 101 * scaleMultiplier
   },
   percentageTextContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 5
+    justifyContent: 'center'
   },
   percentageText: {
     color: '#9FA5AD',

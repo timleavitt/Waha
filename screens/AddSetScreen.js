@@ -11,10 +11,13 @@ import SetItem from '../components/SetItem'
 import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
 import { addSet } from '../redux/actions/groupsActions'
+import BackButton from '../components/BackButton'
+import SnackBar from 'react-native-snackbar-component'
 
 function WahaModal (props) {
   const [setItemMode, setSetItemMode] = useState('')
   const [onPress, setOnPress] = useState(() => {})
+  const [showSnackbar, setShowSnackbar] = useState(false)
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
@@ -25,7 +28,46 @@ function WahaModal (props) {
       title:
         props.route.params.category === 'core'
           ? props.translations.labels.addNewCoreStorySet
-          : props.translations.labels.addNewTopicalSet
+          : props.translations.labels.addNewTopicalSet,
+      headerLeft:
+        props.route.params.category === 'topical'
+          ? props.isRTL
+            ? () => <View></View>
+            : () => <BackButton onPress={() => props.navigation.goBack()} />
+          : props.isRTL
+          ? () => <View></View>
+          : () => (
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  width: 100,
+                  justifyContent: props.isRTL ? 'flex-end' : 'flex-start'
+                }}
+                onPress={() => props.navigation.goBack()}
+              >
+                <Icon
+                  name='cancel-filled'
+                  size={45 * scaleMultiplier}
+                  color='#3A3C3F'
+                />
+              </TouchableOpacity>
+            ),
+      headerRight:
+        props.route.params.category === 'topical'
+          ? props.isRTL
+            ? () => <BackButton onPress={() => props.navigation.goBack()} />
+            : () => <View></View>
+          : props.isRTL
+          ? () => (
+              <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                <Icon
+                  name='cancel-filled'
+                  size={45 * scaleMultiplier}
+                  color='#3A3C3F'
+                />
+              </TouchableOpacity>
+            )
+          : () => <View></View>
     }
   }
 
@@ -37,15 +79,18 @@ function WahaModal (props) {
         isSmall={false}
         mode={props.route.params.category === 'folder' ? 'folder' : 'hidden'}
         onSetSelect={
+          // if we're in a folder, we want to navigate to the sets within that folder
           props.route.params.category === 'folder'
             ? () =>
                 props.navigation.navigate('AddSetFolder', {
                   category: 'topical',
                   folder: setList.item.subcategory
                 })
-            : () => {
+            : // otherwise, add the set
+              () => {
                 props.addSet(props.activeGroup.name, setList.item.id)
-                props.navigation.goBack()
+                setShowSnackbar(true)
+                setTimeout(() => setShowSnackbar(false), 2000)
               }
         }
       />
@@ -66,6 +111,31 @@ function WahaModal (props) {
                 .filter(set => !props.activeGroup.addedSets.includes(set.id))
         }
         renderItem={renderStudySetItem}
+        ListEmptyComponent={
+          <View style={{ width: '100%', margin: 10 }}>
+            <Text
+              style={{
+                fontFamily: props.font + '-regular',
+                color: '#9FA5AD',
+                fontSize: 14 * scaleMultiplier,
+                textAlign: 'center'
+              }}
+            >
+              {props.translations.labels.noMoreSets}
+            </Text>
+          </View>
+        }
+      />
+      <SnackBar
+        visible={showSnackbar}
+        textMessage={props.translations.labels.setAdded}
+        messageStyle={{
+          color: '#FFFFFF',
+          fontSize: 24 * scaleMultiplier,
+          fontFamily: props.font + '-black',
+          textAlign: 'center'
+        }}
+        backgroundColor='#60C239'
       />
     </View>
   )

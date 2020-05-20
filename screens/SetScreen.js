@@ -28,14 +28,18 @@ function SetScreen (props) {
 
   // shows the add new set modal
   const [addNewSetLabel, setAddNewSetLabel] = useState('')
+  const [setCategory, setSetCategory] = useState('')
+
   //// CONSTRUCTOR
 
   useEffect(() => {
     // console.log(props.route.name)
-    if (props.route.name === 'core') {
+    if (props.route.name === 'Core') {
       setAddNewSetLabel(props.translations.labels.addNewCoreStorySet)
-    } else if (props.route.name === 'topical') {
+      setSetCategory('core')
+    } else if (props.route.name === 'Topical') {
       setAddNewSetLabel(props.translations.labels.addNewTopicalSet)
+      setSetCategory('topical')
     }
   }, [])
 
@@ -61,9 +65,22 @@ function SetScreen (props) {
   return (
     <View style={styles.screen}>
       <FlatList
-        data={props.activeDatabase.sets
-          .filter(set => set.category === props.route.name)
-          .filter(set => props.activeGroup.addedSets.includes(set.id))}
+        data={
+          props.route.name === 'Topical'
+            ? // if we're displaying topical sets, display them in the order added
+              props.activeDatabase.sets
+                .filter(set => set.category === setCategory)
+                .filter(set => props.activeGroup.addedSets.includes(set.id))
+                .sort(
+                  (a, b) =>
+                    props.activeGroup.addedSets.indexOf(a.id) -
+                    props.activeGroup.addedSets.indexOf(b.id)
+                )
+            : // otherwise, display them in numerical order
+              props.activeDatabase.sets
+                .filter(set => set.category === setCategory)
+                .filter(set => props.activeGroup.addedSets.includes(set.id))
+        }
         renderItem={renderStudySetItem}
         ListFooterComponent={
           <TouchableOpacity
@@ -72,10 +89,10 @@ function SetScreen (props) {
               { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
             ]}
             onPress={() =>
-              props.navigation.navigate('AddSetNavigator', {
+              props.navigation.navigate('AddSetStack', {
                 screen: 'AddSet',
                 params: {
-                  category: props.route.name === 'core' ? 'core' : 'folder'
+                  category: setCategory === 'core' ? 'core' : 'folder'
                 }
               })
             }
@@ -136,6 +153,7 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
+  console.log(activeGroup)
   return {
     activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,

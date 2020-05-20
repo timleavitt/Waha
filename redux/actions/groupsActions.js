@@ -23,6 +23,14 @@ export function createGroup (groupName, language, imageSource) {
   }
 }
 
+export function initializeGroup (groupName, language, imageSource) {
+  return dispatch => {
+    dispatch(createGroup(groupName, language, imageSource))
+    dispatch(addSet(groupName, language + '01'))
+    dispatch(addSet(groupName, language + '02'))
+  }
+}
+
 export function editGroup (oldGroupName, newGroupName, imageSource) {
   return {
     type: EDIT_GROUP,

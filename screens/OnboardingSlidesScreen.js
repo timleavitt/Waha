@@ -15,7 +15,10 @@ import {
   changeLanguage
 } from '../redux/actions/databaseActions'
 import { connect } from 'react-redux'
-import { createGroup, changeActiveGroup } from '../redux/actions/groupsActions'
+import {
+  initializeGroup,
+  changeActiveGroup
+} from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
 
 function OnboardingSlidesScreen (props) {
@@ -99,7 +102,6 @@ function OnboardingSlidesScreen (props) {
   // tells redux that we're ready to go to loading screen once onboarding is finished
   function finishOnboarding () {
     props.setFinishedOnboarding(true)
-    props.navigation.navigate('Loading')
   }
 
   //// RENDER
@@ -265,8 +267,8 @@ function mapDispatchToProps (dispatch) {
     addLanguage: language => dispatch(addLanguage(language)),
     changeLanguage: language => dispatch(changeLanguage(language)),
     setFinishedOnboarding: toSet => dispatch(setFinishedOnboarding(toSet)),
-    createGroup: (groupName, language, imageSource) =>
-      dispatch(createGroup(groupName, language, imageSource)),
+    initializeGroup: (groupName, language, imageSource) =>
+      dispatch(initializeGroup(groupName, language, imageSource)),
     changeActiveGroup: name => {
       dispatch(changeActiveGroup(name))
     }

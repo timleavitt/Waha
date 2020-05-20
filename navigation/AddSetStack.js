@@ -24,42 +24,14 @@ function AddSetStack (props) {
         name='AddSet'
         component={AddSetScreen}
         options={{
-          title: '',
-          headerLeft: props.isRTL
-            ? () => <View></View>
-            : () => (
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                  <Icon name='cancel' size={50} color='#3A3C3F' />
-                </TouchableOpacity>
-              ),
-          headerRight: props.isRTL
-            ? () => (
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                  <Icon name='cancel' size={50} color='#3A3C3F' />
-                </TouchableOpacity>
-              )
-            : () => <View></View>
+          title: ''
         }}
       />
       <Stack.Screen
         name='AddSetFolder'
         component={AddSetScreen}
         options={{
-          title: '',
-          headerLeft: props.isRTL
-            ? () => <View></View>
-            : () => (
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                  <Icon name='arrow-left' size={50} color='#3A3C3F' />
-                </TouchableOpacity>
-              ),
-          headerRight: props.isRTL
-            ? () => (
-                <TouchableOpacity onPress={() => props.navigation.pop()}>
-                  <Icon name='arrow-right' size={50} color='#3A3C3F' />
-                </TouchableOpacity>
-              )
-            : () => <View></View>
+          title: ''
         }}
       />
     </Stack.Navigator>

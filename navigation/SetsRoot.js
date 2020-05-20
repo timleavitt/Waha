@@ -62,7 +62,7 @@ function SetsRoot (props) {
         }}
       />
       <Stack.Screen
-        name='AddSet'
+        name='AddSetStack'
         component={AddSetStack}
         options={{
           headerShown: false
