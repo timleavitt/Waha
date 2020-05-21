@@ -6,7 +6,9 @@ import {
   Image,
   AsyncStorage,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Clipboard,
+  Alert
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import SetItem from '../components/SetItem'
@@ -16,6 +18,7 @@ import { scaleMultiplier } from '../constants'
 import { resumeDownload } from '../redux/actions/downloadActions'
 import { getStateFromPath } from '@react-navigation/native'
 import BackButton from '../components/BackButton'
+import LanguageInstanceHeaderToolkit from '../components/LanguageInstanceHeaderToolkit'
 function ToolkitEnableScreen (props) {
   //// STATE
 
@@ -37,7 +40,29 @@ function ToolkitEnableScreen (props) {
     }
   }
 
+  function getInstalledLanguageInstances () {
+    var installedLanguageInstances = []
+    for (key in props.database) {
+      if (key.length === 2) {
+        var languageObject = {}
+        languageObject['languageName'] = props.database[key].displayName
+        languageObject['languageID'] = key
+        installedLanguageInstances.push(languageObject)
+      }
+    }
+    return installedLanguageInstances
+  }
+
   //// RENDER
+
+  function renderLanguageHeader (languageInstances) {
+    return (
+      <LanguageInstanceHeaderToolkit
+        languageName={languageInstances.item.languageName}
+        languageID={languageInstances.item.languageID}
+      />
+    )
+  }
 
   return (
     <View style={styles.screen}>
@@ -59,7 +84,17 @@ function ToolkitEnableScreen (props) {
         ]}
         onPress={
           props.toolkitEnabled
-            ? () => {}
+            ? () =>
+                Alert.alert('Toolkit Unlock Code:', '281820', [
+                  {
+                    text: props.translations.alerts.options.clipboard,
+                    onPress: () => Clipboard.setString('281820')
+                  },
+                  {
+                    text: props.translations.alerts.options.close,
+                    onPress: () => {}
+                  }
+                ])
             : () => props.navigation.navigate('Passcode')
         }
       >
@@ -77,6 +112,13 @@ function ToolkitEnableScreen (props) {
           size={50 * scaleMultiplier}
         />
       </TouchableOpacity>
+      <View style={{ width: '100%', flex: 1 }}>
+        <FlatList
+          data={getInstalledLanguageInstances()}
+          renderItem={renderLanguageHeader}
+          keyExtractor={item => item.languageID}
+        />
+      </View>
     </View>
   )
 }
@@ -110,12 +152,14 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
+    database: state.database,
     activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
     font: state.database[activeGroup.language].font,
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    toolkitEnabled: state.toolkitEnabled
   }
 }
 function mapDispatchToProps (dispatch) {

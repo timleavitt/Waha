@@ -6,6 +6,7 @@ export const TOGGLE_COMPLETE = 'TOGGLE_COMPLETE'
 export const SET_BOOKMARK = 'SET_BOOKMARK'
 export const RESET_PROGRESS = 'RESET_PROGRESS'
 export const ADD_SET = 'ADD_SET'
+export const SET_SHOW_TOOLKIT = 'SET_SHOW_TOOLKIT'
 
 export function changeActiveGroup (groupName) {
   return {
@@ -66,5 +67,13 @@ export function addSet (groupName, setID) {
     type: ADD_SET,
     groupName,
     setID
+  }
+}
+
+export function setShowToolkit (groupName, toSet) {
+  return {
+    type: SET_SHOW_TOOLKIT,
+    groupName,
+    toSet
   }
 }

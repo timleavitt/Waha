@@ -106,7 +106,6 @@ export function addLanguage (language) {
       .then(doc => {
         if (doc.exists) {
           dispatch(storeData(doc.data(), language))
-          console.log(doc.data())
 
           var totalProgressObject = {}
           var isFirstCallBackObject = {}

@@ -14,7 +14,7 @@ import AvatarImage from '../components/AvatarImage'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 import { resumeDownload } from '../redux/actions/downloadActions'
-import { getStateFromPath } from '@react-navigation/native'
+import { setToolkitEnabled } from '../redux/actions/toolkitEnabledActions'
 import BackButton from '../components/BackButton'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 
@@ -46,6 +46,7 @@ function PasscodeScreen (props) {
   function checkPasscode (passcode) {
     if (passcode === '281820') {
       setPasscodeStatusText('Success: tookit unlocked!')
+      props.setToolkitEnabled(true)
     } else {
       pinRef.shake().then(() => setPasscode(''))
       setPasscodeStatusText('Error: wrong passcode entered. Please try again.')
@@ -75,7 +76,7 @@ function PasscodeScreen (props) {
         animationFocused=''
         onTextChange={passcode => setPasscode(passcode)}
         onFulfill={checkPasscode}
-        onBackspace={() => console.log('No more back.')}
+        onBackspace={() => {}}
       />
       <Text
         style={{
@@ -117,7 +118,11 @@ function mapStateToProps (state) {
   }
 }
 function mapDispatchToProps (dispatch) {
-  return {}
+  return {
+    setToolkitEnabled: toSet => {
+      dispatch(setToolkitEnabled(toSet))
+    }
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PasscodeScreen)

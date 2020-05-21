@@ -23,7 +23,6 @@ function LanguageInstanceHeader (props) {
     // check if there was a failed language add, i.e. if the app crashed/user quit during a fetch
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
-        console.log(contents)
         if (
           !contents.includes(props.languageID + '-regular-chapter1.mp3') ||
           !contents.includes(props.languageID + '-regular-chapter3.mp3') ||

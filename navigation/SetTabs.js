@@ -7,6 +7,10 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 const Tab = createMaterialTopTabNavigator()
 
 function SetTabs (props) {
+  var toolkit = props.activeGroup.showToolkit ? (
+    <Tab.Screen name='Toolkit' component={SetScreen} options={{}} />
+  ) : null
+
   return (
     //global navigation options
     <Tab.Navigator
@@ -40,8 +44,7 @@ function SetTabs (props) {
           title: 'Topical Sets'
         }}
       />
-
-      <Tab.Screen name='Toolkit' component={SetScreen} options={{}} />
+      {toolkit}
     </Tab.Navigator>
   )
 }
@@ -56,7 +59,8 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
     font: state.database[activeGroup.language].font,
-    primaryColor: state.database[activeGroup.language].primaryColor
+    primaryColor: state.database[activeGroup.language].primaryColor,
+    activeGroup: activeGroup
   }
 }
 
