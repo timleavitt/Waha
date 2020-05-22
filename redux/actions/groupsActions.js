@@ -40,10 +40,11 @@ export function deleteGroup (groupName) {
   }
 }
 
-export function toggleComplete (groupName, lessonIndex) {
+export function toggleComplete (groupName, set, lessonIndex) {
   return {
     type: TOGGLE_COMPLETE,
     groupName,
+    set,
     lessonIndex
   }
 }

@@ -17,6 +17,7 @@ import { resumeDownload } from '../redux/actions/downloadActions'
 import { getStateFromPath } from '@react-navigation/native'
 
 function SetScreen (props) {
+  console.log(props.activeGroup)
   //// STUFF FOR TESTING
 
   // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
@@ -40,6 +41,8 @@ function SetScreen (props) {
     } else if (props.route.name === 'Topical') {
       setAddNewSetLabel(props.translations.labels.addNewTopicalSet)
       setSetCategory('topical')
+    } else {
+      setSetCategory('toolkit')
     }
   }, [])
 
@@ -70,48 +73,60 @@ function SetScreen (props) {
             ? // if we're displaying topical sets, display them in the order added
               props.activeDatabase.sets
                 .filter(set => set.category === setCategory)
-                .filter(set => props.activeGroup.addedSets.includes(set.id))
+                .filter(set =>
+                  props.activeGroup.addedSets.some(
+                    addedSet => addedSet.id === set.id
+                  )
+                )
                 .sort(
                   (a, b) =>
                     props.activeGroup.addedSets.indexOf(a.id) -
                     props.activeGroup.addedSets.indexOf(b.id)
                 )
             : // otherwise, display them in numerical order
+              // TODO: update for new added sets structure
               props.activeDatabase.sets
                 .filter(set => set.category === setCategory)
-                .filter(set => props.activeGroup.addedSets.includes(set.id))
+                .filter(set =>
+                  props.activeGroup.addedSets.some(
+                    addedSet => addedSet.id === set.id
+                  )
+                )
         }
         renderItem={renderStudySetItem}
+        extraData={props.activeGroup}
         ListFooterComponent={
-          <TouchableOpacity
-            style={[
-              styles.addNewSetContainer,
-              { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
-            ]}
-            onPress={() =>
-              props.navigation.navigate('AddSetStack', {
-                screen: 'AddSet',
-                params: {
-                  category: setCategory === 'core' ? 'core' : 'folder'
-                }
-              })
-            }
-          >
-            <Icon
-              name='plus-filled'
-              size={50 * scaleMultiplier}
-              color='#9FA5AD'
-              style={styles.addNewSetIcon}
-            />
-            <Text
+          setCategory === 'toolkit' ? null : (
+            <TouchableOpacity
               style={[
-                styles.addNewSetText,
-                { fontFamily: props.font + '-regular' }
+                styles.addNewSetContainer,
+                { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
               ]}
+              onPress={() =>
+                props.navigation.navigate('AddSetStack', {
+                  screen: 'AddSet',
+                  params: {
+                    category: setCategory === 'core' ? 'core' : 'folder'
+                  }
+                })
+              }
             >
-              {addNewSetLabel}
-            </Text>
-          </TouchableOpacity>
+              <Icon
+                name='plus-filled'
+                size={50 * scaleMultiplier}
+                color='#9FA5AD'
+                style={styles.addNewSetIcon}
+              />
+              <Text
+                style={[
+                  styles.addNewSetText,
+                  { fontFamily: props.font + '-regular' }
+                ]}
+              >
+                {addNewSetLabel}
+              </Text>
+            </TouchableOpacity>
+          )
         }
       />
     </View>

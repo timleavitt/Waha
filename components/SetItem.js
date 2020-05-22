@@ -85,9 +85,15 @@ function SetItem (props) {
           ) : (
             <View style={styles.actionContainer}>
               <Icon
-                name={props.isRTL ? 'triangle-left' : 'triangle-right'}
+                name={
+                  props.thisSet.id === props.activeGroup.setBookmark
+                    ? props.isRTL
+                      ? 'triangle-left'
+                      : 'triangle-right'
+                    : null
+                }
                 size={37 * scaleMultiplier}
-                color='#828282'
+                color={props.primaryColor}
               />
             </View>
           )
@@ -219,27 +225,26 @@ function SetItem (props) {
   //// FUNCTIONS
 
   function setProgress () {
-    for (const set of props.activeDatabase.sets) {
-      if (set.id === props.thisSet.id) {
-        setNumLessons(set.length)
-      }
-    }
-
-    setNumCompleted(0)
-    for (const lessonIndex of props.activeProgress) {
-      if (
-        props.activeDatabase.lessons.filter(
-          lesson => lesson.index === lessonIndex
-        )[0].setid === props.thisSet.id
-      ) {
-        setNumCompleted(numCompleted => numCompleted + 1)
-      }
-    }
-    if (numCompleted === numLessons) {
-      setFullyCompleted(true)
-    } else {
-      setFullyCompleted(false)
-    }
+    // for (const set of props.activeDatabase.sets) {
+    //   if (set.id === props.thisSet.id) {
+    //     setNumLessons(set.length)
+    //   }
+    // }
+    // setNumCompleted(0)
+    // for (const lessonIndex of props.activeProgress) {
+    //   if (
+    //     props.activeDatabase.lessons.filter(
+    //       lesson => lesson.index === lessonIndex
+    //     )[0].setid === props.thisSet.id
+    //   ) {
+    //     setNumCompleted(numCompleted => numCompleted + 1)
+    //   }
+    // }
+    // if (numCompleted === numLessons) {
+    //   setFullyCompleted(true)
+    // } else {
+    //   setFullyCompleted(false)
+    // }
   }
 
   //// RENDER
@@ -334,11 +339,12 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    activeProgress: activeGroup.progress,
+    //activeProgress: activeGroup.progress,
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],
     primaryColor: state.database[activeGroup.language].primaryColor,
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    activeGroup: activeGroup
   }
 }
 

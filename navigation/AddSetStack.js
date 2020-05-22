@@ -16,7 +16,8 @@ function AddSetStack (props) {
         headerStyle: {
           height: 90 * scaleMultiplier
         },
-        headerTitleAlign: 'center'
+        headerTitleAlign: 'center',
+        gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal'
       }}
       mode='card'
     >

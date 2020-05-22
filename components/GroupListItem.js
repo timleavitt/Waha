@@ -10,18 +10,19 @@ function GroupListItem (props) {
 
   // gets a formatted string of this group's bookmark lesson
   function getBookmarkText () {
-    var thisGroup = props.groups.filter(
-      group => group.name === props.groupName
-    )[0]
-    if (
-      thisGroup.bookmark ===
-      props.database[thisGroup.language].lessons.length + 1
-    )
-      return 'Contact us for more study sets!'
-    var bookmarkLesson = props.database[thisGroup.language].lessons.filter(
-      lesson => lesson.index === thisGroup.bookmark
-    )[0]
-    return bookmarkLesson.subtitle + ' ' + bookmarkLesson.title
+    // var thisGroup = props.groups.filter(
+    //   group => group.name === props.groupName
+    // )[0]
+    // if (
+    //   thisGroup.bookmark ===
+    //   props.database[thisGroup.language].lessons.length + 1
+    // )
+    //   return 'Contact us for more study sets!'
+    // var bookmarkLesson = props.database[thisGroup.language].lessons.filter(
+    //   lesson => lesson.index === thisGroup.bookmark
+    // )[0]
+    // return bookmarkLesson.subtitle + ' ' + bookmarkLesson.title
+    return 'dummy text'
   }
 
   // RENDER

@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import { connect } from 'react-redux'
-import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
+import { setBookmark } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
 import {
   removeDownload,
@@ -77,7 +77,7 @@ function LessonItem (props) {
             name={
               props.isComplete
                 ? 'check-outline'
-                : props.activeGroup.bookmark === props.thisLesson.index
+                : props.isBookmark
                 ? props.isRTL
                   ? 'triangle-left'
                   : 'triangle-right'
@@ -168,7 +168,7 @@ function mapStateToProps (state) {
   )[0]
   return {
     primaryColor: state.database[activeGroup.language].primaryColor,
-    progress: state.appProgress,
+    //progress: state.appProgress,
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     downloads: state.downloads,
@@ -182,9 +182,6 @@ function mapDispatchToProps (dispatch) {
   return {
     downloadLesson: (lessonID, source) => {
       dispatch(downloadLesson(lessonID, source))
-    },
-    toggleComplete: (groupName, lessonIndex) => {
-      dispatch(toggleComplete(groupName, lessonIndex))
     },
     setBookmark: groupName => {
       dispatch(setBookmark(groupName))

@@ -4,7 +4,8 @@ import { connect } from 'react-redux'
 import {
   deleteGroup,
   changeActiveGroup,
-  setShowToolkit
+  setShowToolkit,
+  addSet
 } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
 import AvatarImage from '../components/AvatarImage'
@@ -45,9 +46,15 @@ function GroupListItemToolkit (props) {
           trackColor={{ false: '#DEE3E9', true: '#60C239' }}
           thumbColor='#FFFFFF'
           ios_backgroundColor='#DEE3E9'
-          onValueChange={() =>
+          onValueChange={() => {
             props.setShowToolkit(props.group.name, !props.group.showToolkit)
-          }
+            if (!props.group.showToolkit)
+              for (const set of props.database[props.group.language].sets) {
+                if (set.category === 'toolkit') {
+                  props.addSet(props.group.name, set.id)
+                }
+              }
+          }}
           value={props.group.showToolkit}
           disabled={props.toolkitEnabled ? false : true}
         />
@@ -106,6 +113,9 @@ function mapDispatchToProps (dispatch) {
     },
     setShowToolkit: (groupName, toSet) => {
       dispatch(setShowToolkit(groupName, toSet))
+    },
+    addSet: (groupName, setID) => {
+      dispatch(addSet(groupName, setID))
     }
   }
 }
