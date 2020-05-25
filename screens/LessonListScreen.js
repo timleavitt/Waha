@@ -52,8 +52,6 @@ function LessonListScreen (props) {
     set => set.id === props.route.params.thisSet.id
   )[0].bookmark
 
-  console.log(thisSetBookmark)
-
   //// CONSTRUCTOR
 
   useEffect(() => {
@@ -148,16 +146,15 @@ function LessonListScreen (props) {
   // marks every lesson in current set as complete up until the selected lesson via modal press
   function markUpToThisPointAsCompleteFromModal () {
     for (var i = 1; i <= activeLessonInModal.index; i++) {
-      if (
-        !props.activeGroup.progress.includes(i) &&
-        props.activeDatabase.lessons[i - 1].setid ===
-          props.route.params.thisSet.id
-      ) {
-        props.toggleComplete(props.activeGroup.name, i)
+      if (!thisSetProgress.includes(i)) {
+        props.toggleComplete(
+          props.activeGroup.name,
+          props.route.params.thisSet,
+          i
+        )
       }
     }
     hideModals()
-    props.setBookmark(props.activeGroup.name)
   }
 
   // hides all the modals
@@ -218,6 +215,8 @@ function LessonListScreen (props) {
         onLessonSelect={() =>
           props.navigation.navigate('Play', {
             thisLesson: lessonList.item,
+            thisSet: props.route.params.thisSet,
+            thisSetProgress: thisSetProgress,
             isDownloaded: downloadsInFileSystem[lessonList.item.id]
           })
         }
@@ -364,7 +363,7 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
-
+  // console.log(activeGroup)
   return {
     downloads: state.downloads,
     activeDatabase: state.database[activeGroup.language],

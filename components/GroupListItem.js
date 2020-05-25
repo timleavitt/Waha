@@ -22,7 +22,17 @@ function GroupListItem (props) {
     //   lesson => lesson.index === thisGroup.bookmark
     // )[0]
     // return bookmarkLesson.subtitle + ' ' + bookmarkLesson.title
-    return 'dummy text'
+
+    var bookmarkSet = props.activeDatabase.sets.filter(
+      set => set.id === props.activeGroup.setBookmark
+    )[0]
+    var bookmarkSetBookmarkLesson = props.activeGroup.addedSets.filter(
+      addedSet => addedSet.id === bookmarkSet.id
+    )[0].bookmark
+    var bookmarkLesson = props.activeDatabase.lessons
+      .filter(lesson => lesson.setid === props.activeGroup.setBookmark)
+      .filter(lesson => lesson.index === bookmarkSetBookmarkLesson)[0]
+    return bookmarkLesson.subtitle + ' ' + bookmarkLesson.title
   }
 
   // RENDER
@@ -199,9 +209,10 @@ function mapStateToProps (state) {
   )[0]
   return {
     database: state.database,
+    activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,
     groups: state.groups,
-    activeGroup: state.activeGroup,
+    activeGroup: activeGroup,
     font: state.database[activeGroup.language].font
   }
 }

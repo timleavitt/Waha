@@ -105,10 +105,20 @@ function WahaModal (props) {
             ? props.activeDatabase.sets
                 .filter(set => set.category === 'topical')
                 .filter(set => set.folder === props.route.params.folder)
-                .filter(set => !props.activeGroup.addedSets.includes(set.id))
+                .filter(
+                  set =>
+                    !props.activeGroup.addedSets.some(
+                      addedSet => addedSet.id === set.id
+                    )
+                )
             : props.activeDatabase.sets
                 .filter(set => set.category === props.route.params.category)
-                .filter(set => !props.activeGroup.addedSets.includes(set.id))
+                .filter(
+                  set =>
+                    !props.activeGroup.addedSets.some(
+                      addedSet => addedSet.id === set.id
+                    )
+                )
         }
         renderItem={renderStudySetItem}
         ListEmptyComponent={

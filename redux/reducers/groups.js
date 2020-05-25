@@ -1,7 +1,7 @@
 import {
   CREATE_GROUP,
   DELETE_GROUP,
-  TOGGLE_COMPLETE,
+  UPDATE_PROGRESS,
   RESET_PROGRESS,
   EDIT_GROUP,
   SET_BOOKMARK,
@@ -23,13 +23,17 @@ export function groups (state = [], action) {
           addedSets: [
             {
               id: action.language + '01',
+              index: 1,
               progress: [],
-              bookmark: 1
+              bookmark: 1,
+              setCategory: 'core'
             },
             {
               id: action.language + '02',
+              index: 2,
               progress: [],
-              bookmark: 1
+              bookmark: 1,
+              setCategory: 'core'
             }
           ],
           showToolkit: false
@@ -49,16 +53,9 @@ export function groups (state = [], action) {
       })
     case DELETE_GROUP:
       return state.filter(group => group.name != action.groupName)
-    case TOGGLE_COMPLETE:
+    case UPDATE_PROGRESS:
       // SET BOOKMARK
       // move set bookmark to the set of the lesson that was just marked as complete
-      console.log(action.set)
-      var setBookmark = action.set.id
-      var recentCoreOrTool = null
-      var lessonBookmark = 0
-
-      if (action.set.category === 'core' || action.set.category === 'toolkit')
-        recentCoreOrTool = action.set.id
 
       // MOST RECENT
       // check if the set is core or toolkit
@@ -83,22 +80,39 @@ export function groups (state = [], action) {
       //       -> if it's topical, move the set bookmark to whatever set is stored in
       //       -> if it's a core or toolkit, move the set bookmark to the next in the progression
 
+      // store the set bookmark to be the set of the lesson
+      var setBookmark = action.set.id
+
+      // start recent core or tool as null in case we're on a topical set
+      var recentCoreOrTool = null
+
+      // start the lesson bookmark at 0
+      var lessonBookmark = 0
+
+      // set the recentcoreortool if this set is a core or toolkit
+      if (action.set.category === 'core' || action.set.category === 'toolkit')
+        recentCoreOrTool = action.set.id
+
       return state.map(group => {
         // get specified group
         if (group.name === action.groupName) {
           // if we didn't set the most recent core/tool set before, leave it as what it was before
           if (recentCoreOrTool === null)
             recentCoreOrTool = group.recentCoreOrTool
+
           // change some stuff in our specified group
           return {
+            // return the rest of the group stuff as is
             ...group,
+
+            //// ADDED SETS (progress and lesson bookmark setting)
             addedSets: group.addedSets.map(set => {
               // get the set we're changing
               if (set.id === action.set.id) {
-                // get earliest uncompleted lesson
-
                 // if the lesson is already marked as completed, mark it as uncomplete and set the bookmark
                 if (set.progress.includes(action.lessonIndex)) {
+                  // increment the bookmark until we get to 1 that's incomplete
+                  // (including the one we're marking)
                   do {
                     lessonBookmark += 1
                   } while (
@@ -106,15 +120,36 @@ export function groups (state = [], action) {
                     lessonBookmark !== action.lessonIndex
                   )
 
+                  // return the set with the new bookmark and progress
                   return {
                     ...set,
                     bookmark: lessonBookmark,
                     progress: set.progress.filter(
-                      id => id !== action.lessonIndex
+                      index => index !== action.lessonIndex
                     )
                   }
                   // otherwise, mark it as complete and set the bookmark
                 } else {
+                  // if we've completed everything in a set
+                  if (set.progress.length + 1 === action.set.length) {
+                    // if core or toolkit, set to next in that category
+                    if (
+                      action.set.category === 'core' ||
+                      action.set.category === 'toolkit'
+                    ) {
+                      setBookmark = action.nextSet
+                        ? action.nextSet.id
+                        : group.setBookmark
+
+                      recentCoreOrTool = setBookmark
+                      // if topical, set to recentCoreOrTool
+                    } else {
+                      setBookmark = recentCoreOrTool
+                    }
+                  }
+
+                  // increment the bookmark until we get to 1 that's incomplete
+                  // (including the one we're marking)
                   do {
                     lessonBookmark += 1
                   } while (
@@ -122,17 +157,23 @@ export function groups (state = [], action) {
                     lessonBookmark === action.lessonIndex
                   )
 
+                  // return the set with the new bookmark and progress
                   return {
                     ...set,
                     bookmark: lessonBookmark,
                     progress: [...set.progress, action.lessonIndex]
                   }
                 }
+                // return the rest of the sets that we don't care about changing
               } else {
                 return set
               }
             }),
+
+            //// MOST RECENT CORE OR TOOLKIT SET
             recentCoreOrTool: recentCoreOrTool,
+
+            //// SET BOOKMARK
             setBookmark: setBookmark
           }
         }
@@ -160,7 +201,7 @@ export function groups (state = [], action) {
         if (group.name === action.groupName) {
           return { ...group, progress: [] }
         }
-        return groupq
+        return group
       })
 
     case ADD_SET:
@@ -170,7 +211,11 @@ export function groups (state = [], action) {
             ...group,
             addedSets: [
               ...group.addedSets,
-              { id: action.setID, progress: [], bookmark: 1 }
+              {
+                id: action.setID,
+                progress: [],
+                bookmark: 1
+              }
             ]
           }
         }

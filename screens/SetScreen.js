@@ -17,7 +17,6 @@ import { resumeDownload } from '../redux/actions/downloadActions'
 import { getStateFromPath } from '@react-navigation/native'
 
 function SetScreen (props) {
-  console.log(props.activeGroup)
   //// STUFF FOR TESTING
 
   // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {

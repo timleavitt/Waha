@@ -2,7 +2,7 @@ export const CHANGE_ACTIVE_GROUP = 'CHANGE_ACTIVE_GROUP'
 export const CREATE_GROUP = 'CREATE_GROUP'
 export const EDIT_GROUP = 'EDIT_GROUP'
 export const DELETE_GROUP = 'DELETE_GROUP'
-export const TOGGLE_COMPLETE = 'TOGGLE_COMPLETE'
+export const UPDATE_PROGRESS = 'UPDATE_PROGRESS'
 export const SET_BOOKMARK = 'SET_BOOKMARK'
 export const RESET_PROGRESS = 'RESET_PROGRESS'
 export const ADD_SET = 'ADD_SET'
@@ -40,12 +40,25 @@ export function deleteGroup (groupName) {
   }
 }
 
-export function toggleComplete (groupName, set, lessonIndex) {
+function updateProgress (groupName, set, nextSet, lessonIndex) {
   return {
-    type: TOGGLE_COMPLETE,
+    type: UPDATE_PROGRESS,
     groupName,
     set,
+    nextSet,
     lessonIndex
+  }
+}
+
+export function toggleComplete (groupName, set, lessonIndex) {
+  return (dispatch, getState) => {
+    var thisLanguage = getState().groups.filter(
+      group => group.name === groupName
+    )[0].language
+    var nextSet = getState().database[thisLanguage].sets.filter(
+      dbSet => dbSet.category === set.category && dbSet.index === set.index + 1
+    )[0]
+    dispatch(updateProgress(groupName, set, nextSet, lessonIndex))
   }
 }
 
