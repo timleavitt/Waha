@@ -99,6 +99,7 @@ function OnboardingSlidesScreen (props) {
   // tells redux that we're ready to go to loading screen once onboarding is finished
   function finishOnboarding () {
     props.setFinishedOnboarding(true)
+    props.navigation.navigate('Loading')
   }
 
   //// RENDER

@@ -216,7 +216,7 @@ function SetItem (props) {
         )
         break
     }
-  }, [numCompleted, fullyCompleted])
+  }, [numCompleted, fullyCompleted, props.activeGroup.setBookmark])
 
   useEffect(() => {
     setProgress()
