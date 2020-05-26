@@ -23,17 +23,13 @@ export function groups (state = [], action) {
           addedSets: [
             {
               id: action.language + '01',
-              index: 1,
               progress: [],
-              bookmark: 1,
-              setCategory: 'core'
+              bookmark: 1
             },
             {
               id: action.language + '02',
-              index: 2,
               progress: [],
-              bookmark: 1,
-              setCategory: 'core'
+              bookmark: 1
             }
           ],
           showToolkit: false

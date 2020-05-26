@@ -19,6 +19,8 @@ import { resumeDownload } from '../redux/actions/downloadActions'
 import { getStateFromPath } from '@react-navigation/native'
 import BackButton from '../components/BackButton'
 import LanguageInstanceHeaderToolkit from '../components/LanguageInstanceHeaderToolkit'
+import OptionsModal from '../components/OptionsModal'
+
 function ToolkitEnableScreen (props) {
   //// STATE
 
@@ -55,6 +57,30 @@ function ToolkitEnableScreen (props) {
 
   //// RENDER
 
+  var howToolkitWords = props.toolkitEnabled ? (
+    <TouchableOpacity
+      style={[
+        styles.unlockButton,
+        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+      ]}
+      onPress={() => {}}
+    >
+      <Text
+        style={{
+          fontFamily: props.font + '-medium',
+          fontSize: 18 * scaleMultiplier
+        }}
+      >
+        {props.translations.labels.howToolkitWorks}
+      </Text>
+      <Icon
+        name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+        color='#3A3C3F'
+        size={50 * scaleMultiplier}
+      />
+    </TouchableOpacity>
+  ) : null
+
   function renderLanguageHeader (languageInstances) {
     return (
       <LanguageInstanceHeaderToolkit
@@ -77,41 +103,56 @@ function ToolkitEnableScreen (props) {
           ? 'toolkit is currently enabled'
           : 'toolkit is currently disabled'}
       </Text>
-      <TouchableOpacity
-        style={[
-          styles.unlockButton,
-          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
-        ]}
-        onPress={
-          props.toolkitEnabled
-            ? () =>
-                Alert.alert('Toolkit Unlock Code:', '281820', [
-                  {
-                    text: props.translations.alerts.options.clipboard,
-                    onPress: () => Clipboard.setString('281820')
-                  },
-                  {
-                    text: props.translations.alerts.options.close,
-                    onPress: () => {}
-                  }
-                ])
-            : () => props.navigation.navigate('Passcode')
-        }
+      <View
+        style={{
+          width: '100%',
+          alignItems: 'center',
+          marginVertical: 50
+        }}
       >
-        <Text
-          style={{
-            fontFamily: props.font + '-medium',
-            fontSize: 18 * scaleMultiplier
-          }}
+        <TouchableOpacity
+          style={[
+            styles.unlockButton,
+            { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+          ]}
+          onPress={
+            props.toolkitEnabled
+              ? () =>
+                  Alert.alert(
+                    props.translations.labels.toolkitUnlockCode,
+                    '281820',
+                    [
+                      {
+                        text: props.translations.alerts.options.clipboard,
+                        onPress: () => Clipboard.setString('281820')
+                      },
+                      {
+                        text: props.translations.alerts.options.close,
+                        onPress: () => {}
+                      }
+                    ]
+                  )
+              : () => props.navigation.navigate('Passcode')
+          }
         >
-          {props.toolkitEnabled ? 'View code' : 'Unlock toolkit'}
-        </Text>
-        <Icon
-          name={props.isRTL ? 'arrow-left' : 'arrow-right'}
-          color='#3A3C3F'
-          size={50 * scaleMultiplier}
-        />
-      </TouchableOpacity>
+          <Text
+            style={{
+              fontFamily: props.font + '-medium',
+              fontSize: 18 * scaleMultiplier
+            }}
+          >
+            {props.toolkitEnabled
+              ? props.translations.labels.viewCode
+              : props.translations.labels.unlockToolkit}
+          </Text>
+          <Icon
+            name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+            color='#3A3C3F'
+            size={50 * scaleMultiplier}
+          />
+        </TouchableOpacity>
+        {howToolkitWords}
+      </View>
       <View style={{ width: '100%', flex: 1 }}>
         <FlatList
           data={getInstalledLanguageInstances()}
@@ -139,7 +180,7 @@ const styles = StyleSheet.create({
     borderColor: '#EFF2F4',
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 40 * scaleMultiplier,
+    //marginVertical: 40 * scaleMultiplier,
     paddingHorizontal: 15,
     justifyContent: 'space-between'
   }

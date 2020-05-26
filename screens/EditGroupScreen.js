@@ -18,7 +18,7 @@ import {
   changeActiveGroup,
   setBookmark
 } from '../redux/actions/groupsActions'
-import WahaModal from '../components/WahaModal'
+import OptionsModal from '../components/OptionsModal'
 import ModalButton from '../components/ModalButton'
 import AvatarImage from '../components/AvatarImage'
 
@@ -254,7 +254,7 @@ function EditGroupScreen (props) {
           </Text>
         </TouchableOpacity>
       </View>
-      <WahaModal
+      <OptionsModal
         isVisible={showImagePickerModal}
         hideModal={() => setShowImagePickerModal(false)}
         closeText={props.translations.modals.cameraOptions.cancel}
@@ -268,7 +268,7 @@ function EditGroupScreen (props) {
           title={props.translations.modals.cameraOptions.chooseFromLibrary}
           onPress={openImageLibraryHandler}
         />
-      </WahaModal>
+      </OptionsModal>
     </View>
   )
 }

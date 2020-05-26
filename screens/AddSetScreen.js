@@ -14,7 +14,7 @@ import { addSet } from '../redux/actions/groupsActions'
 import BackButton from '../components/BackButton'
 import SnackBar from 'react-native-snackbar-component'
 
-function WahaModal (props) {
+function AddSetScreen (props) {
   const [setItemMode, setSetItemMode] = useState('')
   const [onPress, setOnPress] = useState(() => {})
   const [showSnackbar, setShowSnackbar] = useState(false)
@@ -179,4 +179,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(WahaModal)
+export default connect(mapStateToProps, mapDispatchToProps)(AddSetScreen)
