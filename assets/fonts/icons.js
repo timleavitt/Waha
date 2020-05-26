@@ -43,7 +43,7 @@ const glyphMap = {
   'fullscreen-enter': '\uea29',
   'fullscreen-exit': '\uea2a',
   'help: countent': '\uea2b',
-  'info: countent': '\uea2c',
+  info: '\uea2c',
   'language: enut': '\uea2d',
   'menu: countent': '\uea2e',
   'notes: onutent': '\uea2f',

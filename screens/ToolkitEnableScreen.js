@@ -169,9 +169,8 @@ function ToolkitEnableScreen (props) {
         hideModal={() => setShowHowToolkitWorksModal(false)}
         title='Enable toolkit content'
         body='In order to add these new story sets to your currently active group, toggle the switch!'
-      >
-        <Text>test</Text>
-      </MessageModal>
+        imageSource={require('../assets/splash.png')}
+      />
     </View>
   )
 }

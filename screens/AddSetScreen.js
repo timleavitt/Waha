@@ -120,6 +120,11 @@ function AddSetScreen (props) {
                     )
                 )
         }
+        ItemSeparatorComponent={() => (
+          <View
+            style={{ backgroundColor: '#DEE3E9', height: 2, width: '100%' }}
+          />
+        )}
         renderItem={renderStudySetItem}
         ListEmptyComponent={
           <View style={{ width: '100%', margin: 10 }}>

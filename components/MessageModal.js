@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import Modal from 'react-native-modal'
 import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
@@ -15,6 +15,15 @@ function MessageModal (props) {
       style={{ justifyContent: 'flex-end', flex: 1, margin: 0 }}
     >
       <View style={styles.buttonsContainer}>
+        <Image
+          source={props.imageSource}
+          style={{
+            height: 200,
+            margin: 20,
+            padding: 20,
+            resizeMode: 'center'
+          }}
+        />
         <Text
           style={{
             fontFamily: props.font + '-black',

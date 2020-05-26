@@ -234,11 +234,7 @@ function LessonListScreen (props) {
   return (
     <View style={styles.screen}>
       <View style={styles.studySetItemContainer}>
-        <SetItem
-          thisSet={props.route.params.thisSet}
-          isSmall={true}
-          mode='small'
-        />
+        <SetItem thisSet={props.route.params.thisSet} mode='lessonlist' />
       </View>
       <FlatList
         data={props.activeDatabase.lessons.filter(
@@ -343,7 +339,7 @@ const styles = StyleSheet.create({
   },
   studySetItemContainer: {
     width: '100%',
-    height: 90 * scaleMultiplier
+    height: 100 * scaleMultiplier
   },
   headerImage: {
     resizeMode: 'contain',

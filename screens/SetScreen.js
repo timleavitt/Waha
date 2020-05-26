@@ -110,20 +110,41 @@ function SetScreen (props) {
                 })
               }
             >
-              <Icon
-                name='plus-filled'
-                size={50 * scaleMultiplier}
-                color='#9FA5AD'
-                style={styles.addNewSetIcon}
-              />
-              <Text
-                style={[
-                  styles.addNewSetText,
-                  { fontFamily: props.font + '-regular' }
-                ]}
+              <View
+                style={{
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: 80 * scaleMultiplier,
+                  height: 80 * scaleMultiplier
+                }}
               >
-                {addNewSetLabel}
-              </Text>
+                <Icon
+                  name='plus-filled'
+                  size={60 * scaleMultiplier}
+                  color='#9FA5AD'
+                  style={styles.addNewSetIcon}
+                />
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  flexDirection: 'column',
+                  marginRight: props.isRTL ? 20 : 0,
+                  marginLeft: props.isRTL ? 0 : 20
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: props.font + '-regular',
+                    fontSize: 14 * scaleMultiplier,
+                    color: '#9FA5AD'
+                  }}
+                >
+                  {addNewSetLabel}
+                </Text>
+              </View>
             </TouchableOpacity>
           )
         }
@@ -147,18 +168,13 @@ const styles = StyleSheet.create({
   },
   addNewSetContainer: {
     width: '100%',
-    height: 80 * scaleMultiplier,
+    height: 100 * scaleMultiplier,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    padding: 20
   },
-  addNewSetIcon: {
-    marginHorizontal: 25
-  },
-  addNewSetText: {
-    fontSize: 14 * scaleMultiplier,
-    color: '#9FA5AD'
-  }
+  addNewSetText: {}
 })
 
 //// REDUX
