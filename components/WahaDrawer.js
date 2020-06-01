@@ -56,8 +56,8 @@ function WahaDrawer (props) {
             /> */}
           <DrawerItem
             iconName='record'
-            text={props.translations.navigation.drawer.toolkit}
-            onPress={() => props.navigation.navigate('ToolkitEnable')}
+            text={props.translations.navigation.drawer.mt}
+            onPress={() => props.navigation.navigate('MTEnable')}
           />
           <DrawerItem
             iconName='storage'

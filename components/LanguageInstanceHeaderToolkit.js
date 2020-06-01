@@ -66,17 +66,28 @@ function LanguageInstanceHeaderToolkit (props) {
           { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
         ]}
       >
-        <Text
-          style={[
-            styles.languageHeaderText,
-            {
+        <View>
+          <Text
+            style={{
               textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-regular'
-            }
-          ]}
-        >
-          {props.languageName + ' ' + props.translations.labels.toolkitStatus}
-        </Text>
+              fontFamily: props.font + '-medium',
+              fontSize: 18 * scaleMultiplier,
+              color: '#9FA5AD'
+            }}
+          >
+            {props.languageName + ' ' + props.translations.labels.groups}
+          </Text>
+          <Text
+            style={{
+              textAlign: props.isRTL ? 'right' : 'left',
+              fontFamily: props.font + '-regular',
+              fontSize: 18 * scaleMultiplier,
+              color: '#9FA5AD'
+            }}
+          >
+            {props.translations.labels.mtStatus}
+          </Text>
+        </View>
         <Image
           style={styles.languageLogo}
           source={{
@@ -101,24 +112,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    height: 30
-  },
-  trashButtonContainer: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  languageHeaderText: {
-    fontSize: 18 * scaleMultiplier,
-    color: '#9FA5AD',
-    marginHorizontal: 30,
-    flex: 1
+    height: 45 * scaleMultiplier,
+    paddingHorizontal: 20,
+    justifyContent: 'space-between'
   },
   languageLogo: {
     resizeMode: 'stretch',
     width: 96 * scaleMultiplier,
     height: 32 * scaleMultiplier,
-    alignSelf: 'flex-end',
-    marginHorizontal: 10
+    alignSelf: 'flex-end'
   },
   addGroupContainer: {
     height: 80 * scaleMultiplier,

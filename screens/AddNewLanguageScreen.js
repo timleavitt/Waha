@@ -130,7 +130,8 @@ const styles = StyleSheet.create({
     height: 60,
     margin: 5,
     borderWidth: 2,
-    borderColor: '#9FA5AD'
+    borderColor: '#9FA5AD',
+    marginHorizontal: 20
   },
   languageInstanceText: {
     color: '#82868D',
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
   },
   noMoreLanguagesText: {
     color: '#82868D',
-    paddingLeft: 10,
+    paddingHorizontal: 10,
     fontSize: 18,
     textAlign: 'center',
     marginTop: 20

@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   inputContainer: {
-    marginHorizontal: 25,
+    marginHorizontal: 20,
     padding: 3
   },
   groupNameLabel: {
@@ -254,11 +254,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#60C239',
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 30,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2
+    alignSelf: 'flex-end',
+    margin: 20
   },
   saveButtonText: {
     fontSize: 18 * scaleMultiplier,

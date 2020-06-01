@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   inputContainer: {
-    marginHorizontal: 25,
+    marginHorizontal: 20,
     padding: 3
   },
   groupNameLabel: {
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end',
-    margin: 30
+    margin: 20
   },
   saveButtonText: {
     fontSize: 18 * scaleMultiplier,

@@ -166,15 +166,14 @@ const styles = StyleSheet.create({
     flex: 1
   },
   addNewLanguageContainer: {
-    width: '100%',
     height: 80 * scaleMultiplier,
     justifyContent: 'center',
-    borderTopColor: '#EFF2F4'
+    borderTopColor: '#EFF2F4',
+    paddingHorizontal: 20
   },
   addNewLanguageText: {
     fontSize: 18 * scaleMultiplier,
-    color: '#9FA5AD',
-    marginHorizontal: 15
+    color: '#9FA5AD'
   },
   editButtonContainer: {
     width: 80,

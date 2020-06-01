@@ -10,12 +10,11 @@ import AddNewGroupScreen from '../screens/AddNewGroupScreen'
 import AddNewLanguageScreen from '../screens/AddNewLanguageScreen'
 import EditGroupScreen from '../screens/EditGroupScreen'
 import StorageScreen from '../screens/StorageScreen'
-import ToolkitEnableScreen from '../screens/ToolkitEnableScreen'
+import MTEnableScreen from '../screens/MTEnableScreen'
 import PasscodeScreen from '../screens/PasscodeScreen'
 import SetTabNavigator from './SetTabs'
 import { createStackNavigator } from '@react-navigation/stack'
 import { connect } from 'react-redux'
-import AvatarImage from '../components/AvatarImage'
 import SetsRoot from './SetsRoot'
 
 const Stack = createStackNavigator()
@@ -145,11 +144,10 @@ function MainStack (props) {
         }}
       />
       <Stack.Screen
-        name='ToolkitEnable'
-        component={ToolkitEnableScreen}
+        name='MTEnable'
+        component={MTEnableScreen}
         options={{
-          headerTitle:
-            props.translations.navigation.headers.toolkitEnableScreen,
+          headerTitle: props.translations.navigation.headers.mtEnableScreen,
           headerStyle: {
             backgroundColor: '#F7F9FA'
           },
@@ -163,8 +161,7 @@ function MainStack (props) {
         name='Passcode'
         component={PasscodeScreen}
         options={{
-          headerTitle:
-            props.translations.navigation.headers.toolkitEnableScreen,
+          headerTitle: props.translations.navigation.headers.mtEnableScreen,
           headerStyle: {
             backgroundColor: '#F7F9FA'
           },

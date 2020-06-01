@@ -10,7 +10,6 @@ import {
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import SetItem from '../components/SetItem'
-import AvatarImage from '../components/AvatarImage'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 import { resumeDownload } from '../redux/actions/downloadActions'
@@ -45,11 +44,11 @@ function PasscodeScreen (props) {
 
   function checkPasscode (passcode) {
     if (passcode === '281820') {
-      setPasscodeStatusText('Success: tookit unlocked!')
+      setPasscodeStatusText(props.translations.labels.passcodeSuccess)
       props.setToolkitEnabled(true)
     } else {
       pinRef.shake().then(() => setPasscode(''))
-      setPasscodeStatusText('Error: wrong passcode entered. Please try again.')
+      setPasscodeStatusText(props.translations.labels.passcodeError)
       setTimeout(() => setPasscodeStatusText(''), 3000)
     }
   }
@@ -65,7 +64,7 @@ function PasscodeScreen (props) {
           marginVertical: 30 * scaleMultiplier
         }}
       >
-        Input passcode to unlock toolkit
+        {props.translations.labels.enterPasscode}
       </Text>
       <SmoothPinCodeInput
         ref={ref => setPinRef(ref)}

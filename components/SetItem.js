@@ -129,11 +129,11 @@ function SetItem (props) {
             style={[
               styles.iconContainer,
               {
-                backgroundColor: '#1D1E20',
-                borderRadius: (80 * scaleMultiplier) / 2,
+                backgroundColor: '#FFFFFF',
+                borderRadius: 14,
                 overflow: 'hidden',
                 borderWidth: 7,
-                borderColor: '#1D1E20'
+                borderColor: '#3A3C3F'
               }
             ]}
           >
@@ -142,7 +142,7 @@ function SetItem (props) {
               name={''}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
-              fill='#FFFFFF'
+              fill='#3A3C3F'
             />
           </View>
         )
@@ -211,7 +211,8 @@ function SetItem (props) {
     progressPercentage,
     fullyCompleted,
     props.activeGroup.setBookmark,
-    props.activeGroup.addedSets
+    props.activeGroup.addedSets,
+    props.isRTL
   ])
 
   //// FUNCTIONS

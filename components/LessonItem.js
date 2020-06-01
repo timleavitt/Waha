@@ -47,7 +47,9 @@ function LessonItem (props) {
     <View
       style={[
         styles.lessonItem,
-        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        {
+          flexDirection: props.isRTL ? 'row-reverse' : 'row'
+        }
       ]}
     >
       <TouchableOpacity
@@ -83,31 +85,36 @@ function LessonItem (props) {
                   : 'triangle-right'
                 : null
             }
-            size={30 * scaleMultiplier}
+            size={24 * scaleMultiplier}
             color={props.isComplete ? '#828282' : props.primaryColor}
           />
         </View>
-        <View style={styles.titleContainer}>
+        <View
+          style={{
+            flexDirection: 'column',
+            justifyContent: 'center',
+            flex: 1,
+            marginLeft: props.isRTL ? 0 : 20,
+            marginRight: props.isRTL ? 20 : 0
+          }}
+        >
           <Text
             style={{
-              ...styles.title,
-              ...{
-                color: props.isComplete ? '#9FA5AD' : 'black',
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontFamily: props.font + '-medium'
-              }
+              fontSize: 18 * scaleMultiplier,
+              textAlignVertical: 'center',
+              color: props.isComplete ? '#9FA5AD' : 'black',
+              textAlign: props.isRTL ? 'right' : 'left',
+              fontFamily: props.font + '-medium'
             }}
           >
             {props.thisLesson.title}
           </Text>
           <Text
             style={{
-              ...styles.subtitle,
-              ...{
-                color: props.isComplete ? '#9FA5AD' : 'black',
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontFamily: props.font + '-regular'
-              }
+              fontSize: 14 * scaleMultiplier,
+              color: '#9FA5AD',
+              textAlign: props.isRTL ? 'right' : 'left',
+              fontFamily: props.font + '-regular'
             }}
           >
             {props.thisLesson.subtitle}
@@ -129,11 +136,11 @@ function LessonItem (props) {
 
 const styles = StyleSheet.create({
   lessonItem: {
-    height: 72 * scaleMultiplier,
-    justifyContent: 'center',
+    height: 64 * scaleMultiplier,
     flexDirection: 'row',
-    alignContent: 'center',
-    backgroundColor: '#F7F9FA'
+    backgroundColor: '#F7F9FA',
+    flex: 1,
+    paddingLeft: 20
   },
   progressAndTitle: {
     justifyContent: 'flex-start',
@@ -143,20 +150,7 @@ const styles = StyleSheet.create({
   },
   completeStatusContainer: {
     justifyContent: 'center',
-    marginHorizontal: 10,
-    width: 35 * scaleMultiplier
-  },
-  titleContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    flex: 1
-  },
-  title: {
-    fontSize: 18 * scaleMultiplier,
-    textAlignVertical: 'center'
-  },
-  subtitle: {
-    fontSize: 14 * scaleMultiplier
+    width: 24 * scaleMultiplier
   }
 })
 

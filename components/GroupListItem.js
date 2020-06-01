@@ -49,13 +49,7 @@ function GroupListItem (props) {
   if (props.isEditing && props.activeGroup.name != props.groupName) {
     deleteButton = (
       <TouchableOpacity
-        style={[
-          styles.minusButtonContainer,
-          {
-            marginLeft: props.isRTL ? -5 : 10,
-            marginRight: props.isRTL ? 10 : -5
-          }
-        ]}
+        style={styles.minusButtonContainer}
         onPress={() => props.deleteGroup(props.groupName)}
       >
         <Icon name='minus-filled' size={24 * scaleMultiplier} color='#FF0800' />
@@ -63,15 +57,7 @@ function GroupListItem (props) {
     )
   } else if (props.isEditing && props.activeGroup.name === props.groupName) {
     deleteButton = (
-      <View
-        style={[
-          styles.minusButtonContainer,
-          {
-            marginLeft: props.isRTL ? -5 : 10,
-            marginRight: props.isRTL ? 10 : -5
-          }
-        ]}
-      >
+      <View style={styles.minusButtonContainer}>
         <Icon name='check' size={24 * scaleMultiplier} color='#2D9CDB' />
       </View>
     )
@@ -97,7 +83,9 @@ function GroupListItem (props) {
       </View>
     )
   } else {
-    rightButton = null
+    rightButton = (
+      <View style={[styles.iconContainer, { width: 24 * scaleMultiplier }]} />
+    )
   }
 
   return (
@@ -113,7 +101,11 @@ function GroupListItem (props) {
       <TouchableOpacity
         style={[
           styles.touchableContainer,
-          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+          {
+            flexDirection: props.isRTL ? 'row-reverse' : 'row',
+            paddingLeft: props.isEditing ? 0 : 20,
+            paddingRight: 20
+          }
         ]}
         onPress={
           props.isEditing
@@ -125,11 +117,18 @@ function GroupListItem (props) {
       >
         <AvatarImage
           size={50 * scaleMultiplier}
-          onPress={() => {}}
           source={props.avatarSource}
           isActive={props.activeGroup.name === props.groupName}
         />
-        <View style={styles.groupNameContainer}>
+        <View
+          style={[
+            styles.groupNameContainer,
+            {
+              marginLeft: props.isRTL ? 0 : 20,
+              marginRight: props.isRTL ? 20 : 0
+            }
+          ]}
+        >
           <Text
             style={[
               styles.groupNameText,
@@ -179,7 +178,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    margin: 2
+    borderWidth: 1,
+    borderColor: '#EFF2F4'
   },
   touchableContainer: {
     flex: 1,
@@ -191,14 +191,13 @@ const styles = StyleSheet.create({
   iconContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 15,
     height: '100%'
   },
   minusButtonContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-    width: 30
+    paddingHorizontal: 20
   },
   groupNameContainer: {
     flex: 1,
