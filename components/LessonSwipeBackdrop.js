@@ -34,7 +34,7 @@ function LessonSwipeBackdrop (props) {
       onPress={props.toggleComplete}
     >
       <View style={styles.iconContainer}>
-        <Icon name='check-filled' size={20} color='#FFFFFF' />
+        <Icon name='check-fill' size={20} color='#FFFFFF' />
       </View>
     </TouchableOpacity>
   )

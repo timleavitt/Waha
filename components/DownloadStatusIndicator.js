@@ -21,11 +21,7 @@ function DownloadStatusIndicator (props) {
       onPress={props.showDeleteModal}
       style={styles.downloadButtonContainer}
     >
-      <Icon
-        name='cloud-check-outline'
-        color='#9FA5AD'
-        size={22 * scaleMultiplier}
-      />
+      <Icon name='cloud-check' color='#9FA5AD' size={22 * scaleMultiplier} />
     </TouchableOpacity>
   ) : props.isConnected ? (
     props.lessonID in props.downloads ? (
@@ -47,7 +43,7 @@ function DownloadStatusIndicator (props) {
         style={styles.downloadButtonContainer}
       >
         <Icon
-          name='cloud-download-outline'
+          name='cloud-download'
           color={props.isDownloaded ? '#9FA5AD' : '#3A3C3F'}
           size={22 * scaleMultiplier}
         />
@@ -56,11 +52,7 @@ function DownloadStatusIndicator (props) {
   ) : (
     // not downloaded and not connected
     <View style={styles.downloadButtonContainer}>
-      <Icon
-        name='cloud-slash-outline'
-        color='#3A3C3F'
-        size={22 * scaleMultiplier}
-      />
+      <Icon name='cloud-slash' color='#3A3C3F' size={22 * scaleMultiplier} />
     </View>
   )
 }

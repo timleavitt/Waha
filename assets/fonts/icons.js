@@ -1,64 +1,136 @@
 import { createIconSet } from 'react-native-vector-icons'
 const glyphMap = {
-  'group-add': '\uea01',
+  announcement: '\uea01',
+
   archive: '\uea02',
+
   'arrow-left': '\uea03',
+
   'arrow-right': '\uea04',
-  'cancel-filled': '\uea05',
-  check: '\uea06',
-  'check-filled': '\uea07',
-  'check-outline': '\uea08',
-  'cloud-check-outline': '\uea09',
-  'cloud-download-outline': '\uea0a',
-  email: '\uea0b',
-  group: '\uea0c',
-  camera: '\uea0d',
-  '1-filled': '\uea0e',
-  '1-outline': '\uea0f',
-  '2-filled': '\uea10',
-  '2-outline': '\uea11',
-  '3-filled': '\uea12',
-  '3-outline': '\uea13',
-  pencil: '\uea14',
-  'triangle-right': '\uea15',
-  'playlist-add': '\uea16',
-  'playlist-check': '\uea17',
-  'minus-filled': '\uea18',
-  security: '\uea19',
-  'share-android': '\uea1a',
-  storage: '\uea1b',
-  'plus-filled': '\uea1c',
-  announcement: '\uea1d',
-  backspace: '\uea1e',
-  camera: '\uea1f',
-  'cloud-filled': '\uea20',
-  'cloud-download-filled': '\uea21',
-  'cloud-slash-outline': '\uea22',
-  trash: '\uea23',
-  description: '\uea24',
-  'error-filled': '\uea25',
-  'error-outline': '\uea26',
-  record: '\uea27',
-  'skip-forward': '\uea28',
-  'fullscreen-enter': '\uea29',
-  'fullscreen-exit': '\uea2a',
-  'help: countent': '\uea2b',
-  info: '\uea2c',
-  'language: enut': '\uea2d',
-  'menu: countent': '\uea2e',
-  'notes: onutent': '\uea2f',
-  'quad-arrow': '\uea30',
-  'pause-filled': '\uea31',
-  'play-filled': '\uea32',
-  'remove-playlist': '\uea33',
-  'minus-outline': '\uea34',
-  'skip-back': '\uea35',
+
+  backspace: '\uea05',
+
+  camera: '\uea06',
+
+  cast: '\uea07',
+
+  check: '\uea08',
+
+  'check-fill': '\uea09',
+
+  'check-outline': '\uea0a',
+
+  'cloud-check': '\uea0b',
+
+  'cloud-download': '\uea0c',
+
+  'cloud-slash': '\uea0d',
+
+  description: '\uea0e',
+
+  email: '\uea0f',
+
+  'error-filled': '\uea10',
+
+  'error-outline': '\uea11',
+
+  'fullscreen-enter': '\uea12',
+
+  'fullscreen-exit': '\uea13',
+
+  group: '\uea14',
+
+  'group-add': '\uea15',
+
+  help: '\uea16',
+
+  info: '\uea17',
+
+  key: '\uea18',
+
+  language: '\uea19',
+
+  menu: '\uea1a',
+
+  'minus-filled': '\uea1b',
+
+  'minus-outline': '\uea1c',
+
+  movie: '\uea1d',
+
+  notes: '\uea1e',
+
+  'number-1-fill': '\uea1f',
+
+  'number-1-outline': '\uea20',
+
+  'number-2-fill': '\uea21',
+
+  'number-2-outline': '\uea22',
+
+  'number-3-fill': '\uea23',
+
+  'number-3-outline': '\uea24',
+
+  'number-4-fill': '\uea25',
+
+  'number-4-outline': '\uea26',
+
+  'number-5-fill': '\uea27',
+
+  'number-5-outline': '\uea28',
+
+  'number-6-fill': '\uea29',
+
+  'number-6-outline': '\uea2a',
+
+  open: '\uea2b',
+
+  pause: '\uea2c',
+
+  pencil: '\uea2d',
+
+  play: '\uea2e',
+
+  'playlist-add': '\uea2f',
+
+  'playlist-check': '\uea30',
+
+  'playlist-remove': '\uea31',
+
+  plus: '\uea32',
+
+  'plus-filled': '\uea33',
+
+  record: '\uea34',
+
+  security: '\uea35',
+
   settings: '\uea36',
-  'share-ios': '\uea37',
-  'triangle-left': '\uea38',
-  volume: '\uea39',
-  key: '\uea3a'
+
+  'share-android': '\uea37',
+
+  'share-ios': '\uea38',
+
+  'skip-back': '\uea39',
+
+  'skip-forward': '\uea3a',
+
+  storage: '\uea3b',
+
+  trash: '\uea3c',
+
+  'triangle-left': '\uea3d',
+
+  'triangle-right': '\uea3e',
+
+  volume: '\uea3f',
+
+  x: '\uea40',
+
+  'x-filled': '\uea41'
 }
+
 export default Icon = createIconSet(
   glyphMap,
   'waha',
