@@ -35,7 +35,8 @@ function GroupListItemToolkit (props) {
             styles.groupNameText,
             {
               textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-medium'
+              fontFamily: props.font + '-medium',
+              color: props.toolkitEnabled ? '#1D1E20' : '#DEE3E9'
             }
           ]}
         >
