@@ -248,7 +248,7 @@ function SetItem (props) {
         dbSet.category === 'core' && dbSet.index === props.thisSet.index + 1
     )[0]
 
-    // we want to automatically add the next set if
+    // we want to automatically add the next set if the next set exists AND
     if (nextSet) {
       if (
         // we've completed 75% of a set AND

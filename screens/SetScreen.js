@@ -40,7 +40,7 @@ function SetScreen (props) {
       setAddNewSetLabel(props.translations.labels.addNewTopicalSet)
       setSetCategory('topical')
     } else {
-      setSetCategory('toolkit')
+      setSetCategory('mt')
     }
   }, [])
 
@@ -93,7 +93,7 @@ function SetScreen (props) {
         renderItem={renderStudySetItem}
         extraData={props.activeGroup}
         ListFooterComponent={
-          setCategory === 'toolkit' ? null : (
+          setCategory === 'mt' ? null : (
             <TouchableOpacity
               style={[
                 styles.addNewSetContainer,

@@ -61,7 +61,14 @@ function ChapterSelect (props) {
               props.activeChapter === 'passage' ? props.primaryColor : '#EFF2F4'
           }
         ]}
-        onPress={() => props.onPress('passage')}
+        onPress={
+          props.hasAudioSource
+            ? () => props.onPress('passage')
+            : () => {
+                props.onPress('passage')
+                props.goToScripture()
+              }
+        }
       >
         <Icon
           name={chapter2IconName}

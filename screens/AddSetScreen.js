@@ -45,11 +45,7 @@ function AddSetScreen (props) {
                 }}
                 onPress={() => props.navigation.goBack()}
               >
-                <Icon
-                  name='cancel-filled'
-                  size={45 * scaleMultiplier}
-                  color='#3A3C3F'
-                />
+                <Icon name='x' size={45 * scaleMultiplier} color='#3A3C3F' />
               </TouchableOpacity>
             ),
       headerRight:
@@ -60,11 +56,7 @@ function AddSetScreen (props) {
           : props.isRTL
           ? () => (
               <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                <Icon
-                  name='cancel-filled'
-                  size={45 * scaleMultiplier}
-                  color='#3A3C3F'
-                />
+                <Icon name='x' size={45 * scaleMultiplier} color='#3A3C3F' />
               </TouchableOpacity>
             )
           : () => <View></View>
@@ -129,7 +121,7 @@ function AddSetScreen (props) {
         }
         ItemSeparatorComponent={() => (
           <View
-            style={{ backgroundColor: '#DEE3E9', height: 2, width: '100%' }}
+            style={{ backgroundColor: '#DEE3E9', height: 1, width: '100%' }}
           />
         )}
         renderItem={renderStudySetItem}

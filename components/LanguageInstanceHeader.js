@@ -24,10 +24,11 @@ function LanguageInstanceHeader (props) {
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
         if (
-          !contents.includes(props.languageID + '-regular-chapter1.mp3') ||
-          !contents.includes(props.languageID + '-regular-chapter3.mp3') ||
-          !contents.includes(props.languageID + '-first-chapter1.mp3') ||
-          !contents.includes(props.languageID + '-first-chapter3.mp3') ||
+          !contents.includes(props.languageID + '-c-t-chapter1.mp3') ||
+          !contents.includes(props.languageID + '-c-t-chapter3.mp3') ||
+          !contents.includes(props.languageID + '-mt-chapter1.mp3') ||
+          !contents.includes(props.languageID + '-mt-chapter3.mp3') ||
+          !contents.includes(props.languageID + '-dummy-chapter2.mp3') ||
           !contents.includes(props.languageID + '-header.png')
         ) {
           deleteLanguageInstance()

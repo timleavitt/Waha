@@ -52,7 +52,7 @@ function GroupListItemToolkit (props) {
             props.setShowToolkit(props.group.name, !props.group.showToolkit)
             if (!props.group.showToolkit)
               for (const set of props.database[props.group.language].sets) {
-                if (set.category === 'toolkit') {
+                if (set.category === 'mt') {
                   props.addSet(props.group.name, set.id)
                 }
               }

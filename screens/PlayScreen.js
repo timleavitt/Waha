@@ -63,6 +63,8 @@ function PlayScreen (props) {
 
   const [videoSource, setVideoSource] = useState()
 
+  const [albumArtRef, setAlbumArtRef] = useState()
+
   //share modal
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
 
@@ -530,6 +532,17 @@ function PlayScreen (props) {
         activeChapter={activeChapter}
         lessonID={props.route.params.thisLesson.id}
         onPress={chapter => changeChapter(chapter)}
+        goToScripture={() =>
+          albumArtRef.scrollToIndex({
+            animated: true,
+            viewPosition: 0.5,
+            viewOffset: -Dimensions.get('screen').width,
+            index: 0
+          })
+        }
+        hasAudioSource={
+          props.route.params.thisLesson.audioSource ? true : false
+        }
       />
       <Scrubber
         value={seekPosition}
@@ -564,6 +577,7 @@ function PlayScreen (props) {
           <FlatList
             data={albumArtData}
             renderItem={renderAlbumArtItem}
+            ref={ref => setAlbumArtRef(ref)}
             horizontal={true}
             pagingEnabled={true}
             snapToAlignment={'start'}

@@ -8,12 +8,31 @@ const Tab = createMaterialTopTabNavigator()
 
 function SetTabs (props) {
   var toolkit = props.activeGroup.showToolkit ? (
-    <Tab.Screen name='Toolkit' component={SetScreen} options={{}} />
+    <Tab.Screen name='Mobilization Tools' component={SetScreen} options={{}} />
   ) : null
+
+  var bookmarkSetCategory = props.activeDatabase.sets.filter(
+    set => set.id === props.activeGroup.setBookmark
+  )[0].category
+  var initialRouteName
+
+  switch (bookmarkSetCategory) {
+    case 'core':
+      initialRouteName = 'Core'
+      break
+    case 'topical':
+      initialRouteName = 'Topical'
+      break
+    case 'mt':
+      initialRouteName = 'Mobilization Tools'
+      break
+    default:
+      initialRouteName = 'Core'
+  }
 
   var tabs = props.isRTL ? (
     <Tab.Navigator
-      initialRouteName='Core'
+      initialRouteName={initialRouteName}
       swipeEnabled={false}
       tabBarOptions={{
         labelStyle: {
@@ -46,7 +65,7 @@ function SetTabs (props) {
     </Tab.Navigator>
   ) : (
     <Tab.Navigator
-      initialRouteName='Core'
+      initialRouteName={initialRouteName}
       swipeEnabled={false}
       tabBarOptions={{
         labelStyle: {
@@ -97,7 +116,8 @@ function mapStateToProps (state) {
     translations: state.database[activeGroup.language].translations,
     font: state.database[activeGroup.language].font,
     primaryColor: state.database[activeGroup.language].primaryColor,
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    activeDatabase: state.database[activeGroup.language]
   }
 }
 
