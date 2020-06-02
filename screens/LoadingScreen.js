@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
 })
 
 function mapStateToProps (state) {
+  console.log(state.fetchingStatus)
   return {
     progress: state.database.currentFetchProgress,
     fetchError: state.fetchingStatus.fetchError,

@@ -110,9 +110,11 @@ function PlayScreen (props) {
     )
 
     // check if this lesson has an audio source
-    if (props.thisLesson.audioSource) {
+    if (props.route.params.thisLesson.audioSource) {
       // if it does, set the source to it
-      FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
+      setChapter2Source(
+        FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
+      )
 
       // if an audio file is not donwloading and not currently downloading, download it
       if (
@@ -135,7 +137,7 @@ function PlayScreen (props) {
     }
 
     // TODO: video stuff
-    if (props.thisLesson.videoSource) {
+    if (props.route.params.thisLesson.videoSource) {
     }
 
     //set up our timer tick for updating the seeker every second

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
@@ -227,43 +227,52 @@ function SetItem (props) {
     if (progressPercentage === 1) setFullyCompleted(true)
     else setFullyCompleted(false)
 
-    console.log(progressPercentage)
-    console.log('is the next set already added?')
-    console.log(
-      !props.activeGroup.addedSets.some(
-        addedSet => addedSet.index === props.thisSet.index + 1
-      )
-    )
-    console.log('is the set core?')
-    console.log(props.thisSet.category === 'core')
-    console.log('is the next set present in the set array?')
-    console.log(
-      props.activeDatabase.sets
-        .filter(set => set.category === 'core')
-        .some(set => set.index === props.thisSet.index + 1)
-    )
-    if (
-      progressPercentage > 0.8 &&
-      !props.activeGroup.addedSets.some(
-        addedSet => addedSet.id === props.thisSet.id
-      ) &&
-      props.thisSet.category === 'core' &&
-      props.activeDatabase.sets
-        .filter(set => set.category === 'core')
-        .some(set => set.index === props.thisSet.index + 1)
-    ) {
-      Alert.alert('next story set added', '', [
-        {
-          text: props.translations.alerts.options.ok,
-          onPress: () => {}
-        }
-      ])
-      props.addSet(
-        props.activeGroup.name,
-        props.activeDatabase.sets
-          .filter(set => set.category === 'core')
-          .filter(set => set.index === props.thisSet.index + 1)[0].id
-      )
+    // console.log(progressPercentage)
+    // console.log('is the next set already added?')
+    // console.log(
+    //   !props.activeGroup.addedSets.some(
+    //     addedSet => addedSet.index === props.thisSet.index + 1
+    //   )
+    // )
+    // console.log('is the set core?')
+    // console.log(props.thisSet.category === 'core')
+    // console.log('is the next set present in the set array?')
+    // console.log(
+    //   props.activeDatabase.sets
+    //     .filter(set => set.category === 'core')
+    //     .some(set => set.index === props.thisSet.index + 1)
+    // )
+
+    var nextSet = props.activeDatabase.sets.filter(
+      dbSet =>
+        dbSet.category === 'core' && dbSet.index === props.thisSet.index + 1
+    )[0]
+
+    // we want to automatically add the next set if
+    if (nextSet) {
+      if (
+        // we've completed 75% of a set AND
+        progressPercentage > 0.75 &&
+        // this set is a core set AND
+        props.thisSet.category === 'core' &&
+        // the next set after this one hasn't already been added AND
+        !props.activeGroup.addedSets.some(
+          addedSet => addedSet.id === nextSet.id
+        )
+      ) {
+        Alert.alert('next story set added', '', [
+          {
+            text: props.translations.alerts.options.ok,
+            onPress: () => {}
+          }
+        ])
+        props.addSet(
+          props.activeGroup.name,
+          props.activeDatabase.sets
+            .filter(set => set.category === 'core')
+            .filter(set => set.index === props.thisSet.index + 1)[0].id
+        )
+      }
     }
   }
 
@@ -361,7 +370,8 @@ function mapStateToProps (state) {
     activeDatabase: state.database[activeGroup.language],
     primaryColor: state.database[activeGroup.language].primaryColor,
     font: state.database[activeGroup.language].font,
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    translations: state.database[activeGroup.language].translations
   }
 }
 

@@ -103,7 +103,10 @@ function LessonListScreen (props) {
 
   // downloads a lesson's chapter 2 mp3 via modal press
   function downloadLessonFromModal () {
-    props.downloadLesson(activeLessonInModal.id, activeLessonInModal.source)
+    props.downloadLesson(
+      activeLessonInModal.id,
+      activeLessonInModal.audioSource
+    )
     hideModals()
   }
 

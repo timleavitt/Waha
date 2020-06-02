@@ -17,6 +17,7 @@ function Onboarding () {
           name='OnboardingSlides'
           component={OnboardingSlidesScreen}
         />
+        <Stack.Screen name='Loading' component={LoadingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

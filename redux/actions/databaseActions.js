@@ -188,13 +188,18 @@ export function addLanguage (language) {
               dispatch(setCurrentFetchProgress(0))
             })
             .catch(() => {
+              console.log('1')
               dispatch(setFetchError(true, language))
             })
         } else {
+          console.log('2')
           dispatch(setFetchError(true, language))
         }
       })
-      .catch(() => dispatch(setFetchError(true, language)))
+      .catch(() => {
+        dispatch(setFetchError(true, language))
+        console.log('3')
+      })
   }
 }
 
