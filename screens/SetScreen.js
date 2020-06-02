@@ -82,7 +82,6 @@ function SetScreen (props) {
                     props.activeGroup.addedSets.indexOf(b.id)
                 )
             : // otherwise, display them in numerical order
-              // TODO: update for new added sets structure
               props.activeDatabase.sets
                 .filter(set => set.category === setCategory)
                 .filter(set =>

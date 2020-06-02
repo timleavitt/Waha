@@ -58,10 +58,10 @@ function PlayScreen (props) {
 
   // sources for all 3 audio files
   const [chapter1Source, setChapter1Source] = useState()
-  const [chapter2Source, setChapter2Source] = useState(
-    FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
-  )
+  const [chapter2Source, setChapter2Source] = useState()
   const [chapter3Source, setChapter3Source] = useState()
+
+  const [videoSource, setVideoSource] = useState()
 
   //share modal
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
@@ -109,15 +109,33 @@ function PlayScreen (props) {
         '-chapter3.mp3'
     )
 
-    // check if chapter 2 is downloaded or downloading, and if neither, start to download it
-    if (
-      !props.route.params.isDownloaded &&
-      !(props.route.params.thisLesson.id in props.downloads)
-    ) {
-      props.downloadLesson(
-        props.route.params.thisLesson.id,
-        props.route.params.thisLesson.source
+    // check if this lesson has an audio source
+    if (props.thisLesson.audioSource) {
+      // if it does, set the source to it
+      FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
+
+      // if an audio file is not donwloading and not currently downloading, download it
+      if (
+        !props.route.params.isDownloaded &&
+        !(props.route.params.thisLesson.id in props.downloads)
+      ) {
+        props.downloadLesson(
+          props.route.params.thisLesson.id,
+          props.route.params.thisLesson.audioSource
+        )
+      }
+      // otherwise, set the source to our dummy mp3 file
+    } else {
+      setChapter2Source(
+        FileSystem.documentDirectory +
+          props.activeGroup.language +
+          '-' +
+          'dummy-chapter2.mp3'
       )
+    }
+
+    // TODO: video stuff
+    if (props.thisLesson.videoSource) {
     }
 
     //set up our timer tick for updating the seeker every second

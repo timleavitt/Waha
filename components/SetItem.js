@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 import Icon from '../assets/fonts/icons'
 import SVG from '../assets/svg.js'
+import { addSet } from '../redux/actions/groupsActions'
 
 function SetItem (props) {
   //// STATE
@@ -225,6 +226,45 @@ function SetItem (props) {
     )
     if (progressPercentage === 1) setFullyCompleted(true)
     else setFullyCompleted(false)
+
+    console.log(progressPercentage)
+    console.log('is the next set already added?')
+    console.log(
+      !props.activeGroup.addedSets.some(
+        addedSet => addedSet.index === props.thisSet.index + 1
+      )
+    )
+    console.log('is the set core?')
+    console.log(props.thisSet.category === 'core')
+    console.log('is the next set present in the set array?')
+    console.log(
+      props.activeDatabase.sets
+        .filter(set => set.category === 'core')
+        .some(set => set.index === props.thisSet.index + 1)
+    )
+    if (
+      progressPercentage > 0.8 &&
+      !props.activeGroup.addedSets.some(
+        addedSet => addedSet.id === props.thisSet.id
+      ) &&
+      props.thisSet.category === 'core' &&
+      props.activeDatabase.sets
+        .filter(set => set.category === 'core')
+        .some(set => set.index === props.thisSet.index + 1)
+    ) {
+      Alert.alert('next story set added', '', [
+        {
+          text: props.translations.alerts.options.ok,
+          onPress: () => {}
+        }
+      ])
+      props.addSet(
+        props.activeGroup.name,
+        props.activeDatabase.sets
+          .filter(set => set.category === 'core')
+          .filter(set => set.index === props.thisSet.index + 1)[0].id
+      )
+    }
   }
 
   //// RENDER
@@ -325,4 +365,12 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(SetItem)
+function mapDispatchToProps (dispatch) {
+  return {
+    addSet: (groupName, setID) => {
+      dispatch(addSet(groupName, setID))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SetItem)

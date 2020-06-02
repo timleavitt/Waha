@@ -169,10 +169,11 @@ export function addLanguage (language) {
           function downloadEverything () {
             return Promise.all([
               downloadSomething('header', 'header.png'),
-              downloadSomething('regular-chapter1', 'regular-chapter1.mp3'),
-              downloadSomething('regular-chapter3', 'regular-chapter3.mp3'),
-              downloadSomething('first-chapter1', 'first-chapter1.mp3'),
-              downloadSomething('first-chapter3', 'first-chapter3.mp3')
+              downloadSomething('c-t-chapter1', 'c-t-chapter1.mp3'),
+              downloadSomething('c-t-chapter3', 'c-t-chapter3.mp3'),
+              downloadSomething('mt-chapter1', 'mt-chapter1.mp3'),
+              downloadSomething('mt-chapter3', 'mt-chapter3.mp3'),
+              downloadSomething('dummy-chapter2', 'dummy-chapter2.mp3')
             ])
           }
 

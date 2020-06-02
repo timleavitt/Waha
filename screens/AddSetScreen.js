@@ -84,7 +84,7 @@ function AddSetScreen (props) {
             ? () =>
                 props.navigation.navigate('AddSetFolder', {
                   category: 'topical',
-                  folder: setList.item.subcategory
+                  folder: setList.item.folderName
                 })
             : // otherwise, add the set
               () => {
@@ -101,6 +101,10 @@ function AddSetScreen (props) {
     <View style={styles.screen}>
       <FlatList
         data={
+          // if we're displaying topical sets:
+          // 1. filter by all sets that are topical,
+          // 2. filter by topical sets in the specified folder, and then
+          // 3. filter to only display sets that haven't already been added
           props.route.params.category === 'topical'
             ? props.activeDatabase.sets
                 .filter(set => set.category === 'topical')
@@ -111,7 +115,10 @@ function AddSetScreen (props) {
                       addedSet => addedSet.id === set.id
                     )
                 )
-            : props.activeDatabase.sets
+            : // if we're displaying core or folders:
+              // 1. filter by cateogry (core or folder)
+              // 2. filter to only display sets that haven't already been added
+              props.activeDatabase.sets
                 .filter(set => set.category === props.route.params.category)
                 .filter(
                   set =>
