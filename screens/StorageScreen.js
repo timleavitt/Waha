@@ -137,7 +137,7 @@ function StorageScreen (props) {
         onPress={() =>
           Alert.alert(
             props.translations.alerts.deleteDownloadedLessonsPerLanguage.header,
-            props.translations.alerts.deleteDownloadedLessonsPerLanguage.body,
+            props.translations.alerts.deleteDownloadedLessonsPerLanguage.text,
             [
               {
                 text: props.translations.alerts.options.cancel,
@@ -230,7 +230,7 @@ function StorageScreen (props) {
                     Alert.alert(
                       props.translations.alerts.deleteAllDownloadedLessons
                         .header,
-                      props.translations.alerts.deleteAllDownloadedLessons.body,
+                      props.translations.alerts.deleteAllDownloadedLessons.text,
                       [
                         {
                           text: props.translations.alerts.options.cancel,

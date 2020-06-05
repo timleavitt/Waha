@@ -16,12 +16,13 @@ import { resumeDownload } from '../redux/actions/downloadActions'
 import { setToolkitEnabled } from '../redux/actions/toolkitEnabledActions'
 import BackButton from '../components/BackButton'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
-
+import MessageModal from '../components/MessageModal'
 function PasscodeScreen (props) {
   //// STATE
   const [passcode, setPasscode] = useState('')
   const [pinRef, setPinRef] = useState()
   const [passcodeStatusText, setPasscodeStatusText] = useState('')
+  const [showHowMTsWorkModal, setShowHotMTsWorkModal] = useState(false)
   //// CONSTRUCTOR
 
   useEffect(() => {
@@ -44,7 +45,7 @@ function PasscodeScreen (props) {
 
   function checkPasscode (passcode) {
     if (passcode === '281820') {
-      setPasscodeStatusText(props.translations.labels.passcodeSuccess)
+      setShowHotMTsWorkModal(true)
       props.setToolkitEnabled(true)
     } else {
       pinRef.shake().then(() => setPasscode(''))
@@ -87,6 +88,16 @@ function PasscodeScreen (props) {
       >
         {passcodeStatusText}
       </Text>
+      <MessageModal
+        isVisible={showHowMTsWorkModal}
+        hideModal={() => {
+          setShowHotMTsWorkModal(false)
+          props.navigation.goBack()
+        }}
+        title='Mobilization tools content is enabled'
+        body='In order to add these new story sets to your currently active group, toggle the switch!'
+        imageSource={require('../assets/splash.png')}
+      />
     </View>
   )
 }

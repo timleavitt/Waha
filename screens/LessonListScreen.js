@@ -196,7 +196,7 @@ function LessonListScreen (props) {
               )
             : Alert.alert(
                 props.translations.alerts.shareUndownloaded.header,
-                props.translations.alerts.shareUndownloaded.body,
+                props.translations.alerts.shareUndownloaded.text,
                 [
                   {
                     text: props.translations.alerts.options.ok,

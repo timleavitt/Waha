@@ -126,7 +126,7 @@ function GroupsScreen (props) {
                   : () =>
                       Alert.alert(
                         props.translations.alerts.addLanguageNoInternet.header,
-                        props.translations.alerts.addLanguageNoInternet.body,
+                        props.translations.alerts.addLanguageNoInternet.text,
                         [
                           {
                             text: props.translations.alerts.options.ok,

@@ -65,7 +65,7 @@ function AddNewLanguageScreen (props) {
         onPress={() =>
           Alert.alert(
             props.translations.alerts.addNewLanguage.header,
-            props.translations.alerts.addNewLanguage.body,
+            props.translations.alerts.addNewLanguage.text,
             [
               {
                 text: props.translations.alerts.options.cancel,

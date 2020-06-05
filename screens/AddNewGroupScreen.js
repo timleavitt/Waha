@@ -64,7 +64,7 @@ function AddNewGroupScreen (props) {
     if (isDuplicate) {
       Alert.alert(
         props.translations.alerts.sameGroupName.header,
-        props.translations.alerts.sameGroupName.body,
+        props.translations.alerts.sameGroupName.text,
         [{ text: props.translations.alerts.options.ok, onPress: () => {} }]
       )
       return
@@ -73,7 +73,7 @@ function AddNewGroupScreen (props) {
     if (groupName === '') {
       Alert.alert(
         props.translations.alerts.blankGroupName.header,
-        props.translations.alerts.blankGroupName.body,
+        props.translations.alerts.blankGroupName.text,
         [{ text: props.translations.alerts.options.ok, onPress: () => {} }]
       )
       return

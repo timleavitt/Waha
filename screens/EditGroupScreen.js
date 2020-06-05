@@ -205,7 +205,7 @@ function EditGroupScreen (props) {
             onPress={() =>
               Alert.alert(
                 props.translations.alerts.resetProgress.header,
-                props.translations.alerts.resetProgress.body,
+                props.translations.alerts.resetProgress.text,
                 [
                   {
                     text: props.translations.alerts.options.cancel,

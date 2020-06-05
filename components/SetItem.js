@@ -156,20 +156,19 @@ function SetItem (props) {
             />
           </View>
         )
-        setInfo(
-          <TouchableOpacity
-            style={[
-              styles.actionContainer,
-              {
-                marginRight: props.isRTL ? 0 : 10,
-                marginLeft: props.isRTL ? 10 : 0
-              }
-            ]}
-            onPress={() => {}}
-          >
-            <Icon name='info' size={30 * scaleMultiplier} color='#9FA5AD' />
-          </TouchableOpacity>
-        )
+        setInfo()
+        // <TouchableOpacity
+        //   style={[
+        //     styles.actionContainer,
+        //     {
+        //       marginRight: props.isRTL ? 0 : 10,
+        //       marginLeft: props.isRTL ? 10 : 0
+        //     }
+        //   ]}
+        //   onPress={() => {}}
+        // >
+        //   <Icon name='info' size={30 * scaleMultiplier} color='#9FA5AD' />
+        // </TouchableOpacity>
         break
       case 'folder':
         setIcon(
@@ -192,20 +191,19 @@ function SetItem (props) {
             />
           </View>
         )
-        setInfo(
-          <TouchableOpacity
-            style={[
-              styles.actionContainer,
-              {
-                marginRight: props.isRTL ? 0 : 10,
-                marginLeft: props.isRTL ? 10 : 0
-              }
-            ]}
-            onPress={() => {}}
-          >
-            <Icon name='info' size={30 * scaleMultiplier} color='#9FA5AD' />
-          </TouchableOpacity>
-        )
+        setInfo()
+        // <TouchableOpacity
+        //   style={[
+        //     styles.actionContainer,
+        //     {
+        //       marginRight: props.isRTL ? 0 : 10,
+        //       marginLeft: props.isRTL ? 10 : 0
+        //     }
+        //   ]}
+        //   onPress={() => {}}
+        // >
+        //   <Icon name='info' size={30 * scaleMultiplier} color='#9FA5AD' />
+        // </TouchableOpacity>
         break
     }
   }, [
@@ -252,7 +250,7 @@ function SetItem (props) {
     if (nextSet) {
       if (
         // we've completed 75% of a set AND
-        progressPercentage > 0.75 &&
+        progressPercentage > 0.85 &&
         // this set is a core set AND
         props.thisSet.category === 'core' &&
         // the next set after this one hasn't already been added AND

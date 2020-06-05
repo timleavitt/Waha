@@ -377,7 +377,7 @@ function PlayScreen (props) {
     ) {
       Alert.alert(
         props.translations.alerts.markedAsIncomplete.header,
-        props.translations.alerts.markedAsIncomplete.body,
+        props.translations.alerts.markedAsIncomplete.text,
         [
           {
             text: props.translations.alerts.ok,
@@ -388,7 +388,7 @@ function PlayScreen (props) {
     } else {
       Alert.alert(
         props.translations.alerts.markedAsComplete.header,
-        props.translations.alerts.markedAsComplete.body,
+        props.translations.alerts.markedAsComplete.text,
         [
           {
             text: props.translations.alerts.ok,
@@ -432,7 +432,7 @@ function PlayScreen (props) {
               )
             : Alert.alert(
                 props.translations.alerts.shareUndownloaded.header,
-                props.translations.alerts.shareUndownloaded.body,
+                props.translations.alerts.shareUndownloaded.text,
                 [
                   {
                     text: props.translations.alerts.options.ok,

@@ -89,7 +89,7 @@ function LanguageInstanceHeader (props) {
         onPress={() =>
           Alert.alert(
             props.translations.alerts.deleteLanguage.header,
-            props.translations.alerts.deleteLanguage.body,
+            props.translations.alerts.deleteLanguage.text,
             [
               {
                 text: props.translations.alerts.options.cancel,
