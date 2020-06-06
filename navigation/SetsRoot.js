@@ -17,7 +17,7 @@ function SetsRoot (props) {
       initialRouteName='SetTabs'
       screenOptions={{
         headerStyle: {
-          height: 90 * scaleMultiplier
+          height: 110
         },
         headerTitleAlign: 'center'
       }}

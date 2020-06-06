@@ -25,9 +25,6 @@ function MainStack (props) {
     <Stack.Navigator
       initialRouteName='SetsRoot'
       screenOptions={{
-        headerStyle: {
-          height: 90 * scaleMultiplier
-        },
         gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
         gestureResponseDistance: {
           horizontal: 50 * scaleMultiplier,

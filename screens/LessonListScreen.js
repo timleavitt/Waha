@@ -8,7 +8,8 @@ import {
   Button,
   Text,
   Share,
-  Platform
+  Platform,
+  Dimensions
 } from 'react-native'
 import LessonItem from '../components/LessonItem'
 import * as FileSystem from 'expo-file-system'
@@ -25,7 +26,8 @@ import {
 } from '../redux/actions/downloadActions'
 import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { connect } from 'react-redux'
-
+import { SwipeListView } from 'react-native-swipe-list-view'
+import LessonSwipeBackdrop from '../components/LessonSwipeBackdrop'
 function LessonListScreen (props) {
   //// STATE
 
@@ -43,6 +45,7 @@ function LessonListScreen (props) {
   const [showSaveLessonModal, setShowSaveLessonModal] = useState(false)
   const [showDeleteLessonModal, setShowDeleteLessonModal] = useState(false)
   const [showLessonOptionsModal, setShowLessonOptionsModal] = useState(false)
+  const [showShareModal, setShowShareModal] = useState(false)
 
   var thisSetProgress = props.activeGroup.addedSets.filter(
     set => set.id === props.route.params.thisSet.id
@@ -229,7 +232,7 @@ function LessonListScreen (props) {
         setActiveLessonInModal={() => setActiveLessonInModal(lessonList.item)}
         setShowSaveLessonModal={() => setShowSaveLessonModal(true)}
         setShowDeleteLessonModal={() => setShowDeleteLessonModal(true)}
-        setShowLessonOptionsModal={() => setShowLessonOptionsModal(true)}
+        // setShowLessonOptionsModal={() => setShowLessonOptionsModal(true)}
       />
     )
   }
@@ -239,12 +242,39 @@ function LessonListScreen (props) {
       <View style={styles.studySetItemContainer}>
         <SetItem thisSet={props.route.params.thisSet} mode='lessonlist' />
       </View>
-      <FlatList
+      <SwipeListView
         data={props.activeDatabase.lessons.filter(
           lesson => props.route.params.thisSet.id === lesson.setid
         )}
         renderItem={renderLessonItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.index.toString()}
+        renderHiddenItem={(data, rowMap) => (
+          <LessonSwipeBackdrop
+            isComplete={thisSetProgress.includes(data.item.index)}
+            toggleComplete={() =>
+              props.toggleComplete(
+                props.activeGroup.name,
+                props.route.params.thisSet,
+                data.item.index
+              )
+            }
+          />
+        )}
+        leftOpenValue={50}
+        rightOpenValue={-50}
+        leftActivationValue={Dimensions.get('screen').width / 2 - 10}
+        rightActivationValue={-Dimensions.get('screen').width / 2 + 10}
+        stopLeftSwipe={Dimensions.get('screen').width / 2}
+        stopRightSwipe={-Dimensions.get('screen').width / 2}
+        onLeftActionStatusChange={data => {
+          if (data.isActivated)
+            props.toggleComplete(
+              props.activeGroup.name,
+              props.route.params.thisSet,
+              parseInt(data.key)
+            )
+        }}
+        onRightActionStatusChange={data => setShowLessonOptionsModal(true)}
       />
 
       {/* MODALS */}
@@ -285,7 +315,7 @@ function LessonListScreen (props) {
         hideModal={hideModals}
         closeText={props.activeDatabase.translations.modals.lessonOptions.close}
       >
-        <ModalButton
+        {/* <ModalButton
           title={
             props.activeDatabase.translations.modals.lessonOptions
               .markLessonComplete
@@ -298,7 +328,7 @@ function LessonListScreen (props) {
               .markLessonIncomplete
           }
           onPress={() => toggleCompleteFromModal('incomplete')}
-        />
+        /> */}
         <ModalButton
           title={
             props.activeDatabase.translations.modals.lessonOptions.shareApp
@@ -319,14 +349,14 @@ function LessonListScreen (props) {
           }
           onPress={() => share('audio')}
         />
-        <ModalButton
+        {/* <ModalButton
           isLast={true}
           title={
             props.activeDatabase.translations.modals.lessonOptions
               .markUpToPointAsComplete
           }
           onPress={markUpToThisPointAsCompleteFromModal}
-        />
+        /> */}
       </OptionsModal>
     </View>
   )

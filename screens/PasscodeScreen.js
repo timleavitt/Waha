@@ -22,7 +22,9 @@ function PasscodeScreen (props) {
   const [passcode, setPasscode] = useState('')
   const [pinRef, setPinRef] = useState()
   const [passcodeStatusText, setPasscodeStatusText] = useState('')
-  const [showHowMTsWorkModal, setShowHotMTsWorkModal] = useState(false)
+  const [unlockSuccessModal, setUnlockSuccessModal] = useState(false)
+  const [unlockFailiureModal, setUnlockFailiureModal] = useState(false)
+
   //// CONSTRUCTOR
 
   useEffect(() => {
@@ -45,12 +47,12 @@ function PasscodeScreen (props) {
 
   function checkPasscode (passcode) {
     if (passcode === '281820') {
-      setShowHotMTsWorkModal(true)
+      setUnlockSuccessModal(true)
       props.setToolkitEnabled(true)
     } else {
       pinRef.shake().then(() => setPasscode(''))
-      setPasscodeStatusText(props.translations.labels.passcodeError)
-      setTimeout(() => setPasscodeStatusText(''), 3000)
+      setUnlockFailiureModal(true)
+      // setTimeout(() => setPasscodeStatusText(''), 3000)
     }
   }
 
@@ -81,21 +83,32 @@ function PasscodeScreen (props) {
       <Text
         style={{
           fontFamily: props.font + '-regular',
-          fontSize: 14 * scaleMultiplier,
-          color: '#9FA5AD',
-          marginTop: 30 * scaleMultiplier
+          fontSize: 18 * scaleMultiplier,
+          color: '#FF0800',
+          marginTop: 30 * scaleMultiplier,
+          paddingHorizontal: 20,
+          textAlign: 'center'
         }}
       >
         {passcodeStatusText}
       </Text>
       <MessageModal
-        isVisible={showHowMTsWorkModal}
+        isVisible={unlockSuccessModal}
         hideModal={() => {
-          setShowHotMTsWorkModal(false)
+          setUnlockSuccessModal(false)
           props.navigation.goBack()
         }}
-        title='Mobilization tools content is enabled'
-        body='In order to add these new story sets to your currently active group, toggle the switch!'
+        title='Success!'
+        body='Mobilization tools have been unlocked. In order to add these new story sets to your currently active group, toggle the switch!'
+        imageSource={require('../assets/splash.png')}
+      />
+      <MessageModal
+        isVisible={unlockFailiureModal}
+        hideModal={() => {
+          setUnlockFailiureModal(false)
+        }}
+        title='Incorrect passcode entered'
+        body='Please try entering the passcode again.'
         imageSource={require('../assets/splash.png')}
       />
     </View>

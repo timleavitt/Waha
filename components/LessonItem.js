@@ -72,7 +72,6 @@ function LessonItem (props) {
                 )
             : props.onLessonSelect
         }
-        onLongPress={showLessonOptionsModal}
       >
         <View style={styles.completeStatusContainer}>
           <Icon

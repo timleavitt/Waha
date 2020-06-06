@@ -10,34 +10,34 @@ function GroupListItem (props) {
 
   // gets a formatted string of this group's bookmark lesson
   function getBookmarkText () {
-    // var thisGroup = props.groups.filter(
-    //   group => group.name === props.groupName
-    // )[0]
-    // if (
-    //   thisGroup.bookmark ===
-    //   props.database[thisGroup.language].lessons.length + 1
-    // )
-    //   return 'Contact us for more study sets!'
-    // var bookmarkLesson = props.database[thisGroup.language].lessons.filter(
-    //   lesson => lesson.index === thisGroup.bookmark
-    // )[0]
-    // return bookmarkLesson.subtitle + ' ' + bookmarkLesson.title
-
+    // get the active group object
     var thisGroup = props.groups.filter(
       group => group.name === props.groupName
     )[0]
+
+    // get the currently bookmarked set object
     var bookmarkSet = props.activeDatabase.sets.filter(
       set => set.id === thisGroup.setBookmark
     )[0]
+
+    // get the id of the bookmarked lesson from the bookmarked set
     var bookmarkSetBookmarkLesson = thisGroup.addedSets.filter(
       addedSet => addedSet.id === bookmarkSet.id
     )[0].bookmark
+
+    // get the bookmrarked lesson object
     var bookmarkLesson = props.activeDatabase.lessons
       .filter(lesson => lesson.setid === thisGroup.setBookmark)
       .filter(lesson => lesson.index === bookmarkSetBookmarkLesson)[0]
-    return {
-      lesson: bookmarkLesson.subtitle + ' ' + bookmarkLesson.title,
-      set: bookmarkSet.subtitle
+
+    // if both those exist, return them to display the bookmarks
+    if (bookmarkLesson && bookmarkSet) {
+      return {
+        lesson: bookmarkLesson.subtitle + ' ' + bookmarkLesson.title,
+        set: bookmarkSet.subtitle
+      }
+    } else {
+      return ''
     }
   }
 
