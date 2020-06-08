@@ -9,6 +9,7 @@ import {
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 
+// component rendered behind a lesson item that shows the swipe options
 function LessonSwipeBackdrop (props) {
   //// RENDER
 

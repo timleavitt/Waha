@@ -3,9 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import { deleteGroup, changeActiveGroup } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
-import AvatarImage from '../components/AvatarImage'
+import AvatarImage from './AvatarImage'
 
-function GroupListItem (props) {
+function GroupItem (props) {
   // FUNCTIONS
 
   // gets a formatted string of this group's bookmark lesson
@@ -43,9 +43,9 @@ function GroupListItem (props) {
 
   // RENDER
 
-  // render the delete button conditionally as we can only delete in edit mode and
-  // can't delete the active group
+  // render the delete button
   var deleteButton
+  // if we're editing and not in the active group, show tappable delete button
   if (props.isEditing && props.activeGroup.name != props.groupName) {
     deleteButton = (
       <TouchableOpacity
@@ -55,6 +55,7 @@ function GroupListItem (props) {
         <Icon name='minus-filled' size={24 * scaleMultiplier} color='#FF0800' />
       </TouchableOpacity>
     )
+    // if we're editing and in the active group, show an untappable check
   } else if (props.isEditing && props.activeGroup.name === props.groupName) {
     deleteButton = (
       <View style={styles.minusButtonContainer}>
@@ -64,7 +65,7 @@ function GroupListItem (props) {
   }
 
   // render right button conditionally; can be either right arrow when in edit mode,
-  // checkmark if in edit mode and this group is active, or nothing
+  // checkmark if in edit mode and this group is active, or an empty view
   var rightButton
   if (props.isEditing) {
     rightButton = (
@@ -98,6 +99,7 @@ function GroupListItem (props) {
       ]}
     >
       {deleteButton}
+      {/* main tappable area */}
       <TouchableOpacity
         style={[
           styles.touchableContainer,
@@ -120,6 +122,7 @@ function GroupListItem (props) {
           source={props.avatarSource}
           isActive={props.activeGroup.name === props.groupName}
         />
+        {/* text portion includes group name and bookmark text */}
         <View
           style={[
             styles.groupNameContainer,
@@ -244,4 +247,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupListItem)
+export default connect(mapStateToProps, mapDispatchToProps)(GroupItem)

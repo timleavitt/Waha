@@ -7,6 +7,7 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress'
 function DownloadStatusIndicator (props) {
   //// RENDER
 
+  // WHAT TO RENDER
   // Has audio source?
   //  true: Downloaded?
   //    true: cloud-check
@@ -18,8 +19,9 @@ function DownloadStatusIndicator (props) {
   //  false: null
 
   return props.hasAudioSource ? (
+    // if has audio source
     props.isDownloaded ? (
-      // if downloaded
+      // if downloaded, show check
       <TouchableOpacity
         onPress={props.showDeleteModal}
         style={styles.downloadButtonContainer}
@@ -28,7 +30,7 @@ function DownloadStatusIndicator (props) {
       </TouchableOpacity>
     ) : props.isConnected ? (
       props.lessonID in props.downloads ? (
-        // if connected and currently downloading
+        // if connected and currently downloading, show progress
         <View style={styles.downloadButtonContainer}>
           <AnimatedCircularProgress
             size={22 * scaleMultiplier}
@@ -40,7 +42,7 @@ function DownloadStatusIndicator (props) {
           />
         </View>
       ) : (
-        // if not downloaded, not downloading, and connected
+        // if not downloaded, not downloading, and connected, show download icon
         <TouchableOpacity
           onPress={props.showSaveModal}
           style={styles.downloadButtonContainer}
@@ -53,12 +55,13 @@ function DownloadStatusIndicator (props) {
         </TouchableOpacity>
       )
     ) : (
-      // not downloaded and not connected
+      // if not downloaded and not connected, show slash
       <View style={styles.downloadButtonContainer}>
         <Icon name='cloud-slash' color='#3A3C3F' size={22 * scaleMultiplier} />
       </View>
     )
-  ) : null
+  ) : // if no audio source, show nothing
+  null
 }
 
 //// STYLES
@@ -69,6 +72,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   }
 })
+
+//// REDUX
 
 function mapStateToProps (state) {
   return {

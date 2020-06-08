@@ -9,20 +9,18 @@ import {
   Image
 } from 'react-native'
 import { connect } from 'react-redux'
-import GroupListItemToolkit from '../components/GroupListItemToolkit'
+import GroupItemMT from './GroupItemMT'
 import { scaleMultiplier } from '../constants'
-import { deleteGroup } from '../redux/actions/groupsActions'
-import { deleteLanguage } from '../redux/actions/databaseActions'
 import * as FileSystem from 'expo-file-system'
-import { removeDownload } from '../redux/actions/downloadActions'
 
-function LanguageInstanceHeaderToolkit (props) {
+function GroupListHeaderMT (props) {
   //// FUNCTIONS
 
   useEffect(() => {}, [])
 
   //// RENDER
 
+  // if our active language has a toolkit, show the list of groups
   var list = props.activeDatabase.hasToolkit ? (
     <FlatList
       data={props.groups.filter(group => group.language === props.languageID)}
@@ -30,6 +28,7 @@ function LanguageInstanceHeaderToolkit (props) {
       keyExtractor={item => item.name}
     />
   ) : (
+    // otherwise, show a message that says MTs are not available for that language
     <View
       style={{
         height: 80 * scaleMultiplier,
@@ -54,8 +53,9 @@ function LanguageInstanceHeaderToolkit (props) {
     </View>
   )
 
+  // renders a group item
   function renderGroupItem (groups) {
-    return <GroupListItemToolkit group={groups.item} />
+    return <GroupItemMT group={groups.item} />
   }
 
   return (
@@ -100,6 +100,8 @@ function LanguageInstanceHeaderToolkit (props) {
           }}
         />
       </View>
+
+      {/* list of groups OR no MTs message */}
       {list}
     </View>
   )
@@ -126,19 +128,6 @@ const styles = StyleSheet.create({
     width: 96 * scaleMultiplier,
     height: 32 * scaleMultiplier,
     alignSelf: 'flex-end'
-  },
-  addGroupContainer: {
-    height: 80 * scaleMultiplier,
-    justifyContent: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    margin: 3
-  },
-  addGroupText: {
-    color: '#2D9CDB',
-    fontSize: 18 * scaleMultiplier,
-    textAlign: 'left'
   }
 })
 
@@ -158,21 +147,4 @@ function mapStateToProps (state) {
   }
 }
 
-function mapDispatchToProps (dispatch) {
-  return {
-    deleteGroup: name => {
-      dispatch(deleteGroup(name))
-    },
-    deleteLanguage: language => {
-      dispatch(deleteLanguage(language))
-    },
-    removeDownload: lessonID => {
-      dispatch(removeDownload(lessonID))
-    }
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LanguageInstanceHeaderToolkit)
+export default connect(mapStateToProps)(GroupListHeaderMT)

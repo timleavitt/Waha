@@ -10,16 +10,15 @@ import {
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import { connect } from 'react-redux'
-import { setBookmark } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
-import {
-  removeDownload,
-  resumeDownload
-} from '../redux/actions/downloadActions'
+import { removeDownload } from '../redux/actions/downloadActions'
 import DownloadStatusIndicator from '../components/DownloadStatusIndicator'
 
 function LessonItem (props) {
+  //// CONSTRUCTOR
+
   useEffect(() => {
+    // if we've completed the download for this lesson, remove the download from redux
     if (props.downloads[props.thisLesson.id] == 1) {
       props.removeDownload(props.thisLesson.id)
     }
@@ -36,10 +35,6 @@ function LessonItem (props) {
     props.setActiveLessonInModal.call()
     props.setShowDeleteLessonModal.call()
   }
-  function showLessonOptionsModal () {
-    props.setActiveLessonInModal.call()
-    props.setShowLessonOptionsModal.call()
-  }
 
   //// RENDER
 
@@ -52,6 +47,7 @@ function LessonItem (props) {
         }
       ]}
     >
+      {/* main touchable area */}
       <TouchableOpacity
         style={[
           styles.progressAndTitle,
@@ -73,6 +69,7 @@ function LessonItem (props) {
             : props.onLessonSelect
         }
       >
+        {/* complete status indicator */}
         <View style={styles.completeStatusContainer}>
           <Icon
             name={
@@ -88,6 +85,8 @@ function LessonItem (props) {
             color={props.isComplete ? '#828282' : props.primaryColor}
           />
         </View>
+
+        {/* title and subtitle */}
         <View
           style={{
             flexDirection: 'column',
@@ -162,7 +161,6 @@ function mapStateToProps (state) {
   )[0]
   return {
     primaryColor: state.database[activeGroup.language].primaryColor,
-    //progress: state.appProgress,
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     downloads: state.downloads,
@@ -174,17 +172,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    downloadLesson: (lessonID, source) => {
-      dispatch(downloadLesson(lessonID, source))
-    },
-    setBookmark: groupName => {
-      dispatch(setBookmark(groupName))
-    },
     removeDownload: lessonID => {
       dispatch(removeDownload(lessonID))
-    },
-    resumeDownload: (lessonID, downloadSnapshotJSON) => {
-      dispatch(resumeDownload(lessonID, downloadSnapshotJSON))
     }
   }
 }

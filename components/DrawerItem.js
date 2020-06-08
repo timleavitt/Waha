@@ -61,6 +61,8 @@ const styles = StyleSheet.create({
   }
 })
 
+//// REDUX
+
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup

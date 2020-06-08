@@ -1,8 +1,8 @@
-//basic imports
 import React from 'react'
 import { View, StyleSheet, Slider } from 'react-native'
 import TimeDisplay from '../components/TimeDisplay'
 
+// scrubber component rendered on play screen
 function Scrubber (props) {
   //// RENDER
 

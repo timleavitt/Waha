@@ -8,9 +8,10 @@ import {
   addSet
 } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
-import AvatarImage from '../components/AvatarImage'
+import AvatarImage from './AvatarImage'
 
-function GroupListItemToolkit (props) {
+// variant of group list item that shows only avatar image, group name, and a switch to enable MTs
+function GroupItemMT (props) {
   // FUNCTIONS
 
   return (
@@ -54,7 +55,10 @@ function GroupListItemToolkit (props) {
           thumbColor='#FFFFFF'
           ios_backgroundColor='#DEE3E9'
           onValueChange={() => {
+            // toggle MTs on or off
             props.setShowToolkit(props.group.name, !props.group.showToolkit)
+
+            // if we're toggling MTs on for the first time, add the MT sets
             if (!props.group.showToolkit)
               for (const set of props.database[props.group.language].sets) {
                 if (set.category === 'mt') {
@@ -113,12 +117,6 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    deleteGroup: name => {
-      dispatch(deleteGroup(name))
-    },
-    changeActiveGroup: name => {
-      dispatch(changeActiveGroup(name))
-    },
     setShowToolkit: (groupName, toSet) => {
       dispatch(setShowToolkit(groupName, toSet))
     },
@@ -128,7 +126,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(GroupListItemToolkit)
+export default connect(mapStateToProps, mapDispatchToProps)(GroupItemMT)

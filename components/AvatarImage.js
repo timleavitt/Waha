@@ -42,6 +42,8 @@ function AvatarImage (props) {
       />
     )
 
+  // if we have something for props.onPress, make it touchable, otherwise make it
+  // not touchable
   return props.onPress ? (
     <TouchableOpacity
       style={{

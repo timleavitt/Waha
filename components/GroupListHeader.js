@@ -9,18 +9,19 @@ import {
   Image
 } from 'react-native'
 import { connect } from 'react-redux'
-import GroupListItem from '../components/GroupListItem'
+import GroupItem from './GroupItem'
 import { scaleMultiplier } from '../constants'
 import { deleteGroup } from '../redux/actions/groupsActions'
 import { deleteLanguage } from '../redux/actions/databaseActions'
 import * as FileSystem from 'expo-file-system'
 import { removeDownload } from '../redux/actions/downloadActions'
 
-function LanguageInstanceHeader (props) {
+function GroupListHeader (props) {
   //// FUNCTIONS
 
   useEffect(() => {
     // check if there was a failed language add, i.e. if the app crashed/user quit during a fetch
+    // and clear out the already downloaded content if there was
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
         if (
@@ -66,7 +67,7 @@ function LanguageInstanceHeader (props) {
 
   function renderGroupItem (groups) {
     return (
-      <GroupListItem
+      <GroupItem
         groupName={groups.item.name}
         isEditing={props.isEditing}
         goToEditGroupScreen={props.goToEditGroupScreen}
@@ -75,8 +76,9 @@ function LanguageInstanceHeader (props) {
     )
   }
 
-  // render trash button conditionally because it's only shown when editting mode is active
+  // render trash button conditionally because it's only shown when editing mode is active
   var trashButton
+  // if we're editing and not in the active group, we can delete, so show trash can
   if (props.isEditing && !(props.activeGroup.language === props.languageID)) {
     trashButton = (
       <TouchableOpacity
@@ -106,11 +108,13 @@ function LanguageInstanceHeader (props) {
         <Icon name='trash' size={25 * scaleMultiplier} color='#FF0800' />
       </TouchableOpacity>
     )
+    // if we're editing and active, show an empty view
   } else if (
     props.isEditing &&
     props.activeGroup.language === props.languageID
   ) {
     trashButton = <View style={{ height: '100%', width: 20 }} />
+    // otherwise, make it nothin
   } else {
     trashButton = null
   }
@@ -145,11 +149,15 @@ function LanguageInstanceHeader (props) {
           }}
         />
       </View>
+
+      {/* list of groups */}
       <FlatList
         data={props.groups.filter(group => group.language === props.languageID)}
         renderItem={renderGroupItem}
         keyExtractor={item => item.name}
       />
+
+      {/* add new group button */}
       <TouchableOpacity
         style={[
           styles.addGroupContainer,
@@ -255,7 +263,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LanguageInstanceHeader)
+export default connect(mapStateToProps, mapDispatchToProps)(GroupListHeader)

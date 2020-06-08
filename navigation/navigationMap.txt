@@ -1,0 +1,23 @@
+ROOT (conditionally renders):
+  > ONBOARDING
+  > loading
+  > MAINDRAWER
+    > drawer
+    > MAINSTACK
+      > lessonlist
+      > play 
+      > groups
+      > addNewGroup
+      > addNewanguage
+      > editGroup
+      > storage
+      > MT
+      > passcode
+      > SETSROOT
+        > SETTABS
+          > set (core)
+          > set (topical)
+          > set (mt) (rendered conditionally)
+        > ADDSETSTACK
+          > addset
+          > addset (folder)

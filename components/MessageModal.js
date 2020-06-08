@@ -4,6 +4,7 @@ import Modal from 'react-native-modal'
 import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
 
+// modal variant that shows some information
 function MessageModal (props) {
   //// RENDER
   return (
