@@ -54,7 +54,7 @@ function WahaDrawer (props) {
                onPress={() => {}}
             /> */}
           <DrawerItem
-            iconName='record'
+            iconName='boat'
             text={props.translations.navigation.drawer.mt}
             onPress={() => props.navigation.navigate('MT')}
           />

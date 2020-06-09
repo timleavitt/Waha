@@ -10,11 +10,11 @@ function ChapterSelect (props) {
   // render chapter 2 icon conditionally based off if it's not active, active, or completed
   var chapter2IconName
   if (props.activeChapter === 'fellowship') {
-    chapter2IconName = 'number-2-fill'
+    chapter2IconName = 'number-2-filled'
   } else if (props.activeChapter === 'passage') {
     chapter2IconName = 'number-2-outline'
   } else {
-    chapter2IconName = 'check-fill'
+    chapter2IconName = 'check-filled'
   }
 
   // render chapter 2 button
@@ -34,7 +34,7 @@ function ChapterSelect (props) {
         <AnimatedCircularProgress
           size={20}
           width={4}
-          fill={props.downloads[props.lessonID] * 100}
+          filled={props.downloads[props.lessonID] * 100}
           tintColor={props.primaryColor}
           rotation={0}
           backgroundColor='#FFFFFF'
@@ -116,7 +116,7 @@ function ChapterSelect (props) {
           name={
             props.activeChapter === 'fellowship'
               ? 'number-1-outline'
-              : 'check-fill'
+              : 'check-filled'
           }
           size={25}
           color={
@@ -144,14 +144,23 @@ function ChapterSelect (props) {
 
       {/* chapter 3 button */}
       <TouchableOpacity
-        style={[styles.chapterSelect, { borderColor: props.primaryColor }]}
+        style={[
+          styles.chapterSelect,
+          {
+            borderColor: props.primaryColor,
+            backgroundColor:
+              props.activeChapter === 'application'
+                ? props.primaryColor
+                : '#EFF2F4'
+          }
+        ]}
         onPress={() => props.onPress('application')}
       >
         <Icon
           name={
             props.activeChapter === 'application'
               ? 'number-3-outline'
-              : 'number-3-fill'
+              : 'number-3-filled'
           }
           size={25}
           color={

@@ -1,136 +1,75 @@
 import { createIconSet } from 'react-native-vector-icons'
 const glyphMap = {
-  announcement: '\uea01',
-
-  archive: '\uea02',
-
-  'arrow-left': '\uea03',
-
-  'arrow-right': '\uea04',
-
-  backspace: '\uea05',
-
-  camera: '\uea06',
-
-  cast: '\uea07',
-
-  check: '\uea08',
-
-  'check-fill': '\uea09',
-
-  'check-outline': '\uea0a',
-
-  'cloud-check': '\uea0b',
-
-  'cloud-download': '\uea0c',
-
-  'cloud-slash': '\uea0d',
-
-  description: '\uea0e',
-
-  email: '\uea0f',
-
+  'announcement': '\uea01',
+  'archive': '\uea02',
+  'arrow-left': '\ue803',
+  'cancel-filled': '\ue807',
+  'cancel': '\ue80b',
+  'arrow-right': '\ue804',
+  'backspace': '\ue805',
+  'camera': '\ue806',
+  'cast': '\uea07',
+  'check': '\ue80a',
+  'check-filled': '\ue808',
+  'check-outline': '\ue809',
+  'cloud-check': '\ue80c',
+  'cloud-download': '\ue80d',
+  'cloud-slash': '\ue80e',
+  'description': '\uea0e',
+  'email': '\ue811',
   'error-filled': '\uea10',
-
   'error-outline': '\uea11',
-
-  'fullscreen-enter': '\uea12',
-
-  'fullscreen-exit': '\uea13',
-
-  group: '\uea14',
-
-  'group-add': '\uea15',
-
-  help: '\uea16',
-
-  info: '\uea17',
-
-  key: '\uea18',
-
-  language: '\uea19',
-
-  menu: '\uea1a',
-
-  'minus-filled': '\uea1b',
-
-  'minus-outline': '\uea1c',
-
-  movie: '\uea1d',
-
-  notes: '\uea1e',
-
-  'number-1-fill': '\uea1f',
-
-  'number-1-outline': '\uea20',
-
-  'number-2-fill': '\uea21',
-
-  'number-2-outline': '\uea22',
-
-  'number-3-fill': '\uea23',
-
-  'number-3-outline': '\uea24',
-
-  'number-4-fill': '\uea25',
-
-  'number-4-outline': '\uea26',
-
-  'number-5-fill': '\uea27',
-
-  'number-5-outline': '\uea28',
-
-  'number-6-fill': '\uea29',
-
-  'number-6-outline': '\uea2a',
-
-  open: '\uea2b',
-
-  pause: '\uea2c',
-
-  pencil: '\uea2d',
-
-  play: '\uea2e',
-
-  'playlist-add': '\uea2f',
-
-  'playlist-check': '\uea30',
-
-  'playlist-remove': '\uea31',
-
-  plus: '\uea32',
-
-  'plus-filled': '\uea33',
-
-  record: '\uea34',
-
-  security: '\uea35',
-
-  settings: '\uea36',
-
-  'share-android': '\uea37',
-
-  'share-ios': '\uea38',
-
-  'skip-back': '\uea39',
-
-  'skip-forward': '\uea3a',
-
-  storage: '\uea3b',
-
-  trash: '\uea3c',
-
+  'fullscreen-enter': '\ue816',
+  'fullscreen-exit': '\ue815',
+  'group': '\ue818',
+  'group-add': '\ue817',
+  'help': '\ue819',
+  'info': '\ue814',
+  'info-outline': '\ue812',
+  'key': '\uea18',
+  'language': '\ue81b',
+  'menu': '\uea1a',
+  'minus-filled': '\ue830',
+  'minus-outline': '\ue831',
+  'movie': '\uea1d',
+  'notes': '\ue810',
+  'number-1-filled': '\ue81a',
+  'number-1-outline': '\ue81f',
+  'number-2-filled': '\ue820',
+  'number-2-outline': '\ue821',
+  'number-3-filled': '\ue822',
+  'number-3-outline': '\ue823',
+  'number-4-filled': '\ue824',
+  'number-4-outline': '\ue825',
+  'number-5-filled': '\ue826',
+  'number-5-outline': '\ue827',
+  'number-6-filled': '\ue828',
+  'number-6-outline': '\ue829',
+  'open': '\uea2b',
+  'pause': '\ue82a',
+  'pencil': '\ue82b',
+  'play': '\ue82d',
+  'playlist-add': '\ue82e',
+  'playlist-check': '\ue82f',
+  'playlist-remove': '\ue832',
+  'plus': '\ue801',
+  'plus-filled': '\ue800',
+  'record': '\uea34',
+  'security': '\ue834',
+  'settings': '\ue829',
+  'share-android': '\ue836',
+  'share-ios': '\ue837',
+  'skip-back': '\ue833',
+  'skip-forward': '\ue813',
+  'storage': '\ue838',
+  'trash': '\ue80f',
   'triangle-left': '\uea3d',
-
-  'triangle-right': '\uea3e',
-
-  volume: '\uea3f',
-
-  x: '\uea40',
-
-  'x-filled': '\uea41'
+  'triangle-right': '\ue82c',
+  'volume': '\ue83a',
+  'x': '\uea40',
+  'x-filled': '\uea41',
+  'boat': '\ue83b'
 }
-
 export default Icon = createIconSet(
   glyphMap,
   'waha',
