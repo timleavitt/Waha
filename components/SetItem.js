@@ -58,8 +58,7 @@ function SetItem (props) {
                   }}
                 >
                   <SVG
-                    // name={'set' + props.thisSet.index}
-                    name={''}
+                    name={props.thisSet.icon}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
                     fill={fullyCompleted ? '#9FA5AD' : '#1D1E20'}
@@ -118,8 +117,7 @@ function SetItem (props) {
                   }}
                 >
                   <SVG
-                    // name={'set' + props.thisSet.index}
-                    name={''}
+                    name={props.thisSet.icon}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
                     fill={fullyCompleted ? '#9FA5AD' : '#1D1E20'}
@@ -146,8 +144,7 @@ function SetItem (props) {
             ]}
           >
             <SVG
-              // name={'set' + props.thisSet.index}
-              name={''}
+              name={props.thisSet.icon}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
               fill='#3A3C3F'
@@ -182,8 +179,7 @@ function SetItem (props) {
         setIcon(
           <View style={styles.iconContainer}>
             <SVG
-              // name={'set' + props.thisSet.index}
-              name={''}
+              name={props.thisSet.icon}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
               fill='#1D1E20'
