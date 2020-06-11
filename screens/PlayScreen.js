@@ -511,12 +511,24 @@ function PlayScreen (props) {
     return (
       <View>
         <Text
-          style={[styles.albumArtText, { fontFamily: props.font + '-medium' }]}
+          style={[
+            styles.albumArtText,
+            {
+              fontFamily: props.font + '-medium',
+              textAlign: props.isRTL ? 'right' : 'left'
+            }
+          ]}
         >
           {textList.item.header}
         </Text>
         <Text
-          style={[styles.albumArtText, { fontFamily: props.font + '-regular' }]}
+          style={[
+            styles.albumArtText,
+            {
+              fontFamily: props.font + '-regular',
+              textAlign: props.isRTL ? 'right' : 'left'
+            }
+          ]}
         >
           {textList.item.text + '\n'}
         </Text>
@@ -599,19 +611,19 @@ function PlayScreen (props) {
       <OptionsModal
         isVisible={showShareLessonModal}
         hideModal={() => setShowShareLessonModal(false)}
-        closeText={props.translations.modals.lessonOptions.close}
+        closeText={props.translations.modals.shareOptions.close}
       >
         <ModalButton
-          title={props.translations.modals.lessonOptions.shareApp}
+          title={props.translations.modals.shareOptions.shareApp}
           onPress={() => share('app')}
         />
         <ModalButton
-          title={props.translations.modals.lessonOptions.sharePassageText}
+          title={props.translations.modals.shareOptions.sharePassageText}
           onPress={() => share('text')}
         />
         <ModalButton
           isLast={true}
-          title={props.translations.modals.lessonOptions.sharePassageAudio}
+          title={props.translations.modals.shareOptions.sharePassageAudio}
           onPress={() => share('audio')}
         />
       </OptionsModal>
@@ -662,8 +674,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   albumArtText: {
-    fontSize: 18 * scaleMultiplier,
-    textAlign: 'justify'
+    fontSize: 18 * scaleMultiplier
   },
   scrollBar: {
     width: 4,

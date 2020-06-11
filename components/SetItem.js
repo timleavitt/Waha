@@ -5,7 +5,8 @@ import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 import Icon from '../assets/fonts/icons'
 import SVG from '../assets/svg.js'
-import { addSet } from '../redux/actions/groupsActions'
+import { addSet, setShowToolkit } from '../redux/actions/groupsActions'
+import MessageModal from '../components/MessageModal'
 
 function SetItem (props) {
   //// STATE
@@ -18,6 +19,8 @@ function SetItem (props) {
 
   // keeps track of whether the set is fully completed or not
   const [fullyCompleted, setFullyCompleted] = useState(false)
+
+  const [showUnlockModal, setShowUnlockModal] = useState(false)
 
   // dynamic set components
   const [icon, setIcon] = useState()
@@ -251,12 +254,7 @@ function SetItem (props) {
           addedSet => addedSet.id === nextSet.id
         )
       ) {
-        Alert.alert('next story set added', '', [
-          {
-            text: props.translations.alerts.options.ok,
-            onPress: () => {}
-          }
-        ])
+        setShowUnlockModal(true)
         props.addSet(
           props.activeGroup.name,
           props.activeDatabase.sets
@@ -321,6 +319,13 @@ function SetItem (props) {
 
       {/* action button rendered earlier */}
       {action}
+      <MessageModal
+        isVisible={showUnlockModal}
+        hideModal={() => setShowUnlockModal(false)}
+        title={props.translations.modals.storySetUnlock.header}
+        body={props.translations.modals.storySetUnlock.text}
+        imageSource={require('../assets/splash.png')}
+      />
     </TouchableOpacity>
   )
 }

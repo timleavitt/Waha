@@ -136,7 +136,8 @@ function GroupListHeader (props) {
             {
               textAlign: props.isRTL ? 'right' : 'left',
               fontFamily: props.font + '-regular',
-              paddingLeft: props.isEditing ? 0 : 20
+              marginLeft: props.isRTL ? 0 : props.isEditing ? 0 : 20,
+              marginRight: props.isRTL ? (props.isEditing ? 0 : 20) : 0
             }
           ]}
         >
