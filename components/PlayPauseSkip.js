@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 
+// play, pause, and skip controls for play screen
 function PlayPauseSkip (props) {
   //// RENDER
 
@@ -19,7 +20,7 @@ function PlayPauseSkip (props) {
         onPress={props.onPlayPress}
       >
         <Icon
-          name={props.isPlaying ? 'pause-filled' : 'play-filled'}
+          name={props.isPlaying ? 'pause' : 'play'}
           size={100 * scaleMultiplier}
           color={props.primaryColor}
         />

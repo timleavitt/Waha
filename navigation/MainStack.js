@@ -1,28 +1,30 @@
 import React from 'react'
+import { View, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import { scaleMultiplier } from '../constants'
+import * as FileSystem from 'expo-file-system'
 
 import LessonListScreen from '../screens/LessonListScreen'
 import PlayScreen from '../screens/PlayScreen'
-import SetScreen from '../screens/SetScreen'
 import GroupsScreen from '../screens/GroupsScreen'
 import AddNewGroupScreen from '../screens/AddNewGroupScreen'
 import AddNewLanguageScreen from '../screens/AddNewLanguageScreen'
 import EditGroupScreen from '../screens/EditGroupScreen'
 import StorageScreen from '../screens/StorageScreen'
+import MTScreen from '../screens/MTScreen'
+import PasscodeScreen from '../screens/PasscodeScreen'
+import SetTabNavigator from './SetTabs'
 import { createStackNavigator } from '@react-navigation/stack'
 import { connect } from 'react-redux'
+import SetsRoot from './SetsRoot'
 
 const Stack = createStackNavigator()
 
-function StackNavigator (props) {
+function MainStack (props) {
   return (
     //global navigation options
     <Stack.Navigator
-      initialRouteName='StudySet'
+      initialRouteName='SetsRoot'
       screenOptions={{
-        headerStyle: {
-          height: 90 * scaleMultiplier
-        },
         gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
         gestureResponseDistance: {
           horizontal: 50 * scaleMultiplier,
@@ -30,17 +32,13 @@ function StackNavigator (props) {
         },
         headerTitleAlign: 'center'
       }}
+      mode='card'
     >
       {/* Study Set Screen */}
       <Stack.Screen
-        name='Set'
-        component={SetScreen}
-        options={{
-          headerStyle: {
-            backgroundColor: '#EAEEF0'
-          },
-          headerTitleAlign: 'center'
-        }}
+        name='SetsRoot'
+        component={SetsRoot}
+        options={{ headerShown: false }}
       />
 
       {/* Lesson List Screen */}
@@ -55,8 +53,6 @@ function StackNavigator (props) {
           headerTitleAlign: 'center'
         }}
       />
-
-      {/* Play Screen */}
       <Stack.Screen
         name='Play'
         component={PlayScreen}
@@ -142,9 +138,46 @@ function StackNavigator (props) {
           }
         }}
       />
+      <Stack.Screen
+        name='MT'
+        component={MTScreen}
+        options={{
+          headerTitle: props.translations.navigation.headers.mtScreen,
+          headerStyle: {
+            backgroundColor: '#F7F9FA'
+          },
+          headerTitleStyle: {
+            color: '#000000',
+            fontFamily: props.font + '-medium'
+          }
+        }}
+      />
+      <Stack.Screen
+        name='Passcode'
+        component={PasscodeScreen}
+        options={{
+          headerTitle: props.translations.navigation.headers.mtScreen,
+          headerStyle: {
+            backgroundColor: '#F7F9FA'
+          },
+          headerTitleStyle: {
+            color: '#000000',
+            fontFamily: props.font + '-medium'
+          }
+        }}
+      />
     </Stack.Navigator>
   )
 }
+
+const styles = StyleSheet.create({
+  headerImage: {
+    resizeMode: 'contain',
+    width: 120,
+    height: 40,
+    alignSelf: 'center'
+  }
+})
 
 //// REDUX
 
@@ -155,8 +188,9 @@ function mapStateToProps (state) {
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    activeGroup: activeGroup
   }
 }
 
-export default connect(mapStateToProps)(StackNavigator)
+export default connect(mapStateToProps)(MainStack)

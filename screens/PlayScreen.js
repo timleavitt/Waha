@@ -14,7 +14,7 @@ import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
 import { scaleMultiplier, setImages } from '../constants'
 import { Audio } from 'expo-av'
-import WahaModal from '../components/WahaModal'
+import OptionsModal from '../components/OptionsModal'
 import ModalButton from '../components/ModalButton'
 import Scrubber from '../components/Scrubber'
 import PlayPauseSkip from '../components/PlayPauseSkip'
@@ -58,10 +58,12 @@ function PlayScreen (props) {
 
   // sources for all 3 audio files
   const [chapter1Source, setChapter1Source] = useState()
-  const [chapter2Source, setChapter2Source] = useState(
-    FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
-  )
+  const [chapter2Source, setChapter2Source] = useState()
   const [chapter3Source, setChapter3Source] = useState()
+
+  const [videoSource, setVideoSource] = useState()
+
+  const [albumArtRef, setAlbumArtRef] = useState()
 
   //share modal
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
@@ -70,9 +72,7 @@ function PlayScreen (props) {
   const albumArtData = [
     {
       key: '0',
-      type: 'text',
-      header: props.translations.questionsHeader,
-      body: props.translations.questionsBody
+      type: 'text'
     },
     {
       key: '1',
@@ -85,9 +85,7 @@ function PlayScreen (props) {
     },
     {
       key: '2',
-      type: 'text',
-      header: props.route.params.thisLesson.scriptureHeader,
-      body: props.route.params.thisLesson.scriptureText
+      type: 'text'
     }
   ]
 
@@ -97,41 +95,51 @@ function PlayScreen (props) {
     //set nav options
     props.navigation.setOptions(getNavOptions())
 
-    // set chapters 1 and 3 according to if we have a special case (first lesson, leadership questions, etc.)
-    if (props.route.params.thisLesson.chapter1and3Type === 'firstLesson') {
-      setChapter1Source(
-        FileSystem.documentDirectory +
-          props.activeGroup.language +
-          'lesson1chapter1.mp3'
+    // set chapters 1 and 3 according the questions type of this lesson
+    setChapter1Source(
+      FileSystem.documentDirectory +
+        props.activeGroup.language +
+        '-' +
+        props.route.params.thisLesson.questionsType +
+        '-chapter1.mp3'
+    )
+    setChapter3Source(
+      FileSystem.documentDirectory +
+        props.activeGroup.language +
+        '-' +
+        props.route.params.thisLesson.questionsType +
+        '-chapter3.mp3'
+    )
+
+    // check if this lesson has an audio source
+    if (props.route.params.thisLesson.audioSource) {
+      // if it does, set the source to it
+      setChapter2Source(
+        FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
       )
-      setChapter3Source(
-        FileSystem.documentDirectory +
-          props.activeGroup.language +
-          'lesson1chapter3.mp3'
-      )
-      // regular
+
+      // if an audio file is not donwloading and not currently downloading, download it
+      if (
+        !props.route.params.isDownloaded &&
+        !(props.route.params.thisLesson.id in props.downloads)
+      ) {
+        props.downloadLesson(
+          props.route.params.thisLesson.id,
+          props.route.params.thisLesson.audioSource
+        )
+      }
+      // otherwise, set the source to our dummy mp3 file
     } else {
-      setChapter1Source(
+      setChapter2Source(
         FileSystem.documentDirectory +
           props.activeGroup.language +
-          'chapter1.mp3'
-      )
-      setChapter3Source(
-        FileSystem.documentDirectory +
-          props.activeGroup.language +
-          'chapter3.mp3'
+          '-' +
+          'dummy-chapter2.mp3'
       )
     }
 
-    // check if chapter 2 is downloaded or downloading, and if neither, start to download it
-    if (
-      !props.route.params.isDownloaded &&
-      !(props.route.params.thisLesson.id in props.downloads)
-    ) {
-      props.downloadLesson(
-        props.route.params.thisLesson.id,
-        props.route.params.thisLesson.source
-      )
+    // TODO: video stuff
+    if (props.route.params.thisLesson.videoSource) {
     }
 
     //set up our timer tick for updating the seeker every second
@@ -176,7 +184,7 @@ function PlayScreen (props) {
             <PlayScreenHeaderButtons
               shareOnPress={() => setShowShareLessonModal(true)}
               completeOnPress={changeCompleteStatus}
-              completeCondition={props.activeGroup.progress.includes(
+              completeCondition={props.route.params.thisSetProgress.includes(
                 props.route.params.thisLesson.index
               )}
             />
@@ -186,8 +194,8 @@ function PlayScreen (props) {
             <PlayScreenHeaderButtons
               shareOnPress={() => setShowShareLessonModal(true)}
               completeOnPress={changeCompleteStatus}
-              completeCondition={props.activeGroup.progress.includes(
-                props.route.params.thisLesson.iindex
+              completeCondition={props.route.params.thisSetProgress.includes(
+                props.route.params.thisLesson.index
               )}
             />
           )
@@ -356,19 +364,20 @@ function PlayScreen (props) {
   // switches the complete status of a lesson to the opposite of its current status
   // and alerts the user of the change
   function changeCompleteStatus () {
-    var isComplete = props.activeGroup.progress.includes(
-      props.route.params.thisLesson.index
-    )
     props.toggleComplete(
       props.activeGroup.name,
+      props.route.params.thisSet,
       props.route.params.thisLesson.index
     )
-    props.setBookmark(props.activeGroup.name)
 
-    if (isComplete) {
+    if (
+      props.route.params.thisSetProgress.includes(
+        props.route.params.thisLesson.index
+      )
+    ) {
       Alert.alert(
         props.translations.alerts.markedAsIncomplete.header,
-        props.translations.alerts.markedAsIncomplete.body,
+        props.translations.alerts.markedAsIncomplete.text,
         [
           {
             text: props.translations.alerts.ok,
@@ -379,7 +388,7 @@ function PlayScreen (props) {
     } else {
       Alert.alert(
         props.translations.alerts.markedAsComplete.header,
-        props.translations.alerts.markedAsComplete.body,
+        props.translations.alerts.markedAsComplete.text,
         [
           {
             text: props.translations.alerts.ok,
@@ -423,7 +432,7 @@ function PlayScreen (props) {
               )
             : Alert.alert(
                 props.translations.alerts.shareUndownloaded.header,
-                props.translations.alerts.shareUndownloaded.body,
+                props.translations.alerts.shareUndownloaded.text,
                 [
                   {
                     text: props.translations.alerts.options.ok,
@@ -467,7 +476,9 @@ function PlayScreen (props) {
             ]}
             data={
               item.key === '0'
-                ? props.activeDatabase.lessonQuestions
+                ? props.activeDatabase.questions[
+                    props.route.params.thisLesson.questionsType
+                  ]
                 : props.route.params.thisLesson.scripture
             }
             renderItem={renderTextContent}
@@ -500,12 +511,24 @@ function PlayScreen (props) {
     return (
       <View>
         <Text
-          style={[styles.albumArtText, { fontFamily: props.font + '-medium' }]}
+          style={[
+            styles.albumArtText,
+            {
+              fontFamily: props.font + '-medium',
+              textAlign: props.isRTL ? 'right' : 'left'
+            }
+          ]}
         >
           {textList.item.header}
         </Text>
         <Text
-          style={[styles.albumArtText, { fontFamily: props.font + '-regular' }]}
+          style={[
+            styles.albumArtText,
+            {
+              fontFamily: props.font + '-regular',
+              textAlign: props.isRTL ? 'right' : 'left'
+            }
+          ]}
         >
           {textList.item.text + '\n'}
         </Text>
@@ -521,6 +544,17 @@ function PlayScreen (props) {
         activeChapter={activeChapter}
         lessonID={props.route.params.thisLesson.id}
         onPress={chapter => changeChapter(chapter)}
+        goToScripture={() =>
+          albumArtRef.scrollToIndex({
+            animated: true,
+            viewPosition: 0.5,
+            viewOffset: -Dimensions.get('screen').width,
+            index: 0
+          })
+        }
+        hasAudioSource={
+          props.route.params.thisLesson.audioSource ? true : false
+        }
       />
       <Scrubber
         value={seekPosition}
@@ -555,6 +589,7 @@ function PlayScreen (props) {
           <FlatList
             data={albumArtData}
             renderItem={renderAlbumArtItem}
+            ref={ref => setAlbumArtRef(ref)}
             horizontal={true}
             pagingEnabled={true}
             snapToAlignment={'start'}
@@ -573,25 +608,25 @@ function PlayScreen (props) {
       {audioControlContainer}
 
       {/* MODALS */}
-      <WahaModal
+      <OptionsModal
         isVisible={showShareLessonModal}
         hideModal={() => setShowShareLessonModal(false)}
-        closeText={props.translations.modals.lessonOptions.close}
+        closeText={props.translations.modals.shareOptions.close}
       >
         <ModalButton
-          title={props.translations.modals.lessonOptions.shareApp}
+          title={props.translations.modals.shareOptions.shareApp}
           onPress={() => share('app')}
         />
         <ModalButton
-          title={props.translations.modals.lessonOptions.sharePassageText}
+          title={props.translations.modals.shareOptions.sharePassageText}
           onPress={() => share('text')}
         />
         <ModalButton
           isLast={true}
-          title={props.translations.modals.lessonOptions.sharePassageAudio}
+          title={props.translations.modals.shareOptions.sharePassageAudio}
           onPress={() => share('audio')}
         />
-      </WahaModal>
+      </OptionsModal>
     </View>
   )
 }
@@ -639,8 +674,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   albumArtText: {
-    fontSize: 18 * scaleMultiplier,
-    textAlign: 'justify'
+    fontSize: 18 * scaleMultiplier
   },
   scrollBar: {
     width: 4,
@@ -678,8 +712,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    toggleComplete: (groupName, lessonIndex) => {
-      dispatch(toggleComplete(groupName, lessonIndex))
+    toggleComplete: (groupName, set, lessonIndex) => {
+      dispatch(toggleComplete(groupName, set, lessonIndex))
     },
     downloadLesson: (lessonID, source) => {
       dispatch(downloadLesson(lessonID, source))

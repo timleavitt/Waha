@@ -3,65 +3,69 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import { deleteGroup, changeActiveGroup } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
-import AvatarImage from '../components/AvatarImage'
+import AvatarImage from './AvatarImage'
 
-function GroupListItem (props) {
+function GroupItem (props) {
   // FUNCTIONS
 
   // gets a formatted string of this group's bookmark lesson
   function getBookmarkText () {
+    // get the active group object
     var thisGroup = props.groups.filter(
       group => group.name === props.groupName
     )[0]
-    if (
-      thisGroup.bookmark ===
-      props.database[thisGroup.language].lessons.length + 1
-    )
-      return 'Contact us for more study sets!'
-    var bookmarkLesson = props.database[thisGroup.language].lessons.filter(
-      lesson => lesson.index === thisGroup.bookmark
+
+    // get the currently bookmarked set object
+    var bookmarkSet = props.activeDatabase.sets.filter(
+      set => set.id === thisGroup.setBookmark
     )[0]
-    return bookmarkLesson.subtitle + ' ' + bookmarkLesson.title
+
+    // get the id of the bookmarked lesson from the bookmarked set
+    var bookmarkSetBookmarkLesson = thisGroup.addedSets.filter(
+      addedSet => addedSet.id === bookmarkSet.id
+    )[0].bookmark
+
+    // get the bookmrarked lesson object
+    var bookmarkLesson = props.activeDatabase.lessons
+      .filter(lesson => lesson.setid === thisGroup.setBookmark)
+      .filter(lesson => lesson.index === bookmarkSetBookmarkLesson)[0]
+
+    // if both those exist, return them to display the bookmarks
+    if (bookmarkLesson && bookmarkSet) {
+      return {
+        lesson: bookmarkLesson.subtitle + ' ' + bookmarkLesson.title,
+        set: bookmarkSet.subtitle
+      }
+    } else {
+      return ''
+    }
   }
 
   // RENDER
 
-  // render the delete button conditionally as we can only delete in edit mode and
-  // can't delete the active group
+  // render the delete button
   var deleteButton
-  if (props.isEditing && props.activeGroup != props.groupName) {
+  // if we're editing and not in the active group, show tappable delete button
+  if (props.isEditing && props.activeGroup.name != props.groupName) {
     deleteButton = (
       <TouchableOpacity
-        style={[
-          styles.minusButtonContainer,
-          {
-            marginLeft: props.isRTL ? -5 : 10,
-            marginRight: props.isRTL ? 10 : -5
-          }
-        ]}
+        style={styles.minusButtonContainer}
         onPress={() => props.deleteGroup(props.groupName)}
       >
         <Icon name='minus-filled' size={24 * scaleMultiplier} color='#FF0800' />
       </TouchableOpacity>
     )
-  } else if (props.isEditing && props.activeGroup === props.groupName) {
+    // if we're editing and in the active group, show an untappable check
+  } else if (props.isEditing && props.activeGroup.name === props.groupName) {
     deleteButton = (
-      <View
-        style={[
-          styles.minusButtonContainer,
-          {
-            marginLeft: props.isRTL ? -5 : 10,
-            marginRight: props.isRTL ? 10 : -5
-          }
-        ]}
-      >
+      <View style={styles.minusButtonContainer}>
         <Icon name='check' size={24 * scaleMultiplier} color='#2D9CDB' />
       </View>
     )
   }
 
   // render right button conditionally; can be either right arrow when in edit mode,
-  // checkmark if in edit mode and this group is active, or nothing
+  // checkmark if in edit mode and this group is active, or an empty view
   var rightButton
   if (props.isEditing) {
     rightButton = (
@@ -73,14 +77,16 @@ function GroupListItem (props) {
         />
       </View>
     )
-  } else if (props.activeGroup === props.groupName) {
+  } else if (props.activeGroup.name === props.groupName) {
     rightButton = (
       <View style={styles.iconContainer}>
         <Icon name='check' size={24 * scaleMultiplier} color='#2D9CDB' />
       </View>
     )
   } else {
-    rightButton = null
+    rightButton = (
+      <View style={[styles.iconContainer, { width: 24 * scaleMultiplier }]} />
+    )
   }
 
   return (
@@ -93,10 +99,15 @@ function GroupListItem (props) {
       ]}
     >
       {deleteButton}
+      {/* main tappable area */}
       <TouchableOpacity
         style={[
           styles.touchableContainer,
-          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+          {
+            flexDirection: props.isRTL ? 'row-reverse' : 'row',
+            paddingLeft: props.isEditing ? 0 : 20,
+            paddingRight: 20
+          }
         ]}
         onPress={
           props.isEditing
@@ -108,11 +119,19 @@ function GroupListItem (props) {
       >
         <AvatarImage
           size={50 * scaleMultiplier}
-          onPress={() => {}}
           source={props.avatarSource}
-          isActive={props.activeGroup === props.groupName}
+          isActive={props.activeGroup.name === props.groupName}
         />
-        <View style={styles.groupNameContainer}>
+        {/* text portion includes group name and bookmark text */}
+        <View
+          style={[
+            styles.groupNameContainer,
+            {
+              marginLeft: props.isRTL ? 0 : 20,
+              marginRight: props.isRTL ? 20 : 0
+            }
+          ]}
+        >
           <Text
             style={[
               styles.groupNameText,
@@ -133,7 +152,18 @@ function GroupListItem (props) {
               }
             ]}
           >
-            {getBookmarkText()}
+            {getBookmarkText().set}
+          </Text>
+          <Text
+            style={[
+              styles.checkpointText,
+              {
+                textAlign: props.isRTL ? 'right' : 'left',
+                fontFamily: props.font + '-regular'
+              }
+            ]}
+          >
+            {getBookmarkText().lesson}
           </Text>
         </View>
         {rightButton}
@@ -151,7 +181,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    margin: 2
+    borderWidth: 1,
+    borderColor: '#EFF2F4'
   },
   touchableContainer: {
     flex: 1,
@@ -163,14 +194,13 @@ const styles = StyleSheet.create({
   iconContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 15,
     height: '100%'
   },
   minusButtonContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-    width: 30
+    paddingHorizontal: 20
   },
   groupNameContainer: {
     flex: 1,
@@ -198,9 +228,10 @@ function mapStateToProps (state) {
   )[0]
   return {
     database: state.database,
+    activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,
     groups: state.groups,
-    activeGroup: state.activeGroup,
+    activeGroup: activeGroup,
     font: state.database[activeGroup.language].font
   }
 }
@@ -216,4 +247,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupListItem)
+export default connect(mapStateToProps, mapDispatchToProps)(GroupItem)

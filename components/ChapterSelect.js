@@ -10,16 +10,17 @@ function ChapterSelect (props) {
   // render chapter 2 icon conditionally based off if it's not active, active, or completed
   var chapter2IconName
   if (props.activeChapter === 'fellowship') {
-    chapter2IconName = '2-filled'
+    chapter2IconName = 'number-2-filled'
   } else if (props.activeChapter === 'passage') {
-    chapter2IconName = '2-outline'
+    chapter2IconName = 'number-2-outline'
   } else {
     chapter2IconName = 'check-filled'
   }
 
-  // render chapter 2 button conditionally based off whether it's downloaded or not
+  // render chapter 2 button
   var chapter2Button =
     props.downloads[props.lessonID] && props.downloads[props.lessonID] < 1 ? (
+      // if the lesson is downloading, show the progress in the chapter button
       <View
         style={[
           styles.chapterSelect,
@@ -52,6 +53,7 @@ function ChapterSelect (props) {
         </Text>
       </View>
     ) : (
+      // otherwise, show the button as normal
       <TouchableOpacity
         style={[
           styles.chapterSelect,
@@ -61,7 +63,14 @@ function ChapterSelect (props) {
               props.activeChapter === 'passage' ? props.primaryColor : '#EFF2F4'
           }
         ]}
-        onPress={() => props.onPress('passage')}
+        onPress={
+          props.hasAudioSource
+            ? () => props.onPress('passage')
+            : () => {
+                props.onPress('passage')
+                props.goToScripture()
+              }
+        }
       >
         <Icon
           name={chapter2IconName}
@@ -89,6 +98,7 @@ function ChapterSelect (props) {
 
   return (
     <View style={styles.chapterSelectContainer}>
+      {/* chapter 1 button */}
       <TouchableOpacity
         style={[
           styles.chapterSelect,
@@ -104,7 +114,9 @@ function ChapterSelect (props) {
       >
         <Icon
           name={
-            props.activeChapter === 'fellowship' ? '1-outline' : 'check-filled'
+            props.activeChapter === 'fellowship'
+              ? 'number-1-outline'
+              : 'check-filled'
           }
           size={25}
           color={
@@ -126,7 +138,11 @@ function ChapterSelect (props) {
           {props.translations.labels.fellowship}
         </Text>
       </TouchableOpacity>
+
+      {/* chapter 2 button (defined earlier) */}
       {chapter2Button}
+
+      {/* chapter 3 button */}
       <TouchableOpacity
         style={[
           styles.chapterSelect,
@@ -142,7 +158,9 @@ function ChapterSelect (props) {
       >
         <Icon
           name={
-            props.activeChapter === 'application' ? '3-outline' : '3-filled'
+            props.activeChapter === 'application'
+              ? 'number-3-outline'
+              : 'number-3-filled'
           }
           size={25}
           color={

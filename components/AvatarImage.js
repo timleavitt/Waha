@@ -42,43 +42,77 @@ function AvatarImage (props) {
       />
     )
 
-  return (
-    <View>
-      <TouchableOpacity
+  // if we have something for props.onPress, make it touchable, otherwise make it
+  // not touchable
+  return props.onPress ? (
+    <TouchableOpacity
+      style={{
+        borderColor: props.isActive ? '#2D9CDB' : null,
+        borderWidth: props.isActive ? 5 : null,
+        width: props.size * scaleMultiplier + 5,
+        height: props.size * scaleMultiplier + 5,
+        borderRadius: (props.size * scaleMultiplier) / 2 + 5,
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      source={{ uri: props.source }}
+      onPress={props.onPress}
+    >
+      <View
         style={{
-          borderColor: props.isActive ? '#2D9CDB' : null,
-          borderWidth: props.isActive ? 5 : null,
-          width: props.size * scaleMultiplier + 5,
-          height: props.size * scaleMultiplier + 5,
-          borderRadius: (props.size * scaleMultiplier) / 2 + 5,
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginHorizontal: 10
+          ...styles.avatarContainer,
+          ...{
+            width: props.size * scaleMultiplier,
+            height: props.size * scaleMultiplier,
+            borderRadius: (props.size * scaleMultiplier) / 2
+          }
         }}
-        source={{ uri: props.source }}
-        onPress={props.onPress}
       >
-        <View
-          style={{
-            ...styles.avatarContainer,
-            ...{
-              width: props.size * scaleMultiplier,
-              height: props.size * scaleMultiplier,
-              borderRadius: (props.size * scaleMultiplier) / 2
-            }
-          }}
-        >
-          {avatarImage}
-        </View>
-        <View
-          style={{
-            marginTop: props.isChangeable ? -30 : 0,
-            width: '100%'
-          }}
-        >
-          {cameraIcon}
-        </View>
-      </TouchableOpacity>
+        {avatarImage}
+      </View>
+      <View
+        style={{
+          marginTop: props.isChangeable ? -30 : 0,
+          width: '100%'
+        }}
+      >
+        {cameraIcon}
+      </View>
+    </TouchableOpacity>
+  ) : (
+    <View
+      style={{
+        borderColor: props.isActive ? '#2D9CDB' : null,
+        borderWidth: props.isActive ? 5 : null,
+        width: props.size * scaleMultiplier + 5,
+        height: props.size * scaleMultiplier + 5,
+        borderRadius: (props.size * scaleMultiplier) / 2 + 5,
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      source={{ uri: props.source }}
+      onPress={props.onPress}
+    >
+      <View
+        style={{
+          ...styles.avatarContainer,
+          ...{
+            width: props.size * scaleMultiplier,
+            height: props.size * scaleMultiplier,
+            borderRadius: (props.size * scaleMultiplier) / 2
+          }
+        }}
+      >
+        {avatarImage}
+      </View>
+      <View
+        style={{
+          marginTop: props.isChangeable ? -30 : 0,
+          width: '100%'
+        }}
+      >
+        {cameraIcon}
+      </View>
     </View>
   )
 }

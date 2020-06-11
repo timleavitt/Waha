@@ -3,6 +3,7 @@ import { TouchableOpacity, StyleSheet, Text } from 'react-native'
 import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
 
+// button rendered on the options modal component
 function ModalButton (props) {
   //// RETURN
 

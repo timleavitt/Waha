@@ -137,7 +137,7 @@ function StorageScreen (props) {
         onPress={() =>
           Alert.alert(
             props.translations.alerts.deleteDownloadedLessonsPerLanguage.header,
-            props.translations.alerts.deleteDownloadedLessonsPerLanguage.body,
+            props.translations.alerts.deleteDownloadedLessonsPerLanguage.text,
             [
               {
                 text: props.translations.alerts.options.cancel,
@@ -168,7 +168,7 @@ function StorageScreen (props) {
               uri:
                 FileSystem.documentDirectory +
                 languageInstanceList.item.languageID +
-                'header.png'
+                '-header.png'
             }}
           />
           <Text
@@ -230,7 +230,7 @@ function StorageScreen (props) {
                     Alert.alert(
                       props.translations.alerts.deleteAllDownloadedLessons
                         .header,
-                      props.translations.alerts.deleteAllDownloadedLessons.body,
+                      props.translations.alerts.deleteAllDownloadedLessons.text,
                       [
                         {
                           text: props.translations.alerts.options.cancel,
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   },
   storageList: {
     flex: 1,
-    marginHorizontal: 15
+    marginHorizontal: 20
   },
   headerItems: {
     marginBottom: 40

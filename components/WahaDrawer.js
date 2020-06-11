@@ -1,13 +1,12 @@
 import SafeAreaView from 'react-native-safe-area-view'
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
 import DrawerItem from '../components/DrawerItem'
 import SmallDrawerItem from '../components/SmallDrawerItem'
 import { scaleMultiplier } from '../constants'
 import * as WebBrowser from 'expo-web-browser'
 import AvatarImage from '../components/AvatarImage'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 
 function WahaDrawer (props) {
   //// FUNCTIONS
@@ -55,13 +54,9 @@ function WahaDrawer (props) {
                onPress={() => {}}
             /> */}
           <DrawerItem
-            iconName='email'
-            text={props.translations.navigation.drawer.feedback}
-            onPress={() =>
-              openBrowser(
-                'https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif'
-              )
-            }
+            iconName='boat'
+            text={props.translations.navigation.drawer.mt}
+            onPress={() => props.navigation.navigate('MT')}
           />
           <DrawerItem
             iconName='storage'
@@ -76,7 +71,7 @@ function WahaDrawer (props) {
         <View style={styles.smallDrawerItemsContainer}>
           <SmallDrawerItem
             onPress={() => {}}
-            label={props.translations.navigation.drawer.coaching}
+            label={props.translations.navigation.drawer.feedback}
           />
           <SmallDrawerItem
             onPress={() =>
@@ -100,7 +95,7 @@ function WahaDrawer (props) {
               { fontFamily: props.font + '-regular' }
             ]}
           >
-            v0.2.8
+            v0.4
           </Text>
         </View>
       </View>
@@ -120,9 +115,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     padding: 15
-  },
-  bigDrawerItemsContainer: {
-    backgroundColor: '#FFFFFF'
   },
   groupIconContainer: {
     alignItems: 'center',

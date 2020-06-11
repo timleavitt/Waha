@@ -10,16 +10,15 @@ import {
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import { connect } from 'react-redux'
-import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
-import {
-  removeDownload,
-  resumeDownload
-} from '../redux/actions/downloadActions'
+import { removeDownload } from '../redux/actions/downloadActions'
 import DownloadStatusIndicator from '../components/DownloadStatusIndicator'
 
 function LessonItem (props) {
+  //// CONSTRUCTOR
+
   useEffect(() => {
+    // if we've completed the download for this lesson, remove the download from redux
     if (props.downloads[props.thisLesson.id] == 1) {
       props.removeDownload(props.thisLesson.id)
     }
@@ -30,15 +29,11 @@ function LessonItem (props) {
   // calls the various modal functions on lessonlistscreen
   function showSaveModal () {
     props.setActiveLessonInModal.call()
-    props.setShowSaveLessonModal.call()
+    props.setShowDownloadLessonModal.call()
   }
   function showDeleteModal () {
     props.setActiveLessonInModal.call()
     props.setShowDeleteLessonModal.call()
-  }
-  function showLessonOptionsModal () {
-    props.setActiveLessonInModal.call()
-    props.setShowLessonOptionsModal.call()
   }
 
   //// RENDER
@@ -47,9 +42,12 @@ function LessonItem (props) {
     <View
       style={[
         styles.lessonItem,
-        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        {
+          flexDirection: props.isRTL ? 'row-reverse' : 'row'
+        }
       ]}
     >
+      {/* main touchable area */}
       <TouchableOpacity
         style={[
           styles.progressAndTitle,
@@ -60,7 +58,7 @@ function LessonItem (props) {
             ? () =>
                 Alert.alert(
                   props.translations.alerts.playUndownloadedNoInternet.header,
-                  props.translations.alerts.playUndownloadedNoInternet.body,
+                  props.translations.alerts.playUndownloadedNoInternet.text,
                   [
                     {
                       text: props.translations.alerts.options.ok,
@@ -70,44 +68,51 @@ function LessonItem (props) {
                 )
             : props.onLessonSelect
         }
-        onLongPress={showLessonOptionsModal}
       >
+        {/* complete status indicator */}
         <View style={styles.completeStatusContainer}>
           <Icon
             name={
               props.isComplete
                 ? 'check-outline'
-                : props.activeGroup.bookmark === props.thisLesson.index
+                : props.isBookmark
                 ? props.isRTL
                   ? 'triangle-left'
                   : 'triangle-right'
                 : null
             }
-            size={30 * scaleMultiplier}
+            size={24 * scaleMultiplier}
             color={props.isComplete ? '#828282' : props.primaryColor}
           />
         </View>
-        <View style={styles.titleContainer}>
+
+        {/* title and subtitle */}
+        <View
+          style={{
+            flexDirection: 'column',
+            justifyContent: 'center',
+            flex: 1,
+            marginLeft: props.isRTL ? 0 : 20,
+            marginRight: props.isRTL ? 20 : 0
+          }}
+        >
           <Text
             style={{
-              ...styles.title,
-              ...{
-                color: props.isComplete ? '#9FA5AD' : 'black',
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontFamily: props.font + '-medium'
-              }
+              fontSize: 18 * scaleMultiplier,
+              textAlignVertical: 'center',
+              color: props.isComplete ? '#9FA5AD' : 'black',
+              textAlign: props.isRTL ? 'right' : 'left',
+              fontFamily: props.font + '-medium'
             }}
           >
             {props.thisLesson.title}
           </Text>
           <Text
             style={{
-              ...styles.subtitle,
-              ...{
-                color: props.isComplete ? '#9FA5AD' : 'black',
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontFamily: props.font + '-regular'
-              }
+              fontSize: 14 * scaleMultiplier,
+              color: '#9FA5AD',
+              textAlign: props.isRTL ? 'right' : 'left',
+              fontFamily: props.font + '-regular'
             }}
           >
             {props.thisLesson.subtitle}
@@ -120,6 +125,7 @@ function LessonItem (props) {
         showDeleteModal={showDeleteModal}
         showSaveModal={showSaveModal}
         lessonID={props.thisLesson.id}
+        hasAudioSource={props.thisLesson.audioSource ? true : false}
       />
     </View>
   )
@@ -129,11 +135,11 @@ function LessonItem (props) {
 
 const styles = StyleSheet.create({
   lessonItem: {
-    height: 72 * scaleMultiplier,
-    justifyContent: 'center',
+    height: 64 * scaleMultiplier,
     flexDirection: 'row',
-    alignContent: 'center',
-    backgroundColor: '#F7F9FA'
+    backgroundColor: '#F7F9FA',
+    flex: 1,
+    paddingLeft: 20
   },
   progressAndTitle: {
     justifyContent: 'flex-start',
@@ -143,20 +149,7 @@ const styles = StyleSheet.create({
   },
   completeStatusContainer: {
     justifyContent: 'center',
-    marginHorizontal: 10,
-    width: 35 * scaleMultiplier
-  },
-  titleContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    flex: 1
-  },
-  title: {
-    fontSize: 18 * scaleMultiplier,
-    textAlignVertical: 'center'
-  },
-  subtitle: {
-    fontSize: 14 * scaleMultiplier
+    width: 24 * scaleMultiplier
   }
 })
 
@@ -168,7 +161,6 @@ function mapStateToProps (state) {
   )[0]
   return {
     primaryColor: state.database[activeGroup.language].primaryColor,
-    progress: state.appProgress,
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     downloads: state.downloads,
@@ -180,20 +172,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    downloadLesson: (lessonID, source) => {
-      dispatch(downloadLesson(lessonID, source))
-    },
-    toggleComplete: (groupName, lessonIndex) => {
-      dispatch(toggleComplete(groupName, lessonIndex))
-    },
-    setBookmark: groupName => {
-      dispatch(setBookmark(groupName))
-    },
     removeDownload: lessonID => {
       dispatch(removeDownload(lessonID))
-    },
-    resumeDownload: (lessonID, downloadSnapshotJSON) => {
-      dispatch(resumeDownload(lessonID, downloadSnapshotJSON))
     }
   }
 }

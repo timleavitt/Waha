@@ -9,6 +9,7 @@ import {
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 
+// component rendered behind a lesson item that shows the swipe options
 function LessonSwipeBackdrop (props) {
   //// RENDER
 
@@ -19,7 +20,7 @@ function LessonSwipeBackdrop (props) {
       onPress={props.toggleComplete}
     >
       <View style={styles.iconContainer}>
-        <Icon name='cancel' size={20} color='#FFFFFF' />
+        <Icon name='cancel-filled' size={20} color='#FFFFFF' />
       </View>
     </TouchableOpacity>
   ) : (
@@ -43,7 +44,7 @@ function LessonSwipeBackdrop (props) {
     <View
       style={[
         styles.lessonSwipeBackdropContainer,
-        { flexDirection: props.isRLT ? 'row-reverse' : 'row' }
+        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
       ]}
     >
       {completeButton}
@@ -55,6 +56,7 @@ function LessonSwipeBackdrop (props) {
             alignItems: props.isRLT ? 'flex-start' : 'flex-end'
           }
         ]}
+        onPress={props.showShareModal}
       >
         <View style={styles.iconContainer}>
           <Icon

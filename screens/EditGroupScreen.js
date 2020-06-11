@@ -18,7 +18,7 @@ import {
   changeActiveGroup,
   setBookmark
 } from '../redux/actions/groupsActions'
-import WahaModal from '../components/WahaModal'
+import OptionsModal from '../components/OptionsModal'
 import ModalButton from '../components/ModalButton'
 import AvatarImage from '../components/AvatarImage'
 
@@ -205,7 +205,7 @@ function EditGroupScreen (props) {
             onPress={() =>
               Alert.alert(
                 props.translations.alerts.resetProgress.header,
-                props.translations.alerts.resetProgress.body,
+                props.translations.alerts.resetProgress.text,
                 [
                   {
                     text: props.translations.alerts.options.cancel,
@@ -254,7 +254,7 @@ function EditGroupScreen (props) {
           </Text>
         </TouchableOpacity>
       </View>
-      <WahaModal
+      <OptionsModal
         isVisible={showImagePickerModal}
         hideModal={() => setShowImagePickerModal(false)}
         closeText={props.translations.modals.cameraOptions.cancel}
@@ -268,7 +268,7 @@ function EditGroupScreen (props) {
           title={props.translations.modals.cameraOptions.chooseFromLibrary}
           onPress={openImageLibraryHandler}
         />
-      </WahaModal>
+      </OptionsModal>
     </View>
   )
 }
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   inputContainer: {
-    marginHorizontal: 25,
+    marginHorizontal: 20,
     padding: 3
   },
   groupNameLabel: {
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end',
-    margin: 30
+    margin: 20
   },
   saveButtonText: {
     fontSize: 18 * scaleMultiplier,

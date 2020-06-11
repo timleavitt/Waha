@@ -38,11 +38,11 @@ function AddNewLanguageScreen (props) {
     {
       id: 'en',
       displayName: 'English'
-    },
-    {
-      id: 'te',
-      displayName: 'Test Language'
     }
+    // {
+    //   id: 'te',
+    //   displayName: 'Test Language'
+    // }
   ]
 
   // set list of installed languages
@@ -65,7 +65,7 @@ function AddNewLanguageScreen (props) {
         onPress={() =>
           Alert.alert(
             props.translations.alerts.addNewLanguage.header,
-            props.translations.alerts.addNewLanguage.body,
+            props.translations.alerts.addNewLanguage.text,
             [
               {
                 text: props.translations.alerts.options.cancel,
@@ -130,7 +130,8 @@ const styles = StyleSheet.create({
     height: 60,
     margin: 5,
     borderWidth: 2,
-    borderColor: '#9FA5AD'
+    borderColor: '#9FA5AD',
+    marginHorizontal: 20
   },
   languageInstanceText: {
     color: '#82868D',
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
   },
   noMoreLanguagesText: {
     color: '#82868D',
-    paddingLeft: 10,
+    paddingHorizontal: 10,
     fontSize: 18,
     textAlign: 'center',
     marginTop: 20

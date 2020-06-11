@@ -10,7 +10,7 @@ import {
 import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
-import LanguageInstanceHeader from '../components/LanguageInstanceHeader'
+import GroupListHeader from '../components/GroupListHeader'
 
 function GroupsScreen (props) {
   //// STATE
@@ -91,7 +91,7 @@ function GroupsScreen (props) {
 
   function renderLanguageInstanceItem (languageInstances) {
     return (
-      <LanguageInstanceHeader
+      <GroupListHeader
         languageName={languageInstances.item.languageName}
         languageID={languageInstances.item.languageID}
         goToAddNewGroupScreen={() =>
@@ -126,7 +126,7 @@ function GroupsScreen (props) {
                   : () =>
                       Alert.alert(
                         props.translations.alerts.addLanguageNoInternet.header,
-                        props.translations.alerts.addLanguageNoInternet.body,
+                        props.translations.alerts.addLanguageNoInternet.text,
                         [
                           {
                             text: props.translations.alerts.options.ok,
@@ -166,15 +166,14 @@ const styles = StyleSheet.create({
     flex: 1
   },
   addNewLanguageContainer: {
-    width: '100%',
     height: 80 * scaleMultiplier,
     justifyContent: 'center',
-    borderTopColor: '#EFF2F4'
+    borderTopColor: '#EFF2F4',
+    paddingHorizontal: 20
   },
   addNewLanguageText: {
     fontSize: 18 * scaleMultiplier,
-    color: '#9FA5AD',
-    marginHorizontal: 15
+    color: '#9FA5AD'
   },
   editButtonContainer: {
     width: 80,
