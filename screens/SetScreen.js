@@ -103,7 +103,7 @@ function SetScreen (props) {
                 props.navigation.navigate('AddSetStack', {
                   screen: 'AddSet',
                   params: {
-                    category: setCategory === 'core' ? 'core' : 'folder'
+                    category: setCategory === 'core' ? 'core' : 'topical'
                   }
                 })
               }
@@ -118,7 +118,7 @@ function SetScreen (props) {
                 }}
               >
                 <Icon
-                  name='plus-filled'
+                  name='plus'
                   size={60 * scaleMultiplier}
                   color='#9FA5AD'
                   style={styles.addNewSetIcon}
@@ -181,6 +181,7 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
+  console.log(activeGroup.addedSets)
   return {
     activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,

@@ -92,8 +92,16 @@ function LessonItem (props) {
             flexDirection: 'column',
             justifyContent: 'center',
             flex: 1,
-            marginLeft: props.isRTL ? 0 : 20,
-            marginRight: props.isRTL ? 20 : 0
+            marginLeft: props.isRTL
+              ? props.thisLesson.audioSource
+                ? 0
+                : 20
+              : 20,
+            marginRight: props.isRTL
+              ? 20
+              : props.thisLesson.audioSource
+              ? 0
+              : 20
           }}
         >
           <Text

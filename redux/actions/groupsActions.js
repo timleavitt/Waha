@@ -3,7 +3,6 @@ export const CREATE_GROUP = 'CREATE_GROUP'
 export const EDIT_GROUP = 'EDIT_GROUP'
 export const DELETE_GROUP = 'DELETE_GROUP'
 export const UPDATE_PROGRESS = 'UPDATE_PROGRESS'
-export const SET_BOOKMARK = 'SET_BOOKMARK'
 export const RESET_PROGRESS = 'RESET_PROGRESS'
 export const ADD_SET = 'ADD_SET'
 export const SET_SHOW_TOOLKIT = 'SET_SHOW_TOOLKIT'
@@ -59,13 +58,6 @@ export function toggleComplete (groupName, set, lessonIndex) {
       dbSet => dbSet.category === set.category && dbSet.index === set.index + 1
     )[0]
     dispatch(updateProgress(groupName, set, nextSet, lessonIndex))
-  }
-}
-
-export function setBookmark (groupName) {
-  return {
-    type: SET_BOOKMARK,
-    groupName
   }
 }
 

@@ -33,7 +33,15 @@ function AddSetScreen (props) {
         props.route.params.category === 'topical'
           ? props.isRTL
             ? () => <View></View>
-            : () => <BackButton onPress={() => props.navigation.goBack()} />
+            : () => (
+                <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                  <Icon
+                    name='cancel'
+                    size={45 * scaleMultiplier}
+                    color='#3A3C3F'
+                  />
+                </TouchableOpacity>
+              )
           : props.isRTL
           ? () => <View></View>
           : () => (

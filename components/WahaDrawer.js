@@ -70,7 +70,11 @@ function WahaDrawer (props) {
         </View>
         <View style={styles.smallDrawerItemsContainer}>
           <SmallDrawerItem
-            onPress={() => {}}
+            onPress={() =>
+              openBrowser(
+                'https://docs.google.com/forms/d/e/1FAIpQLSeUvdc3Ehib_kIOMqkyBgECyqL7Jaj_ztFercRSfMnCXQ6UwA/viewform?usp=sf_link'
+              )
+            }
             label={props.translations.navigation.drawer.feedback}
           />
           <SmallDrawerItem
@@ -95,7 +99,7 @@ function WahaDrawer (props) {
               { fontFamily: props.font + '-regular' }
             ]}
           >
-            v0.4
+            v0.4.1.4
           </Text>
         </View>
       </View>

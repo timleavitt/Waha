@@ -67,7 +67,7 @@ function EditGroupScreen (props) {
 
   // edits a group and sets it as active
   function editGroup () {
-    props.changeActiveGroup(groupName)
+    // props.changeActiveGroup(groupName)
     props.editGroup(props.route.params.groupName, groupName, avatarSource)
     props.navigation.goBack()
   }
@@ -215,7 +215,6 @@ function EditGroupScreen (props) {
                     text: props.translations.alerts.options.ok,
                     onPress: () => {
                       props.resetProgress(props.route.params.groupName)
-                      props.setBookmark(props.route.params.groupName)
                       props.navigation.goBack()
                     }
                   }

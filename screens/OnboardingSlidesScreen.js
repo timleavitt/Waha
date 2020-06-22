@@ -44,23 +44,23 @@ function OnboardingSlidesScreen (props) {
       prev: 'Previous',
       next: 'Next',
       finish: 'Finish'
-    },
-    te: {
-      title0: 'sed!',
-      body0: 'ultricies lacus sed turpis tincidunt.',
-      title1: 'pulvinar neque laoreet suspendisse interdum.',
-      body1:
-        'duis convallis convallis tellus id interdum velit laoreet id donec.',
-      title2: 'turpis tincidunt id aliquet.',
-      body2:
-        'in egestas erat imperdiet sed euismod nisi porta lorem mollis aliquam ut porttitor leo a diam sollicitudin tempor id eu.',
-      title3: 'ac turpis egestas maecenas!',
-      body3:
-        'varius quam quisque id diam vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus interdum posuere lorem ipsum dolor.',
-      prev: 'nulla',
-      next: 'interdum',
-      finish: 'nunc'
     }
+    // te: {
+    //   title0: 'sed!',
+    //   body0: 'ultricies lacus sed turpis tincidunt.',
+    //   title1: 'pulvinar neque laoreet suspendisse interdum.',
+    //   body1:
+    //     'duis convallis convallis tellus id interdum velit laoreet id donec.',
+    //   title2: 'turpis tincidunt id aliquet.',
+    //   body2:
+    //     'in egestas erat imperdiet sed euismod nisi porta lorem mollis aliquam ut porttitor leo a diam sollicitudin tempor id eu.',
+    //   title3: 'ac turpis egestas maecenas!',
+    //   body3:
+    //     'varius quam quisque id diam vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus interdum posuere lorem ipsum dolor.',
+    //   prev: 'nulla',
+    //   next: 'interdum',
+    //   finish: 'nunc'
+    // }
   }
 
   // stuff for flatlist

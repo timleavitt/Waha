@@ -228,9 +228,11 @@ function PlayScreen (props) {
         })
       } else if (activeChapter === 'application') {
         if (
-          !props.activeGroup.progress.includes(
-            props.route.params.thisLesson.index
-          )
+          !props.activeGroup.addedSets
+            .filter(
+              addedSet => addedSet.id === props.route.params.thisSet.id
+            )[0]
+            .progress.includes(props.route.params.thisLesson.index)
         ) {
           changeCompleteStatus()
         }

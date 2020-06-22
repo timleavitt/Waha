@@ -224,13 +224,11 @@ function SetItem (props) {
 
   //// FUNCTIONS
 
-  // sets the progress through this set
-  function setProgress () {
-    // set the percentage through a set
-    setProgressPercentage(
-      props.activeGroup.addedSets.filter(set => set.id === props.thisSet.id)[0]
-        .progress.length / props.thisSet.length
-    )
+  useEffect(() => {
+    progressCases()
+  }, [progressPercentage])
+
+  function progressCases () {
     // if it's fully completed, set fully completed to true, which renders
     // the shown and lessonlist variants as grayed out
     if (progressPercentage === 1) setFullyCompleted(true)
@@ -254,15 +252,28 @@ function SetItem (props) {
           addedSet => addedSet.id === nextSet.id
         )
       ) {
-        setShowUnlockModal(true)
         props.addSet(
           props.activeGroup.name,
           props.activeDatabase.sets
             .filter(set => set.category === 'core')
             .filter(set => set.index === props.thisSet.index + 1)[0].id
         )
+        showModal()
       }
     }
+  }
+
+  // sets the progress through this set
+  function setProgress () {
+    // set the percentage through a set
+    setProgressPercentage(
+      props.activeGroup.addedSets.filter(set => set.id === props.thisSet.id)[0]
+        .progress.length / props.thisSet.length
+    )
+  }
+
+  function showModal () {
+    setShowUnlockModal(true)
   }
 
   //// RENDER
@@ -366,6 +377,7 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
+  console.log(activeGroup.addedSets)
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],
