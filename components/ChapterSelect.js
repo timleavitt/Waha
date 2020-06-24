@@ -8,17 +8,57 @@ function ChapterSelect (props) {
   // RENDER
 
   // render chapter 2 icon conditionally based off if it's not active, active, or completed
-  var chapter2IconName
+  var storyIcon
   if (props.activeChapter === 'fellowship') {
-    chapter2IconName = 'number-2-filled'
-  } else if (props.activeChapter === 'passage') {
-    chapter2IconName = 'number-2-outline'
+    storyIcon = 'number-2-filled'
+  } else if (props.activeChapter === 'story') {
+    storyIcon = 'number-2-outline'
   } else {
-    chapter2IconName = 'check-filled'
+    storyIcon = 'check-filled'
   }
 
+  var trainingButton = props.hasVideoSource ? (
+    <TouchableOpacity
+      style={[
+        styles.chapterSelect,
+        {
+          borderColor: props.primaryColor,
+          backgroundColor:
+            props.activeChapter === 'training' ? props.primaryColor : '#EFF2F4'
+        }
+      ]}
+      onPress={() => props.onPress('training')}
+    >
+      <Icon
+        name={
+          props.activeChapter === 'application'
+            ? 'check-filled'
+            : props.activeChapter === 'training'
+            ? 'number-3-outline'
+            : 'number-3-filled'
+        }
+        size={25 * scaleMultiplier}
+        color={
+          props.activeChapter === 'training' ? 'white' : props.primaryColor
+        }
+      />
+      <Text
+        style={[
+          styles.chapterSelectText,
+          {
+            color:
+              props.activeChapter === 'training' ? 'white' : props.primaryColor,
+            fontFamily: props.font + '-black'
+          }
+        ]}
+      >
+        {props.translations.labels.training}
+      </Text>
+    </TouchableOpacity>
+  ) : null
+
   // render chapter 2 button
-  var chapter2Button =
+  var storyButton =
     props.downloads[props.lessonID] && props.downloads[props.lessonID] < 1 ? (
       // if the lesson is downloading, show the progress in the chapter button
       <View
@@ -32,7 +72,7 @@ function ChapterSelect (props) {
         ]}
       >
         <AnimatedCircularProgress
-          size={20}
+          size={20 * scaleMultiplier}
           width={4}
           fill={props.downloads[props.lessonID] * 100}
           tintColor={props.primaryColor}
@@ -49,7 +89,7 @@ function ChapterSelect (props) {
             }
           ]}
         >
-          {props.translations.labels.passage}
+          {props.translations.labels.story}
         </Text>
       </View>
     ) : (
@@ -60,38 +100,34 @@ function ChapterSelect (props) {
           {
             borderColor: props.primaryColor,
             backgroundColor:
-              props.activeChapter === 'passage' ? props.primaryColor : '#EFF2F4'
+              props.activeChapter === 'story' ? props.primaryColor : '#EFF2F4'
           }
         ]}
         onPress={
           props.hasAudioSource
-            ? () => props.onPress('passage')
+            ? () => props.onPress('story')
             : () => {
-                props.onPress('passage')
+                props.onPress('story')
                 props.goToScripture()
               }
         }
       >
         <Icon
-          name={chapter2IconName}
-          size={25}
-          color={
-            props.activeChapter === 'passage' ? 'white' : props.primaryColor
-          }
+          name={storyIcon}
+          size={25 * scaleMultiplier}
+          color={props.activeChapter === 'story' ? 'white' : props.primaryColor}
         />
         <Text
           style={[
             styles.chapterSelectText,
             {
               color:
-                props.activeChapter === 'passage'
-                  ? 'white'
-                  : props.primaryColor,
+                props.activeChapter === 'story' ? 'white' : props.primaryColor,
               fontFamily: props.font + '-black'
             }
           ]}
         >
-          {props.translations.labels.passage}
+          {props.translations.labels.story}
         </Text>
       </TouchableOpacity>
     )
@@ -118,7 +154,7 @@ function ChapterSelect (props) {
               ? 'number-1-outline'
               : 'check-filled'
           }
-          size={25}
+          size={25 * scaleMultiplier}
           color={
             props.activeChapter === 'fellowship' ? 'white' : props.primaryColor
           }
@@ -140,7 +176,9 @@ function ChapterSelect (props) {
       </TouchableOpacity>
 
       {/* chapter 2 button (defined earlier) */}
-      {chapter2Button}
+      {storyButton}
+
+      {trainingButton}
 
       {/* chapter 3 button */}
       <TouchableOpacity
@@ -158,11 +196,15 @@ function ChapterSelect (props) {
       >
         <Icon
           name={
-            props.activeChapter === 'application'
+            props.hasVideoSource
+              ? props.activeChapter === 'application'
+                ? 'number-4-outline'
+                : 'number-4-filled'
+              : props.activeChapter === 'application'
               ? 'number-3-outline'
               : 'number-3-filled'
           }
-          size={25}
+          size={25 * scaleMultiplier}
           color={
             props.activeChapter === 'application' ? 'white' : props.primaryColor
           }
@@ -195,14 +237,14 @@ const styles = StyleSheet.create({
   },
   chapterSelect: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
-    height: 50 * scaleMultiplier,
+    height: 55 * scaleMultiplier,
     justifyContent: 'center',
     borderWidth: 2
   },
   chapterSelectText: {
-    fontSize: 16 * scaleMultiplier
+    fontSize: 14 * scaleMultiplier
   }
 })
 
