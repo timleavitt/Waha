@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { View, StyleSheet, Text, Picker, TouchableOpacity } from 'react-native'
+import {
+  View,
+  StyleSheet,
+  Text,
+  Picker,
+  TouchableOpacity,
+  TextInput
+} from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
-import { Audio } from 'expo-av'
 import { scaleMultiplier, languageT2S } from '../constants'
 import NetInfo from '@react-native-community/netinfo'
+import ModalSelector from 'react-native-modal-selector'
+import LanguageSelectItem from '../components/LanguageSelectItem'
 
 function LanguageSelectScreen (props) {
   //// STATE
@@ -17,7 +25,6 @@ function LanguageSelectScreen (props) {
   const [isConnected, setIsConnected] = useState(true)
 
   // sound for the text to speech
-  const soundObject = new Audio.Sound()
 
   // translations for language select
   i18n.translations = {
@@ -25,15 +32,30 @@ function LanguageSelectScreen (props) {
       welcome: 'Hello and welcome!',
       selectLanguage: 'Please select your language.',
       letsBegin: "Let's begin!",
-      noInternet: 'Error: an internet connection is required to set up the app'
+      noInternet: 'Error: an internet connection is required to set up the app',
+      cancel: 'Cancel'
+    },
+    te: {
+      welcome: 'morbi tristique senectus et!',
+      selectLanguage: 'eget nulla facilisi etiam.',
+      letsBegin: 'nibh ipsum!',
+      noInternet: 'morbi tristique senectus et eget nulla facilisi etiam',
+      cancel: 'Lecnac'
     }
-    // te: {
-    //   welcome: 'morbi tristique senectus et!',
-    //   selectLanguage: 'eget nulla facilisi etiam.',
-    //   letsBegin: 'nibh ipsum!',
-    //   noInternet: 'morbi tristique senectus et eget nulla facilisi etiam'
-    // }
   }
+
+  const data = [
+    {
+      key: 'en',
+      label: 'English',
+      component: <LanguageSelectItem id='en' label='🇺🇸English' />
+    },
+    {
+      key: 'te',
+      label: 'Test',
+      component: <LanguageSelectItem id='te' label='⭐️Test' />
+    }
+  ]
 
   //// CONSTRUCTOR
 
@@ -53,12 +75,6 @@ function LanguageSelectScreen (props) {
   //// FUNCTIONS
 
   // plays text-to-speech audio file of language
-  async function playAudio () {
-    soundObject.unloadAsync()
-    await soundObject.loadAsync(languageT2S[i18n.locale]).then(() => {
-      soundObject.playAsync()
-    })
-  }
 
   // updates language on picker change
   function onPickerChange (language) {
@@ -110,23 +126,44 @@ function LanguageSelectScreen (props) {
         }}
       >
         <View style={{ flex: 1 }}>
-          <Picker
-            selectedValue={selectedLanguage}
-            onValueChange={language => onPickerChange(language)}
-            mode='dropdown'
+          <ModalSelector
+            data={data}
+            animationType='fade'
+            // initValue={
+            //   data.filter(item => item.key === selectedLanguage)[0].value
+            // }
+            // selectedKey={selectedLanguage}
+            onChange={option => {
+              onPickerChange(option.key)
+            }}
+            cancelText={i18n.t('cancel')}
+            cancelStyle={{
+              height: 70 * scaleMultiplier,
+              justifyContent: 'center'
+            }}
+            backdropPressToClose={true}
           >
-            <Picker.Item label='🇺🇸English' value='en' />
-            {/* <Picker.Item label='⭐️Test Language' value='te' /> */}
-          </Picker>
-        </View>
-        <View style={{}}>
-          <Ionicons.Button
-            name='ios-volume-high'
-            size={30}
-            backgroundColor='rgba(0,0,0,0)'
-            color='black'
-            onPress={playAudio}
-          />
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: '#ccc',
+                borderRadius: 5,
+                backgroundColor: '#FFFFFF',
+                height: 80 * scaleMultiplier,
+                justifyContent: 'center',
+                paddingHorizontal: 20
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 24 * scaleMultiplier
+                }}
+              >
+                {data.filter(item => item.key === selectedLanguage)[0].label}
+              </Text>
+            </View>
+          </ModalSelector>
         </View>
       </View>
       {startButton}
@@ -155,8 +192,8 @@ const styles = StyleSheet.create({
     fontSize: 24 * scaleMultiplier
   },
   button: {
-    width: 200,
-    height: 50,
+    width: 250 * scaleMultiplier,
+    height: 60 * scaleMultiplier,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#1D1E20',

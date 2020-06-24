@@ -77,11 +77,7 @@ function PlayScreen (props) {
     {
       key: '1',
       type: 'image',
-      svgName:
-        'set' +
-        props.activeDatabase.sets.filter(
-          set => set.id === props.route.params.thisLesson.setid
-        )[0].index
+      svgName: props.route.params.thisSet.icon
     },
     {
       key: '2',

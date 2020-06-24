@@ -31,9 +31,21 @@ function getGestureEnabled (route) {
 }
 
 function MainDrawer (props) {
+  function downloadSomething (source, fileName) {
+    var downloadResumable = FileSystem.createDownloadResumable(
+      doc.data().sources[source],
+      FileSystem.documentDirectory + activeGroup.language + '-' + fileName,
+      {},
+      callback
+    )
+    return downloadResumable.downloadAsync().catch(error => {
+      throw error
+    })
+  }
+
   useEffect(() => {
     // add listener for connection status and update it accordingly
-    const unsubscribe = NetInfo.addEventListener(state => {
+    const netInfoUnsubscribe = NetInfo.addEventListener(state => {
       props.updateConnectionStatus(state.isConnected)
     })
 
@@ -41,11 +53,63 @@ function MainDrawer (props) {
     db.collection('languages')
       .doc(props.activeGroup.language)
       .onSnapshot(function (doc) {
+
+        // if a new c-t chapter 1 is available
+        if (
+          doc.data().sources['c-t-chapter1'] !==
+          props.activeDatabase.sources['c-t-chapter1']
+        ) {
+          // ALERT
+          // downloadSomething('c-t-chapter1', 'c-t-chapter1.mp3')
+        }
+
+        // if a new c-t chapter 3 is available
+        if (
+          doc.data().sources['c-t-chapter3'] !==
+          props.activeDatabase.sources['c-t-chapter3']
+        ) {
+          // ALERT
+          // downloadSomething('c-t-chapter3', 'c-t-chapter3.mp3')
+        }
+
+        // if a new mt chapter 1 is available
+        if (
+          doc.data().sources['mt-chapter1'] !==
+          props.activeDatabase.sources['mt-chapter1']
+        ) {
+          // ALERT
+          // downloadSomething('mt-chapter1', 'mt-chapter1.mp3')
+        }
+
+        // if a new mt chapter 3 is available
+        if (
+          doc.data().sources['mt-chapter3'] !==
+          props.activeDatabase.sources['mt-chapter3']
+        ) {
+          // ALERT
+          // downloadSomething('mt-chapter3', 'mt-chapter3.mp3')
+        }
+
+        // if 
+        // 1. all core story sets are completed
+        // 2. a new core story set has been addded
+        
+        // 1. add it automatically to added sets for this group
+        // 2. make it display the 'new' icon somehow 
+
+        // if 
+        // 1. mobilization tools is unlocked for this group
+        // 2. a new mobilization tools set is added
+        // if (props.activeGroup.showToolkit && )
+
+        // 1. add it automatically to added sets for htis group
+        // 2. make it dispaly the 'new' icon somehow
+
         props.storeData(doc.data(), props.activeGroup.language)
       })
 
     return function cleanup () {
-      unsubscribe()
+      netInfoUnsubscribe()
     }
   }, [])
 
@@ -111,7 +175,8 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],
     isConnected: state.network.isConnected,
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    toolkitEnabled: state.toolkitEnabled
   }
 }
 

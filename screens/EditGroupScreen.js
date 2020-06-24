@@ -67,7 +67,8 @@ function EditGroupScreen (props) {
 
   // edits a group and sets it as active
   function editGroup () {
-    // props.changeActiveGroup(groupName)
+    if (props.route.params.groupName === props.activeGroup.name)
+      props.changeActiveGroup(groupName)
     props.editGroup(props.route.params.groupName, groupName, avatarSource)
     props.navigation.goBack()
   }
@@ -360,7 +361,8 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    activeGroup: activeGroup
   }
 }
 
