@@ -18,6 +18,7 @@ function DownloadStatusIndicator (props) {
   // 	    false: slash
   //  false: null
 
+  // TODO: show download options/progress for lessons with ONLY video
   return props.hasAudioSource ? (
     // if has audio source
     props.isDownloaded ? (
@@ -35,7 +36,16 @@ function DownloadStatusIndicator (props) {
           <AnimatedCircularProgress
             size={22 * scaleMultiplier}
             width={5 * scaleMultiplier}
-            fill={props.downloads[props.lessonID] * 100}
+            fill={
+              props.hasQuestionsType
+                ? props.hasVideoSource && props.hasAudioSource
+                  ? ((props.downloads[props.lessonID] +
+                      props.downloads[props.lessonID + 'v']) /
+                      2) *
+                    100
+                  : props.downloads[props.lessonID] * 100
+                : props.downloads[props.lessonID + 'v'] * 100
+            }
             tintColor={'#828282'}
             rotation={0}
             backgroundColor='#FFFFFF'

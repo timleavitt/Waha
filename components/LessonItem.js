@@ -134,6 +134,8 @@ function LessonItem (props) {
         showSaveModal={showSaveModal}
         lessonID={props.thisLesson.id}
         hasAudioSource={props.thisLesson.audioSource ? true : false}
+        hasVideoSource={props.thisLesson.videoSource ? true : false}
+        hasQuestionsType={props.thisLesson.questionsType ? true : false}
       />
     </View>
   )

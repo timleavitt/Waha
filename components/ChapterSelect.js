@@ -18,43 +18,83 @@ function ChapterSelect (props) {
   }
 
   var trainingButton = props.hasVideoSource ? (
-    <TouchableOpacity
-      style={[
-        styles.chapterSelect,
-        {
-          borderColor: props.primaryColor,
-          backgroundColor:
-            props.activeChapter === 'training' ? props.primaryColor : '#EFF2F4'
-        }
-      ]}
-      onPress={() => props.onPress('training')}
-    >
-      <Icon
-        name={
-          props.activeChapter === 'application'
-            ? 'check-filled'
-            : props.activeChapter === 'training'
-            ? 'number-3-outline'
-            : 'number-3-filled'
-        }
-        size={25 * scaleMultiplier}
-        color={
-          props.activeChapter === 'training' ? 'white' : props.primaryColor
-        }
-      />
-      <Text
+    props.downloads[props.lessonID + 'v'] &&
+    props.downloads[props.lessonID + 'v'] < 1 ? (
+      // if the video is downloading, show the progress in the chapter button
+      <View
         style={[
-          styles.chapterSelectText,
+          styles.chapterSelect,
           {
-            color:
-              props.activeChapter === 'training' ? 'white' : props.primaryColor,
-            fontFamily: props.font + '-black'
+            flexDirection: 'row',
+            borderColor: '#82868D',
+            backgroundColor: '#EFF2F4'
           }
         ]}
       >
-        {props.translations.labels.training}
-      </Text>
-    </TouchableOpacity>
+        <AnimatedCircularProgress
+          size={20 * scaleMultiplier}
+          width={4}
+          fill={props.downloads[props.lessonID + 'v'] * 100}
+          tintColor={props.primaryColor}
+          rotation={0}
+          backgroundColor='#FFFFFF'
+          style={{ margin: 5 }}
+        />
+        <Text
+          style={[
+            styles.chapterSelectText,
+            {
+              color: '#82868D',
+              fontFamily: props.font + '-black'
+            }
+          ]}
+        >
+          {props.translations.labels.training}
+        </Text>
+      </View>
+    ) : (
+      <TouchableOpacity
+        style={[
+          styles.chapterSelect,
+          {
+            borderColor: props.primaryColor,
+            backgroundColor:
+              props.activeChapter === 'training'
+                ? props.primaryColor
+                : '#EFF2F4'
+          }
+        ]}
+        onPress={() => props.onPress('training')}
+      >
+        <Icon
+          name={
+            props.activeChapter === 'application'
+              ? 'check-filled'
+              : props.activeChapter === 'training'
+              ? 'number-3-outline'
+              : 'number-3-filled'
+          }
+          size={25 * scaleMultiplier}
+          color={
+            props.activeChapter === 'training' ? 'white' : props.primaryColor
+          }
+        />
+        <Text
+          style={[
+            styles.chapterSelectText,
+            {
+              color:
+                props.activeChapter === 'training'
+                  ? 'white'
+                  : props.primaryColor,
+              fontFamily: props.font + '-black'
+            }
+          ]}
+        >
+          {props.translations.labels.training}
+        </Text>
+      </TouchableOpacity>
+    )
   ) : null
 
   // render chapter 2 button

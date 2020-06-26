@@ -53,7 +53,6 @@ function MainDrawer (props) {
     db.collection('languages')
       .doc(props.activeGroup.language)
       .onSnapshot(function (doc) {
-
         // if a new c-t chapter 1 is available
         if (
           doc.data().sources['c-t-chapter1'] !==
@@ -90,14 +89,14 @@ function MainDrawer (props) {
           // downloadSomething('mt-chapter3', 'mt-chapter3.mp3')
         }
 
-        // if 
+        // if
         // 1. all core story sets are completed
         // 2. a new core story set has been addded
-        
-        // 1. add it automatically to added sets for this group
-        // 2. make it display the 'new' icon somehow 
 
-        // if 
+        // 1. add it automatically to added sets for this group
+        // 2. make it display the 'new' icon somehow
+
+        // if
         // 1. mobilization tools is unlocked for this group
         // 2. a new mobilization tools set is added
         // if (props.activeGroup.showToolkit && )
@@ -142,6 +141,7 @@ function MainDrawer (props) {
         })
         .catch(err => props.removeDownload(lesson.id))
     })
+    await AsyncStorage
   }
 
   var direction = props.isRTL ? 'right' : 'left'

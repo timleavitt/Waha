@@ -20,6 +20,49 @@ export function removeDownload (lessonID) {
   }
 }
 
+export function downloadVideo (lessonID, source) {
+  console.log('from redux')
+  var counter = 0
+
+  return dispatch => {
+    // callback function
+    function callback ({ totalBytesWritten, totalBytesExpectedToWrite }) {
+      progress = totalBytesWritten / totalBytesExpectedToWrite
+      if (progress == 1) {
+        dispatch(addUpdateDownload(progress, lessonID + 'v'))
+      } else if (counter % 10 == 0) {
+        dispatch(addUpdateDownload(progress, lessonID + 'v'))
+      }
+      counter += 1
+    }
+
+    // create our download object
+    const downloadResumable = FileSystem.createDownloadResumable(
+      source,
+      FileSystem.documentDirectory + lessonID + 'v.mp4',
+      {},
+      callback
+    )
+    console.log('downloading video')
+    // add our download to state with progress 0
+    dispatch(addUpdateDownload(0, lessonID + 'v'))
+
+    // attempt to download file
+    downloadResumable.downloadAsync().catch(() => {
+      // if we get an error, set our progress back to 0
+      dispatch(addUpdateDownload(0, lessonID + 'v'))
+
+      console.log('error')
+
+      // then, store the download resumable object so we can start it later
+      AsyncStorage.setItem(
+        lessonID + 'v',
+        JSON.stringify(downloadResumable.savable())
+      ).catch(err => removeDownload(lessonID))
+    })
+  }
+}
+
 // thunk function for async downloading
 export function downloadLesson (lessonID, source) {
   var counter = 0

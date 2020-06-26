@@ -1,5 +1,10 @@
 import React from 'react'
-import { View, TouchableOpacity, StyleSheet } from 'react-native'
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator
+} from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 
@@ -15,16 +20,29 @@ function PlayPauseSkip (props) {
       >
         <Icon name='skip-back' size={69 * scaleMultiplier} />
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.playPauseSkipButton}
-        onPress={props.onPlayPress}
-      >
-        <Icon
-          name={props.isPlaying ? 'pause' : 'play'}
-          size={100 * scaleMultiplier}
-          color={props.primaryColor}
-        />
-      </TouchableOpacity>
+      {props.isVideoBuffering ? (
+        <View
+          style={{
+            width: 101 * scaleMultiplier,
+            height: 101 * scaleMultiplier,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <ActivityIndicator size='large' />
+        </View>
+      ) : (
+        <TouchableOpacity
+          style={styles.playPauseSkipButton}
+          onPress={props.onPlayPress}
+        >
+          <Icon
+            name={props.isPlaying ? 'pause' : 'play'}
+            size={100 * scaleMultiplier}
+            color={props.primaryColor}
+          />
+        </TouchableOpacity>
+      )}
       <TouchableOpacity
         style={styles.playPauseSkipButton}
         onPress={() => props.onSkipPress(10000)}

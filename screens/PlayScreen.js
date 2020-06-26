@@ -8,11 +8,12 @@ import {
   FlatList,
   Dimensions,
   ScrollView,
-  Share
+  Share,
+  TouchableWithoutFeedback
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
-import { scaleMultiplier, setImages } from '../constants'
+import { scaleMultiplier } from '../constants'
 import { Audio, Video } from 'expo-av'
 import OptionsModal from '../components/OptionsModal'
 import ModalButton from '../components/ModalButton'
@@ -25,10 +26,12 @@ import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { connect } from 'react-redux'
 import {
   downloadLesson,
-  removeDownload
+  removeDownload,
+  downloadVideo
 } from '../redux/actions/downloadActions'
 import SVG from '../assets/svg'
 import useInterval from '@use-it/interval'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 console.disableYellowBox = true
 
@@ -44,7 +47,8 @@ function PlayScreen (props) {
 
   // keeps track of if the audio file is loaded
   const [isLoaded, setIsLoaded] = useState(false)
-
+  const [isVideoBuffering, setIsVideoBuffering] = useState(false)
+  const [showVideoControls, setShowVideoControls] = useState(false)
   // keeps track of whether the audio file is playing or paused
   const [isPlaying, setIsPlaying] = useState(false)
 
@@ -59,11 +63,11 @@ function PlayScreen (props) {
   const [activeChapter, setActiveChapter] = useState('fellowship')
 
   // sources for all 3 audio files
-  const [chapter1Source, setChapter1Source] = useState()
-  const [chapter2Source, setChapter2Source] = useState()
-  const [chapter3Source, setChapter3Source] = useState()
+  const [fellowshipSource, setFellowshipSource] = useState()
+  const [storySource, setStorySource] = useState()
+  const [applicationSource, setApplicationSource] = useState()
 
-  const [videoSource, setVideoSource] = useState()
+  const [trainingSource, setTrainingSource] = useState()
 
   const [albumArtRef, setAlbumArtRef] = useState()
 
@@ -98,14 +102,14 @@ function PlayScreen (props) {
 
     if (props.route.params.thisLesson.questionsType) {
       // set chapters 1 and 3 according the questions type of this lesson
-      setChapter1Source(
+      setFellowshipSource(
         FileSystem.documentDirectory +
           props.activeGroup.language +
           '-' +
           props.route.params.thisLesson.questionsType +
           '-chapter1.mp3'
       )
-      setChapter3Source(
+      setApplicationSource(
         FileSystem.documentDirectory +
           props.activeGroup.language +
           '-' +
@@ -116,33 +120,60 @@ function PlayScreen (props) {
       // check if this lesson has an audio source
       if (props.route.params.thisLesson.audioSource) {
         // if it does, set the source to it
-        setChapter2Source(
+        setStorySource(
           FileSystem.documentDirectory +
             props.route.params.thisLesson.id +
             '.mp3'
         )
-
-        // if an audio file is not donwloading and not currently downloading, download it
-        if (
-          !props.route.params.isDownloaded &&
-          !(props.route.params.thisLesson.id in props.downloads)
-        ) {
-          props.downloadLesson(
-            props.route.params.thisLesson.id,
-            props.route.params.thisLesson.audioSource
-          )
-        }
-        // otherwise, set the source to our dummy mp3 file
       } else {
-        setChapter2Source(
+        setStorySource(
           FileSystem.documentDirectory +
             props.activeGroup.language +
             '-' +
             'dummy-chapter2.mp3'
         )
       }
+
+      if (props.route.params.thisLesson.videoSource) {
+        setTrainingSource(
+          FileSystem.documentDirectory +
+            props.route.params.thisLesson.id +
+            'v.mp4'
+        )
+      }
+
+      // if an audio file is not downloaded and not currently downloading, download it
+      if (
+        !props.route.params.isDownloaded &&
+        !(props.route.params.thisLesson.id in props.downloads)
+      ) {
+        props.downloadLesson(
+          props.route.params.thisLesson.id,
+          props.route.params.thisLesson.audioSource
+        )
+        if (props.route.params.thisLesson.videoSource) {
+          props.downloadVideo(
+            props.route.params.thisLesson.id,
+            props.route.params.thisLesson.videoSource
+          )
+        }
+      }
+      // otherwise, set the source to our dummy mp3 file
     } else {
       changeChapter('training')
+      FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+        contents => {
+          if (contents.includes(props.route.params.thisLesson.id + 'v.mp4')) {
+            setTrainingSource(
+              FileSystem.documentDirectory +
+                props.route.params.thisLesson.id +
+                'v.mp4'
+            )
+          } else {
+            setTrainingSource(props.route.params.thisLesson.videoSource)
+          }
+        }
+      )
     }
 
     //set up our timer tick for updating the seeker every second
@@ -188,19 +219,23 @@ function PlayScreen (props) {
 
   // once we set a chapter 1 source, load it up
   useEffect(() => {
-    if (chapter1Source) {
+    if (fellowshipSource) {
       try {
-        loadAudioFile(chapter1Source)
+        loadAudioFile(fellowshipSource)
       } catch (error) {
         console.log(error)
       }
     }
-  }, [chapter1Source])
+  }, [fellowshipSource])
 
   // if a download finishes, remove it from download tracking object
   useEffect(() => {
     if (props.downloads[props.route.params.thisLesson.id] == 1) {
       props.removeDownload(props.route.params.thisLesson.id)
+    }
+
+    if (props.downloads[props.route.params.thisLesson.id + 'v'] == 1) {
+      props.removeDownload(props.route.params.thisLesson.id + 'v')
     }
   }, [props.downloads])
 
@@ -272,7 +307,10 @@ function PlayScreen (props) {
   async function loadVideoFile (source) {
     try {
       await videoObject
-        .loadAsync({ uri: source }, { progressUpdateIntervalMillis: 1000 })
+        .loadAsync(
+          { uri: trainingSource },
+          { progressUpdateIntervalMillis: 100 }
+        )
         .then(playbackStatus => {
           setAudioFileLength(playbackStatus.durationMillis)
           videoObject.setStatusAsync({
@@ -288,10 +326,10 @@ function PlayScreen (props) {
   }
 
   useEffect(() => {
-    if (videoObject) {
+    if (videoObject && trainingSource) {
       loadVideoFile(props.route.params.thisLesson.videoSource)
     }
-  }, [videoObject])
+  }, [videoObject, trainingSource])
 
   // gets called every second by our timer and updates the seeker position based on the progress through the audio file
   async function updateSeekerTick () {
@@ -450,13 +488,13 @@ function PlayScreen (props) {
       shouldTickUpdate.current = false
       if (chapter === 'fellowship') {
         setSeekPosition(0)
-        loadAudioFile(chapter1Source)
+        loadAudioFile(fellowshipSource)
       } else if (chapter === 'story') {
         setSeekPosition(0)
-        loadAudioFile(chapter2Source)
+        loadAudioFile(storySource)
       } else if (chapter === 'application') {
         setSeekPosition(0)
-        loadAudioFile(chapter3Source)
+        loadAudioFile(applicationSource)
       } else if (chapter === 'training') {
         setIsLoaded(false)
         setSeekPosition(0)
@@ -645,25 +683,86 @@ function PlayScreen (props) {
   }
 
   var videoPlayer = (
-    <View
-      style={{
-        height: Dimensions.get('window').width - 80,
-        width: '100%'
+    <TouchableWithoutFeedback
+      onPress={() => {
+        if (!showVideoControls) {
+          setShowVideoControls(true)
+          setTimeout(() => setShowVideoControls(false), 1000)
+        }
       }}
     >
-      <Video
-        ref={ref => setVideoObject(ref)}
-        rate={1.0}
-        volume={1.0}
-        isMuted={false}
-        resizeMode='contain'
-        shouldPlay
-        // useNativeControls
-        usePoster
-        onLoad={() => setIsLoaded(true)}
-        style={{ flex: 1 }}
-      />
-    </View>
+      <View
+        style={{
+          height: Dimensions.get('window').width - 80,
+          width: '100%',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          backgroundColor: 'black'
+        }}
+      >
+        <Video
+          ref={ref => setVideoObject(ref)}
+          rate={1.0}
+          volume={1.0}
+          isMuted={false}
+          resizeMode='contain'
+          shouldPlay
+          usePoster
+          onLoad={() => setIsLoaded(true)}
+          style={{ flex: 1 }}
+          onPlaybackStatusUpdate={status => {
+            // match up so there's a single source of truth between
+            // waha controls and native video controls
+            if (status.isPlaying) setIsPlaying(true)
+            else if (!status.isPlaying) setIsPlaying(false)
+
+            // if we're buffering, turn play icon into activity indicator
+            if (!status.isBuffering) setIsVideoBuffering(false)
+            else if (status.isBuffering) setIsVideoBuffering(true)
+          }}
+          onLoadStart={() => setIsLoaded(false)}
+          onLoad={() => setIsLoaded(true)}
+          onFullscreenUpdate={({ fullscreenUpdate, status }) => {}}
+        />
+        {isLoaded ? null : (
+          <View
+            style={{
+              alignSelf: 'center',
+              width: '100%',
+              position: 'absolute',
+              alignItems: 'center'
+            }}
+          >
+            <Icon name='video' size={100 * scaleMultiplier} color='#828282' />
+          </View>
+        )}
+        {showVideoControls ? (
+          <View
+            style={{
+              width: '100%',
+              height: 65 * scaleMultiplier,
+              position: 'absolute',
+              alignSelf: 'flex-end',
+              backgroundColor: '#00000050',
+              justifyContent: 'center'
+            }}
+          >
+            <TouchableOpacity
+              style={{ alignSelf: 'flex-end' }}
+              onPress={() => {
+                videoObject.presentFullscreenPlayer()
+              }}
+            >
+              <Icon
+                name='fullscreen-enter'
+                size={50 * scaleMultiplier}
+                color='#FFF'
+              />
+            </TouchableOpacity>
+          </View>
+        ) : null}
+      </View>
+    </TouchableWithoutFeedback>
   )
 
   var middleSection =
@@ -723,6 +822,7 @@ function PlayScreen (props) {
       />
       <PlayPauseSkip
         isPlaying={isPlaying}
+        isVideoBuffering={isVideoBuffering}
         onPlayPress={playHandler}
         onSkipPress={value => {
           skip(value)
@@ -857,6 +957,9 @@ function mapDispatchToProps (dispatch) {
     },
     downloadLesson: (lessonID, source) => {
       dispatch(downloadLesson(lessonID, source))
+    },
+    downloadVideo: (lessonID, source) => {
+      dispatch(downloadVideo(lessonID, source))
     },
     setBookmark: groupName => {
       dispatch(setBookmark(groupName))

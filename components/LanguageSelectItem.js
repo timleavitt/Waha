@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import { scaleMultiplier, languageT2S } from '../constants'
 import * as FileSystem from 'expo-file-system'

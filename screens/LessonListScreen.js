@@ -23,7 +23,8 @@ import { scaleMultiplier } from '../constants'
 import BackButton from '../components/BackButton'
 import {
   downloadLesson,
-  removeDownload
+  removeDownload,
+  downloadVideo
 } from '../redux/actions/downloadActions'
 import { toggleComplete, setBookmark } from '../redux/actions/groupsActions'
 import { connect } from 'react-redux'
@@ -34,10 +35,14 @@ function LessonListScreen (props) {
 
   // console.log(props.activeGroup.addedSets)
 
+  // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
+  //   console.log(contents)
+  // })
+
   // keeps track of whether the user has internet connection
 
   // keeps track of which lessons are downloaded
-  const [downloadsInFileSystem, setDownloadsInFileSystem] = useState([])
+  const [downloadsInFileSystem, setDownloadsInFileSystem] = useState({})
 
   // keeps track of the lesson to download/delete/toggle complete when modals are up
   const [activeLessonInModal, setActiveLessonInModal] = useState({})
@@ -71,6 +76,9 @@ function LessonListScreen (props) {
           if (contents.includes(lesson.id + '.mp3'))
             whichLessonsDownloaded[lesson.id] = true
           else whichLessonsDownloaded[lesson.id] = false
+          if (contents.includes(lesson.id + 'v.mp4')) {
+            whichLessonsDownloaded[lesson.id + 'v'] = true
+          }
         })
         return whichLessonsDownloaded
       })
@@ -107,10 +115,23 @@ function LessonListScreen (props) {
 
   // downloads a lesson's chapter 2 mp3 via modal press
   function downloadLessonFromModal () {
-    props.downloadLesson(
-      activeLessonInModal.id,
-      activeLessonInModal.audioSource
-    )
+    if (activeLessonInModal.questionsType) {
+      props.downloadLesson(
+        activeLessonInModal.id,
+        activeLessonInModal.audioSource
+      )
+      if (activeLessonInModal.videoSource) {
+        props.downloadVideo(
+          activeLessonInModal.id,
+          activeLessonInModal.videoSource
+        )
+      }
+    } else {
+      props.downloadVideo(
+        activeLessonInModal.id,
+        activeLessonInModal.videoSource
+      )
+    }
     hideModals()
   }
 
@@ -119,7 +140,13 @@ function LessonListScreen (props) {
     FileSystem.deleteAsync(
       FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
     )
+    if (activeLessonInModal.videoSource) {
+      FileSystem.deleteAsync(
+        FileSystem.documentDirectory + activeLessonInModal.id + 'v.mp4'
+      )
+    }
     props.removeDownload(activeLessonInModal.id)
+    props.removeDownload(activeLessonInModal.id + 'v')
     hideModals()
   }
 
@@ -228,7 +255,12 @@ function LessonListScreen (props) {
           })
         }
         isBookmark={lessonList.item.index === thisSetBookmark}
-        isDownloaded={downloadsInFileSystem[lessonList.item.id]}
+        isDownloaded={
+          lessonList.item.audioSource && lessonList.item.videoSource
+            ? downloadsInFileSystem[lessonList.item.id] &&
+              downloadsInFileSystem[lessonList.item.id + 'v']
+            : downloadsInFileSystem[lessonList.item.id]
+        }
         isComplete={thisSetProgress.includes(lessonList.item.index)}
         setActiveLessonInModal={() => setActiveLessonInModal(lessonList.item)}
         setShowDownloadLessonModal={() => setShowDownloadLessonModal(true)}
@@ -385,7 +417,7 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
-  // console.log(activeGroup)
+  console.log(state.downloads)
   return {
     downloads: state.downloads,
     activeDatabase: state.database[activeGroup.language],
@@ -399,6 +431,9 @@ function mapDispatchToProps (dispatch) {
   return {
     downloadLesson: (lessonID, source) => {
       dispatch(downloadLesson(lessonID, source))
+    },
+    downloadVideo: (lessonID, source) => {
+      dispatch(downloadVideo(lessonID, source))
     },
     toggleComplete: (groupName, set, lessonIndex) => {
       dispatch(toggleComplete(groupName, set, lessonIndex))
