@@ -9,7 +9,8 @@ import {
   Dimensions,
   ScrollView,
   Share,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  TouchableOpacity
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
@@ -31,7 +32,7 @@ import {
 } from '../redux/actions/downloadActions'
 import SVG from '../assets/svg'
 import useInterval from '@use-it/interval'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { DeviceMotion } from 'expo-sensors'
 
 console.disableYellowBox = true
 
@@ -49,6 +50,9 @@ function PlayScreen (props) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isVideoBuffering, setIsVideoBuffering] = useState(false)
   const [showVideoControls, setShowVideoControls] = useState(false)
+  const [fullscreenStatus, setFullScreenStatus] = useState(3)
+  const [screenOrientation, setScreenOrientation] = useState(0)
+
   // keeps track of whether the audio file is playing or paused
   const [isPlaying, setIsPlaying] = useState(false)
 
@@ -65,9 +69,8 @@ function PlayScreen (props) {
   // sources for all 3 audio files
   const [fellowshipSource, setFellowshipSource] = useState()
   const [storySource, setStorySource] = useState()
-  const [applicationSource, setApplicationSource] = useState()
-
   const [trainingSource, setTrainingSource] = useState()
+  const [applicationSource, setApplicationSource] = useState()
 
   const [albumArtRef, setAlbumArtRef] = useState()
 
@@ -93,98 +96,129 @@ function PlayScreen (props) {
 
   //// CONSTRUCTOR
 
-  // NEW INTERVAL
+  // interval for updating seeker
   useInterval(updateSeekerTick, 1000)
 
-  useEffect(() => {
-    //set nav options
-    props.navigation.setOptions(getNavOptions())
+  function setSources () {
+    // set all possible sources for ease of use later
+    var fellowshipLocal =
+      FileSystem.documentDirectory +
+      props.activeGroup.language +
+      '-' +
+      props.route.params.thisLesson.questionsType +
+      '-chapter1.mp3'
 
-    if (props.route.params.thisLesson.questionsType) {
-      // set chapters 1 and 3 according the questions type of this lesson
-      setFellowshipSource(
-        FileSystem.documentDirectory +
-          props.activeGroup.language +
-          '-' +
-          props.route.params.thisLesson.questionsType +
-          '-chapter1.mp3'
-      )
-      setApplicationSource(
-        FileSystem.documentDirectory +
-          props.activeGroup.language +
-          '-' +
-          props.route.params.thisLesson.questionsType +
-          '-chapter3.mp3'
-      )
+    var applicationLocal =
+      FileSystem.documentDirectory +
+      props.activeGroup.language +
+      '-' +
+      props.route.params.thisLesson.questionsType +
+      '-chapter3.mp3'
 
-      // check if this lesson has an audio source
-      if (props.route.params.thisLesson.audioSource) {
-        // if it does, set the source to it
-        setStorySource(
-          FileSystem.documentDirectory +
-            props.route.params.thisLesson.id +
-            '.mp3'
-        )
-      } else {
-        setStorySource(
-          FileSystem.documentDirectory +
-            props.activeGroup.language +
-            '-' +
-            'dummy-chapter2.mp3'
-        )
-      }
+    var storyLocal =
+      FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
 
-      if (props.route.params.thisLesson.videoSource) {
-        setTrainingSource(
-          FileSystem.documentDirectory +
-            props.route.params.thisLesson.id +
-            'v.mp4'
-        )
-      }
+    var storyDummy =
+      FileSystem.documentDirectory +
+      props.activeGroup.language +
+      '-' +
+      'dummy-chapter2.mp3'
 
-      // if an audio file is not downloaded and not currently downloading, download it
-      if (
-        !props.route.params.isDownloaded &&
-        !(props.route.params.thisLesson.id in props.downloads)
-      ) {
-        props.downloadLesson(
-          props.route.params.thisLesson.id,
-          props.route.params.thisLesson.audioSource
+    var trainingLocal =
+      FileSystem.documentDirectory + props.route.params.thisLesson.id + 'v.mp4'
+
+    var trainingStream = props.route.params.thisLesson.videoSource
+
+    switch (props.route.params.lessonType) {
+      case 'qa':
+        setFellowshipSource(fellowshipLocal)
+        setStorySource(storyLocal)
+        setTrainingSource(null)
+        setApplicationSource(applicationLocal)
+
+        // start downloading stuff if it's not downloaded
+        if (
+          !props.route.params.isDownloaded &&
+          !props.route.params.isDownloading
         )
-        if (props.route.params.thisLesson.videoSource) {
+          props.downloadLesson(
+            props.route.params.thisLesson.id,
+            props.route.params.thisLesson.audioSource
+          )
+        break
+      case 'qav':
+        setFellowshipSource(fellowshipLocal)
+        setStorySource(storyLocal)
+        setTrainingSource(trainingLocal)
+        setApplicationSource(applicationLocal)
+
+        // start downloading stuff if it's not downloaded
+        if (
+          !props.route.params.isDownloaded &&
+          !props.route.params.isDownloading
+        ) {
+          props.downloadLesson(
+            props.route.params.thisLesson.id,
+            props.route.params.thisLesson.audioSource
+          )
           props.downloadVideo(
             props.route.params.thisLesson.id,
             props.route.params.thisLesson.videoSource
           )
         }
-      }
-      // otherwise, set the source to our dummy mp3 file
-    } else {
-      changeChapter('training')
-      FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-        contents => {
-          if (contents.includes(props.route.params.thisLesson.id + 'v.mp4')) {
-            setTrainingSource(
-              FileSystem.documentDirectory +
-                props.route.params.thisLesson.id +
-                'v.mp4'
-            )
-          } else {
-            setTrainingSource(props.route.params.thisLesson.videoSource)
-          }
-        }
-      )
-    }
+        break
+      case 'qv':
+        setFellowshipSource(fellowshipLocal)
+        setStorySource(storyDummy)
+        setTrainingSource(trainingLocal)
+        setApplicationSource(applicationLocal)
 
-    //set up our timer tick for updating the seeker every second
-    // const interval = setInterval(updateSeekerTick, 1000)
+        // start downloading stuff if it's not downloaded
+        if (
+          !props.route.params.isDownloaded &&
+          !props.route.params.isDownloading
+        )
+          props.downloadVideo(
+            props.route.params.thisLesson.id,
+            props.route.params.thisLesson.videoSource
+          )
+        break
+      case 'v':
+        changeChapter('training')
+        setFellowshipSource(null)
+        setStorySource(null)
+        setTrainingSource(
+          props.route.params.isDownloaded ? trainingLocal : trainingStream
+        )
+        setApplicationSource(null)
+        break
+      case 'q':
+        setFellowshipSource(fellowshipLocal)
+        setStorySource(storyDummy)
+        setTrainingSource(null)
+        setApplicationSource(applicationLocal)
+    }
+  }
+
+  useEffect(() => {
+    //set nav options
+    props.navigation.setOptions(getNavOptions())
+
+    // set sources and download stuff if we need to
+    setSources()
 
     //when leaving the screen, cancel the interval timer and unload the audio file
     return function cleanup () {
       // clearInterval(interval)
+
       if (soundObject) {
         soundObject.unloadAsync()
         setSoundObject(null)
+      }
+
+      if (videoObject) {
+        videoObject.unloadAsync()
+        setVideoObject(null)
       }
     }
   }, [])
@@ -228,14 +262,27 @@ function PlayScreen (props) {
     }
   }, [fellowshipSource])
 
-  // if a download finishes, remove it from download tracking object
+  // if a download finishes, remove it from download tracker
   useEffect(() => {
-    if (props.downloads[props.route.params.thisLesson.id] == 1) {
-      props.removeDownload(props.route.params.thisLesson.id)
-    }
-
-    if (props.downloads[props.route.params.thisLesson.id + 'v'] == 1) {
-      props.removeDownload(props.route.params.thisLesson.id + 'v')
+    switch (props.route.params.lessonType) {
+      case 'qa':
+        if (props.downloads[props.route.params.thisLesson.id] === 1)
+          props.removeDownload(props.route.params.thisLesson.id)
+        break
+      case 'qav':
+        if (
+          props.downloads[props.route.params.thisLesson.id] === 1 &&
+          props.downloads[props.route.params.thisLesson.id + 'v'] === 1
+        ) {
+          props.removeDownload(props.route.params.thisLesson.id)
+          props.removeDownload(props.route.params.thisLesson.id + 'v')
+        }
+        break
+      case 'qv':
+      case 'v':
+        if (props.downloads[props.route.params.thisLesson.id + 'v'] === 1)
+          props.removeDownload(props.route.params.thisLesson.id + 'v')
+        break
     }
   }, [props.downloads])
 
@@ -251,34 +298,20 @@ function PlayScreen (props) {
     // chapter once we finish or toggle the whole lesson as complete
     if (playbackStatus.didJustFinish) {
       if (activeChapter === 'fellowship') {
-        if (!props.route.params.thisLesson.id in props.downloads)
+        if (!props.downloads[props.route.params.thisLesson.id])
           changeChapter('story')
       } else if (activeChapter === 'story') {
-        if (props.route.params.thisLesson.videoSource) {
-          changeChapter('training')
-        } else {
-          FileSystem.getInfoAsync(
-            FileSystem.documentDirectory +
-              props.route.params.thisLesson.id +
-              '.mp3'
-          ).then(({ exists }) => {
-            // only switch to chapter 2 if it's downloaded
-            if (
-              exists &&
-              !(props.route.params.thisLesson.id in props.downloads)
-            )
+        switch (props.route.params.lessonType) {
+          case 'qa':
+            if (!props.isDownloading) {
               changeChapter('application')
-          })
-        }
-      } else if (activeChapter === 'application') {
-        if (
-          !props.activeGroup.addedSets
-            .filter(
-              addedSet => addedSet.id === props.route.params.thisSet.id
-            )[0]
-            .progress.includes(props.route.params.thisLesson.index)
-        ) {
-          changeCompleteStatus()
+            }
+            break
+          case 'qav':
+            if (!props.downloads[props.route.params.thisLesson.id + 'v']) {
+              changeChapter('training')
+            }
+            break
         }
       }
     }
@@ -328,8 +361,26 @@ function PlayScreen (props) {
   useEffect(() => {
     if (videoObject && trainingSource) {
       loadVideoFile(props.route.params.thisLesson.videoSource)
+
+      // orientation listener to activate full screen when switched to landscape and vice versa
+      DeviceMotion.addListener(({ orientation }) => {
+        if (orientation !== screenOrientation) {
+          setScreenOrientation(orientation)
+        }
+      })
     }
   }, [videoObject, trainingSource])
+
+  useEffect(() => {
+    if (screenOrientation === -90 || screenOrientation === 90) {
+      videoObject.presentFullscreenPlayer()
+    }
+  }, [screenOrientation])
+
+  // async function changeOrientation () {
+  //   if (fullscreenStatus === 3) await
+  //   else if (fullscreenStatus === 1) await videoObject.dismissFullScreenPlayer()
+  // }
 
   // gets called every second by our timer and updates the seeker position based on the progress through the audio file
   async function updateSeekerTick () {
@@ -588,6 +639,11 @@ function PlayScreen (props) {
               )
         })
         break
+      case 'video':
+        Share.share({
+          message: activeLessonInModal.videoSource
+        })
+        break
     }
   }
 
@@ -719,10 +775,16 @@ function PlayScreen (props) {
             // if we're buffering, turn play icon into activity indicator
             if (!status.isBuffering) setIsVideoBuffering(false)
             else if (status.isBuffering) setIsVideoBuffering(true)
+
+            if (status.didJustFinish && props.route.params.lessonType !== 'v')
+              changeChapter('application')
           }}
           onLoadStart={() => setIsLoaded(false)}
           onLoad={() => setIsLoaded(true)}
-          onFullscreenUpdate={({ fullscreenUpdate, status }) => {}}
+          onFullscreenUpdate={({ fullscreenUpdate, status }) => {
+            setFullScreenStatus(fullscreenUpdate)
+            console.log(fullscreenUpdate)
+          }}
         />
         {isLoaded ? null : (
           <View
@@ -792,25 +854,21 @@ function PlayScreen (props) {
   // if we're loading, render a loading circle; otherwise load the audio controls
   var audioControlContainer = isLoaded ? (
     <View style={styles.audioControlContainer}>
-      {props.route.params.thisLesson.questionsType ? (
+      {props.route.params.lessonType !== 'v' ? (
         <ChapterSelect
           activeChapter={activeChapter}
           lessonID={props.route.params.thisLesson.id}
           onPress={chapter => changeChapter(chapter)}
-          goToScripture={() =>
-            albumArtRef.scrollToIndex({
-              animated: true,
-              viewPosition: 0.5,
-              viewOffset: -Dimensions.get('screen').width,
-              index: 0
-            })
-          }
-          hasAudioSource={
-            props.route.params.thisLesson.audioSource ? true : false
-          }
-          hasVideoSource={
-            props.route.params.thisLesson.videoSource ? true : false
-          }
+          goToScripture={() => {
+            if (albumArtRef)
+              albumArtRef.scrollToIndex({
+                animated: true,
+                viewPosition: 0.5,
+                viewOffset: -Dimensions.get('screen').width,
+                index: 0
+              })
+          }}
+          lessonType={props.route.params.lessonType}
         />
       ) : null}
       <Scrubber
@@ -854,18 +912,39 @@ function PlayScreen (props) {
         closeText={props.translations.modals.shareOptions.close}
       >
         <ModalButton
-          title={props.translations.modals.shareOptions.shareApp}
+          title={props.activeDatabase.translations.modals.shareOptions.shareApp}
           onPress={() => share('app')}
         />
-        <ModalButton
-          title={props.translations.modals.shareOptions.sharePassageText}
-          onPress={() => share('text')}
-        />
-        <ModalButton
-          isLast={true}
-          title={props.translations.modals.shareOptions.sharePassageAudio}
-          onPress={() => share('audio')}
-        />
+        {props.route.params.lessonType !== 'v' ? (
+          <ModalButton
+            title={
+              props.activeDatabase.translations.modals.shareOptions
+                .sharePassageText
+            }
+            onPress={() => share('text')}
+          />
+        ) : null}
+        {(props.route.params.lessonType === 'qa' ||
+          props.route.params.lessonType === 'qav') &&
+        !props.downloads[props.route.params.thisLesson.id] ? (
+          <ModalButton
+            title={
+              props.activeDatabase.translations.modals.shareOptions
+                .sharePassageAudio
+            }
+            onPress={() => share('audio')}
+          />
+        ) : null}
+        {props.route.params.lessonType !== 'qa' &&
+        props.route.params.lessonType !== 'q' ? (
+          <ModalButton
+            title={
+              props.activeDatabase.translations.modals.shareOptions
+                .shareVideoLink
+            }
+            onPress={() => share('video')}
+          />
+        ) : null}
       </OptionsModal>
     </View>
   )

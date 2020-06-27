@@ -33,13 +33,9 @@ import LessonSwipeBackdrop from '../components/LessonSwipeBackdrop'
 function LessonListScreen (props) {
   //// STATE
 
-  // console.log(props.activeGroup.addedSets)
-
   // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
   //   console.log(contents)
   // })
-
-  // keeps track of whether the user has internet connection
 
   // keeps track of which lessons are downloaded
   const [downloadsInFileSystem, setDownloadsInFileSystem] = useState({})
@@ -53,13 +49,9 @@ function LessonListScreen (props) {
   const [showLessonOptionsModal, setShowLessonOptionsModal] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
 
-  var thisSetProgress = props.activeGroup.addedSets.filter(
-    set => set.id === props.route.params.thisSet.id
-  )[0].progress
-
-  var thisSetBookmark = props.activeGroup.addedSets.filter(
-    set => set.id === props.route.params.thisSet.id
-  )[0].bookmark
+  // progress and bookmark for the set we're looking at
+  const [thisSetProgress, setThisSetProgress] = useState([])
+  const [thisSetBookmark, setThisSetBookmark] = useState(1)
 
   //// CONSTRUCTOR
 
@@ -67,7 +59,11 @@ function LessonListScreen (props) {
     props.navigation.setOptions(getNavOptions())
   }, [])
 
-  // checks which lessons are downloaded and stores in state
+  useEffect(() => {
+    console.log(activeLessonInModal)
+  }, [activeLessonInModal])
+
+  // checks which lessons and lesson videos are downloaded and stores in state
   useEffect(() => {
     var whichLessonsDownloaded = {}
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
@@ -75,7 +71,6 @@ function LessonListScreen (props) {
         props.activeDatabase.lessons.forEach(lesson => {
           if (contents.includes(lesson.id + '.mp3'))
             whichLessonsDownloaded[lesson.id] = true
-          else whichLessonsDownloaded[lesson.id] = false
           if (contents.includes(lesson.id + 'v.mp4')) {
             whichLessonsDownloaded[lesson.id + 'v'] = true
           }
@@ -86,6 +81,20 @@ function LessonListScreen (props) {
         setDownloadsInFileSystem(whichLessonsDownloaded)
       })
   }, [props.downloads])
+
+  // whenever progress or bookmarks update, update the progress and bookmarks for this set
+  useEffect(() => {
+    setThisSetProgress(
+      props.activeGroup.addedSets.filter(
+        set => set.id === props.route.params.thisSet.id
+      )[0].progress
+    )
+    setThisSetBookmark(
+      props.activeGroup.addedSets.filter(
+        set => set.id === props.route.params.thisSet.id
+      )[0].bookmark
+    )
+  }, [props.activeGroup.addedSets, props.activeGroup.setBookmark])
 
   //// NAV OPTIONS
 
@@ -113,38 +122,115 @@ function LessonListScreen (props) {
 
   //// FUNCTIONS
 
+  function getLessonType (lesson) {
+    // q = has questions, a = has audio, v = has video
+    // options not allowed: av, a
+    return lesson.questionsType
+      ? lesson.audioSource
+        ? lesson.videoSource
+          ? 'qav'
+          : 'qa'
+        : lesson.videoSource
+        ? 'qv'
+        : 'q'
+      : 'v'
+  }
+
+  function getIsLessonDownloaded (lesson) {
+    switch (getLessonType(lesson)) {
+      case 'qa':
+        if (downloadsInFileSystem[lesson.id]) return true
+        else return false
+        break
+      case 'qav':
+        if (
+          downloadsInFileSystem[lesson.id] &&
+          downloadsInFileSystem[lesson.id + 'v']
+        )
+          return true
+        else return false
+        break
+      case 'qv':
+      case 'v':
+        if (downloadsInFileSystem[lesson.id + 'v']) return true
+        else return false
+        break
+    }
+  }
+
+  function getIsLessonDownloading (lesson) {
+    switch (getLessonType(lesson)) {
+      case 'qa':
+        if (props.downloads[lesson.id]) return true
+        else return false
+        break
+      case 'qav':
+        if (props.downloads[lesson.id] && props.downloads[lesson.id + 'v'])
+          return true
+        else return false
+        break
+      case 'qv':
+      case 'v':
+        if (props.downloads[lesson.id + 'v']) return true
+        else return false
+        break
+    }
+  }
+
   // downloads a lesson's chapter 2 mp3 via modal press
   function downloadLessonFromModal () {
-    if (activeLessonInModal.questionsType) {
-      props.downloadLesson(
-        activeLessonInModal.id,
-        activeLessonInModal.audioSource
-      )
-      if (activeLessonInModal.videoSource) {
+    switch (getLessonType(activeLessonInModal)) {
+      case 'qa':
+        props.downloadLesson(
+          activeLessonInModal.id,
+          activeLessonInModal.audioSource
+        )
+        break
+      case 'qav':
+        props.downloadLesson(
+          activeLessonInModal.id,
+          activeLessonInModal.audioSource
+        )
         props.downloadVideo(
           activeLessonInModal.id,
           activeLessonInModal.videoSource
         )
-      }
-    } else {
-      props.downloadVideo(
-        activeLessonInModal.id,
-        activeLessonInModal.videoSource
-      )
+        break
+      case 'qv':
+      case 'v':
+        props.downloadVideo(
+          activeLessonInModal.id,
+          activeLessonInModal.videoSource
+        )
+        break
     }
     hideModals()
   }
 
   // deletes a lesson's chapter 2 mp3 via modal press
   function deleteLessonFromModal () {
-    FileSystem.deleteAsync(
-      FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
-    )
-    if (activeLessonInModal.videoSource) {
-      FileSystem.deleteAsync(
-        FileSystem.documentDirectory + activeLessonInModal.id + 'v.mp4'
-      )
+    switch (getLessonType(activeLessonInModal)) {
+      case 'qa':
+        FileSystem.deleteAsync(
+          FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
+        )
+        break
+      case 'qav':
+        FileSystem.deleteAsync(
+          FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
+        )
+        FileSystem.deleteAsync(
+          FileSystem.documentDirectory + activeLessonInModal.id + 'v.mp4'
+        )
+        break
+      case 'qv':
+      case 'v':
+        FileSystem.deleteAsync(
+          FileSystem.documentDirectory + activeLessonInModal.id + 'v.mp4'
+        )
+        break
     }
+
     props.removeDownload(activeLessonInModal.id)
     props.removeDownload(activeLessonInModal.id + 'v')
     hideModals()
@@ -237,6 +323,11 @@ function LessonListScreen (props) {
               )
         })
         break
+      case 'video':
+        Share.share({
+          message: activeLessonInModal.videoSource
+        })
+        break
     }
   }
 
@@ -251,16 +342,15 @@ function LessonListScreen (props) {
             thisLesson: lessonList.item,
             thisSet: props.route.params.thisSet,
             thisSetProgress: thisSetProgress,
-            isDownloaded: downloadsInFileSystem[lessonList.item.id]
+            isDownloaded: getIsLessonDownloaded(lessonList.item),
+            isDownloading: getIsLessonDownloading(lessonList.item),
+            lessonType: getLessonType(lessonList.item)
           })
         }
         isBookmark={lessonList.item.index === thisSetBookmark}
-        isDownloaded={
-          lessonList.item.audioSource && lessonList.item.videoSource
-            ? downloadsInFileSystem[lessonList.item.id] &&
-              downloadsInFileSystem[lessonList.item.id + 'v']
-            : downloadsInFileSystem[lessonList.item.id]
-        }
+        isDownloaded={getIsLessonDownloaded(lessonList.item)}
+        isDownloading={getIsLessonDownloading(lessonList.item)}
+        lessonType={getLessonType(lessonList.item)}
         isComplete={thisSetProgress.includes(lessonList.item.index)}
         setActiveLessonInModal={() => setActiveLessonInModal(lessonList.item)}
         setShowDownloadLessonModal={() => setShowDownloadLessonModal(true)}
@@ -302,7 +392,9 @@ function LessonListScreen (props) {
         stopRightSwipe={-Dimensions.get('screen').width / 2}
         onLeftActionStatusChange={
           props.isRTL
-            ? data => setShowShareModal(true)
+            ? data => {
+                setShowShareModal(true)
+              }
             : data => {
                 if (data.isActivated)
                   props.toggleComplete(
@@ -322,8 +414,20 @@ function LessonListScreen (props) {
                     parseInt(data.key)
                   )
               }
-            : data => setShowShareModal(true)
+            : data => {
+                setShowShareModal(true)
+              }
         }
+        swipeGestureBegan={data => {
+          console.log(data)
+          setActiveLessonInModal(
+            props.activeDatabase.lessons.filter(
+              lesson =>
+                props.route.params.thisSet.id === lesson.setid &&
+                lesson.index === parseInt(data)
+            )[0]
+          )
+        }}
       />
 
       {/* MODALS */}
@@ -368,20 +472,36 @@ function LessonListScreen (props) {
           title={props.activeDatabase.translations.modals.shareOptions.shareApp}
           onPress={() => share('app')}
         />
-        <ModalButton
-          title={
-            props.activeDatabase.translations.modals.shareOptions
-              .sharePassageText
-          }
-          onPress={() => share('text')}
-        />
-        <ModalButton
-          title={
-            props.activeDatabase.translations.modals.shareOptions
-              .sharePassageAudio
-          }
-          onPress={() => share('audio')}
-        />
+        {getLessonType(activeLessonInModal) !== 'v' ? (
+          <ModalButton
+            title={
+              props.activeDatabase.translations.modals.shareOptions
+                .sharePassageText
+            }
+            onPress={() => share('text')}
+          />
+        ) : null}
+        {props.route.params.lessonType === 'qa' ||
+        props.route.params.lessonType === 'qav' ||
+        !props.downloads[activeLessonInModal.id] ? (
+          <ModalButton
+            title={
+              props.activeDatabase.translations.modals.shareOptions
+                .sharePassageAudio
+            }
+            onPress={() => share('audio')}
+          />
+        ) : null}
+        {getLessonType(activeLessonInModal) !== 'qa' &&
+        getLessonType(activeLessonInModal) !== 'q' ? (
+          <ModalButton
+            title={
+              props.activeDatabase.translations.modals.shareOptions
+                .shareVideoLink
+            }
+            onPress={() => share('video')}
+          />
+        ) : null}
       </OptionsModal>
     </View>
   )
@@ -417,7 +537,6 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
-  console.log(state.downloads)
   return {
     downloads: state.downloads,
     activeDatabase: state.database[activeGroup.language],

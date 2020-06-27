@@ -99,7 +99,7 @@ function WahaDrawer (props) {
               { fontFamily: props.font + '-regular' }
             ]}
           >
-            v0.4.1.4
+            v0.4.2
           </Text>
         </View>
       </View>

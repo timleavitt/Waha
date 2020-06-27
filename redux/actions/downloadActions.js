@@ -21,7 +21,6 @@ export function removeDownload (lessonID) {
 }
 
 export function downloadVideo (lessonID, source) {
-  console.log('from redux')
   var counter = 0
 
   return dispatch => {
@@ -43,7 +42,6 @@ export function downloadVideo (lessonID, source) {
       {},
       callback
     )
-    console.log('downloading video')
     // add our download to state with progress 0
     dispatch(addUpdateDownload(0, lessonID + 'v'))
 
@@ -58,7 +56,7 @@ export function downloadVideo (lessonID, source) {
       AsyncStorage.setItem(
         lessonID + 'v',
         JSON.stringify(downloadResumable.savable())
-      ).catch(err => removeDownload(lessonID))
+      ).catch(err => dispatch(removeDownload(lessonID)))
     })
   }
 }
@@ -95,13 +93,15 @@ export function downloadLesson (lessonID, source) {
       // if we get an error, set our progress back to 0
       dispatch(addUpdateDownload(0, lessonID))
 
-      console.log('error')
+      console.log(
+        'lesson download error, storing download in async storage for later'
+      )
 
       // then, store the download resumable object so we can start it later
       AsyncStorage.setItem(
         lessonID,
         JSON.stringify(downloadResumable.savable())
-      ).catch(err => removeDownload(lessonID))
+      ).catch(err => dispatch(removeDownload(lessonID)))
     })
   }
 }
