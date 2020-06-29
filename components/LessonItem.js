@@ -18,8 +18,8 @@ function LessonItem (props) {
   //// CONSTRUCTOR
 
   useEffect(() => {
-    // if we've completed the download for this lesson, remove the download from redux
-
+    // if we've completed the download for this lesson, remove the audio/video
+    //  download from redux
     switch (props.lessonType) {
       case 'qa':
         if (props.downloads[props.thisLesson.id] === 1)
@@ -145,6 +145,7 @@ function LessonItem (props) {
           </Text>
         </View>
       </TouchableOpacity>
+      {/* cloud icon/download indicator */}
       <DownloadStatusIndicator
         isDownloaded={props.isDownloaded}
         isDownloading={props.isDownloading}
