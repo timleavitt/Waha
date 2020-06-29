@@ -59,10 +59,6 @@ function LessonListScreen (props) {
     props.navigation.setOptions(getNavOptions())
   }, [])
 
-  useEffect(() => {
-    console.log(activeLessonInModal)
-  }, [activeLessonInModal])
-
   // checks which lessons and lesson videos are downloaded and stores in state
   useEffect(() => {
     var whichLessonsDownloaded = {}
@@ -374,22 +370,39 @@ function LessonListScreen (props) {
         renderHiddenItem={(data, rowMap) => (
           <LessonSwipeBackdrop
             isComplete={thisSetProgress.includes(data.item.index)}
-            toggleComplete={() =>
+            toggleComplete={() => {
               props.toggleComplete(
                 props.activeGroup.name,
                 props.route.params.thisSet,
                 data.item.index
               )
-            }
-            showShareModal={() => setShowShareModal(true)}
+              rowMap[data.item.index].closeRow()
+            }}
+            showShareModal={() => {
+              setShowShareModal(true)
+              rowMap[data.item.index].closeRow()
+            }}
           />
         )}
         leftOpenValue={50}
         rightOpenValue={-50}
-        leftActivationValue={Dimensions.get('screen').width / 2 - 10}
-        rightActivationValue={-Dimensions.get('screen').width / 2 + 10}
+        leftActivationValue={
+          Platform.OS === 'ios' ? Dimensions.get('screen').width / 2 - 10 : 1000
+        }
+        rightActivationValue={
+          Platform.OS === 'ios'
+            ? -Dimensions.get('screen').width / 2 + 10
+            : -1000
+        }
+        // leftActivationValue={Dimensions.get('screen').width / 2 - 10}
+        // rightActivationValue={-Dimensions.get('screen').width / 2 + 10}
         stopLeftSwipe={Dimensions.get('screen').width / 2}
         stopRightSwipe={-Dimensions.get('screen').width / 2}
+        // onLeftActionStatusChange={() =>
+        //   setTimeout(() => {
+        //     console.log('test'), 1000
+        //   })
+        // }
         onLeftActionStatusChange={
           props.isRTL
             ? data => {
@@ -419,7 +432,6 @@ function LessonListScreen (props) {
               }
         }
         swipeGestureBegan={data => {
-          console.log(data)
           setActiveLessonInModal(
             props.activeDatabase.lessons.filter(
               lesson =>

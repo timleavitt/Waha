@@ -298,8 +298,9 @@ function PlayScreen (props) {
     // chapter once we finish or toggle the whole lesson as complete
     if (playbackStatus.didJustFinish) {
       if (activeChapter === 'fellowship') {
-        if (!props.downloads[props.route.params.thisLesson.id])
+        if (!props.downloads[props.route.params.thisLesson.id]) {
           changeChapter('story')
+        }
       } else if (activeChapter === 'story') {
         switch (props.route.params.lessonType) {
           case 'qa':
@@ -313,6 +314,13 @@ function PlayScreen (props) {
             }
             break
         }
+      } else if (
+        activeChapter === 'application' &&
+        !props.route.params.thisSetProgress.includes(
+          props.route.params.thisLesson.index
+        )
+      ) {
+        changeCompleteStatus()
       }
     }
   })
@@ -543,6 +551,13 @@ function PlayScreen (props) {
       } else if (chapter === 'story') {
         setSeekPosition(0)
         loadAudioFile(storySource)
+        if (albumArtRef)
+          albumArtRef.scrollToIndex({
+            animated: true,
+            viewPosition: 0.5,
+            viewOffset: -Dimensions.get('screen').width,
+            index: 0
+          })
       } else if (chapter === 'application') {
         setSeekPosition(0)
         loadAudioFile(applicationSource)
@@ -641,7 +656,7 @@ function PlayScreen (props) {
         break
       case 'video':
         Share.share({
-          message: activeLessonInModal.videoSource
+          message: props.route.params.thisLesson.videoSource
         })
         break
     }
@@ -859,15 +874,6 @@ function PlayScreen (props) {
           activeChapter={activeChapter}
           lessonID={props.route.params.thisLesson.id}
           onPress={chapter => changeChapter(chapter)}
-          goToScripture={() => {
-            if (albumArtRef)
-              albumArtRef.scrollToIndex({
-                animated: true,
-                viewPosition: 0.5,
-                viewOffset: -Dimensions.get('screen').width,
-                index: 0
-              })
-          }}
           lessonType={props.route.params.lessonType}
         />
       ) : null}
