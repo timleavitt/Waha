@@ -55,8 +55,8 @@ function MainDrawer (props) {
       .onSnapshot(function (doc) {
         // if a new c-t chapter 1 is available
         if (
-          doc.data().sources['c-t-chapter1'] !==
-          props.activeDatabase.sources['c-t-chapter1']
+          doc.data().sources['c-t-fellowship'] !==
+          props.activeDatabase.sources['c-t-fellowship']
         ) {
           // ALERT
           // downloadSomething('c-t-chapter1', 'c-t-chapter1.mp3')
@@ -64,8 +64,8 @@ function MainDrawer (props) {
 
         // if a new c-t chapter 3 is available
         if (
-          doc.data().sources['c-t-chapter3'] !==
-          props.activeDatabase.sources['c-t-chapter3']
+          doc.data().sources['c-t-application'] !==
+          props.activeDatabase.sources['c-t-application']
         ) {
           // ALERT
           // downloadSomething('c-t-chapter3', 'c-t-chapter3.mp3')
@@ -73,8 +73,8 @@ function MainDrawer (props) {
 
         // if a new mt chapter 1 is available
         if (
-          doc.data().sources['mt-chapter1'] !==
-          props.activeDatabase.sources['mt-chapter1']
+          doc.data().sources['mt-fellowship'] !==
+          props.activeDatabase.sources['mt-fellowship']
         ) {
           // ALERT
           // downloadSomething('mt-chapter1', 'mt-chapter1.mp3')
@@ -82,8 +82,8 @@ function MainDrawer (props) {
 
         // if a new mt chapter 3 is available
         if (
-          doc.data().sources['mt-chapter3'] !==
-          props.activeDatabase.sources['mt-chapter3']
+          doc.data().sources['mt-application'] !==
+          props.activeDatabase.sources['mt-application']
         ) {
           // ALERT
           // downloadSomething('mt-chapter3', 'mt-chapter3.mp3')

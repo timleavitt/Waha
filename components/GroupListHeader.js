@@ -25,11 +25,11 @@ function GroupListHeader (props) {
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
         if (
-          !contents.includes(props.languageID + '-c-t-chapter1.mp3') ||
-          !contents.includes(props.languageID + '-c-t-chapter3.mp3') ||
-          !contents.includes(props.languageID + '-mt-chapter1.mp3') ||
-          !contents.includes(props.languageID + '-mt-chapter3.mp3') ||
-          !contents.includes(props.languageID + '-dummy-chapter2.mp3') ||
+          !contents.includes(props.languageID + '-c-t-fellowship.mp3') ||
+          !contents.includes(props.languageID + '-c-t-application.mp3') ||
+          !contents.includes(props.languageID + '-mt-fellowship.mp3') ||
+          !contents.includes(props.languageID + '-mt-application.mp3') ||
+          !contents.includes(props.languageID + '-dummy-story.mp3') ||
           !contents.includes(props.languageID + '-header.png')
         ) {
           deleteLanguageInstance()

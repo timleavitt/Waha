@@ -732,7 +732,7 @@ function PlayScreen (props) {
             name={item.svgName}
             width={Dimensions.get('window').width - 80}
             height={Dimensions.get('window').width - 80}
-            color='#1D1E20'
+            fill='#1D1E20'
           />
         </View>
       )
