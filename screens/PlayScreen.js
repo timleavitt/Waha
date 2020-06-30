@@ -10,7 +10,8 @@ import {
   ScrollView,
   Share,
   TouchableWithoutFeedback,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
@@ -33,6 +34,7 @@ import {
 import SVG from '../assets/svg'
 import useInterval from '@use-it/interval'
 import { DeviceMotion } from 'expo-sensors'
+import { TouchableHighlight } from 'react-native-gesture-handler'
 
 console.disableYellowBox = true
 
@@ -92,8 +94,12 @@ function PlayScreen (props) {
   // ref for the middle album art scroller
   const [albumArtRef, setAlbumArtRef] = useState()
 
-  //share modal
+  // share modal
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
+
+  // animation state
+  const [playOpacity, setPlayOpacity] = useState(new Animated.Value(0))
+  const [animationZIndex, setAnimationZIndex] = useState(0)
 
   // data for album art flatlist
   const albumArtData = [
@@ -191,14 +197,14 @@ function PlayScreen (props) {
       props.activeGroup.language +
       '-' +
       props.route.params.thisLesson.questionsType +
-      '-chapter1.mp3'
+      '-fellowship.mp3'
 
     var applicationLocal =
       FileSystem.documentDirectory +
       props.activeGroup.language +
       '-' +
       props.route.params.thisLesson.questionsType +
-      '-chapter3.mp3'
+      '-application.mp3'
 
     var storyLocal =
       FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
@@ -207,7 +213,7 @@ function PlayScreen (props) {
       FileSystem.documentDirectory +
       props.activeGroup.language +
       '-' +
-      'dummy-chapter2.mp3'
+      'dummy-story.mp3'
 
     var trainingLocal =
       FileSystem.documentDirectory + props.route.params.thisLesson.id + 'v.mp4'
@@ -443,6 +449,7 @@ function PlayScreen (props) {
         updateSeekerTick()
         isPlaying ? videoObject.pauseAsync() : videoObject.playAsync()
       } else {
+        startPlayPauseAnimation()
         updateSeekerTick()
         isPlaying
           ? soundObject.setStatusAsync({
@@ -677,6 +684,22 @@ function PlayScreen (props) {
     }
   }
 
+  function startPlayPauseAnimation () {
+    setAnimationZIndex(2)
+    Animated.sequence([
+      Animated.timing(playOpacity, {
+        toValue: 1,
+        duration: 0,
+        useNativeDriver: true
+      }),
+      Animated.timing(playOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true
+      })
+    ]).start(() => setAnimationZIndex(0))
+  }
+
   //// RENDER
 
   // renders the album art section in the middle of the screen
@@ -728,12 +751,42 @@ function PlayScreen (props) {
             { justifyContent: 'center', alignItems: 'center' }
           ]}
         >
-          <SVG
-            name={item.svgName}
-            width={Dimensions.get('window').width - 80}
-            height={Dimensions.get('window').width - 80}
-            fill='#1D1E20'
-          />
+          <View style={{ zIndex: 1, width: '100%', height: '100%' }}>
+            <TouchableHighlight
+              style={{ width: '100%', height: '100%' }}
+              onPress={playHandler}
+              underlayColor='#FFFFFF00'
+              activeOpacity={1}
+            >
+              <SVG
+                name={item.svgName}
+                width={Dimensions.get('window').width - 80}
+                height={Dimensions.get('window').width - 80}
+                fill='#1D1E20'
+              />
+            </TouchableHighlight>
+          </View>
+          <Animated.View
+            style={{
+              position: 'absolute',
+              opacity: playOpacity,
+              transform: [
+                {
+                  scale: playOpacity.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [2, 1]
+                  })
+                }
+              ],
+              zIndex: animationZIndex
+            }}
+          >
+            <Icon
+              name={isPlaying ? 'pause' : 'play'}
+              size={100 * scaleMultiplier}
+              color='#ffffff'
+            />
+          </Animated.View>
         </View>
       )
     }
@@ -778,6 +831,7 @@ function PlayScreen (props) {
             setTimeout(() => setShowVideoControls(false), 1000)
           }
         }}
+        style={{ width: '100%' }}
       >
         <View
           style={{
@@ -860,23 +914,33 @@ function PlayScreen (props) {
         </View>
       </TouchableWithoutFeedback>
     ) : (
-      <FlatList
-        data={albumArtData}
-        renderItem={renderAlbumArtItem}
-        ref={ref => setAlbumArtRef(ref)}
-        horizontal={true}
-        pagingEnabled={true}
-        snapToAlignment={'start'}
-        snapToInterval={Dimensions.get('window').width - 70}
-        decelerationRate={'fast'}
-        showsHorizontalScrollIndicator={false}
-        getItemLayout={(data, index) => ({
-          length: Dimensions.get('window').width - 70,
-          offset: Dimensions.get('window').width - 70 * index,
-          index
-        })}
-        initialScrollIndex={1}
-      />
+      <View
+        style={{
+          width: '100%',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <View style={{ width: '100%' }}>
+          <FlatList
+            data={albumArtData}
+            renderItem={renderAlbumArtItem}
+            ref={ref => setAlbumArtRef(ref)}
+            horizontal={true}
+            pagingEnabled={true}
+            snapToAlignment={'start'}
+            snapToInterval={Dimensions.get('window').width - 70}
+            decelerationRate={'fast'}
+            showsHorizontalScrollIndicator={false}
+            getItemLayout={(data, index) => ({
+              length: Dimensions.get('window').width - 70,
+              offset: Dimensions.get('window').width - 70 * index,
+              index
+            })}
+            initialScrollIndex={1}
+          />
+        </View>
+      </View>
     )
 
   // entire playback control section
@@ -923,11 +987,14 @@ function PlayScreen (props) {
     <View style={styles.screen}>
       <View style={styles.topHalfContainer}>
         <View style={styles.titlesContainer}>
-          <Text style={[styles.title, { fontFamily: props.font + '-black' }]}>
+          <Text
+            numberOfLines={1}
+            style={[styles.title, { fontFamily: props.font + '-black' }]}
+          >
             {props.route.params.thisLesson.title}
           </Text>
         </View>
-        <View style={{ width: '100%' }}>{middleSection}</View>
+        {middleSection}
       </View>
       {audioControlContainer}
 
@@ -995,11 +1062,12 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    flexWrap: 'nowrap'
+    flexWrap: 'nowrap',
+    paddingHorizontal: 20
   },
   title: {
     textAlign: 'center',
-    fontSize: 30 * scaleMultiplier,
+    fontSize: 24 * scaleMultiplier,
     flexWrap: 'nowrap'
   },
   albumArtContainer: {

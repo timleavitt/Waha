@@ -1,5 +1,6 @@
 import { Dimensions } from 'react-native'
 import * as FileSystem from 'expo-file-system'
+import i18n from 'i18n-js'
 
 export const scaleMultiplier = Dimensions.get('window').width / 430
 
@@ -11,7 +12,11 @@ export const languageT2S = {
 export const languages = [
   {
     title: 'English',
-    data: ['English (Global)', 'English (UK)', 'English (Australia)']
+    data: [
+      { name: 'English (Global)', wahaID: 'en', languageCode: 'en' },
+      { name: 'English (UK)', wahaID: 'uk', languageCode: 'en' },
+      { name: 'English (Australia)', wahaID: 'as', languageCode: 'en' }
+    ]
   },
   { title: 'اَلْعَرَبِيَّةُ', data: ['ليبي', 'الدارجة', 'خليجي'] }
 ]

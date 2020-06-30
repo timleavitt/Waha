@@ -34,9 +34,9 @@ function LessonListScreen (props) {
   //// STATE
 
   // read downloaded files for testing purposes
-  // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
-  //   console.log(contents)
-  // })
+  FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
+    console.log(contents)
+  })
 
   // keeps track of which lessons are downloaded
   const [downloadsInFileSystem, setDownloadsInFileSystem] = useState({})
@@ -270,7 +270,15 @@ function LessonListScreen (props) {
       case 'app':
         Share.share({
           message:
-            Platform.OS === 'ios'
+            props.route.params.thisSet.category === 'mt'
+              ? Platform.OS === 'ios'
+                ? 'www.appstorelink.com' +
+                  ' ' +
+                  props.translations.labels.shareCode
+                : 'www.playstorelink.com' +
+                  ' ' +
+                  props.translations.labels.shareCode
+              : Platform.OS === 'ios'
               ? 'www.appstorelink.com'
               : 'www.playstorelink.com'
         })
@@ -477,8 +485,8 @@ function LessonListScreen (props) {
             onPress={() => share('text')}
           />
         ) : null}
-        {props.route.params.lessonType === 'qa' ||
-        props.route.params.lessonType === 'qav' ||
+        {(getLessonType(activeLessonInModal) === 'qa' ||
+          getLessonType(activeLessonInModal) === 'qav') &&
         !props.downloads[activeLessonInModal.id] ? (
           <ModalButton
             title={

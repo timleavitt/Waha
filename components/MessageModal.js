@@ -22,7 +22,7 @@ function MessageModal (props) {
             height: 200,
             margin: 20,
             padding: 20,
-            resizeMode: 'center'
+            resizeMode: 'contain'
           }}
         />
         <Text

@@ -8,7 +8,11 @@ const Tab = createMaterialTopTabNavigator()
 
 function SetTabs (props) {
   var toolkit = props.activeGroup.showToolkit ? (
-    <Tab.Screen name='Mobilization Tools' component={SetScreen} options={{}} />
+    <Tab.Screen
+      name='Mobilization Tools'
+      component={SetScreen}
+      options={{ title: props.translations.navigation.tabs.mobilization }}
+    />
   ) : null
 
   var bookmarkSetCategory = props.activeDatabase.sets.filter(
@@ -52,14 +56,14 @@ function SetTabs (props) {
         name='Topical'
         component={SetScreen}
         options={{
-          title: 'Topical Stories'
+          title: props.translations.navigation.tabs.topics
         }}
       />
       <Tab.Screen
         name='Core'
         component={SetScreen}
         options={{
-          title: 'Core Stories'
+          title: props.translations.navigation.tabs.foundations
         }}
       />
     </Tab.Navigator>
@@ -84,7 +88,7 @@ function SetTabs (props) {
         name='Core'
         component={SetScreen}
         options={{
-          title: 'Core Stories'
+          title: props.translations.navigation.tabs.foundations
         }}
       />
 
@@ -92,7 +96,7 @@ function SetTabs (props) {
         name='Topical'
         component={SetScreen}
         options={{
-          title: 'Topical Stories'
+          title: props.translations.navigation.tabs.topics
         }}
       />
       {toolkit}

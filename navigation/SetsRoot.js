@@ -16,9 +16,9 @@ function SetsRoot (props) {
     <Stack.Navigator
       initialRouteName='SetTabs'
       screenOptions={{
-        headerStyle: {
-          height: Dimensions.get('screen').height / 9
-        },
+        // headerStyle: {
+        //   height: Dimensions.get('screen').height / 9
+        // },
         headerTitleAlign: 'center',
         headerMode: 'float'
       }}

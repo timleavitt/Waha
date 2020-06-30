@@ -140,6 +140,7 @@ function GroupItem (props) {
                 fontFamily: props.font + '-black'
               }
             ]}
+            numberOfLines={1}
           >
             {props.groupName}
           </Text>
@@ -151,6 +152,7 @@ function GroupItem (props) {
                 fontFamily: props.font + '-regular'
               }
             ]}
+            numberOfLines={1}
           >
             {getBookmarkText().set}
           </Text>
@@ -162,6 +164,7 @@ function GroupItem (props) {
                 fontFamily: props.font + '-regular'
               }
             ]}
+            numberOfLines={1}
           >
             {getBookmarkText().lesson}
           </Text>

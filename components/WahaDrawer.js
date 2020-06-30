@@ -27,19 +27,23 @@ function WahaDrawer (props) {
         <View style={styles.groupIconContainer}>
           <AvatarImage source={props.activeGroup.imageSource} size={120} />
         </View>
-        <Text style={[styles.groupName, { fontFamily: props.font + '-black' }]}>
+        <Text
+          style={[styles.groupName, { fontFamily: props.font + '-black' }]}
+          numberOfLines={2}
+        >
           {props.activeGroup.name}
         </Text>
-        <TouchableOpacity
-          style={styles.pencilIconContainer}
-          onPress={() =>
-            props.navigation.navigate('EditGroup', {
-              groupName: props.activeGroup.name
-            })
-          }
-        >
-          <Icon name='pencil' size={25 * scaleMultiplier} color='#FFFFFF' />
-        </TouchableOpacity>
+        <View style={styles.pencilIconContainer}>
+          <TouchableOpacity
+            onPress={() =>
+              props.navigation.navigate('EditGroup', {
+                groupName: props.activeGroup.name
+              })
+            }
+          >
+            <Icon name='pencil' size={25 * scaleMultiplier} color='#FFFFFF' />
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
         <View>
@@ -99,7 +103,7 @@ function WahaDrawer (props) {
               { fontFamily: props.font + '-regular' }
             ]}
           >
-            v0.4.2
+            v0.4.4
           </Text>
         </View>
       </View>
@@ -118,7 +122,7 @@ const styles = StyleSheet.create({
     height: 233 * scaleMultiplier,
     justifyContent: 'center',
     alignContent: 'center',
-    padding: 15
+    paddingHorizontal: 35
   },
   groupIconContainer: {
     alignItems: 'center',
@@ -130,7 +134,12 @@ const styles = StyleSheet.create({
     fontSize: 25 * scaleMultiplier
   },
   pencilIconContainer: {
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-end',
+    position: 'absolute',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    padding: 10,
+    height: '100%'
   },
   smallDrawerItemsContainer: {
     justifyContent: 'flex-end',

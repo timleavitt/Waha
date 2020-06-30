@@ -29,7 +29,7 @@ function AddSetStack (props) {
         }}
       />
       <Stack.Screen
-        name='AddSetFolder'
+        name='SetInfo'
         component={AddSetScreen}
         options={{
           title: ''

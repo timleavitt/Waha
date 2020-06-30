@@ -308,6 +308,7 @@ function SetItem (props) {
             flexWrap: 'wrap',
             fontFamily: props.font + '-regular'
           }}
+          numberOfLines={1}
         >
           {props.thisSet.subtitle}
         </Text>
@@ -320,6 +321,7 @@ function SetItem (props) {
             flexWrap: 'wrap',
             fontFamily: props.font + '-black'
           }}
+          numberOfLines={2}
         >
           {props.thisSet.title}
         </Text>

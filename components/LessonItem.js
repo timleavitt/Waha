@@ -130,6 +130,7 @@ function LessonItem (props) {
               textAlign: props.isRTL ? 'right' : 'left',
               fontFamily: props.font + '-medium'
             }}
+            numberOfLines={2}
           >
             {props.thisLesson.title}
           </Text>
@@ -140,6 +141,7 @@ function LessonItem (props) {
               textAlign: props.isRTL ? 'right' : 'left',
               fontFamily: props.font + '-regular'
             }}
+            numberOfLines={1}
           >
             {props.thisLesson.subtitle}
           </Text>
