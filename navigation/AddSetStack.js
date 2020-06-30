@@ -5,6 +5,7 @@ import { scaleMultiplier } from '../constants'
 import { createStackNavigator } from '@react-navigation/stack'
 import { connect } from 'react-redux'
 import AddSetScreen from '../screens/AddSetScreen'
+import SetInfoScreen from '../screens/SetInfoScreen'
 
 const Stack = createStackNavigator()
 
@@ -30,7 +31,7 @@ function AddSetStack (props) {
       />
       <Stack.Screen
         name='SetInfo'
-        component={AddSetScreen}
+        component={SetInfoScreen}
         options={{
           title: ''
         }}

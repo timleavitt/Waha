@@ -24,7 +24,6 @@ function SetItem (props) {
 
   // dynamic set components
   const [icon, setIcon] = useState()
-  const [info, setInfo] = useState()
   const [action, setAction] = useState()
 
   //// CONSTRUCTOR
@@ -132,7 +131,7 @@ function SetItem (props) {
         )
         setAction(<View style={styles.actionContainer} />)
         break
-      case 'hidden':
+      case 'addset':
         setIcon(
           <View
             style={[
@@ -157,62 +156,72 @@ function SetItem (props) {
         setAction(
           <View style={styles.actionContainer}>
             <Icon
-              name='playlist-add'
-              size={30 * scaleMultiplier}
-              color={props.primaryColor}
-            />
-          </View>
-        )
-        setInfo()
-        // INFO BUTTON (keep for later)
-        // <TouchableOpacity
-        //   style={[
-        //     styles.actionContainer,
-        //     {
-        //       marginRight: props.isRTL ? 0 : 10,
-        //       marginLeft: props.isRTL ? 10 : 0
-        //     }
-        //   ]}
-        //   onPress={() => {}}
-        // >
-        //   <Icon name='info' size={30 * scaleMultiplier} color='#9FA5AD' />
-        // </TouchableOpacity>
-        break
-      case 'folder':
-        setIcon(
-          <View style={styles.iconContainer}>
-            <SVG
-              name={props.thisSet.icon}
-              width={80 * scaleMultiplier}
-              height={80 * scaleMultiplier}
-              fill='#1D1E20'
-            />
-          </View>
-        )
-        setAction(
-          <View style={styles.actionContainer}>
-            <Icon
               name={props.isRTL ? 'arrow-left' : 'arrow-right'}
               size={30 * scaleMultiplier}
               color={props.primaryColor}
             />
           </View>
         )
-        setInfo()
-        // INFO BUTTON (keep for later)
-        // <TouchableOpacity
-        //   style={[
-        //     styles.actionContainer,
-        //     {
-        //       marginRight: props.isRTL ? 0 : 10,
-        //       marginLeft: props.isRTL ? 10 : 0
-        //     }
-        //   ]}
-        //   onPress={() => {}}
-        // >
-        //   <Icon name='info' size={30 * scaleMultiplier} color='#9FA5AD' />
-        // </TouchableOpacity>
         break
+      case 'setinfo':
+        setIcon(
+          <View
+            style={[
+              styles.iconContainer,
+              {
+                backgroundColor: '#FFFFFF',
+                borderRadius: 14,
+                overflow: 'hidden',
+                borderWidth: 7,
+                borderColor: '#3A3C3F'
+              }
+            ]}
+          >
+            <SVG
+              name={props.thisSet.icon}
+              width={80 * scaleMultiplier}
+              height={80 * scaleMultiplier}
+              fill='#3A3C3F'
+            />
+          </View>
+        )
+        setAction(null)
+        break
+      // case 'folder':
+      //   setIcon(
+      //     <View style={styles.iconContainer}>
+      //       <SVG
+      //         name={props.thisSet.icon}
+      //         width={80 * scaleMultiplier}
+      //         height={80 * scaleMultiplier}
+      //         fill='#1D1E20'
+      //       />
+      //     </View>
+      //   )
+      //   setAction(
+      //     <View style={styles.actionContainer}>
+      //       <Icon
+      //         name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+      //         size={30 * scaleMultiplier}
+      //         color={props.primaryColor}
+      //       />
+      //     </View>
+      //   )
+      //   setInfo()
+      //   // INFO BUTTON (keep for later)
+      //   // <TouchableOpacity
+      //   //   style={[
+      //   //     styles.actionContainer,
+      //   //     {
+      //   //       marginRight: props.isRTL ? 0 : 10,
+      //   //       marginLeft: props.isRTL ? 10 : 0
+      //   //     }
+      //   //   ]}
+      //   //   onPress={() => {}}
+      //   // >
+      //   //   <Icon name='info' size={30 * scaleMultiplier} color='#9FA5AD' />
+      //   // </TouchableOpacity>
+      //   break
     }
   }, [
     progressPercentage,
@@ -326,9 +335,6 @@ function SetItem (props) {
           {props.thisSet.title}
         </Text>
       </View>
-
-      {/* info button rendered earlier */}
-      {info}
 
       {/* action button rendered earlier */}
       {action}

@@ -13,6 +13,11 @@ import { connect } from 'react-redux'
 import { addSet } from '../redux/actions/groupsActions'
 import BackButton from '../components/BackButton'
 import SnackBar from 'react-native-snackbar-component'
+import { YellowBox } from 'react-native'
+
+YellowBox.ignoreWarnings([
+  'Non-serializable values were found in the navigation state'
+])
 
 function AddSetScreen (props) {
   const [setItemMode, setSetItemMode] = useState('')
@@ -29,53 +34,20 @@ function AddSetScreen (props) {
         props.route.params.category === 'core'
           ? props.translations.labels.addNewCoreStorySet
           : props.translations.labels.addNewTopicalSet,
-      headerLeft:
-        props.route.params.category === 'topical'
-          ? props.isRTL
-            ? () => <View></View>
-            : () => (
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                  <Icon
-                    name='cancel'
-                    size={45 * scaleMultiplier}
-                    color='#3A3C3F'
-                  />
-                </TouchableOpacity>
-              )
-          : props.isRTL
-          ? () => <View></View>
-          : () => (
-              <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  width: 100,
-                  justifyContent: props.isRTL ? 'flex-end' : 'flex-start'
-                }}
-                onPress={() => props.navigation.goBack()}
-              >
-                <Icon
-                  name='cancel'
-                  size={45 * scaleMultiplier}
-                  color='#3A3C3F'
-                />
-              </TouchableOpacity>
-            ),
-      headerRight:
-        props.route.params.category === 'topical'
-          ? props.isRTL
-            ? () => <BackButton onPress={() => props.navigation.goBack()} />
-            : () => <View></View>
-          : props.isRTL
-          ? () => (
-              <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                <Icon
-                  name='cancel'
-                  size={45 * scaleMultiplier}
-                  color='#3A3C3F'
-                />
-              </TouchableOpacity>
-            )
-          : () => <View></View>
+      headerLeft: props.isRTL
+        ? () => <View></View>
+        : () => (
+            <TouchableOpacity onPress={() => props.navigation.goBack()}>
+              <Icon name='cancel' size={45 * scaleMultiplier} color='#3A3C3F' />
+            </TouchableOpacity>
+          ),
+      headerRight: props.isRTL
+        ? () => (
+            <TouchableOpacity onPress={() => props.navigation.goBack()}>
+              <Icon name='cancel' size={45 * scaleMultiplier} color='#3A3C3F' />
+            </TouchableOpacity>
+          )
+        : () => <View></View>
     }
   }
 
@@ -85,22 +57,17 @@ function AddSetScreen (props) {
       <SetItem
         thisSet={setList.item}
         isSmall={false}
-        mode={props.route.params.category === 'folder' ? 'folder' : 'hidden'}
-        onSetSelect={
-          // if we're in a folder, we want to navigate to the sets within that folder
-          props.route.params.category === 'folder'
-            ? () =>
-                props.navigation.navigate('AddSetFolder', {
-                  category: 'topical',
-                  folder: setList.item.folderName
-                })
-            : // otherwise, add the set
-              () => {
-                props.addSet(props.activeGroup.name, setList.item.id)
-                setShowSnackbar(true)
-                setTimeout(() => setShowSnackbar(false), 2000)
-              }
-        }
+        mode='addset'
+        onSetSelect={() => {
+          props.navigation.navigate('SetInfo', {
+            category: props.route.params.category,
+            thisSet: setList.item,
+            showSnackbar: () => {
+              setShowSnackbar(true)
+              setTimeout(() => setShowSnackbar(false), 2000)
+            }
+          })
+        }}
       />
     )
   }
@@ -109,31 +76,40 @@ function AddSetScreen (props) {
     <View style={styles.screen}>
       <FlatList
         data={
-          // if we're displaying topical sets:
-          // 1. filter by all sets that are topical,
-          // 2. filter by topical sets in the specified folder, and then
-          // 3. filter to only display sets that haven't already been added
-          props.route.params.category === 'topical'
-            ? props.activeDatabase.sets
-                .filter(set => set.category === 'topical')
-                .filter(set => set.folder === props.route.params.folder)
-                .filter(
-                  set =>
-                    !props.activeGroup.addedSets.some(
-                      addedSet => addedSet.id === set.id
-                    )
+          props.activeDatabase.sets
+            .filter(set => set.category === props.route.params.category)
+            .filter(
+              set =>
+                !props.activeGroup.addedSets.some(
+                  addedSet => addedSet.id === set.id
                 )
-            : // if we're displaying core or folders:
-              // 1. filter by cateogry (core or folder)
-              // 2. filter to only display sets that haven't already been added
-              props.activeDatabase.sets
-                .filter(set => set.category === props.route.params.category)
-                .filter(
-                  set =>
-                    !props.activeGroup.addedSets.some(
-                      addedSet => addedSet.id === set.id
-                    )
-                )
+            )
+          // NOT USED: for folders
+          // // if we're displaying topical sets:
+          // // 1. filter by all sets that are topical,
+          // // 2. filter by topical sets in the specified folder, and then
+          // // 3. filter to only display sets that haven't already been added
+          // props.route.params.category === 'topical'
+          //   ? props.activeDatabase.sets
+          //       .filter(set => set.category === 'topical')
+          //       .filter(set => set.folder === props.route.params.folder)
+          //       .filter(
+          //         set =>
+          //           !props.activeGroup.addedSets.some(
+          //             addedSet => addedSet.id === set.id
+          //           )
+          //       )
+          //   : // if we're displaying core or folders:
+          //     // 1. filter by cateogry (core or folder)
+          //     // 2. filter to only display sets that haven't already been added
+          //     props.activeDatabase.sets
+          //       .filter(set => set.category === props.route.params.category)
+          //       .filter(
+          //         set =>
+          //           !props.activeGroup.addedSets.some(
+          //             addedSet => addedSet.id === set.id
+          //           )
+          //       )
         }
         ItemSeparatorComponent={() => (
           <View

@@ -26,49 +26,25 @@ import {
   removeDownload,
   downloadVideo
 } from '../redux/actions/downloadActions'
+import { addSet } from '../redux/actions/groupsActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
 import { connect } from 'react-redux'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import LessonSwipeBackdrop from '../components/LessonSwipeBackdrop'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import SnackBar from 'react-native-snackbar-component'
+
 function SetInfoScreen (props) {
   //// STATE
-
-  // read downloaded files for testing purposes
-  FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
-    console.log(contents)
-  })
-
-  // keeps track of which lessons are downloaded
-  const [downloadsInFileSystem, setDownloadsInFileSystem] = useState({})
-
-  // keeps track of the lesson to download/delete/toggle complete when modals are up
-  const [activeLessonInModal, setActiveLessonInModal] = useState({})
-
-  // modal states
-  const [showDownloadLessonModal, setShowDownloadLessonModal] = useState(false)
-  const [showDeleteLessonModal, setShowDeleteLessonModal] = useState(false)
-  const [showLessonOptionsModal, setShowLessonOptionsModal] = useState(false)
-  const [showShareModal, setShowShareModal] = useState(false)
-
-  // progress and bookmark for the set we're looking at
-  const [thisSetProgress, setThisSetProgress] = useState([])
-  const [thisSetBookmark, setThisSetBookmark] = useState(1)
 
   //// NAV OPTIONS
 
   function getNavOptions () {
     return {
-      headerTitle: () => (
-        <Image
-          style={styles.headerImage}
-          source={{
-            uri:
-              FileSystem.documentDirectory +
-              props.activeGroup.language +
-              '-header.png'
-          }}
-        />
-      ),
+      title:
+        props.route.params.category === 'core'
+          ? props.translations.labels.addNewCoreStorySet
+          : props.translations.labels.addNewTopicalSet,
       headerRight: props.isRTL
         ? () => <BackButton onPress={() => props.navigation.goBack()} />
         : () => <View></View>,
@@ -92,13 +68,61 @@ function SetInfoScreen (props) {
   return (
     <View style={styles.screen}>
       <View style={styles.studySetItemContainer}>
-        <SetItem thisSet={props.thisSet} mode='lessonlist' />
+        <SetItem thisSet={props.route.params.thisSet} mode='setinfo' />
       </View>
+      <TouchableOpacity
+        onPress={() => {
+          props.addSet(props.activeGroup.name, props.route.params.thisSet.id)
+          props.route.params.showSnackbar()
+          props.navigation.goBack()
+        }}
+        style={styles.addSetButton}
+      >
+        <Text
+          style={{
+            color: '#FFFFFF',
+            textAlign: 'center',
+            fontSize: 18 * scaleMultiplier,
+            fontFamily: props.font + '-medium'
+          }}
+        >
+          {props.translations.labels.addNewStorySet}
+        </Text>
+      </TouchableOpacity>
       <FlatList
         data={props.activeDatabase.lessons.filter(
-          lesson => props.thisSet.id === lesson.setid
+          lesson => props.route.params.thisSet.id === lesson.setid
         )}
-        renderItem={({ item }) => <View></View>}
+        renderItem={({ item }) => (
+          <View
+            style={{
+              height: 64 * scaleMultiplier,
+              justifyContent: 'center',
+              paddingHorizontal: 40
+            }}
+          >
+            <Text
+              style={{
+                color: '#1D1E20',
+                textAlign: props.isRTL ? 'right' : 'left',
+                fontSize: 16 * scaleMultiplier,
+                fontFamily: props.font + '-medium'
+              }}
+            >
+              {item.title}
+            </Text>
+            <Text
+              style={{
+                color: '#9FA5AD',
+                textAlign: props.isRTL ? 'right' : 'left',
+                fontSize: 14 * scaleMultiplier,
+                fontFamily: props.font + '-regular'
+              }}
+            >
+              {item.subtitle}
+            </Text>
+          </View>
+        )}
       />
     </View>
   )
@@ -110,17 +134,20 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#F7F9FA'
+    backgroundColor: '#FFFFFF'
   },
   studySetItemContainer: {
     width: '100%',
     height: 100 * scaleMultiplier
   },
-  headerImage: {
-    resizeMode: 'contain',
-    width: 120,
-    height: 40,
-    alignSelf: 'center'
+  addSetButton: {
+    height: 68 * scaleMultiplier,
+    marginHorizontal: 20,
+    marginVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
+    backgroundColor: '#60C239'
   }
 })
 
@@ -135,23 +162,15 @@ function mapStateToProps (state) {
     activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
-    translations: state.database[activeGroup.language].translations
+    translations: state.database[activeGroup.language].translations,
+    font: state.database[activeGroup.language].font
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    downloadLesson: (lessonID, source) => {
-      dispatch(downloadLesson(lessonID, source))
-    },
-    downloadVideo: (lessonID, source) => {
-      dispatch(downloadVideo(lessonID, source))
-    },
-    toggleComplete: (groupName, set, lessonIndex) => {
-      dispatch(toggleComplete(groupName, set, lessonIndex))
-    },
-    removeDownload: lessonID => {
-      dispatch(removeDownload(lessonID))
+    addSet: (groupName, setID) => {
+      dispatch(addSet(groupName, setID))
     }
   }
 }
