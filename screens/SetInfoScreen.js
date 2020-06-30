@@ -76,18 +76,28 @@ function SetInfoScreen (props) {
           props.route.params.showSnackbar()
           props.navigation.goBack()
         }}
-        style={styles.addSetButton}
+        style={[
+          styles.addSetButton,
+          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        ]}
       >
         <Text
           style={{
             color: '#FFFFFF',
             textAlign: 'center',
             fontSize: 18 * scaleMultiplier,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-medium',
+            marginHorizontal: 10
           }}
         >
           {props.translations.labels.addNewStorySet}
         </Text>
+        <Icon
+          style={{ marginHorizontal: 10 }}
+          color='#FFFFFF'
+          size={36 * scaleMultiplier}
+          name='playlist-add'
+        />
       </TouchableOpacity>
       <FlatList
         data={props.activeDatabase.lessons.filter(
