@@ -15,6 +15,8 @@ import { createGroup, changeActiveGroup } from '../redux/actions/groupsActions'
 import OptionsModal from '../components/OptionsModal'
 import ModalButton from '../components/ModalButton'
 import AvatarImage from '../components/AvatarImage'
+import EmojiSelector from 'react-native-emoji-selector'
+import Modal from 'react-native-modal'
 
 function AddNewGroupScreen (props) {
   //// STATE
@@ -23,10 +25,12 @@ function AddNewGroupScreen (props) {
   const [groupName, setGroupName] = useState('')
 
   // keeps track of the source for the avatar image
-  const [avatarSource, setAvatarSource] = useState('')
+  const [emoji, setEmoji] = useState('')
 
   // shows the image picker modal
-  const [showImagePickerModal, setShowImagePickerModal] = useState(false)
+  // const [showImagePickerModal, setShowImagePickerModal] = useState(false)
+
+  const [showEmojiPickerModal, setShowEmojiPickerModal] = useState(false)
 
   //// CONSTRUCTOR
 
@@ -79,64 +83,64 @@ function AddNewGroupScreen (props) {
       return
     }
 
-    props.createGroup(groupName, props.route.params.languageID, avatarSource)
+    props.createGroup(groupName, props.route.params.languageID, emoji)
     props.changeActiveGroup(groupName)
     props.navigation.goBack()
   }
 
   // opens image library after checking for permission, then set the avatarSource state
   // to the uri of the image the user selected
-  async function openImageLibraryHandler () {
-    var permissionGranted = false
-    await ImagePicker.getCameraRollPermissionsAsync().then(
-      permissionResponse => {
-        if (permissionResponse.status !== 'granted') {
-          ImagePicker.requestCameraRollPermissionsAsync().then(
-            permissionResponse => {
-              if (permissionResponse.status === 'granted') {
-                openImageLibraryHandler()
-              }
-            }
-          )
-        } else {
-          permissionGranted = true
-        }
-      }
-    )
-    if (permissionGranted) {
-      ImagePicker.launchImageLibraryAsync({}).then(returnObject => {
-        if (returnObject.cancelled !== true) {
-          setAvatarSource(returnObject.uri)
-        }
-        setShowImagePickerModal(false)
-      })
-    }
-  }
+  // async function openImageLibraryHandler () {
+  //   var permissionGranted = false
+  //   await ImagePicker.getCameraRollPermissionsAsync().then(
+  //     permissionResponse => {
+  //       if (permissionResponse.status !== 'granted') {
+  //         ImagePicker.requestCameraRollPermissionsAsync().then(
+  //           permissionResponse => {
+  //             if (permissionResponse.status === 'granted') {
+  //               openImageLibraryHandler()
+  //             }
+  //           }
+  //         )
+  //       } else {
+  //         permissionGranted = true
+  //       }
+  //     }
+  //   )
+  //   if (permissionGranted) {
+  //     ImagePicker.launchImageLibraryAsync({}).then(returnObject => {
+  //       if (returnObject.cancelled !== true) {
+  //         setAvatarSource(returnObject.uri)
+  //       }
+  //       setShowImagePickerModal(false)
+  //     })
+  //   }
+  // }
 
   // opens camera  after checking for permission, then set the avatarSource state
   // to the uri of the picture the user takes
-  async function openCameraHandler () {
-    var permissionGranted = false
-    await ImagePicker.getCameraPermissionsAsync().then(permissionResponse => {
-      if (permissionResponse.status !== 'granted') {
-        ImagePicker.requestCameraPermissionsAsync().then(permissionResponse => {
-          if (permissionResponse.status === 'granted') {
-            openCameraHandler()
-          }
-        })
-      } else {
-        permissionGranted = true
-      }
-    })
-    if (permissionGranted) {
-      ImagePicker.launchCameraAsync({}).then(returnObject => {
-        if (returnObject.cancelled !== true) {
-          setAvatarSource(returnObject.uri)
-        }
-        setShowImagePickerModal(false)
-      })
-    }
-  }
+  // async function openCameraHandler () {
+  //   var permissionGranted = false
+  //   await ImagePicker.getCameraPermissionsAsync().then(permissionResponse => {
+  //     if (permissionResponse.status !== 'granted') {
+  //       ImagePicker.requestCameraPermissionsAsync().then(permissionResponse => {
+  //         if (permissionResponse.status === 'granted') {
+  //           openCameraHandler()
+  //         }
+  //       })
+  //     } else {
+  //       permissionGranted = true
+  //     }
+  //   })
+  //   if (permissionGranted) {
+  //     ImagePicker.launchCameraAsync({}).then(returnObject => {
+  //       if (returnObject.cancelled !== true) {
+  //         setAvatarSource(returnObject.uri)
+  //       }
+  //       setShowImagePickerModal(false)
+  //     })
+  //   }
+  // }
 
   //// RENDER
 
@@ -144,8 +148,9 @@ function AddNewGroupScreen (props) {
     <View style={styles.screen}>
       <View style={styles.photoContainer}>
         <AvatarImage
-          source={avatarSource}
-          onPress={() => setShowImagePickerModal(true)}
+          emoji={emoji}
+          // onPress={() => setShowImagePickerModal(true)}
+          onPress={() => setShowEmojiPickerModal(true)}
           size={120}
           isChangeable={true}
         />
@@ -198,7 +203,7 @@ function AddNewGroupScreen (props) {
           </Text>
         </TouchableOpacity>
       </View>
-      <OptionsModal
+      {/* <OptionsModal
         isVisible={showImagePickerModal}
         hideModal={() => setShowImagePickerModal(false)}
         closeText={props.translations.modals.cameraOptions.cancel}
@@ -212,7 +217,31 @@ function AddNewGroupScreen (props) {
           title={props.translations.modals.cameraOptions.chooseFromLibrary}
           onPress={openImageLibraryHandler}
         />
-      </OptionsModal>
+      </OptionsModal> */}
+      <Modal
+        isVisible={showEmojiPickerModal}
+        hasBackdrop={true}
+        onBackdropPress={() => setShowEmojiPickerModal(false)}
+        backdropOpacity={0.3}
+        style={{
+          justifyContent: 'flex-end',
+          backgroundColor: '#FFFFFF',
+          borderRadius: 10,
+          marginBottom: -20
+        }}
+      >
+        <View>
+          <TouchableOpacity onPress={() => setShowEmojiPickerModal(false)}>
+            <Icon name='cancel' size={45 * scaleMultiplier} color='#3A3C3F' />
+          </TouchableOpacity>
+        </View>
+        <EmojiSelector
+          onEmojiSelected={emoji => {
+            setEmoji(emoji)
+            setShowEmojiPickerModal(false)
+          }}
+        />
+      </Modal>
     </View>
   )
 }
@@ -280,8 +309,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    createGroup: (groupName, language, imageSource) =>
-      dispatch(createGroup(groupName, language, imageSource)),
+    createGroup: (groupName, language, emoji) =>
+      dispatch(createGroup(groupName, language, emoji)),
     changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName))
   }
 }

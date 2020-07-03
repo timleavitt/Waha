@@ -71,21 +71,7 @@ function LessonItem (props) {
           styles.progressAndTitle,
           { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
         ]}
-        onPress={
-          !props.isConnected && !props.isDownloaded
-            ? () =>
-                Alert.alert(
-                  props.translations.alerts.playUndownloadedNoInternet.header,
-                  props.translations.alerts.playUndownloadedNoInternet.text,
-                  [
-                    {
-                      text: props.translations.alerts.options.ok,
-                      onPress: () => {}
-                    }
-                  ]
-                )
-            : props.onLessonSelect
-        }
+        onPress={props.onLessonSelect}
       >
         {/* complete status indicator */}
         <View style={styles.completeStatusContainer}>

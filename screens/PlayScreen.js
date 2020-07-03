@@ -11,6 +11,7 @@ import {
   Share,
   TouchableWithoutFeedback,
   TouchableOpacity,
+  TouchableHighlight,
   Animated
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
@@ -34,7 +35,7 @@ import {
 import SVG from '../assets/svg'
 import useInterval from '@use-it/interval'
 import { DeviceMotion } from 'expo-sensors'
-import { TouchableHighlight } from 'react-native-gesture-handler'
+import { useKeepAwake } from 'expo-keep-awake'
 
 console.disableYellowBox = true
 
@@ -89,10 +90,58 @@ function PlayScreen (props) {
   const [trainingSource, setTrainingSource] = useState()
   const [applicationSource, setApplicationSource] = useState()
 
-  //// OTHER STATE
+  //// ALBUM ART STATE
 
   // ref for the middle album art scroller
   const [albumArtRef, setAlbumArtRef] = useState()
+  const [isMiddle, setIsMiddle] = useState(true)
+  const [middleScrollBarOpacity, setMiddleScrollBarOpacity] = useState(
+    new Animated.Value(0)
+  )
+  const [sideScrollBarOpacity, setSideScrollBarOpacity] = useState(
+    new Animated.Value(0.8)
+  )
+
+  const onViewRef = useRef(info => {
+    if (info.viewableItems.some(item => item.index === 0)) setIsMiddle(true)
+    else setIsMiddle(false)
+  })
+  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
+
+  // keeps the screen always awake on this screen
+  useKeepAwake()
+
+  useEffect(() => {
+    if (isMiddle)
+      Animated.sequence([
+        Animated.timing(middleScrollBarOpacity, {
+          toValue: 0,
+          duration: 100,
+          useNativeDriver: true
+        }),
+        Animated.timing(sideScrollBarOpacity, {
+          toValue: 0.8,
+          duration: 100,
+          useNativeDriver: true
+        })
+      ]).start()
+    else {
+      Animated.sequence([
+        Animated.timing(sideScrollBarOpacity, {
+          toValue: 0,
+          duration: 100,
+          useNativeDriver: true
+        }),
+        Animated.timing(middleScrollBarOpacity, {
+          toValue: 0.8,
+          duration: 100,
+          useNativeDriver: true
+        })
+      ]).start()
+    }
+  }, [isMiddle])
+
+  //// OTHER STATE
 
   // share modal
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
@@ -182,6 +231,11 @@ function PlayScreen (props) {
       }
     }
   }, [fellowshipSource])
+
+  useEffect(() => {
+    if (props.route.params.lessonType === 'v')
+      if (props.isConnected) if (!isLoaded) loadVideoFile(trainingSource)
+  }, [props.isConnected])
 
   // interval for updating seeker
   useInterval(updateSeekerTick, 1000)
@@ -390,7 +444,18 @@ function PlayScreen (props) {
     // chapter once we finish or toggle the whole lesson as complete
     if (playbackStatus.didJustFinish) {
       if (activeChapter === 'fellowship') {
-        if (!props.downloads[props.route.params.thisLesson.id]) {
+        if (!props.route.params.thisLesson.audioSource) {
+          changeChapter('story')
+          swipeToScripture()
+        } else if (
+          props.downloads[props.route.params.thisLesson.id] ||
+          ((props.route.params.lessonType === 'qa' ||
+            props.route.params.lessonType === 'qav') &&
+            !props.isConnected &&
+            !props.route.params.isDownloaded)
+        ) {
+          swipeToScripture()
+        } else {
           changeChapter('story')
         }
       } else if (activeChapter === 'story') {
@@ -573,15 +638,11 @@ function PlayScreen (props) {
       } else if (chapter === 'story') {
         setSeekPosition(0)
         loadAudioFile(storySource)
-        if (!props.route.params.thisLesson.audioSource) {
-          if (albumArtRef)
-            albumArtRef.scrollToIndex({
-              animated: true,
-              viewPosition: 0.5,
-              viewOffset: -Dimensions.get('screen').width,
-              index: 0
-            })
-        }
+        // auto scroll to scripture if
+        //  1. there's no audio source
+        //  2. we're currently downloading the lesson
+        //  3. there's an audio source, it's not downloading, and there's no internet
+        if (!props.route.params.thisLesson.audioSource) swipeToScripture()
       } else if (chapter === 'application') {
         setSeekPosition(0)
         loadAudioFile(applicationSource)
@@ -591,6 +652,16 @@ function PlayScreen (props) {
       }
       setActiveChapter(chapter)
     }
+  }
+
+  function swipeToScripture () {
+    if (albumArtRef)
+      albumArtRef.scrollToIndex({
+        animated: true,
+        viewPosition: 0.5,
+        viewOffset: -Dimensions.get('screen').width,
+        index: 0
+      })
   }
 
   //// OTHER FUNCTIONS
@@ -704,11 +775,52 @@ function PlayScreen (props) {
 
   // renders the album art section in the middle of the screen
   function renderAlbumArtItem ({ item }) {
+    var scrollBarLeft = (
+      <View
+        style={{
+          height: '100%',
+          width: 20,
+          position: 'absolute',
+          alignSelf: 'flex-start',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <Animated.View
+          style={[
+            styles.scrollBar,
+            {
+              opacity:
+                item.key === '1' ? middleScrollBarOpacity : sideScrollBarOpacity
+            }
+          ]}
+        />
+      </View>
+    )
+    var scrollBarRight = (
+      <View
+        style={{
+          height: '100%',
+          width: 20,
+          position: 'absolute',
+          alignSelf: 'flex-end',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <Animated.View
+          style={[
+            styles.scrollBar,
+            {
+              opacity:
+                item.key === '1' ? middleScrollBarOpacity : sideScrollBarOpacity
+            }
+          ]}
+        />
+      </View>
+    )
+
     if (item.type === 'text') {
-      var scrollBarLeft =
-        item.key === '0' ? null : <View style={styles.scrollBar} />
-      var scrollBarRight =
-        item.key === '0' ? <View style={styles.scrollBar} /> : null
       return (
         <View
           style={[
@@ -748,9 +860,13 @@ function PlayScreen (props) {
         <View
           style={[
             styles.albumArtContainer,
-            { justifyContent: 'center', alignItems: 'center' }
+            {
+              justifyContent: 'center',
+              alignItems: 'center'
+            }
           ]}
         >
+          {scrollBarLeft}
           <View style={{ zIndex: 1, width: '100%', height: '100%' }}>
             <TouchableHighlight
               style={{ width: '100%', height: '100%' }}
@@ -782,11 +898,12 @@ function PlayScreen (props) {
             }}
           >
             <Icon
-              name={isPlaying ? 'pause' : 'play'}
+              name={isPlaying ? 'play' : 'pause'}
               size={100 * scaleMultiplier}
               color='#ffffff'
             />
           </Animated.View>
+          {scrollBarRight}
         </View>
       )
     }
@@ -838,8 +955,8 @@ function PlayScreen (props) {
             height: Dimensions.get('window').width - 80,
             width: '100%',
             flexDirection: 'row',
-            justifyContent: 'center',
-            backgroundColor: 'black'
+            justifyContent: 'center'
+            // backgroundColor: 'black'
           }}
         >
           <Video
@@ -938,6 +1055,8 @@ function PlayScreen (props) {
               index
             })}
             initialScrollIndex={1}
+            viewabilityConfig={viewConfigRef.current}
+            onViewableItemsChanged={onViewRef.current}
           />
         </View>
       </View>
@@ -959,6 +1078,7 @@ function PlayScreen (props) {
           lessonID={props.route.params.thisLesson.id}
           onPress={chapter => changeChapter(chapter)}
           lessonType={props.route.params.lessonType}
+          isDownloaded={props.route.params.isDownloaded}
         />
       ) : null}
       <Scrubber
@@ -1076,12 +1196,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 10,
     backgroundColor: '#DEE3E9',
-    flexDirection: 'row',
     overflow: 'hidden'
   },
   scrollBar: {
     width: 4,
-    height: 150 * scaleMultiplier,
+    height: 75 * scaleMultiplier,
     backgroundColor: '#9FA5AD',
     borderRadius: 10,
     alignSelf: 'center'
@@ -1109,7 +1228,8 @@ function mapStateToProps (state) {
     downloads: state.downloads,
     primaryColor: state.database[activeGroup.language].primaryColor,
     isRTL: state.database[activeGroup.language].isRTL,
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    isConnected: state.network.isConnected
   }
 }
 

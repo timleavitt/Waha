@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import { View, TouchableOpacity, StyleSheet, Image, Text } from 'react-native'
 import { scaleMultiplier } from '../constants'
 import Icon from '../assets/fonts/icons'
 
@@ -19,31 +19,49 @@ function AvatarImage (props) {
         marginLeft: -10
       }}
     >
-      <Icon name='camera' size={35 * scaleMultiplier} color='#FF0800' />
+      <Icon name='emoji' size={35 * scaleMultiplier} color='black' />
     </View>
   ) : null
 
   // render the image conditionally because if no source is provided, we want to use the
   // default image (the group icon)
-  var avatarImage =
-    props.source === '' ? (
+  // var avatarImage =
+  //   props.source === '' ? (
+  //     <Icon name='group' size={(props.size / 2) * scaleMultiplier} />
+  //   ) : (
+  //     <Image
+  //       style={{
+  //         ...styles.avatarContainer,
+  //         ...{
+  //           width: props.size * scaleMultiplier,
+  //           height: props.size * scaleMultiplier,
+  //           borderRadius: (props.size * scaleMultiplier) / 2
+  //         }
+  //       }}
+  //       source={{ uri: props.source }}
+  //     />
+  //   )
+
+  var emoji =
+    props.emoji === '' ? (
       <Icon name='group' size={(props.size / 2) * scaleMultiplier} />
     ) : (
-      <Image
+      <Text
         style={{
-          ...styles.avatarContainer,
-          ...{
-            width: props.size * scaleMultiplier,
-            height: props.size * scaleMultiplier,
-            borderRadius: (props.size * scaleMultiplier) / 2
-          }
+          fontSize: (props.size / 1.5) * scaleMultiplier,
+          textAlign: 'center',
+          paddingLeft:
+            props.size > 100
+              ? (props.size * scaleMultiplier) / 20
+              : (props.size * scaleMultiplier) / 10
         }}
-        source={{ uri: props.source }}
-      />
+      >
+        {props.emoji}
+      </Text>
     )
 
-  // if we have something for props.onPress, make it touchable, otherwise make it
-  // not touchable
+  // if we have something for props.onPress, make it touchable, otherwise
+  // make it not touchable
   return props.onPress ? (
     <TouchableOpacity
       style={{
@@ -55,7 +73,6 @@ function AvatarImage (props) {
         alignItems: 'center',
         justifyContent: 'center'
       }}
-      source={{ uri: props.source }}
       onPress={props.onPress}
     >
       <View
@@ -68,7 +85,7 @@ function AvatarImage (props) {
           }
         }}
       >
-        {avatarImage}
+        {emoji}
       </View>
       <View
         style={{
@@ -103,7 +120,7 @@ function AvatarImage (props) {
           }
         }}
       >
-        {avatarImage}
+        {emoji}
       </View>
       <View
         style={{

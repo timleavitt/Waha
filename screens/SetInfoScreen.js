@@ -103,36 +103,43 @@ function SetInfoScreen (props) {
         data={props.activeDatabase.lessons.filter(
           lesson => props.route.params.thisSet.id === lesson.setid
         )}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              height: 64 * scaleMultiplier,
-              justifyContent: 'center',
-              paddingHorizontal: 40
-            }}
-          >
-            <Text
+        renderItem={({ item }) => {
+          var scriptureList = item.scripture[0].header
+          item.scripture.forEach((chunk, index) => {
+            if (index !== 0) scriptureList += ', ' + chunk.header
+          })
+
+          return (
+            <View
               style={{
-                color: '#1D1E20',
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontSize: 16 * scaleMultiplier,
-                fontFamily: props.font + '-medium'
+                height: 64 * scaleMultiplier,
+                justifyContent: 'center',
+                paddingHorizontal: 40
               }}
             >
-              {item.title}
-            </Text>
-            <Text
-              style={{
-                color: '#9FA5AD',
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontSize: 14 * scaleMultiplier,
-                fontFamily: props.font + '-regular'
-              }}
-            >
-              {item.subtitle}
-            </Text>
-          </View>
-        )}
+              <Text
+                style={{
+                  color: '#1D1E20',
+                  textAlign: props.isRTL ? 'right' : 'left',
+                  fontSize: 16 * scaleMultiplier,
+                  fontFamily: props.font + '-medium'
+                }}
+              >
+                {item.title}
+              </Text>
+              <Text
+                style={{
+                  color: '#9FA5AD',
+                  textAlign: props.isRTL ? 'right' : 'left',
+                  fontSize: 14 * scaleMultiplier,
+                  fontFamily: props.font + '-regular'
+                }}
+              >
+                {scriptureList}
+              </Text>
+            </View>
+          )
+        }}
       />
     </View>
   )

@@ -17,16 +17,51 @@ function ChapterSelect (props) {
     storyIcon = 'check-filled'
   }
 
-  var trainingButton =
-    props.lessonType === 'qav' || props.lessonType === 'qv' ? (
+  var trainingButton
+  if (props.lessonType === 'qav' || props.lessonType === 'qv') {
+    if (
+      (props.lessonType === 'qav' || props.lessonType === 'qv') &&
+      !props.isConnected &&
+      !props.isDownloaded
+    ) {
+      trainingButton = (
+        <View
+          style={[
+            styles.chapterSelect,
+            {
+              borderColor: '#82868D',
+              backgroundColor: '#EFF2F4'
+            }
+          ]}
+        >
+          <Icon
+            name='cloud-slash'
+            size={25 * scaleMultiplier}
+            color='#82868D'
+          />
+          <Text
+            style={[
+              styles.chapterSelectText,
+              {
+                color: '#82868D',
+                fontFamily: props.font + '-black'
+              }
+            ]}
+          >
+            {props.translations.labels.training}
+          </Text>
+        </View>
+      )
+    } else if (
       props.downloads[props.lessonID + 'v'] &&
-      props.downloads[props.lessonID + 'v'] < 1 ? (
+      props.downloads[props.lessonID + 'v'] < 1
+    ) {
+      trainingButton = (
         // if the video is downloading, show the progress in the chapter button
         <View
           style={[
             styles.chapterSelect,
             {
-              flexDirection: 'row',
               borderColor: '#82868D',
               backgroundColor: '#EFF2F4'
             }
@@ -53,7 +88,9 @@ function ChapterSelect (props) {
             {props.translations.labels.training}
           </Text>
         </View>
-      ) : (
+      )
+    } else {
+      trainingButton = (
         <TouchableOpacity
           style={[
             styles.chapterSelect,
@@ -96,17 +133,53 @@ function ChapterSelect (props) {
           </Text>
         </TouchableOpacity>
       )
-    ) : null
+    }
+  } else {
+    trainingButton = null
+  }
 
   // render chapter 2 button
-  var storyButton =
-    props.downloads[props.lessonID] && props.downloads[props.lessonID] < 1 ? (
+  var storyButton
+  if (
+    (props.lessonType === 'qa' || props.lessonType === 'qav') &&
+    !props.isConnected &&
+    !props.isDownloaded
+  )
+    storyButton = (
+      <View
+        style={[
+          styles.chapterSelect,
+          {
+            borderColor: '#82868D',
+            backgroundColor: '#EFF2F4'
+          }
+        ]}
+      >
+        <Icon name='cloud-slash' size={25 * scaleMultiplier} color='#82868D' />
+        <Text
+          style={[
+            styles.chapterSelectText,
+            {
+              color: '#82868D',
+
+              fontFamily: props.font + '-black'
+            }
+          ]}
+        >
+          {props.translations.labels.story}
+        </Text>
+      </View>
+    )
+  else if (
+    props.downloads[props.lessonID] &&
+    props.downloads[props.lessonID] < 1
+  )
+    storyButton = (
       // if the lesson is downloading, show the progress in the chapter button
       <View
         style={[
           styles.chapterSelect,
           {
-            flexDirection: 'row',
             borderColor: '#82868D',
             backgroundColor: '#EFF2F4'
           }
@@ -133,8 +206,9 @@ function ChapterSelect (props) {
           {props.translations.labels.story}
         </Text>
       </View>
-    ) : (
-      // otherwise, show the button as normal
+    )
+  else
+    storyButton = (
       <TouchableOpacity
         style={[
           styles.chapterSelect,
@@ -292,7 +366,8 @@ function mapStateToProps (state) {
     primaryColor: state.database[activeGroup.language].primaryColor,
     downloads: state.downloads,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    isConnected: state.network.isConnected
   }
 }
 

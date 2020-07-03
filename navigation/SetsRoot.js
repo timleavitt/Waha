@@ -45,7 +45,7 @@ function SetsRoot (props) {
             : () => (
                 <View style={{ paddingHorizontal: 10 }}>
                   <AvatarImage
-                    source={props.activeGroup.imageSource}
+                    emoji={props.activeGroup.emoji}
                     size={40}
                     onPress={() => props.navigation.toggleDrawer()}
                     isActive={true}
@@ -56,7 +56,7 @@ function SetsRoot (props) {
             ? () => (
                 <View style={{ paddingHorizontal: 10 }}>
                   <AvatarImage
-                    source={props.activeGroup.imageSource}
+                    emoji={props.activeGroup.emoji}
                     size={40}
                     onPress={() => props.navigation.toggleDrawer()}
                     isActive={true}

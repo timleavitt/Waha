@@ -16,7 +16,7 @@ export function groups (state = [], action) {
         {
           name: action.groupName,
           language: action.language,
-          imageSource: action.imageSource,
+          emoji: action.emoji,
           recentCoreOrTool: action.language + '01',
           setBookmark: action.language + '01',
           addedSets: [
@@ -41,7 +41,7 @@ export function groups (state = [], action) {
           return {
             ...group,
             name: action.newGroupName,
-            imageSource: action.imageSource
+            emoji: action.emoji
           }
         }
         return group

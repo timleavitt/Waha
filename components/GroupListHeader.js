@@ -71,7 +71,7 @@ function GroupListHeader (props) {
         groupName={groups.item.name}
         isEditing={props.isEditing}
         goToEditGroupScreen={props.goToEditGroupScreen}
-        avatarSource={groups.item.imageSource}
+        emoji={groups.item.emoji}
       />
     )
   }

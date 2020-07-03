@@ -14,21 +14,21 @@ export function changeActiveGroup (groupName) {
   }
 }
 
-export function createGroup (groupName, language, imageSource) {
+export function createGroup (groupName, language, emoji) {
   return {
     type: CREATE_GROUP,
     groupName,
     language,
-    imageSource
+    emoji
   }
 }
 
-export function editGroup (oldGroupName, newGroupName, imageSource) {
+export function editGroup (oldGroupName, newGroupName, emoji) {
   return {
     type: EDIT_GROUP,
     oldGroupName,
     newGroupName,
-    imageSource
+    emoji
   }
 }
 
