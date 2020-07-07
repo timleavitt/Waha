@@ -2,49 +2,68 @@ import React, { useEffect } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import { scaleMultiplier, languageT2S } from '../constants'
 import * as FileSystem from 'expo-file-system'
-import { Audio } from 'expo-av'
 
 function LanguageSelectItem (props) {
   // FUNCTIONS
 
-  const soundObject = new Audio.Sound()
-
-  async function playAudio () {
-    soundObject.unloadAsync()
-    await soundObject.loadAsync(languageT2S[props.id]).then(() => {
-      soundObject.playAsync()
-    })
-  }
+  iconComponent = props.isSelected ? (
+    <View>
+      <Icon name='check' size={30} color='#60C239' />
+    </View>
+  ) : (
+    <TouchableOpacity onPress={props.playAudio}>
+      <Icon name='volume' size={30} color='black' />
+    </TouchableOpacity>
+  )
 
   return (
     <View
-      style={[
-        props.style,
-        {
-          height: 50 * scaleMultiplier,
-          width: '100%',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }
-      ]}
+      style={{
+        height: 70 * scaleMultiplier,
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        margin: 1,
+        backgroundColor: props.isSelected ? '#BFE5AF' : '#FFFFFF'
+      }}
     >
-      <Text
+      <TouchableOpacity
         style={{
-          fontSize: 24 * scaleMultiplier
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexDirection: 'row'
         }}
+        onPress={props.onPress}
       >
-        {props.label}
-      </Text>
-      <Image
-        style={styles.headerImage}
-        source={{
-          uri: FileSystem.documentDirectory + props.id + '-header.png'
-        }}
-      />
-      <TouchableOpacity onPress={playAudio}>
-        <Icon name='volume' size={30} color='black' />
+        <View style={{ alignItems: 'center' }}>
+          <Text
+            style={{
+              fontSize: 18 * scaleMultiplier,
+              fontWeight: 'bold'
+            }}
+          >
+            {props.nativeName}
+          </Text>
+          <Text
+            style={{
+              fontSize: 14 * scaleMultiplier
+            }}
+          >
+            {props.localeName}
+          </Text>
+        </View>
+        <Image
+          style={styles.headerImage}
+          source={{
+            uri: FileSystem.documentDirectory + props.id + '-header.png'
+          }}
+        />
+        <Text>LOGO</Text>
       </TouchableOpacity>
+      {iconComponent}
     </View>
   )
 }

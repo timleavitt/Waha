@@ -6,7 +6,8 @@ import {
   Picker,
   TouchableOpacity,
   TextInput,
-  SectionList
+  SectionList,
+  Dimensions
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import * as Localization from 'expo-localization'
@@ -16,12 +17,13 @@ import NetInfo from '@react-native-community/netinfo'
 import ModalSelector from 'react-native-modal-selector'
 import LanguageSelectItem from '../components/LanguageSelectItem'
 import { FlatList } from 'react-native-gesture-handler'
+import { Audio } from 'expo-av'
 
 function LanguageSelectScreen (props) {
   //// STATE
 
   // keeps track of language selected in picker (TODO: change default to user's default language)
-  const [selectedLanguage, setSelectedLanguage] = useState(i18n.locale)
+  const [selectedLanguage, setSelectedLanguage] = useState('')
 
   // keeps track of whether the uesr has an internet connection
   const [isConnected, setIsConnected] = useState(true)
@@ -35,29 +37,66 @@ function LanguageSelectScreen (props) {
       selectLanguage: 'Please select your language.',
       letsBegin: "Let's begin!",
       noInternet: 'Error: an internet connection is required to set up the app',
-      cancel: 'Cancel'
+      cancel: 'Cancel',
+      // waha language headers
+      english: 'English',
+      french: 'French',
+      arabic: 'Arabic',
+      // waha languages
+      englishGlobal: 'English (Global)',
+      englishUK: 'English (UK)',
+      englishAustralia: 'English (Australia)',
+      french: 'French',
+      darija: 'Darija',
+      laarbia: 'Laarbia'
     },
-    te: {
-      welcome: 'morbi tristique senectus et!',
-      selectLanguage: 'eget nulla facilisi etiam.',
-      letsBegin: 'nibh ipsum!',
-      noInternet: 'morbi tristique senectus et eget nulla facilisi etiam',
-      cancel: 'Lecnac'
+    fr: {
+      welcome: 'Bonjour et bienvenue!',
+      selectLanguage: 'Veuillez sélectionner votre langue.',
+      letsBegin: 'Commençons!',
+      noInternet:
+        "Erreur: une connexion Internet est requise pour configurer l'application",
+      cancel: 'Annuler',
+      // waha language headers
+      english: 'Anglais',
+      french: 'Français',
+      arabic: 'Arabe',
+      // waha languages
+      englishGlobal: 'Anglais (Mondial)',
+      englishUK: 'Anglais (Royaume-Uni)',
+      englishAustralia: 'Anglais (Australie)',
+      french: 'Français',
+      darija: 'Accent Marocain',
+      laarbia: 'Libyen'
+    },
+    ar: {
+      welcome: 'أهلا ومرحبا!',
+      selectLanguage: 'الرجاء اختيار لغتك.',
+      letsBegin: 'هيا نبدأ!',
+      noInternet: 'خطأ: مطلوب اتصال بالإنترنت لإعداد التطبيق',
+      cancel: 'إلغاء',
+      // waha language headers
+      english: 'الإنجليزية',
+      french: 'فرنسي',
+      arabic: 'العربية',
+      // waha languages
+      englishGlobal: 'الإنجليزية (عالميًا)',
+      englishUK: 'الإنجليزية (المملكة المتحدة)',
+      englishAustralia: 'الإنجليزية (أستراليا)',
+      french: 'فرنسي',
+      darija: 'اللهجة المغربية',
+      laarbia: 'ليبي‎'
     }
   }
 
-  const data = [
-    {
-      key: 'en',
-      label: 'English',
-      component: <LanguageSelectItem id='en' label='🇺🇸English' />
-    },
-    {
-      key: 'te',
-      label: 'Test',
-      component: <LanguageSelectItem id='te' label='⭐️Test' />
-    }
-  ]
+  const soundObject = new Audio.Sound()
+
+  async function playAudio (key) {
+    soundObject.unloadAsync()
+    await soundObject.loadAsync(languageT2S[key]).then(() => {
+      soundObject.playAsync()
+    })
+  }
 
   //// CONSTRUCTOR
 
@@ -90,7 +129,6 @@ function LanguageSelectScreen (props) {
   // updates language on picker change
   function onPickerChange (language) {
     setSelectedLanguage(language)
-    i18n.locale = language
   }
 
   //// RENDER
@@ -103,7 +141,7 @@ function LanguageSelectScreen (props) {
           selectedLanguage: selectedLanguage
         })
       }
-      style={styles.button}
+      style={[styles.button, { backgroundColor: '#60C239' }]}
     >
       <Text style={styles.buttonTitle}>{i18n.t('letsBegin')} </Text>
     </TouchableOpacity>
@@ -114,49 +152,101 @@ function LanguageSelectScreen (props) {
   )
 
   var errorMessage = isConnected ? (
-    <View style={styles.errorMessageContainer}></View>
+    <View
+      style={{ height: 50 * scaleMultiplier, paddingHorizontal: 10 }}
+    ></View>
   ) : (
-    <View style={styles.errorMessageContainer}>
+    <View style={{ height: 50 * scaleMultiplier, paddingHorizontal: 10 }}>
       <Text style={styles.errorMessage}>{i18n.t('noInternet')}</Text>
     </View>
   )
 
   function renderLanguage (item) {
-    console.log(item)
     return (
-      <View>
-        <Text>{item.item}</Text>
+      <LanguageSelectItem
+        nativeName={item.section.data[item.index].nativeName}
+        localeName={i18n.t(item.section.data[item.index].i18nName)}
+        onPress={() =>
+          setSelectedLanguage(item.section.data[item.index].wahaID)
+        }
+        isSelected={
+          selectedLanguage === item.section.data[item.index].wahaID
+            ? true
+            : false
+        }
+        playAudio={() => playAudio(item.section.data[item.index].wahaID)}
+      />
+    )
+  }
+
+  function renderLanguageHeader (section) {
+    return (
+      <View
+        style={{
+          height: 40 * scaleMultiplier,
+          width: '100%',
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 20,
+          backgroundColor: '#EAEEF0',
+          borderTopLeftRadius: 10,
+          borderTopRightRadius: 10
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            marginRight: 20
+          }}
+        >
+          <Text>{section.title}</Text>
+          <Text>{i18n.t(section.i18nName)}</Text>
+        </View>
+        <TouchableOpacity onPress={() => playAudio(section.i18nName)}>
+          <Icon name='volume' size={30} color='black' />
+        </TouchableOpacity>
       </View>
     )
   }
 
-  function renderLanguageHeader (item) {
-    return <View></View>
-  }
-
   return (
     <View style={styles.screen}>
-      <View>
+      <View style={{ marginVertical: 20 }}>
         <Text style={styles.title}> {i18n.t('welcome')}</Text>
         <Text style={styles.subtitle}> {i18n.t('selectLanguage')}</Text>
       </View>
       <View
         style={{
           width: '100%',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+          height: '100%',
+          backgroundColor: '#EAEEF0',
+          justifyContent: 'center',
           alignItems: 'center',
-          padding: 20,
+          borderRadius: 10,
           flex: 1
         }}
       >
-        {/* <SectionList
-          sections={languages}
-          keyExtractor={item => item.title}
-          renderItem={renderLanguage}
-          renderSectionHeader={({ section: { title } }) => <Text>{title}</Text>}
-        /> */}
-        <ModalSelector
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flex: 1
+          }}
+        >
+          <SectionList
+            sections={languages}
+            keyExtractor={item => item.wahaID}
+            renderItem={renderLanguage}
+            renderSectionHeader={({ section }) => renderLanguageHeader(section)}
+            renderSectionFooter={() => (
+              <View style={{ height: 20 * scaleMultiplier, width: '100%' }} />
+            )}
+          />
+          {/* <ModalSelector
           data={data}
           animationType='fade'
           // initValue={
@@ -193,10 +283,11 @@ function LanguageSelectScreen (props) {
               {data.filter(item => item.key === selectedLanguage)[0].label}
             </Text>
           </View>
-        </ModalSelector>
+        </ModalSelector> */}
+        </View>
+        {startButton}
+        {errorMessage}
       </View>
-      {startButton}
-      {errorMessage}
     </View>
   )
 }
@@ -209,7 +300,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#F7F7F7',
-    paddingTop: 50 * scaleMultiplier
+    paddingTop: 20 * scaleMultiplier
   },
   title: {
     textAlign: 'center',
@@ -222,27 +313,23 @@ const styles = StyleSheet.create({
     fontSize: 24 * scaleMultiplier
   },
   button: {
-    width: 250 * scaleMultiplier,
     height: 60 * scaleMultiplier,
+    width: Dimensions.get('window').width - 40,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#1D1E20',
-    borderRadius: 5
+    borderRadius: 5,
+    marginVertical: 10
   },
   buttonTitle: {
     textAlign: 'center',
     fontSize: 24 * scaleMultiplier,
     color: '#FFFFFF'
   },
-  errorMessageContainer: {
-    height: '10%',
-    width: '100%'
-  },
   errorMessage: {
     textAlign: 'center',
     fontSize: 16 * scaleMultiplier,
-    color: '#828282',
-    marginTop: 10
+    color: '#828282'
   }
 })
 
