@@ -25,24 +25,32 @@ function LanguageSelectItem (props) {
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 20,
-        margin: 1,
+        borderWidth: 1,
+        borderColor: '#EFF2F4',
         backgroundColor: props.isSelected ? '#BFE5AF' : '#FFFFFF'
       }}
     >
       <TouchableOpacity
         style={{
           flex: 1,
+          height: '100%',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'space-around',
           flexDirection: 'row'
         }}
         onPress={props.onPress}
       >
-        <View style={{ alignItems: 'center' }}>
+        <View
+          style={{
+            justifyContent: 'center',
+            flex: 1
+          }}
+        >
           <Text
             style={{
               fontSize: 18 * scaleMultiplier,
-              fontWeight: 'bold'
+              fontWeight: 'bold',
+              textAlign: 'left'
             }}
           >
             {props.nativeName}
@@ -58,10 +66,9 @@ function LanguageSelectItem (props) {
         <Image
           style={styles.headerImage}
           source={{
-            uri: FileSystem.documentDirectory + props.id + '-header.png'
+            uri: props.logoSource
           }}
         />
-        <Text>LOGO</Text>
       </TouchableOpacity>
       {iconComponent}
     </View>
@@ -73,9 +80,10 @@ function LanguageSelectItem (props) {
 const styles = StyleSheet.create({
   headerImage: {
     resizeMode: 'contain',
-    width: 120,
-    height: 40,
-    alignSelf: 'center'
+    width: 120 * scaleMultiplier,
+    height: 40 * scaleMultiplier,
+    alignSelf: 'center',
+    marginHorizontal: 20
   }
 })
 

@@ -1,0 +1,15 @@
+{
+  "welcome": "Bonjour et bienvenue!",
+  "selectLanguage": "Veuillez sélectionner votre langue.",
+  "letsBegin": "Commençons!",
+  "noInternet": "Erreur: une connexion Internet est requise pour configurer l'application",
+  "cancel": "Annuler",
+  "english": "Anglais",
+  "arabic": "Arabe",
+  "englishGlobal": "Anglais (Mondial)",
+  "englishUK": "Anglais (Royaume-Uni)",
+  "englishAustralia": "Anglais (Australie)",
+  "french": "Français",
+  "darija": "Accent Marocain",
+  "laarbia": "Libyen"
+}

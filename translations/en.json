@@ -1,0 +1,15 @@
+{
+  "welcome": "Hello and welcome!",
+  "selectLanguage": "Please select your language.",
+  "letsBegin": "Let's begin!",
+  "noInternet": "Error: an internet connection is required to set up the app",
+  "cancel": "Cancel",
+  "english": "English",
+  "french": "French",
+  "arabic": "Arabic",
+  "englishGlobal": "English (Global)",
+  "englishUK": "English (UK)",
+  "englishAustralia": "English (Australia)",
+  "darija": "Darija",
+  "laarbia": "Laarbia"
+}
