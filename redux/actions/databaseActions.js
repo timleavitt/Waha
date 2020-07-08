@@ -4,6 +4,7 @@ import * as FileSystem from 'expo-file-system'
 import { createGroup, changeActiveGroup } from '../actions/groupsActions'
 import i18n from 'i18n-js'
 import { getStateFromPath } from '@react-navigation/native'
+import * as Analytics from 'expo-firebase-analytics'
 
 export const ADD_LANGUAGE = 'ADD_LANGUAGE'
 export const SET_FETCH_ERROR = 'SET_FETCH_ERROR'
@@ -30,6 +31,7 @@ const config = {
 }
 firebase.initializeApp(config)
 export const db = firebase.firestore()
+Analytics.setDebugModeEnabled(true)
 
 const groupNames = {
   en: 'Group 1',

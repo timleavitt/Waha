@@ -10,6 +10,8 @@ export const languageT2S = {
   english: require('./assets/languageT2S/en.mp3')
 }
 
+export const groupIcons = {}
+
 export const languages = [
   {
     i18nName: 'english',
@@ -20,7 +22,7 @@ export const languages = [
         wahaID: 'en',
         i18nName: 'englishGlobal',
         logoSource:
-          'https://www.arizonachristian.edu/wp-content/uploads/2017/06/logo-placeholder.png'
+          'https://res.cloudinary.com/waha/image/upload/v1594243650/English/Discovering_God_eorblz.png'
       }
       // {
       //   nativeName: 'English (UK)',

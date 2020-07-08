@@ -82,8 +82,8 @@ function SetsRoot (props) {
 const styles = StyleSheet.create({
   headerImage: {
     resizeMode: 'contain',
-    width: 120,
-    height: 40,
+    width: 175 * scaleMultiplier,
+    flex: 1,
     alignSelf: 'center'
   }
 })

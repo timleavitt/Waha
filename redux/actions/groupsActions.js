@@ -6,6 +6,7 @@ export const UPDATE_PROGRESS = 'UPDATE_PROGRESS'
 export const RESET_PROGRESS = 'RESET_PROGRESS'
 export const ADD_SET = 'ADD_SET'
 export const SET_SHOW_TOOLKIT = 'SET_SHOW_TOOLKIT'
+import * as Analytics from 'expo-firebase-analytics'
 
 export function changeActiveGroup (groupName) {
   return {
@@ -50,6 +51,7 @@ function updateProgress (groupName, set, nextSet, lessonIndex) {
 }
 
 export function toggleComplete (groupName, set, lessonIndex) {
+  logToggleComplete(set)
   return (dispatch, getState) => {
     var thisLanguage = getState().groups.filter(
       group => group.name === groupName
@@ -59,6 +61,13 @@ export function toggleComplete (groupName, set, lessonIndex) {
     )[0]
     dispatch(updateProgress(groupName, set, nextSet, lessonIndex))
   }
+}
+
+async function logToggleComplete (set) {
+  console.log('beep')
+  await Analytics.logEvent('LessonComplete', {
+    set: set.title
+  })
 }
 
 export function resetProgress (groupName) {
