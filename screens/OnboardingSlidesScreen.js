@@ -265,8 +265,6 @@ function mapDispatchToProps (dispatch) {
     addLanguage: language => dispatch(addLanguage(language)),
     changeLanguage: language => dispatch(changeLanguage(language)),
     setFinishedOnboarding: toSet => dispatch(setFinishedOnboarding(toSet)),
-    createGroup: (groupName, language, imageSource) =>
-      dispatch(createGroup(groupName, language, imageSource)),
     changeActiveGroup: name => {
       dispatch(changeActiveGroup(name))
     }

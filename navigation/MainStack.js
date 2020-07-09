@@ -6,9 +6,8 @@ import * as FileSystem from 'expo-file-system'
 import LessonListScreen from '../screens/LessonListScreen'
 import PlayScreen from '../screens/PlayScreen'
 import GroupsScreen from '../screens/GroupsScreen'
-import AddNewGroupScreen from '../screens/AddNewGroupScreen'
+import AddEditGroupScreen from '../screens/AddEditGroupScreen'
 import AddNewLanguageScreen from '../screens/AddNewLanguageScreen'
-import EditGroupScreen from '../screens/EditGroupScreen'
 import StorageScreen from '../screens/StorageScreen'
 import MTScreen from '../screens/MTScreen'
 import PasscodeScreen from '../screens/PasscodeScreen'
@@ -82,8 +81,8 @@ function MainStack (props) {
         }}
       />
       <Stack.Screen
-        name='AddNewGroup'
-        component={AddNewGroupScreen}
+        name='AddGroup'
+        component={AddEditGroupScreen}
         options={{
           headerTitle: props.translations.navigation.headers.addNewGroupScreen,
           headerStyle: {
@@ -112,7 +111,7 @@ function MainStack (props) {
       />
       <Stack.Screen
         name='EditGroup'
-        component={EditGroupScreen}
+        component={AddEditGroupScreen}
         options={{
           headerTitle: props.translations.navigation.headers.editGroupScreen,
           headerStyle: {

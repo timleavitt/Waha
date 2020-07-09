@@ -213,10 +213,10 @@ const styles = StyleSheet.create({
     flex: 1
   },
   languageLogo: {
-    resizeMode: 'stretch',
-    width: 96 * scaleMultiplier,
-    height: 32 * scaleMultiplier,
-    alignSelf: 'flex-end',
+    resizeMode: 'contain',
+    width: 120 * scaleMultiplier,
+    height: 40 * scaleMultiplier,
+    // alignSelf: 'flex-end',
     marginHorizontal: 10
   },
   addGroupContainer: {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, TouchableOpacity, StyleSheet, Image, Text } from 'react-native'
-import { scaleMultiplier } from '../constants'
+import { scaleMultiplier, groupIcons, groupIconSources } from '../constants'
 import Icon from '../assets/fonts/icons'
 
 function AvatarImage (props) {
@@ -8,20 +8,6 @@ function AvatarImage (props) {
 
   // render camer icon conditionally because we only want it to show when we can change the image
   // note: can only change image on add group screen or edit group screen
-  var cameraIcon = props.isChangeable ? (
-    <View
-      style={{
-        width: 40 * scaleMultiplier,
-        height: 40 * scaleMultiplier,
-        alignSelf: 'flex-start',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft: -10
-      }}
-    >
-      <Icon name='emoji' size={35 * scaleMultiplier} color='black' />
-    </View>
-  ) : null
 
   // render the image conditionally because if no source is provided, we want to use the
   // default image (the group icon)
@@ -43,25 +29,29 @@ function AvatarImage (props) {
   //   )
 
   var emoji =
-    props.emoji === '' ? (
-      <Icon name='group' size={(props.size / 2) * scaleMultiplier} />
+    props.emoji === 'default' ? (
+      <Icon
+        name='group'
+        size={(props.size / 2) * scaleMultiplier}
+        color='#3A3C3F'
+      />
     ) : (
-      <Text
+      <View
         style={{
-          // fontSize: (props.size / 1.5) * scaleMultiplier,
-          fontSize: (props.size / 1.4) * scaleMultiplier,
-          // position: 'absolute',
-          // flex: 1,
-          lineHeight: props.size * scaleMultiplier,
-          transform: [{ scale: 0.85 }]
-          // paddingLeft:
-          //   props.size > 100
-          //     ? (props.size * scaleMultiplier) / 20
-          //     : (props.size * scaleMultiplier) / 10,
+          width: props.size * 0.65 * scaleMultiplier,
+          height: props.size * 0.65 * scaleMultiplier,
+          justifyContent: 'center',
+          alignItems: 'center'
         }}
       >
-        {props.emoji}
-      </Text>
+        <Image
+          style={{
+            width: props.size * 0.65 * scaleMultiplier,
+            height: props.size * 0.65 * scaleMultiplier
+          }}
+          source={groupIconSources[props.emoji]}
+        />
+      </View>
     )
 
   // if we have something for props.onPress, make it touchable, otherwise
@@ -92,14 +82,6 @@ function AvatarImage (props) {
       >
         {emoji}
       </View>
-      <View
-        style={{
-          marginTop: props.isChangeable ? -30 : 0,
-          width: '100%'
-        }}
-      >
-        {cameraIcon}
-      </View>
     </TouchableOpacity>
   ) : (
     <View
@@ -126,14 +108,6 @@ function AvatarImage (props) {
         }}
       >
         {emoji}
-      </View>
-      <View
-        style={{
-          marginTop: props.isChangeable ? -30 : 0,
-          width: '100%'
-        }}
-      >
-        {cameraIcon}
       </View>
     </View>
   )
