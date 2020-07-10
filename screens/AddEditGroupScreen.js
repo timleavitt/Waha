@@ -24,7 +24,6 @@ import {
 import OptionsModal from '../components/OptionsModal'
 import ModalButton from '../components/ModalButton'
 import AvatarImage from '../components/AvatarImage'
-import EmojiSelector from 'react-native-emoji-selector'
 import Modal from 'react-native-modal'
 
 function AddEditGroupScreen (props) {

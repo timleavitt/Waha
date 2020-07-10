@@ -16,7 +16,7 @@ function GroupItem (props) {
     )[0]
 
     // get the currently bookmarked set object
-    var bookmarkSet = props.activeDatabase.sets.filter(
+    var bookmarkSet = props.database[thisGroup.language].sets.filter(
       set => set.id === thisGroup.setBookmark
     )[0]
 
@@ -26,7 +26,7 @@ function GroupItem (props) {
     )[0].bookmark
 
     // get the bookmrarked lesson object
-    var bookmarkLesson = props.activeDatabase.lessons
+    var bookmarkLesson = props.database[thisGroup.language].lessons
       .filter(lesson => lesson.setid === thisGroup.setBookmark)
       .filter(lesson => lesson.index === bookmarkSetBookmarkLesson)[0]
 

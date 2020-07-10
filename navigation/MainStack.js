@@ -7,7 +7,8 @@ import LessonListScreen from '../screens/LessonListScreen'
 import PlayScreen from '../screens/PlayScreen'
 import GroupsScreen from '../screens/GroupsScreen'
 import AddEditGroupScreen from '../screens/AddEditGroupScreen'
-import AddNewLanguageScreen from '../screens/AddNewLanguageScreen'
+import LanguageSelectScreen from '../screens/LanguageSelectScreen'
+
 import StorageScreen from '../screens/StorageScreen'
 import MTScreen from '../screens/MTScreen'
 import PasscodeScreen from '../screens/PasscodeScreen'
@@ -95,8 +96,8 @@ function MainStack (props) {
         }}
       />
       <Stack.Screen
-        name='AddNewLanguage'
-        component={AddNewLanguageScreen}
+        name='AddLanguage'
+        component={LanguageSelectScreen}
         options={{
           headerTitle:
             props.translations.navigation.headers.addNewLanguageScreen,

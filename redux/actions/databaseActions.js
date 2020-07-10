@@ -33,7 +33,7 @@ export const db = firebase.firestore()
 
 const groupNames = {
   en: 'Group 1',
-  te: 'facilisis 1'
+  da: 'Group 1 test'
 }
 
 export function storeData (data, language) {
@@ -91,13 +91,10 @@ export function setFetchError (status, language) {
 
 export function addLanguage (language) {
   return (dispatch, getState) => {
-    // set the i18n language for loading screen translations
-    i18n.locale = language
-
     // set isFetching to true to signal that we're doing stuff and don't want to load the rest of the app
     dispatch(setIsFetching(true))
 
-    /// / FIREBASE FETCH
+    //// FIREBASE FETCH
 
     // get language object from database and throw it in redux
     db.collection('languages')
@@ -187,14 +184,16 @@ export function addLanguage (language) {
               dispatch(setFinishedInitialFetch(true))
               dispatch(setCurrentFetchProgress(0))
             })
-            .catch(() => {
+            .catch(error => {
+              console.log(error)
               dispatch(setFetchError(true, language))
             })
         } else {
           dispatch(setFetchError(true, language))
         }
       })
-      .catch(() => {
+      .catch(error => {
+        console.log(error)
         dispatch(setFetchError(true, language))
       })
   }

@@ -120,7 +120,7 @@ function GroupsScreen (props) {
               onPress={
                 props.isConnected
                   ? () =>
-                      props.navigation.navigate('AddNewLanguage', {
+                      props.navigation.navigate('AddLanguage', {
                         installedLanguageInstances: getInstalledLanguageInstances()
                       })
                   : () =>

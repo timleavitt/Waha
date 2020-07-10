@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   StyleSheet,
@@ -17,6 +17,11 @@ import {
 import { connect } from 'react-redux'
 import { createGroup, changeActiveGroup } from '../redux/actions/groupsActions'
 import { scaleMultiplier } from '../constants'
+// translations import
+import en from '../translations/en.json'
+import fr from '../translations/fr.json'
+import ar from '../translations/ar.json'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 function OnboardingSlidesScreen (props) {
   //// STATE
@@ -27,49 +32,21 @@ function OnboardingSlidesScreen (props) {
   // reference to change flatlist
   const [flatListRef, setFlatListRef] = useState()
 
-  // translations
+  // translations for language select
   i18n.translations = {
-    en: {
-      title0: 'Welcome!',
-      body0: 'Here is how to use this app.',
-      title1: 'Discover God’s truth the Holy Bible.',
-      body1:
-        'Each story brings insight for your group to discover the love and purpose of God.',
-      title2: 'Gather a small group.',
-      body2:
-        'Lessons are audio based, so gather a small group of friends or family to listen to bible stories and to discuss them.',
-      title3: 'Lets get everything set up!',
-      body3:
-        'We’ve started downloading some necessary files for you. This process usually takes between 1 to 3 minutes.',
-      prev: 'Previous',
-      next: 'Next',
-      finish: 'Finish'
-    }
-    // te: {
-    //   title0: 'sed!',
-    //   body0: 'ultricies lacus sed turpis tincidunt.',
-    //   title1: 'pulvinar neque laoreet suspendisse interdum.',
-    //   body1:
-    //     'duis convallis convallis tellus id interdum velit laoreet id donec.',
-    //   title2: 'turpis tincidunt id aliquet.',
-    //   body2:
-    //     'in egestas erat imperdiet sed euismod nisi porta lorem mollis aliquam ut porttitor leo a diam sollicitudin tempor id eu.',
-    //   title3: 'ac turpis egestas maecenas!',
-    //   body3:
-    //     'varius quam quisque id diam vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus interdum posuere lorem ipsum dolor.',
-    //   prev: 'nulla',
-    //   next: 'interdum',
-    //   finish: 'nunc'
-    // }
+    en,
+    fr,
+    ar
   }
 
   // stuff for flatlist
-  const onViewRef = React.useRef(({ viewableItems }) => {
-    if (viewableItems) {
-      setPageNumber(viewableItems[0].index)
-    }
+  const onViewRef = useRef(info => {
+    console.log(info)
+    // if (viewableItems) {
+    //   setPageNumber(viewableItems[0].index)
+    // }
   })
-  const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 })
+  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 100 })
 
   //// CONSTRUCTOR
 
@@ -159,8 +136,13 @@ function OnboardingSlidesScreen (props) {
           horizontal={true}
           pagingEnabled={true}
           snapToAlignment={'start'}
-          snapToInterval={Dimensions.get('window').width}
+          snapToInterval={Dimensions.get('window').width - 64}
           decelerationRate={'fast'}
+          getItemLayout={(data, index) => ({
+            length: Dimensions.get('window').width - 64,
+            offset: Dimensions.get('window').width - 64 * index,
+            index
+          })}
           onViewableItemsChanged={onViewRef.current}
           viewabilityConfig={viewConfigRef.current}
           showsHorizontalScrollIndicator={false}
@@ -168,21 +150,23 @@ function OnboardingSlidesScreen (props) {
         <View style={styles.buttonsContainer}>
           <View>
             {pageNumber > 0 ? (
-              <Button
-                title={i18n.t('prev')}
-                onPress={() => incrementPageNumber('prev')}
-              />
+              <TouchableOpacity onPress={() => incrementPageNumber('prev')}>
+                <Text>{i18n.t('prev')}</Text>
+              </TouchableOpacity>
             ) : null}
           </View>
           <View>
-            <Button
-              title={pageNumber !== 3 ? i18n.t('next') : i18n.t('finish')}
+            <TouchableOpacity
               onPress={
                 pageNumber !== 3
                   ? () => incrementPageNumber('next')
                   : finishOnboarding
               }
-            />
+            >
+              <Text>
+                {pageNumber !== 3 ? i18n.t('next') : i18n.t('finish')}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

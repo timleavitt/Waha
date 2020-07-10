@@ -18,6 +18,8 @@ import ModalSelector from 'react-native-modal-selector'
 import LanguageSelectItem from '../components/LanguageSelectItem'
 import { FlatList } from 'react-native-gesture-handler'
 import { Audio } from 'expo-av'
+import { connect } from 'react-redux'
+import { addLanguage } from '../redux/actions/databaseActions'
 
 // translations import
 import en from '../translations/en.json'
@@ -89,14 +91,21 @@ function LanguageSelectScreen (props) {
   // render start button conditionally as the user can't start if they don't have internet
   var startButton = isConnected ? (
     <TouchableOpacity
-      onPress={() =>
-        props.navigation.navigate('OnboardingSlides', {
-          selectedLanguage: selectedLanguage
-        })
+      onPress={
+        props.route.name === 'LanguageSelect'
+          ? () =>
+              props.navigation.navigate('OnboardingSlides', {
+                selectedLanguage: selectedLanguage
+              })
+          : () => props.addLanguage(selectedLanguage)
       }
       style={[styles.button, { backgroundColor: '#60C239' }]}
     >
-      <Text style={styles.buttonTitle}>{i18n.t('letsBegin')} </Text>
+      <Text style={styles.buttonTitle}>
+        {props.route.name === 'LanguageSelect'
+          ? i18n.t('letsBegin')
+          : i18n.t('addLanguage')}{' '}
+      </Text>
     </TouchableOpacity>
   ) : (
     <View style={[styles.button, { backgroundColor: '#828282' }]}>
@@ -109,6 +118,14 @@ function LanguageSelectScreen (props) {
       <Text style={styles.errorMessage}>{i18n.t('noInternet')}</Text>
     </View>
   )
+
+  var headerText =
+    props.route.name === 'LanguageSelect' ? (
+      <View style={{ marginVertical: 40 * scaleMultiplier }}>
+        <Text style={styles.title}> {i18n.t('welcome')}</Text>
+        <Text style={styles.subtitle}> {i18n.t('selectLanguage')}</Text>
+      </View>
+    ) : null
 
   function renderLanguage (item) {
     return (
@@ -148,10 +165,7 @@ function LanguageSelectScreen (props) {
 
   return (
     <View style={styles.screen}>
-      <View style={{ marginVertical: 40 * scaleMultiplier }}>
-        <Text style={styles.title}> {i18n.t('welcome')}</Text>
-        <Text style={styles.subtitle}> {i18n.t('selectLanguage')}</Text>
-      </View>
+      {headerText}
       <View
         style={{
           width: '100%',
@@ -164,11 +178,48 @@ function LanguageSelectScreen (props) {
         <SectionList
           // sort sections to put brands associated with phone language at the
           //  top
-          sections={languages.sort((a, b) => {
-            if (i18n.locale.includes(a.languageCode)) return -1
-            else if (i18n.locale.includes(b.languageCode)) return 1
-            else return 0
-          })}
+          sections={
+            props.route.name === 'LanguageSelect'
+              ? languages.sort((a, b) => {
+                  if (i18n.locale.includes(a.languageCode)) return -1
+                  else if (i18n.locale.includes(b.languageCode)) return 1
+                  else return 0
+                })
+              : languages
+                  // sort based on closeness to phone language
+                  .sort((a, b) => {
+                    if (i18n.locale.includes(a.languageCode)) return -1
+                    else if (i18n.locale.includes(b.languageCode)) return 1
+                    else return 0
+                  })
+                  // filter out languages that are already installed
+                  .map(languageFamily => {
+                    return {
+                      ...languageFamily,
+                      // filter out languages that are in
+                      //  installedLanguageInstances which came from previous
+                      //  screen
+                      data: languageFamily.data.filter(language => {
+                        if (
+                          props.route.params.installedLanguageInstances.some(
+                            installedLanguage =>
+                              installedLanguage.languageID === language.wahaID
+                          )
+                        ) {
+                          return false
+                        } else {
+                          return true
+                        }
+                      })
+                    }
+                  })
+                  // if a language family has every language installed, don't
+                  //  show it
+                  .filter(languageFamily => {
+                    if (languageFamily.data.length !== 0) return true
+                    else return false
+                  })
+          }
           keyExtractor={item => item.wahaID}
           renderItem={renderLanguage}
           renderSectionHeader={({ section }) => renderLanguageHeader(section)}
@@ -232,4 +283,21 @@ const styles = StyleSheet.create({
   }
 })
 
-export default LanguageSelectScreen
+////REDUX
+
+function mapStateToProps (state) {
+  return {
+    isFetching: state.database.isFetching
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    addLanguage: language => dispatch(addLanguage(language))
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LanguageSelectScreen)
