@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     color: '#E74D3D'
   },
   languageLogo: {
-    resizeMode: 'stretch',
+    resizeMode: 'contain',
     width: 96 * scaleMultiplier,
     height: 32 * scaleMultiplier,
     marginRight: 20

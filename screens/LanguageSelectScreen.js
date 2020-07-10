@@ -20,6 +20,7 @@ import { FlatList } from 'react-native-gesture-handler'
 import { Audio } from 'expo-av'
 import { connect } from 'react-redux'
 import { addLanguage } from '../redux/actions/databaseActions'
+import BackButton from '../components/BackButton'
 
 // translations import
 import en from '../translations/en.json'
@@ -59,6 +60,8 @@ function LanguageSelectScreen (props) {
   //// CONSTRUCTOR
 
   useEffect(() => {
+    props.navigation.setOptions(getNavOptions())
+
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected)
     })
@@ -76,6 +79,14 @@ function LanguageSelectScreen (props) {
       unsubscribe()
     }
   }, [])
+
+  function getNavOptions () {
+    return props.route.name === 'AddLanguage'
+      ? {
+          headerTitle: i18n.t('newLanguage')
+        }
+      : null
+  }
 
   //// FUNCTIONS
 

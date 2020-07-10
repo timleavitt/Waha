@@ -2,13 +2,15 @@ import React from 'react'
 import { View, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import { scaleMultiplier } from '../constants'
 import * as FileSystem from 'expo-file-system'
-
+import i18n from 'i18n-js'
+import en from '../translations/en.json'
+import fr from '../translations/fr.json'
+import ar from '../translations/ar.json'
 import LessonListScreen from '../screens/LessonListScreen'
 import PlayScreen from '../screens/PlayScreen'
 import GroupsScreen from '../screens/GroupsScreen'
 import AddEditGroupScreen from '../screens/AddEditGroupScreen'
 import LanguageSelectScreen from '../screens/LanguageSelectScreen'
-
 import StorageScreen from '../screens/StorageScreen'
 import MTScreen from '../screens/MTScreen'
 import PasscodeScreen from '../screens/PasscodeScreen'
@@ -16,7 +18,13 @@ import SetTabNavigator from './SetTabs'
 import { createStackNavigator } from '@react-navigation/stack'
 import { connect } from 'react-redux'
 import SetsRoot from './SetsRoot'
+import BackButton from '../components/BackButton'
 
+i18n.translations = {
+  en,
+  fr,
+  ar
+}
 const Stack = createStackNavigator()
 
 function MainStack (props) {
@@ -99,15 +107,19 @@ function MainStack (props) {
         name='AddLanguage'
         component={LanguageSelectScreen}
         options={{
-          headerTitle:
-            props.translations.navigation.headers.addNewLanguageScreen,
           headerStyle: {
             backgroundColor: '#F7F7F7'
           },
           headerTitleStyle: {
             color: '#000000',
             fontFamily: props.font + '-medium'
-          }
+          },
+          headerRight: props.isRTL
+            ? () => <BackButton onPress={() => props.navigation.goBack()} />
+            : () => <View></View>,
+          headerLeft: props.isRTL
+            ? () => <View></View>
+            : () => <BackButton onPress={() => props.navigation.goBack()} />
         }}
       />
       <Stack.Screen

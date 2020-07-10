@@ -22,5 +22,10 @@
   "body3": "We’ve started downloading some necessary files for you. This process usually takes between 1 to 3 minutes.",
   "prev": "Previous",
   "next": "Next",
-  "finish": "Finish"
+  "finish": "Finish",
+  "loadingMessage": "Hang on, we're setting things up...",
+  "errorMessage": "Sorry, there was a problem during fetching. Please check your connection and try again.",
+  "retry": "Retry",
+  "addLanguage": "Add Language",
+  "newLanguage": "New Language"
 }

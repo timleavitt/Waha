@@ -21,16 +21,10 @@ import { scaleMultiplier } from '../constants'
 import en from '../translations/en.json'
 import fr from '../translations/fr.json'
 import ar from '../translations/ar.json'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import Onboarding from 'react-native-onboarding-swiper'
 
 function OnboardingSlidesScreen (props) {
   //// STATE
-
-  // keeps track of current onboarding page number
-  const [pageNumber, setPageNumber] = useState(0)
-
-  // reference to change flatlist
-  const [flatListRef, setFlatListRef] = useState()
 
   // translations for language select
   i18n.translations = {
@@ -39,15 +33,6 @@ function OnboardingSlidesScreen (props) {
     ar
   }
 
-  // stuff for flatlist
-  const onViewRef = useRef(info => {
-    console.log(info)
-    // if (viewableItems) {
-    //   setPageNumber(viewableItems[0].index)
-    // }
-  })
-  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 100 })
-
   //// CONSTRUCTOR
 
   useEffect(() => {
@@ -55,23 +40,7 @@ function OnboardingSlidesScreen (props) {
     props.addLanguage(language)
   }, [])
 
-  //// FUNCTIONS
-
-  // updates scroll when page number updates
-  useEffect(() => {
-    if (flatListRef) {
-      flatListRef.scrollToIndex({ index: pageNumber })
-    }
-  }, [pageNumber])
-
-  // decrements / increments page number
-  function incrementPageNumber (direction) {
-    if (direction === 'next') {
-      setPageNumber(oldPageNumber => (oldPageNumber += 1))
-    } else {
-      setPageNumber(oldPageNumber => (oldPageNumber -= 1))
-    }
-  }
+  // //// FUNCTIONS
 
   // tells redux that we're ready to go to loading screen once onboarding is finished
   function finishOnboarding () {
@@ -83,50 +52,130 @@ function OnboardingSlidesScreen (props) {
 
   const onboardingData = [
     {
-      key: '0',
-      imageSource: require('../assets/onboarding/onboarding1.png'),
+      backgroundColor: '#FFFFFF',
+      image: (
+        <Image
+          style={styles.image}
+          source={require('../assets/onboarding/onboarding1.png')}
+        />
+      ),
       title: i18n.t('title0'),
-      body: i18n.t('body0')
+      subtitle: i18n.t('body0')
     },
     {
-      key: '1',
-      imageSource: require('../assets/onboarding/onboarding2.png'),
+      backgroundColor: '#FFFFFF',
+      image: (
+        <Image
+          style={styles.image}
+          source={require('../assets/onboarding/onboarding2.png')}
+        />
+      ),
       title: i18n.t('title1'),
-      body: i18n.t('body1')
+      subtitle: i18n.t('body1')
     },
     {
-      key: '2',
-      imageSource: require('../assets/onboarding/onboarding3.png'),
+      backgroundColor: '#FFFFFF',
+      image: (
+        <Image
+          style={styles.image}
+          source={require('../assets/onboarding/onboarding3.png')}
+        />
+      ),
       title: i18n.t('title2'),
-      body: i18n.t('body2')
+      subtitle: i18n.t('body2')
     },
     {
-      key: '3',
-      imageSource: require('../assets/onboarding/onboarding4.png'),
+      backgroundColor: '#FFFFFF',
+      image: (
+        <Image
+          style={styles.image}
+          source={require('../assets/onboarding/onboarding4.png')}
+        />
+      ),
       title: i18n.t('title3'),
-      body: i18n.t('body3')
+      subtitle: i18n.t('body3')
     }
   ]
 
-  function renderOnboardingSlide (slideList) {
-    return (
-      <View style={styles.pageContainer}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{slideList.item.title}</Text>
-        </View>
-        <View style={styles.bodyContainer}>
-          <Text style={styles.body}>{slideList.item.body}</Text>
-        </View>
-        <View style={styles.imageContainer}>
-          <Image source={slideList.item.imageSource} style={styles.image} />
-        </View>
-      </View>
-    )
-  }
-
   return (
     <View style={styles.screen}>
-      <View style={styles.onboardingSequence}>
+      <Onboarding
+        pages={onboardingData}
+        showSkip={false}
+        onDone={finishOnboarding}
+        nextLabel={i18n.t('next')}
+        containerStyles={{ marginTop: 0 }}
+        imageContainerStyles={{
+          paddingBottom: Dimensions.get('window').width < 700 ? 0 : 60
+        }}
+      />
+    </View>
+  )
+}
+
+//// STYLES
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#F7F7F7',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
+  },
+  image: {
+    resizeMode: 'center',
+    width:
+      Dimensions.get('window').width < 700
+        ? 241 * scaleMultiplier
+        : 321 * scaleMultiplier,
+    height:
+      Dimensions.get('window').width < 700
+        ? 204 * scaleMultiplier
+        : 272 * scaleMultiplier
+  }
+})
+
+////REDUX
+
+function mapStateToProps (state) {
+  return {
+    isFetching: state.database.isFetching
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    addLanguage: language => dispatch(addLanguage(language)),
+    changeLanguage: language => dispatch(changeLanguage(language)),
+    setFinishedOnboarding: toSet => dispatch(setFinishedOnboarding(toSet)),
+    changeActiveGroup: name => {
+      dispatch(changeActiveGroup(name))
+    }
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(OnboardingSlidesScreen)
+
+// function renderOnboardingSlide (slideList) {
+//   return (
+//     <View style={styles.pageContainer}>
+//       <View style={styles.titleContainer}>
+//         <Text style={styles.title}>{slideList.item.title}</Text>
+//       </View>
+//       <View style={styles.bodyContainer}>
+//         <Text style={styles.body}>{slideList.item.body}</Text>
+//       </View>
+//       <View style={styles.imageContainer}>
+//         <Image source={slideList.item.imageSource} style={styles.image} />
+//       </View>
+//     </View>
+//   )
+// }
+
+/* <View style={styles.onboardingSequence}>
         <FlatList
           renderItem={renderOnboardingSlide}
           data={onboardingData}
@@ -169,93 +218,35 @@ function OnboardingSlidesScreen (props) {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
-    </View>
-  )
-}
+      </View> */
 
-//// STYLES
+// // updates scroll when page number updates
+// useEffect(() => {
+//   if (flatListRef) {
+//     flatListRef.scrollToIndex({ index: pageNumber })
+//   }
+// }, [pageNumber])
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#F7F7F7',
-    flexDirection: 'column',
-    justifyContent: 'space-between'
-  },
-  onboardingSequence: {
-    flex: 1,
-    padding: 10,
-    marginHorizontal: 20,
-    marginVertical: 50,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    borderColor: '#1D1E20',
-    borderWidth: 2,
-    flexDirection: 'column',
-    justifyContent: 'space-between'
-  },
-  pageContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    width: Dimensions.get('window').width - 64
-  },
-  imageContainer: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  image: {
-    resizeMode: 'center',
-    width: 321 * scaleMultiplier,
-    height: 272 * scaleMultiplier
-  },
-  titleContainer: {
-    width: '100%',
-    padding: 20
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 24 * scaleMultiplier,
-    flexWrap: 'wrap',
-    fontWeight: 'bold'
-  },
-  bodyContainer: {
-    width: '100%',
-    padding: 20
-  },
-  body: {
-    textAlign: 'center',
-    fontSize: 18 * scaleMultiplier,
-    flexWrap: 'wrap'
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    padding: 20
-  }
-})
+// // decrements / increments page number
+// function incrementPageNumber (direction) {
+//   if (direction === 'next') {
+//     setPageNumber(oldPageNumber => (oldPageNumber += 1))
+//   } else {
+//     setPageNumber(oldPageNumber => (oldPageNumber -= 1))
+//   }
+// }
 
-////REDUX
+// // stuff for flatlist
+// const onViewRef = useRef(info => {
+//   console.log(info)
+//   // if (viewableItems) {
+//   //   setPageNumber(viewableItems[0].index)
+//   // }
+// })
+// const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 100 })
 
-function mapStateToProps (state) {
-  return {
-    isFetching: state.database.isFetching
-  }
-}
+// // keeps track of current onboarding page number
+// const [pageNumber, setPageNumber] = useState(0)
 
-function mapDispatchToProps (dispatch) {
-  return {
-    addLanguage: language => dispatch(addLanguage(language)),
-    changeLanguage: language => dispatch(changeLanguage(language)),
-    setFinishedOnboarding: toSet => dispatch(setFinishedOnboarding(toSet)),
-    changeActiveGroup: name => {
-      dispatch(changeActiveGroup(name))
-    }
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(OnboardingSlidesScreen)
+// // reference to change flatlist
+// const [flatListRef, setFlatListRef] = useState()

@@ -119,12 +119,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    height: 45 * scaleMultiplier,
+    height: 55 * scaleMultiplier,
     paddingHorizontal: 20,
     justifyContent: 'space-between'
   },
   languageLogo: {
-    resizeMode: 'stretch',
+    resizeMode: 'contain',
     width: 96 * scaleMultiplier,
     height: 32 * scaleMultiplier,
     alignSelf: 'flex-end'

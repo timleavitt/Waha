@@ -242,14 +242,14 @@ export const languages = [
           'https://res.cloudinary.com/waha/image/upload/v1594243650/English/Discovering_God_eorblz.png'
       }
       // {
-      //   nativeName: 'English (UK)',
+      //   nativeName: "English (UK) *don't choose, will break*",
       //   wahaID: 'uk',
       //   i18nName: 'englishUK',
       //   logoSource:
       //     'https://www.arizonachristian.edu/wp-content/uploads/2017/06/logo-placeholder.png'
       // },
       // {
-      //   nativeName: 'English (Australia)',
+      //   nativeName: "English (Australia) *don't choose, will break*",
       //   wahaID: 'as',
       //   i18nName: 'englishAustralia',
       //   logoSource:
@@ -267,27 +267,27 @@ export const languages = [
         i18nName: 'darija',
         logoSource:
           'https://www.arizonachristian.edu/wp-content/uploads/2017/06/logo-placeholder.png'
-      },
-      {
-        nativeName: 'ليبي‎',
-        wahaID: 'la',
-        i18nName: 'laarbia',
-        logoSource:
-          'https://www.arizonachristian.edu/wp-content/uploads/2017/06/logo-placeholder.png'
       }
-    ]
-  },
-  {
-    i18nName: 'french',
-    languageCode: 'fr',
-    data: [
-      {
-        nativeName: 'Français',
-        wahaID: 'fr',
-        i18nName: 'french',
-        logoSource:
-          'https://www.arizonachristian.edu/wp-content/uploads/2017/06/logo-placeholder.png'
-      }
+      // {
+      //   nativeName: 'ليبي‎',
+      //   wahaID: 'la',
+      //   i18nName: 'laarbia',
+      //   logoSource:
+      //     'https://www.arizonachristian.edu/wp-content/uploads/2017/06/logo-placeholder.png'
+      // }
     ]
   }
+  // {
+  //   i18nName: 'french',
+  //   languageCode: 'fr',
+  //   data: [
+  //     {
+  //       nativeName: "Français *don't choose, will break*",
+  //       wahaID: 'fr',
+  //       i18nName: 'french',
+  //       logoSource:
+  //         'https://www.arizonachristian.edu/wp-content/uploads/2017/06/logo-placeholder.png'
+  //     }
+  //   ]
+  // }
 ]

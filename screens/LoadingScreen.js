@@ -6,21 +6,16 @@ import * as Progress from 'react-native-progress'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { scaleMultiplier } from '../constants'
 import { setFetchError, addLanguage } from '../redux/actions/databaseActions'
+// translations import
+import en from '../translations/en.json'
+import fr from '../translations/fr.json'
+import ar from '../translations/ar.json'
 
 function LoadingScreen (props) {
   i18n.translations = {
-    en: {
-      loadingMessage: "Hang on, we're setting things up...",
-      errorMessage:
-        'Sorry, there was a problem during fetching. Please check your connection and try again.',
-      retry: 'Retry'
-    },
-    te: {
-      loadingMessage: 'aliquet eget sit amet tellus cras...',
-      errorMessage:
-        'aliquet eget sit amet tellus cra aliquet eget sit amet tellus cra aliquet eget sit amet tellus cra',
-      retry: 'tellus'
-    }
+    en,
+    ar,
+    fr
   }
 
   function retry () {
