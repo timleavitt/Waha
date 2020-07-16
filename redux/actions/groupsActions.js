@@ -24,6 +24,7 @@ export function createGroup (groupName, language, emoji) {
 }
 
 export function editGroup (oldGroupName, newGroupName, emoji) {
+  console.log('editing')
   return {
     type: EDIT_GROUP,
     oldGroupName,

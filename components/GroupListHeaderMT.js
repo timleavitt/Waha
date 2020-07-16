@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
   },
   languageLogo: {
     resizeMode: 'contain',
-    width: 96 * scaleMultiplier,
-    height: 32 * scaleMultiplier,
+    width: 120 * scaleMultiplier,
+    height: 40 * scaleMultiplier,
     alignSelf: 'flex-end'
   }
 })

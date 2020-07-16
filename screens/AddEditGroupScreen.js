@@ -55,52 +55,87 @@ function AddEditGroupScreen (props) {
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
-  }, [props.isRTL])
+  }, [props.isRTL, groupName, emoji])
 
   //// NAV OPTIONS
 
   function getNavOptions () {
     return {
       headerRight: props.isRTL
-        ? () => <BackButton onPress={() => props.navigation.goBack()} />
+        ? () => (
+            <BackButton
+              onPress={() => {
+                if (props.route.name === 'EditGroup') {
+                  if (!checkForDuplicate()) editGroup()
+                }
+                props.navigation.goBack()
+              }}
+            />
+          )
         : () => <View></View>,
       headerLeft: props.isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => props.navigation.goBack()} />
+        : () => (
+            <BackButton
+              onPress={() => {
+                if (props.route.name === 'EditGroup') {
+                  if (!checkForDuplicate() && !checkForBlank()) editGroup()
+                } else props.navigation.goBack()
+              }}
+            />
+          )
     }
   }
 
   //// FUNCTIONS
 
-  // adds a group to redux if it passes all error checking
-  function addNewGroup () {
+  function checkForDuplicate () {
     var isDuplicate = false
-
-    props.groups.map(group => {
-      if (group.name === groupName) {
-        isDuplicate = true
-        return
-      }
-      return
-    })
-
-    if (isDuplicate) {
-      Alert.alert(
-        props.translations.alerts.sameGroupName.header,
-        props.translations.alerts.sameGroupName.text,
-        [{ text: props.translations.alerts.options.ok, onPress: () => {} }]
-      )
-      return
+    if (props.route.name === 'AddGroup') {
+      props.groups.forEach(group => {
+        if (group.name === groupName) {
+          Alert.alert(
+            props.translations.alerts.sameGroupName.header,
+            props.translations.alerts.sameGroupName.text,
+            [{ text: props.translations.alerts.options.ok, onPress: () => {} }]
+          )
+          isDuplicate = true
+        }
+      })
+    } else {
+      props.groups.forEach(group => {
+        if (
+          group.name === groupName &&
+          props.route.params.groupName !== groupName
+        ) {
+          Alert.alert(
+            props.translations.alerts.sameGroupName.header,
+            props.translations.alerts.sameGroupName.text,
+            [{ text: props.translations.alerts.options.ok, onPress: () => {} }]
+          )
+          isDuplicate = true
+        }
+      })
     }
 
+    return isDuplicate
+  }
+
+  function checkForBlank () {
     if (groupName === '') {
       Alert.alert(
         props.translations.alerts.blankGroupName.header,
         props.translations.alerts.blankGroupName.text,
         [{ text: props.translations.alerts.options.ok, onPress: () => {} }]
       )
-      return
+      return true
     }
+    return false
+  }
+
+  // adds a group to redux if it passes all error checking
+  function addNewGroup () {
+    if (checkForDuplicate() || checkForBlank()) return
 
     props.createGroup(groupName, props.route.params.languageID, emoji)
     props.changeActiveGroup(groupName)
@@ -119,20 +154,32 @@ function AddEditGroupScreen (props) {
 
   // renders the delete group button conditionally because the currently active group can't be deleted
   var deleteButton = isActive ? (
-    <Text
+    <View
       style={[
-        styles.cantDeleteText,
-        {
-          textAlign: props.isRTL ? 'right' : 'left',
-          fontFamily: props.font + '-regular'
-        }
+        styles.buttonContainer,
+        { borderWidth: 1, borderColor: '#9FA5AD', borderRadius: 10 }
       ]}
     >
-      {props.translations.labels.cantDeleteGroup}
-    </Text>
+      <Text
+        style={[
+          styles.cantDeleteText,
+          {
+            textAlign: props.isRTL ? 'right' : 'left',
+            fontFamily: props.font + '-regular'
+          }
+        ]}
+      >
+        {props.translations.labels.cantDeleteGroup}
+      </Text>
+    </View>
   ) : (
     <TouchableOpacity
-      style={styles.deleteGroupButtonContainer}
+      style={[
+        styles.buttonContainer,
+        {
+          backgroundColor: '#FF0800'
+        }
+      ]}
       onPress={() => {
         props.deleteGroup(props.route.params.groupName)
         props.navigation.goBack()
@@ -140,10 +187,11 @@ function AddEditGroupScreen (props) {
     >
       <Text
         style={[
-          styles.deleteGroupButtonText,
+          styles.buttonText,
           {
             textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-regular'
+            fontFamily: props.font + '-regular',
+            color: '#FFFFFF'
           }
         ]}
       >
@@ -154,9 +202,27 @@ function AddEditGroupScreen (props) {
 
   var editControls =
     props.route.name === 'EditGroup' ? (
-      <View style={{ paddingHorizontal: 20 }}>
+      <View
+        style={{
+          paddingHorizontal: 20,
+          paddingVertical: 10,
+          flex: 1,
+          flexDirection:
+            Dimensions.get('window').height < 550
+              ? props.isRTL
+                ? 'row-reverse'
+                : 'row'
+              : 'column'
+        }}
+      >
         <TouchableOpacity
-          style={styles.resetProgressButtonContainer}
+          style={[
+            styles.buttonContainer,
+            {
+              borderWidth: 1,
+              borderColor: '#FF0800'
+            }
+          ]}
           onPress={() =>
             Alert.alert(
               props.translations.alerts.resetProgress.header,
@@ -179,18 +245,40 @@ function AddEditGroupScreen (props) {
         >
           <Text
             style={[
-              styles.resetProgressButtonText,
+              styles.buttonText,
               {
                 textAlign: props.isRTL ? 'right' : 'left',
-                fontFamily: props.font + '-regular'
+                fontFamily: props.font + '-regular',
+                color: '#FF0800'
               }
             ]}
           >
             {props.translations.labels.resetProgress}
           </Text>
         </TouchableOpacity>
+        <View style={{ width: 20, height: '100%' }} />
         {deleteButton}
       </View>
+    ) : null
+
+  var saveButton =
+    props.route.name === 'AddGroup' ? (
+      <TouchableOpacity
+        style={[
+          styles.saveButtonContainer,
+          { alignSelf: props.isRTL ? 'flex-start' : 'flex-end' }
+        ]}
+        onPress={addNewGroup}
+      >
+        <Text
+          style={[
+            styles.saveButtonText,
+            { fontFamily: props.font + '-medium' }
+          ]}
+        >
+          {props.translations.labels.save}
+        </Text>
+      </TouchableOpacity>
     ) : null
 
   return (
@@ -290,22 +378,7 @@ function AddEditGroupScreen (props) {
         </View>
         {editControls}
       </View>
-      <TouchableOpacity
-        style={[
-          styles.saveButtonContainer,
-          { alignSelf: props.isRTL ? 'flex-start' : 'flex-end' }
-        ]}
-        onPress={props.route.name === 'AddGroup' ? addNewGroup : editGroup}
-      >
-        <Text
-          style={[
-            styles.saveButtonText,
-            { fontFamily: props.font + '-medium' }
-          ]}
-        >
-          {props.translations.labels.save}
-        </Text>
-      </TouchableOpacity>
+      {saveButton}
     </View>
   )
 }
@@ -331,7 +404,7 @@ const styles = StyleSheet.create({
     fontSize: 18 * scaleMultiplier
   },
   resetProgressButtonContainer: {
-    width: '100%',
+    flex: 1,
     borderColor: '#FF0800',
     borderWidth: 1,
     borderRadius: 10,
@@ -340,17 +413,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 15
   },
-  resetProgressButtonText: {
-    color: '#FF0800',
+  buttonText: {
+    textAlign: 'center',
     fontSize: 18 * scaleMultiplier
   },
-  deleteGroupButtonContainer: {
-    width: '100%',
+  buttonContainer: {
+    width:
+      Dimensions.get('window').height < 550
+        ? Dimensions.get('window').width / 2 - 30
+        : Dimensions.get('window').width - 40,
+    marginVertical: 10,
     borderRadius: 10,
     height: 55 * scaleMultiplier,
     justifyContent: 'center',
     paddingHorizontal: 15,
-    backgroundColor: '#FF0800'
+    alignItems: 'center'
   },
   deleteGroupButtonText: {
     color: '#FFFFFF',

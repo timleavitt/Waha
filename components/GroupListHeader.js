@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     width: 120 * scaleMultiplier,
     height: 40 * scaleMultiplier,
     // alignSelf: 'flex-end',
-    marginHorizontal: 10
+    marginHorizontal: 20
   },
   addGroupContainer: {
     height: 80 * scaleMultiplier,
