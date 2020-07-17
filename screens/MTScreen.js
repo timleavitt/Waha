@@ -169,6 +169,8 @@ function MTScreen (props) {
         hideModal={() => setShowHotMTsWorkModal(false)}
         title={props.translations.modals.enableMTContent.header}
         body={props.translations.modals.enableMTContent.text}
+        confirmText={props.translations.modals.enableMTContent.confirm}
+        confirmOnPress={() => setShowHotMTsWorkModal(false)}
         imageSource={require('../assets/gifs/unlock_mob_tools.gif')}
       />
     </View>

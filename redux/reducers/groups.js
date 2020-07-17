@@ -31,7 +31,8 @@ export function groups (state = [], action) {
               bookmark: 1
             }
           ],
-          showToolkit: false
+          showToolkit: false,
+          securityEnabled: false
         }
       ]
     case EDIT_GROUP:

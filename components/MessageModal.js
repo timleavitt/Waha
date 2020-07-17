@@ -6,6 +6,27 @@ import { connect } from 'react-redux'
 
 // modal variant that shows some information
 function MessageModal (props) {
+  var cancelButton = props.cancelText ? (
+    <TouchableOpacity
+      style={{
+        marginVertical: 15
+        // marginBottom: 40 * scaleMultiplier,
+        // marginTop: 80 * scaleMultiplier
+      }}
+      onPress={props.cancelOnPress}
+    >
+      <Text
+        style={{
+          fontFamily: props.font + '-medium',
+          fontSize: 24 * scaleMultiplier,
+          color: '#FF0800'
+        }}
+      >
+        {props.cancelText}
+      </Text>
+    </TouchableOpacity>
+  ) : null
+
   //// RENDER
   return (
     <Modal
@@ -21,7 +42,7 @@ function MessageModal (props) {
           style={{
             height: 200 * scaleMultiplier,
             margin: 20,
-            padding: 20,
+            // padding: 20,
             resizeMode: 'contain'
           }}
         />
@@ -41,6 +62,7 @@ function MessageModal (props) {
             fontFamily: props.font + '-medium',
             fontSize: 18 * scaleMultiplier,
             marginHorizontal: 15,
+            marginBottom: 20,
             textAlign: 'center'
           }}
         >
@@ -48,10 +70,11 @@ function MessageModal (props) {
         </Text>
         <TouchableOpacity
           style={{
-            marginBottom: 40 * scaleMultiplier,
-            marginTop: 80 * scaleMultiplier
+            marginVertical: 15
+            // marginBottom: 40 * scaleMultiplier
+            // marginTop: 80 * scaleMultiplier
           }}
-          onPress={props.hideModal}
+          onPress={props.confirmOnPress}
         >
           <Text
             style={{
@@ -60,9 +83,10 @@ function MessageModal (props) {
               color: '#60C239'
             }}
           >
-            Got it!
+            {props.confirmText}
           </Text>
         </TouchableOpacity>
+        {cancelButton}
       </View>
     </Modal>
   )
@@ -74,7 +98,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingVertical: 10
   }
 })
 
