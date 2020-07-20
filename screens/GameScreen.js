@@ -20,7 +20,6 @@ function GameScreen (props) {
   //// CONSTRUCTOR
 
   useEffect(() => {
-    console.log(pattern)
     if (pattern.includes('brownblueyellow'))
       props.navigation.replace('SetsRoot')
   }, [pattern])

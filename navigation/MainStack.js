@@ -38,7 +38,8 @@ const Stack = createStackNavigator()
 function MainStack (props) {
   function handleAppStateChange (change) {
     if (change === 'inactive' || change === 'background') {
-      if (props.securityEnabled) props.navigation.navigate('Game')
+      if (props.security.securityEnabled && props.security.activateOnSwitch)
+        props.navigation.navigate('Game')
     }
   }
 
@@ -51,12 +52,12 @@ function MainStack (props) {
     return function cleanup () {
       AppState.removeEventListener('change', handleAppStateChange)
     }
-  }, [props.securityEnabled])
+  }, [props.security.securityEnabled, props.security.activateOnSwitch])
 
   return (
     //global navigation options
     <Stack.Navigator
-      initialRouteName={props.securityEnabled ? 'Game' : 'SetsRoot'}
+      initialRouteName={props.security.securityEnabled ? 'Game' : 'SetsRoot'}
       screenOptions={{
         gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
         gestureResponseDistance: {
@@ -246,7 +247,7 @@ function mapStateToProps (state) {
     translations: state.database[activeGroup.language].translations,
     font: state.database[activeGroup.language].font,
     activeGroup: activeGroup,
-    securityEnabled: state.securityEnabled
+    security: state.security
   }
 }
 

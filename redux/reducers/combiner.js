@@ -7,7 +7,8 @@ import { activeGroup } from '../reducers/activeGroup'
 import { network } from '../reducers/network'
 import { toolkitEnabled } from '../reducers/toolkitEnabled'
 import { combineReducers } from 'redux'
-import { securityEnabled } from '../reducers/securityEnabled'
+import { security } from '../reducers/security'
+
 export default rootReducer = combineReducers({
   downloads,
   database,
@@ -16,5 +17,5 @@ export default rootReducer = combineReducers({
   network,
   fetchingStatus,
   toolkitEnabled,
-  securityEnabled
+  security
 })

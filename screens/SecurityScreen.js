@@ -20,7 +20,10 @@ import { getStateFromPath } from '@react-navigation/native'
 import BackButton from '../components/BackButton'
 import GroupListHeaderMT from '../components/GroupListHeaderMT'
 import MessageModal from '../components/MessageModal'
-import { setSecurityEnabled } from '../redux/actions/securityEnabledActions'
+import {
+  setSecurityEnabled,
+  setActivateOnSwitch
+} from '../redux/actions/securityActions'
 
 function SecurityScreen (props) {
   //// STATE
@@ -67,34 +70,114 @@ function SecurityScreen (props) {
       <View
         style={{
           width: '100%',
-          alignItems: 'center',
-          marginVertical: 50
+          alignItems: 'center'
         }}
       >
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 14 * scaleMultiplier,
+            fontFamily: props.font + '-regular',
+            paddingHorizontal: 20,
+            marginVertical: 10,
+            color: '#1D1E20'
+          }}
+        >
+          {props.translations.modals.securityWarning.text}
+        </Text>
         <View
           style={[
             styles.unlockButton,
             { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
           ]}
         >
-          <Text
+          <View style={{ justifyContent: 'center', flex: 1 }}>
+            <Text
+              style={{
+                fontFamily: props.font + '-medium',
+                fontSize: 18 * scaleMultiplier,
+                color: '#1D1E20'
+              }}
+            >
+              {props.translations.labels.securityMode}
+            </Text>
+            <Text
+              style={{
+                fontFamily: props.font + '-regular',
+                fontSize: 14 * scaleMultiplier,
+                color: '#82868D'
+              }}
+              numberOfLines={2}
+            >
+              {props.translations.labels.securityModeBlurb}
+            </Text>
+          </View>
+          <View
             style={{
-              fontFamily: props.font + '-medium',
-              fontSize: 18 * scaleMultiplier
+              flexDirection: 'row',
+              alignItems: 'center'
             }}
           >
-            {props.translations.labels.securityMode}
-          </Text>
+            <Icon
+              name='error-filled'
+              size={40 * scaleMultiplier}
+              color='#FF0800'
+              style={{ marginHorizontal: 20 }}
+            />
+            <Switch
+              trackColor={{ false: '#DEE3E9', true: '#60C239' }}
+              thumbColor='#FFFFFF'
+              ios_backgroundColor='#DEE3E9'
+              onValueChange={() => {
+                // toggle security mode on or off for the active group
+                if (props.security.securityEnabled) {
+                  props.setSecurityEnabled(false)
+                  props.setActivateOnSwitch(false)
+                } else setShowSecurityWarningModal(true)
+              }}
+              value={props.security.securityEnabled}
+            />
+          </View>
+        </View>
+        <View
+          style={[
+            styles.unlockButton,
+            { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+          ]}
+        >
+          <View style={{ justifyContent: 'center', flex: 1 }}>
+            <Text
+              style={{
+                fontFamily: props.font + '-medium',
+                fontSize: 18 * scaleMultiplier,
+                color: '#1D1E20'
+              }}
+            >
+              {props.translations.labels.activateOnSwitch}
+            </Text>
+            <Text
+              style={{
+                fontFamily: props.font + '-regular',
+                fontSize: 14 * scaleMultiplier,
+                color: '#82868D'
+              }}
+              numberOfLines={2}
+            >
+              {props.translations.labels.activateOnSwitchBlurb}
+            </Text>
+          </View>
           <Switch
             trackColor={{ false: '#DEE3E9', true: '#60C239' }}
             thumbColor='#FFFFFF'
             ios_backgroundColor='#DEE3E9'
             onValueChange={() => {
               // toggle security mode on or off for the active group
-              if (props.securityEnabled) props.setSecurityEnabled(false)
-              else setShowSecurityWarningModal(true)
+              if (props.security.activateOnSwitch)
+                props.setActivateOnSwitch(false)
+              else props.setActivateOnSwitch(true)
             }}
-            value={props.securityEnabled}
+            value={props.security.activateOnSwitch}
+            disabled={props.security.securityEnabled ? false : true}
           />
         </View>
       </View>
@@ -126,7 +209,7 @@ const styles = StyleSheet.create({
   },
   unlockButton: {
     width: '100%',
-    height: 80 * scaleMultiplier,
+    height: 100 * scaleMultiplier,
     backgroundColor: '#FFFFFF',
     borderWidth: 2,
     borderColor: '#EFF2F4',
@@ -153,13 +236,14 @@ function mapStateToProps (state) {
     font: state.database[activeGroup.language].font,
     activeGroup: activeGroup,
     toolkitEnabled: state.toolkitEnabled,
-    securityEnabled: state.securityEnabled
+    security: state.security
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    setSecurityEnabled: toSet => dispatch(setSecurityEnabled(toSet))
+    setSecurityEnabled: toSet => dispatch(setSecurityEnabled(toSet)),
+    setActivateOnSwitch: toSet => dispatch(setActivateOnSwitch(toSet))
   }
 }
 
