@@ -1,6 +1,7 @@
 import {
   SET_SECURITY_ENABLED,
-  SET_ACTIVATE_ON_SWITCH
+  SET_ACTIVATE_ON_SWITCH,
+  SET_CODE
 } from '../actions/securityActions'
 
 export function security (state = {}, action) {
@@ -15,6 +16,11 @@ export function security (state = {}, action) {
       return {
         ...state,
         activateOnSwitch: action.toSet
+      }
+    case SET_CODE:
+      return {
+        ...state,
+        code: action.code
       }
     default:
       return state
