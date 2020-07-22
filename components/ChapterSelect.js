@@ -48,7 +48,7 @@ function ChapterSelect (props) {
               }
             ]}
           >
-            {props.translations.labels.training}
+            {props.translations.play.training}
           </Text>
         </View>
       )
@@ -85,7 +85,7 @@ function ChapterSelect (props) {
               }
             ]}
           >
-            {props.translations.labels.training}
+            {props.translations.play.training}
           </Text>
         </View>
       )
@@ -129,7 +129,7 @@ function ChapterSelect (props) {
               }
             ]}
           >
-            {props.translations.labels.training}
+            {props.translations.play.training}
           </Text>
         </TouchableOpacity>
       )
@@ -166,7 +166,7 @@ function ChapterSelect (props) {
             }
           ]}
         >
-          {props.translations.labels.story}
+          {props.translations.play.story}
         </Text>
       </View>
     )
@@ -203,7 +203,7 @@ function ChapterSelect (props) {
             }
           ]}
         >
-          {props.translations.labels.story}
+          {props.translations.play.story}
         </Text>
       </View>
     )
@@ -235,7 +235,7 @@ function ChapterSelect (props) {
             }
           ]}
         >
-          {props.translations.labels.story}
+          {props.translations.play.story}
         </Text>
       </TouchableOpacity>
     )
@@ -279,7 +279,7 @@ function ChapterSelect (props) {
             }
           ]}
         >
-          {props.translations.labels.fellowship}
+          {props.translations.play.fellowship}
         </Text>
       </TouchableOpacity>
 
@@ -329,7 +329,7 @@ function ChapterSelect (props) {
             }
           ]}
         >
-          {props.translations.labels.application}
+          {props.translations.play.application}
         </Text>
       </TouchableOpacity>
     </View>

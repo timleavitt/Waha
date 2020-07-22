@@ -72,7 +72,10 @@ function MTScreen (props) {
           fontSize: 18 * scaleMultiplier
         }}
       >
-        {props.translations.labels.howMTsWork}
+        {
+          props.translations.mobilization_tools
+            .how_mobilization_tools_work_label
+        }
       </Text>
       <Icon
         name={props.isRTL ? 'arrow-left' : 'arrow-right'}
@@ -129,15 +132,15 @@ function MTScreen (props) {
             props.toolkitEnabled
               ? () =>
                   Alert.alert(
-                    props.translations.labels.mtUnlockCode,
+                    props.translations.mobilization_tools.mt_code_title,
                     '281820',
                     [
                       {
-                        text: props.translations.alerts.options.clipboard,
+                        text: props.translations.general.clipboard,
                         onPress: () => Clipboard.setString('281820')
                       },
                       {
-                        text: props.translations.alerts.options.close,
+                        text: props.translations.general.close,
                         onPress: () => {}
                       }
                     ]
@@ -152,8 +155,8 @@ function MTScreen (props) {
             }}
           >
             {props.toolkitEnabled
-              ? props.translations.labels.viewCode
-              : props.translations.labels.unlockMT}
+              ? props.translations.mobilization_tools.view_code_button_label
+              : props.translations.mobilization_tools.unlock_mt_button_label}
           </Text>
           <Icon
             name={props.isRTL ? 'arrow-left' : 'arrow-right'}
@@ -167,9 +170,13 @@ function MTScreen (props) {
       <MessageModal
         isVisible={showHowMTsWorkModal}
         hideModal={() => setShowHotMTsWorkModal(false)}
-        title={props.translations.modals.enableMTContent.header}
-        body={props.translations.modals.enableMTContent.text}
-        confirmText={props.translations.modals.enableMTContent.confirm}
+        title={
+          props.translations.mobilization_tools.how_to_enable_mt_content_title
+        }
+        body={
+          props.translations.mobilization_tools.how_to_enable_mt_content_message
+        }
+        confirmText={props.translations.general.got_it}
         confirmOnPress={() => setShowHotMTsWorkModal(false)}
         imageSource={require('../assets/gifs/unlock_mob_tools.gif')}
       />

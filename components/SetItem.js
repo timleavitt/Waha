@@ -341,9 +341,9 @@ function SetItem (props) {
       <MessageModal
         isVisible={showUnlockModal}
         hideModal={() => setShowUnlockModal(false)}
-        title={props.translations.modals.storySetUnlock.header}
-        body={props.translations.modals.storySetUnlock.text}
-        confirmText={props.translations.modals.storySetUnlock.confirm}
+        title={props.translations.general.popups.new_story_set_unlocked_title}
+        body={props.translations.general.popups.new_story_set_unlocked_message}
+        confirmText={props.translations.general.got_it}
         confirmOnPress={() => setShowUnlockModal(false)}
         imageSource={require('../assets/splash.png')}
       />

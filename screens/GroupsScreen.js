@@ -43,8 +43,8 @@ function GroupsScreen (props) {
                 ]}
               >
                 {isEditing
-                  ? props.translations.labels.done
-                  : props.translations.labels.edit}
+                  ? props.translations.groups.done_button_label
+                  : props.translations.groups.edit_button_label}
               </Text>
             </TouchableOpacity>
           ),
@@ -63,8 +63,8 @@ function GroupsScreen (props) {
                 ]}
               >
                 {isEditing
-                  ? props.translations.labels.done
-                  : props.translations.labels.edit}
+                  ? props.translations.groups.done_button_label
+                  : props.translations.groups.edit_button_label}
               </Text>
             </TouchableOpacity>
           )
@@ -117,23 +117,10 @@ function GroupsScreen (props) {
           ListFooterComponent={
             <TouchableOpacity
               style={styles.addNewLanguageContainer}
-              onPress={
-                props.isConnected
-                  ? () =>
-                      props.navigation.navigate('AddLanguage', {
-                        installedLanguageInstances: getInstalledLanguageInstances()
-                      })
-                  : () =>
-                      Alert.alert(
-                        props.translations.alerts.addLanguageNoInternet.header,
-                        props.translations.alerts.addLanguageNoInternet.text,
-                        [
-                          {
-                            text: props.translations.alerts.options.ok,
-                            onPress: () => {}
-                          }
-                        ]
-                      )
+              onPress={() =>
+                props.navigation.navigate('AddLanguage', {
+                  installedLanguageInstances: getInstalledLanguageInstances()
+                })
               }
             >
               <Text
@@ -145,7 +132,7 @@ function GroupsScreen (props) {
                   }
                 ]}
               >
-                {props.translations.labels.newLanguage}
+                {props.translations.groups.new_language_button_label}
               </Text>
             </TouchableOpacity>
           }

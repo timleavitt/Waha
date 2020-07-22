@@ -49,7 +49,7 @@ function WahaDrawer (props) {
         <View>
           <DrawerItem
             iconName='group'
-            text={props.translations.navigation.drawer.groups}
+            text={props.translations.groups.header}
             onPress={() => props.navigation.navigate('Groups')}
           />
           <DrawerItem
@@ -59,12 +59,12 @@ function WahaDrawer (props) {
           />
           <DrawerItem
             iconName='boat'
-            text={props.translations.navigation.drawer.mt}
+            text={props.translations.mobilization_tools.header}
             onPress={() => props.navigation.navigate('MT')}
           />
           <DrawerItem
             iconName='storage'
-            text={props.translations.navigation.drawer.storage}
+            text={props.translations.storage.header}
             onPress={() =>
               props.navigation.navigate('Storage', {
                 isRTL: props.isFetching ? null : props.isRTL
@@ -75,11 +75,9 @@ function WahaDrawer (props) {
         <View style={styles.smallDrawerItemsContainer}>
           <SmallDrawerItem
             onPress={() =>
-              openBrowser(
-                'https://docs.google.com/forms/d/e/1FAIpQLSeUvdc3Ehib_kIOMqkyBgECyqL7Jaj_ztFercRSfMnCXQ6UwA/viewform?usp=sf_link'
-              )
+              openBrowser('https://airtable.com/shrGQY4b3FSPprzmt')
             }
-            label={props.translations.navigation.drawer.feedback}
+            label={props.translations.general.feedback}
           />
           <SmallDrawerItem
             onPress={() =>
@@ -87,7 +85,7 @@ function WahaDrawer (props) {
                 'https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif'
               )
             }
-            label={props.translations.navigation.drawer.privacy}
+            label={props.translations.general.privacy}
           />
           <SmallDrawerItem
             onPress={() =>
@@ -95,7 +93,7 @@ function WahaDrawer (props) {
                 'https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif'
               )
             }
-            label={props.translations.navigation.drawer.credits}
+            label={props.translations.general.credits}
           />
           <Text
             style={[

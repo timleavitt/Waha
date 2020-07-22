@@ -105,7 +105,7 @@ function MainStack (props) {
         name='Groups'
         component={GroupsScreen}
         options={{
-          headerTitle: props.translations.navigation.headers.groupScreen,
+          headerTitle: props.translations.groups.header,
           headerStyle: {
             backgroundColor: '#EFF2F4'
           },
@@ -119,7 +119,7 @@ function MainStack (props) {
         name='AddGroup'
         component={AddEditGroupScreen}
         options={{
-          headerTitle: props.translations.navigation.headers.addNewGroupScreen,
+          headerTitle: props.translations.add_edit_group.header_add,
           headerStyle: {
             backgroundColor: '#FFFFFF'
           },
@@ -152,7 +152,7 @@ function MainStack (props) {
         name='EditGroup'
         component={AddEditGroupScreen}
         options={{
-          headerTitle: props.translations.navigation.headers.editGroupScreen,
+          headerTitle: props.translations.add_edit_group.header_edit,
           headerStyle: {
             backgroundColor: '#F7F7F7'
           },
@@ -166,7 +166,7 @@ function MainStack (props) {
         name='Storage'
         component={StorageScreen}
         options={{
-          headerTitle: props.translations.navigation.headers.storageScreen,
+          headerTitle: props.translations.storage.header,
           headerStyle: {
             backgroundColor: '#FFFFFF'
           },
@@ -180,7 +180,7 @@ function MainStack (props) {
         name='MT'
         component={MTScreen}
         options={{
-          headerTitle: props.translations.navigation.headers.mtScreen,
+          headerTitle: props.translations.mobilization_tools.header,
           headerStyle: {
             backgroundColor: '#F7F9FA'
           },
@@ -194,7 +194,7 @@ function MainStack (props) {
         name='Passcode'
         component={PasscodeScreen}
         options={{
-          headerTitle: props.translations.navigation.headers.mtScreen,
+          headerTitle: props.translations.mobilization_tools.header,
           headerStyle: {
             backgroundColor: '#F7F9FA'
           },
@@ -208,7 +208,7 @@ function MainStack (props) {
         name='Security'
         component={SecurityScreen}
         options={{
-          headerTitle: props.translations.navigation.headers.SecurityScreen,
+          headerTitle: props.translations.security.header,
           headerStyle: {
             backgroundColor: '#F7F7F7'
           },

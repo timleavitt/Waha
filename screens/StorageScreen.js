@@ -136,15 +136,17 @@ function StorageScreen (props) {
         ]}
         onPress={() =>
           Alert.alert(
-            props.translations.alerts.deleteDownloadedLessonsPerLanguage.header,
-            props.translations.alerts.deleteDownloadedLessonsPerLanguage.text,
+            props.translations.storage.popups
+              .delete_all_downloaded_lessons_for_a_language_title,
+            props.translations.storage.popups
+              .delete_all_downloaded_lessons_for_a_language_message,
             [
               {
-                text: props.translations.alerts.options.cancel,
+                text: props.translations.general.cancel,
                 onPress: () => {}
               },
               {
-                text: props.translations.alerts.options.ok,
+                text: props.translations.general.ok,
                 onPress: () =>
                   deleteDownloadedLessons(languageInstanceList.item.languageID)
               }
@@ -175,7 +177,7 @@ function StorageScreen (props) {
             style={[styles.mbText, { fontFamily: props.font + '-regular' }]}
           >
             {storageObject[languageInstanceList.item.languageID]}
-            {props.translations.labels.mb}
+            {props.translations.storage.megabyte_label}
           </Text>
         </View>
       </TouchableOpacity>
@@ -207,7 +209,7 @@ function StorageScreen (props) {
                       }
                     ]}
                   >
-                    {props.translations.labels.storageUsed}
+                    {props.translations.storage.storage_used_label}
                   </Text>
                   <Text
                     style={[
@@ -215,7 +217,7 @@ function StorageScreen (props) {
                       { fontFamily: props.font + '-regular' }
                     ]}
                   >
-                    {totalStorage} {props.translations.labels.mb}
+                    {totalStorage} {props.translations.storage.megabyte_label}
                   </Text>
                 </View>
                 <TouchableOpacity
@@ -228,16 +230,17 @@ function StorageScreen (props) {
                   ]}
                   onPress={() =>
                     Alert.alert(
-                      props.translations.alerts.deleteAllDownloadedLessons
-                        .header,
-                      props.translations.alerts.deleteAllDownloadedLessons.text,
+                      props.translations.storage.popups
+                        .delete_all_downloaded_lessons_title,
+                      props.translations.storage.popups
+                        .delete_all_downloaded_lessons_message,
                       [
                         {
-                          text: props.translations.alerts.options.cancel,
+                          text: props.translations.general.cancel,
                           onPress: () => {}
                         },
                         {
-                          text: props.translations.alerts.options.ok,
+                          text: props.translations.general.ok,
                           onPress: () => deleteDownloadedLessons()
                         }
                       ]
@@ -250,7 +253,10 @@ function StorageScreen (props) {
                       { fontFamily: props.font + '-regular' }
                     ]}
                   >
-                    {props.translations.labels.deleteAllDownloadedLessons}
+                    {
+                      props.translations.storage
+                        .delete_all_downloaded_lessons_button_label
+                    }
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -263,7 +269,7 @@ function StorageScreen (props) {
                   }
                 ]}
               >
-                {props.translations.labels.downloadedLessons}
+                {props.translations.storage.downloaded_lessons_list_label}
               </Text>
               <View
                 style={{ height: 2, flex: 1, backgroundColor: '#9FA5AD' }}

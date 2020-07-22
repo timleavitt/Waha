@@ -83,7 +83,7 @@ function SecurityScreen (props) {
             color: '#1D1E20'
           }}
         >
-          {props.translations.modals.securityWarning.text}
+          {props.translations.security.security_mode_description_text}
         </Text>
         <View
           style={[
@@ -99,7 +99,7 @@ function SecurityScreen (props) {
                 color: '#1D1E20'
               }}
             >
-              {props.translations.labels.securityMode}
+              {props.translations.security.security_mode_picker_label}
             </Text>
             <Text
               style={{
@@ -109,7 +109,7 @@ function SecurityScreen (props) {
               }}
               numberOfLines={2}
             >
-              {props.translations.labels.securityModeBlurb}
+              {props.translations.security.security_mode_picker_blurb}
             </Text>
           </View>
           <View
@@ -153,7 +153,7 @@ function SecurityScreen (props) {
                 color: '#1D1E20'
               }}
             >
-              {props.translations.labels.activateOnSwitch}
+              {props.translations.security.activate_on_switch_picker_label}
             </Text>
             <Text
               style={{
@@ -163,7 +163,7 @@ function SecurityScreen (props) {
               }}
               numberOfLines={2}
             >
-              {props.translations.labels.activateOnSwitchBlurb}
+              {props.translations.security.activate_on_switch_picker_blurb}
             </Text>
           </View>
           <Switch
@@ -184,14 +184,20 @@ function SecurityScreen (props) {
       <MessageModal
         isVisible={showSecurityWarningModal}
         hideModal={() => setShowSecurityWarningModal(false)}
-        title={props.translations.modals.securityWarning.header}
-        body={props.translations.modals.securityWarning.text}
-        confirmText={props.translations.modals.securityWarning.confirm}
+        title={
+          props.translations.security.popups
+            .activate_security_mode_confirmation_title
+        }
+        body={
+          props.translations.security.popups
+            .activate_security_mode_confirmation_message
+        }
+        confirmText={props.translations.general.confirm}
         confirmOnPress={() => {
           props.setSecurityEnabled(true)
           setShowSecurityWarningModal(false)
         }}
-        cancelText={props.translations.modals.securityWarning.cancel}
+        cancelText={props.translations.general.cancel}
         cancelOnPress={() => setShowSecurityWarningModal(false)}
         imageSource={require('../assets/gifs/unlock_mob_tools.gif')}
       />

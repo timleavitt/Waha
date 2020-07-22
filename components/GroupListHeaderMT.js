@@ -48,7 +48,10 @@ function GroupListHeaderMT (props) {
           textAlign: 'center'
         }}
       >
-        {props.translations.labels.noToolkit}
+        {
+          props.translations.mobilization_tools
+            .no_mobilization_tools_content_text
+        }
       </Text>
     </View>
   )
@@ -75,7 +78,9 @@ function GroupListHeaderMT (props) {
               color: '#9FA5AD'
             }}
           >
-            {props.languageName + ' ' + props.translations.labels.groups}
+            {props.languageName +
+              ' ' +
+              props.translations.mobilization_tools.groups_label}
           </Text>
           <Text
             style={{
@@ -85,7 +90,10 @@ function GroupListHeaderMT (props) {
               color: '#9FA5AD'
             }}
           >
-            {props.translations.labels.mtStatus}
+            {
+              props.translations.mobilization_tools
+                .mobilization_tools_status_label
+            }
           </Text>
         </View>
         <Image

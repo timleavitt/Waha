@@ -34,10 +34,12 @@ function SetScreen (props) {
   useEffect(() => {
     // console.log(props.route.name)
     if (props.route.name === 'Core') {
-      setAddNewSetLabel(props.translations.labels.addNewCoreStorySet)
+      setAddNewSetLabel(
+        props.translations.sets.add_foundational_story_set_button_label
+      )
       setSetCategory('core')
     } else if (props.route.name === 'Topical') {
-      setAddNewSetLabel(props.translations.labels.addNewTopicalSet)
+      setAddNewSetLabel(props.translations.sets.add_topical_set_button_label)
       setSetCategory('topical')
     } else {
       setSetCategory('mt')

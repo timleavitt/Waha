@@ -95,9 +95,10 @@ function AddEditGroupScreen (props) {
       props.groups.forEach(group => {
         if (group.name === groupName) {
           Alert.alert(
-            props.translations.alerts.sameGroupName.header,
-            props.translations.alerts.sameGroupName.text,
-            [{ text: props.translations.alerts.options.ok, onPress: () => {} }]
+            props.translations.groups.add_edit_group.duplicate_group_name_title,
+            props.translations.groups.add_edit_group
+              .duplicate_group_name_message,
+            [{ text: props.translations.general.ok, onPress: () => {} }]
           )
           isDuplicate = true
         }
@@ -109,9 +110,10 @@ function AddEditGroupScreen (props) {
           props.route.params.groupName !== groupName
         ) {
           Alert.alert(
-            props.translations.alerts.sameGroupName.header,
-            props.translations.alerts.sameGroupName.text,
-            [{ text: props.translations.alerts.options.ok, onPress: () => {} }]
+            props.translations.groups.add_edit_group.duplicate_group_name_title,
+            props.translations.groups.add_edit_group
+              .duplicate_group_name_message,
+            [{ text: props.translations.general.ok, onPress: () => {} }]
           )
           isDuplicate = true
         }
@@ -124,9 +126,9 @@ function AddEditGroupScreen (props) {
   function checkForBlank () {
     if (groupName === '') {
       Alert.alert(
-        props.translations.alerts.blankGroupName.header,
-        props.translations.alerts.blankGroupName.text,
-        [{ text: props.translations.alerts.options.ok, onPress: () => {} }]
+        props.translations.groups.add_edit_group.blank_group_name_title,
+        props.translations.groups.add_edit_group.blank_group_name_message,
+        [{ text: props.translations.general.ok, onPress: () => {} }]
       )
       return true
     }
@@ -169,7 +171,7 @@ function AddEditGroupScreen (props) {
           }
         ]}
       >
-        {props.translations.labels.cantDeleteGroup}
+        {props.translations.add_edit_group.cant_delete_group_text}
       </Text>
     </View>
   ) : (
@@ -195,7 +197,7 @@ function AddEditGroupScreen (props) {
           }
         ]}
       >
-        {props.translations.labels.deleteGroup}
+        {props.translations.add_edit_group.delete_group_button_label}
       </Text>
     </TouchableOpacity>
   )
@@ -225,15 +227,15 @@ function AddEditGroupScreen (props) {
           ]}
           onPress={() =>
             Alert.alert(
-              props.translations.alerts.resetProgress.header,
-              props.translations.alerts.resetProgress.text,
+              props.translations.add_edit_group.reset_progress_title,
+              props.translations.add_edit_group.reset_progress_message,
               [
                 {
-                  text: props.translations.alerts.options.cancel,
+                  text: props.translations.general.cancel,
                   onPress: () => {}
                 },
                 {
-                  text: props.translations.alerts.options.ok,
+                  text: props.translations.general.ok,
                   onPress: () => {
                     props.resetProgress(props.route.params.groupName)
                     props.navigation.goBack()
@@ -253,7 +255,7 @@ function AddEditGroupScreen (props) {
               }
             ]}
           >
-            {props.translations.labels.resetProgress}
+            {props.translations.add_edit_group.reset_progress_button_label}
           </Text>
         </TouchableOpacity>
         <View style={{ width: 20, height: '100%' }} />
@@ -276,7 +278,7 @@ function AddEditGroupScreen (props) {
             { fontFamily: props.font + '-medium' }
           ]}
         >
-          {props.translations.labels.save}
+          {props.translations.add_edit_group.save_button_label}
         </Text>
       </TouchableOpacity>
     ) : null
@@ -300,7 +302,7 @@ function AddEditGroupScreen (props) {
               color: '#9FA5AD'
             }}
           >
-            {props.translations.labels.groupName}
+            {props.translations.add_edit_group.group_name_form_label}
           </Text>
           <TextInput
             style={[
@@ -314,7 +316,9 @@ function AddEditGroupScreen (props) {
             value={groupName}
             autoCapitalize='words'
             autoCorrect={false}
-            placeholder={props.translations.labels.groupNamePlaceholder}
+            placeholder={
+              props.translations.add_edit_group.group_name_form_placeholder
+            }
             placeholderTextColor='#9FA5AD'
             maxLength={50}
             returnKeyType='done'
@@ -331,7 +335,7 @@ function AddEditGroupScreen (props) {
             marginBottom: 5
           }}
         >
-          {props.translations.labels.icon}
+          {props.translations.add_edit_group.icon_form_label}
         </Text>
         <View
           style={{
