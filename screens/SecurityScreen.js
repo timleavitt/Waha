@@ -9,12 +9,13 @@ import {
   TouchableOpacity,
   Clipboard,
   Alert,
-  Switch
+  Switch,
+  ScrollView
 } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 import SetItem from '../components/SetItem'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import { scaleMultiplier, keyColors } from '../constants'
 import { resumeDownload } from '../redux/actions/downloadActions'
 import { getStateFromPath } from '@react-navigation/native'
 import BackButton from '../components/BackButton'
@@ -24,6 +25,8 @@ import {
   setSecurityEnabled,
   setActivateOnSwitch
 } from '../redux/actions/securityActions'
+import KeyLabel from '../components/KeyLabel'
+import Piano from '../components/Piano'
 
 function SecurityScreen (props) {
   //// STATE
@@ -31,6 +34,7 @@ function SecurityScreen (props) {
     false
   )
 
+  const [showViewKeyOrderModal, setShowViewKeyOrderModal] = useState(false)
   //// CONSTRUCTOR
 
   useEffect(() => {
@@ -49,10 +53,107 @@ function SecurityScreen (props) {
     }
   }
 
+  var securityControls = props.security.code ? (
+    <View style={{ width: '100%', marginTop: 50 * scaleMultiplier }}>
+      {/* activate on switch button */}
+      <View
+        style={[
+          styles.unlockButton,
+          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        ]}
+      >
+        <View style={{ justifyContent: 'center', flex: 1 }}>
+          <Text
+            style={{
+              fontFamily: props.font + '-medium',
+              fontSize: 18 * scaleMultiplier,
+              color: '#1D1E20'
+            }}
+          >
+            {props.translations.security.activate_on_switch_picker_label}
+          </Text>
+          <Text
+            style={{
+              fontFamily: props.font + '-regular',
+              fontSize: 14 * scaleMultiplier,
+              color: '#82868D'
+            }}
+            numberOfLines={2}
+          >
+            {props.translations.security.activate_on_switch_picker_blurb}
+          </Text>
+        </View>
+        <Switch
+          trackColor={{ false: '#DEE3E9', true: '#60C239' }}
+          thumbColor='#FFFFFF'
+          ios_backgroundColor='#DEE3E9'
+          onValueChange={() => {
+            // toggle security mode on or off
+            if (props.security.activateOnSwitch)
+              props.setActivateOnSwitch(false)
+            else props.setActivateOnSwitch(true)
+          }}
+          value={props.security.activateOnSwitch}
+          disabled={props.security.securityEnabled ? false : true}
+        />
+      </View>
+      {/* Change key order button */}
+      <TouchableOpacity
+        style={[
+          styles.unlockButton,
+          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        ]}
+        onPress={() => props.navigation.navigate('KeyOrderChange_Old')}
+      >
+        <View style={{ justifyContent: 'center', flex: 1 }}>
+          <Text
+            style={{
+              fontFamily: props.font + '-medium',
+              fontSize: 18 * scaleMultiplier,
+              color: '#1D1E20'
+            }}
+          >
+            {props.translations.security.change_key_order_button_label}
+          </Text>
+        </View>
+        <Icon
+          name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+          color='#3A3C3F'
+          size={50 * scaleMultiplier}
+        />
+      </TouchableOpacity>
+      {/* View key order button */}
+      <TouchableOpacity
+        style={[
+          styles.unlockButton,
+          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        ]}
+        onPress={() => setShowViewKeyOrderModal(true)}
+      >
+        <View style={{ justifyContent: 'center', flex: 1 }}>
+          <Text
+            style={{
+              fontFamily: props.font + '-medium',
+              fontSize: 18 * scaleMultiplier,
+              color: '#1D1E20'
+            }}
+          >
+            {props.translations.security.view_key_order_button_label}
+          </Text>
+        </View>
+        <Icon
+          name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+          color='#3A3C3F'
+          size={50 * scaleMultiplier}
+        />
+      </TouchableOpacity>
+    </View>
+  ) : null
+
   //// RENDER
 
   return (
-    <View style={styles.screen}>
+    <ScrollView style={styles.screen}>
       <View
         style={{
           backgroundColor: '#FFFFFF',
@@ -88,7 +189,10 @@ function SecurityScreen (props) {
         <View
           style={[
             styles.unlockButton,
-            { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+            {
+              flexDirection: props.isRTL ? 'row-reverse' : 'row',
+              marginTop: 50 * scaleMultiplier
+            }
           ]}
         >
           <View style={{ justifyContent: 'center', flex: 1 }}>
@@ -130,58 +234,22 @@ function SecurityScreen (props) {
               ios_backgroundColor='#DEE3E9'
               onValueChange={() => {
                 // toggle security mode on or off for the active group
-                if (props.security.securityEnabled) {
-                  props.setSecurityEnabled(false)
-                  props.setActivateOnSwitch(false)
-                } else setShowSecurityWarningModal(true)
+                if (props.security.code) {
+                  if (props.security.securityEnabled) {
+                    props.setSecurityEnabled(false)
+                    props.setActivateOnSwitch(false)
+                  } else props.setSecurityEnabled(true)
+                } else {
+                  props.navigation.navigate('SecurityOnboarding')
+                }
               }}
               value={props.security.securityEnabled}
             />
           </View>
         </View>
-        <View
-          style={[
-            styles.unlockButton,
-            { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
-          ]}
-        >
-          <View style={{ justifyContent: 'center', flex: 1 }}>
-            <Text
-              style={{
-                fontFamily: props.font + '-medium',
-                fontSize: 18 * scaleMultiplier,
-                color: '#1D1E20'
-              }}
-            >
-              {props.translations.security.activate_on_switch_picker_label}
-            </Text>
-            <Text
-              style={{
-                fontFamily: props.font + '-regular',
-                fontSize: 14 * scaleMultiplier,
-                color: '#82868D'
-              }}
-              numberOfLines={2}
-            >
-              {props.translations.security.activate_on_switch_picker_blurb}
-            </Text>
-          </View>
-          <Switch
-            trackColor={{ false: '#DEE3E9', true: '#60C239' }}
-            thumbColor='#FFFFFF'
-            ios_backgroundColor='#DEE3E9'
-            onValueChange={() => {
-              // toggle security mode on or off for the active group
-              if (props.security.activateOnSwitch)
-                props.setActivateOnSwitch(false)
-              else props.setActivateOnSwitch(true)
-            }}
-            value={props.security.activateOnSwitch}
-            disabled={props.security.securityEnabled ? false : true}
-          />
-        </View>
+        {securityControls}
       </View>
-      <MessageModal
+      {/* <MessageModal
         isVisible={showSecurityWarningModal}
         hideModal={() => setShowSecurityWarningModal(false)}
         title={
@@ -200,8 +268,78 @@ function SecurityScreen (props) {
         cancelText={props.translations.general.cancel}
         cancelOnPress={() => setShowSecurityWarningModal(false)}
         imageSource={require('../assets/gifs/unlock_mob_tools.gif')}
+      /> */}
+      <MessageModal
+        isVisible={showViewKeyOrderModal}
+        hideModal={() => setShowViewKeyOrderModal(false)}
+        title={props.translations.security.your_key_order_label}
+        body={
+          props.translations.security.popups
+            .activate_security_mode_confirmation_message
+        }
+        confirmText={props.translations.general.close}
+        confirmOnPress={() => setShowViewKeyOrderModal(false)}
+        topComponent={
+          props.security.code ? (
+            <View style={{ justifyContent: 'center' }}>
+              <Piano setPattern={() => {}} />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  marginTop: 20
+                }}
+              >
+                <View style={styles.keyPlaceholder}>
+                  <KeyLabel
+                    backgroundColor={
+                      keyColors[
+                        props.security.code.substr(0, 2).replace(/^0+/, '')
+                      ]
+                    }
+                    number={props.security.code.substr(0, 2).replace(/^0+/, '')}
+                    style={{ alignSelf: null, marginBottom: 0 }}
+                  />
+                </View>
+                <View style={styles.keyPlaceholder}>
+                  <KeyLabel
+                    backgroundColor={
+                      keyColors[
+                        props.security.code.substr(2, 2).replace(/^0+/, '')
+                      ]
+                    }
+                    number={props.security.code.substr(2, 2).replace(/^0+/, '')}
+                    style={{ alignSelf: null, marginBottom: 0 }}
+                  />
+                </View>
+                <View style={styles.keyPlaceholder}>
+                  <KeyLabel
+                    backgroundColor={
+                      keyColors[
+                        props.security.code.substr(4, 2).replace(/^0+/, '')
+                      ]
+                    }
+                    number={props.security.code.substr(4, 2).replace(/^0+/, '')}
+                    style={{ alignSelf: null, marginBottom: 0 }}
+                  />
+                </View>
+                <View style={styles.keyPlaceholder}>
+                  <KeyLabel
+                    backgroundColor={
+                      keyColors[
+                        props.security.code.substr(6, 2).replace(/^0+/, '')
+                      ]
+                    }
+                    number={props.security.code.substr(6, 2).replace(/^0+/, '')}
+                    style={{ alignSelf: null, marginBottom: 0 }}
+                  />
+                </View>
+              </View>
+            </View>
+          ) : null
+        }
       />
-    </View>
+    </ScrollView>
   )
 }
 
@@ -210,8 +348,8 @@ function SecurityScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#F7F7F7',
-    alignItems: 'center'
+    backgroundColor: '#F7F7F7'
+    // alignItems: 'center'
   },
   unlockButton: {
     width: '100%',
@@ -224,6 +362,15 @@ const styles = StyleSheet.create({
     //marginVertical: 40 * scaleMultiplier,
     paddingHorizontal: 20,
     justifyContent: 'space-between'
+  },
+  keyPlaceholder: {
+    width: 80 * scaleMultiplier,
+    height: 80 * scaleMultiplier,
+    borderRadius: 40 * scaleMultiplier,
+    backgroundColor: '#EAEEF0',
+    margin: 5,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })
 
@@ -233,6 +380,7 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
+  console.log(state.security)
   return {
     database: state.database,
     activeDatabase: state.database[activeGroup.language],

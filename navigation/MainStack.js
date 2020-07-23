@@ -21,6 +21,8 @@ import StorageScreen from '../screens/StorageScreen'
 import MTScreen from '../screens/MTScreen'
 import PasscodeScreen from '../screens/PasscodeScreen'
 import SecurityScreen from '../screens/SecurityScreen'
+import SecurityOnboardingScreen from '../screens/SecurityOnboardingScreen'
+import KeyOrderSetScreen from '../screens/KeyOrderSetScreen'
 import GameScreen from '../screens/GameScreen'
 import SetTabNavigator from './SetTabs'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -210,7 +212,7 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.security.header,
           headerStyle: {
-            backgroundColor: '#F7F7F7'
+            backgroundColor: '#F7F9FA'
           },
           headerTitleStyle: {
             color: '#000000',
@@ -218,6 +220,86 @@ function MainStack (props) {
           }
         }}
       />
+      <Stack.Screen
+        name='SecurityOnboarding'
+        component={SecurityOnboardingScreen}
+        options={{
+          headerTitle: props.translations.security.header,
+          headerStyle: {
+            backgroundColor: '#F7F9FA'
+          },
+          headerTitleStyle: {
+            color: '#000000',
+            fontFamily: props.font + '-medium'
+          }
+        }}
+      />
+      <Stack.Screen
+        name='KeyOrderSet_Initial'
+        component={KeyOrderSetScreen}
+        options={{
+          headerStyle: {
+            backgroundColor: '#F7F9FA'
+          },
+          headerTitleStyle: {
+            color: '#000000',
+            fontFamily: props.font + '-medium'
+          }
+        }}
+      />
+      <Stack.Screen
+        name='KeyOrderSet_Confirm'
+        component={KeyOrderSetScreen}
+        options={{
+          headerStyle: {
+            backgroundColor: '#F7F9FA'
+          },
+          headerTitleStyle: {
+            color: '#000000',
+            fontFamily: props.font + '-medium'
+          }
+        }}
+      />
+      <Stack.Screen
+        name='KeyOrderChange_Old'
+        component={KeyOrderSetScreen}
+        options={{
+          headerStyle: {
+            backgroundColor: '#F7F9FA'
+          },
+          headerTitleStyle: {
+            color: '#000000',
+            fontFamily: props.font + '-medium'
+          }
+        }}
+      />
+      <Stack.Screen
+        name='KeyOrderChange_Initial'
+        component={KeyOrderSetScreen}
+        options={{
+          headerStyle: {
+            backgroundColor: '#F7F9FA'
+          },
+          headerTitleStyle: {
+            color: '#000000',
+            fontFamily: props.font + '-medium'
+          }
+        }}
+      />
+      <Stack.Screen
+        name='KeyOrderChange_Confirm'
+        component={KeyOrderSetScreen}
+        options={{
+          headerStyle: {
+            backgroundColor: '#F7F9FA'
+          },
+          headerTitleStyle: {
+            color: '#000000',
+            fontFamily: props.font + '-medium'
+          }
+        }}
+      />
+
       <Stack.Screen
         name='Game'
         component={GameScreen}

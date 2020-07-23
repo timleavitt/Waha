@@ -13,7 +13,13 @@ function KeyLabel (props) {
   // RENDER
 
   return (
-    <View style={[styles.circle, { backgroundColor: props.backgroundColor }]}>
+    <View
+      style={[
+        styles.circle,
+        { backgroundColor: props.backgroundColor },
+        props.style
+      ]}
+    >
       <Text
         style={{
           fontFamily: props.font + '-medium',

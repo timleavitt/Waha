@@ -12,7 +12,8 @@ const persistConfig = {
     'fetchingStatus',
     'toolkitEnabled'
     // 'groups',
-    // 'database'
+    // 'database',
+    // 'security'
   ]
 }
 

@@ -7,7 +7,7 @@ import {
   Dimensions
 } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import { scaleMultiplier, keyColors } from '../constants'
 import KeyLabel from '../components/KeyLabel'
 function Piano (props) {
   // RENDER
@@ -32,32 +32,32 @@ function Piano (props) {
           style={styles.blackKey}
           onPress={() => props.setPattern(pattern => pattern + '02')}
         >
-          <KeyLabel backgroundColor={'#3cb44b'} number='2' />
+          <KeyLabel backgroundColor={keyColors['2']} number='2' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => props.setPattern(pattern => pattern + '04')}
         >
-          <KeyLabel backgroundColor={'#911eb4'} number='4' />
+          <KeyLabel backgroundColor={keyColors['4']} number='4' />
         </TouchableOpacity>
         <View style={{ flex: 1 }} />
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => props.setPattern(pattern => pattern + '07')}
         >
-          <KeyLabel backgroundColor={'#e6194B'} number='7' />
+          <KeyLabel backgroundColor={keyColors['7']} number='7' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => props.setPattern(pattern => pattern + '09')}
         >
-          <KeyLabel backgroundColor={'#469990'} number='9' />
+          <KeyLabel backgroundColor={keyColors['9']} number='9' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => props.setPattern(pattern => pattern + '11')}
         >
-          <KeyLabel backgroundColor={'#dcbeff'} number='11' />
+          <KeyLabel backgroundColor={keyColors['11']} number='11' />
         </TouchableOpacity>
         <View style={{ flex: 0.5 }} />
       </View>
@@ -71,43 +71,43 @@ function Piano (props) {
           style={styles.whiteKey}
           onPress={() => props.setPattern(pattern => pattern + '01')}
         >
-          <KeyLabel backgroundColor={'#ffe119'} number='1' />
+          <KeyLabel backgroundColor={keyColors['1']} number='1' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => props.setPattern(pattern => pattern + '03')}
         >
-          <KeyLabel backgroundColor={'#4363d8'} number='3' />
+          <KeyLabel backgroundColor={keyColors['3']} number='3' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => props.setPattern(pattern => pattern + '05')}
         >
-          <KeyLabel backgroundColor={'#aaffc3'} number='5' />
+          <KeyLabel backgroundColor={keyColors['5']} number='5' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => props.setPattern(pattern => pattern + '06')}
         >
-          <KeyLabel backgroundColor={'#f032e6'} number='6' />
+          <KeyLabel backgroundColor={keyColors['6']} number='6' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => props.setPattern(pattern => pattern + '08')}
         >
-          <KeyLabel backgroundColor={'#42d4f4'} number='8' />
+          <KeyLabel backgroundColor={keyColors['8']} number='8' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => props.setPattern(pattern => pattern + '10')}
         >
-          <KeyLabel backgroundColor={'#bfef45'} number='10' />
+          <KeyLabel backgroundColor={keyColors['10']} number='10' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => props.setPattern(pattern => pattern + '12')}
         >
-          <KeyLabel backgroundColor={'#9A6324'} number='12' />
+          <KeyLabel backgroundColor={keyColors['12']} number='12' />
         </TouchableOpacity>
       </View>
     </View>

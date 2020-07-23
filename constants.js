@@ -291,3 +291,18 @@ export const languages = [
   //   ]
   // }
 ]
+
+export const keyColors = {
+  1: '#ffe119',
+  2: '#3cb44b',
+  3: '#4363d8',
+  4: '#911eb4',
+  5: '#aaffc3',
+  6: '#f032e6',
+  7: '#e6194B',
+  8: '#42d4f4',
+  9: '#469990',
+  10: '#bfef45',
+  11: '#dcbeff',
+  12: '#9A6324'
+}
