@@ -14,6 +14,7 @@ import {
 } from 'react-native'
 import Piano from '../components/Piano'
 import { connect } from 'react-redux'
+import { Audio } from 'expo-av'
 
 function GameScreen (props) {
   //// STATE
@@ -24,11 +25,16 @@ function GameScreen (props) {
 
   useEffect(() => {
     console.log(pattern)
-    if (pattern.includes(props.security.code))
+    if (pattern.includes(props.security.code)) {
+      var note = new Audio.Sound()
+      note
+        .loadAsync(require('../assets/notes/Success.mp3'))
+        .then(() => note.playAsync())
       props.navigation.reset({
         index: 0,
         routes: [{ name: 'SetsRoot' }]
       })
+    }
   }, [pattern])
 
   //// RENDER
