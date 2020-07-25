@@ -33,7 +33,7 @@ export default function App () {
   // lock orientation to portrait or upside down
   ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
 
-  // loads up all the fonts
+  // loads up all the fonts for all languages
   async function loadFonts () {
     await Font.loadAsync({
       waha: require('./assets/fonts/waha.ttf')
@@ -46,15 +46,6 @@ export default function App () {
     })
     await Font.loadAsync({
       'roboto-regular': require('./assets/fonts/Roboto/Roboto-Regular.ttf')
-    })
-    await Font.loadAsync({
-      'playfairdisplay-black': require('./assets/fonts/PlayfairDisplay/PlayfairDisplay-Black.ttf')
-    })
-    await Font.loadAsync({
-      'playfairdisplay-medium': require('./assets/fonts/PlayfairDisplay/PlayfairDisplay-Medium.ttf')
-    })
-    await Font.loadAsync({
-      'playfairdisplay-regular': require('./assets/fonts/PlayfairDisplay/PlayfairDisplay-Regular.ttf')
     })
     setFontsLoaded(true)
   }

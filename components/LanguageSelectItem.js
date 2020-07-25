@@ -1,21 +1,19 @@
-import React, { useEffect } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
-import { scaleMultiplier, languageT2S } from '../constants'
-import * as FileSystem from 'expo-file-system'
-
+import React from 'react'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { colors, scaleMultiplier } from '../constants'
 function LanguageSelectItem (props) {
   // FUNCTIONS
 
   iconComponent = props.isSelected ? (
     <View style={{ marginHorizontal: 20 }}>
-      <Icon name='check' size={30} color='#60C239' />
+      <Icon name='check' size={30} color={colors.apple} />
     </View>
   ) : (
     <TouchableOpacity
       onPress={props.playAudio}
       style={{ marginHorizontal: 20 }}
     >
-      <Icon name='volume' size={30} color='black' />
+      <Icon name='volume' size={30} color={colors.shark} />
     </TouchableOpacity>
   )
 
@@ -28,8 +26,8 @@ function LanguageSelectItem (props) {
         justifyContent: 'space-between',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#EFF2F4',
-        backgroundColor: props.isSelected ? '#BFE5AF' : '#FFFFFF'
+        borderColor: colors.athens,
+        backgroundColor: props.isSelected ? '#BFE5AF' : colors.white
       }}
     >
       {iconComponent}
@@ -51,6 +49,7 @@ function LanguageSelectItem (props) {
         >
           <Text
             style={{
+              color: colors.shark,
               fontSize: 18 * scaleMultiplier,
               fontWeight: 'bold',
               textAlign: 'left'
@@ -60,6 +59,7 @@ function LanguageSelectItem (props) {
           </Text>
           <Text
             style={{
+              color: colors.shark,
               fontSize: 14 * scaleMultiplier
             }}
           >

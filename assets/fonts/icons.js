@@ -1,4 +1,7 @@
+// map of all the icons used in Waha
+
 import { createIconSet } from 'react-native-vector-icons'
+
 const glyphMap = {
   'archive': '\ue902',
   'arrow-left': '\ue903',

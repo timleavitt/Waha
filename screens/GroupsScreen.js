@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
   FlatList,
+  StyleSheet,
   Text,
-  Alert
+  TouchableOpacity,
+  View
 } from 'react-native'
-import BackButton from '../components/BackButton'
-import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
+import BackButton from '../components/BackButton'
 import GroupListHeader from '../components/GroupListHeader'
-
+import { colors, scaleMultiplier } from '../constants'
 function GroupsScreen (props) {
   //// STATE
 
@@ -147,7 +145,7 @@ function GroupsScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#EFF2F4'
+    backgroundColor: colors.athens
   },
   languageList: {
     flex: 1
@@ -155,12 +153,12 @@ const styles = StyleSheet.create({
   addNewLanguageContainer: {
     height: 80 * scaleMultiplier,
     justifyContent: 'center',
-    borderTopColor: '#EFF2F4',
+    borderTopColor: colors.athens,
     paddingHorizontal: 20
   },
   addNewLanguageText: {
     fontSize: 18 * scaleMultiplier,
-    color: '#9FA5AD'
+    color: colors.chateau
   },
   editButtonContainer: {
     width: 80,
@@ -169,6 +167,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   editButtonText: {
+    color: colors.shark,
     fontSize: 18 * scaleMultiplier
   }
 })

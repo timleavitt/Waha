@@ -1,20 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Image,
-  AsyncStorage,
-  Text,
-  TouchableOpacity,
-  Clipboard,
-  Alert,
-  Switch,
-  SafeAreaView
-} from 'react-native'
-import Piano from '../components/Piano'
-import { connect } from 'react-redux'
 import { Audio } from 'expo-av'
+import React, { useEffect, useState } from 'react'
+import { Image, SafeAreaView, StyleSheet, View } from 'react-native'
+import { connect } from 'react-redux'
+import Piano from '../components/Piano'
 
 function GameScreen (props) {
   //// STATE
@@ -61,7 +49,7 @@ function GameScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#F7F7F7',
+    backgroundColor: colors.aquaHaze,
     alignItems: 'center',
     justifyContent: 'flex-start'
   }

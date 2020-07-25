@@ -1,42 +1,40 @@
-import React, { useState, useEffect, useRef } from 'react'
+import useInterval from '@use-it/interval'
+import { Audio, Video } from 'expo-av'
+import * as FileSystem from 'expo-file-system'
+import { useKeepAwake } from 'expo-keep-awake'
+import { DeviceMotion } from 'expo-sensors'
+import * as Sharing from 'expo-sharing'
+import React, { useEffect, useRef, useState } from 'react'
 import {
-  View,
+  ActivityIndicator,
+  Alert,
+  Animated,
+  Dimensions,
+  FlatList,
+  Share,
   StyleSheet,
   Text,
-  Alert,
-  ActivityIndicator,
-  FlatList,
-  Dimensions,
-  ScrollView,
-  Share,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
   TouchableHighlight,
-  Animated
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native'
-import * as FileSystem from 'expo-file-system'
-import * as Sharing from 'expo-sharing'
-import { scaleMultiplier } from '../constants'
-import { Audio, Video } from 'expo-av'
-import OptionsModal from '../components/OptionsModal'
-import ModalButton from '../components/ModalButton'
-import Scrubber from '../components/Scrubber'
-import PlayPauseSkip from '../components/PlayPauseSkip'
-import ChapterSelect from '../components/ChapterSelect'
-import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
-import BackButton from '../components/BackButton'
-import { toggleComplete } from '../redux/actions/groupsActions'
 import { connect } from 'react-redux'
+import SVG from '../assets/svg'
+import BackButton from '../components/BackButton'
+import ChapterSelect from '../components/ChapterSelect'
+import ModalButton from '../components/ModalButton'
+import OptionsModal from '../components/OptionsModal'
+import PlayPauseSkip from '../components/PlayPauseSkip'
+import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
+import Scrubber from '../components/Scrubber'
+import { colors, scaleMultiplier } from '../constants'
 import {
   downloadLesson,
-  removeDownload,
-  downloadVideo
+  downloadVideo,
+  removeDownload
 } from '../redux/actions/downloadActions'
-import SVG from '../assets/svg'
-import useInterval from '@use-it/interval'
-import { DeviceMotion } from 'expo-sensors'
-import { useKeepAwake } from 'expo-keep-awake'
-
+import { toggleComplete } from '../redux/actions/groupsActions'
 console.disableYellowBox = true
 
 function PlayScreen (props) {
@@ -873,7 +871,7 @@ function PlayScreen (props) {
             <TouchableHighlight
               style={{ width: '100%', height: '100%' }}
               onPress={playHandler}
-              underlayColor='#FFFFFF00'
+              underlayColor={colors.white + '00'}
               activeOpacity={1}
             >
               <SVG
@@ -902,7 +900,7 @@ function PlayScreen (props) {
             <Icon
               name={isPlaying ? 'play' : 'pause'}
               size={100 * scaleMultiplier}
-              color='#ffffff'
+              color={colors.white}
             />
           </Animated.View>
           {scrollBarRight}
@@ -917,6 +915,7 @@ function PlayScreen (props) {
       <View>
         <Text
           style={{
+            color: colors.shark,
             fontSize: 18 * scaleMultiplier,
             fontFamily: props.font + '-medium',
             textAlign: props.isRTL ? 'right' : 'left'
@@ -926,6 +925,7 @@ function PlayScreen (props) {
         </Text>
         <Text
           style={{
+            color: colors.shark,
             fontSize: 18 * scaleMultiplier,
             fontFamily: props.font + '-regular',
             textAlign: props.isRTL ? 'right' : 'left'
@@ -1001,7 +1001,11 @@ function PlayScreen (props) {
                 alignItems: 'center'
               }}
             >
-              <Icon name='video' size={100 * scaleMultiplier} color='#828282' />
+              <Icon
+                name='video'
+                size={100 * scaleMultiplier}
+                color={colors.oslo}
+              />
             </View>
           )}
           {/* video controls overlay */}
@@ -1012,7 +1016,7 @@ function PlayScreen (props) {
                 height: 65 * scaleMultiplier,
                 position: 'absolute',
                 alignSelf: 'flex-end',
-                backgroundColor: '#00000050',
+                backgroundColor: colors.shark + '50',
                 justifyContent: 'center'
               }}
             >
@@ -1025,7 +1029,7 @@ function PlayScreen (props) {
                 <Icon
                   name='fullscreen-enter'
                   size={50 * scaleMultiplier}
-                  color='#FFF'
+                  color={colors.white}
                 />
               </TouchableOpacity>
             </View>
@@ -1101,7 +1105,7 @@ function PlayScreen (props) {
     </View>
   ) : (
     <View style={styles.audioControlContainer}>
-      <ActivityIndicator size='large' color='black' />
+      <ActivityIndicator size='large' color={colors.shark} />
     </View>
   )
 
@@ -1164,7 +1168,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: '100%',
     width: '100%',
-    backgroundColor: '#FFFFFF'
+    backgroundColor: colors.white
   },
   topHalfContainer: {
     justifyContent: 'space-evenly',
@@ -1179,6 +1183,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   title: {
+    color: colors.shark,
     textAlign: 'center',
     fontSize: 24 * scaleMultiplier,
     flexWrap: 'nowrap'
@@ -1188,13 +1193,13 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').width - 80,
     borderRadius: 10,
     marginHorizontal: 10,
-    backgroundColor: '#DEE3E9',
+    backgroundColor: colors.chateau,
     overflow: 'hidden'
   },
   scrollBar: {
     width: 4,
     height: 75 * scaleMultiplier,
-    backgroundColor: '#9FA5AD',
+    backgroundColor: colors.chateau,
     borderRadius: 10,
     alignSelf: 'center'
   },

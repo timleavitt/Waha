@@ -1,32 +1,24 @@
-import React, { useState, useEffect } from 'react'
-import {
-  View,
-  StyleSheet,
-  Text,
-  Picker,
-  TouchableOpacity,
-  TextInput,
-  SectionList,
-  Dimensions
-} from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
+import NetInfo from '@react-native-community/netinfo'
+import { Audio } from 'expo-av'
 import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
-import { scaleMultiplier, languageT2S, languages } from '../constants'
-import NetInfo from '@react-native-community/netinfo'
-import ModalSelector from 'react-native-modal-selector'
-import LanguageSelectItem from '../components/LanguageSelectItem'
-import { FlatList } from 'react-native-gesture-handler'
-import { Audio } from 'expo-av'
+import React, { useEffect, useState } from 'react'
+import {
+  Dimensions,
+  SectionList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
+import LanguageSelectItem from '../components/LanguageSelectItem'
+import { colors, languages, languageT2S, scaleMultiplier } from '../constants'
 import { addLanguage } from '../redux/actions/databaseActions'
-import BackButton from '../components/BackButton'
-
+import ar from '../translations/ar.json'
 // translations import
 import en from '../translations/en.json'
 import fr from '../translations/fr.json'
-import ar from '../translations/ar.json'
-
 function LanguageSelectScreen (props) {
   //// STATE
 
@@ -110,7 +102,7 @@ function LanguageSelectScreen (props) {
               })
           : () => props.addLanguage(selectedLanguage)
       }
-      style={[styles.button, { backgroundColor: '#60C239' }]}
+      style={[styles.button, { backgroundColor: colors.apple }]}
     >
       <Text style={styles.buttonTitle}>
         {props.route.name === 'LanguageSelect'
@@ -119,7 +111,7 @@ function LanguageSelectScreen (props) {
       </Text>
     </TouchableOpacity>
   ) : (
-    <View style={[styles.button, { backgroundColor: '#828282' }]}>
+    <View style={[styles.button, { backgroundColor: colors.oslo }]}>
       <Text style={styles.buttonTitle}>{i18n.t('letsBegin')} </Text>
     </View>
   )
@@ -166,10 +158,10 @@ function LanguageSelectScreen (props) {
           flexDirection: 'row',
           alignItems: 'center',
           paddingHorizontal: 20,
-          backgroundColor: '#F7F9FA'
+          backgroundColor: colors.aquaHaze
         }}
       >
-        <Text>{i18n.t(section.i18nName)}</Text>
+        <Text style={{ color: colors.shark }}>{i18n.t(section.i18nName)}</Text>
       </View>
     )
   }
@@ -261,16 +253,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F7F9FA',
+    backgroundColor: colors.aquaHaze,
     paddingTop: 40 * scaleMultiplier
   },
   title: {
+    color: colors.shark,
     textAlign: 'center',
     fontSize: 36 * scaleMultiplier,
     fontWeight: 'bold',
     margin: 5
   },
   subtitle: {
+    color: colors.shark,
     textAlign: 'center',
     fontSize: 24 * scaleMultiplier
   },
@@ -279,18 +273,18 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width - 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1D1E20',
+    backgroundColor: colors.shark,
     borderRadius: 10
   },
   buttonTitle: {
     textAlign: 'center',
     fontSize: 24 * scaleMultiplier,
-    color: '#FFFFFF'
+    color: colors.white
   },
   errorMessage: {
     textAlign: 'center',
     fontSize: 16 * scaleMultiplier,
-    color: '#828282'
+    color: colors.oslo
   }
 })
 

@@ -1,8 +1,7 @@
 import React from 'react'
-import { TouchableOpacity, StyleSheet, Text } from 'react-native'
-import { scaleMultiplier } from '../constants'
+import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
-
+import { colors, scaleMultiplier } from '../constants'
 // button rendered on the options modal component
 function ModalButton (props) {
   //// RETURN
@@ -35,9 +34,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 70 * scaleMultiplier,
     justifyContent: 'center',
-    borderBottomColor: '#dedede'
+    borderBottomColor: colors.athens
   },
   text: {
+    color: colors.shark,
     textAlign: 'center',
     fontSize: 19.5 * scaleMultiplier
   }

@@ -1,12 +1,9 @@
-import React from 'react'
-import { View, TouchableOpacity } from 'react-native'
-import { scaleMultiplier } from '../constants'
-
 import { createStackNavigator } from '@react-navigation/stack'
+import React from 'react'
 import { connect } from 'react-redux'
+import { scaleMultiplier } from '../constants'
 import AddSetScreen from '../screens/AddSetScreen'
 import SetInfoScreen from '../screens/SetInfoScreen'
-
 const Stack = createStackNavigator()
 
 function AddSetStack (props) {

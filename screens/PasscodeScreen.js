@@ -1,23 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Image,
-  AsyncStorage,
-  Text,
-  TouchableOpacity,
-  Alert
-} from 'react-native'
-import * as FileSystem from 'expo-file-system'
-import SetItem from '../components/SetItem'
-import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
-import { resumeDownload } from '../redux/actions/downloadActions'
-import { setToolkitEnabled } from '../redux/actions/toolkitEnabledActions'
-import BackButton from '../components/BackButton'
+import { Alert, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
+import { connect } from 'react-redux'
+import BackButton from '../components/BackButton'
 import MessageModal from '../components/MessageModal'
+import { colors, scaleMultiplier } from '../constants'
+import { setToolkitEnabled } from '../redux/actions/toolkitEnabledActions'
 function PasscodeScreen (props) {
   //// STATE
   const [passcode, setPasscode] = useState('')
@@ -71,6 +59,7 @@ function PasscodeScreen (props) {
     <View style={styles.screen}>
       <Text
         style={{
+          color: colors.shark,
           fontFamily: props.font + '-regular',
           fontSize: 18,
           marginVertical: 30 * scaleMultiplier,
@@ -95,7 +84,7 @@ function PasscodeScreen (props) {
         style={{
           fontFamily: props.font + '-regular',
           fontSize: 18 * scaleMultiplier,
-          color: '#FF0800',
+          color: colors.red,
           marginTop: 30 * scaleMultiplier,
           paddingHorizontal: 20,
           textAlign: 'center'
@@ -124,7 +113,7 @@ function PasscodeScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#F7F9FA',
+    backgroundColor: colors.aquaHaze,
     alignItems: 'center'
   }
 })

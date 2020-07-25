@@ -1,8 +1,7 @@
 import React from 'react'
-import { Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
-
+import { colors, scaleMultiplier } from '../constants'
 function SmallDrawerItem (props) {
   //// RENDER
 
@@ -38,7 +37,7 @@ const styles = StyleSheet.create({
   },
   smallDrawerItemText: {
     fontSize: 18 * scaleMultiplier,
-    color: '#82868D'
+    color: colors.chateau
   }
 })
 

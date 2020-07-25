@@ -1,8 +1,7 @@
 import React from 'react'
-import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native'
-import { scaleMultiplier } from '../constants'
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-
+import { colors, scaleMultiplier } from '../constants'
 function PlayScreenHeaderButtons (props) {
   //// RENDER
 
@@ -20,7 +19,7 @@ function PlayScreenHeaderButtons (props) {
         <Icon
           name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
           size={32 * scaleMultiplier}
-          color='#828282'
+          color={colors.oslo}
         />
       </TouchableOpacity>
       <TouchableOpacity
@@ -30,7 +29,7 @@ function PlayScreenHeaderButtons (props) {
         <Icon
           name={props.completeCondition ? 'check-filled' : 'check-outline'}
           size={35 * scaleMultiplier}
-          color='#828282'
+          color={colors.oslo}
         />
       </TouchableOpacity>
     </View>

@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from 'react'
 import NetInfo from '@react-native-community/netinfo'
-import { AsyncStorage, Alert } from 'react-native'
-import { scaleMultiplier } from '../constants'
-import WahaDrawer from '../components/WahaDrawer'
-import { updateConnectionStatus } from '../redux/actions/networkActions'
-import MainStack from './MainStack'
-import { NavigationContainer } from '@react-navigation/native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
+import { NavigationContainer } from '@react-navigation/native'
+import * as FileSystem from 'expo-file-system'
+import React, { useEffect } from 'react'
+import { Alert, AsyncStorage } from 'react-native'
 import { connect } from 'react-redux'
+import WahaDrawer from '../components/WahaDrawer'
+import { scaleMultiplier } from '../constants'
+import { db, storeData } from '../redux/actions/databaseActions'
 import {
-  resumeDownload,
-  removeDownload
+  removeDownload,
+  resumeDownload
 } from '../redux/actions/downloadActions'
 import { addSet } from '../redux/actions/groupsActions'
-import * as FileSystem from 'expo-file-system'
-import { db, storeData } from '../redux/actions/databaseActions'
-
+import { updateConnectionStatus } from '../redux/actions/networkActions'
+import MainStack from './MainStack'
 const Drawer = createDrawerNavigator()
 
 //allows only accessing hamburger swipe from study set screen

@@ -1,35 +1,30 @@
-import React, { useState, useEffect } from 'react'
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Alert,
-  Image,
-  Button,
-  Text,
-  Share,
-  Platform,
-  Dimensions,
-  SafeAreaView
-} from 'react-native'
-import LessonItem from '../components/LessonItem'
 import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
-import SetItem from '../components/SetItem'
-import OptionsModal from '../components/OptionsModal'
-import ModalButton from '../components/ModalButton'
-import NetInfo from '@react-native-community/netinfo'
-import { scaleMultiplier } from '../constants'
+import React, { useEffect, useState } from 'react'
+import {
+  Alert,
+  Dimensions,
+  Image,
+  Platform,
+  Share,
+  StyleSheet,
+  View
+} from 'react-native'
+import { SwipeListView } from 'react-native-swipe-list-view'
+import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
+import LessonItem from '../components/LessonItem'
+import LessonSwipeBackdrop from '../components/LessonSwipeBackdrop'
+import ModalButton from '../components/ModalButton'
+import OptionsModal from '../components/OptionsModal'
+import SetItem from '../components/SetItem'
+import { colors, scaleMultiplier } from '../constants'
 import {
   downloadLesson,
-  removeDownload,
-  downloadVideo
+  downloadVideo,
+  removeDownload
 } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
-import { connect } from 'react-redux'
-import { SwipeListView } from 'react-native-swipe-list-view'
-import LessonSwipeBackdrop from '../components/LessonSwipeBackdrop'
 function LessonListScreen (props) {
   //// STATE
 
@@ -503,7 +498,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#F7F9FA'
+    backgroundColor: colors.aquaHaze
   },
   studySetItemContainer: {
     width: '100%',

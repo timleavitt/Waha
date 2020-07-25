@@ -1,14 +1,7 @@
 import React from 'react'
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions
-} from 'react-native'
+import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
-
+import { colors, scaleMultiplier } from '../constants'
 function KeyLabel (props) {
   // RENDER
 
@@ -24,7 +17,7 @@ function KeyLabel (props) {
         style={{
           fontFamily: props.font + '-medium',
           fontSize: 22 * scaleMultiplier,
-          color: '#1D1E20'
+          color: colors.shark
         }}
       >
         {props.number}

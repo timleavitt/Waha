@@ -1,6 +1,8 @@
 import * as React from 'react'
 import Svg, { Use, Path, Defs, Image } from 'react-native-svg'
 
+// exports an svg according to the name given
+// these are used for the story set icons / cover images
 function SVG (props) {
   switch (props.name) {
     case 'world':

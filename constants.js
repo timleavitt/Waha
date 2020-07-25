@@ -1,6 +1,4 @@
 import { Dimensions } from 'react-native'
-import * as FileSystem from 'expo-file-system'
-import i18n from 'i18n-js'
 
 export const scaleMultiplier = Dimensions.get('window').width / 430
 
@@ -305,4 +303,29 @@ export const keyColors = {
   10: '#bfef45',
   11: '#dcbeff',
   12: '#9A6324'
+}
+
+export const colors = {
+  // normal text
+  shark: '#1D1E20',
+
+  // secondary text and icons
+  tuna: '#3A3C3F',
+
+  // grayed out stuff
+  chateau: '#9FA5AD',
+
+  // gray borders
+  oslo: '#828282',
+
+  // backgrounds, list items, borders
+  porcelain: '#EAEEF0',
+  athens: '#EFF2F4',
+  aquaHaze: '#f7f9fa',
+  white: '#FFFFFF',
+
+  // other colors
+  apple: '#60C239',
+  red: '#FF0800',
+  blue: '#2D9CDB'
 }

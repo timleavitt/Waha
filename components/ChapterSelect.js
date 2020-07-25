@@ -1,13 +1,21 @@
 import React from 'react'
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native'
-import { connect } from 'react-redux'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
-import { scaleMultiplier } from '../constants'
-
+import { connect } from 'react-redux'
+import { colors, scaleMultiplier } from '../constants'
+// chapter select on play screen
+//  1. allows switching of lessons
+//  2. shows what your current chapter is
 function ChapterSelect (props) {
+  // order of chapters is
+  //  1. fellowship
+  //  2. story
+  //  3. (if applicable) training, which is always a video
+  //  4. application
+
   // RENDER
 
-  // render chapter 2 icon conditionally based off if it's not active, active, or completed
+  // render story icon conditionally based off if it's not active, active, or completed
   var storyIcon
   if (props.activeChapter === 'fellowship') {
     storyIcon = 'number-2-filled'
@@ -17,33 +25,36 @@ function ChapterSelect (props) {
     storyIcon = 'check-filled'
   }
 
+  // render training button based on a lot of factors
   var trainingButton
+
+  // if our lesson type shows that we have a video, render the video button
+  // otherwise, render nothing for training button
   if (props.lessonType === 'qav' || props.lessonType === 'qv') {
-    if (
-      (props.lessonType === 'qav' || props.lessonType === 'qv') &&
-      !props.isConnected &&
-      !props.isDownloaded
-    ) {
+    // if we're not connected to the internet, and the video is not downloaded,
+    //  then show a cloud slash icon. the user cannot play the video in this
+    //    case, so it's not touchable
+    if (!props.isConnected && !props.isDownloaded) {
       trainingButton = (
         <View
           style={[
             styles.chapterSelect,
             {
-              borderColor: '#82868D',
-              backgroundColor: '#EFF2F4'
+              borderColor: colors.chateau,
+              backgroundColor: colors.athens
             }
           ]}
         >
           <Icon
             name='cloud-slash'
             size={25 * scaleMultiplier}
-            color='#82868D'
+            color={colors.chateau}
           />
           <Text
             style={[
               styles.chapterSelectText,
               {
-                color: '#82868D',
+                color: colors.shark,
                 fontFamily: props.font + '-black'
               }
             ]}
@@ -52,18 +63,18 @@ function ChapterSelect (props) {
           </Text>
         </View>
       )
+      // if the video is currently downloading, show the progress bar
     } else if (
       props.downloads[props.lessonID + 'v'] &&
       props.downloads[props.lessonID + 'v'] < 1
     ) {
       trainingButton = (
-        // if the video is downloading, show the progress in the chapter button
         <View
           style={[
             styles.chapterSelect,
             {
-              borderColor: '#82868D',
-              backgroundColor: '#EFF2F4'
+              borderColor: colors.chateau,
+              backgroundColor: colors.athens
             }
           ]}
         >
@@ -73,14 +84,14 @@ function ChapterSelect (props) {
             fill={props.downloads[props.lessonID + 'v'] * 100}
             tintColor={props.primaryColor}
             rotation={0}
-            backgroundColor='#FFFFFF'
+            backgroundColor={colors.white}
             style={{ margin: 5 }}
           />
           <Text
             style={[
               styles.chapterSelectText,
               {
-                color: '#82868D',
+                color: colors.shark,
                 fontFamily: props.font + '-black'
               }
             ]}
@@ -89,6 +100,8 @@ function ChapterSelect (props) {
           </Text>
         </View>
       )
+      // if our video is downloaded or we have the internet to stream it, then
+      //  show the button as normal
     } else {
       trainingButton = (
         <TouchableOpacity
@@ -99,7 +112,7 @@ function ChapterSelect (props) {
               backgroundColor:
                 props.activeChapter === 'training'
                   ? props.primaryColor
-                  : '#EFF2F4'
+                  : colors.athens
             }
           ]}
           onPress={() => props.onPress('training')}
@@ -114,7 +127,9 @@ function ChapterSelect (props) {
             }
             size={25 * scaleMultiplier}
             color={
-              props.activeChapter === 'training' ? 'white' : props.primaryColor
+              props.activeChapter === 'training'
+                ? colors.white
+                : props.primaryColor
             }
           />
           <Text
@@ -123,7 +138,7 @@ function ChapterSelect (props) {
               {
                 color:
                   props.activeChapter === 'training'
-                    ? 'white'
+                    ? colors.white
                     : props.primaryColor,
                 fontFamily: props.font + '-black'
               }
@@ -138,8 +153,12 @@ function ChapterSelect (props) {
     trainingButton = null
   }
 
-  // render chapter 2 button
+  // render chapter 2 button based on a lot of factors
   var storyButton
+
+  // if our lesson type shows we have an audio source, and we are not connected
+  //  and the lesson isn't downloaded, show the cloud slash icon. the user
+  //  can't listen to the audio, so it's not touchable
   if (
     (props.lessonType === 'qa' || props.lessonType === 'qav') &&
     !props.isConnected &&
@@ -150,17 +169,21 @@ function ChapterSelect (props) {
         style={[
           styles.chapterSelect,
           {
-            borderColor: '#82868D',
-            backgroundColor: '#EFF2F4'
+            borderColor: Colors.darkGrey1,
+            backgroundColor: Colors.lightGray3
           }
         ]}
       >
-        <Icon name='cloud-slash' size={25 * scaleMultiplier} color='#82868D' />
+        <Icon
+          name='cloud-slash'
+          size={25 * scaleMultiplier}
+          color={colors.chateau}
+        />
         <Text
           style={[
             styles.chapterSelectText,
             {
-              color: '#82868D',
+              color: colors.chateau,
 
               fontFamily: props.font + '-black'
             }
@@ -170,6 +193,7 @@ function ChapterSelect (props) {
         </Text>
       </View>
     )
+  // if the audio is downloading, show the progress
   else if (
     props.downloads[props.lessonID] &&
     props.downloads[props.lessonID] < 1
@@ -180,8 +204,8 @@ function ChapterSelect (props) {
         style={[
           styles.chapterSelect,
           {
-            borderColor: '#82868D',
-            backgroundColor: '#EFF2F4'
+            borderColor: colors.chateau,
+            backgroundColor: colors.athens
           }
         ]}
       >
@@ -191,14 +215,14 @@ function ChapterSelect (props) {
           fill={props.downloads[props.lessonID] * 100}
           tintColor={props.primaryColor}
           rotation={0}
-          backgroundColor='#FFFFFF'
+          backgroundColor={colors.white}
           style={{ margin: 5 }}
         />
         <Text
           style={[
             styles.chapterSelectText,
             {
-              color: '#82868D',
+              color: colors.chateau,
               fontFamily: props.font + '-black'
             }
           ]}
@@ -207,6 +231,7 @@ function ChapterSelect (props) {
         </Text>
       </View>
     )
+  // otherwise, show the button as normal
   else
     storyButton = (
       <TouchableOpacity
@@ -215,7 +240,9 @@ function ChapterSelect (props) {
           {
             borderColor: props.primaryColor,
             backgroundColor:
-              props.activeChapter === 'story' ? props.primaryColor : '#EFF2F4'
+              props.activeChapter === 'story'
+                ? props.primaryColor
+                : colors.athens
           }
         ]}
         onPress={() => props.onPress('story')}
@@ -223,14 +250,18 @@ function ChapterSelect (props) {
         <Icon
           name={storyIcon}
           size={25 * scaleMultiplier}
-          color={props.activeChapter === 'story' ? 'white' : props.primaryColor}
+          color={
+            props.activeChapter === 'story' ? colors.white : props.primaryColor
+          }
         />
         <Text
           style={[
             styles.chapterSelectText,
             {
               color:
-                props.activeChapter === 'story' ? 'white' : props.primaryColor,
+                props.activeChapter === 'story'
+                  ? colors.white
+                  : props.primaryColor,
               fontFamily: props.font + '-black'
             }
           ]}
@@ -240,9 +271,10 @@ function ChapterSelect (props) {
       </TouchableOpacity>
     )
 
+  // other 2 buttons are always rendered, so they aren't dynamic
   return (
     <View style={styles.chapterSelectContainer}>
-      {/* chapter 1 button */}
+      {/* fellowship button */}
       <TouchableOpacity
         style={[
           styles.chapterSelect,
@@ -251,7 +283,7 @@ function ChapterSelect (props) {
             backgroundColor:
               props.activeChapter === 'fellowship'
                 ? props.primaryColor
-                : '#EFF2F4'
+                : colors.athens
           }
         ]}
         onPress={() => props.onPress('fellowship')}
@@ -264,7 +296,9 @@ function ChapterSelect (props) {
           }
           size={25 * scaleMultiplier}
           color={
-            props.activeChapter === 'fellowship' ? 'white' : props.primaryColor
+            props.activeChapter === 'fellowship'
+              ? colors.white
+              : props.primaryColor
           }
         />
         <Text
@@ -273,7 +307,7 @@ function ChapterSelect (props) {
             {
               color:
                 props.activeChapter === 'fellowship'
-                  ? 'white'
+                  ? colors.white
                   : props.primaryColor,
               fontFamily: props.font + '-black'
             }
@@ -283,12 +317,13 @@ function ChapterSelect (props) {
         </Text>
       </TouchableOpacity>
 
-      {/* chapter 2 button (defined earlier) */}
+      {/* story button (defined earlier) */}
       {storyButton}
 
+      {/* training button (defined earlier) */}
       {trainingButton}
 
-      {/* chapter 3 button */}
+      {/* application button */}
       <TouchableOpacity
         style={[
           styles.chapterSelect,
@@ -297,7 +332,7 @@ function ChapterSelect (props) {
             backgroundColor:
               props.activeChapter === 'application'
                 ? props.primaryColor
-                : '#EFF2F4'
+                : colors.athens
           }
         ]}
         onPress={() => props.onPress('application')}
@@ -314,7 +349,9 @@ function ChapterSelect (props) {
           }
           size={25 * scaleMultiplier}
           color={
-            props.activeChapter === 'application' ? 'white' : props.primaryColor
+            props.activeChapter === 'application'
+              ? colors.white
+              : props.primaryColor
           }
         />
         <Text
@@ -323,7 +360,7 @@ function ChapterSelect (props) {
             {
               color:
                 props.activeChapter === 'application'
-                  ? 'white'
+                  ? colors.white
                   : props.primaryColor,
               fontFamily: props.font + '-black'
             }

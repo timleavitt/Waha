@@ -1,39 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Alert,
-  Image,
-  Button,
-  Text,
-  Share,
-  Platform,
-  Dimensions,
-  SafeAreaView
-} from 'react-native'
-import LessonItem from '../components/LessonItem'
-import * as FileSystem from 'expo-file-system'
-import * as Sharing from 'expo-sharing'
-import SetItem from '../components/SetItem'
-import OptionsModal from '../components/OptionsModal'
-import ModalButton from '../components/ModalButton'
-import NetInfo from '@react-native-community/netinfo'
-import { scaleMultiplier } from '../constants'
-import BackButton from '../components/BackButton'
-import {
-  downloadLesson,
-  removeDownload,
-  downloadVideo
-} from '../redux/actions/downloadActions'
-import { addSet } from '../redux/actions/groupsActions'
-import { toggleComplete } from '../redux/actions/groupsActions'
-import { connect } from 'react-redux'
-import { SwipeListView } from 'react-native-swipe-list-view'
-import LessonSwipeBackdrop from '../components/LessonSwipeBackdrop'
+import React, { useEffect } from 'react'
+import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import SnackBar from 'react-native-snackbar-component'
-
+import { connect } from 'react-redux'
+import BackButton from '../components/BackButton'
+import SetItem from '../components/SetItem'
+import { colors, scaleMultiplier } from '../constants'
+import { addSet } from '../redux/actions/groupsActions'
 function SetInfoScreen (props) {
   //// STATE
 
@@ -83,7 +55,7 @@ function SetInfoScreen (props) {
       >
         <Text
           style={{
-            color: '#FFFFFF',
+            color: colors.white,
             textAlign: 'center',
             fontSize: 18 * scaleMultiplier,
             fontFamily: props.font + '-medium',
@@ -94,7 +66,7 @@ function SetInfoScreen (props) {
         </Text>
         <Icon
           style={{ marginHorizontal: 10 }}
-          color='#FFFFFF'
+          color={colors.white}
           size={36 * scaleMultiplier}
           name='playlist-add'
         />
@@ -119,7 +91,7 @@ function SetInfoScreen (props) {
             >
               <Text
                 style={{
-                  color: '#1D1E20',
+                  color: colors.shark,
                   textAlign: props.isRTL ? 'right' : 'left',
                   fontSize: 16 * scaleMultiplier,
                   fontFamily: props.font + '-medium'
@@ -129,7 +101,7 @@ function SetInfoScreen (props) {
               </Text>
               <Text
                 style={{
-                  color: '#9FA5AD',
+                  color: colors.chateau,
                   textAlign: props.isRTL ? 'right' : 'left',
                   fontSize: 14 * scaleMultiplier,
                   fontFamily: props.font + '-regular'
@@ -151,7 +123,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#FFFFFF'
+    backgroundColor: colors.white
   },
   studySetItemContainer: {
     width: '100%',
@@ -164,7 +136,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 12,
-    backgroundColor: '#60C239'
+    backgroundColor: colors.apple
   }
 })
 

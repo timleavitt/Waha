@@ -1,39 +1,20 @@
 import React from 'react'
-import { View, TouchableOpacity, StyleSheet, Image, Text } from 'react-native'
-import { scaleMultiplier, groupIcons, groupIconSources } from '../constants'
+import { Image, TouchableOpacity, View } from 'react-native'
 import Icon from '../assets/fonts/icons'
-
+import { colors, groupIconSources, scaleMultiplier } from '../constants'
+// component for a group's avatar
 function AvatarImage (props) {
   //// RENDER
 
-  // render camer icon conditionally because we only want it to show when we can change the image
-  // note: can only change image on add group screen or edit group screen
-
-  // render the image conditionally because if no source is provided, we want to use the
-  // default image (the group icon)
-  // var avatarImage =
-  //   props.source === '' ? (
-  //     <Icon name='group' size={(props.size / 2) * scaleMultiplier} />
-  //   ) : (
-  //     <Image
-  //       style={{
-  //         ...styles.avatarContainer,
-  //         ...{
-  //           width: props.size * scaleMultiplier,
-  //           height: props.size * scaleMultiplier,
-  //           borderRadius: (props.size * scaleMultiplier) / 2
-  //         }
-  //       }}
-  //       source={{ uri: props.source }}
-  //     />
-  //   )
-
+  // renders the emoji in a group icon
+  // if it's default, show the standard group icon
+  // otherwise, show the custom icon that's stored in the group redux
   var emoji =
     props.emoji === 'default' ? (
       <Icon
         name='group'
         size={(props.size / 2) * scaleMultiplier}
-        color='#3A3C3F'
+        color={colors.tuna}
       />
     ) : (
       <View
@@ -54,12 +35,13 @@ function AvatarImage (props) {
       </View>
     )
 
-  // if we have something for props.onPress, make it touchable, otherwise
-  // make it not touchable
+  // if we have something for props.onPress, make the avatar image touchable
+  // note: only time it's touchable is when used in the set screen header to
+  //  open the drawer
   return props.onPress ? (
     <TouchableOpacity
       style={{
-        borderColor: props.isActive ? '#2D9CDB' : null,
+        borderColor: props.isActive ? colors.blue : null,
         borderWidth: props.isActive ? 5 : null,
         width: props.size * scaleMultiplier + 5,
         height: props.size * scaleMultiplier + 5,
@@ -74,10 +56,9 @@ function AvatarImage (props) {
           width: props.size * scaleMultiplier,
           height: props.size * scaleMultiplier,
           borderRadius: (props.size * scaleMultiplier) / 2,
-          backgroundColor: '#DEE3E9',
+          backgroundColor: colors.chateau,
           alignItems: 'center',
           justifyContent: 'center'
-          // paddingTop: 5
         }}
       >
         {emoji}
@@ -86,7 +67,7 @@ function AvatarImage (props) {
   ) : (
     <View
       style={{
-        borderColor: props.isActive ? '#2D9CDB' : null,
+        borderColor: props.isActive ? colors.blue : null,
         borderWidth: props.isActive ? 5 : null,
         width: props.size * scaleMultiplier + 5,
         height: props.size * scaleMultiplier + 5,
@@ -102,7 +83,7 @@ function AvatarImage (props) {
           width: props.size * scaleMultiplier,
           height: props.size * scaleMultiplier,
           borderRadius: (props.size * scaleMultiplier) / 2,
-          backgroundColor: '#DEE3E9',
+          backgroundColor: colors.chateau,
           justifyContent: 'center',
           alignItems: 'center'
         }}

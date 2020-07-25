@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
 import Icon from '../assets/fonts/icons'
 import SVG from '../assets/svg.js'
-import { addSet, setShowToolkit } from '../redux/actions/groupsActions'
 import MessageModal from '../components/MessageModal'
-
+import { colors, scaleMultiplier } from '../constants'
+import { addSet } from '../redux/actions/groupsActions'
 function SetItem (props) {
   //// STATE
 
@@ -49,7 +48,7 @@ function SetItem (props) {
                 fullyCompleted ? props.primaryColor + '50' : props.primaryColor
               }
               rotation={0}
-              backgroundColor='#FFFFFF'
+              backgroundColor={colors.white}
             >
               {() => (
                 <View
@@ -63,7 +62,7 @@ function SetItem (props) {
                     name={props.thisSet.icon}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    fill={fullyCompleted ? '#9FA5AD' : '#1D1E20'}
+                    fill={fullyCompleted ? colors.chateau : colors.shark}
                   />
                 </View>
               )}
@@ -76,7 +75,7 @@ function SetItem (props) {
               <Icon
                 name='check-outline'
                 size={30 * scaleMultiplier}
-                color='#828282'
+                color={colors.oslo}
               />
             </View>
           ) : (
@@ -108,7 +107,7 @@ function SetItem (props) {
                 fullyCompleted ? props.primaryColor + '50' : props.primaryColor
               }
               rotation={0}
-              backgroundColor='#FFFFFF'
+              backgroundColor={colors.white}
             >
               {() => (
                 <View
@@ -122,7 +121,7 @@ function SetItem (props) {
                     name={props.thisSet.icon}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    fill={fullyCompleted ? '#9FA5AD' : '#1D1E20'}
+                    fill={fullyCompleted ? colors.chateau : colors.shark}
                   />
                 </View>
               )}
@@ -137,11 +136,11 @@ function SetItem (props) {
             style={[
               styles.iconContainer,
               {
-                backgroundColor: '#FFFFFF',
+                backgroundColor: colors.white,
                 borderRadius: 14,
                 overflow: 'hidden',
                 borderWidth: 7,
-                borderColor: '#3A3C3F'
+                borderColor: colors.tuna
               }
             ]}
           >
@@ -149,7 +148,7 @@ function SetItem (props) {
               name={props.thisSet.icon}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
-              fill='#3A3C3F'
+              fill={colors.tuna}
             />
           </View>
         )
@@ -169,11 +168,11 @@ function SetItem (props) {
             style={[
               styles.iconContainer,
               {
-                backgroundColor: '#FFFFFF',
+                backgroundColor: colors.white,
                 borderRadius: 14,
                 overflow: 'hidden',
                 borderWidth: 7,
-                borderColor: '#3A3C3F'
+                borderColor: colors.tuna
               }
             ]}
           >
@@ -181,7 +180,7 @@ function SetItem (props) {
               name={props.thisSet.icon}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
-              fill='#3A3C3F'
+              fill={colors.tuna}
             />
           </View>
         )
@@ -219,7 +218,7 @@ function SetItem (props) {
       //   //   ]}
       //   //   onPress={() => {}}
       //   // >
-      //   //   <Icon name='info' size={30 * scaleMultiplier} color='#9FA5AD' />
+      //   //   <Icon name='info' size={30 * scaleMultiplier} color={colors.chateau} />
       //   // </TouchableOpacity>
       //   break
     }
@@ -310,7 +309,7 @@ function SetItem (props) {
       >
         <Text
           style={{
-            color: fullyCompleted ? '#9FA5AD' : '#1D1E20',
+            color: fullyCompleted ? colors.chateau : colors.shark,
             textAlign: props.isRTL ? 'right' : 'left',
             fontSize: 12 * scaleMultiplier,
             textAlignVertical: 'center',
@@ -323,7 +322,7 @@ function SetItem (props) {
         </Text>
         <Text
           style={{
-            color: fullyCompleted ? '#9FA5AD' : '#1D1E20',
+            color: fullyCompleted ? colors.chateau : colors.shark,
             textAlign: props.isRTL ? 'right' : 'left',
             fontSize: 18 * scaleMultiplier,
             textAlignVertical: 'center',

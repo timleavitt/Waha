@@ -1,9 +1,8 @@
 //basic imports
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import { scaleMultiplier } from '../constants'
+import { StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-
+import { colors, scaleMultiplier } from '../constants'
 function TimeDisplay (props) {
   //function to convert a time in milliseconds to a
   //nicely formatted string (for the scrubber)
@@ -34,6 +33,7 @@ function TimeDisplay (props) {
 
 const styles = StyleSheet.create({
   timeText: {
+    color: colors.shark,
     fontSize: 12 * scaleMultiplier
   }
 })

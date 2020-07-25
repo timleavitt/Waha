@@ -1,16 +1,15 @@
-import React from 'react'
-import { View, StyleSheet, Text, Dimensions, Image } from 'react-native'
 import i18n from 'i18n-js'
-import { connect } from 'react-redux'
-import * as Progress from 'react-native-progress'
+import React from 'react'
+import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { scaleMultiplier } from '../constants'
-import { setFetchError, addLanguage } from '../redux/actions/databaseActions'
+import * as Progress from 'react-native-progress'
+import { connect } from 'react-redux'
+import { colors, scaleMultiplier } from '../constants'
+import { addLanguage, setFetchError } from '../redux/actions/databaseActions'
+import ar from '../translations/ar.json'
 // translations import
 import en from '../translations/en.json'
 import fr from '../translations/fr.json'
-import ar from '../translations/ar.json'
-
 function LoadingScreen (props) {
   i18n.translations = {
     en,
@@ -45,7 +44,7 @@ function LoadingScreen (props) {
         <Progress.Bar
           progress={props.progress}
           width={Dimensions.get('window').width - 50}
-          color={'black'}
+          color={colors.shark}
         />
       </View>
     </View>
@@ -61,6 +60,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   loadingMessageText: {
+    color: colors.shark,
     textAlign: 'center',
     fontSize: 30,
     padding: 10
@@ -75,13 +75,13 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1D1E20',
+    backgroundColor: colors.shark,
     borderRadius: 5
   },
   buttonTitle: {
     textAlign: 'center',
     fontSize: 24 * scaleMultiplier,
-    color: '#FFFFFF'
+    color: colors.white
   }
 })
 

@@ -1,19 +1,10 @@
 //imports
-import React, { useState, useEffect } from 'react'
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  AsyncStorage
-} from 'react-native'
-import * as FileSystem from 'expo-file-system'
+import React, { useEffect } from 'react'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
-import { removeDownload } from '../redux/actions/downloadActions'
 import DownloadStatusIndicator from '../components/DownloadStatusIndicator'
-
+import { colors, scaleMultiplier } from '../constants'
+import { removeDownload } from '../redux/actions/downloadActions'
 function LessonItem (props) {
   //// CONSTRUCTOR
 
@@ -86,7 +77,7 @@ function LessonItem (props) {
                 : null
             }
             size={24 * scaleMultiplier}
-            color={props.isComplete ? '#828282' : props.primaryColor}
+            color={props.isComplete ? colors.oslo : props.primaryColor}
           />
         </View>
 
@@ -112,7 +103,7 @@ function LessonItem (props) {
             style={{
               fontSize: 18 * scaleMultiplier,
               textAlignVertical: 'center',
-              color: props.isComplete ? '#9FA5AD' : 'black',
+              color: props.isComplete ? colors.chateau : colors.shark,
               textAlign: props.isRTL ? 'right' : 'left',
               fontFamily: props.font + '-medium'
             }}
@@ -123,7 +114,7 @@ function LessonItem (props) {
           <Text
             style={{
               fontSize: 14 * scaleMultiplier,
-              color: '#9FA5AD',
+              color: colors.chateau,
               textAlign: props.isRTL ? 'right' : 'left',
               fontFamily: props.font + '-regular'
             }}
@@ -153,7 +144,7 @@ const styles = StyleSheet.create({
   lessonItem: {
     height: 64 * scaleMultiplier,
     flexDirection: 'row',
-    backgroundColor: '#F7F9FA',
+    backgroundColor: colors.aquaHaze,
     flex: 1,
     paddingLeft: 20
   },

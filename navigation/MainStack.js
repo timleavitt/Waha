@@ -1,35 +1,26 @@
-import React, { useEffect } from 'react'
-import {
-  View,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  AppState
-} from 'react-native'
-import { scaleMultiplier } from '../constants'
-import * as FileSystem from 'expo-file-system'
+import { createStackNavigator } from '@react-navigation/stack'
 import i18n from 'i18n-js'
-import en from '../translations/en.json'
-import fr from '../translations/fr.json'
-import ar from '../translations/ar.json'
-import LessonListScreen from '../screens/LessonListScreen'
-import PlayScreen from '../screens/PlayScreen'
-import GroupsScreen from '../screens/GroupsScreen'
+import React, { useEffect } from 'react'
+import { AppState, StyleSheet, View } from 'react-native'
+import { connect } from 'react-redux'
+import BackButton from '../components/BackButton'
+import { colors, scaleMultiplier } from '../constants'
 import AddEditGroupScreen from '../screens/AddEditGroupScreen'
+import GameScreen from '../screens/GameScreen'
+import GroupsScreen from '../screens/GroupsScreen'
+import KeyOrderSetScreen from '../screens/KeyOrderSetScreen'
 import LanguageSelectScreen from '../screens/LanguageSelectScreen'
-import StorageScreen from '../screens/StorageScreen'
+import LessonListScreen from '../screens/LessonListScreen'
 import MTScreen from '../screens/MTScreen'
 import PasscodeScreen from '../screens/PasscodeScreen'
-import SecurityScreen from '../screens/SecurityScreen'
+import PlayScreen from '../screens/PlayScreen'
 import SecurityOnboardingScreen from '../screens/SecurityOnboardingScreen'
-import KeyOrderSetScreen from '../screens/KeyOrderSetScreen'
-import GameScreen from '../screens/GameScreen'
-import SetTabNavigator from './SetTabs'
-import { createStackNavigator } from '@react-navigation/stack'
-import { connect } from 'react-redux'
+import SecurityScreen from '../screens/SecurityScreen'
+import StorageScreen from '../screens/StorageScreen'
+import ar from '../translations/ar.json'
+import en from '../translations/en.json'
+import fr from '../translations/fr.json'
 import SetsRoot from './SetsRoot'
-import BackButton from '../components/BackButton'
-
 i18n.translations = {
   en,
   fr,
@@ -84,7 +75,7 @@ function MainStack (props) {
         options={{
           //gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
           headerStyle: {
-            backgroundColor: '#F7F9FA'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleAlign: 'center'
         }}
@@ -94,10 +85,10 @@ function MainStack (props) {
         component={PlayScreen}
         options={{
           headerStyle: {
-            backgroundColor: '#FFFFFF'
+            backgroundColor: colors.white
           },
           headerTitleStyle: {
-            color: '#82868D',
+            color: colors.chateau,
             fontFamily: props.font + '-medium'
           },
           gestureEnabled: false
@@ -109,10 +100,10 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.groups.header,
           headerStyle: {
-            backgroundColor: '#EFF2F4'
+            backgroundColor: colors.athens
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -123,10 +114,10 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.add_edit_group.header_add,
           headerStyle: {
-            backgroundColor: '#FFFFFF'
+            backgroundColor: colors.white
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -136,10 +127,10 @@ function MainStack (props) {
         component={LanguageSelectScreen}
         options={{
           headerStyle: {
-            backgroundColor: '#F7F7F7'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           },
           headerRight: props.isRTL
@@ -156,10 +147,10 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.add_edit_group.header_edit,
           headerStyle: {
-            backgroundColor: '#F7F7F7'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -170,10 +161,10 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.storage.header,
           headerStyle: {
-            backgroundColor: '#FFFFFF'
+            backgroundColor: colors.white
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -184,10 +175,10 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.mobilization_tools.header,
           headerStyle: {
-            backgroundColor: '#F7F9FA'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -198,10 +189,10 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.mobilization_tools.header,
           headerStyle: {
-            backgroundColor: '#F7F9FA'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -212,10 +203,10 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.security.header,
           headerStyle: {
-            backgroundColor: '#F7F9FA'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -226,10 +217,10 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.security.header,
           headerStyle: {
-            backgroundColor: '#F7F9FA'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -239,10 +230,10 @@ function MainStack (props) {
         component={KeyOrderSetScreen}
         options={{
           headerStyle: {
-            backgroundColor: '#F7F9FA'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -252,10 +243,10 @@ function MainStack (props) {
         component={KeyOrderSetScreen}
         options={{
           headerStyle: {
-            backgroundColor: '#F7F9FA'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -265,10 +256,10 @@ function MainStack (props) {
         component={KeyOrderSetScreen}
         options={{
           headerStyle: {
-            backgroundColor: '#F7F9FA'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -278,10 +269,10 @@ function MainStack (props) {
         component={KeyOrderSetScreen}
         options={{
           headerStyle: {
-            backgroundColor: '#F7F9FA'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}
@@ -291,10 +282,10 @@ function MainStack (props) {
         component={KeyOrderSetScreen}
         options={{
           headerStyle: {
-            backgroundColor: '#F7F9FA'
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
-            color: '#000000',
+            color: colors.shark,
             fontFamily: props.font + '-medium'
           }
         }}

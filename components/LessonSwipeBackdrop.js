@@ -1,14 +1,7 @@
 import React from 'react'
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Platform
-} from 'react-native'
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
-
+import { colors, scaleMultiplier } from '../constants'
 // component rendered behind a lesson item that shows the swipe options
 function LessonSwipeBackdrop (props) {
   //// RENDER
@@ -16,11 +9,11 @@ function LessonSwipeBackdrop (props) {
   // render complete button conditionally since it could be complete or incomplete
   var completeButton = props.isComplete ? (
     <TouchableOpacity
-      style={[styles.buttonContainer, { backgroundColor: '#82868D' }]}
+      style={[styles.buttonContainer, { backgroundColor: colors.chateau }]}
       onPress={props.toggleComplete}
     >
       <View style={styles.iconContainer}>
-        <Icon name='cancel-filled' size={20} color='#FFFFFF' />
+        <Icon name='cancel-filled' size={20} color={colors.white} />
       </View>
     </TouchableOpacity>
   ) : (
@@ -28,14 +21,14 @@ function LessonSwipeBackdrop (props) {
       style={[
         styles.buttonContainer,
         {
-          backgroundColor: '#60C239',
+          backgroundColor: colors.apple,
           alignItems: props.isRTL ? 'flex-end' : 'flex-start'
         }
       ]}
       onPress={props.toggleComplete}
     >
       <View style={styles.iconContainer}>
-        <Icon name='check-filled' size={20} color='#FFFFFF' />
+        <Icon name='check-filled' size={20} color={colors.white} />
       </View>
     </TouchableOpacity>
   )
@@ -52,7 +45,7 @@ function LessonSwipeBackdrop (props) {
         style={[
           styles.buttonContainer,
           {
-            backgroundColor: '#2D9CDB',
+            backgroundColor: colors.blue,
             alignItems: props.isRLT ? 'flex-start' : 'flex-end'
           }
         ]}
@@ -62,7 +55,7 @@ function LessonSwipeBackdrop (props) {
           <Icon
             name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
             size={20}
-            color='#FFFFFF'
+            color={colors.white}
           />
         </View>
       </TouchableOpacity>

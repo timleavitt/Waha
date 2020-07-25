@@ -1,33 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import {
-  View,
-  FlatList,
+  ScrollView,
   StyleSheet,
-  Image,
-  AsyncStorage,
+  Switch,
   Text,
   TouchableOpacity,
-  Clipboard,
-  Alert,
-  Switch,
-  ScrollView
+  View
 } from 'react-native'
-import * as FileSystem from 'expo-file-system'
-import SetItem from '../components/SetItem'
 import { connect } from 'react-redux'
-import { scaleMultiplier, keyColors } from '../constants'
-import { resumeDownload } from '../redux/actions/downloadActions'
-import { getStateFromPath } from '@react-navigation/native'
 import BackButton from '../components/BackButton'
-import GroupListHeaderMT from '../components/GroupListHeaderMT'
-import MessageModal from '../components/MessageModal'
-import {
-  setSecurityEnabled,
-  setActivateOnSwitch
-} from '../redux/actions/securityActions'
 import KeyLabel from '../components/KeyLabel'
+import MessageModal from '../components/MessageModal'
 import Piano from '../components/Piano'
-
+import { colors, keyColors, scaleMultiplier } from '../constants'
+import {
+  setActivateOnSwitch,
+  setSecurityEnabled
+} from '../redux/actions/securityActions'
 function SecurityScreen (props) {
   //// STATE
   const [showSecurityWarningModal, setShowSecurityWarningModal] = useState(
@@ -65,9 +54,9 @@ function SecurityScreen (props) {
         <View style={{ justifyContent: 'center', flex: 1 }}>
           <Text
             style={{
+              color: colors.shark,
               fontFamily: props.font + '-medium',
-              fontSize: 18 * scaleMultiplier,
-              color: '#1D1E20'
+              fontSize: 18 * scaleMultiplier
             }}
           >
             {props.translations.security.activate_on_switch_picker_label}
@@ -76,7 +65,7 @@ function SecurityScreen (props) {
             style={{
               fontFamily: props.font + '-regular',
               fontSize: 14 * scaleMultiplier,
-              color: '#82868D'
+              color: colors.chateau
             }}
             numberOfLines={2}
           >
@@ -84,9 +73,9 @@ function SecurityScreen (props) {
           </Text>
         </View>
         <Switch
-          trackColor={{ false: '#DEE3E9', true: '#60C239' }}
-          thumbColor='#FFFFFF'
-          ios_backgroundColor='#DEE3E9'
+          trackColor={{ false: colors.chateau, true: colors.apple }}
+          thumbColor={colors.white}
+          ios_backgroundColor={colors.chateau}
           onValueChange={() => {
             // toggle security mode on or off
             if (props.security.activateOnSwitch)
@@ -110,7 +99,7 @@ function SecurityScreen (props) {
             style={{
               fontFamily: props.font + '-medium',
               fontSize: 18 * scaleMultiplier,
-              color: '#1D1E20'
+              color: colors.shark
             }}
           >
             {props.translations.security.change_key_order_button_label}
@@ -118,7 +107,7 @@ function SecurityScreen (props) {
         </View>
         <Icon
           name={props.isRTL ? 'arrow-left' : 'arrow-right'}
-          color='#3A3C3F'
+          color={colors.tuna}
           size={50 * scaleMultiplier}
         />
       </TouchableOpacity>
@@ -135,7 +124,7 @@ function SecurityScreen (props) {
             style={{
               fontFamily: props.font + '-medium',
               fontSize: 18 * scaleMultiplier,
-              color: '#1D1E20'
+              color: colors.shark
             }}
           >
             {props.translations.security.view_key_order_button_label}
@@ -143,7 +132,7 @@ function SecurityScreen (props) {
         </View>
         <Icon
           name={props.isRTL ? 'arrow-left' : 'arrow-right'}
-          color='#3A3C3F'
+          color={colors.tuna}
           size={50 * scaleMultiplier}
         />
       </TouchableOpacity>
@@ -156,10 +145,10 @@ function SecurityScreen (props) {
     <ScrollView style={styles.screen}>
       <View
         style={{
-          backgroundColor: '#FFFFFF',
+          backgroundColor: colors.white,
           borderTopWidth: 2,
           borderBottomWidth: 2,
-          borderColor: '#EFF2F4',
+          borderColor: colors.athens,
           height: 180 * scaleMultiplier,
           width: '100%',
           justifyContent: 'center',
@@ -181,7 +170,7 @@ function SecurityScreen (props) {
             fontFamily: props.font + '-regular',
             paddingHorizontal: 20,
             marginVertical: 10,
-            color: '#1D1E20'
+            color: colors.shark
           }}
         >
           {props.translations.security.security_mode_description_text}
@@ -200,7 +189,7 @@ function SecurityScreen (props) {
               style={{
                 fontFamily: props.font + '-medium',
                 fontSize: 18 * scaleMultiplier,
-                color: '#1D1E20'
+                color: colors.shark
               }}
             >
               {props.translations.security.security_mode_picker_label}
@@ -209,7 +198,7 @@ function SecurityScreen (props) {
               style={{
                 fontFamily: props.font + '-regular',
                 fontSize: 14 * scaleMultiplier,
-                color: '#82868D'
+                color: colors.chateau
               }}
               numberOfLines={2}
             >
@@ -225,13 +214,13 @@ function SecurityScreen (props) {
             <Icon
               name='error-filled'
               size={40 * scaleMultiplier}
-              color='#FF0800'
+              color={colors.red}
               style={{ marginHorizontal: 20 }}
             />
             <Switch
-              trackColor={{ false: '#DEE3E9', true: '#60C239' }}
-              thumbColor='#FFFFFF'
-              ios_backgroundColor='#DEE3E9'
+              trackColor={{ false: colors.chateau, true: colors.apple }}
+              thumbColor={colors.white}
+              ios_backgroundColor={colors.chateau}
               onValueChange={() => {
                 // toggle security mode on or off for the active group
                 if (props.security.code) {
@@ -348,15 +337,15 @@ function SecurityScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#F7F7F7'
+    backgroundColor: colors.aquaHaze
     // alignItems: 'center'
   },
   unlockButton: {
     width: '100%',
     height: 100 * scaleMultiplier,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderWidth: 2,
-    borderColor: '#EFF2F4',
+    borderColor: colors.athens,
     flexDirection: 'row',
     alignItems: 'center',
     //marginVertical: 40 * scaleMultiplier,
@@ -367,7 +356,7 @@ const styles = StyleSheet.create({
     width: 80 * scaleMultiplier,
     height: 80 * scaleMultiplier,
     borderRadius: 40 * scaleMultiplier,
-    backgroundColor: '#EAEEF0',
+    backgroundColor: colors.chateau,
     margin: 5,
     justifyContent: 'center',
     alignItems: 'center'

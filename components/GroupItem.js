@@ -1,14 +1,16 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { deleteGroup, changeActiveGroup } from '../redux/actions/groupsActions'
-import { scaleMultiplier } from '../constants'
+import { colors, scaleMultiplier } from '../constants'
+import { changeActiveGroup, deleteGroup } from '../redux/actions/groupsActions'
 import AvatarImage from './AvatarImage'
-
+// renders a list item for a single group
 function GroupItem (props) {
   // FUNCTIONS
 
-  // gets a formatted string of this group's bookmark lesson
+  // gets a formatted string of this the bookmark lesson for this group
+  // the bookmark lesson is the earliest uncompleted lesson of the active set
+  //  for this group, and the text displays the subtitle and the name
   function getBookmarkText () {
     // get the active group object
     var thisGroup = props.groups.filter(
@@ -52,14 +54,18 @@ function GroupItem (props) {
         style={styles.minusButtonContainer}
         onPress={() => props.deleteGroup(props.groupName)}
       >
-        <Icon name='minus-filled' size={24 * scaleMultiplier} color='#FF0800' />
+        <Icon
+          name='minus-filled'
+          size={24 * scaleMultiplier}
+          color={colors.red}
+        />
       </TouchableOpacity>
     )
     // if we're editing and in the active group, show an untappable check
   } else if (props.isEditing && props.activeGroup.name === props.groupName) {
     deleteButton = (
       <View style={styles.minusButtonContainer}>
-        <Icon name='check' size={24 * scaleMultiplier} color='#2D9CDB' />
+        <Icon name='check' size={24 * scaleMultiplier} color={colors.blue} />
       </View>
     )
   }
@@ -73,14 +79,14 @@ function GroupItem (props) {
         <Icon
           name={props.isRTL ? 'arrow-left' : 'arrow-right'}
           size={36 * scaleMultiplier}
-          color='gray'
+          color={colors.chateau}
         />
       </View>
     )
   } else if (props.activeGroup.name === props.groupName) {
     rightButton = (
       <View style={styles.iconContainer}>
-        <Icon name='check' size={24 * scaleMultiplier} color='#2D9CDB' />
+        <Icon name='check' size={24 * scaleMultiplier} color={colors.blue} />
       </View>
     )
   } else {
@@ -105,8 +111,7 @@ function GroupItem (props) {
           styles.touchableContainer,
           {
             flexDirection: props.isRTL ? 'row-reverse' : 'row',
-            paddingLeft: props.isEditing ? 0 : 20,
-            paddingRight: 20
+            paddingLeft: props.isEditing ? 0 : 20
           }
         ]}
         onPress={
@@ -146,7 +151,7 @@ function GroupItem (props) {
           </Text>
           <Text
             style={[
-              styles.checkpointText,
+              styles.bookmarkText,
               {
                 textAlign: props.isRTL ? 'right' : 'left',
                 fontFamily: props.font + '-regular'
@@ -158,7 +163,7 @@ function GroupItem (props) {
           </Text>
           <Text
             style={[
-              styles.checkpointText,
+              styles.bookmarkText,
               {
                 textAlign: props.isRTL ? 'right' : 'left',
                 fontFamily: props.font + '-regular'
@@ -183,16 +188,17 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#EFF2F4'
+    borderColor: colors.athens
   },
   touchableContainer: {
     flex: 1,
     height: '100%',
     justifyContent: 'flex-start',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingRight: 20
   },
   iconContainer: {
     justifyContent: 'center',
@@ -212,13 +218,13 @@ const styles = StyleSheet.create({
     flexWrap: 'nowrap'
   },
   groupNameText: {
-    color: '#3A3C3F',
+    color: colors.shark,
     fontSize: 18 * scaleMultiplier,
     textAlign: 'left'
   },
-  checkpointText: {
+  bookmarkText: {
     fontSize: 12 * scaleMultiplier,
-    color: '#9FA5AD',
+    color: colors.chateau,
     textAlign: 'left'
   }
 })

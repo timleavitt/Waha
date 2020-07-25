@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react'
-import { View, FlatList, StyleSheet, Image, AsyncStorage } from 'react-native'
 import * as FileSystem from 'expo-file-system'
-import SetItem from '../components/SetItem'
-import AvatarImage from '../components/AvatarImage'
+import React, { useEffect } from 'react'
+import { FlatList, Image, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import AvatarImage from '../components/AvatarImage'
+import SetItem from '../components/SetItem'
 import { resumeDownload } from '../redux/actions/downloadActions'
 
 function SetScreen (props) {
@@ -90,7 +89,7 @@ function SetScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#EAEEF0'
+    backgroundColor: Colors.porcelain
   },
   headerImage: {
     resizeMode: 'contain',

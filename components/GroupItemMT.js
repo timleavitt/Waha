@@ -1,15 +1,9 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native'
+import { StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import {
-  deleteGroup,
-  changeActiveGroup,
-  setShowToolkit,
-  addSet
-} from '../redux/actions/groupsActions'
-import { scaleMultiplier } from '../constants'
+import { colors, scaleMultiplier } from '../constants'
+import { addSet, setShowToolkit } from '../redux/actions/groupsActions'
 import AvatarImage from './AvatarImage'
-
 // variant of group list item that shows only avatar image, group name, and a switch to enable MTs
 function GroupItemMT (props) {
   // FUNCTIONS
@@ -25,8 +19,7 @@ function GroupItemMT (props) {
     >
       <View
         style={{
-          marginHorizontal: 20,
-          tintColor: props.toolkitEnabled ? null : '#DEE3E9'
+          marginHorizontal: 20
         }}
       >
         <AvatarImage
@@ -42,7 +35,7 @@ function GroupItemMT (props) {
             {
               textAlign: props.isRTL ? 'right' : 'left',
               fontFamily: props.font + '-medium',
-              color: props.toolkitEnabled ? '#1D1E20' : '#DEE3E9'
+              color: props.toolkitEnabled ? colors.shark : colors.chateau
             }
           ]}
         >
@@ -51,9 +44,9 @@ function GroupItemMT (props) {
       </View>
       <View style={{ marginHorizontal: 20 }}>
         <Switch
-          trackColor={{ false: '#DEE3E9', true: '#60C239' }}
-          thumbColor='#FFFFFF'
-          ios_backgroundColor='#DEE3E9'
+          trackColor={{ false: colors.chateau, true: colors.apple }}
+          thumbColor={colors.white}
+          ios_backgroundColor={colors.chateau}
           onValueChange={() => {
             // toggle MTs on or off
             props.setShowToolkit(props.group.name, !props.group.showToolkit)
@@ -82,9 +75,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#EFF2F4'
+    borderColor: colors.athens
   },
   groupNameContainer: {
     flex: 1,
@@ -93,7 +86,7 @@ const styles = StyleSheet.create({
     flexWrap: 'nowrap'
   },
   groupNameText: {
-    color: '#9FA5AD',
+    color: colors.chateau,
     fontSize: 18 * scaleMultiplier,
     textAlign: 'left'
   }

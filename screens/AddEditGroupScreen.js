@@ -1,30 +1,31 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-  View,
-  StyleSheet,
-  TextInput,
-  Text,
-  TouchableOpacity,
   Alert,
+  Dimensions,
   FlatList,
   Image,
-  Dimensions
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native'
-import BackButton from '../components/BackButton'
-import { scaleMultiplier, groupIcons, groupIconSources } from '../constants'
-import * as ImagePicker from 'expo-image-picker'
 import { connect } from 'react-redux'
+import AvatarImage from '../components/AvatarImage'
+import BackButton from '../components/BackButton'
 import {
-  createGroup,
+  colors,
+  groupIcons,
+  groupIconSources,
+  scaleMultiplier
+} from '../constants'
+import {
   changeActiveGroup,
-  editGroup,
+  createGroup,
   deleteGroup,
+  editGroup,
   resetProgress
 } from '../redux/actions/groupsActions'
-import OptionsModal from '../components/OptionsModal'
-import ModalButton from '../components/ModalButton'
-import AvatarImage from '../components/AvatarImage'
-import Modal from 'react-native-modal'
 
 function AddEditGroupScreen (props) {
   //// STATE
@@ -159,7 +160,7 @@ function AddEditGroupScreen (props) {
     <View
       style={[
         styles.buttonContainer,
-        { borderWidth: 1, borderColor: '#9FA5AD', borderRadius: 10 }
+        { borderWidth: 1, borderColor: colors.chateau, borderRadius: 10 }
       ]}
     >
       <Text
@@ -179,7 +180,7 @@ function AddEditGroupScreen (props) {
       style={[
         styles.buttonContainer,
         {
-          backgroundColor: '#FF0800'
+          backgroundColor: colors.red
         }
       ]}
       onPress={() => {
@@ -193,7 +194,7 @@ function AddEditGroupScreen (props) {
           {
             textAlign: props.isRTL ? 'right' : 'left',
             fontFamily: props.font + '-regular',
-            color: '#FFFFFF'
+            color: colors.white
           }
         ]}
       >
@@ -222,7 +223,7 @@ function AddEditGroupScreen (props) {
             styles.buttonContainer,
             {
               borderWidth: 1,
-              borderColor: '#FF0800'
+              borderColor: colors.red
             }
           ]}
           onPress={() =>
@@ -251,7 +252,7 @@ function AddEditGroupScreen (props) {
               {
                 textAlign: props.isRTL ? 'right' : 'left',
                 fontFamily: props.font + '-regular',
-                color: '#FF0800'
+                color: colors.red
               }
             ]}
           >
@@ -299,7 +300,7 @@ function AddEditGroupScreen (props) {
               textAlign: props.isRTL ? 'right' : 'left',
               fontFamily: props.font + '-regular',
               fontSize: 14 * scaleMultiplier,
-              color: '#9FA5AD'
+              color: colors.chateau
             }}
           >
             {props.translations.add_edit_group.group_name_form_label}
@@ -319,7 +320,7 @@ function AddEditGroupScreen (props) {
             placeholder={
               props.translations.add_edit_group.group_name_form_placeholder
             }
-            placeholderTextColor='#9FA5AD'
+            placeholderTextColor={colors.chateau}
             maxLength={50}
             returnKeyType='done'
           />
@@ -327,7 +328,7 @@ function AddEditGroupScreen (props) {
         <Text
           style={{
             fontSize: 14 * scaleMultiplier,
-            color: '#9FA5AD',
+            color: colors.chateau,
             textAlign: props.isRTL ? 'right' : 'left',
             fontFamily: props.font + '-regular',
             marginHorizontal: 20,
@@ -345,7 +346,7 @@ function AddEditGroupScreen (props) {
             borderWidth: 2,
             borderRadius: 10,
             marginHorizontal: 20,
-            borderColor: '#EFF2F4'
+            borderColor: colors.athens
           }}
         >
           <FlatList
@@ -359,9 +360,9 @@ function AddEditGroupScreen (props) {
                   alignItems: 'center',
                   padding: 2,
                   borderWidth: item === emoji ? 2 : 0,
-                  borderColor: item === emoji ? '#2D9CDB' : null,
+                  borderColor: item === emoji ? colors.blue : null,
                   borderRadius: 10,
-                  backgroundColor: item === emoji ? '#2D9CDB38' : null
+                  backgroundColor: item === emoji ? colors.blue + '38' : null
                 }}
                 onPress={() => setEmoji(item)}
               >
@@ -392,7 +393,7 @@ function AddEditGroupScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     justifyContent: 'space-between'
   },
   photoContainer: {
@@ -402,14 +403,14 @@ const styles = StyleSheet.create({
     marginVertical: 20 * scaleMultiplier
   },
   addNewGroupContainer: {
-    borderBottomColor: '#EFF2F4',
+    borderBottomColor: colors.athens,
     borderBottomWidth: 2,
     height: 40 * scaleMultiplier,
     fontSize: 18 * scaleMultiplier
   },
   resetProgressButtonContainer: {
     flex: 1,
-    borderColor: '#FF0800',
+    borderColor: colors.red,
     borderWidth: 1,
     borderRadius: 10,
     height: 55 * scaleMultiplier,
@@ -434,18 +435,18 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   deleteGroupButtonText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 18 * scaleMultiplier
   },
   cantDeleteText: {
     fontSize: 14 * scaleMultiplier,
-    color: '#9FA5AD'
+    color: colors.chateau
   },
   saveButtonContainer: {
     width: 127 * scaleMultiplier,
     height: 52 * scaleMultiplier,
     borderRadius: 10,
-    backgroundColor: '#60C239',
+    backgroundColor: colors.apple,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end',
@@ -453,7 +454,7 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     fontSize: 18 * scaleMultiplier,
-    color: '#FFFFFF'
+    color: colors.white
   }
 })
 

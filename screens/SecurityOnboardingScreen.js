@@ -1,20 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
-import {
-  View,
-  StyleSheet,
-  Text,
-  Button,
-  Image,
-  FlatList,
-  Dimensions
-} from 'react-native'
-import i18n from 'i18n-js'
-import { connect } from 'react-redux'
-import { createGroup, changeActiveGroup } from '../redux/actions/groupsActions'
-import { scaleMultiplier } from '../constants'
-import BackButton from '../components/BackButton'
+import React, { useEffect } from 'react'
+import { Dimensions, Image, StyleSheet, View } from 'react-native'
 import Onboarding from 'react-native-onboarding-swiper'
-
+import { connect } from 'react-redux'
+import BackButton from '../components/BackButton'
+import { colors, scaleMultiplier } from '../constants'
 function SecurityOnboardingScreen (props) {
   //// STATE
 
@@ -47,7 +36,7 @@ function SecurityOnboardingScreen (props) {
 
   const onboardingData = [
     {
-      backgroundColor: '#FFFFFF',
+      backgroundColor: colors.white,
       image: (
         <Image
           style={styles.image}
@@ -58,7 +47,7 @@ function SecurityOnboardingScreen (props) {
       subtitle: props.translations.security.popups.onboarding_1_message
     },
     {
-      backgroundColor: '#FFFFFF',
+      backgroundColor: colors.white,
       image: (
         <Image
           style={styles.image}
@@ -69,7 +58,7 @@ function SecurityOnboardingScreen (props) {
       subtitle: props.translations.security.popups.onboarding_2_message
     },
     {
-      backgroundColor: '#FFFFFF',
+      backgroundColor: colors.white,
       image: (
         <Image
           style={styles.image}
@@ -102,7 +91,7 @@ function SecurityOnboardingScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#F7F9FA',
+    backgroundColor: colors.aquaHaze,
     flexDirection: 'column',
     justifyContent: 'space-between'
   },

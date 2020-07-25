@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, Slider } from 'react-native'
+import { Slider, StyleSheet, View } from 'react-native'
 import TimeDisplay from '../components/TimeDisplay'
 
 // scrubber component rendered on play screen
@@ -16,8 +16,8 @@ function Scrubber (props) {
           minimumValue={0}
           maximumValue={props.maximumValue}
           step={1000}
-          minimumTrackTintColor={'#3A3C3F'}
-          thumbTintColor={'#3A3C3F'}
+          minimumTrackTintColor={colors.tuna}
+          thumbTintColor={colors.tuna}
         />
       </View>
       <View style={styles.timeInfo}>

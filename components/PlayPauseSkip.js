@@ -1,13 +1,12 @@
 import React from 'react'
 import {
-  View,
-  TouchableOpacity,
+  ActivityIndicator,
   StyleSheet,
-  ActivityIndicator
+  TouchableOpacity,
+  View
 } from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
-
 // play, pause, and skip controls for play screen
 function PlayPauseSkip (props) {
   //// RENDER

@@ -1,9 +1,8 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Modal from 'react-native-modal'
-import { scaleMultiplier } from '../constants'
 import { connect } from 'react-redux'
-
+import { colors, scaleMultiplier } from '../constants'
 // modal variant that shows some information
 function MessageModal (props) {
   var cancelButton = props.cancelText ? (
@@ -19,7 +18,7 @@ function MessageModal (props) {
         style={{
           fontFamily: props.font + '-medium',
           fontSize: 24 * scaleMultiplier,
-          color: '#FF0800'
+          color: colors.red
         }}
       >
         {props.cancelText}
@@ -54,6 +53,7 @@ function MessageModal (props) {
         {topComponent}
         <Text
           style={{
+            color: colors.shark,
             fontFamily: props.font + '-black',
             fontSize: 36 * scaleMultiplier,
             marginVertical: 20,
@@ -65,6 +65,7 @@ function MessageModal (props) {
         </Text>
         <Text
           style={{
+            color: colors.shark,
             fontFamily: props.font + '-medium',
             fontSize: 18 * scaleMultiplier,
             marginHorizontal: 15,
@@ -86,7 +87,7 @@ function MessageModal (props) {
             style={{
               fontFamily: props.font + '-medium',
               fontSize: 24 * scaleMultiplier,
-              color: '#60C239'
+              color: colors.apple
             }}
           >
             {props.confirmText}
@@ -100,7 +101,7 @@ function MessageModal (props) {
 
 const styles = StyleSheet.create({
   buttonsContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     justifyContent: 'center',

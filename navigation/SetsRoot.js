@@ -1,13 +1,12 @@
-import React from 'react'
-import { View, Image, StyleSheet, Dimensions } from 'react-native'
-import SetTabs from './SetTabs'
 import { createStackNavigator } from '@react-navigation/stack'
+import * as FileSystem from 'expo-file-system'
+import React from 'react'
+import { Image, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
+import AvatarImage from '../components/AvatarImage'
 import { scaleMultiplier } from '../constants'
 import AddSetStack from './AddSetStack'
-import AvatarImage from '../components/AvatarImage'
-import * as FileSystem from 'expo-file-system'
-
+import SetTabs from './SetTabs'
 const Stack = createStackNavigator()
 
 function SetsRoot (props) {

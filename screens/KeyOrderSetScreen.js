@@ -1,23 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import {
-  View,
-  FlatList,
+  Alert,
+  SafeAreaView,
   StyleSheet,
-  Image,
-  AsyncStorage,
   Text,
   TouchableOpacity,
-  Clipboard,
-  Alert,
-  Switch,
-  SafeAreaView
+  View
 } from 'react-native'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
 import KeyLabel from '../components/KeyLabel'
 import Piano from '../components/Piano'
-import { scaleMultiplier, keyColors } from '../constants'
-import { setSecurityEnabled, setCode } from '../redux/actions/securityActions'
+import { colors, keyColors, scaleMultiplier } from '../constants'
+import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
 function KeyOrderSetScreen (props) {
   //// STATE
 
@@ -213,6 +208,7 @@ function KeyOrderSetScreen (props) {
         <View style={{ width: '100%' }}>
           <Text
             style={{
+              color: colors.shark,
               fontFamily: props.font + '-medium',
               fontSize: 24 * scaleMultiplier,
               textAlign: 'center'
@@ -239,13 +235,14 @@ function KeyOrderSetScreen (props) {
             marginHorizontal: 100,
             borderRadius: 10,
             borderWidth: 1,
-            borderColor: '#000000',
+            borderColor: colors.shark,
             padding: 20
           }}
           onPress={() => setKeyOrder('')}
         >
           <Text
             style={{
+              color: colors.shark,
               textAlign: 'center',
               fontFamily: props.font + '-regular'
             }}
@@ -264,7 +261,7 @@ function KeyOrderSetScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#F7F9FA',
+    backgroundColor: colors.aquaHaze,
     alignItems: 'center',
     justifyContent: 'space-around'
   },
@@ -272,7 +269,7 @@ const styles = StyleSheet.create({
     width: 80 * scaleMultiplier,
     height: 80 * scaleMultiplier,
     borderRadius: 40 * scaleMultiplier,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     margin: 5,
     justifyContent: 'center',
     alignItems: 'center',

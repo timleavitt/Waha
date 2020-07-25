@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import {
-  View,
   FlatList,
   StyleSheet,
-  Image,
-  AsyncStorage,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  View
 } from 'react-native'
-import * as FileSystem from 'expo-file-system'
-import SetItem from '../components/SetItem'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import SetItem from '../components/SetItem'
+import { colors, scaleMultiplier } from '../constants'
 import { resumeDownload } from '../redux/actions/downloadActions'
-import { getStateFromPath } from '@react-navigation/native'
-
 function SetScreen (props) {
   //// STUFF FOR TESTING
 
@@ -122,7 +117,7 @@ function SetScreen (props) {
                 <Icon
                   name='plus'
                   size={60 * scaleMultiplier}
-                  color='#9FA5AD'
+                  color={colors.chateau}
                   style={styles.addNewSetIcon}
                 />
               </View>
@@ -139,7 +134,7 @@ function SetScreen (props) {
                   style={{
                     fontFamily: props.font + '-regular',
                     fontSize: 14 * scaleMultiplier,
-                    color: '#9FA5AD',
+                    color: colors.chateau,
                     textAlign: props.isRTL ? 'right' : 'left'
                   }}
                 >
@@ -159,7 +154,7 @@ function SetScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#EAEEF0'
+    backgroundColor: colors.porcelain
   },
   headerImage: {
     resizeMode: 'contain',
