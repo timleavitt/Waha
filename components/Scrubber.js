@@ -1,7 +1,7 @@
 import React from 'react'
 import { Slider, StyleSheet, View } from 'react-native'
 import TimeDisplay from '../components/TimeDisplay'
-
+import { colors } from '../constants'
 // scrubber component rendered on play screen
 function Scrubber (props) {
   //// RENDER

@@ -51,6 +51,7 @@ function updateProgress (groupName, set, nextSet, lessonIndex) {
 }
 
 export function toggleComplete (groupName, set, lessonIndex) {
+  // logToggleComplete(set)
   return (dispatch, getState) => {
     var thisLanguage = getState().groups.filter(
       group => group.name === groupName
@@ -61,13 +62,6 @@ export function toggleComplete (groupName, set, lessonIndex) {
     dispatch(updateProgress(groupName, set, nextSet, lessonIndex))
   }
 }
-
-// async function logToggleComplete (set) {
-//   console.log('beep')
-//   await Analytics.logEvent('LessonComplete', {
-//     set: set.title
-//   })
-// }
 
 export function resetProgress (groupName) {
   return {

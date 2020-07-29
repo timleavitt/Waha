@@ -12,3 +12,4 @@ web-report/
 app.json
 # macOS
 .DS_Store
+firebase
