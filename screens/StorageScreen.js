@@ -1,18 +1,13 @@
 import * as FileSystem from 'expo-file-system'
 import React, { useEffect, useState } from 'react'
-import {
-  Alert,
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native'
+import { Alert, Dimensions, FlatList, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
-import { colors, scaleMultiplier } from '../constants'
+import LanguageStorageItem from '../components/LanguageStorageItem'
+import WahaButton from '../components/WahaButton'
+import { colors } from '../constants'
 import { removeDownload } from '../redux/actions/downloadActions'
+
 function StorageScreen (props) {
   //// STATE
 
@@ -125,19 +120,18 @@ function StorageScreen (props) {
 
   //// RENDER
 
-  function renderLanguageInstance (languageInstanceList) {
+  function renderLanguageStorageItem (languageList) {
     return (
-      <TouchableOpacity
-        style={[
-          styles.storageContainerFlatList,
-          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
-        ]}
-        onPress={() =>
+      <LanguageStorageItem
+        languageName={languageList.item.languageName}
+        languageID={languageList.item.languageID}
+        megabytes={storageObject[languageList.item.languageID]}
+        clearDownloads={() => {
           Alert.alert(
             props.translations.storage.popups
-              .delete_all_downloaded_lessons_for_a_language_title,
+              .clear_all_downloaded_lessons_for_a_language_title,
             props.translations.storage.popups
-              .delete_all_downloaded_lessons_for_a_language_message,
+              .clear_all_downloaded_lessons_for_a_language_message,
             [
               {
                 text: props.translations.general.cancel,
@@ -146,149 +140,57 @@ function StorageScreen (props) {
               {
                 text: props.translations.general.ok,
                 onPress: () =>
-                  deleteDownloadedLessons(languageInstanceList.item.languageID)
+                  deleteDownloadedLessons(languageList.item.languageID)
               }
             ]
           )
-        }
-      >
-        <Text style={[styles.mbText, { fontFamily: props.font + '-regular' }]}>
-          {languageInstanceList.item.languageName}
-        </Text>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: props.isRTL ? 'flex-start' : 'flex-end'
-          }}
-        >
-          <Image
-            style={styles.languageLogo}
-            source={{
-              uri:
-                FileSystem.documentDirectory +
-                languageInstanceList.item.languageID +
-                '-header.png'
-            }}
-          />
-          <Text
-            style={[styles.mbText, { fontFamily: props.font + '-regular' }]}
-          >
-            {storageObject[languageInstanceList.item.languageID]}
-            {props.translations.storage.megabyte_label}
-          </Text>
-        </View>
-      </TouchableOpacity>
+        }}
+      />
     )
   }
 
   return (
     <View style={styles.screen}>
-      <View style={styles.storageList}>
-        <FlatList
-          data={getInstalledLanguageInstances()}
-          renderItem={renderLanguageInstance}
-          keyExtractor={item => item.languageID}
-          ItemSeparatorComponent={() => (
-            <View
-              style={{
-                height: 1,
-                flex: 1,
-                backgroundColor: colors.chateau
-              }}
-            />
-          )}
-          ListHeaderComponent={
-            <View style={styles.storageHeader}>
-              <View style={styles.headerItems}>
-                <View
-                  style={[
-                    styles.headerItemContainer,
-                    { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.storageUsedText,
-                      {
-                        fontFamily: props.font + '-medium'
-                      }
-                    ]}
-                  >
-                    {props.translations.storage.storage_used_label}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.mbText,
-                      { fontFamily: props.font + '-regular' }
-                    ]}
-                  >
-                    {totalStorage} {props.translations.storage.megabyte_label}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  style={[
-                    styles.headerItemContainer,
-                    {
-                      flexDirection: props.isRTL ? 'row-reverse' : 'row',
-                      borderTopWidth: 0
-                    }
-                  ]}
-                  onPress={() =>
-                    Alert.alert(
-                      props.translations.storage.popups
-                        .delete_all_downloaded_lessons_title,
-                      props.translations.storage.popups
-                        .delete_all_downloaded_lessons_message,
-                      [
-                        {
-                          text: props.translations.general.cancel,
-                          onPress: () => {}
-                        },
-                        {
-                          text: props.translations.general.ok,
-                          onPress: () => deleteDownloadedLessons()
-                        }
-                      ]
-                    )
-                  }
-                >
-                  <Text
-                    style={[
-                      styles.deleteText,
-                      { fontFamily: props.font + '-regular' }
-                    ]}
-                  >
-                    {
-                      props.translations.storage
-                        .delete_all_downloaded_lessons_button_label
-                    }
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <Text
-                style={[
-                  styles.downloadedLessonsText,
-                  {
-                    textAlign: props.isRTL ? 'right' : 'left',
-                    fontFamily: props.font + '-regular'
-                  }
-                ]}
-              >
-                {props.translations.storage.downloaded_lessons_list_label}
-              </Text>
-              <View
-                style={{ height: 2, flex: 1, backgroundColor: colors.chateau }}
-              />
-            </View>
-          }
-          ListFooterComponent={
-            <View
-              style={{ height: 2, flex: 1, backgroundColor: colors.chateau }}
-            />
-          }
-        />
-      </View>
+      <FlatList
+        data={getInstalledLanguageInstances()}
+        renderItem={renderLanguageStorageItem}
+        keyExtractor={item => item.languageID}
+        ItemSeparatorComponent={() => (
+          <View style={{ height: 20, width: '100%' }} />
+        )}
+      />
+      <WahaButton
+        type='filled'
+        color={colors.cinnabar}
+        label={
+          props.translations.storage.clear_all_downloaded_lessons_button_label +
+          ' (' +
+          totalStorage +
+          ' ' +
+          props.translations.storage.megabyte_label +
+          ')'
+        }
+        width={Dimensions.get('window').width - 40}
+        onPress={() =>
+          Alert.alert(
+            props.translations.storage.popups
+              .clear_all_downloaded_lessons_title,
+            props.translations.storage.popups
+              .clear_all_downloaded_lessons_message,
+            [
+              {
+                text: props.translations.general.cancel,
+                onPress: () => {}
+              },
+              {
+                text: props.translations.general.ok,
+                onPress: () => deleteDownloadedLessons()
+              }
+            ]
+          )
+        }
+        style={{ alignSelf: 'center' }}
+      />
     </View>
   )
 }
@@ -298,56 +200,7 @@ function StorageScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.white
-  },
-  storageList: {
-    flex: 1,
-    marginHorizontal: 20
-  },
-  headerItems: {
-    marginBottom: 40
-  },
-  headerItemContainer: {
-    height: 55 * scaleMultiplier,
-    borderWidth: 2,
-    borderColor: colors.chateau,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 10
-  },
-  downloadedLessonsText: {
-    color: colors.chateau,
-    fontSize: 18 * scaleMultiplier
-  },
-  storageContainerFlatList: {
-    height: 55 * scaleMultiplier,
-    borderLeftWidth: 2,
-    borderRightWidth: 2,
-    borderColor: colors.chateau,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 10
-  },
-  storageUsedText: {
-    fontSize: 18,
-    color: colors.tuna
-  },
-  mbText: {
-    fontSize: 18,
-    color: colors.chateau,
-    alignSelf: 'center'
-  },
-  deleteText: {
-    fontSize: 18,
-    color: colors.red
-  },
-  languageLogo: {
-    resizeMode: 'contain',
-    width: 96 * scaleMultiplier,
-    height: 32 * scaleMultiplier,
-    marginRight: 20
+    backgroundColor: colors.aquaHaze
   }
 })
 

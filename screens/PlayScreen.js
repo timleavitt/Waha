@@ -1193,8 +1193,10 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').width - 80,
     borderRadius: 10,
     marginHorizontal: 10,
-    backgroundColor: colors.chateau,
-    overflow: 'hidden'
+    backgroundColor: colors.porcelain,
+    overflow: 'hidden',
+    borderWidth: 4,
+    borderColor: colors.oslo
   },
   scrollBar: {
     width: 4,
