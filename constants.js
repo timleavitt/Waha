@@ -318,6 +318,8 @@ export const colors = {
   // gray borders
   oslo: '#828282',
 
+  geyser: '#DEE3E9',
+
   // backgrounds, list items, borders
   porcelain: '#EAEEF0',
   athens: '#EFF2F4',

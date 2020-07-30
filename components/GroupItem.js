@@ -123,6 +123,7 @@ function GroupItem (props) {
         }
       >
         <AvatarImage
+          style={{ backgroundColor: colors.geyser }}
           size={50 * scaleMultiplier}
           emoji={props.emoji}
           isActive={props.activeGroup.name === props.groupName}

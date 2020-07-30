@@ -5,7 +5,14 @@ import { colors, scaleMultiplier } from '../constants'
 
 function WahaItemDescription (props) {
   return (
-    <View style={{ width: '100%', paddingHorizontal: 20, paddingVertical: 5 }}>
+    <View
+      style={{
+        width: '100%',
+        paddingHorizontal: 20,
+        paddingVertical: 5,
+        flexDirection: props.isRTL ? 'row-reverse' : 'row'
+      }}
+    >
       <Text
         style={{
           fontFamily: props.font + '-regular',
@@ -24,7 +31,8 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    isRTL: state.database[activeGroup.language].isRTL
   }
 }
 

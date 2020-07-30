@@ -6,6 +6,7 @@ import BackButton from '../components/BackButton'
 import MessageModal from '../components/MessageModal'
 import { colors, scaleMultiplier } from '../constants'
 import { setToolkitEnabled } from '../redux/actions/toolkitEnabledActions'
+
 function PasscodeScreen (props) {
   //// STATE
   const [passcode, setPasscode] = useState('')
@@ -101,10 +102,13 @@ function PasscodeScreen (props) {
         title={props.translations.passcode.popups.unlock_successful_title}
         body={props.translations.passcode.popups.unlock_successful_message}
         confirmText={props.translations.general.got_it}
-        confirmOnPress={() => setUnlockSuccessModal(false)}
+        confirmOnPress={() => {
+          setUnlockSuccessModal(false)
+          props.navigation.goBack()
+        }}
       >
         <Image
-          source={require('../assets/splash.png')}
+          source={require('../assets/gifs/unlock_mob_tools.gif')}
           style={{
             height: 200 * scaleMultiplier,
             margin: 20,

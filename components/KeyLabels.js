@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     width: 80 * scaleMultiplier,
     height: 80 * scaleMultiplier,
     borderRadius: 40 * scaleMultiplier,
-    backgroundColor: colors.white,
+    backgroundColor: colors.aquaHaze,
     margin: 5,
     justifyContent: 'center',
     alignItems: 'center',

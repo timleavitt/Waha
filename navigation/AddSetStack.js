@@ -1,7 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
 import AddSetScreen from '../screens/AddSetScreen'
 import SetInfoScreen from '../screens/SetInfoScreen'
 const Stack = createStackNavigator()
@@ -11,9 +10,6 @@ function AddSetStack (props) {
     <Stack.Navigator
       initialRouteName='AddSet'
       screenOptions={{
-        headerStyle: {
-          height: 90 * scaleMultiplier
-        },
         headerTitleAlign: 'center',
         gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal'
       }}

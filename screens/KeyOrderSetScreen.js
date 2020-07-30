@@ -218,19 +218,6 @@ function KeyOrderSetScreen (props) {
             {instructionText}
           </Text>
         </View>
-        {/* <View
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            padding: 20
-          }}
-        >
-          <View style={styles.keyPlaceholder}>{keyLabel1}</View>
-          <View style={styles.keyPlaceholder}>{keyLabel2}</View>
-          <View style={styles.keyPlaceholder}>{keyLabel3}</View>
-          <View style={styles.keyPlaceholder}>{keyLabel4}</View>
-        </View> */}
         <KeyLabels keyOrder={keyOrder} />
         <TouchableOpacity
           style={{
@@ -263,19 +250,9 @@ function KeyOrderSetScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.aquaHaze,
+    backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'space-around'
-  },
-  keyPlaceholder: {
-    width: 80 * scaleMultiplier,
-    height: 80 * scaleMultiplier,
-    borderRadius: 40 * scaleMultiplier,
-    backgroundColor: colors.white,
-    margin: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2
   }
 })
 
@@ -286,7 +263,8 @@ function mapStateToProps (state) {
   return {
     translations: state.database[activeGroup.language].translations,
     font: state.database[activeGroup.language].font,
-    security: state.security
+    security: state.security,
+    isRTL: state.database[activeGroup.language].isRTL
   }
 }
 

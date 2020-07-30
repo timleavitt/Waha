@@ -40,6 +40,9 @@ function SetTabs (props) {
       initialRouteName={initialRouteName}
       swipeEnabled={true}
       tabBarOptions={{
+        style: {
+          backgroundColor: colors.aquaHaze
+        },
         labelStyle: {
           fontSize: 14 * scaleMultiplier,
           fontFamily: props.font + '-medium',
@@ -73,6 +76,9 @@ function SetTabs (props) {
       initialRouteName={initialRouteName}
       swipeEnabled={true}
       tabBarOptions={{
+        style: {
+          backgroundColor: colors.aquaHaze
+        },
         labelStyle: {
           fontSize: 14 * scaleMultiplier,
           fontFamily: props.font + '-medium',
