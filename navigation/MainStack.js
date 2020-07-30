@@ -100,7 +100,7 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.groups.header,
           headerStyle: {
-            backgroundColor: colors.athens
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
             color: colors.shark,
@@ -161,7 +161,7 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.storage.header,
           headerStyle: {
-            backgroundColor: colors.white
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
             color: colors.shark,
@@ -189,7 +189,7 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.mobilization_tools.header,
           headerStyle: {
-            backgroundColor: colors.aquaHaze
+            backgroundColor: colors.white
           },
           headerTitleStyle: {
             color: colors.shark,
@@ -217,7 +217,7 @@ function MainStack (props) {
         options={{
           headerTitle: props.translations.security.header,
           headerStyle: {
-            backgroundColor: colors.aquaHaze
+            backgroundColor: colors.white
           },
           headerTitleStyle: {
             color: colors.shark,
@@ -230,7 +230,7 @@ function MainStack (props) {
         component={KeyOrderSetScreen}
         options={{
           headerStyle: {
-            backgroundColor: colors.aquaHaze
+            backgroundColor: colors.white
           },
           headerTitleStyle: {
             color: colors.shark,
@@ -243,7 +243,7 @@ function MainStack (props) {
         component={KeyOrderSetScreen}
         options={{
           headerStyle: {
-            backgroundColor: colors.aquaHaze
+            backgroundColor: colors.white
           },
           headerTitleStyle: {
             color: colors.shark,
@@ -256,7 +256,7 @@ function MainStack (props) {
         component={KeyOrderSetScreen}
         options={{
           headerStyle: {
-            backgroundColor: colors.aquaHaze
+            backgroundColor: colors.white
           },
           headerTitleStyle: {
             color: colors.shark,
@@ -269,7 +269,7 @@ function MainStack (props) {
         component={KeyOrderSetScreen}
         options={{
           headerStyle: {
-            backgroundColor: colors.aquaHaze
+            backgroundColor: colors.white
           },
           headerTitleStyle: {
             color: colors.shark,
@@ -282,7 +282,7 @@ function MainStack (props) {
         component={KeyOrderSetScreen}
         options={{
           headerStyle: {
-            backgroundColor: colors.aquaHaze
+            backgroundColor: colors.white
           },
           headerTitleStyle: {
             color: colors.shark,

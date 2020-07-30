@@ -2,7 +2,6 @@ import * as FileSystem from 'expo-file-system'
 import React, { useEffect } from 'react'
 import {
   Alert,
-  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -14,7 +13,6 @@ import { colors, scaleMultiplier } from '../constants'
 import { deleteLanguage } from '../redux/actions/databaseActions'
 import { removeDownload } from '../redux/actions/downloadActions'
 import { deleteGroup } from '../redux/actions/groupsActions'
-import GroupItem from './GroupItem'
 function GroupListHeader (props) {
   //// FUNCTIONS
 
@@ -62,19 +60,6 @@ function GroupListHeader (props) {
     props.deleteLanguage(props.languageID)
   }
 
-  //// RENDER
-
-  function renderGroupItem (groups) {
-    return (
-      <GroupItem
-        groupName={groups.item.name}
-        isEditing={props.isEditing}
-        goToEditGroupScreen={props.goToEditGroupScreen}
-        emoji={groups.item.emoji}
-      />
-    )
-  }
-
   // render trash button conditionally because it's only shown when editing mode is active
   var trashButton
   // if we're editing and not in the active group, we can delete, so show trash can
@@ -119,79 +104,34 @@ function GroupListHeader (props) {
   }
 
   return (
-    <View style={styles.languageHeaderListContainer}>
-      <View
+    <View
+      style={[
+        styles.languageHeaderContainer,
+        {
+          flexDirection: props.isRTL ? 'row-reverse' : 'row'
+        }
+      ]}
+    >
+      {trashButton}
+      <Text
         style={[
-          styles.languageHeaderContainer,
+          styles.languageHeaderText,
           {
-            flexDirection: props.isRTL ? 'row-reverse' : 'row'
+            textAlign: props.isRTL ? 'right' : 'left',
+            fontFamily: props.font + '-regular',
+            marginLeft: props.isRTL ? 0 : props.isEditing ? 0 : 20,
+            marginRight: props.isRTL ? (props.isEditing ? 0 : 20) : 0
           }
         ]}
       >
-        {trashButton}
-        <Text
-          style={[
-            styles.languageHeaderText,
-            {
-              textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-regular',
-              marginLeft: props.isRTL ? 0 : props.isEditing ? 0 : 20,
-              marginRight: props.isRTL ? (props.isEditing ? 0 : 20) : 0
-            }
-          ]}
-        >
-          {props.languageName}
-        </Text>
-        <Image
-          style={styles.languageLogo}
-          source={{
-            uri: FileSystem.documentDirectory + props.languageID + '-header.png'
-          }}
-        />
-      </View>
-
-      {/* list of groups */}
-      <FlatList
-        data={props.groups.filter(group => group.language === props.languageID)}
-        renderItem={renderGroupItem}
-        keyExtractor={item => item.name}
+        {props.languageName}
+      </Text>
+      <Image
+        style={styles.languageLogo}
+        source={{
+          uri: FileSystem.documentDirectory + props.languageID + '-header.png'
+        }}
       />
-
-      {/* add new group button */}
-      <TouchableOpacity
-        style={[
-          styles.addGroupContainer,
-          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
-        ]}
-        onPress={props.goToAddNewGroupScreen}
-      >
-        <View
-          style={{
-            width: 50 * scaleMultiplier,
-            height: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginHorizontal: 20
-          }}
-        >
-          <Icon
-            name='group-add'
-            size={40 * scaleMultiplier}
-            color={colors.chateau}
-          />
-        </View>
-        <Text
-          style={[
-            styles.addGroupText,
-            {
-              textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-medium'
-            }
-          ]}
-        >
-          {props.translations.groups.new_group_button_label}
-        </Text>
-      </TouchableOpacity>
     </View>
   )
 }
@@ -199,16 +139,11 @@ function GroupListHeader (props) {
 //// STYLES
 
 const styles = StyleSheet.create({
-  languageHeaderListContainer: {
-    width: '100%',
-    marginBottom: 15,
-    marginTop: 3
-  },
   languageHeaderContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    height: 30
+    height: 40 * scaleMultiplier,
+    backgroundColor: colors.aquaHaze
   },
   languageHeaderText: {
     fontSize: 18 * scaleMultiplier,
@@ -219,22 +154,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     width: 120 * scaleMultiplier,
     height: 40 * scaleMultiplier,
-    // alignSelf: 'flex-end',
     marginHorizontal: 20
-  },
-  addGroupContainer: {
-    height: 80 * scaleMultiplier,
-    justifyContent: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.athens
-  },
-  addGroupText: {
-    color: colors.blue,
-    fontSize: 18 * scaleMultiplier,
-    textAlign: 'left'
   }
 })
 

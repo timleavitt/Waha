@@ -75,9 +75,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.athens
+    backgroundColor: colors.white
   },
   groupNameContainer: {
     flex: 1,

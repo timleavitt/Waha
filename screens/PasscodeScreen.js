@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
@@ -102,8 +102,17 @@ function PasscodeScreen (props) {
         body={props.translations.passcode.popups.unlock_successful_message}
         confirmText={props.translations.general.got_it}
         confirmOnPress={() => setUnlockSuccessModal(false)}
-        imageSource={require('../assets/gifs/unlock_mob_tools.gif')}
-      />
+      >
+        <Image
+          source={require('../assets/splash.png')}
+          style={{
+            height: 200 * scaleMultiplier,
+            margin: 20,
+            // padding: 20,
+            resizeMode: 'contain'
+          }}
+        />
+      </MessageModal>
     </View>
   )
 }
@@ -113,7 +122,7 @@ function PasscodeScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.aquaHaze,
+    backgroundColor: colors.white,
     alignItems: 'center'
   }
 })

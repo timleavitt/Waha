@@ -1,9 +1,8 @@
 import * as FileSystem from 'expo-file-system'
 import React, { useEffect } from 'react'
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
-import GroupItemMT from './GroupItemMT'
 function GroupListHeaderMT (props) {
   //// FUNCTIONS
 
@@ -12,91 +11,86 @@ function GroupListHeaderMT (props) {
   //// RENDER
 
   // if our active language has a toolkit, show the list of groups
-  var list = props.activeDatabase.hasToolkit ? (
-    <FlatList
-      data={props.groups.filter(group => group.language === props.languageID)}
-      renderItem={renderGroupItem}
-      keyExtractor={item => item.name}
-    />
-  ) : (
-    // otherwise, show a message that says MTs are not available for that language
-    <View
-      style={{
-        height: 80 * scaleMultiplier,
-        justifyContent: 'flex-start',
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: colors.white,
-        margin: 2,
-        justifyContent: 'center'
-      }}
-    >
-      <Text
-        style={{
-          fontFamily: props.font + '-regular',
-          fontSize: 14 * scaleMultiplier,
-          color: colors.chateau,
-          textAlign: 'center'
-        }}
-      >
-        {
-          props.translations.mobilization_tools
-            .no_mobilization_tools_content_text
-        }
-      </Text>
-    </View>
-  )
+  // var list = props.activeDatabase.hasToolkit ? (
+  //   <FlatList
+  //     data={props.groups.filter(group => group.language === props.languageID)}
+  //     renderItem={renderGroupItem}
+  //     keyExtractor={item => item.name}
+  //   />
+  // ) : (
+  //   // otherwise, show a message that says MTs are not available for that language
+  //   <View
+  //     style={{
+  //       height: 80 * scaleMultiplier,
+  //       justifyContent: 'flex-start',
+  //       flexDirection: 'row',
+  //       alignItems: 'center',
+  //       backgroundColor: colors.white,
+  //       margin: 2,
+  //       justifyContent: 'center'
+  //     }}
+  //   >
+  //     <Text
+  //       style={{
+  //         fontFamily: props.font + '-regular',
+  //         fontSize: 14 * scaleMultiplier,
+  //         color: colors.chateau,
+  //         textAlign: 'center'
+  //       }}
+  //     >
+  //       {
+  //         props.translations.mobilization_tools
+  //           .no_mobilization_tools_content_text
+  //       }
+  //     </Text>
+  //   </View>
+  // )
 
-  // renders a group item
-  function renderGroupItem (groups) {
-    return <GroupItemMT group={groups.item} />
-  }
+  // // renders a group item
+  // function renderGroupItem (groups) {
+  //   return <GroupItemMT group={groups.item} />
+  // }
 
   return (
-    <View style={styles.languageHeaderListContainer}>
-      <View
-        style={[
-          styles.languageHeaderContainer,
-          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
-        ]}
-      >
-        <View>
-          <Text
-            style={{
-              textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-medium',
-              fontSize: 18 * scaleMultiplier,
-              color: colors.chateau
-            }}
-          >
-            {props.languageName +
-              ' ' +
-              props.translations.mobilization_tools.groups_label}
-          </Text>
-          <Text
-            style={{
-              textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-regular',
-              fontSize: 18 * scaleMultiplier,
-              color: colors.chateau
-            }}
-          >
-            {
-              props.translations.mobilization_tools
-                .mobilization_tools_status_label
-            }
-          </Text>
-        </View>
-        <Image
-          style={styles.languageLogo}
-          source={{
-            uri: FileSystem.documentDirectory + props.languageID + '-header.png'
+    <View
+      style={[
+        styles.languageHeaderContainer,
+        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+      ]}
+    >
+      <View>
+        <Text
+          style={{
+            textAlign: props.isRTL ? 'right' : 'left',
+            fontFamily: props.font + '-medium',
+            fontSize: 18 * scaleMultiplier,
+            color: colors.chateau
           }}
-        />
+        >
+          {props.languageName +
+            ' ' +
+            props.translations.mobilization_tools.groups_label}
+        </Text>
+        <Text
+          style={{
+            textAlign: props.isRTL ? 'right' : 'left',
+            fontFamily: props.font + '-regular',
+            fontSize: 18 * scaleMultiplier,
+            color: colors.chateau
+          }}
+        >
+          {
+            props.translations.mobilization_tools
+              .mobilization_tools_status_label
+          }
+        </Text>
       </View>
-
-      {/* list of groups OR no MTs message */}
-      {list}
+      <Image
+        style={styles.languageLogo}
+        source={{
+          uri: FileSystem.documentDirectory + props.languageID + '-header.png'
+        }}
+      />
     </View>
   )
 }
@@ -104,18 +98,14 @@ function GroupListHeaderMT (props) {
 //// STYLES
 
 const styles = StyleSheet.create({
-  languageHeaderListContainer: {
-    width: '100%',
-    marginBottom: 15,
-    marginTop: 3
-  },
   languageHeaderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
     height: 55 * scaleMultiplier,
     paddingHorizontal: 20,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    backgroundColor: colors.aquaHaze
   },
   languageLogo: {
     resizeMode: 'contain',

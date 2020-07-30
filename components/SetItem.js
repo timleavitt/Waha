@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
 import Icon from '../assets/fonts/icons'
@@ -28,8 +28,8 @@ function SetItem (props) {
   //// CONSTRUCTOR
 
   useEffect(() => {
-    // big switch statement that renders the 3 dynamic components (the big icon,
-    // the info button, and the action button) of a set item based on props.mode
+    // big switch statement that renders the 2 dynamic components (the big icon,
+    // and the action button) of a set item based on props.mode
     // 1. SHOWN is for sets that have been added to the set screen
     // 2. LESSONLIST is for the set component on the lesson list screen
     // 3. HIDDEN is for sets that have not been added and live on the add set screen
@@ -344,8 +344,17 @@ function SetItem (props) {
         body={props.translations.general.popups.new_story_set_unlocked_message}
         confirmText={props.translations.general.got_it}
         confirmOnPress={() => setShowUnlockModal(false)}
-        imageSource={require('../assets/splash.png')}
-      />
+      >
+        <Image
+          source={require('../assets/splash.png')}
+          style={{
+            height: 200 * scaleMultiplier,
+            margin: 20,
+            // padding: 20,
+            resizeMode: 'contain'
+          }}
+        />
+      </MessageModal>
     </TouchableOpacity>
   )
 }
