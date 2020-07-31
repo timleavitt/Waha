@@ -6,7 +6,7 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import { colors, scaleMultiplier } from '../constants'
 // play, pause, and skip controls for play screen
 function PlayPauseSkip (props) {
   //// RENDER
@@ -17,7 +17,11 @@ function PlayPauseSkip (props) {
         style={styles.playPauseSkipButton}
         onPress={() => props.onSkipPress(-10000)}
       >
-        <Icon name='skip-back' size={69 * scaleMultiplier} />
+        <Icon
+          name='skip-back'
+          size={69 * scaleMultiplier}
+          color={colors.tuna}
+        />
       </TouchableOpacity>
       {props.isVideoBuffering ? (
         <View
@@ -46,7 +50,11 @@ function PlayPauseSkip (props) {
         style={styles.playPauseSkipButton}
         onPress={() => props.onSkipPress(10000)}
       >
-        <Icon name='skip-forward' size={69 * scaleMultiplier} />
+        <Icon
+          name='skip-forward'
+          size={69 * scaleMultiplier}
+          color={colors.tuna}
+        />
       </TouchableOpacity>
     </View>
   )

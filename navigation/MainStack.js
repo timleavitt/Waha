@@ -127,7 +127,7 @@ function MainStack (props) {
         component={LanguageSelectScreen}
         options={{
           headerStyle: {
-            backgroundColor: colors.aquaHaze
+            backgroundColor: colors.white
           },
           headerTitleStyle: {
             color: colors.shark,

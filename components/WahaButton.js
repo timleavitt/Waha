@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 
@@ -25,9 +25,9 @@ function WahaButton (props) {
             style={[
               styles.buttonText,
               {
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontFamily: props.font + '-medium',
-                color: props.color
+                fontFamily: props.font ? props.font + '-medium' : null,
+                color: props.color,
+                fontWeight: props.font ? null : 'bold'
               },
               props.textStyle
             ]}
@@ -57,9 +57,10 @@ function WahaButton (props) {
             style={[
               styles.buttonText,
               {
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontFamily: props.font + '-medium',
-                color: colors.white
+                fontFamily: props.font ? props.font + '-medium' : null,
+                color: colors.white,
+                textAlign: 'center',
+                fontWeight: props.font ? null : 'bold'
               },
               props.textStyle
             ]}
@@ -88,8 +89,8 @@ function WahaButton (props) {
               {
                 fontSize: 14 * scaleMultiplier,
                 color: colors.chateau,
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontFamily: props.font + '-medium'
+                fontFamily: props.font ? props.font + '-medium' : null,
+                fontWeight: props.font ? null : 'bold'
               },
               props.textStyle
             ]}
@@ -108,13 +109,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 20,
     height: 55 * scaleMultiplier,
-    justifyContent: 'center',
     paddingHorizontal: 15,
-    alignItems: 'center'
+    alignItems: 'center',
+    flexDirection: 'row'
   },
   buttonText: {
     textAlign: 'center',
-    fontSize: 18 * scaleMultiplier
+    fontSize: 18 * scaleMultiplier,
+    flex: 1
   }
 })
 
@@ -122,10 +124,12 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
-  return {
-    font: state.database[activeGroup.language].font,
-    isRTL: state.database[activeGroup.language].isRTL
-  }
+  return activeGroup
+    ? {
+        font: state.database[activeGroup.language].font,
+        isRTL: state.database[activeGroup.language].isRTL
+      }
+    : {}
 }
 
 export default connect(mapStateToProps)(WahaButton)

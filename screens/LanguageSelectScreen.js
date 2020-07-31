@@ -3,27 +3,24 @@ import { Audio } from 'expo-av'
 import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
-import {
-  Dimensions,
-  SectionList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native'
+import { Alert, SectionList, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import LanguageSelectItem from '../components/LanguageSelectItem'
+import Separator from '../components/Separator'
+import WahaButton from '../components/WahaButton'
 import { colors, languages, languageT2S, scaleMultiplier } from '../constants'
 import { addLanguage } from '../redux/actions/databaseActions'
 import ar from '../translations/ar.json'
 // translations import
 import en from '../translations/en.json'
 import fr from '../translations/fr.json'
+
 function LanguageSelectScreen (props) {
   //// STATE
 
   // keeps track of language selected in picker (TODO: change default to user's default language)
   const [selectedLanguage, setSelectedLanguage] = useState('')
+  const [isListEmpty, setIsListEmpty] = useState(false)
 
   // keeps track of whether the uesr has an internet connection
   const [isConnected, setIsConnected] = useState(true)
@@ -58,15 +55,6 @@ function LanguageSelectScreen (props) {
       setIsConnected(state.isConnected)
     })
 
-    fetch('http://ip-api.com/json/')
-      .then(response => response.json())
-      .then(responseJson => {
-        // console.log(responseJson)
-      })
-      .catch(error => {
-        // console.error(error)
-      })
-
     return function cleanup () {
       unsubscribe()
     }
@@ -92,34 +80,46 @@ function LanguageSelectScreen (props) {
   //// RENDER
 
   // render start button conditionally as the user can't start if they don't have internet
-  var startButton = isConnected ? (
-    <TouchableOpacity
+  var startButton = isListEmpty ? (
+    <WahaButton
+      type='inactive'
+      color={colors.chateau}
+      style={{ marginHorizontal: 20, height: 68 * scaleMultiplier }}
+      label={i18n.t('noMoreLanguages')}
+    />
+  ) : isConnected ? (
+    <WahaButton
+      type='filled'
+      color={colors.apple}
       onPress={
-        props.route.name === 'LanguageSelect'
-          ? () =>
-              props.navigation.navigate('OnboardingSlides', {
-                selectedLanguage: selectedLanguage
-              })
-          : () => props.addLanguage(selectedLanguage)
+        selectedLanguage
+          ? props.route.name === 'LanguageSelect'
+            ? () =>
+                props.navigation.navigate('OnboardingSlides', {
+                  selectedLanguage: selectedLanguage
+                })
+            : () => props.addLanguage(selectedLanguage)
+          : () =>
+              Alert.alert(
+                i18n.t('pleaseSelectLanguageTitle'),
+                i18n.t('pleaseSelectLanguageMessage'),
+                [{ text: i18n.t('ok'), onPress: () => {} }]
+              )
       }
-      style={[styles.button, { backgroundColor: colors.apple }]}
-    >
-      <Text style={styles.buttonTitle}>
-        {props.route.name === 'LanguageSelect'
+      label={
+        props.route.name === 'LanguageSelect'
           ? i18n.t('letsBegin')
-          : i18n.t('addLanguage')}{' '}
-      </Text>
-    </TouchableOpacity>
+          : i18n.t('addLanguage') + ' '
+      }
+      style={{ marginHorizontal: 20, height: 68 * scaleMultiplier }}
+    />
   ) : (
-    <View style={[styles.button, { backgroundColor: colors.oslo }]}>
-      <Text style={styles.buttonTitle}>{i18n.t('letsBegin')} </Text>
-    </View>
-  )
-
-  var errorMessage = isConnected ? null : (
-    <View style={{ height: 50 * scaleMultiplier, paddingHorizontal: 10 }}>
-      <Text style={styles.errorMessage}>{i18n.t('noInternet')}</Text>
-    </View>
+    <WahaButton
+      type='inactive'
+      color={colors.chateau}
+      style={{ marginHorizontal: 20, height: 68 * scaleMultiplier }}
+      label={i18n.t('noInternet')}
+    />
   )
 
   var headerText =
@@ -158,16 +158,31 @@ function LanguageSelectScreen (props) {
           flexDirection: 'row',
           alignItems: 'center',
           paddingHorizontal: 20,
-          backgroundColor: colors.aquaHaze
+          backgroundColor:
+            props.route.name === 'LanguageSelect'
+              ? colors.aquaHaze
+              : colors.white
         }}
       >
-        <Text style={{ color: colors.shark }}>{i18n.t(section.i18nName)}</Text>
+        <Text style={{ color: colors.chateau, fontSize: 18 * scaleMultiplier }}>
+          {i18n.t(section.i18nName)}
+        </Text>
       </View>
     )
   }
 
   return (
-    <View style={styles.screen}>
+    <View
+      style={[
+        styles.screen,
+        {
+          backgroundColor:
+            props.route.name === 'LanguageSelect'
+              ? colors.aquaHaze
+              : colors.white
+        }
+      ]}
+    >
       {headerText}
       <View
         style={{
@@ -223,6 +238,12 @@ function LanguageSelectScreen (props) {
                     else return false
                   })
           }
+          ItemSeparatorComponent={() => <Separator />}
+          SectionSeparatorComponent={() => <Separator />}
+          ListEmptyComponent={() => {
+            setIsListEmpty(true)
+            return null
+          }}
           keyExtractor={item => item.wahaID}
           renderItem={renderLanguage}
           renderSectionHeader={({ section }) => renderLanguageHeader(section)}
@@ -240,7 +261,6 @@ function LanguageSelectScreen (props) {
         }}
       >
         {startButton}
-        {errorMessage}
       </View>
     </View>
   )
@@ -253,7 +273,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: colors.aquaHaze,
     paddingTop: 40 * scaleMultiplier
   },
   title: {
@@ -267,14 +286,6 @@ const styles = StyleSheet.create({
     color: colors.shark,
     textAlign: 'center',
     fontSize: 24 * scaleMultiplier
-  },
-  button: {
-    height: 60 * scaleMultiplier,
-    width: Dimensions.get('window').width - 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.shark,
-    borderRadius: 10
   },
   buttonTitle: {
     textAlign: 'center',

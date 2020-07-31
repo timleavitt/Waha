@@ -158,10 +158,13 @@ function StorageScreen (props) {
         ItemSeparatorComponent={() => (
           <View style={{ height: 20, width: '100%' }} />
         )}
+        ListHeaderComponent={() => (
+          <View style={{ height: 10, width: '100%' }} />
+        )}
       />
       <WahaButton
         type='filled'
-        color={colors.cinnabar}
+        color={colors.red}
         label={
           props.translations.storage.clear_all_downloaded_lessons_button_label +
           ' (' +

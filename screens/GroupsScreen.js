@@ -122,84 +122,85 @@ function GroupsScreen (props) {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.languageList}>
-        <SectionList
-          sections={getLanguageAndGroupData()}
-          renderItem={({ item }) => renderGroupItem(item)}
-          renderSectionHeader={({ section }) =>
-            renderLanguageInstanceItem(section)
-          }
-          keyExtractor={item => item.name}
-          ItemSeparatorComponent={() => <Separator />}
-          SectionSeparatorComponent={() => <Separator />}
-          renderSectionFooter={({ section }) => (
-            <View>
-              <TouchableOpacity
-                style={[
-                  styles.addGroupContainer,
-                  { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
-                ]}
-                onPress={() =>
-                  props.navigation.navigate('AddGroup', {
-                    languageID: section.languageID
-                  })
-                }
-              >
-                <View
-                  style={{
-                    width: 50 * scaleMultiplier,
-                    height: '100%',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginHorizontal: 20
-                  }}
-                >
-                  <Icon
-                    name='group-add'
-                    size={40 * scaleMultiplier}
-                    color={colors.chateau}
-                  />
-                </View>
-                <Text
-                  style={[
-                    styles.addGroupText,
-                    {
-                      textAlign: props.isRTL ? 'right' : 'left',
-                      fontFamily: props.font + '-medium'
-                    }
-                  ]}
-                >
-                  {props.translations.groups.new_group_button_label}
-                </Text>
-              </TouchableOpacity>
-              <Separator />
-              <View style={{ height: 20, width: '100%' }} />
-            </View>
-          )}
-          ListFooterComponent={
+      <SectionList
+        sections={getLanguageAndGroupData()}
+        renderItem={({ item }) => renderGroupItem(item)}
+        renderSectionHeader={({ section }) =>
+          renderLanguageInstanceItem(section)
+        }
+        keyExtractor={item => item.name}
+        ItemSeparatorComponent={() => <Separator />}
+        SectionSeparatorComponent={() => <Separator />}
+        renderSectionFooter={({ section }) => (
+          <View>
             <TouchableOpacity
-              style={styles.addNewLanguageContainer}
+              style={[
+                styles.addGroupContainer,
+                { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+              ]}
               onPress={() =>
-                props.navigation.navigate('AddLanguage', {
-                  installedLanguageInstances: getLanguageAndGroupData()
+                props.navigation.navigate('AddGroup', {
+                  languageID: section.languageID
                 })
               }
             >
+              <View
+                style={{
+                  width: 50 * scaleMultiplier,
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginHorizontal: 20
+                }}
+              >
+                <Icon
+                  name='group-add'
+                  size={40 * scaleMultiplier}
+                  color={colors.chateau}
+                />
+              </View>
               <Text
                 style={[
-                  styles.addNewLanguageText,
+                  styles.addGroupText,
                   {
                     textAlign: props.isRTL ? 'right' : 'left',
                     fontFamily: props.font + '-medium'
                   }
                 ]}
               >
-                {props.translations.groups.new_language_button_label}
+                {props.translations.groups.new_group_button_label}
               </Text>
             </TouchableOpacity>
-          }
-        />
-      </View>
+            <Separator />
+            <View style={{ height: 20, width: '100%' }} />
+          </View>
+        )}
+        ListHeaderComponent={() => (
+          <View style={{ height: 10, width: '100%' }} />
+        )}
+        ListFooterComponent={
+          <TouchableOpacity
+            style={styles.addNewLanguageContainer}
+            onPress={() =>
+              props.navigation.navigate('AddLanguage', {
+                installedLanguageInstances: getLanguageAndGroupData()
+              })
+            }
+          >
+            <Text
+              style={[
+                styles.addNewLanguageText,
+                {
+                  textAlign: props.isRTL ? 'right' : 'left',
+                  fontFamily: props.font + '-medium'
+                }
+              ]}
+            >
+              {props.translations.groups.new_language_button_label}
+            </Text>
+          </TouchableOpacity>
+        }
+      />
     </View>
   )
 }
@@ -210,9 +211,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.aquaHaze
-  },
-  languageList: {
-    flex: 1
   },
   addNewLanguageContainer: {
     height: 80 * scaleMultiplier,
@@ -239,8 +237,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white
-    // borderWidth: 1,
-    // borderColor: colors.athens
   },
   addGroupText: {
     color: colors.blue,

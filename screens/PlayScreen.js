@@ -838,8 +838,7 @@ function PlayScreen (props) {
               flexDirection: 'column',
               flex: 1,
               marginLeft: item.key === '2' ? 10 : 0,
-              marginRight: item.key === '0' ? 10 : 0,
-              marginVertical: 10
+              marginRight: item.key === '0' ? 10 : 0
             }}
             data={
               item.key === '0'
@@ -851,6 +850,9 @@ function PlayScreen (props) {
             renderItem={renderTextContent}
             keyExtractor={item => item.header}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={() => (
+              <View style={{ width: '100%', height: 10 }} />
+            )}
           />
           {scrollBarRight}
         </View>
@@ -866,10 +868,14 @@ function PlayScreen (props) {
             }
           ]}
         >
-          {scrollBarLeft}
           <View style={{ zIndex: 1, width: '100%', height: '100%' }}>
             <TouchableHighlight
-              style={{ width: '100%', height: '100%' }}
+              style={{
+                width: '100%',
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
               onPress={playHandler}
               underlayColor={colors.white + '00'}
               activeOpacity={1}
@@ -903,6 +909,7 @@ function PlayScreen (props) {
               color={colors.white}
             />
           </Animated.View>
+          {scrollBarLeft}
           {scrollBarRight}
         </View>
       )
@@ -1196,7 +1203,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.porcelain,
     overflow: 'hidden',
     borderWidth: 4,
-    borderColor: colors.oslo
+    borderColor: colors.chateau
   },
   scrollBar: {
     width: 4,

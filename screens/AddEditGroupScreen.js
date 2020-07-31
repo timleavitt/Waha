@@ -13,6 +13,7 @@ import {
 import { connect } from 'react-redux'
 import AvatarImage from '../components/AvatarImage'
 import BackButton from '../components/BackButton'
+import WahaButton from '../components/WahaButton'
 import {
   colors,
   groupIcons,
@@ -67,9 +68,8 @@ function AddEditGroupScreen (props) {
             <BackButton
               onPress={() => {
                 if (props.route.name === 'EditGroup') {
-                  if (!checkForDuplicate()) editGroup()
-                }
-                props.navigation.goBack()
+                  if (!checkForDuplicate() && !checkForBlank()) editGroup()
+                } else props.navigation.goBack()
               }}
             />
           )
@@ -96,8 +96,8 @@ function AddEditGroupScreen (props) {
       props.groups.forEach(group => {
         if (group.name === groupName) {
           Alert.alert(
-            props.translations.groups.add_edit_group.duplicate_group_name_title,
-            props.translations.groups.add_edit_group
+            props.translations.add_edit_group.popups.duplicate_group_name_title,
+            props.translations.add_edit_group.popups
               .duplicate_group_name_message,
             [{ text: props.translations.general.ok, onPress: () => {} }]
           )
@@ -111,8 +111,8 @@ function AddEditGroupScreen (props) {
           props.route.params.groupName !== groupName
         ) {
           Alert.alert(
-            props.translations.groups.add_edit_group.duplicate_group_name_title,
-            props.translations.groups.add_edit_group
+            props.translations.add_edit_group.popups.duplicate_group_name_title,
+            props.translations.add_edit_group.popups
               .duplicate_group_name_message,
             [{ text: props.translations.general.ok, onPress: () => {} }]
           )
@@ -127,8 +127,8 @@ function AddEditGroupScreen (props) {
   function checkForBlank () {
     if (groupName === '') {
       Alert.alert(
-        props.translations.groups.add_edit_group.blank_group_name_title,
-        props.translations.groups.add_edit_group.blank_group_name_message,
+        props.translations.add_edit_group.popups.blank_group_name_title,
+        props.translations.add_edit_group.popups.blank_group_name_message,
         [{ text: props.translations.general.ok, onPress: () => {} }]
       )
       return true
@@ -156,52 +156,6 @@ function AddEditGroupScreen (props) {
   //// RENDER
 
   // renders the delete group button conditionally because the currently active group can't be deleted
-  var deleteButton = isActive ? (
-    <View
-      style={[
-        styles.buttonContainer,
-        { borderWidth: 1, borderColor: colors.chateau, borderRadius: 10 }
-      ]}
-    >
-      <Text
-        style={[
-          styles.cantDeleteText,
-          {
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-regular'
-          }
-        ]}
-      >
-        {props.translations.add_edit_group.cant_delete_group_text}
-      </Text>
-    </View>
-  ) : (
-    <TouchableOpacity
-      style={[
-        styles.buttonContainer,
-        {
-          backgroundColor: colors.red
-        }
-      ]}
-      onPress={() => {
-        props.deleteGroup(props.route.params.groupName)
-        props.navigation.goBack()
-      }}
-    >
-      <Text
-        style={[
-          styles.buttonText,
-          {
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-regular',
-            color: colors.white
-          }
-        ]}
-      >
-        {props.translations.add_edit_group.delete_group_button_label}
-      </Text>
-    </TouchableOpacity>
-  )
 
   var editControls =
     props.route.name === 'EditGroup' ? (
@@ -218,18 +172,18 @@ function AddEditGroupScreen (props) {
               : 'column'
         }}
       >
-        <TouchableOpacity
-          style={[
-            styles.buttonContainer,
-            {
-              borderWidth: 1,
-              borderColor: colors.red
-            }
-          ]}
+        <WahaButton
+          type='outline'
+          color={colors.red}
+          width={
+            Dimensions.get('window').height < 550
+              ? Dimensions.get('window').width / 2 - 30
+              : Dimensions.get('window').width - 40
+          }
           onPress={() =>
             Alert.alert(
-              props.translations.add_edit_group.reset_progress_title,
-              props.translations.add_edit_group.reset_progress_message,
+              props.translations.add_edit_group.popups.reset_progress_title,
+              props.translations.add_edit_group.popups.reset_progress_message,
               [
                 {
                   text: props.translations.general.cancel,
@@ -245,43 +199,47 @@ function AddEditGroupScreen (props) {
               ]
             )
           }
-        >
-          <Text
-            style={[
-              styles.buttonText,
-              {
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontFamily: props.font + '-regular',
-                color: colors.red
-              }
-            ]}
-          >
-            {props.translations.add_edit_group.reset_progress_button_label}
-          </Text>
-        </TouchableOpacity>
+          label={props.translations.add_edit_group.reset_progress_button_label}
+          style={{ marginVertical: 10 }}
+          textStyle={{
+            fontFamily: props.font + '-regular',
+            textAlign: props.isRTL ? 'right' : 'left'
+          }}
+        />
         <View style={{ width: 20, height: '100%' }} />
-        {deleteButton}
+        {/* delete group button */}
+        {isActive ? (
+          <WahaButton
+            type='inactive'
+            width={
+              Dimensions.get('window').height < 550
+                ? Dimensions.get('window').width / 2 - 30
+                : Dimensions.get('window').width - 40
+            }
+            label={props.translations.add_edit_group.cant_delete_group_text}
+            color={colors.chateau}
+            style={{ marginVertical: 10 }}
+            textStyle={{ textAlign: props.isRTL ? 'right' : 'left' }}
+          />
+        ) : (
+          <WahaButton
+            type='filled'
+            onPress={() => {
+              props.deleteGroup(props.route.params.groupName)
+              props.navigation.goBack()
+            }}
+            width={
+              Dimensions.get('window').height < 550
+                ? Dimensions.get('window').width / 2 - 30
+                : Dimensions.get('window').width - 40
+            }
+            color={colors.red}
+            label={props.translations.add_edit_group.delete_group_button_label}
+            style={{ marginVertical: 10 }}
+            textStyle={{ textAlign: props.isRTL ? 'right' : 'left' }}
+          />
+        )}
       </View>
-    ) : null
-
-  var saveButton =
-    props.route.name === 'AddGroup' ? (
-      <TouchableOpacity
-        style={[
-          styles.saveButtonContainer,
-          { alignSelf: props.isRTL ? 'flex-start' : 'flex-end' }
-        ]}
-        onPress={addNewGroup}
-      >
-        <Text
-          style={[
-            styles.saveButtonText,
-            { fontFamily: props.font + '-medium' }
-          ]}
-        >
-          {props.translations.add_edit_group.save_button_label}
-        </Text>
-      </TouchableOpacity>
     ) : null
 
   return (
@@ -289,7 +247,7 @@ function AddEditGroupScreen (props) {
       <View>
         <View style={styles.photoContainer}>
           <AvatarImage
-            style={{ backgroundColor: colors.chateau }}
+            style={{ backgroundColor: colors.athens }}
             emoji={emoji}
             size={120}
             isChangeable={true}
@@ -388,7 +346,20 @@ function AddEditGroupScreen (props) {
         </View>
         {editControls}
       </View>
-      {saveButton}
+      {/* save button */}
+      {props.route.name === 'AddGroup' ? (
+        <WahaButton
+          type='filled'
+          color={colors.apple}
+          width={127 * scaleMultiplier}
+          style={{
+            alignSelf: props.isRTL ? 'flex-start' : 'flex-end',
+            marginHorizontal: 20
+          }}
+          onPress={addNewGroup}
+          label={props.translations.add_edit_group.save_button_label}
+        />
+      ) : null}
     </View>
   )
 }
@@ -438,28 +409,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 15,
     alignItems: 'center'
-  },
-  deleteGroupButtonText: {
-    color: colors.white,
-    fontSize: 18 * scaleMultiplier
-  },
-  cantDeleteText: {
-    fontSize: 14 * scaleMultiplier,
-    color: colors.chateau
-  },
-  saveButtonContainer: {
-    width: 127 * scaleMultiplier,
-    height: 52 * scaleMultiplier,
-    borderRadius: 10,
-    backgroundColor: colors.apple,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'flex-end',
-    margin: 20
-  },
-  saveButtonText: {
-    fontSize: 18 * scaleMultiplier,
-    color: colors.white
   }
 })
 

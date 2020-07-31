@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
 import SetItem from '../components/SetItem'
+import WahaButton from '../components/WahaButton'
 import { colors, scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
+
 function SetInfoScreen (props) {
   //// STATE
 
@@ -42,35 +43,25 @@ function SetInfoScreen (props) {
       <View style={styles.studySetItemContainer}>
         <SetItem thisSet={props.route.params.thisSet} mode='setinfo' />
       </View>
-      <TouchableOpacity
+      <WahaButton
+        type='filled'
+        color={colors.apple}
         onPress={() => {
           props.addSet(props.activeGroup.name, props.route.params.thisSet.id)
           props.route.params.showSnackbar()
           props.navigation.goBack()
         }}
-        style={[
-          styles.addSetButton,
-          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
-        ]}
-      >
-        <Text
-          style={{
-            color: colors.white,
-            textAlign: 'center',
-            fontSize: 18 * scaleMultiplier,
-            fontFamily: props.font + '-medium',
-            marginHorizontal: 10
-          }}
-        >
-          {props.translations.add_set.add_new_story_set_button_label}
-        </Text>
-        <Icon
-          style={{ marginHorizontal: 10 }}
-          color={colors.white}
-          size={36 * scaleMultiplier}
-          name='playlist-add'
-        />
-      </TouchableOpacity>
+        style={{ marginHorizontal: 20 }}
+        label={props.translations.add_set.add_new_story_set_button_label}
+        extraComponent={
+          <Icon
+            style={{ marginHorizontal: 10 }}
+            color={colors.white}
+            size={36 * scaleMultiplier}
+            name='playlist-add'
+          />
+        }
+      />
       <FlatList
         data={props.activeDatabase.lessons.filter(
           lesson => props.route.params.thisSet.id === lesson.setid
@@ -122,21 +113,12 @@ function SetInfoScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    flexDirection: 'column',
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
+    paddingTop: 10
   },
   studySetItemContainer: {
     width: '100%',
-    height: 100 * scaleMultiplier
-  },
-  addSetButton: {
-    height: 68 * scaleMultiplier,
-    marginHorizontal: 20,
-    marginVertical: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 12,
-    backgroundColor: colors.apple
+    height: 80 * scaleMultiplier
   }
 })
 

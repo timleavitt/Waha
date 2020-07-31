@@ -13,20 +13,18 @@ function LanguageSelectItem (props) {
       onPress={props.playAudio}
       style={{ marginHorizontal: 20 }}
     >
-      <Icon name='volume' size={30} color={colors.shark} />
+      <Icon name='volume' size={30} color={colors.tuna} />
     </TouchableOpacity>
   )
 
   return (
     <View
       style={{
-        height: 70 * scaleMultiplier,
+        height: 80 * scaleMultiplier,
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: colors.athens,
         backgroundColor: props.isSelected ? '#BFE5AF' : colors.white
       }}
     >

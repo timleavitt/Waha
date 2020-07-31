@@ -329,6 +329,5 @@ export const colors = {
   // other colors
   apple: '#60C239',
   red: '#FF0800',
-  cinnabar: '#E74D3D',
   blue: '#2D9CDB'
 }
