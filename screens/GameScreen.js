@@ -1,6 +1,7 @@
 import { Audio } from 'expo-av'
 import React, { useEffect, useState } from 'react'
-import { Image, SafeAreaView, StyleSheet, View } from 'react-native'
+import { Dimensions, Image, SafeAreaView, StyleSheet, View } from 'react-native'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import Piano from '../components/Piano'
 import { colors } from '../constants'
@@ -9,6 +10,7 @@ function GameScreen (props) {
   //// STATE
 
   const [pattern, setPattern] = useState('')
+  const [isMuted, setIsMuted] = useState(false)
 
   //// CONSTRUCTOR
 
@@ -40,7 +42,26 @@ function GameScreen (props) {
       >
         <Image source={require('../assets/wahaIcon.png')} />
       </View>
-      <Piano setPattern={setPattern} />
+      <Piano setPattern={setPattern} isMuted={isMuted} />
+      <View
+        style={{
+          width: Dimensions.get('window').width,
+          alignItems: 'flex-end'
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => setIsMuted(old => !old)}
+          style={{
+            margin: 20
+          }}
+        >
+          <Icon
+            name={isMuted ? 'bug' : 'volume'}
+            size={50}
+            color={colors.tuna}
+          />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   )
 }
@@ -57,8 +78,12 @@ const styles = StyleSheet.create({
 })
 
 function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
   return {
-    security: state.security
+    security: state.security,
+    font: state.database[activeGroup.language].font
   }
 }
 

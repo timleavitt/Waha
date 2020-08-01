@@ -107,7 +107,7 @@ function WahaButton (props) {
 const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 10,
-    marginVertical: 20,
+    marginVertical: 20 * scaleMultiplier,
     height: 55 * scaleMultiplier,
     paddingHorizontal: 15,
     alignItems: 'center',

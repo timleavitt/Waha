@@ -22,44 +22,46 @@ function Piano (props) {
   var B = require('../assets/notes/B.mp3')
 
   function playNote (number) {
-    var note = new Audio.Sound()
-    switch (number) {
-      case 1:
-        note.loadAsync(C).then(() => note.playAsync())
-        break
-      case 2:
-        note.loadAsync(Db).then(() => note.playAsync())
-        break
-      case 3:
-        note.loadAsync(D).then(() => note.playAsync())
-        break
-      case 4:
-        note.loadAsync(Eb).then(() => note.playAsync())
-        break
-      case 5:
-        note.loadAsync(E).then(() => note.playAsync())
-        break
-      case 6:
-        note.loadAsync(F).then(() => note.playAsync())
-        break
-      case 7:
-        note.loadAsync(Gb).then(() => note.playAsync())
-        break
-      case 8:
-        note.loadAsync(G).then(() => note.playAsync())
-        break
-      case 9:
-        note.loadAsync(Ab).then(() => note.playAsync())
-        break
-      case 10:
-        note.loadAsync(A).then(() => note.playAsync())
-        break
-      case 11:
-        note.loadAsync(Bb).then(() => note.playAsync())
-        break
-      case 12:
-        note.loadAsync(B).then(() => note.playAsync())
-        break
+    if (!props.isMuted) {
+      var note = new Audio.Sound()
+      switch (number) {
+        case 1:
+          note.loadAsync(C).then(() => note.playAsync())
+          break
+        case 2:
+          note.loadAsync(Db).then(() => note.playAsync())
+          break
+        case 3:
+          note.loadAsync(D).then(() => note.playAsync())
+          break
+        case 4:
+          note.loadAsync(Eb).then(() => note.playAsync())
+          break
+        case 5:
+          note.loadAsync(E).then(() => note.playAsync())
+          break
+        case 6:
+          note.loadAsync(F).then(() => note.playAsync())
+          break
+        case 7:
+          note.loadAsync(Gb).then(() => note.playAsync())
+          break
+        case 8:
+          note.loadAsync(G).then(() => note.playAsync())
+          break
+        case 9:
+          note.loadAsync(Ab).then(() => note.playAsync())
+          break
+        case 10:
+          note.loadAsync(A).then(() => note.playAsync())
+          break
+        case 11:
+          note.loadAsync(Bb).then(() => note.playAsync())
+          break
+        case 12:
+          note.loadAsync(B).then(() => note.playAsync())
+          break
+      }
     }
   }
 

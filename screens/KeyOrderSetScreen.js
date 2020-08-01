@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
+  Dimensions,
   SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native'
 import { connect } from 'react-redux'
@@ -12,6 +12,7 @@ import BackButton from '../components/BackButton'
 import KeyLabel from '../components/KeyLabel'
 import KeyLabels from '../components/KeyLabels'
 import Piano from '../components/Piano'
+import WahaButton from '../components/WahaButton'
 import { colors, keyColors, scaleMultiplier } from '../constants'
 import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
 function KeyOrderSetScreen (props) {
@@ -117,7 +118,6 @@ function KeyOrderSetScreen (props) {
             props.navigation.goBack()
             props.navigation.goBack()
             props.navigation.goBack()
-            props.navigation.goBack()
           } else {
             Alert.alert(
               props.translations.security.popups.no_match_title,
@@ -205,7 +205,7 @@ function KeyOrderSetScreen (props) {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <View style={{ width: '100%' }}>
+      <View style={{ width: '100%', alignItems: 'center' }}>
         <View style={{ width: '100%' }}>
           <Text
             style={{
@@ -219,26 +219,14 @@ function KeyOrderSetScreen (props) {
           </Text>
         </View>
         <KeyLabels keyOrder={keyOrder} />
-        <TouchableOpacity
-          style={{
-            marginHorizontal: 100,
-            borderRadius: 10,
-            borderWidth: 1,
-            borderColor: colors.shark,
-            padding: 20
-          }}
+        <WahaButton
+          type='outline'
           onPress={() => setKeyOrder('')}
-        >
-          <Text
-            style={{
-              color: colors.shark,
-              textAlign: 'center',
-              fontFamily: props.font + '-regular'
-            }}
-          >
-            Clear
-          </Text>
-        </TouchableOpacity>
+          color={colors.red}
+          label={props.translations.security.clear_button_label}
+          width={Dimensions.get('window').width / 3}
+          style={{ marginVertical: 0 }}
+        />
       </View>
       <Piano setPattern={setKeyOrder} />
     </SafeAreaView>

@@ -17,6 +17,7 @@ import LessonItem from '../components/LessonItem'
 import LessonSwipeBackdrop from '../components/LessonSwipeBackdrop'
 import ModalButton from '../components/ModalButton'
 import OptionsModal from '../components/OptionsModal'
+import Separator from '../components/Separator'
 import SetItem from '../components/SetItem'
 import { colors, scaleMultiplier } from '../constants'
 import {
@@ -467,25 +468,34 @@ function LessonListScreen (props) {
           onPress={() => share('app')}
         />
         {getLessonType(activeLessonInModal) !== 'v' ? (
-          <ModalButton
-            title={props.translations.general.share_passage_text}
-            onPress={() => share('text')}
-          />
+          <View>
+            <Separator />
+            <ModalButton
+              title={props.translations.general.share_passage_text}
+              onPress={() => share('text')}
+            />
+          </View>
         ) : null}
         {(getLessonType(activeLessonInModal) === 'qa' ||
           getLessonType(activeLessonInModal) === 'qav') &&
         !props.downloads[activeLessonInModal.id] ? (
-          <ModalButton
-            title={props.translations.general.share_passage_audio}
-            onPress={() => share('audio')}
-          />
+          <View>
+            <Separator />
+            <ModalButton
+              title={props.translations.general.share_passage_audio}
+              onPress={() => share('audio')}
+            />
+          </View>
         ) : null}
         {getLessonType(activeLessonInModal) !== 'qa' &&
         getLessonType(activeLessonInModal) !== 'q' ? (
-          <ModalButton
-            title={props.translations.general.share_video_link}
-            onPress={() => share('video')}
-          />
+          <View>
+            <Separator />
+            <ModalButton
+              title={props.translations.general.share_video_link}
+              onPress={() => share('video')}
+            />
+          </View>
         ) : null}
       </OptionsModal>
     </View>

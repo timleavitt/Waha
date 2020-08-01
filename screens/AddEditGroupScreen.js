@@ -295,7 +295,7 @@ function AddEditGroupScreen (props) {
             textAlign: props.isRTL ? 'right' : 'left',
             fontFamily: props.font + '-regular',
             marginHorizontal: 20,
-            marginTop: 20,
+            marginTop: 20 * scaleMultiplier,
             marginBottom: 5
           }}
         >
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     height: 55 * scaleMultiplier,
-    marginVertical: 20,
+    marginVertical: 20 * scaleMultiplier,
     justifyContent: 'center',
     paddingHorizontal: 15
   },

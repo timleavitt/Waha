@@ -172,7 +172,7 @@ function GroupsScreen (props) {
               </Text>
             </TouchableOpacity>
             <Separator />
-            <View style={{ height: 20, width: '100%' }} />
+            <View style={{ height: 20 * scaleMultiplier, width: '100%' }} />
           </View>
         )}
         ListHeaderComponent={() => (

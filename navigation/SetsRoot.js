@@ -49,7 +49,7 @@ function SetsRoot (props) {
                   <AvatarImage
                     style={{ backgroundColor: colors.white }}
                     emoji={props.activeGroup.emoji}
-                    size={40}
+                    size={35}
                     onPress={() => props.navigation.toggleDrawer()}
                     isActive={true}
                   />

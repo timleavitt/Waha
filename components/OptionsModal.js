@@ -13,7 +13,7 @@ function OptionsModal (props) {
       backdropOpacity={0.3}
       style={{ justifyContent: 'flex-end' }}
     >
-      <View>
+      <View style={{}}>
         <View style={styles.buttonsContainer}>{props.children}</View>
         <View style={styles.closeButtonContainer}>
           <TouchableOpacity
@@ -40,15 +40,16 @@ function OptionsModal (props) {
 const styles = StyleSheet.create({
   buttonsContainer: {
     backgroundColor: colors.white,
-    borderRadius: 10
+    borderRadius: 10,
+    marginVertical: 10
   },
   closeButtonContainer: {
     width: '100%',
     height: 70 * scaleMultiplier,
     justifyContent: 'center',
     backgroundColor: colors.white,
-    borderRadius: 10,
-    marginVertical: 5
+    borderRadius: 10
+    // marginTop: 5
   }
 })
 

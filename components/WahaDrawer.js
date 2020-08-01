@@ -53,7 +53,7 @@ function WahaDrawer (props) {
         </View>
       </View>
       <View style={{ backgroundColor: colors.white, flex: 1 }}>
-        <View>
+        <View style={{ flex: 1 }}>
           <DrawerItem
             iconName='group'
             text={props.translations.groups.header}
@@ -86,7 +86,14 @@ function WahaDrawer (props) {
             }
           />
         </View>
-        <View style={styles.smallDrawerItemsContainer}>
+        <View
+          style={[
+            styles.smallDrawerItemsContainer,
+            {
+              flexDirection: props.isRLT ? 'row-reverse' : 'row'
+            }
+          ]}
+        >
           <SmallDrawerItem
             onPress={() =>
               openBrowser(
@@ -103,14 +110,22 @@ function WahaDrawer (props) {
             }
             label={props.translations.general.credits}
           />
-          <Text
-            style={[
-              styles.versionText,
-              { fontFamily: props.font + '-regular' }
-            ]}
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingHorizontal: 20
+            }}
           >
-            v0.4.7
-          </Text>
+            <Text
+              style={[
+                styles.versionText,
+                { fontFamily: props.font + '-regular' }
+              ]}
+            >
+              v0.4.7
+            </Text>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -148,13 +163,11 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   smallDrawerItemsContainer: {
-    justifyContent: 'flex-end',
-    flex: 1,
-    marginBottom: 20
+    width: '100%',
+    justifyContent: 'space-between'
   },
   versionText: {
     fontSize: 10 * scaleMultiplier,
-    marginHorizontal: 13,
     color: colors.chateau,
     justifyContent: 'center',
     alignItems: 'center'

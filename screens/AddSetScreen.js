@@ -39,7 +39,7 @@ function AddSetScreen (props) {
               <Icon
                 name='cancel'
                 size={45 * scaleMultiplier}
-                color={colors.tuna}
+                color={colors.oslo}
               />
             </TouchableOpacity>
           ),
@@ -49,7 +49,7 @@ function AddSetScreen (props) {
               <Icon
                 name='cancel'
                 size={45 * scaleMultiplier}
-                color={colors.tuna}
+                color={colors.oslo}
               />
             </TouchableOpacity>
           )

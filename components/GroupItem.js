@@ -150,30 +150,34 @@ function GroupItem (props) {
           >
             {props.groupName}
           </Text>
-          <Text
-            style={[
-              styles.bookmarkText,
-              {
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontFamily: props.font + '-regular'
-              }
-            ]}
-            numberOfLines={1}
-          >
-            {getBookmarkText().set}
-          </Text>
-          <Text
-            style={[
-              styles.bookmarkText,
-              {
-                textAlign: props.isRTL ? 'right' : 'left',
-                fontFamily: props.font + '-regular'
-              }
-            ]}
-            numberOfLines={1}
-          >
-            {getBookmarkText().lesson}
-          </Text>
+          {getBookmarkText() === '' ? null : (
+            <Text
+              style={[
+                styles.bookmarkText,
+                {
+                  textAlign: props.isRTL ? 'right' : 'left',
+                  fontFamily: props.font + '-regular'
+                }
+              ]}
+              numberOfLines={1}
+            >
+              {getBookmarkText().set}
+            </Text>
+          )}
+          {getBookmarkText() === '' ? null : (
+            <Text
+              style={[
+                styles.bookmarkText,
+                {
+                  textAlign: props.isRTL ? 'right' : 'left',
+                  fontFamily: props.font + '-regular'
+                }
+              ]}
+              numberOfLines={1}
+            >
+              {getBookmarkText().lesson}
+            </Text>
+          )}
         </View>
         {rightButton}
       </TouchableOpacity>

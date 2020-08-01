@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import {
   Alert,
   Clipboard,
-  Image,
   SectionList,
   StyleSheet,
   Text,
@@ -13,7 +12,7 @@ import BackButton from '../components/BackButton'
 import Blurb from '../components/Blurb'
 import GroupItemMT from '../components/GroupItemMT'
 import GroupListHeaderMT from '../components/GroupListHeaderMT'
-import MessageModal from '../components/MessageModal'
+import Hero from '../components/Hero'
 import Separator from '../components/Separator'
 import WahaItem from '../components/WahaItem'
 import { colors, scaleMultiplier } from '../constants'
@@ -81,6 +80,9 @@ function MTScreen (props) {
 
   return (
     <View style={styles.screen}>
+      {props.toolkitEnabled ? (
+        <Hero source={require('../assets/gifs/unlock_mob_tools.gif')} />
+      ) : null}
       <Blurb
         text={
           props.toolkitEnabled
@@ -122,25 +124,7 @@ function MTScreen (props) {
         />
       </WahaItem>
       <Separator />
-
-      {/* how enabling MTs work button */}
-      {props.toolkitEnabled ? (
-        <WahaItem
-          title={
-            props.translations.mobilization_tools
-              .how_mobilization_tools_work_label
-          }
-          onPress={() => setShowHowMTsWorkModal(true)}
-        >
-          <Icon
-            name={props.isRTL ? 'arrow-left' : 'arrow-right'}
-            color={colors.tuna}
-            size={50 * scaleMultiplier}
-          />
-        </WahaItem>
-      ) : null}
-      {props.toolkitEnabled ? <Separator /> : null}
-      <View style={{ width: '100%', height: 20 }} />
+      <View style={{ width: '100%', height: 20 * scaleMultiplier }} />
 
       {/* list of groups with option to enable MTs for each group */}
       <View style={{ width: '100%', flex: 1 }}>
@@ -189,32 +173,6 @@ function MTScreen (props) {
           />
         ) : null}
       </View>
-
-      {/* modals */}
-      <MessageModal
-        isVisible={showHowMTsWorkModal}
-        hideModal={() => setShowHowMTsWorkModal(false)}
-        title={
-          props.translations.mobilization_tools.popups
-            .how_to_enable_mt_content_title
-        }
-        body={
-          props.translations.mobilization_tools.popups
-            .how_to_enable_mt_content_message
-        }
-        confirmText={props.translations.general.got_it}
-        confirmOnPress={() => setShowHowMTsWorkModal(false)}
-      >
-        <Image
-          source={require('../assets/gifs/unlock_mob_tools.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            // padding: 20,
-            resizeMode: 'contain'
-          }}
-        />
-      </MessageModal>
     </View>
   )
 }
