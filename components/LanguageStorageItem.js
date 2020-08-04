@@ -58,7 +58,8 @@ function LanguageStorageItem (props) {
             fontSize: 18 * scaleMultiplier,
             color: colors.tuna,
             flex: 1,
-            paddingHorizontal: 20
+            paddingHorizontal: 20,
+            textAlign: props.isRTL ? 'right' : 'left'
           }}
         >
           {props.translations.storage.storage_used_label}

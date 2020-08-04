@@ -131,10 +131,13 @@ function WahaDrawer (props) {
             <Text
               style={[
                 styles.versionText,
-                { fontFamily: props.font + '-regular' }
+                {
+                  fontFamily: props.font + '-regular',
+                  textAlign: props.isRTL ? 'right' : 'left'
+                }
               ]}
             >
-              v0.5.1
+              v0.5.0.1
             </Text>
           </View>
         </SafeAreaView>

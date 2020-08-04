@@ -263,11 +263,11 @@ export const languages = [
     languageCode: 'ar',
     data: [
       {
-        nativeName: 'اللهجة المغربية',
+        nativeName: 'Test language (RTL)',
         wahaID: 'da',
-        i18nName: 'darija',
+        i18nName: 'testLanguage',
         logoSource:
-          'https://www.arizonachristian.edu/wp-content/uploads/2017/06/logo-placeholder.png'
+          'https://res.cloudinary.com/waha/image/upload/v1596578895/English/logo-1_kr9nno.png'
       }
       // {
       //   nativeName: 'ليبي‎',

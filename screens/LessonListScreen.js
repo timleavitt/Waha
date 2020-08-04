@@ -512,13 +512,14 @@ const styles = StyleSheet.create({
   },
   studySetItemContainer: {
     width: '100%',
-    height: 100 * scaleMultiplier
+    aspectRatio: 4
   },
   headerImage: {
     resizeMode: 'contain',
-    width: 120,
-    height: 40,
-    alignSelf: 'center'
+    width: 175 * scaleMultiplier,
+    flex: 1,
+    alignSelf: 'center',
+    justifyContent: 'center'
   }
 })
 

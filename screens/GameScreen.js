@@ -56,7 +56,7 @@ function GameScreen (props) {
           }}
         >
           <Icon
-            name={isMuted ? 'bug' : 'volume'}
+            name={isMuted ? 'volume-off' : 'volume'}
             size={50}
             color={colors.tuna}
           />

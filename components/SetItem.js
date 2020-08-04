@@ -184,43 +184,8 @@ function SetItem (props) {
             />
           </View>
         )
-        setAction(null)
+        setAction(<View style={styles.actionContainer} />)
         break
-      // case 'folder':
-      //   setIcon(
-      //     <View style={styles.iconContainer}>
-      //       <SVG
-      //         name={props.thisSet.icon}
-      //         width={80 * scaleMultiplier}
-      //         height={80 * scaleMultiplier}
-      //         fill='#1D1E20'
-      //       />
-      //     </View>
-      //   )
-      //   setAction(
-      //     <View style={styles.actionContainer}>
-      //       <Icon
-      //         name={props.isRTL ? 'arrow-left' : 'arrow-right'}
-      //         size={30 * scaleMultiplier}
-      //         color={props.primaryColor}
-      //       />
-      //     </View>
-      //   )
-      //   setInfo()
-      //   // INFO BUTTON (keep for later)
-      //   // <TouchableOpacity
-      //   //   style={[
-      //   //     styles.actionContainer,
-      //   //     {
-      //   //       marginRight: props.isRTL ? 0 : 10,
-      //   //       marginLeft: props.isRTL ? 10 : 0
-      //   //     }
-      //   //   ]}
-      //   //   onPress={() => {}}
-      //   // >
-      //   //   <Icon name='info' size={30 * scaleMultiplier} color={colors.chateau} />
-      //   // </TouchableOpacity>
-      //   break
     }
   }, [
     progressPercentage,
@@ -364,6 +329,7 @@ function SetItem (props) {
 const styles = StyleSheet.create({
   studySetItem: {
     flexDirection: 'row',
+    width: '100%',
     flex: 1,
     // height: 100 * scaleMultiplier,
     aspectRatio: 4,
@@ -415,3 +381,39 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SetItem)
+
+// case 'folder':
+//   setIcon(
+//     <View style={styles.iconContainer}>
+//       <SVG
+//         name={props.thisSet.icon}
+//         width={80 * scaleMultiplier}
+//         height={80 * scaleMultiplier}
+//         fill='#1D1E20'
+//       />
+//     </View>
+//   )
+//   setAction(
+//     <View style={styles.actionContainer}>
+//       <Icon
+//         name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+//         size={30 * scaleMultiplier}
+//         color={props.primaryColor}
+//       />
+//     </View>
+//   )
+//   setInfo()
+//   // INFO BUTTON (keep for later)
+//   // <TouchableOpacity
+//   //   style={[
+//   //     styles.actionContainer,
+//   //     {
+//   //       marginRight: props.isRTL ? 0 : 10,
+//   //       marginLeft: props.isRTL ? 10 : 0
+//   //     }
+//   //   ]}
+//   //   onPress={() => {}}
+//   // >
+//   //   <Icon name='info' size={30 * scaleMultiplier} color={colors.chateau} />
+//   // </TouchableOpacity>
+//   break

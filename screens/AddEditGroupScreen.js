@@ -165,7 +165,7 @@ function AddEditGroupScreen (props) {
           paddingVertical: 10,
           flex: 1,
           flexDirection:
-            Dimensions.get('window').height < 550
+            Dimensions.get('window').height < 700
               ? props.isRTL
                 ? 'row-reverse'
                 : 'row'
@@ -176,7 +176,7 @@ function AddEditGroupScreen (props) {
           type='outline'
           color={colors.red}
           width={
-            Dimensions.get('window').height < 550
+            Dimensions.get('window').height < 700
               ? Dimensions.get('window').width / 2 - 30
               : Dimensions.get('window').width - 40
           }
@@ -203,7 +203,12 @@ function AddEditGroupScreen (props) {
           style={{ marginVertical: 10 }}
           textStyle={{
             fontFamily: props.font + '-regular',
-            textAlign: props.isRTL ? 'right' : 'left'
+            textAlign:
+              Dimensions.get('window').height < 700
+                ? 'center'
+                : props.isRTL
+                ? 'right'
+                : 'left'
           }}
         />
         <View style={{ width: 20, height: '100%' }} />
@@ -212,14 +217,22 @@ function AddEditGroupScreen (props) {
           <WahaButton
             type='inactive'
             width={
-              Dimensions.get('window').height < 550
+              Dimensions.get('window').height < 700
                 ? Dimensions.get('window').width / 2 - 30
                 : Dimensions.get('window').width - 40
             }
             label={props.translations.add_edit_group.cant_delete_group_text}
             color={colors.chateau}
             style={{ marginVertical: 10 }}
-            textStyle={{ textAlign: props.isRTL ? 'right' : 'left' }}
+            textStyle={{
+              fontFamily: props.font + '-regular',
+              textAlign:
+                Dimensions.get('window').height < 700
+                  ? 'center'
+                  : props.isRTL
+                  ? 'right'
+                  : 'left'
+            }}
           />
         ) : (
           <WahaButton
@@ -236,7 +249,15 @@ function AddEditGroupScreen (props) {
             color={colors.red}
             label={props.translations.add_edit_group.delete_group_button_label}
             style={{ marginVertical: 10 }}
-            textStyle={{ textAlign: props.isRTL ? 'right' : 'left' }}
+            textStyle={{
+              fontFamily: props.font + '-regular',
+              textAlign:
+                Dimensions.get('window').height < 700
+                  ? 'center'
+                  : props.isRTL
+                  ? 'right'
+                  : 'left'
+            }}
           />
         )}
       </View>

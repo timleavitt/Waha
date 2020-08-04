@@ -51,7 +51,7 @@ function SetInfoScreen (props) {
           props.route.params.showSnackbar()
           props.navigation.goBack()
         }}
-        style={{ marginHorizontal: 20 }}
+        style={{ marginHorizontal: 20, marginVertical: 10 }}
         label={props.translations.add_set.add_new_story_set_button_label}
         extraComponent={
           <Icon
@@ -118,7 +118,8 @@ const styles = StyleSheet.create({
   },
   studySetItemContainer: {
     width: '100%',
-    height: 80 * scaleMultiplier
+    // height: 80 * scaleMultiplier,
+    aspectRatio: 4
   }
 })
 
