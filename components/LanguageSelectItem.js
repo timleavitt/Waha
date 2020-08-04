@@ -4,7 +4,7 @@ import { colors, scaleMultiplier } from '../constants'
 function LanguageSelectItem (props) {
   // FUNCTIONS
 
-  iconComponent = props.isSelected ? (
+  var iconComponent = props.isSelected ? (
     <View style={{ marginHorizontal: 20 }}>
       <Icon name='check' size={30} color={colors.apple} />
     </View>
@@ -20,7 +20,8 @@ function LanguageSelectItem (props) {
   return (
     <View
       style={{
-        height: 80 * scaleMultiplier,
+        // height: 80 * scaleMultiplier,
+        aspectRatio: 5,
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',

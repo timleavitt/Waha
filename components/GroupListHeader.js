@@ -142,7 +142,8 @@ const styles = StyleSheet.create({
   languageHeaderContainer: {
     alignItems: 'center',
     width: '100%',
-    height: 40 * scaleMultiplier,
+    // height: 40 * scaleMultiplier,
+    aspectRatio: 8.7,
     backgroundColor: colors.aquaHaze
   },
   languageHeaderText: {

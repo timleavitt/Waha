@@ -153,7 +153,8 @@ function LanguageSelectScreen (props) {
     return (
       <View
         style={{
-          height: 40 * scaleMultiplier,
+          // height: 40 * scaleMultiplier,
+          aspectRatio: 8.7,
           width: '100%',
           flexDirection: 'row',
           alignItems: 'center',

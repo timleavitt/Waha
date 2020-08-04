@@ -32,8 +32,9 @@ function SmallDrawerItem (props) {
 
 const styles = StyleSheet.create({
   smallDrawerItemContainer: {
-    margin: 5,
-    padding: 5
+    paddingHorizontal: 10,
+    // aspectRatio: 8,
+    marginVertical: 5
   },
   smallDrawerItemText: {
     fontSize: 18 * scaleMultiplier,

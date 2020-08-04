@@ -365,7 +365,8 @@ const styles = StyleSheet.create({
   studySetItem: {
     flexDirection: 'row',
     flex: 1,
-    height: 100 * scaleMultiplier,
+    // height: 100 * scaleMultiplier,
+    aspectRatio: 4,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20

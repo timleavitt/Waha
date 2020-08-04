@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 10,
     marginVertical: 20 * scaleMultiplier,
-    height: 55 * scaleMultiplier,
+    height: 60 * scaleMultiplier,
     paddingHorizontal: 15,
     alignItems: 'center',
     flexDirection: 'row'

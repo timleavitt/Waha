@@ -53,7 +53,8 @@ function WahaItem (props) {
 const styles = StyleSheet.create({
   itemContainer: {
     width: '100%',
-    height: 80 * scaleMultiplier,
+    // height: 80 * scaleMultiplier,
+    aspectRatio: 5,
     backgroundColor: colors.white,
     alignItems: 'center',
     paddingHorizontal: 20,

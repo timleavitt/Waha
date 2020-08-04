@@ -1,6 +1,9 @@
 import { Dimensions } from 'react-native'
 
-export const scaleMultiplier = Dimensions.get('window').width / 430
+export const scaleMultiplier =
+  Dimensions.get('window').width > 400
+    ? 1
+    : Dimensions.get('window').width / 400
 
 export const languageT2S = {
   en: require('./assets/languageT2S/en.mp3'),

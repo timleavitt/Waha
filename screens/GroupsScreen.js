@@ -146,7 +146,7 @@ function GroupsScreen (props) {
             >
               <View
                 style={{
-                  width: 50 * scaleMultiplier,
+                  width: 55 * scaleMultiplier,
                   height: '100%',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -232,7 +232,8 @@ const styles = StyleSheet.create({
     fontSize: 18 * scaleMultiplier
   },
   addGroupContainer: {
-    height: 80 * scaleMultiplier,
+    // height: 80 * scaleMultiplier,
+    aspectRatio: 5,
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',

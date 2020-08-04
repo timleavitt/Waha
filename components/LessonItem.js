@@ -142,7 +142,8 @@ function LessonItem (props) {
 
 const styles = StyleSheet.create({
   lessonItem: {
-    height: 64 * scaleMultiplier,
+    // height: 68 * scaleMultiplier,
+    aspectRatio: 5.9,
     flexDirection: 'row',
     backgroundColor: colors.aquaHaze,
     flex: 1,

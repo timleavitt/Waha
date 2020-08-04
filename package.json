@@ -45,6 +45,7 @@
     "react-native-safe-area-context": "~3.0.7",
     "react-native-safe-area-view": "^1.1.1",
     "react-native-screens": "~2.9.0",
+    "react-native-size-matters": "^0.3.0",
     "react-native-smooth-pincode-input": "^1.0.9",
     "react-native-snackbar": "^2.2.3",
     "react-native-snackbar-component": "^1.1.10",
