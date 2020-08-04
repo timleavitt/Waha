@@ -1,5 +1,7 @@
 ROOT (conditionally renders):
   > ONBOARDING
+    > addNewLanguage
+    > onboardingSlides
   > loading
   > MAINDRAWER
     > drawer
@@ -7,17 +9,21 @@ ROOT (conditionally renders):
       > lessonlist
       > play 
       > groups
-      > addNewGroup
-      > addNewanguage
-      > editGroup
-      > storage
-      > MT
+      > addEditGroup (add)
+      > addEditGroup (edit)
+      > addNewLanguage
+      > storage 
+      > mt
       > passcode
+      > security
+      > securityOnboarding  
+      > keyOrderSet (5 variants) 
+      > game
       > SETSROOT
         > SETTABS
           > set (core)
           > set (topical)
           > set (mt) (rendered conditionally)
         > ADDSETSTACK
-          > addset
-          > addset (folder)
+          > addSet
+          > setInfo
