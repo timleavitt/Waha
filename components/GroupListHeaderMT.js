@@ -110,8 +110,7 @@ const styles = StyleSheet.create({
   languageLogo: {
     resizeMode: 'contain',
     width: 120 * scaleMultiplier,
-    height: 40 * scaleMultiplier,
-    alignSelf: 'flex-end'
+    height: 16.8 * scaleMultiplier
   }
 })
 

@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   languageLogo: {
     resizeMode: 'contain',
     width: 120 * scaleMultiplier,
-    height: 40 * scaleMultiplier,
+    height: 16.8 * scaleMultiplier,
     marginHorizontal: 20
   }
 })
