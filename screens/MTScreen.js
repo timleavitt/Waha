@@ -86,8 +86,9 @@ function MTScreen (props) {
       <Blurb
         text={
           props.toolkitEnabled
-            ? 'Some vision for mobilization tools! This will probably be bigger when the vision is fully written.'
-            : 'Enabling Mobilization Tools adds additional content. The passcode is passed from user to user, so you’ll need to find a user with the passcode to unlock this content.'
+            ? props.translations.mobilization_tools.mobilization_tools_vision
+            : props.translations.mobilization_tools
+                .mobilization_tools_pre_unlock
         }
       />
       <Separator />
