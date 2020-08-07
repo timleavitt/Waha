@@ -1,10 +1,17 @@
 import { Audio } from 'expo-av'
 import React, { useEffect, useState } from 'react'
-import { Dimensions, Image, SafeAreaView, StyleSheet, View } from 'react-native'
+import {
+  Dimensions,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import Piano from '../components/Piano'
-import { colors } from '../constants'
+import { colors, scaleMultiplier } from '../constants'
 
 function GameScreen (props) {
   //// STATE
@@ -37,30 +44,50 @@ function GameScreen (props) {
           height: '25%',
           width: '100%',
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
+          flexDirection: 'row'
         }}
       >
-        <Image source={require('../assets/wahaIcon.png')} />
-      </View>
-      <Piano setPattern={setPattern} isMuted={isMuted} />
-      <View
-        style={{
-          width: Dimensions.get('window').width,
-          alignItems: 'flex-end'
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => setIsMuted(old => !old)}
+        <Image
+          source={require('../assets/wahaIcon.png')}
           style={{
-            margin: 20
+            resizeMode: 'contain',
+            width: 50,
+            height: 50,
+            borderRadius: 10
+          }}
+        />
+        <Text
+          style={{
+            fontFamily: props.font + '-medium',
+            paddingHorizontal: 10,
+            fontSize: 32 * scaleMultiplier
           }}
         >
-          <Icon
-            name={isMuted ? 'volume-off' : 'volume'}
-            size={50}
-            color={colors.tuna}
-          />
-        </TouchableOpacity>
+          {props.translations.security.game_screen_title}
+        </Text>
+      </View>
+      <View>
+        <Piano setPattern={setPattern} isMuted={isMuted} />
+        <View
+          style={{
+            width: Dimensions.get('window').width,
+            alignItems: 'flex-end'
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => setIsMuted(old => !old)}
+            style={{
+              margin: 20
+            }}
+          >
+            <Icon
+              name={isMuted ? 'volume-off' : 'volume'}
+              size={50}
+              color={colors.tuna}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   )
@@ -73,7 +100,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.aquaHaze,
     alignItems: 'center',
-    justifyContent: 'flex-start'
+    justifyContent: 'space-around'
   }
 })
 
@@ -83,7 +110,8 @@ function mapStateToProps (state) {
   )[0]
   return {
     security: state.security,
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    translations: state.database[activeGroup.language].translations
   }
 }
 

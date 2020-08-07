@@ -25,40 +25,40 @@ function Piano (props) {
     if (!props.isMuted) {
       var note = new Audio.Sound()
       switch (number) {
-        case 1:
+        case 0:
           note.loadAsync(C).then(() => note.playAsync())
           break
-        case 2:
+        case 1:
           note.loadAsync(Db).then(() => note.playAsync())
           break
-        case 3:
+        case 2:
           note.loadAsync(D).then(() => note.playAsync())
           break
-        case 4:
+        case 3:
           note.loadAsync(Eb).then(() => note.playAsync())
           break
-        case 5:
+        case 4:
           note.loadAsync(E).then(() => note.playAsync())
           break
-        case 6:
+        case 5:
           note.loadAsync(F).then(() => note.playAsync())
           break
-        case 7:
+        case 6:
           note.loadAsync(Gb).then(() => note.playAsync())
           break
-        case 8:
+        case 7:
           note.loadAsync(G).then(() => note.playAsync())
           break
-        case 9:
+        case 8:
           note.loadAsync(Ab).then(() => note.playAsync())
           break
-        case 10:
+        case 9:
           note.loadAsync(A).then(() => note.playAsync())
           break
-        case 11:
+        case 10:
           note.loadAsync(Bb).then(() => note.playAsync())
           break
-        case 12:
+        case 11:
           note.loadAsync(B).then(() => note.playAsync())
           break
       }
@@ -84,48 +84,48 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '02')
-            playNote(2)
+            props.setPattern(pattern => pattern + '01')
+            playNote(1)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['2']} number='2' />
+          <KeyLabel backgroundColor={keyColors['1']} number='1' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '04')
-            playNote(4)
+            props.setPattern(pattern => pattern + '03')
+            playNote(3)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['4']} number='4' />
+          <KeyLabel backgroundColor={keyColors['3']} number='3' />
         </TouchableOpacity>
         <View style={{ flex: 1 }} />
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '07')
-            playNote(7)
+            props.setPattern(pattern => pattern + '06')
+            playNote(6)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['7']} number='7' />
+          <KeyLabel backgroundColor={keyColors['6']} number='6' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
             props.setPattern(pattern => pattern + '09')
-            playNote(9)
+            playNote(8)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['9']} number='9' />
+          <KeyLabel backgroundColor={keyColors['8']} number='8' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '11')
-            playNote(11)
+            props.setPattern(pattern => pattern + '10')
+            playNote(10)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['11']} number='11' />
+          <KeyLabel backgroundColor={keyColors['10']} number='10' />
         </TouchableOpacity>
         <View style={{ flex: 0.5 }} />
       </View>
@@ -138,20 +138,29 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '01')
-            playNote(1)
+            props.setPattern(pattern => pattern + '00')
+            playNote(0)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['1']} number='1' />
+          <KeyLabel backgroundColor={keyColors['0']} number='0' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '03')
-            playNote(3)
+            props.setPattern(pattern => pattern + '02')
+            playNote(2)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['3']} number='3' />
+          <KeyLabel backgroundColor={keyColors['2']} number='2' />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.whiteKey}
+          onPress={() => {
+            props.setPattern(pattern => pattern + '04')
+            playNote(4)
+          }}
+        >
+          <KeyLabel backgroundColor={keyColors['4']} number='4' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
@@ -165,38 +174,29 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '06')
-            playNote(6)
+            props.setPattern(pattern => pattern + '07')
+            playNote(7)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['6']} number='6' />
+          <KeyLabel backgroundColor={keyColors['7']} number='7' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '08')
-            playNote(8)
+            props.setPattern(pattern => pattern + '09')
+            playNote(9)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['8']} number='8' />
+          <KeyLabel backgroundColor={keyColors['9']} number='9' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '10')
-            playNote(10)
+            props.setPattern(pattern => pattern + '11')
+            playNote(11)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['10']} number='10' />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.whiteKey}
-          onPress={() => {
-            props.setPattern(pattern => pattern + '12')
-            playNote(12)
-          }}
-        >
-          <KeyLabel backgroundColor={keyColors['12']} number='12' />
+          <KeyLabel backgroundColor={keyColors['11']} number='11' />
         </TouchableOpacity>
       </View>
     </View>
@@ -216,7 +216,8 @@ const styles = StyleSheet.create({
     borderColor: colors.shark,
     borderWidth: 2,
     zIndex: 0,
-    color: colors.white
+    color: colors.white,
+    borderBottomWidth: 5
   },
   blackKey: {
     flex: 1,
@@ -229,6 +230,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     zIndex: 1,
     backgroundColor: colors.shark
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 1,
+    // shadowRadius: 10
   },
   circle: {
     width: Dimensions.get('window').width / 10,

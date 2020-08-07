@@ -72,17 +72,17 @@ function SecurityScreen (props) {
   //// RENDER
 
   return (
-    <ScrollView style={styles.screen}>
+    <View style={styles.screen}>
       <Hero source={require('../assets/gifs/piano_unlock.gif')} />
-      <View
+
+      <Blurb
+        text={props.translations.security.security_mode_description_text}
+      />
+      <ScrollView
         style={{
-          width: '100%',
-          alignItems: 'center'
+          width: '100%'
         }}
       >
-        <Blurb
-          text={props.translations.security.security_mode_description_text}
-        />
         <Separator />
         <WahaItem
           title={props.translations.security.security_mode_picker_label}
@@ -123,7 +123,7 @@ function SecurityScreen (props) {
           text={props.translations.security.security_mode_picker_blurb}
         />
         {securityControls}
-      </View>
+      </ScrollView>
       <MessageModal
         isVisible={showViewKeyOrderModal}
         hideModal={() => setShowViewKeyOrderModal(false)}
@@ -135,7 +135,7 @@ function SecurityScreen (props) {
         <Piano setPattern={() => {}} />
         <KeyLabels keyOrder={props.security.code} />
       </MessageModal>
-    </ScrollView>
+    </View>
   )
 }
 
