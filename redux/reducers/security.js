@@ -1,7 +1,8 @@
 import {
-  SET_SECURITY_ENABLED,
   SET_ACTIVATE_ON_SWITCH,
-  SET_CODE
+  SET_CODE,
+  SET_IS_MUTED,
+  SET_SECURITY_ENABLED
 } from '../actions/securityActions'
 
 export function security (state = {}, action) {
@@ -21,6 +22,11 @@ export function security (state = {}, action) {
       return {
         ...state,
         code: action.code
+      }
+    case SET_IS_MUTED:
+      return {
+        ...state,
+        isMuted: action.toSet
       }
     default:
       return state

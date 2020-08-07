@@ -82,7 +82,8 @@ const styles = StyleSheet.create({
   headerImage: {
     resizeMode: 'contain',
     width: 120 * scaleMultiplier,
-    height: 16.8 * scaleMultiplier
+    height: 16.8 * scaleMultiplier,
+    marginRight: 20
   }
 })
 

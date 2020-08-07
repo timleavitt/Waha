@@ -7,40 +7,32 @@ import { colors, keyColors, scaleMultiplier } from '../constants'
 function KeyLabels (props) {
   var keyLabel1 = props.keyOrder[1] ? (
     <KeyLabel
-      backgroundColor={
-        keyColors[props.keyOrder.substr(0, 2).replace(/^0+/, '')]
-      }
-      number={props.keyOrder.substr(0, 2).replace(/^0+/, '')}
+      backgroundColor={keyColors[props.keyOrder.substr(0, 2).replace(/^0/, '')]}
+      number={props.keyOrder.substr(0, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
   var keyLabel2 = props.keyOrder[3] ? (
     <KeyLabel
-      backgroundColor={
-        keyColors[props.keyOrder.substr(2, 2).replace(/^0+/, '')]
-      }
-      number={props.keyOrder.substr(2, 2).replace(/^0+/, '')}
+      backgroundColor={keyColors[props.keyOrder.substr(2, 2).replace(/^0/, '')]}
+      number={props.keyOrder.substr(2, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
   var keyLabel3 = props.keyOrder[5] ? (
     <KeyLabel
-      backgroundColor={
-        keyColors[props.keyOrder.substr(4, 2).replace(/^0+/, '')]
-      }
-      number={props.keyOrder.substr(4, 2).replace(/^0+/, '')}
+      backgroundColor={keyColors[props.keyOrder.substr(4, 2).replace(/^0/, '')]}
+      number={props.keyOrder.substr(4, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
   var keyLabel4 = props.keyOrder[7] ? (
     <KeyLabel
-      backgroundColor={
-        keyColors[props.keyOrder.substr(6, 2).replace(/^0+/, '')]
-      }
-      number={props.keyOrder.substr(6, 2).replace(/^0+/, '')}
+      backgroundColor={keyColors[props.keyOrder.substr(6, 2).replace(/^0/, '')]}
+      number={props.keyOrder.substr(6, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
