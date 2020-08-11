@@ -64,7 +64,7 @@ function SecurityScreen (props) {
   // extra controls for if security mode is enabled
   var securityControls = props.security.code ? (
     <View style={{ width: '100%' }}>
-      <Separator />
+      {/* <Separator />
       <WahaItem title={props.translations.security.enable_timeout_picker_label}>
         <Switch
           trackColor={{ false: colors.chateau, true: colors.apple }}
@@ -83,38 +83,34 @@ function SecurityScreen (props) {
       <Separator />
       <WahaItemDescription
         text={props.translations.security.enable_timeout_picker_blurb}
-      />
-      {props.security.timeoutDuration !== null ? (
-        <View>
-          <Separator />
-          <WahaItem
-            title={props.translations.security.change_timeout_button_label}
-            onPress={() => setShowChangeTimeoutModal(true)}
+      /> */}
+      <Separator />
+      <WahaItem
+        title={props.translations.security.change_timeout_button_label}
+        onPress={() => setShowChangeTimeoutModal(true)}
+      >
+        <View
+          style={{
+            flexDirection: props.isRTL ? 'row-reverse' : 'row',
+            alignItems: 'center'
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: props.font + '-regular',
+              fontSize: 16 * scaleMultiplier,
+              color: colors.chateau
+            }}
           >
-            <View
-              style={{
-                flexDirection: props.isRTL ? 'row-reverse' : 'row',
-                alignItems: 'center'
-              }}
-            >
-              <Text
-                style={{
-                  fontFamily: props.font + '-regular',
-                  fontSize: 16 * scaleMultiplier,
-                  color: colors.chateau
-                }}
-              >
-                {getTimeoutText()}
-              </Text>
-              <Icon
-                name={props.isRTL ? 'arrow-left' : 'arrow-right'}
-                color={colors.tuna}
-                size={50 * scaleMultiplier}
-              />
-            </View>
-          </WahaItem>
+            {getTimeoutText()}
+          </Text>
+          <Icon
+            name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+            color={colors.tuna}
+            size={50 * scaleMultiplier}
+          />
         </View>
-      ) : null}
+      </WahaItem>
       <Separator />
       <WahaItem
         title={props.translations.security.change_key_order_button_label}
@@ -180,7 +176,6 @@ function SecurityScreen (props) {
                 if (props.security.code) {
                   if (props.security.securityEnabled) {
                     props.setSecurityEnabled(false)
-                    props.setActivateOnSwitch(false)
                   } else props.setSecurityEnabled(true)
                 } else {
                   props.navigation.navigate('SecurityOnboarding')
@@ -213,6 +208,13 @@ function SecurityScreen (props) {
         closeText={props.translations.general.cancel}
       >
         <ModalButton
+          title={props.translations.security.instant_label}
+          onPress={() => {
+            props.setTimeoutDuration(0), setShowChangeTimeoutModal(false)
+          }}
+        />
+        <Separator />
+        <ModalButton
           title={props.translations.security.one_minute_label}
           onPress={() => {
             props.setTimeoutDuration(60000), setShowChangeTimeoutModal(false)
@@ -234,23 +236,9 @@ function SecurityScreen (props) {
         />
         <Separator />
         <ModalButton
-          title={props.translations.security.thirty_minutes_label}
-          onPress={() => {
-            props.setTimeoutDuration(1800000), setShowChangeTimeoutModal(false)
-          }}
-        />
-        <Separator />
-        <ModalButton
           title={props.translations.security.one_hour_label}
           onPress={() => {
             props.setTimeoutDuration(3600000), setShowChangeTimeoutModal(false)
-          }}
-        />
-        <Separator />
-        <ModalButton
-          title={props.translations.security.instant_label}
-          onPress={() => {
-            props.setTimeoutDuration(0), setShowChangeTimeoutModal(false)
           }}
         />
       </OptionsModal>

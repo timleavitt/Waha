@@ -51,10 +51,7 @@ function MainStack (props) {
       props.setTimer(Date.now())
     }
     if (appState === 'active') {
-      if (
-        props.security.securityEnabled &&
-        props.security.timeoutDuration !== null
-      ) {
+      if (props.security.securityEnabled) {
         // if we've already timed out, go straight to game
         if (props.security.isTimedOut) {
           props.navigation.navigate('Game')

@@ -19,7 +19,8 @@ function GameScreen (props) {
 
   const [pattern, setPattern] = useState('')
   const [isMuted, setIsMuted] = useState(false)
-
+  const [countdown, setCountdown] = useState('')
+  const [isPlaying, setIsPlaying] = useState(false)
   //// CONSTRUCTOR
 
   useEffect(() => {
@@ -73,13 +74,88 @@ function GameScreen (props) {
         </Text>
       </View>
       <View>
+        <View
+          style={{
+            flexDirection: props.isRTL ? 'row-reverse' : 'row',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <TouchableOpacity
+            onPress={
+              countdown === ''
+                ? () => {
+                    setCountdown('3')
+                    setTimeout(() => setCountdown('2'), 1000)
+                    setTimeout(() => setCountdown('1'), 2000)
+                    setTimeout(() => setCountdown('!'), 3000)
+                  }
+                : () => {
+                    setCountdown('')
+                  }
+              // props.security.isMuted
+              //   ? () => props.setIsMuted(false)
+              //   : () => props.setIsMuted(true)
+            }
+            style={{
+              margin: 20
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: colors.red,
+                width: 50 * scaleMultiplier,
+                height: 50 * scaleMultiplier,
+                borderRadius: (50 * scaleMultiplier) / 2,
+                borderWidth: 2,
+                borderColor: colors.tuna,
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <Text
+                style={{
+                  fontFamily: props.font + '-regular',
+                  fontSize: 24 * scaleMultiplier,
+                  color: colors.white
+                }}
+              >
+                {countdown}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={
+              isPlaying ? () => setIsPlaying(false) : () => setIsPlaying(true)
+            }
+            style={{
+              margin: 20
+            }}
+          >
+            <Icon
+              name={isPlaying ? 'pause' : 'play'}
+              size={60 * scaleMultiplier}
+              color={colors.tuna}
+            />
+          </TouchableOpacity>
+        </View>
         <Piano setPattern={setPattern} isMuted={props.security.isMuted} />
         <View
           style={{
             width: Dimensions.get('window').width,
-            alignItems: 'flex-end'
+            flexDirection: props.isRTL ? 'row-reverse' : 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}
         >
+          <TouchableOpacity
+            onPress={() => {}}
+            style={{
+              margin: 20
+            }}
+          >
+            <Icon name={'settings'} size={50} color={colors.tuna} />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={
               props.security.isMuted

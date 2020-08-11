@@ -137,7 +137,7 @@ function WahaDrawer (props) {
                 }
               ]}
             >
-              v0.5.0.4
+              v0.5.0.5
             </Text>
           </View>
         </SafeAreaView>

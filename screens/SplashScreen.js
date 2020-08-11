@@ -6,7 +6,7 @@ function SplashScreen (props) {
   return (
     <View style={styles.screen}>
       <Image
-        source={require('../assets/splash.png')}
+        source={require('../assets/splash.jpg')}
         style={{
           resizeMode: 'contain',
           width: Dimensions.get('window').width - 100 * scaleMultiplier
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f3f9ef'
+    backgroundColor: '#e43c44'
   },
   loadingMessageText: {
     color: colors.shark,
