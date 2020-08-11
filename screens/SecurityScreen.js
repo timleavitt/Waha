@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, Switch, View } from 'react-native'
+import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
 import Blurb from '../components/Blurb'
 import Hero from '../components/Hero'
 import KeyLabels from '../components/KeyLabels'
 import MessageModal from '../components/MessageModal'
+import ModalButton from '../components/ModalButton'
+import OptionsModal from '../components/OptionsModal'
 import Piano from '../components/Piano'
 import Separator from '../components/Separator'
 import WahaItem from '../components/WahaItem'
 import WahaItemDescription from '../components/WahaItemDescription'
 import { colors, scaleMultiplier } from '../constants'
 import {
-  setActivateOnSwitch,
-  setSecurityEnabled
+  setIsTimedOut,
+  setSecurityEnabled,
+  setTimeoutDuration
 } from '../redux/actions/securityActions'
+
 function SecurityScreen (props) {
   //// STATE
   const [showSecurityWarningModal, setShowSecurityWarningModal] = useState(
@@ -22,11 +26,28 @@ function SecurityScreen (props) {
   )
 
   const [showViewKeyOrderModal, setShowViewKeyOrderModal] = useState(false)
+
+  const [showChangeTimeoutModal, setShowChangeTimeoutModal] = useState(false)
   //// CONSTRUCTOR
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
   }, [])
+
+  function getTimeoutText () {
+    if (props.security.timeoutDuration === 60000)
+      return props.security.one_minute_label
+    else if (props.security.timeoutDuration === 300000)
+      return props.translations.security.five_minutes_label
+    else if (props.security.timeoutDuration === 900000)
+      return props.translations.security.fifteen_minutes_label
+    else if (props.security.timeoutDuration === 1800000)
+      return props.translations.security.thirty_minutes_label
+    else if (props.security.timeoutDuration === 3600000)
+      return props.translations.security.one_hour_label
+    else if (props.security.timeoutDuration === 0)
+      return props.translations.security.instant_label
+  }
 
   //// NAV OPTIONS
   function getNavOptions () {
@@ -42,7 +63,58 @@ function SecurityScreen (props) {
 
   // extra controls for if security mode is enabled
   var securityControls = props.security.code ? (
-    <View style={{ width: '100%', marginTop: 20 * scaleMultiplier }}>
+    <View style={{ width: '100%' }}>
+      <Separator />
+      <WahaItem title={props.translations.security.enable_timeout_picker_label}>
+        <Switch
+          trackColor={{ false: colors.chateau, true: colors.apple }}
+          thumbColor={colors.white}
+          ios_backgroundColor={colors.chateau}
+          onValueChange={() => {
+            // toggle security mode on or off
+            if (props.security.timeoutDuration === null)
+              props.setTimeoutDuration(0)
+            else props.setTimeoutDuration(null)
+          }}
+          value={props.security.timeoutDuration !== null ? true : false}
+          disabled={props.security.securityEnabled ? false : true}
+        />
+      </WahaItem>
+      <Separator />
+      <WahaItemDescription
+        text={props.translations.security.enable_timeout_picker_blurb}
+      />
+      {props.security.timeoutDuration !== null ? (
+        <View>
+          <Separator />
+          <WahaItem
+            title={props.translations.security.change_timeout_button_label}
+            onPress={() => setShowChangeTimeoutModal(true)}
+          >
+            <View
+              style={{
+                flexDirection: props.isRTL ? 'row-reverse' : 'row',
+                alignItems: 'center'
+              }}
+            >
+              <Text
+                style={{
+                  fontFamily: props.font + '-regular',
+                  fontSize: 16 * scaleMultiplier,
+                  color: colors.chateau
+                }}
+              >
+                {getTimeoutText()}
+              </Text>
+              <Icon
+                name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+                color={colors.tuna}
+                size={50 * scaleMultiplier}
+              />
+            </View>
+          </WahaItem>
+        </View>
+      ) : null}
       <Separator />
       <WahaItem
         title={props.translations.security.change_key_order_button_label}
@@ -135,6 +207,53 @@ function SecurityScreen (props) {
         <Piano setPattern={() => {}} />
         <KeyLabels keyOrder={props.security.code} />
       </MessageModal>
+      <OptionsModal
+        isVisible={showChangeTimeoutModal}
+        hideModal={() => setShowChangeTimeoutModal(false)}
+        closeText={props.translations.general.cancel}
+      >
+        <ModalButton
+          title={props.translations.security.one_minute_label}
+          onPress={() => {
+            props.setTimeoutDuration(60000), setShowChangeTimeoutModal(false)
+          }}
+        />
+        <Separator />
+        <ModalButton
+          title={props.translations.security.five_minutes_label}
+          onPress={() => {
+            props.setTimeoutDuration(300000), setShowChangeTimeoutModal(false)
+          }}
+        />
+        <Separator />
+        <ModalButton
+          title={props.translations.security.fifteen_minutes_label}
+          onPress={() => {
+            props.setTimeoutDuration(900000), setShowChangeTimeoutModal(false)
+          }}
+        />
+        <Separator />
+        <ModalButton
+          title={props.translations.security.thirty_minutes_label}
+          onPress={() => {
+            props.setTimeoutDuration(1800000), setShowChangeTimeoutModal(false)
+          }}
+        />
+        <Separator />
+        <ModalButton
+          title={props.translations.security.one_hour_label}
+          onPress={() => {
+            props.setTimeoutDuration(3600000), setShowChangeTimeoutModal(false)
+          }}
+        />
+        <Separator />
+        <ModalButton
+          title={props.translations.security.instant_label}
+          onPress={() => {
+            props.setTimeoutDuration(0), setShowChangeTimeoutModal(false)
+          }}
+        />
+      </OptionsModal>
     </View>
   )
 }
@@ -154,7 +273,6 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
-  console.log(state.security)
   return {
     database: state.database,
     activeDatabase: state.database[activeGroup.language],
@@ -171,7 +289,8 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
   return {
     setSecurityEnabled: toSet => dispatch(setSecurityEnabled(toSet)),
-    setActivateOnSwitch: toSet => dispatch(setActivateOnSwitch(toSet))
+    setIsTimedOut: toSet => dispatch(setIsTimedOut(toSet)),
+    setTimeoutDuration: ms => dispatch(setTimeoutDuration(ms))
   }
 }
 

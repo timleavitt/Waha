@@ -12,7 +12,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import Piano from '../components/Piano'
 import { colors, scaleMultiplier } from '../constants'
-import { setIsMuted } from '../redux/actions/securityActions'
+import { setIsMuted, setIsTimedOut } from '../redux/actions/securityActions'
 
 function GameScreen (props) {
   //// STATE
@@ -23,16 +23,20 @@ function GameScreen (props) {
   //// CONSTRUCTOR
 
   useEffect(() => {
-    console.log(pattern)
     if (pattern.includes(props.security.code)) {
       var note = new Audio.Sound()
       note
         .loadAsync(require('../assets/notes/Success.mp3'))
         .then(() => note.playAsync())
-      props.navigation.reset({
-        index: 0,
-        routes: [{ name: 'SetsRoot' }]
-      })
+      props.setIsTimedOut(false)
+      if (props.navigation.canGoBack()) {
+        props.navigation.goBack()
+        props.navigation.goBack()
+      } else
+        props.navigation.reset({
+          index: 0,
+          routes: [{ name: 'SetsRoot' }]
+        })
     }
   }, [pattern])
 
@@ -124,6 +128,9 @@ function mapDispatchToProps (dispatch) {
   return {
     setIsMuted: toSet => {
       dispatch(setIsMuted(toSet))
+    },
+    setIsTimedOut: toSet => {
+      dispatch(setIsTimedOut(toSet))
     }
   }
 }

@@ -1,15 +1,33 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import LoadingScreen from '../screens/LoadingScreen'
 import MainDrawer from './MainDrawer'
 import Onboarding from './Onboarding'
-import LoadingScreen from '../screens/LoadingScreen'
-import { connect } from 'react-redux'
 
 function Root (props) {
+  // const [appState, setAppState] = useState('')
+
+  // function handleAppStateChange (change) {
+  //   setAppState(change)
+  // }
+
+  // useEffect(() => {
+  //   const appStateUnsubscribe = AppState.addEventListener(
+  //     'change',
+  //     handleAppStateChange
+  //   )
+  //   return function cleanup () {
+  //     AppState.removeEventListener('change', handleAppStateChange)
+  //   }
+  // }, [])
   if (
     props.haveFinishedInitialFetch &&
     !props.isFetching &&
     props.haveFinishedOnboarding
   ) {
+    // if (appState === 'inactive' || appState === 'background') {
+    //   return <GameScreen />
+    // } else
     return <MainDrawer />
     // } else if ((props.haveFinishedOnboarding && props.isFetching && !props.haveFinishedInitialFetch) || (props.haveFinishedOnboarding && props.fetchError)) {
     //    return <LoadingScreen/>

@@ -10,6 +10,7 @@ function WahaItemDescription (props) {
         width: '100%',
         paddingHorizontal: 20,
         paddingVertical: 5,
+        marginBottom: 20 * scaleMultiplier,
         flexDirection: props.isRTL ? 'row-reverse' : 'row'
       }}
     >

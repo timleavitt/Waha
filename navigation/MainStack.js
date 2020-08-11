@@ -1,10 +1,11 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import i18n from 'i18n-js'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AppState, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
 import { colors, scaleMultiplier } from '../constants'
+import { setIsTimedOut, setTimer } from '../redux/actions/securityActions'
 import AddEditGroupScreen from '../screens/AddEditGroupScreen'
 import GameScreen from '../screens/GameScreen'
 import GroupsScreen from '../screens/GroupsScreen'
@@ -16,11 +17,13 @@ import PasscodeScreen from '../screens/PasscodeScreen'
 import PlayScreen from '../screens/PlayScreen'
 import SecurityOnboardingScreen from '../screens/SecurityOnboardingScreen'
 import SecurityScreen from '../screens/SecurityScreen'
+import SplashScreen from '../screens/SplashScreen'
 import StorageScreen from '../screens/StorageScreen'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
 import fr from '../translations/fr.json'
 import SetsRoot from './SetsRoot'
+
 i18n.translations = {
   en,
   fr,
@@ -29,12 +32,52 @@ i18n.translations = {
 const Stack = createStackNavigator()
 
 function MainStack (props) {
-  function handleAppStateChange (change) {
-    if (change === 'inactive' || change === 'background') {
-      if (props.security.securityEnabled && props.security.activateOnSwitch)
-        props.navigation.navigate('Game')
-    }
+  async function getTime () {
+    return Date.now()
   }
+
+  const [appState, setAppState] = useState('')
+
+  function handleAppStateChange (change) {
+    setAppState(change)
+  }
+
+  useEffect(() => {
+    if (appState === 'inactive' || appState === 'background') {
+      // hide screen during multitasking / going home
+      props.navigation.navigate('Splash')
+
+      // store current time for timeout checking later
+      props.setTimer(Date.now())
+    }
+    if (appState === 'active') {
+      if (
+        props.security.securityEnabled &&
+        props.security.timeoutDuration !== null
+      ) {
+        // if we've already timed out, go straight to game
+        if (props.security.isTimedOut) {
+          props.navigation.navigate('Game')
+        } else {
+          // check if we are now timed out
+          // if we are, set isTimedOut to true and navigate to game
+          if (
+            Date.now() - props.security.timer >
+            props.security.timeoutDuration
+          ) {
+            props.setIsTimedOut(true)
+            props.navigation.navigate('Game')
+            // otherwise, if we haven't timed out, just go back to normal screen
+          } else {
+            props.navigation.goBack()
+          }
+        }
+        // default: go back from splash to whatever screen we were on before
+      } else {
+        props.navigation.goBack()
+      }
+    }
+  }, [appState])
 
   useEffect(() => {
     const appStateUnsubscribe = AppState.addEventListener(
@@ -46,6 +89,12 @@ function MainStack (props) {
       AppState.removeEventListener('change', handleAppStateChange)
     }
   }, [props.security.securityEnabled, props.security.activateOnSwitch])
+
+  const forFade = ({ current }) => ({
+    cardStyle: {
+      opacity: current.progress
+    }
+  })
 
   return (
     //global navigation options
@@ -290,11 +339,21 @@ function MainStack (props) {
           }
         }}
       />
-
       <Stack.Screen
         name='Game'
         component={GameScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          cardStyleInterpolator: forFade
+        }}
+      />
+      <Stack.Screen
+        name='Splash'
+        component={SplashScreen}
+        options={{
+          headerShown: false,
+          cardStyleInterpolator: forFade
+        }}
       />
     </Stack.Navigator>
   )
@@ -315,6 +374,7 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
+  console.log(state.security)
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
@@ -324,4 +384,15 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(MainStack)
+function mapDispatchToProps (dispatch) {
+  return {
+    setTimer: ms => {
+      dispatch(setTimer(ms))
+    },
+    setIsTimedOut: toSet => {
+      dispatch(setIsTimedOut(toSet))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainStack)
