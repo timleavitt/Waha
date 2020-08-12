@@ -158,6 +158,7 @@ function MainStack (props) {
         name='AddGroup'
         component={AddEditGroupScreen}
         options={{
+          gestureEnabled: false,
           headerTitle: props.translations.add_edit_group.header_add,
           headerStyle: {
             backgroundColor: colors.white
@@ -191,6 +192,7 @@ function MainStack (props) {
         name='EditGroup'
         component={AddEditGroupScreen}
         options={{
+          gestureEnabled: false,
           headerTitle: props.translations.add_edit_group.header_edit,
           headerStyle: {
             backgroundColor: colors.aquaHaze

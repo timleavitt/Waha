@@ -91,7 +91,23 @@ function MTScreen (props) {
                 .mobilization_tools_pre_unlock
         }
       />
-      <Separator />
+
+      {props.toolkitEnabled ? null : (
+        <View style={{ width: '100%' }}>
+          <Separator />
+          <WahaItem
+            title={props.translations.mobilization_tools.unlock_mt_button_label}
+            onPress={() => props.navigation.navigate('Passcode')}
+          >
+            <Icon
+              name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+              color={colors.tuna}
+              size={50 * scaleMultiplier}
+            />
+          </WahaItem>
+          <Separator />
+        </View>
+      )}
 
       {/* list of groups with option to enable MTs for each group */}
       <View style={{ width: '100%', flex: 1 }}>
@@ -130,6 +146,7 @@ function MTScreen (props) {
             }}
             ListHeaderComponent={() => (
               <View>
+                <Separator />
                 <WahaItem
                   title={
                     props.toolkitEnabled

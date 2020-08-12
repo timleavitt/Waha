@@ -36,7 +36,7 @@ function SecurityScreen (props) {
 
   function getTimeoutText () {
     if (props.security.timeoutDuration === 60000)
-      return props.security.one_minute_label
+      return props.translations.security.one_minute_label
     else if (props.security.timeoutDuration === 300000)
       return props.translations.security.five_minutes_label
     else if (props.security.timeoutDuration === 900000)
@@ -187,7 +187,11 @@ function SecurityScreen (props) {
         </WahaItem>
         <Separator />
         <WahaItemDescription
-          text={props.translations.security.security_mode_picker_blurb}
+          text={
+            props.security.code
+              ? props.translations.security.security_mode_picker_blurb_post_code
+              : props.translations.security.security_mode_picker_blurb_pre_code
+          }
         />
         {securityControls}
       </ScrollView>

@@ -18,17 +18,18 @@ function GameScreen (props) {
   //// STATE
 
   const [pattern, setPattern] = useState('')
-  const [isMuted, setIsMuted] = useState(false)
   const [countdown, setCountdown] = useState('')
   const [isPlaying, setIsPlaying] = useState(false)
   //// CONSTRUCTOR
 
   useEffect(() => {
     if (pattern.includes(props.security.code)) {
-      var note = new Audio.Sound()
-      note
-        .loadAsync(require('../assets/notes/Success.mp3'))
-        .then(() => note.playAsync())
+      if (!props.security.isMuted) {
+        var note = new Audio.Sound()
+        note
+          .loadAsync(require('../assets/notes/Success.mp3'))
+          .then(() => note.playAsync())
+      }
       props.setIsTimedOut(false)
       if (props.navigation.canGoBack()) {
         props.navigation.goBack()
