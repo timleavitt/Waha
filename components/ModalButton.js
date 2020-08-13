@@ -17,6 +17,7 @@ function ModalButton (props) {
       >
         {props.title}
       </Text>
+      {props.children}
     </TouchableOpacity>
   )
 }
@@ -28,7 +29,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 70 * scaleMultiplier,
     justifyContent: 'center',
-    borderBottomColor: colors.athens
+    borderBottomColor: colors.athens,
+    alignItems: 'center'
   },
   text: {
     color: colors.shark,
@@ -42,7 +44,8 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    isRTL: state.database[activeGroup.language].isRTL
   }
 }
 

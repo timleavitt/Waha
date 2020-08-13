@@ -216,35 +216,100 @@ function SecurityScreen (props) {
           onPress={() => {
             props.setTimeoutDuration(0), setShowChangeTimeoutModal(false)
           }}
-        />
+        >
+          {props.security.timeoutDuration === 0 ? (
+            <Icon
+              name='check'
+              color={colors.apple}
+              size={30 * scaleMultiplier}
+              style={{
+                position: 'absolute',
+                alignSelf: 'flex-end',
+                paddingHorizontal: 20
+              }}
+            />
+          ) : null}
+        </ModalButton>
         <Separator />
         <ModalButton
           title={props.translations.security.one_minute_label}
           onPress={() => {
             props.setTimeoutDuration(60000), setShowChangeTimeoutModal(false)
           }}
-        />
+        >
+          {props.security.timeoutDuration === 60000 ? (
+            <Icon
+              name='check'
+              color={colors.apple}
+              size={30 * scaleMultiplier}
+              style={{
+                position: 'absolute',
+                alignSelf: 'flex-end',
+                paddingHorizontal: 20
+              }}
+            />
+          ) : null}
+        </ModalButton>
         <Separator />
         <ModalButton
           title={props.translations.security.five_minutes_label}
           onPress={() => {
             props.setTimeoutDuration(300000), setShowChangeTimeoutModal(false)
           }}
-        />
+        >
+          {props.security.timeoutDuration === 300000 ? (
+            <Icon
+              name='check'
+              color={colors.apple}
+              size={30 * scaleMultiplier}
+              style={{
+                position: 'absolute',
+                alignSelf: 'flex-end',
+                paddingHorizontal: 20
+              }}
+            />
+          ) : null}
+        </ModalButton>
         <Separator />
         <ModalButton
           title={props.translations.security.fifteen_minutes_label}
           onPress={() => {
             props.setTimeoutDuration(900000), setShowChangeTimeoutModal(false)
           }}
-        />
+        >
+          {props.security.timeoutDuration === 900000 ? (
+            <Icon
+              name='check'
+              color={colors.apple}
+              size={30 * scaleMultiplier}
+              style={{
+                position: 'absolute',
+                alignSelf: 'flex-end',
+                paddingHorizontal: 20
+              }}
+            />
+          ) : null}
+        </ModalButton>
         <Separator />
         <ModalButton
           title={props.translations.security.one_hour_label}
           onPress={() => {
             props.setTimeoutDuration(3600000), setShowChangeTimeoutModal(false)
           }}
-        />
+        >
+          {props.security.timeoutDuration === 3600000 ? (
+            <Icon
+              name='check'
+              color={colors.apple}
+              size={30 * scaleMultiplier}
+              style={{
+                position: 'absolute',
+                alignSelf: 'flex-end',
+                paddingHorizontal: 20
+              }}
+            />
+          ) : null}
+        </ModalButton>
       </OptionsModal>
     </View>
   )

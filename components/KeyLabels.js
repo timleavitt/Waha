@@ -37,6 +37,24 @@ function KeyLabels (props) {
     />
   ) : null
 
+  var keyLabel5 = props.keyOrder[9] ? (
+    <KeyLabel
+      backgroundColor={keyColors[props.keyOrder.substr(8, 2).replace(/^0/, '')]}
+      number={props.keyOrder.substr(8, 2).replace(/^0/, '')}
+      style={{ alignSelf: null, marginBottom: 0 }}
+    />
+  ) : null
+
+  var keyLabel6 = props.keyOrder[11] ? (
+    <KeyLabel
+      backgroundColor={
+        keyColors[props.keyOrder.substr(10, 2).replace(/^0/, '')]
+      }
+      number={props.keyOrder.substr(10, 2).replace(/^0/, '')}
+      style={{ alignSelf: null, marginBottom: 0 }}
+    />
+  ) : null
+
   return (
     <View
       style={{
@@ -50,6 +68,8 @@ function KeyLabels (props) {
       <View style={styles.keyPlaceholder}>{keyLabel2}</View>
       <View style={styles.keyPlaceholder}>{keyLabel3}</View>
       <View style={styles.keyPlaceholder}>{keyLabel4}</View>
+      <View style={styles.keyPlaceholder}>{keyLabel5}</View>
+      <View style={styles.keyPlaceholder}>{keyLabel6}</View>
     </View>
   )
 }
@@ -58,9 +78,9 @@ function KeyLabels (props) {
 
 const styles = StyleSheet.create({
   keyPlaceholder: {
-    width: 80 * scaleMultiplier,
-    height: 80 * scaleMultiplier,
-    borderRadius: 40 * scaleMultiplier,
+    width: 50 * scaleMultiplier,
+    height: 50 * scaleMultiplier,
+    borderRadius: 25 * scaleMultiplier,
     backgroundColor: colors.white,
     margin: 5,
     justifyContent: 'center',

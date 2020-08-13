@@ -9,11 +9,10 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
-import KeyLabel from '../components/KeyLabel'
 import KeyLabels from '../components/KeyLabels'
 import Piano from '../components/Piano'
 import WahaButton from '../components/WahaButton'
-import { colors, keyColors, scaleMultiplier } from '../constants'
+import { colors, scaleMultiplier } from '../constants'
 import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
 function KeyOrderSetScreen (props) {
   //// STATE
@@ -53,7 +52,7 @@ function KeyOrderSetScreen (props) {
   useEffect(() => {
     console.log(keyOrder)
 
-    if (keyOrder.length === 8) {
+    if (keyOrder.length === 12) {
       switch (props.route.name) {
         case 'KeyOrderSet_Initial':
           props.navigation.navigate('KeyOrderSet_Confirm', {
@@ -168,38 +167,6 @@ function KeyOrderSetScreen (props) {
           )
     }
   }
-
-  var keyLabel1 = keyOrder[1] ? (
-    <KeyLabel
-      backgroundColor={keyColors[keyOrder.substr(0, 2).replace(/^0+/, '')]}
-      number={keyOrder.substr(0, 2).replace(/^0+/, '')}
-      style={{ alignSelf: null, marginBottom: 0 }}
-    />
-  ) : null
-
-  var keyLabel2 = keyOrder[3] ? (
-    <KeyLabel
-      backgroundColor={keyColors[keyOrder.substr(2, 2).replace(/^0+/, '')]}
-      number={keyOrder.substr(2, 2).replace(/^0+/, '')}
-      style={{ alignSelf: null, marginBottom: 0 }}
-    />
-  ) : null
-
-  var keyLabel3 = keyOrder[5] ? (
-    <KeyLabel
-      backgroundColor={keyColors[keyOrder.substr(4, 2).replace(/^0+/, '')]}
-      number={keyOrder.substr(4, 2).replace(/^0+/, '')}
-      style={{ alignSelf: null, marginBottom: 0 }}
-    />
-  ) : null
-
-  var keyLabel4 = keyOrder[7] ? (
-    <KeyLabel
-      backgroundColor={keyColors[keyOrder.substr(6, 2).replace(/^0+/, '')]}
-      number={keyOrder.substr(6, 2).replace(/^0+/, '')}
-      style={{ alignSelf: null, marginBottom: 0 }}
-    />
-  ) : null
 
   //// RENDER
 

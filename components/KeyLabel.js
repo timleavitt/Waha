@@ -30,9 +30,9 @@ function KeyLabel (props) {
 
 const styles = StyleSheet.create({
   circle: {
-    width: Dimensions.get('window').width / 10,
-    height: Dimensions.get('window').width / 10,
-    borderRadius: Dimensions.get('window').width / 20,
+    width: Dimensions.get('window').width / 12,
+    height: Dimensions.get('window').width / 12,
+    borderRadius: Dimensions.get('window').width / 24,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'flex-end',

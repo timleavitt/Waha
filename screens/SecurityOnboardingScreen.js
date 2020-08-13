@@ -72,16 +72,21 @@ function SecurityOnboardingScreen (props) {
 
   return (
     <View style={styles.screen}>
-      <Onboarding
-        pages={onboardingData}
-        showSkip={false}
-        onDone={finishOnboarding}
-        nextLabel={props.translations.general.next}
-        containerStyles={{ marginTop: 0 }}
-        imageContainerStyles={{
-          paddingBottom: Dimensions.get('window').width < 700 ? 0 : 60
-        }}
-      />
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <Onboarding
+          pages={onboardingData}
+          showSkip={false}
+          onDone={finishOnboarding}
+          nextLabel={props.translations.general.next}
+          containerStyles={{
+            marginTop: Dimensions.get('window').height > 600 ? 100 : 0,
+            justifyContent: 'flex-start'
+          }}
+          imageContainerStyles={{
+            paddingBottom: 0
+          }}
+        />
+      </View>
     </View>
   )
 }
@@ -93,7 +98,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.aquaHaze,
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    justifyContent: 'center'
   },
   image: {
     resizeMode: 'center',

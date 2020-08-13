@@ -342,6 +342,7 @@ function MainStack (props) {
         name='Game'
         component={GameScreen}
         options={{
+          gestureEnabled: false,
           headerShown: false,
           cardStyleInterpolator: forFade
         }}
@@ -350,6 +351,7 @@ function MainStack (props) {
         name='Splash'
         component={SplashScreen}
         options={{
+          gestureEnabled: false,
           headerShown: false,
           cardStyleInterpolator: forFade
         }}

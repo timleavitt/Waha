@@ -95,9 +95,12 @@ function OnboardingSlidesScreen (props) {
         showSkip={false}
         onDone={finishOnboarding}
         nextLabel={i18n.t('next')}
-        containerStyles={{ marginTop: 0 }}
+        containerStyles={{
+          marginTop: Dimensions.get('window').height > 600 ? 100 : 0,
+          justifyContent: 'flex-start'
+        }}
         imageContainerStyles={{
-          paddingBottom: Dimensions.get('window').width < 700 ? 0 : 60
+          paddingBottom: 0
         }}
       />
     </View>
