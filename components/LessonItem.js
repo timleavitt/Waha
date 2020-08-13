@@ -101,7 +101,7 @@ function LessonItem (props) {
         >
           <Text
             style={{
-              fontSize: 18 * scaleMultiplier,
+              fontSize: 17 * scaleMultiplier,
               textAlignVertical: 'center',
               color: props.isComplete ? colors.chateau : colors.shark,
               textAlign: props.isRTL ? 'right' : 'left',
@@ -113,7 +113,7 @@ function LessonItem (props) {
           </Text>
           <Text
             style={{
-              fontSize: 14 * scaleMultiplier,
+              fontSize: 13 * scaleMultiplier,
               color: colors.chateau,
               textAlign: props.isRTL ? 'right' : 'left',
               fontFamily: props.font + '-regular'
@@ -143,7 +143,7 @@ function LessonItem (props) {
 const styles = StyleSheet.create({
   lessonItem: {
     // height: 68 * scaleMultiplier,
-    aspectRatio: 5.9,
+    aspectRatio: 6.1,
     flexDirection: 'row',
     backgroundColor: colors.aquaHaze,
     flex: 1,
