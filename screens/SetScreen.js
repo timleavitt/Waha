@@ -37,6 +37,9 @@ function SetScreen (props) {
       setAddNewSetLabel(props.translations.sets.add_topical_set_button_label)
       setSetCategory('topical')
     } else {
+      setAddNewSetLabel(
+        props.translations.sets.add_mobilization_tool_button_label
+      )
       setSetCategory('mt')
     }
   }, [])
@@ -64,8 +67,16 @@ function SetScreen (props) {
     <View style={styles.screen}>
       <FlatList
         data={
-          props.route.name === 'Topical'
-            ? // if we're displaying topical sets, display them in the order added
+          // if we're adding core sets, display them in numerical order
+          props.route.name === 'Core'
+            ? props.activeDatabase.sets
+                .filter(set => set.category === setCategory)
+                .filter(set =>
+                  props.activeGroup.addedSets.some(
+                    addedSet => addedSet.id === set.id
+                  )
+                )
+            : // if we're displaying topical/mt sets, display them in the order added
               props.activeDatabase.sets
                 .filter(set => set.category === setCategory)
                 .filter(set =>
@@ -73,76 +84,78 @@ function SetScreen (props) {
                     addedSet => addedSet.id === set.id
                   )
                 )
-                .sort(
-                  (a, b) =>
-                    props.activeGroup.addedSets.indexOf(a.id) -
-                    props.activeGroup.addedSets.indexOf(b.id)
-                )
-            : // otherwise, display them in numerical order
-              props.activeDatabase.sets
-                .filter(set => set.category === setCategory)
-                .filter(set =>
-                  props.activeGroup.addedSets.some(
-                    addedSet => addedSet.id === set.id
+                .sort((a, b) => {
+                  return a.index - b.index
+                })
+                .sort((a, b) => {
+                  return (
+                    props.activeGroup.addedSets.indexOf(
+                      props.activeGroup.addedSets.filter(
+                        addedSet => addedSet.id === a.id
+                      )[0]
+                    ) -
+                    props.activeGroup.addedSets.indexOf(
+                      props.activeGroup.addedSets.filter(
+                        addedSet => addedSet.id === b.id
+                      )[0]
+                    )
                   )
-                )
+                })
         }
         renderItem={renderStudySetItem}
         extraData={props.activeGroup}
         ListFooterComponent={
-          setCategory === 'mt' ? null : (
-            <TouchableOpacity
-              style={[
-                styles.addNewSetContainer,
-                { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
-              ]}
-              onPress={() =>
-                props.navigation.navigate('AddSetStack', {
-                  screen: 'AddSet',
-                  params: {
-                    category: setCategory === 'core' ? 'core' : 'topical'
-                  }
-                })
-              }
+          <TouchableOpacity
+            style={[
+              styles.addNewSetContainer,
+              { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+            ]}
+            onPress={() =>
+              props.navigation.navigate('AddSetStack', {
+                screen: 'AddSet',
+                params: {
+                  category: setCategory
+                }
+              })
+            }
+          >
+            <View
+              style={{
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: 80 * scaleMultiplier,
+                height: 80 * scaleMultiplier
+              }}
             >
-              <View
+              <Icon
+                name='plus'
+                size={60 * scaleMultiplier}
+                color={colors.chateau}
+                style={styles.addNewSetIcon}
+              />
+            </View>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                flexDirection: 'column',
+                marginRight: props.isRTL ? 20 : 0,
+                marginLeft: props.isRTL ? 0 : 20
+              }}
+            >
+              <Text
                 style={{
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: 80 * scaleMultiplier,
-                  height: 80 * scaleMultiplier
+                  fontFamily: props.font + '-regular',
+                  fontSize: 14 * scaleMultiplier,
+                  color: colors.chateau,
+                  textAlign: props.isRTL ? 'right' : 'left'
                 }}
               >
-                <Icon
-                  name='plus'
-                  size={60 * scaleMultiplier}
-                  color={colors.chateau}
-                  style={styles.addNewSetIcon}
-                />
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                  marginRight: props.isRTL ? 20 : 0,
-                  marginLeft: props.isRTL ? 0 : 20
-                }}
-              >
-                <Text
-                  style={{
-                    fontFamily: props.font + '-regular',
-                    fontSize: 14 * scaleMultiplier,
-                    color: colors.chateau,
-                    textAlign: props.isRTL ? 'right' : 'left'
-                  }}
-                >
-                  {addNewSetLabel}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )
+                {addNewSetLabel}
+              </Text>
+            </View>
+          </TouchableOpacity>
         }
       />
     </View>

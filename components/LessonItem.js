@@ -13,6 +13,7 @@ function LessonItem (props) {
     //  download from redux
     switch (props.lessonType) {
       case 'qa':
+      case 'a':
         if (props.downloads[props.thisLesson.id] === 1)
           props.removeDownload(props.thisLesson.id)
         break

@@ -52,10 +52,13 @@ function GroupItemMT (props) {
             // toggle MTs on or off
             props.setShowToolkit(props.group.name, !props.group.showToolkit)
 
-            // if we're toggling MTs on for the first time, add the MT sets
+            // if we're toggling MTs on for the first time, add the first 2 MT sets
             if (!props.group.showToolkit)
               for (const set of props.database[props.group.language].sets) {
-                if (set.category === 'mt') {
+                if (
+                  set.category === 'mt' &&
+                  (set.index === 1 || set.index === 2)
+                ) {
                   props.addSet(props.group.name, set.id)
                 }
               }

@@ -24,6 +24,7 @@ function DownloadStatusIndicator (props) {
   function getDownloadPercentage () {
     switch (props.lessonType) {
       case 'qa':
+      case 'a':
         return props.downloads[props.lessonID] * 100
         break
       case 'qav':
@@ -42,7 +43,7 @@ function DownloadStatusIndicator (props) {
   }
 
   // if lesson isn't only video
-  return props.lessonType !== 'q' ? (
+  return props.lessonType !== 'q' && props.lessonType !== 'c' ? (
     // if lesson has audio source
     props.isDownloaded ? (
       // if lesson is downloaded, show check

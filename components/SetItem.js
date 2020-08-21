@@ -59,7 +59,7 @@ function SetItem (props) {
                   }}
                 >
                   <SVG
-                    name={props.thisSet.icon}
+                    name={props.thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
                     fill={fullyCompleted ? colors.chateau : colors.shark}
@@ -118,7 +118,7 @@ function SetItem (props) {
                   }}
                 >
                   <SVG
-                    name={props.thisSet.icon}
+                    name={props.thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
                     fill={fullyCompleted ? colors.chateau : colors.shark}
@@ -145,7 +145,7 @@ function SetItem (props) {
             ]}
           >
             <SVG
-              name={props.thisSet.icon}
+              name={props.thisSet.iconName}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
               fill={colors.tuna}
@@ -177,7 +177,7 @@ function SetItem (props) {
             ]}
           >
             <SVG
-              name={props.thisSet.icon}
+              name={props.thisSet.iconName}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
               fill={colors.tuna}

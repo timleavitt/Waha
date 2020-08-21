@@ -131,17 +131,17 @@ function MainDrawer (props) {
     }
   }, [])
 
-  useEffect(() => {
-    // add any new mt sets to active group
-    props.activeDatabase.sets
-      .filter(set => set.category === 'mt')
-      .forEach(set => {
-        if (
-          !props.activeGroup.addedSets.some(addedSet => addedSet.id === set.id)
-        )
-          props.addSet(props.activeGroup.name, set.id)
-      })
-  }, [props.activeDatabase, props.activeGroup])
+  // useEffect(() => {
+  //   // add any new mt sets to active group
+  //   props.activeDatabase.sets
+  //     .filter(set => set.category === 'mt')
+  //     .forEach(set => {
+  //       if (
+  //         !props.activeGroup.addedSets.some(addedSet => addedSet.id === set.id)
+  //       )
+  //         props.addSet(props.activeGroup.name, set.id)
+  //     })
+  // }, [props.activeDatabase, props.activeGroup])
 
   // if we connect to internet, check to see if we have any paused downloads
   useEffect(() => {

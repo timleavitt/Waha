@@ -165,7 +165,7 @@ function PlayScreen (props) {
     {
       key: '1',
       type: 'image',
-      svgName: props.route.params.thisSet.icon
+      svgName: props.route.params.thisSet.iconName
     },
     {
       key: '2',
@@ -269,6 +269,8 @@ function PlayScreen (props) {
     var storyLocal =
       FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
 
+    var storyStream = props.route.params.thisLesson.audioSource
+
     var storyDummy =
       FileSystem.documentDirectory +
       props.activeGroup.language +
@@ -348,11 +350,22 @@ function PlayScreen (props) {
         setStorySource(storyDummy)
         setTrainingSource(null)
         setApplicationSource(applicationLocal)
+        break
+      case 'a':
+        changeChapter('story')
+        setFellowshipSource(null)
+        setStorySource(
+          props.route.params.isDownloaded ? storyLocal : storyStream
+        )
+        setTrainingSource(null)
+        setApplicationSource(null)
+        break
     }
   }
 
   // loads an audio file, sets the length, and starts playing it
   async function loadAudioFile (source) {
+    console.log('loading audio')
     //console.log(source);
     try {
       await soundObject
@@ -431,6 +444,13 @@ function PlayScreen (props) {
       })
     }
   }, [videoObject, trainingSource])
+
+  // TODO: load audio file for audio books
+  useEffect(() => {
+    if (props.route.params.lessonType === 'a' && storySource) {
+      loadAudioFile(storySource)
+    }
+  }, [storySource])
 
   useEffect(() => {
     if (screenOrientation === -90 || screenOrientation === 90) {
@@ -643,7 +663,9 @@ function PlayScreen (props) {
         loadAudioFile(fellowshipSource)
       } else if (chapter === 'story') {
         setSeekPosition(0)
-        loadAudioFile(storySource)
+        if (storySource) {
+          loadAudioFile(storySource)
+        }
         // auto scroll to scripture if
         //  1. there's no audio source
         //  2. we're currently downloading the lesson
@@ -1076,7 +1098,8 @@ function PlayScreen (props) {
   //  false: show loading circle
   var audioControlContainer = isLoaded ? (
     <View style={styles.audioControlContainer}>
-      {props.route.params.lessonType !== 'v' ? (
+      {props.route.params.lessonType !== 'v' &&
+      props.route.params.lessonType !== 'a' ? (
         <ChapterSelect
           activeChapter={activeChapter}
           lessonID={props.route.params.thisLesson.id}

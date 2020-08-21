@@ -120,15 +120,13 @@ function LessonListScreen (props) {
   function getLessonType (lesson) {
     // q = has questions, a = has audio, v = has video
     // options not allowed: av, a
-    return lesson.questionsType
-      ? lesson.audioSource
-        ? lesson.videoSource
-          ? 'qav'
-          : 'qa'
-        : lesson.videoSource
-        ? 'qv'
-        : 'q'
-      : 'v'
+    var lessonType = ''
+    lessonType += lesson.questionsType ? 'q' : ''
+    lessonType += lesson.audioSource ? 'a' : ''
+    lessonType += lesson.videoSource ? 'v' : ''
+    if (lessonType === '') lessonType = 'c'
+
+    return lessonType
   }
 
   // NOTE: for next 4 functions, what is returned depends on the type of the
@@ -139,6 +137,7 @@ function LessonListScreen (props) {
   function getIsLessonDownloaded (lesson) {
     switch (getLessonType(lesson)) {
       case 'qa':
+      case 'a':
         if (downloadsInFileSystem[lesson.id]) return true
         else return false
         break
@@ -162,6 +161,7 @@ function LessonListScreen (props) {
   function getIsLessonDownloading (lesson) {
     switch (getLessonType(lesson)) {
       case 'qa':
+      case 'a':
         if (props.downloads[lesson.id]) return true
         else return false
         break
@@ -182,6 +182,7 @@ function LessonListScreen (props) {
   function downloadLessonFromModal () {
     switch (getLessonType(activeLessonInModal)) {
       case 'qa':
+      case 'a':
         props.downloadLesson(
           activeLessonInModal.id,
           activeLessonInModal.audioSource
@@ -212,6 +213,7 @@ function LessonListScreen (props) {
   function deleteLessonFromModal () {
     switch (getLessonType(activeLessonInModal)) {
       case 'qa':
+      case 'a':
         FileSystem.deleteAsync(
           FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
         )
