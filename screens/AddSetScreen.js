@@ -26,7 +26,8 @@ function AddSetScreen (props) {
   const [headerTitle, setHeaderTitle] = useState('')
   const [tags, setTags] = useState([])
   const [activeTags, setActiveTags] = useState([])
-  // const [tagSelectRef, setTagSelectRef] = useState()
+  const [tagSelectRef, setTagSelectRef] = useState()
+  const [refresh, setRefresh] = useState(false)
 
   useEffect(() => {
     switch (props.route.params.category) {
@@ -35,7 +36,7 @@ function AddSetScreen (props) {
         break
       case 'topical':
         setHeaderTitle(props.translations.add_set.header_topical)
-        var tempTags = []
+        var tempTags = [props.translations.add_set.all_tag_label]
         props.activeDatabase.sets
           .filter(set => set.category === 'topical')
           .forEach(topicalSet => {
@@ -57,9 +58,11 @@ function AddSetScreen (props) {
     props.navigation.setOptions(getNavOptions())
   }, [headerTitle])
 
-  useEffect(() => {
-    console.log(activeTags)
-  }, [activeTags])
+  // useEffect(() => {
+  //   if (tagSelectRef) {
+  //     tagSelectRef.select(0)
+  //   }
+  // }, [tagSelectRef])
 
   function getNavOptions () {
     return {
@@ -97,6 +100,7 @@ function AddSetScreen (props) {
   var tagSelectComponent = (
     <TagGroup
       source={tags}
+      singleChoiceMode
       onSelectedTagChange={selected => setActiveTags(selected)}
       style={{
         paddingHorizontal: 10,
@@ -107,8 +111,9 @@ function AddSetScreen (props) {
       textStyle={{ color: colors.oslo, fontFamily: props.font + '-regular' }}
       activeTagStyle={{
         borderRadius: 20,
-        backgroundColor: colors.tuna,
-        borderColor: colors.tuna
+        // make primary color
+        backgroundColor: props.primaryColor,
+        borderColor: props.primaryColor
       }}
       activeTextStyle={{
         color: colors.white,
@@ -153,7 +158,10 @@ function AddSetScreen (props) {
                     )
                 )
                 .filter(topicalAddedSet => {
-                  return activeTags.length === 0
+                  return activeTags.length === 0 ||
+                    activeTags.includes(
+                      props.translations.add_set.all_tag_label
+                    )
                     ? true
                     : topicalAddedSet.tags.some(tag => activeTags.includes(tag))
                 })
@@ -242,7 +250,8 @@ function mapStateToProps (state) {
     translations: state.database[activeGroup.language].translations,
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    primaryColor: state.database[activeGroup.language].primaryColor
   }
 }
 

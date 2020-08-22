@@ -23,6 +23,7 @@ import { connect } from 'react-redux'
 import SVG from '../assets/svg'
 import BackButton from '../components/BackButton'
 import ChapterSelect from '../components/ChapterSelect'
+import HomeworkModal from '../components/HomeworkModal'
 import ModalButton from '../components/ModalButton'
 import OptionsModal from '../components/OptionsModal'
 import PlayPauseSkip from '../components/PlayPauseSkip'
@@ -151,6 +152,9 @@ function PlayScreen (props) {
 
   // share modal
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
+
+  // homework modal
+  const [showHomeworkModal, setShowHomeworkModal] = useState(false)
 
   // animation state
   const [playOpacity, setPlayOpacity] = useState(new Animated.Value(0))
@@ -1122,6 +1126,8 @@ function PlayScreen (props) {
         onSkipPress={value => {
           skip(value)
         }}
+        hasHomework={props.route.params.thisLesson.homework ? true : false}
+        showHomeworkModal={() => setShowHomeworkModal(true)}
       />
     </View>
   ) : (
@@ -1186,6 +1192,11 @@ function PlayScreen (props) {
           </View>
         ) : null}
       </OptionsModal>
+      <HomeworkModal
+        isVisible={showHomeworkModal}
+        hideModal={() => setShowHomeworkModal(false)}
+        homework={props.route.params.thisLesson.homework}
+      />
     </View>
   )
 }

@@ -13,6 +13,22 @@ function PlayPauseSkip (props) {
 
   return (
     <View style={styles.playPauseSkipContainer}>
+      {props.hasHomework ? (
+        <View
+          style={{
+            width: '100%',
+            position: 'absolute',
+            justifyContent: 'center'
+          }}
+        >
+          <TouchableOpacity
+            style={{ position: 'absolute', paddingHorizontal: 20 }}
+            onPress={props.showHomeworkModal}
+          >
+            <Icon name='list' size={40 * scaleMultiplier} color={colors.tuna} />
+          </TouchableOpacity>
+        </View>
+      ) : null}
       <TouchableOpacity
         style={styles.playPauseSkipButton}
         onPress={() => props.onSkipPress(-10000)}
