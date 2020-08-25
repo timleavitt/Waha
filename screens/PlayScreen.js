@@ -913,9 +913,9 @@ function PlayScreen (props) {
   )
 
   // render the middle section of the screen conditionally
-  // if fellowship, story, or application are the active chapter, show album
-  //  art
-  // if training is the active chapter, show the video player
+  // 1. if we're in an audio book lesson, show the book text
+  // 2. if we're on a video chapter, show the video player
+  // 3. show the default option, which is the album art and questions/scripture
   var middleSection =
     props.route.params.lessonType === 'a' ? (
       <View
