@@ -168,12 +168,6 @@ export function addLanguage (language) {
                   return downloadSomething(source, source + '.png')
                 else return downloadSomething(source, source + '.mp3')
               })
-              // downloadSomething('header', 'header.png'),
-              // downloadSomething('c-t-fellowship', 'c-t-fellowship.mp3'),
-              // downloadSomething('c-t-application', 'c-t-application.mp3'),
-              // downloadSomething('mt-fellowship', 'mt-fellowship.mp3'),
-              // downloadSomething('mt-application', 'mt-application.mp3'),
-              // downloadSomething('dummy-story', 'dummy-story.mp3')
             ])
           }
 

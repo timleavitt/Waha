@@ -91,7 +91,7 @@ function ChapterSelect (props) {
             style={[
               styles.chapterSelectText,
               {
-                color: colors.shark,
+                color: colors.chateau,
                 fontFamily: props.font + '-black'
               }
             ]}
