@@ -54,58 +54,76 @@ function MainDrawer (props) {
             throw error
           })
         }
-        // if a new c-t chapter 1 is available
-        if (
-          doc.data().sources['c-t-fellowship'] !==
-          props.activeDatabase.sources['c-t-fellowship']
-        ) {
-          Alert.alert(
-            props.translations.general.popups.new_chapter_downloading_title,
-            props.translations.general.popups.new_chapter_downloading_message,
-            [{ text: props.translations.general.ok, onPress: () => {} }]
-          )
-          downloadSomething('c-t-chapter1', 'c-t-chapter1.mp3')
-        }
 
-        // if a new c-t chapter 3 is available
-        if (
-          doc.data().sources['c-t-application'] !==
-          props.activeDatabase.sources['c-t-application']
-        ) {
-          // ALERT
-          Alert.alert(
-            props.translations.general.popups.new_chapter_downloading_title,
-            props.translations.general.popups.new_chapter_downloading_message,
-            [{ text: props.translations.general.ok, onPress: () => {} }]
-          )
-          downloadSomething('c-t-chapter3', 'c-t-chapter3.mp3')
-        }
+        // check for new fellowship or application chapters
+        Object.keys(doc.data().sources).forEach(source => {
+          console.log(source)
+          console.log(props.activeDatabase.sources[source])
+          if (
+            doc.data().sources[source] !== props.activeDatabase.sources[source]
+          ) {
+            // ALERT
+            Alert.alert(
+              props.translations.general.popups.new_chapter_downloading_title,
+              props.translations.general.popups.new_chapter_downloading_message,
+              [{ text: props.translations.general.ok, onPress: () => {} }]
+            )
+            downloadSomething(source, source + '.mp3')
+          }
+        })
 
-        // if a new mt chapter 1 is available
-        if (
-          doc.data().sources['mt-fellowship'] !==
-          props.activeDatabase.sources['mt-fellowship']
-        ) {
-          Alert.alert(
-            props.translations.general.popups.new_chapter_downloading_title,
-            props.translations.general.popups.new_chapter_downloading_message,
-            [{ text: props.translations.general.ok, onPress: () => {} }]
-          )
-          downloadSomething('mt-chapter1', 'mt-chapter1.mp3')
-        }
+        // // if a new c-t chapter 1 is available
+        // if (
+        //   doc.data().sources['c-t-fellowship'] !==
+        //   props.activeDatabase.sources['c-t-fellowship']
+        // ) {
+        //   Alert.alert(
+        //     props.translations.general.popups.new_chapter_downloading_title,
+        //     props.translations.general.popups.new_chapter_downloading_message,
+        //     [{ text: props.translations.general.ok, onPress: () => {} }]
+        //   )
+        //   downloadSomething('c-t-chapter1', 'c-t-chapter1.mp3')
+        // }
 
-        // if a new mt chapter 3 is available
-        if (
-          doc.data().sources['mt-application'] !==
-          props.activeDatabase.sources['mt-application']
-        ) {
-          Alert.alert(
-            props.translations.general.popups.new_chapter_downloading_title,
-            props.translations.general.popups.new_chapter_downloading_message,
-            [{ text: props.translations.general.ok, onPress: () => {} }]
-          )
-          downloadSomething('mt-chapter3', 'mt-chapter3.mp3')
-        }
+        // // if a new c-t chapter 3 is available
+        // if (
+        //   doc.data().sources['c-t-application'] !==
+        //   props.activeDatabase.sources['c-t-application']
+        // ) {
+        //   // ALERT
+        //   Alert.alert(
+        //     props.translations.general.popups.new_chapter_downloading_title,
+        //     props.translations.general.popups.new_chapter_downloading_message,
+        //     [{ text: props.translations.general.ok, onPress: () => {} }]
+        //   )
+        //   downloadSomething('c-t-chapter3', 'c-t-chapter3.mp3')
+        // }
+
+        // // if a new mt chapter 1 is available
+        // if (
+        //   doc.data().sources['mt-fellowship'] !==
+        //   props.activeDatabase.sources['mt-fellowship']
+        // ) {
+        //   Alert.alert(
+        //     props.translations.general.popups.new_chapter_downloading_title,
+        //     props.translations.general.popups.new_chapter_downloading_message,
+        //     [{ text: props.translations.general.ok, onPress: () => {} }]
+        //   )
+        //   downloadSomething('mt-chapter1', 'mt-chapter1.mp3')
+        // }
+
+        // // if a new mt chapter 3 is available
+        // if (
+        //   doc.data().sources['mt-application'] !==
+        //   props.activeDatabase.sources['mt-application']
+        // ) {
+        //   Alert.alert(
+        //     props.translations.general.popups.new_chapter_downloading_title,
+        //     props.translations.general.popups.new_chapter_downloading_message,
+        //     [{ text: props.translations.general.ok, onPress: () => {} }]
+        //   )
+        //   downloadSomething('mt-chapter3', 'mt-chapter3.mp3')
+        // }
 
         // store data
         props.storeData(doc.data(), props.activeGroup.language)

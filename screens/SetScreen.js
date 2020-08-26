@@ -1,3 +1,4 @@
+// import * as FileSystem from 'expo-file-system'
 import React, { useEffect, useState } from 'react'
 import {
   FlatList,
@@ -10,6 +11,7 @@ import { connect } from 'react-redux'
 import SetItem from '../components/SetItem'
 import { colors, scaleMultiplier } from '../constants'
 import { resumeDownload } from '../redux/actions/downloadActions'
+
 function SetScreen (props) {
   //// STUFF FOR TESTING
 

@@ -32,8 +32,6 @@ import {
 function AddEditGroupScreen (props) {
   //// STATE
 
-  console.log(Dimensions.get('window').height)
-
   // keeps track of the group name text input value
   const [groupName, setGroupName] =
     props.route.name === 'AddGroup'

@@ -10,7 +10,7 @@ const persistConfig = {
   blacklist: [
     'downloads',
     'fetchingStatus'
-    // 'toolkitEnabled'
+    // 'toolkitEnabled',
     // 'groups',
     // 'database',
     // 'security'

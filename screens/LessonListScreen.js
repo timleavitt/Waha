@@ -23,9 +23,9 @@ function LessonListScreen (props) {
   //// STATE
 
   // read downloaded files for testing purposes
-  FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
-    console.log(contents)
-  })
+  // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
+  //   console.log(contents)
+  // })
 
   // keeps track of which lessons are downloaded
   const [downloadsInFileSystem, setDownloadsInFileSystem] = useState({})
@@ -115,7 +115,7 @@ function LessonListScreen (props) {
     // q = has questions, a = has audio, v = has video
     // options not allowed: av, a
     var lessonType = ''
-    lessonType += lesson.questionsType ? 'q' : ''
+    lessonType += lesson.fellowshipType ? 'q' : ''
     lessonType += lesson.audioSource ? 'a' : ''
     lessonType += lesson.videoSource ? 'v' : ''
     if (lessonType === '') lessonType = 'c'

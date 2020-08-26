@@ -240,7 +240,8 @@ function PlayScreen (props) {
 
   useEffect(() => {
     if (props.route.params.lessonType === 'v')
-      if (props.isConnected) if (!isLoaded) loadVideoFile(trainingSource)
+      if (props.isConnected && !isLoaded && trainingSource)
+        loadVideoFile(trainingSource)
   }, [props.isConnected])
 
   // interval for updating seeker
@@ -256,15 +257,15 @@ function PlayScreen (props) {
       FileSystem.documentDirectory +
       props.activeGroup.language +
       '-' +
-      props.route.params.thisLesson.questionsType +
-      '-fellowship.mp3'
+      props.route.params.thisLesson.fellowshipType +
+      '.mp3'
 
     var applicationLocal =
       FileSystem.documentDirectory +
       props.activeGroup.language +
       '-' +
-      props.route.params.thisLesson.questionsType +
-      '-application.mp3'
+      props.route.params.thisLesson.applicationType +
+      '.mp3'
 
     var storyLocal =
       FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
@@ -365,8 +366,6 @@ function PlayScreen (props) {
 
   // loads an audio file, sets the length, and starts playing it
   async function loadAudioFile (source) {
-    console.log('loading audio')
-    //console.log(source);
     try {
       await soundObject
         .loadAsync({ uri: source }, { progressUpdateIntervalMillis: 1000 })
@@ -800,12 +799,18 @@ function PlayScreen (props) {
           {scrollBarRight}
           <FlatList
             data={
-              // render questions on the first pane and scripture on the last
-              item.key === '0'
-                ? props.activeDatabase.questions[
-                    props.route.params.thisLesson.questionsType
-                  ]
-                : props.route.params.thisLesson.scripture
+              props.route.params.thisLesson.fellowshipType
+                ? // render questions on the first pane and scripture on the last
+                  item.key === '0'
+                  ? props.activeDatabase.questions[
+                      props.route.params.thisLesson.fellowshipType
+                    ].concat(
+                      props.activeDatabase.questions[
+                        props.route.params.thisLesson.applicationType
+                      ]
+                    )
+                  : props.route.params.thisLesson.scripture
+                : []
             }
             renderItem={renderTextContent}
             keyExtractor={item => item.header}

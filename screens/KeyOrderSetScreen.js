@@ -22,7 +22,6 @@ function KeyOrderSetScreen (props) {
   //// CONSTRUCTOR
 
   useEffect(() => {
-    console.log(props.route.name)
     switch (props.route.name) {
       case 'KeyOrderSet_Initial':
         setInstructionText(props.translations.security.choose_key_order_label)
@@ -50,8 +49,6 @@ function KeyOrderSetScreen (props) {
   }, [])
 
   useEffect(() => {
-    console.log(keyOrder)
-
     if (keyOrder.length === 12) {
       switch (props.route.name) {
         case 'KeyOrderSet_Initial':

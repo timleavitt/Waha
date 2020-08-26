@@ -1,9 +1,7 @@
-import firebase from 'firebase'
 import '@firebase/firestore'
 import * as FileSystem from 'expo-file-system'
-import { createGroup, changeActiveGroup } from '../actions/groupsActions'
-import i18n from 'i18n-js'
-import { getStateFromPath } from '@react-navigation/native'
+import firebase from 'firebase'
+import { changeActiveGroup, createGroup } from '../actions/groupsActions'
 
 export const ADD_LANGUAGE = 'ADD_LANGUAGE'
 export const SET_FETCH_ERROR = 'SET_FETCH_ERROR'
@@ -165,12 +163,17 @@ export function addLanguage (language) {
           // downloads everything we need
           function downloadEverything () {
             return Promise.all([
-              downloadSomething('header', 'header.png'),
-              downloadSomething('c-t-fellowship', 'c-t-fellowship.mp3'),
-              downloadSomething('c-t-application', 'c-t-application.mp3'),
-              downloadSomething('mt-fellowship', 'mt-fellowship.mp3'),
-              downloadSomething('mt-application', 'mt-application.mp3'),
-              downloadSomething('dummy-story', 'dummy-story.mp3')
+              Object.keys(doc.data().sources).map(source => {
+                if (source === 'header')
+                  return downloadSomething(source, source + '.png')
+                else return downloadSomething(source, source + '.mp3')
+              })
+              // downloadSomething('header', 'header.png'),
+              // downloadSomething('c-t-fellowship', 'c-t-fellowship.mp3'),
+              // downloadSomething('c-t-application', 'c-t-application.mp3'),
+              // downloadSomething('mt-fellowship', 'mt-fellowship.mp3'),
+              // downloadSomething('mt-application', 'mt-application.mp3'),
+              // downloadSomething('dummy-story', 'dummy-story.mp3')
             ])
           }
 

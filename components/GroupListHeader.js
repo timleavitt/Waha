@@ -21,16 +21,10 @@ function GroupListHeader (props) {
     // and clear out the already downloaded content if there was
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
-        if (
-          !contents.includes(props.languageID + '-c-t-fellowship.mp3') ||
-          !contents.includes(props.languageID + '-c-t-application.mp3') ||
-          !contents.includes(props.languageID + '-mt-fellowship.mp3') ||
-          !contents.includes(props.languageID + '-mt-application.mp3') ||
-          !contents.includes(props.languageID + '-dummy-story.mp3') ||
-          !contents.includes(props.languageID + '-header.png')
-        ) {
-          deleteLanguageInstance()
-        }
+        props.activeDatabase.sources.forEach(source => {
+          if (!contents.includes(props.languageID + source + '.mp3'))
+            deleteLanguageInstance()
+        })
       }
     )
   }, [])
