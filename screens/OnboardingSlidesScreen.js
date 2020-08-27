@@ -1,9 +1,9 @@
 import i18n from 'i18n-js'
 import React, { useEffect } from 'react'
-import { Dimensions, Image, StyleSheet, View } from 'react-native'
-import Onboarding from 'react-native-onboarding-swiper'
+import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import Onboarding from '../components/Onboarding'
+import { colors } from '../constants'
 import {
   addLanguage,
   changeLanguage,
@@ -14,6 +14,7 @@ import ar from '../translations/ar.json'
 // translations import
 import en from '../translations/en.json'
 import fr from '../translations/fr.json'
+
 function OnboardingSlidesScreen (props) {
   //// STATE
 
@@ -41,56 +42,56 @@ function OnboardingSlidesScreen (props) {
 
   //// RENDER
 
-  const onboardingData = [
-    {
-      backgroundColor: colors.white,
-      image: (
-        <Image
-          style={styles.image}
-          source={require('../assets/onboarding/onboarding1.png')}
-        />
-      ),
-      title: i18n.t('title0'),
-      subtitle: i18n.t('body0')
-    },
-    {
-      backgroundColor: colors.white,
-      image: (
-        <Image
-          style={styles.image}
-          source={require('../assets/onboarding/onboarding2.png')}
-        />
-      ),
-      title: i18n.t('title1'),
-      subtitle: i18n.t('body1')
-    },
-    {
-      backgroundColor: colors.white,
-      image: (
-        <Image
-          style={styles.image}
-          source={require('../assets/onboarding/onboarding3.png')}
-        />
-      ),
-      title: i18n.t('title2'),
-      subtitle: i18n.t('body2')
-    },
-    {
-      backgroundColor: colors.white,
-      image: (
-        <Image
-          style={styles.image}
-          source={require('../assets/onboarding/onboarding4.png')}
-        />
-      ),
-      title: i18n.t('title3'),
-      subtitle: i18n.t('body3')
-    }
-  ]
+  // const onboardingData = [
+  //   {
+  //     backgroundColor: colors.white,
+  //     image: (
+  //       <Image
+  //         style={styles.image}
+  //         source={require('../assets/onboarding/onboarding1.png')}
+  //       />
+  //     ),
+  //     title: i18n.t('title0'),
+  //     subtitle: i18n.t('body0')
+  //   },
+  //   {
+  //     backgroundColor: colors.white,
+  //     image: (
+  //       <Image
+  //         style={styles.image}
+  //         source={require('../assets/onboarding/onboarding2.png')}
+  //       />
+  //     ),
+  //     title: i18n.t('title1'),
+  //     subtitle: i18n.t('body1')
+  //   },
+  //   {
+  //     backgroundColor: colors.white,
+  //     image: (
+  //       <Image
+  //         style={styles.image}
+  //         source={require('../assets/onboarding/onboarding3.png')}
+  //       />
+  //     ),
+  //     title: i18n.t('title2'),
+  //     subtitle: i18n.t('body2')
+  //   },
+  //   {
+  //     backgroundColor: colors.white,
+  //     image: (
+  //       <Image
+  //         style={styles.image}
+  //         source={require('../assets/onboarding/onboarding4.png')}
+  //       />
+  //     ),
+  //     title: i18n.t('title3'),
+  //     subtitle: i18n.t('body3')
+  //   }
+  // ]
 
   return (
     <View style={styles.screen}>
-      <Onboarding
+      {/* <Onboarding
         pages={onboardingData}
         showSkip={false}
         onDone={finishOnboarding}
@@ -102,6 +103,27 @@ function OnboardingSlidesScreen (props) {
         imageContainerStyles={{
           paddingBottom: 0
         }}
+      /> */}
+      <Onboarding
+        sources={[
+          require('../assets/onboarding/onboarding1.png'),
+          require('../assets/onboarding/onboarding2.png'),
+          require('../assets/onboarding/onboarding3.png'),
+          require('../assets/onboarding/onboarding4.png')
+        ]}
+        titles={[
+          i18n.t('title0'),
+          i18n.t('title1'),
+          i18n.t('title2'),
+          i18n.t('title3')
+        ]}
+        messages={[
+          i18n.t('body0'),
+          i18n.t('body1'),
+          i18n.t('body2'),
+          i18n.t('body3')
+        ]}
+        onFinish={finishOnboarding}
       />
     </View>
   )
@@ -113,19 +135,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.aquaHaze,
-    flexDirection: 'column',
-    justifyContent: 'space-between'
-  },
-  image: {
-    resizeMode: 'center',
-    width:
-      Dimensions.get('window').width < 700
-        ? 241 * scaleMultiplier
-        : 321 * scaleMultiplier,
-    height:
-      Dimensions.get('window').width < 700
-        ? 204 * scaleMultiplier
-        : 272 * scaleMultiplier
+    justifyContent: 'center'
   }
 })
 
