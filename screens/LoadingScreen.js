@@ -6,15 +6,11 @@ import * as Progress from 'react-native-progress'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 import { addLanguage, setFetchError } from '../redux/actions/databaseActions'
-import ar from '../translations/ar.json'
 // translations import
 import en from '../translations/en.json'
-import fr from '../translations/fr.json'
 function LoadingScreen (props) {
   i18n.translations = {
-    en,
-    ar,
-    fr
+    en
   }
 
   function retry () {

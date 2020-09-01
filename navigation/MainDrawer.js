@@ -20,7 +20,6 @@ const Drawer = createDrawerNavigator()
 function MainDrawer (props) {
   //allows only accessing hamburger swipe from study set screen
   function getGestureEnabled (route) {
-    console.log(route.state ? route.state.routes[0].name : '')
     // Access the tab navigator's state using `route.state`
     const routeName = route.state
       ? // Get the currently active route name in the tab navigator
@@ -109,53 +108,45 @@ function MainDrawer (props) {
   // }, [props.activeDatabase, props.activeGroup])
 
   // if we connect to internet, check to see if we have any paused downloads
-  useEffect(() => {
-    if (props.isConnected) {
-      checkPausedDownloads()
-    }
-  }, [props.isConnected])
+  // useEffect(() => {
+  //   if (props.isConnected) {
+  //     checkPausedDownloads()
+  //   }
+  // }, [props.isConnected])
 
   //// FUNCTIONS
-  async function checkPausedDownloads () {
-    // props.activeDatabase.lessons.forEach(async lesson => {
-    //   await AsyncStorage.getItem(lesson.id)
-    //     .then(async value => {
-    //       if (value) {
-    //         // error checking for if the async storage object was not deleted before
-    //         // if we have a resumable download stored but the lesson is already downloaded,
-    //         // we don't want to resume it
-    //         FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-    //           contents => {
-    //             if (!contents.includes(lesson.id + '.mp3')) {
-    //               props.resumeDownload(lesson.id, value)
-    //             } else {
-    //               AsyncStorage.removeItem(lesson.id)
-    //             }
-    //           }
-    //         )
-    //       }
-    //     })
-    //     .catch(err => props.removeDownload(lesson.id))
-    //   await AsyncStorage.getItem(lesson.id + 'v')
-    //     .then(async value => {
-    //       if (value) {
-    //         // error checking for if the async storage object was not deleted before
-    //         // if we have a resumable download stored but the lesson is already downloaded,
-    //         // we don't want to resume it
-    //         FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-    //           contents => {
-    //             if (!contents.includes(lesson.id + 'v.mp3')) {
-    //               props.resumeDownload(lesson.id + 'v', value)
-    //             } else {
-    //               AsyncStorage.removeItem(lesson.id + 'v')
-    //             }
-    //           }
-    //         )
-    //       }
-    //     })
-    //     .catch(err => props.removeDownload(lesson.id + 'v'))
-    // })
-  }
+  // async function checkPausedDownloads () {
+  //   var downloadedStuff = {}
+  //   await FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+  //     contents => {
+  //       downloadedStuff = contents
+  //     }
+  //   )
+  //   // get paused downloads from asyncstorage
+  //   await AsyncStorage.getItem('pausedDownloads')
+  //     .then(async downloads => {
+  //       // if anything is there
+  //       if (downloads) {
+  //         // convert string to object and iterate through
+  //         Object.keys(JSON.parse(downloads)).forEach(lessonID => {
+  //           if (!downloadedStuff.includes(downloads[lessonID] + '.mp3')) {
+  //             props.resumeDownload(lessonID, value)
+  //           } else {
+  //             AsyncStorage.removeItem(lessonID)
+  //           }
+  //           if (!downloadedStuff.includes(lessonID + 'v.mp4')) {
+  //             props.resumeDownload(lessonID + 'v', value)
+  //           } else {
+  //             AsyncStorage.removeItem(lessonID + 'v')
+  //           }
+  //         })
+  //       }
+  //     })
+  //     .catch(err => {
+  //       props.removeDownload(lessonID)
+  //       props.removeDownload(lessonID + 'v')
+  //     })
+  // }
 
   var direction = props.isRTL ? 'right' : 'left'
   return (

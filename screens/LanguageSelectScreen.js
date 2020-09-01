@@ -10,10 +10,8 @@ import Separator from '../components/Separator'
 import WahaButton from '../components/WahaButton'
 import { colors, languages, languageT2S, scaleMultiplier } from '../constants'
 import { addLanguage } from '../redux/actions/databaseActions'
-import ar from '../translations/ar.json'
 // translations import
 import en from '../translations/en.json'
-import fr from '../translations/fr.json'
 
 function LanguageSelectScreen (props) {
   //// STATE
@@ -32,9 +30,7 @@ function LanguageSelectScreen (props) {
 
   // translations for language select
   i18n.translations = {
-    en,
-    fr,
-    ar
+    en
   }
 
   const soundObject = new Audio.Sound()

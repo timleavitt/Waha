@@ -19,15 +19,11 @@ import SecurityOnboardingScreen from '../screens/SecurityOnboardingScreen'
 import SecurityScreen from '../screens/SecurityScreen'
 import SplashScreen from '../screens/SplashScreen'
 import StorageScreen from '../screens/StorageScreen'
-import ar from '../translations/ar.json'
 import en from '../translations/en.json'
-import fr from '../translations/fr.json'
 import SetsRoot from './SetsRoot'
 
 i18n.translations = {
-  en,
-  fr,
-  ar
+  en
 }
 const Stack = createStackNavigator()
 

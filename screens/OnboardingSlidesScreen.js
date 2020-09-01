@@ -10,19 +10,15 @@ import {
   setFinishedOnboarding
 } from '../redux/actions/databaseActions'
 import { changeActiveGroup } from '../redux/actions/groupsActions'
-import ar from '../translations/ar.json'
 // translations import
 import en from '../translations/en.json'
-import fr from '../translations/fr.json'
 
 function OnboardingSlidesScreen (props) {
   //// STATE
 
   // translations for language select
   i18n.translations = {
-    en,
-    fr,
-    ar
+    en
   }
 
   //// CONSTRUCTOR
@@ -42,68 +38,8 @@ function OnboardingSlidesScreen (props) {
 
   //// RENDER
 
-  // const onboardingData = [
-  //   {
-  //     backgroundColor: colors.white,
-  //     image: (
-  //       <Image
-  //         style={styles.image}
-  //         source={require('../assets/onboarding/onboarding1.png')}
-  //       />
-  //     ),
-  //     title: i18n.t('title0'),
-  //     subtitle: i18n.t('body0')
-  //   },
-  //   {
-  //     backgroundColor: colors.white,
-  //     image: (
-  //       <Image
-  //         style={styles.image}
-  //         source={require('../assets/onboarding/onboarding2.png')}
-  //       />
-  //     ),
-  //     title: i18n.t('title1'),
-  //     subtitle: i18n.t('body1')
-  //   },
-  //   {
-  //     backgroundColor: colors.white,
-  //     image: (
-  //       <Image
-  //         style={styles.image}
-  //         source={require('../assets/onboarding/onboarding3.png')}
-  //       />
-  //     ),
-  //     title: i18n.t('title2'),
-  //     subtitle: i18n.t('body2')
-  //   },
-  //   {
-  //     backgroundColor: colors.white,
-  //     image: (
-  //       <Image
-  //         style={styles.image}
-  //         source={require('../assets/onboarding/onboarding4.png')}
-  //       />
-  //     ),
-  //     title: i18n.t('title3'),
-  //     subtitle: i18n.t('body3')
-  //   }
-  // ]
-
   return (
     <View style={styles.screen}>
-      {/* <Onboarding
-        pages={onboardingData}
-        showSkip={false}
-        onDone={finishOnboarding}
-        nextLabel={i18n.t('next')}
-        containerStyles={{
-          marginTop: Dimensions.get('window').height > 600 ? 100 : 0,
-          justifyContent: 'flex-start'
-        }}
-        imageContainerStyles={{
-          paddingBottom: 0
-        }}
-      /> */}
       <Onboarding
         sources={[
           require('../assets/onboarding/onboarding1.png'),

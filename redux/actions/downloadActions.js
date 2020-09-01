@@ -88,58 +88,69 @@ export function downloadLesson (lessonID, source) {
     dispatch(addUpdateDownload(0, lessonID))
 
     // attempt to download file
-    downloadResumable.downloadAsync().catch(() => {
-      // if we get an error, set our progress back to 0
-      dispatch(addUpdateDownload(0, lessonID))
-
-      console.log(
-        'lesson download error, storing download in async storage for later'
-      )
-
-      // then, store the download resumable object so we can start it later
-      AsyncStorage.setItem(
-        lessonID,
-        JSON.stringify(downloadResumable.savable())
-      ).catch(err => dispatch(removeDownload(lessonID)))
-      // AsyncStorage.setItem(
-      //   'pausedDownloads',
-      //   JSON.stringify(downloadResumable.savable())
-      // ).catch(err => dispatch(removeDownload(lessonID)))
+    downloadResumable.downloadAsync().catch(error => {
+      console.log(error)
+      // // if we get an error, set our progress back to 0
+      // dispatch(addUpdateDownload(0, lessonID))
+      // console.log(
+      //   'lesson download error, storing download in async storage for later'
+      // )
+      // // then, store the download resumable object so we can start it later
+      // // AsyncStorage.setItem(
+      // //   lessonID,
+      // //   JSON.stringify(downloadResumable.savable())
+      // // ).catch(err => dispatch(removeDownload(lessonID)))
+      // var oldPausedDownloads = {}
+      // AsyncStorage.getItem('pausedDownloads')
+      //   .then(downloads => {
+      //     console.log(downloads)
+      //     // get old paused downloads
+      //     oldPausedDownloads = JSON.parse(downloads)
+      //     // add this new paused download to paused downloads
+      //     oldPausedDownloads[lessonID] = downloadResumable.savable()
+      //     // convert paused downloads back into a string and store again
+      //     AsyncStorage.setItem(
+      //       'pausedDownloads',
+      //       JSON.stringify(oldPausedDownloads)
+      //     ).catch(err => dispatch(removeDownload(lessonID)))
+      //   })
+      //   .catch(err => dispatch(removeDownload(lessonID)))
     })
   }
 }
 
-export function resumeDownload (lessonID, downloadSnapshotJSON) {
-  var counter = 0
-  return async dispatch => {
-    // callback function
-    function callback ({ totalBytesWritten, totalBytesExpectedToWrite }) {
-      progress = totalBytesWritten / totalBytesExpectedToWrite
-      if (progress == 1) {
-        dispatch(addUpdateDownload(progress, lessonID))
-        AsyncStorage.removeItem(lessonID)
-      } else if (counter % 10 == 0) {
-        dispatch(addUpdateDownload(progress, lessonID))
-      }
-      counter += 1
-    }
+// export function resumeDownload (lessonID, downloadSnapshotJSON) {
+//   console.log('beep')
+//   var counter = 0
+//   return async dispatch => {
+//     // callback function
+//     function callback ({ totalBytesWritten, totalBytesExpectedToWrite }) {
+//       progress = totalBytesWritten / totalBytesExpectedToWrite
+//       if (progress == 1) {
+//         dispatch(addUpdateDownload(progress, lessonID))
+//         AsyncStorage.removeItem(lessonID)
+//       } else if (counter % 10 == 0) {
+//         dispatch(addUpdateDownload(progress, lessonID))
+//       }
+//       counter += 1
+//     }
 
-    const downloadSnapshot = JSON.parse(downloadSnapshotJSON)
-    const downloadResumable = new FileSystem.DownloadResumable(
-      downloadSnapshot.url,
-      downloadSnapshot.fileUri,
-      downloadSnapshot.options,
-      callback,
-      downloadSnapshot.resumeData
-    )
+//     const downloadSnapshot = JSON.parse(downloadSnapshotJSON)
+//     const downloadResumable = new FileSystem.DownloadResumable(
+//       downloadSnapshot.url,
+//       downloadSnapshot.fileUri,
+//       downloadSnapshot.options,
+//       callback,
+//       downloadSnapshot.resumeData
+//     )
 
-    downloadResumable
-      .resumeAsync()
-      .catch(() =>
-        AsyncStorage.setItem(
-          lessonID,
-          JSON.stringify(downloadResumable.savable())
-        )
-      )
-  }
-}
+//     downloadResumable
+//       .resumeAsync()
+//       .catch(() =>
+//         AsyncStorage.setItem(
+//           lessonID,
+//           JSON.stringify(downloadResumable.savable())
+//         )
+//       )
+//   }
+// }
