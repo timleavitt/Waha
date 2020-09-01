@@ -33,18 +33,21 @@ function SecurityOnboardingScreen (props) {
       <Onboarding
         sources={[
           require('../assets/onboarding/security_onboarding1.png'),
+          require('../assets/onboarding/security_onboarding1.png'),
           require('../assets/onboarding/security_onboarding2.png'),
           require('../assets/onboarding/security_onboarding3.png')
         ]}
         titles={[
           props.translations.security.popups.onboarding_1_title,
           props.translations.security.popups.onboarding_2_title,
-          props.translations.security.popups.onboarding_3_title
+          props.translations.security.popups.onboarding_3_title,
+          props.translations.security.popups.onboarding_4_title
         ]}
         messages={[
           props.translations.security.popups.onboarding_1_message,
           props.translations.security.popups.onboarding_2_message,
-          props.translations.security.popups.onboarding_3_message
+          props.translations.security.popups.onboarding_3_message,
+          props.translations.security.popups.onboarding_4_message
         ]}
         onFinish={() => props.navigation.navigate('KeyOrderSet_Initial')}
       />

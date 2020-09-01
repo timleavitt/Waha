@@ -76,7 +76,7 @@ function SetInfoScreen (props) {
             return (
               <View
                 style={{
-                  height: 64 * scaleMultiplier,
+                  marginVertical: 10 * scaleMultiplier,
                   justifyContent: 'center',
                   paddingHorizontal: 40
                 }}
@@ -107,7 +107,7 @@ function SetInfoScreen (props) {
             return (
               <View
                 style={{
-                  height: 64 * scaleMultiplier,
+                  marginVertical: 10 * scaleMultiplier,
                   justifyContent: 'center',
                   paddingHorizontal: 40
                 }}

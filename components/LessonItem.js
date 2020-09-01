@@ -102,7 +102,7 @@ function LessonItem (props) {
         >
           <Text
             style={{
-              fontSize: 17 * scaleMultiplier,
+              fontSize: 16 * scaleMultiplier,
               textAlignVertical: 'center',
               color: props.isComplete ? colors.chateau : colors.shark,
               textAlign: props.isRTL ? 'right' : 'left',
@@ -114,7 +114,7 @@ function LessonItem (props) {
           </Text>
           <Text
             style={{
-              fontSize: 13 * scaleMultiplier,
+              fontSize: 12 * scaleMultiplier,
               color: colors.chateau,
               textAlign: props.isRTL ? 'right' : 'left',
               fontFamily: props.font + '-regular'

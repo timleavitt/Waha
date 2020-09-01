@@ -900,7 +900,7 @@ function PlayScreen (props) {
             textAlign: props.isRTL ? 'right' : 'left'
           }}
         >
-          {textList.item.text + '\n'}
+          {textList.item.text}
         </Text>
       </View>
     )

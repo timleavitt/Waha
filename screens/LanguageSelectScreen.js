@@ -206,6 +206,7 @@ function LanguageSelectScreen (props) {
         <SectionList
           // sort sections to put brands associated with phone language at the
           //  top
+          style={{ height: '100%' }}
           sections={
             props.route.name === 'LanguageSelect'
               ? languages.sort((a, b) => {

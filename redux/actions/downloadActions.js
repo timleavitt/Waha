@@ -2,7 +2,6 @@ export const ADD_UPDATE_DOWNLOAD = 'ADD_UPDATE_DOWNLOAD'
 export const REMOVE_DOWNLOAD = 'REMOVE_DOWNLOAD'
 
 import * as FileSystem from 'expo-file-system'
-import NetInfo from '@react-native-community/netinfo'
 import { AsyncStorage } from 'react-native'
 
 export function addUpdateDownload (progress, lessonID) {
@@ -102,6 +101,10 @@ export function downloadLesson (lessonID, source) {
         lessonID,
         JSON.stringify(downloadResumable.savable())
       ).catch(err => dispatch(removeDownload(lessonID)))
+      // AsyncStorage.setItem(
+      //   'pausedDownloads',
+      //   JSON.stringify(downloadResumable.savable())
+      // ).catch(err => dispatch(removeDownload(lessonID)))
     })
   }
 }

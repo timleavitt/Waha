@@ -3,7 +3,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer'
 import { NavigationContainer } from '@react-navigation/native'
 import * as FileSystem from 'expo-file-system'
 import React, { useEffect } from 'react'
-import { Alert, AsyncStorage } from 'react-native'
+import { Alert } from 'react-native'
 import { connect } from 'react-redux'
 import WahaDrawer from '../components/WahaDrawer'
 import { scaleMultiplier } from '../constants'
@@ -17,20 +17,22 @@ import { updateConnectionStatus } from '../redux/actions/networkActions'
 import MainStack from './MainStack'
 const Drawer = createDrawerNavigator()
 
-//allows only accessing hamburger swipe from study set screen
-function getGestureEnabled (route) {
-  // Access the tab navigator's state using `route.state`
-  const routeName = route.state
-    ? // Get the currently active route name in the tab navigator
-      route.state.routes[route.state.index].name
-    : // If state doesn't exist, we need to default to `screen` param if available, or the initial screen
-      // In our case, it's "Feed" as that's the first screen inside the navigator
-      route.params?.screen || 'SetsRoot'
-  if (routeName === 'SetsRoot') return true
-  else return false
-}
-
 function MainDrawer (props) {
+  //allows only accessing hamburger swipe from study set screen
+  function getGestureEnabled (route) {
+    console.log(route.state ? route.state.routes[0].name : '')
+    // Access the tab navigator's state using `route.state`
+    const routeName = route.state
+      ? // Get the currently active route name in the tab navigator
+        route.state.routes[route.state.index].name
+      : // If state doesn't exist, we need to default to `screen` param if available, or the initial screen
+      // In our case, it's "Feed" as that's the first screen inside the navigator
+      route.params?.screen || props.security.securityEnabled
+      ? 'Game'
+      : 'SetsRoot'
+    if (routeName === 'SetsRoot') return true
+    else return false
+  }
   useEffect(() => {
     // add listener for connection status and update it accordingly
     const netInfoUnsubscribe = NetInfo.addEventListener(state => {
@@ -115,44 +117,44 @@ function MainDrawer (props) {
 
   //// FUNCTIONS
   async function checkPausedDownloads () {
-    props.activeDatabase.lessons.forEach(async lesson => {
-      await AsyncStorage.getItem(lesson.id)
-        .then(async value => {
-          if (value) {
-            // error checking for if the async storage object was not deleted before
-            // if we have a resumable download stored but the lesson is already downloaded,
-            // we don't want to resume it
-            FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-              contents => {
-                if (!contents.includes(lesson.id + '.mp3')) {
-                  props.resumeDownload(lesson.id, value)
-                } else {
-                  AsyncStorage.removeItem(lesson.id)
-                }
-              }
-            )
-          }
-        })
-        .catch(err => props.removeDownload(lesson.id))
-      await AsyncStorage.getItem(lesson.id + 'v')
-        .then(async value => {
-          if (value) {
-            // error checking for if the async storage object was not deleted before
-            // if we have a resumable download stored but the lesson is already downloaded,
-            // we don't want to resume it
-            FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-              contents => {
-                if (!contents.includes(lesson.id + 'v.mp3')) {
-                  props.resumeDownload(lesson.id + 'v', value)
-                } else {
-                  AsyncStorage.removeItem(lesson.id + 'v')
-                }
-              }
-            )
-          }
-        })
-        .catch(err => props.removeDownload(lesson.id + 'v'))
-    })
+    // props.activeDatabase.lessons.forEach(async lesson => {
+    //   await AsyncStorage.getItem(lesson.id)
+    //     .then(async value => {
+    //       if (value) {
+    //         // error checking for if the async storage object was not deleted before
+    //         // if we have a resumable download stored but the lesson is already downloaded,
+    //         // we don't want to resume it
+    //         FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+    //           contents => {
+    //             if (!contents.includes(lesson.id + '.mp3')) {
+    //               props.resumeDownload(lesson.id, value)
+    //             } else {
+    //               AsyncStorage.removeItem(lesson.id)
+    //             }
+    //           }
+    //         )
+    //       }
+    //     })
+    //     .catch(err => props.removeDownload(lesson.id))
+    //   await AsyncStorage.getItem(lesson.id + 'v')
+    //     .then(async value => {
+    //       if (value) {
+    //         // error checking for if the async storage object was not deleted before
+    //         // if we have a resumable download stored but the lesson is already downloaded,
+    //         // we don't want to resume it
+    //         FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+    //           contents => {
+    //             if (!contents.includes(lesson.id + 'v.mp3')) {
+    //               props.resumeDownload(lesson.id + 'v', value)
+    //             } else {
+    //               AsyncStorage.removeItem(lesson.id + 'v')
+    //             }
+    //           }
+    //         )
+    //       }
+    //     })
+    //     .catch(err => props.removeDownload(lesson.id + 'v'))
+    // })
   }
 
   var direction = props.isRTL ? 'right' : 'left'
@@ -189,7 +191,8 @@ function mapStateToProps (state) {
     translations: state.database[activeGroup.language].translations,
     activeGroup: activeGroup,
     toolkitEnabled: state.toolkitEnabled,
-    groups: state.groups
+    groups: state.groups,
+    security: state.security
   }
 }
 
