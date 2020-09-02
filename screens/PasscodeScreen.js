@@ -5,14 +5,19 @@ import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
 import MessageModal from '../components/MessageModal'
 import { colors, scaleMultiplier } from '../constants'
+import {
+  setMTUnlockAttempts,
+  setMTUnlockTimeout
+} from '../redux/actions/securityActions'
 import { setToolkitEnabled } from '../redux/actions/toolkitEnabledActions'
 
 function PasscodeScreen (props) {
   //// STATE
   const [passcode, setPasscode] = useState('')
   const [pinRef, setPinRef] = useState()
-  const [passcodeStatusText, setPasscodeStatusText] = useState('')
+  // const [passcodeStatusText, setPasscodeStatusText] = useState('')
   const [unlockSuccessModal, setUnlockSuccessModal] = useState(false)
+  // const [numAttempts, setNumAttempts] = useState(0)
 
   //// CONSTRUCTOR
 
@@ -32,6 +37,13 @@ function PasscodeScreen (props) {
     }
   }
 
+  useEffect(() => {
+    if (props.mtUnlockAttempts === 5) {
+      props.setMTUnlockAttempts(0)
+      props.setMTUnlockTimeout(Date.now() + 1800000)
+    }
+  }, [props.mtUnlockAttempts])
+
   //// FUNCTIONS
 
   function checkPasscode (passcode) {
@@ -39,6 +51,7 @@ function PasscodeScreen (props) {
       setUnlockSuccessModal(true)
       props.setToolkitEnabled(true)
     } else {
+      props.setMTUnlockAttempts(props.mtUnlockAttempts + 1)
       pinRef.shake().then(() => setPasscode(''))
       Alert.alert(
         props.translations.passcode.popups.unlock_unsucessful_message,
@@ -80,6 +93,13 @@ function PasscodeScreen (props) {
         onTextChange={passcode => setPasscode(passcode)}
         onFulfill={checkPasscode}
         onBackspace={() => {}}
+        editable={
+          props.security.mtUnlockTimeout
+            ? Date.now() - props.security.mtUnlockTimeout > 0
+              ? true
+              : false
+            : true
+        }
       />
       <Text
         style={{
@@ -91,7 +111,18 @@ function PasscodeScreen (props) {
           textAlign: 'center'
         }}
       >
-        {passcodeStatusText}
+        {/* conditional text based on how many attempts user has left / if they're currently locked out */}
+        {Date.now() - props.security.mtUnlockTimeout < 0
+          ? props.translations.passcode.too_many_attempts_label +
+            ' ' +
+            Math.round((props.security.mtUnlockTimeout - Date.now()) / 60000) +
+            ' ' +
+            props.translations.passcode.minutes_label
+          : props.mtUnlockAttempts === 3
+          ? props.translations.passcode.two_attempt_remaining_label
+          : props.mtUnlockAttempts === 4
+          ? props.translations.passcode.one_attempt_remaining_label
+          : ''}
       </Text>
       <MessageModal
         isVisible={unlockSuccessModal}
@@ -137,19 +168,28 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
+  console.log(state.mtUnlockAttempts)
   return {
     activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
     font: state.database[activeGroup.language].font,
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    security: state.security,
+    mtUnlockAttempts: state.mtUnlockAttempts
   }
 }
 function mapDispatchToProps (dispatch) {
   return {
     setToolkitEnabled: toSet => {
       dispatch(setToolkitEnabled(toSet))
+    },
+    setMTUnlockTimeout: time => {
+      dispatch(setMTUnlockTimeout(time))
+    },
+    setMTUnlockAttempts: numAttempts => {
+      dispatch(setMTUnlockAttempts(numAttempts))
     }
   }
 }

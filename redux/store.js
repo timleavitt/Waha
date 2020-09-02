@@ -9,7 +9,8 @@ const persistConfig = {
   storage: AsyncStorage,
   blacklist: [
     'downloads',
-    'fetchingStatus'
+    'fetchingStatus',
+    'mtUnlockAttempts'
     // 'toolkitEnabled',
     // 'groups',
     // 'database',

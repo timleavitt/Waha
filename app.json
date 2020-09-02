@@ -2,10 +2,10 @@
   "expo": {
     "name": "Waha",
     "slug": "Waha",
-    "description": "Our app is an audio-based DBS system that facilitates the entire discovery bible study format and encourages group conversation after each question. Unlike other apps, our app is audio based first and has all the elements of a discovery bible study, meaning fellowship, story, and application.",
+    "description": "Mobilize the Believer. Disciple the Lost.",
     "privacy": "public",
     "platforms": ["ios", "android"],
-    "version": "1.0.0",
+    "version": "0.5.1",
     "orientation": "portrait",
     "splash": {
       "image": "./assets/splash.png",
@@ -20,7 +20,8 @@
       "bundleIdentifier": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/GoogleService-Info.plist",
       "supportsTablet": true,
-      "requireFullScreen": true
+      "requireFullScreen": true,
+      "buildNumber": "0.5.1"
     },
     "android": {
       "package": "com.kingdomstrategies.waha",

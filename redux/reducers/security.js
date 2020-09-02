@@ -2,6 +2,7 @@ import {
   SET_CODE,
   SET_IS_MUTED,
   SET_IS_TIMED_OUT,
+  SET_MT_UNLOCK_TIMEOUT,
   SET_SECURITY_ENABLED,
   SET_TIMEOUT_DURATION,
   SET_TIMER
@@ -40,6 +41,11 @@ export function security (state = { timeoutDuration: 0 }, action) {
       return {
         ...state,
         isTimedOut: action.toSet
+      }
+    case SET_MT_UNLOCK_TIMEOUT:
+      return {
+        ...state,
+        mtUnlockTimeout: action.time
       }
     default:
       return state

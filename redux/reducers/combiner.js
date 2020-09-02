@@ -1,13 +1,14 @@
 //simple file to combine all reducers to be used in redux/store.js
 
-import { downloads } from '../reducers/downloads'
-import { database, fetchingStatus } from '../reducers/database'
-import { groups } from '../reducers/groups'
-import { activeGroup } from '../reducers/activeGroup'
-import { network } from '../reducers/network'
-import { toolkitEnabled } from '../reducers/toolkitEnabled'
 import { combineReducers } from 'redux'
+import { activeGroup } from '../reducers/activeGroup'
+import { database, fetchingStatus } from '../reducers/database'
+import { downloads } from '../reducers/downloads'
+import { groups } from '../reducers/groups'
+import { mtUnlockAttempts } from '../reducers/mtUnlockAttempts'
+import { network } from '../reducers/network'
 import { security } from '../reducers/security'
+import { toolkitEnabled } from '../reducers/toolkitEnabled'
 
 export default rootReducer = combineReducers({
   downloads,
@@ -17,5 +18,6 @@ export default rootReducer = combineReducers({
   network,
   fetchingStatus,
   toolkitEnabled,
-  security
+  security,
+  mtUnlockAttempts
 })
