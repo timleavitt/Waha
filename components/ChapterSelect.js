@@ -3,6 +3,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
+import Typography from '../styles/typography'
+
 // chapter select on play screen
 //  1. allows switching of lessons
 //  2. shows what your current chapter is
@@ -50,15 +52,7 @@ function ChapterSelect (props) {
             size={25 * scaleMultiplier}
             color={colors.chateau}
           />
-          <Text
-            style={[
-              styles.chapterSelectText,
-              {
-                color: colors.shark,
-                fontFamily: props.font + '-black'
-              }
-            ]}
-          >
+          <Text style={Typography(props, 'b', 'black', 'center', colors.shark)}>
             {props.translations.play.training}
           </Text>
         </View>
@@ -88,13 +82,7 @@ function ChapterSelect (props) {
             style={{ margin: 5 }}
           />
           <Text
-            style={[
-              styles.chapterSelectText,
-              {
-                color: colors.chateau,
-                fontFamily: props.font + '-black'
-              }
-            ]}
+            style={Typography(props, 'p', 'black', 'center', colors.chateau)}
           >
             {props.translations.play.training}
           </Text>
@@ -133,16 +121,15 @@ function ChapterSelect (props) {
             }
           />
           <Text
-            style={[
-              styles.chapterSelectText,
-              {
-                color:
-                  props.activeChapter === 'training'
-                    ? colors.white
-                    : props.primaryColor,
-                fontFamily: props.font + '-black'
-              }
-            ]}
+            style={Typography(
+              props,
+              'p',
+              'black',
+              'center',
+              props.activeChapter === 'training'
+                ? colors.white
+                : props.primaryColor
+            )}
           >
             {props.translations.play.training}
           </Text>
@@ -179,16 +166,7 @@ function ChapterSelect (props) {
           size={25 * scaleMultiplier}
           color={colors.chateau}
         />
-        <Text
-          style={[
-            styles.chapterSelectText,
-            {
-              color: colors.chateau,
-
-              fontFamily: props.font + '-black'
-            }
-          ]}
-        >
+        <Text style={Typography(props, 'p', 'black', 'center', colors.chateau)}>
           {props.translations.play.story}
         </Text>
       </View>
@@ -218,15 +196,7 @@ function ChapterSelect (props) {
           backgroundColor={colors.white}
           style={{ margin: 5 }}
         />
-        <Text
-          style={[
-            styles.chapterSelectText,
-            {
-              color: colors.chateau,
-              fontFamily: props.font + '-black'
-            }
-          ]}
-        >
+        <Text style={Typography(props, 'p', 'black', 'center', colors.chateau)}>
           {props.translations.play.story}
         </Text>
       </View>
@@ -255,16 +225,13 @@ function ChapterSelect (props) {
           }
         />
         <Text
-          style={[
-            styles.chapterSelectText,
-            {
-              color:
-                props.activeChapter === 'story'
-                  ? colors.white
-                  : props.primaryColor,
-              fontFamily: props.font + '-black'
-            }
-          ]}
+          style={Typography(
+            props,
+            'p',
+            'black',
+            'center',
+            props.activeChapter === 'story' ? colors.white : props.primaryColor
+          )}
         >
           {props.translations.play.story}
         </Text>
@@ -302,16 +269,15 @@ function ChapterSelect (props) {
           }
         />
         <Text
-          style={[
-            styles.chapterSelectText,
-            {
-              color:
-                props.activeChapter === 'fellowship'
-                  ? colors.white
-                  : props.primaryColor,
-              fontFamily: props.font + '-black'
-            }
-          ]}
+          style={Typography(
+            props,
+            'p',
+            'black',
+            'center',
+            props.activeChapter === 'fellowship'
+              ? colors.white
+              : props.primaryColor
+          )}
         >
           {props.translations.play.fellowship}
         </Text>
@@ -355,16 +321,15 @@ function ChapterSelect (props) {
           }
         />
         <Text
-          style={[
-            styles.chapterSelectText,
-            {
-              color:
-                props.activeChapter === 'application'
-                  ? colors.white
-                  : props.primaryColor,
-              fontFamily: props.font + '-black'
-            }
-          ]}
+          style={Typography(
+            props,
+            'p',
+            'black',
+            'center',
+            props.activeChapter === 'application'
+              ? colors.white
+              : props.primaryColor
+          )}
         >
           {props.translations.play.application}
         </Text>

@@ -20,9 +20,18 @@ function LoadingScreen (props) {
 
   return props.fetchError ? (
     <View style={styles.screen}>
-      <Text style={styles.loadingMessageText}>{i18n.t('errorMessage')}</Text>
+      <Text
+        style={[
+          Typography(props, 'h1', '', 'center', colors.chateau),
+          { padding: 10 }
+        ]}
+      >
+        {i18n.t('errorMessage')}
+      </Text>
       <TouchableOpacity onPress={retry} style={styles.button}>
-        <Text style={styles.buttonTitle}>{i18n.t('retry')}</Text>
+        <Text style={Typography(props, 'h2', '', 'center', colors.white)}>
+          {i18n.t('retry')}
+        </Text>
       </TouchableOpacity>
     </View>
   ) : (
@@ -35,7 +44,9 @@ function LoadingScreen (props) {
         }}
         source={require('../assets/logo.png')}
       />
-      <Text style={styles.loadingMessageText}>{i18n.t('loadingMessage')}</Text>
+      <Text style={Typography(props, 'h1', '', 'center', colors.shark)}>
+        {i18n.t('loadingMessage')}
+      </Text>
       <View style={styles.progressBarContainer}>
         <Progress.Bar
           progress={props.progress}

@@ -882,24 +882,10 @@ function PlayScreen (props) {
   function renderTextContent (textList) {
     return (
       <View style={{ paddingHorizontal: 20 }}>
-        <Text
-          style={{
-            color: colors.shark,
-            fontSize: 18 * scaleMultiplier,
-            fontFamily: props.font + '-medium',
-            textAlign: props.isRTL ? 'right' : 'left'
-          }}
-        >
+        <Text style={Typography(props, 'h3', 'medium', 'left', colors.shark)}>
           {textList.item.header}
         </Text>
-        <Text
-          style={{
-            color: colors.shark,
-            fontSize: 18 * scaleMultiplier,
-            fontFamily: props.font + '-regular',
-            textAlign: props.isRTL ? 'right' : 'left'
-          }}
-        >
+        <Text style={Typography(props, 'h3', 'regular', 'left', colors.shark)}>
           {textList.item.text}
         </Text>
       </View>
@@ -909,8 +895,8 @@ function PlayScreen (props) {
   var titleSection = (
     <View style={styles.titlesContainer}>
       <Text
+        style={Typography(props, 'h2', 'black', 'center', colors.shark)}
         numberOfLines={1}
-        style={[styles.title, { fontFamily: props.font + '-black' }]}
       >
         {props.route.params.thisLesson.title}
       </Text>
@@ -937,13 +923,10 @@ function PlayScreen (props) {
           data={props.route.params.thisLesson.text.split('\n')}
           renderItem={paragraphList => (
             <Text
-              style={{
-                color: colors.shark,
-                fontSize: 16 * scaleMultiplier,
-                fontFamily: props.font + '-regular',
-                textAlign: props.isRTL ? 'right' : 'left',
-                marginHorizontal: 10
-              }}
+              style={[
+                Typography(props, 'h4', 'regular', 'left', colors.shark),
+                { marginHorizontal: 10 }
+              ]}
             >
               {paragraphList.item}
             </Text>

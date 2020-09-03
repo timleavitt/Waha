@@ -65,11 +65,10 @@ function GameScreen (props) {
           }}
         />
         <Text
-          style={{
-            fontFamily: props.font + '-medium',
-            paddingHorizontal: 10,
-            fontSize: 32 * scaleMultiplier
-          }}
+          style={[
+            Typography(props, 'h1', 'medium', 'center', colors.shark),
+            { paddingHorizontal: 10 }
+          ]}
         >
           {props.translations.security.game_screen_title}
         </Text>
@@ -115,11 +114,13 @@ function GameScreen (props) {
               }}
             >
               <Text
-                style={{
-                  fontFamily: props.font + '-regular',
-                  fontSize: 24 * scaleMultiplier,
-                  color: colors.white
-                }}
+                style={Typography(
+                  props,
+                  'h2',
+                  'regular',
+                  'center',
+                  colors.white
+                )}
               >
                 {countdown}
               </Text>

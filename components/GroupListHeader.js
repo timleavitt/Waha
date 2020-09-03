@@ -109,10 +109,9 @@ function GroupListHeader (props) {
       {trashButton}
       <Text
         style={[
-          styles.languageHeaderText,
+          Typography(props, 'h3', 'regular', 'left', colors.chateau),
           {
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-regular',
+            flex: 1,
             marginLeft: props.isRTL ? 0 : props.isEditing ? 0 : 20,
             marginRight: props.isRTL ? (props.isEditing ? 0 : 20) : 0
           }

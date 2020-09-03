@@ -33,10 +33,48 @@ function SetInfoScreen (props) {
     props.navigation.setOptions(getNavOptions())
   }, [])
 
-  // whenever progress or bookmarks update, update the progress and bookmarks for this set
-  useEffect(() => {}, [])
-
   //// FUNCTIONS
+
+  function renderLessonInfoItem (item) {
+    if (item.scripture) {
+      var scriptureList = item.scripture[0].header
+      item.scripture.forEach((chunk, index) => {
+        if (index !== 0) scriptureList += ', ' + chunk.header
+      })
+
+      return (
+        <View
+          style={{
+            marginVertical: 10 * scaleMultiplier,
+            justifyContent: 'center',
+            paddingHorizontal: 40
+          }}
+        >
+          <Text style={Typography(props, 'h4', 'medium', 'left', colors.shark)}>
+            {item.title}
+          </Text>
+          <Text
+            style={Typography(props, 'p', 'regular', 'left', colors.chateau)}
+          >
+            {scriptureList}
+          </Text>
+        </View>
+      )
+    } else
+      return (
+        <View
+          style={{
+            marginVertical: 10 * scaleMultiplier,
+            justifyContent: 'center',
+            paddingHorizontal: 40
+          }}
+        >
+          <Text style={Typography(props, 'h4', 'medium', 'left', colors.shark)}>
+            {item.title}
+          </Text>
+        </View>
+      )
+  }
 
   return (
     <View style={styles.screen}>
@@ -66,65 +104,7 @@ function SetInfoScreen (props) {
         data={props.activeDatabase.lessons.filter(
           lesson => props.route.params.thisSet.id === lesson.setid
         )}
-        renderItem={({ item }) => {
-          if (item.scripture) {
-            var scriptureList = item.scripture[0].header
-            item.scripture.forEach((chunk, index) => {
-              if (index !== 0) scriptureList += ', ' + chunk.header
-            })
-
-            return (
-              <View
-                style={{
-                  marginVertical: 10 * scaleMultiplier,
-                  justifyContent: 'center',
-                  paddingHorizontal: 40
-                }}
-              >
-                <Text
-                  style={{
-                    color: colors.shark,
-                    textAlign: props.isRTL ? 'right' : 'left',
-                    fontSize: 16 * scaleMultiplier,
-                    fontFamily: props.font + '-medium'
-                  }}
-                >
-                  {item.title}
-                </Text>
-                <Text
-                  style={{
-                    color: colors.chateau,
-                    textAlign: props.isRTL ? 'right' : 'left',
-                    fontSize: 14 * scaleMultiplier,
-                    fontFamily: props.font + '-regular'
-                  }}
-                >
-                  {scriptureList}
-                </Text>
-              </View>
-            )
-          } else
-            return (
-              <View
-                style={{
-                  marginVertical: 10 * scaleMultiplier,
-                  justifyContent: 'center',
-                  paddingHorizontal: 40
-                }}
-              >
-                <Text
-                  style={{
-                    color: colors.shark,
-                    textAlign: props.isRTL ? 'right' : 'left',
-                    fontSize: 16 * scaleMultiplier,
-                    fontFamily: props.font + '-medium'
-                  }}
-                >
-                  {item.title}
-                </Text>
-              </View>
-            )
-        }}
+        renderItem={({ item }) => renderLessonInfoItem(item)}
       />
     </View>
   )
@@ -140,7 +120,6 @@ const styles = StyleSheet.create({
   },
   studySetItemContainer: {
     width: '100%',
-    // height: 80 * scaleMultiplier,
     aspectRatio: 4
   }
 })

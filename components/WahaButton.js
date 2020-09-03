@@ -23,12 +23,8 @@ function WahaButton (props) {
         >
           <Text
             style={[
-              styles.buttonText,
-              {
-                fontFamily: props.font ? props.font + '-medium' : null,
-                color: props.color,
-                fontWeight: props.font ? null : 'bold'
-              },
+              Typography(props, 'h3', 'medium', 'center', props.color),
+              { fontWeight: props.font ? null : 'bold' },
               props.textStyle
             ]}
           >
@@ -55,13 +51,8 @@ function WahaButton (props) {
         >
           <Text
             style={[
-              styles.buttonText,
-              {
-                fontFamily: props.font ? props.font + '-medium' : null,
-                color: colors.white,
-                textAlign: 'center',
-                fontWeight: props.font ? null : 'bold'
-              },
+              Typography(props, 'h3', 'medium', 'center', colors.white),
+              { fontWeight: props.font ? null : 'bold' },
               props.textStyle
             ]}
           >
@@ -85,13 +76,8 @@ function WahaButton (props) {
         >
           <Text
             style={[
-              styles.buttonText,
-              {
-                fontSize: 14 * scaleMultiplier,
-                color: colors.chateau,
-                fontFamily: props.font ? props.font + '-medium' : null,
-                fontWeight: props.font ? null : 'bold'
-              },
+              Typography(props, 'p', 'medium', 'center', colors.chateau),
+              { fontWeight: props.font ? null : 'bold' },
               props.textStyle
             ]}
           >

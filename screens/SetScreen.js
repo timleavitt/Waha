@@ -47,6 +47,40 @@ function SetScreen (props) {
 
   //// NAV OPTIONS
 
+  // get the sets for whatever tab we're on
+  function getSetData () {
+    // if we're adding core sets, display them in numerical order
+    return props.route.name === 'Core'
+      ? props.activeDatabase.sets
+          .filter(set => set.category === setCategory)
+          .filter(set =>
+            props.activeGroup.addedSets.some(addedSet => addedSet.id === set.id)
+          )
+      : // if we're displaying topical/mt sets, display them in the order added
+        props.activeDatabase.sets
+          .filter(set => set.category === setCategory)
+          .filter(set =>
+            props.activeGroup.addedSets.some(addedSet => addedSet.id === set.id)
+          )
+          .sort((a, b) => {
+            return a.index - b.index
+          })
+          .sort((a, b) => {
+            return (
+              props.activeGroup.addedSets.indexOf(
+                props.activeGroup.addedSets.filter(
+                  addedSet => addedSet.id === a.id
+                )[0]
+              ) -
+              props.activeGroup.addedSets.indexOf(
+                props.activeGroup.addedSets.filter(
+                  addedSet => addedSet.id === b.id
+                )[0]
+              )
+            )
+          })
+  }
+
   //// RENDER
 
   function renderStudySetItem (setList) {
@@ -67,42 +101,7 @@ function SetScreen (props) {
   return (
     <View style={styles.screen}>
       <FlatList
-        data={
-          // if we're adding core sets, display them in numerical order
-          props.route.name === 'Core'
-            ? props.activeDatabase.sets
-                .filter(set => set.category === setCategory)
-                .filter(set =>
-                  props.activeGroup.addedSets.some(
-                    addedSet => addedSet.id === set.id
-                  )
-                )
-            : // if we're displaying topical/mt sets, display them in the order added
-              props.activeDatabase.sets
-                .filter(set => set.category === setCategory)
-                .filter(set =>
-                  props.activeGroup.addedSets.some(
-                    addedSet => addedSet.id === set.id
-                  )
-                )
-                .sort((a, b) => {
-                  return a.index - b.index
-                })
-                .sort((a, b) => {
-                  return (
-                    props.activeGroup.addedSets.indexOf(
-                      props.activeGroup.addedSets.filter(
-                        addedSet => addedSet.id === a.id
-                      )[0]
-                    ) -
-                    props.activeGroup.addedSets.indexOf(
-                      props.activeGroup.addedSets.filter(
-                        addedSet => addedSet.id === b.id
-                      )[0]
-                    )
-                  )
-                })
-        }
+        data={getSetData()}
         renderItem={renderStudySetItem}
         extraData={props.activeGroup}
         ListFooterComponent={
@@ -146,12 +145,13 @@ function SetScreen (props) {
               }}
             >
               <Text
-                style={{
-                  fontFamily: props.font + '-regular',
-                  fontSize: 14 * scaleMultiplier,
-                  color: colors.chateau,
-                  textAlign: props.isRTL ? 'right' : 'left'
-                }}
+                style={Typography(
+                  props,
+                  'p',
+                  'regular',
+                  'left',
+                  colors.chateau
+                )}
               >
                 {addNewSetLabel}
               </Text>

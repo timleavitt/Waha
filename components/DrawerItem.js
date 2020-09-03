@@ -23,12 +23,8 @@ function DrawerItem (props) {
       </View>
       <Text
         style={[
-          styles.title,
-          {
-            color: colors.shark,
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-medium'
-          }
+          Typography(props, 'h3', 'medium', 'left', colors.shark),
+          { paddingHorizontal: 10 }
         ]}
       >
         {props.text}

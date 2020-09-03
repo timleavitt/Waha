@@ -24,7 +24,7 @@ function TimeDisplay (props) {
 
   return (
     <View styles={props.style}>
-      <Text style={[styles.timeText, { fontFamily: props.font + '-regular' }]}>
+      <Text style={Typography(props, 'd', 'regular', 'center', colors.shark)}>
         {msToTime(props.time)}
       </Text>
     </View>

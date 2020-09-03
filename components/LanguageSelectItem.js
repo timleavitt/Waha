@@ -47,12 +47,10 @@ function LanguageSelectItem (props) {
           }}
         >
           <Text
-            style={{
-              color: colors.shark,
-              fontSize: 18 * scaleMultiplier,
-              fontWeight: 'bold',
-              textAlign: 'left'
-            }}
+            style={[
+              Typography(props, 'h3', '', 'left', colors.shark),
+              { fontWeight: 'bold' }
+            ]}
           >
             {props.nativeName}
           </Text>

@@ -96,11 +96,7 @@ function SecurityScreen (props) {
           }}
         >
           <Text
-            style={{
-              fontFamily: props.font + '-regular',
-              fontSize: 16 * scaleMultiplier,
-              color: colors.chateau
-            }}
+            style={Typography(props, 'h4', 'regular', 'left', colors.chateau)}
           >
             {getTimeoutText()}
           </Text>

@@ -273,27 +273,37 @@ function SetItem (props) {
         ]}
       >
         <Text
-          style={{
-            color: fullyCompleted ? colors.chateau : colors.shark,
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontSize: 12 * scaleMultiplier,
-            textAlignVertical: 'center',
-            flexWrap: 'wrap',
-            fontFamily: props.font + '-regular'
-          }}
+          style={[
+            Typography(
+              props,
+              'd',
+              'regular',
+              'left',
+              fullyCompleted ? colors.chateau : colors.shark
+            ),
+            {
+              textAlignVertical: 'center',
+              flexWrap: 'wrap'
+            }
+          ]}
           numberOfLines={1}
         >
           {props.thisSet.subtitle}
         </Text>
         <Text
-          style={{
-            color: fullyCompleted ? colors.chateau : colors.shark,
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontSize: 18 * scaleMultiplier,
-            textAlignVertical: 'center',
-            flexWrap: 'wrap',
-            fontFamily: props.font + '-black'
-          }}
+          style={[
+            Typography(
+              props,
+              'h3',
+              'black',
+              'left',
+              fullyCompleted ? colors.chateau : colors.shark
+            ),
+            {
+              textAlignVertical: 'center',
+              flexWrap: 'wrap'
+            }
+          ]}
           numberOfLines={2}
         >
           {props.thisSet.title}

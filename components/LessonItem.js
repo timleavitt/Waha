@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import DownloadStatusIndicator from '../components/DownloadStatusIndicator'
 import { colors, scaleMultiplier } from '../constants'
 import { removeDownload } from '../redux/actions/downloadActions'
+import Typography from '../styles/typography'
 function LessonItem (props) {
   //// CONSTRUCTOR
 
@@ -52,9 +53,7 @@ function LessonItem (props) {
     <View
       style={[
         styles.lessonItem,
-        {
-          flexDirection: props.isRTL ? 'row-reverse' : 'row'
-        }
+        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
       ]}
     >
       {/* main touchable area */}
@@ -101,24 +100,13 @@ function LessonItem (props) {
           }}
         >
           <Text
-            style={{
-              fontSize: 16 * scaleMultiplier,
-              textAlignVertical: 'center',
-              color: props.isComplete ? colors.chateau : colors.shark,
-              textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-medium'
-            }}
+            style={Typography(props, 'h4', 'medium', 'left', colors.shark)}
             numberOfLines={2}
           >
             {props.thisLesson.title}
           </Text>
           <Text
-            style={{
-              fontSize: 12 * scaleMultiplier,
-              color: colors.chateau,
-              textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-regular'
-            }}
+            style={Typography(props, 'd', 'regular', 'left', colors.chateau)}
             numberOfLines={1}
           >
             {props.thisLesson.subtitle}

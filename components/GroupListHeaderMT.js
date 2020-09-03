@@ -59,25 +59,13 @@ function GroupListHeaderMT (props) {
       ]}
     >
       <View>
-        <Text
-          style={{
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-medium',
-            fontSize: 18 * scaleMultiplier,
-            color: colors.chateau
-          }}
-        >
+        <Text style={Typography(props, 'h3', 'medium', 'left', colors.chateau)}>
           {props.languageName +
             ' ' +
             props.translations.mobilization_tools.groups_label}
         </Text>
         <Text
-          style={{
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-regular',
-            fontSize: 18 * scaleMultiplier,
-            color: colors.chateau
-          }}
+          style={Typography(props, 'h3', 'regular', 'left', colors.chateau)}
         >
           {
             props.translations.mobilization_tools

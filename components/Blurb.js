@@ -2,18 +2,12 @@ import React from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
+import Typography from '../styles/typography'
 
 function Blurb (props) {
   return (
     <View style={{ width: '100%', padding: 20 * scaleMultiplier }}>
-      <Text
-        style={{
-          textAlign: 'center',
-          fontSize: 14 * scaleMultiplier,
-          fontFamily: props.font + '-regular',
-          color: colors.shark
-        }}
-      >
+      <Text style={Typography(props, 'p', 'regular', 'center', colors.shark)}>
         {props.text}
       </Text>
     </View>

@@ -214,12 +214,13 @@ function AddSetScreen (props) {
         ListEmptyComponent={
           <View style={{ width: '100%', margin: 10 }}>
             <Text
-              style={{
-                fontFamily: props.font + '-regular',
-                color: colors.chateau,
-                fontSize: 14 * scaleMultiplier,
-                textAlign: 'center'
-              }}
+              style={Typography(
+                props,
+                'p',
+                'regular',
+                'center',
+                colors.chateau
+              )}
             >
               {props.translations.add_set.no_more_sets_text}
             </Text>
