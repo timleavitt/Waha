@@ -9,9 +9,7 @@ function WahaButton (props) {
       return (
         <TouchableOpacity
           style={[
-            {
-              width: props.width
-            },
+            { width: props.width },
             styles.buttonContainer,
             {
               borderWidth: 2,
@@ -97,12 +95,8 @@ const styles = StyleSheet.create({
     height: 60 * scaleMultiplier,
     paddingHorizontal: 15,
     alignItems: 'center',
+    justifyContent: 'center',
     flexDirection: 'row'
-  },
-  buttonText: {
-    textAlign: 'center',
-    fontSize: 18 * scaleMultiplier,
-    flex: 1
   }
 })
 

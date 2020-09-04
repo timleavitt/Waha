@@ -66,12 +66,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  loadingMessageText: {
-    color: colors.shark,
-    textAlign: 'center',
-    fontSize: 30,
-    padding: 10
-  },
   progressBarContainer: {
     width: '100%',
     justifyContent: 'center',
@@ -84,11 +78,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.shark,
     borderRadius: 5
-  },
-  buttonTitle: {
-    textAlign: 'center',
-    fontSize: 24 * scaleMultiplier,
-    color: colors.white
   }
 })
 

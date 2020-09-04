@@ -139,11 +139,6 @@ const styles = StyleSheet.create({
     aspectRatio: 8.7,
     backgroundColor: colors.aquaHaze
   },
-  languageHeaderText: {
-    fontSize: 18 * scaleMultiplier,
-    color: colors.chateau,
-    flex: 1
-  },
   languageLogo: {
     resizeMode: 'contain',
     width: 120 * scaleMultiplier,

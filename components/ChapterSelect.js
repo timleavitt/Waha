@@ -352,9 +352,6 @@ const styles = StyleSheet.create({
     height: 55 * scaleMultiplier,
     justifyContent: 'center',
     borderWidth: 2
-  },
-  chapterSelectText: {
-    fontSize: 14 * scaleMultiplier
   }
 })
 

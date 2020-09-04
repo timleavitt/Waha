@@ -282,28 +282,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: 40 * scaleMultiplier
-  },
-  title: {
-    color: colors.shark,
-    textAlign: 'center',
-    fontSize: 36 * scaleMultiplier,
-    fontWeight: 'bold',
-    margin: 5
-  },
-  subtitle: {
-    color: colors.shark,
-    textAlign: 'center',
-    fontSize: 24 * scaleMultiplier
-  },
-  buttonTitle: {
-    textAlign: 'center',
-    fontSize: 24 * scaleMultiplier,
-    color: colors.white
-  },
-  errorMessage: {
-    textAlign: 'center',
-    fontSize: 16 * scaleMultiplier,
-    color: colors.oslo
   }
 })
 

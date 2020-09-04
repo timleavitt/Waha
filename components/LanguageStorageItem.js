@@ -89,11 +89,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.aquaHaze,
     paddingHorizontal: 20
   },
-  languageHeaderText: {
-    fontSize: 18 * scaleMultiplier,
-    color: colors.chateau,
-    flex: 1
-  },
   languageLogo: {
     resizeMode: 'contain',
     width: 120 * scaleMultiplier,
@@ -108,19 +103,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 10
-  },
-  storageUsedText: {
-    fontSize: 18,
-    color: colors.tuna
-  },
-  mbText: {
-    fontSize: 18,
-    color: colors.chateau,
-    alignSelf: 'center'
-  },
-  deleteText: {
-    fontSize: 18,
-    color: colors.red
   }
 })
 

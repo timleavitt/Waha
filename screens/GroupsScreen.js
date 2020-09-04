@@ -207,19 +207,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20
   },
-  addNewLanguageText: {
-    fontSize: 18 * scaleMultiplier,
-    color: colors.chateau
-  },
   editButtonContainer: {
     width: 80,
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  editButtonText: {
-    color: colors.shark,
-    fontSize: 18 * scaleMultiplier
   },
   addGroupContainer: {
     // height: 80 * scaleMultiplier,
@@ -228,11 +220,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white
-  },
-  addGroupText: {
-    color: colors.blue,
-    fontSize: 18 * scaleMultiplier,
-    textAlign: 'left'
   }
 })
 

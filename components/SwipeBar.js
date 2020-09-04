@@ -7,17 +7,17 @@ function SwipeBar (props) {
   return (
     <View
       style={[
-        styles.scrollBarContainer,
-        { alignSelf: props.side === 'right' ? 'flex-end' : 'flex-start' }
+        styles.swipeBarContainer,
+        { alignSelf: props.side === 'right' ? 'flex-start' : 'flex-end' }
       ]}
     >
-      <Animated.View style={[styles.scrollBar, { opacity: props.opacity }]} />
+      <Animated.View style={[styles.swipeBar, { opacity: props.opacity }]} />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  scrollBarContainer: {
+  swipeBarContainer: {
     height: '100%',
     width: 24,
     position: 'absolute',
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     zIndex: 3,
     marginLeft: -4
   },
-  scrollBar: {
+  swipeBar: {
     width: 4,
     height: 75 * scaleMultiplier,
     backgroundColor: colors.chateau,

@@ -78,11 +78,6 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     flexWrap: 'nowrap'
-  },
-  groupNameText: {
-    color: colors.chateau,
-    fontSize: 18 * scaleMultiplier,
-    textAlign: 'left'
   }
 })
 

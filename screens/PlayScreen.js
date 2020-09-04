@@ -1,5 +1,5 @@
 import useInterval from '@use-it/interval'
-import { Audio, Video } from 'expo-av'
+import { Audio } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
 import { useKeepAwake } from 'expo-keep-awake'
 import { DeviceMotion } from 'expo-sensors'
@@ -9,24 +9,22 @@ import {
   Alert,
   Animated,
   Dimensions,
-  FlatList,
   StyleSheet,
   Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import SVG from '../assets/svg'
+import AlbumArtSwiper from '../components/AlbumArtSwiper'
 import BackButton from '../components/BackButton'
+import BookView from '../components/BookView'
 import ChapterSelect from '../components/ChapterSelect'
 import HomeworkModal from '../components/HomeworkModal'
 import PlayPauseSkip from '../components/PlayPauseSkip'
 import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
 import Scrubber from '../components/Scrubber'
 import ShareModal from '../components/ShareModal'
-import { colors, scaleMultiplier } from '../constants'
+import VideoPlayer from '../components/VideoPlayer'
+import { colors } from '../constants'
 import {
   downloadLesson,
   downloadVideo,
@@ -37,7 +35,9 @@ import { toggleComplete } from '../redux/actions/groupsActions'
 console.disableYellowBox = true
 
 function PlayScreen (props) {
-  //// STATE
+  /* 
+    STATE
+  */
 
   //// AUDIO SPECIFIC STATE
 
@@ -57,9 +57,6 @@ function PlayScreen (props) {
 
   // keeps track of if the video is buffering
   const [isVideoBuffering, setIsVideoBuffering] = useState(false)
-
-  // keeps track of whether the video controls overlay is visible
-  const [showVideoControls, setShowVideoControls] = useState(false)
 
   // keeps track of the current screen orientation for fullscreen videos
   const [screenOrientation, setScreenOrientation] = useState(0)
@@ -90,53 +87,10 @@ function PlayScreen (props) {
   //// ALBUM ART STATE
 
   // ref for the middle album art scroller
-  const [albumArtRef, setAlbumArtRef] = useState()
-  const [isMiddle, setIsMiddle] = useState(true)
-  const [middleScrollBarOpacity, setMiddleScrollBarOpacity] = useState(
-    new Animated.Value(0)
-  )
-  const [sideScrollBarOpacity, setSideScrollBarOpacity] = useState(
-    new Animated.Value(0.8)
-  )
-
-  const onViewRef = useRef(info => {
-    if (info.viewableItems.some(item => item.index === 0)) setIsMiddle(true)
-    else setIsMiddle(false)
-  })
-  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
+  const [albumArtSwiperRef, setAlbumArtSwiperRef] = useState()
 
   // keeps the screen always awake on this screen
   useKeepAwake()
-
-  useEffect(() => {
-    if (isMiddle)
-      Animated.sequence([
-        Animated.timing(middleScrollBarOpacity, {
-          toValue: 0,
-          duration: 100,
-          useNativeDriver: true
-        }),
-        Animated.timing(sideScrollBarOpacity, {
-          toValue: 0.8,
-          duration: 100,
-          useNativeDriver: true
-        })
-      ]).start()
-    else {
-      Animated.sequence([
-        Animated.timing(sideScrollBarOpacity, {
-          toValue: 0,
-          duration: 100,
-          useNativeDriver: true
-        }),
-        Animated.timing(middleScrollBarOpacity, {
-          toValue: 0.8,
-          duration: 100,
-          useNativeDriver: true
-        })
-      ]).start()
-    }
-  }, [isMiddle])
 
   // pause lesson if we move to a different screen (i.e. when switching to
   //  splash / game for security mode)
@@ -149,29 +103,9 @@ function PlayScreen (props) {
   // share modal
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
 
-  // homework modal
-  const [showHomeworkModal, setShowHomeworkModal] = useState(false)
-
   // animation state
   const [playOpacity, setPlayOpacity] = useState(new Animated.Value(0))
   const [animationZIndex, setAnimationZIndex] = useState(0)
-
-  // data for album art flatlist
-  const albumArtData = [
-    {
-      key: '0',
-      type: 'text'
-    },
-    {
-      key: '1',
-      type: 'image',
-      svgName: props.route.params.thisSet.iconName
-    },
-    {
-      key: '2',
-      type: 'text'
-    }
-  ]
 
   //// NAV OPTIONS
   function getNavOptions () {
@@ -682,8 +616,8 @@ function PlayScreen (props) {
   }
 
   function swipeToScripture () {
-    if (albumArtRef)
-      albumArtRef.scrollToIndex({
+    if (albumArtSwiperRef)
+      albumArtSwiperRef.scrollToIndex({
         animated: true,
         viewPosition: 0.5,
         viewOffset: -Dimensions.get('screen').width,
@@ -749,149 +683,6 @@ function PlayScreen (props) {
 
   //// RENDER
 
-  // renders the album art section in the middle of the screen
-  function renderAlbumArtItem ({ item }) {
-    var scrollBarLeft = (
-      <View
-        style={[
-          styles.scrollBarContainer,
-          {
-            alignSelf: 'flex-start'
-          }
-        ]}
-      >
-        <Animated.View
-          style={[
-            styles.scrollBar,
-            {
-              opacity:
-                item.key === '1' ? middleScrollBarOpacity : sideScrollBarOpacity
-            }
-          ]}
-        />
-      </View>
-    )
-    var scrollBarRight = (
-      <View
-        style={[
-          styles.scrollBarContainer,
-          {
-            alignSelf: 'flex-end'
-          }
-        ]}
-      >
-        <Animated.View
-          style={[
-            styles.scrollBar,
-            {
-              opacity:
-                item.key === '1' ? middleScrollBarOpacity : sideScrollBarOpacity
-            }
-          ]}
-        />
-      </View>
-    )
-
-    if (item.type === 'text') {
-      return (
-        <View style={styles.albumArtContainer}>
-          {scrollBarLeft}
-          {scrollBarRight}
-          <FlatList
-            data={
-              props.route.params.thisLesson.fellowshipType
-                ? // render questions on the first pane and scripture on the last
-                  item.key === '0'
-                  ? props.activeDatabase.questions[
-                      props.route.params.thisLesson.fellowshipType
-                    ].concat(
-                      props.activeDatabase.questions[
-                        props.route.params.thisLesson.applicationType
-                      ]
-                    )
-                  : props.route.params.thisLesson.scripture
-                : []
-            }
-            renderItem={renderTextContent}
-            keyExtractor={item => item.header}
-            showsVerticalScrollIndicator={false}
-            ListHeaderComponent={() => <View style={{ height: 10 }} />}
-          />
-        </View>
-      )
-    } else {
-      return (
-        <View style={styles.albumArtContainer}>
-          {scrollBarLeft}
-          {scrollBarRight}
-          <View
-            style={{
-              zIndex: 1,
-              width: '100%',
-              height: '100%',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <TouchableHighlight
-              style={{
-                width: '100%',
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-              onPress={playHandler}
-              underlayColor={colors.white + '00'}
-              activeOpacity={1}
-            >
-              <SVG
-                name={item.svgName}
-                width={Dimensions.get('window').width - 80}
-                height={Dimensions.get('window').width - 80}
-                fill='#1D1E20'
-              />
-            </TouchableHighlight>
-          </View>
-          <Animated.View
-            style={{
-              position: 'absolute',
-              opacity: playOpacity,
-              transform: [
-                {
-                  scale: playOpacity.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [2, 1]
-                  })
-                }
-              ],
-              zIndex: animationZIndex
-            }}
-          >
-            <Icon
-              name={isPlaying ? 'play' : 'pause'}
-              size={100 * scaleMultiplier}
-              color={colors.white}
-            />
-          </Animated.View>
-        </View>
-      )
-    }
-  }
-
-  // renders the questions/scripture text content
-  function renderTextContent (textList) {
-    return (
-      <View style={{ paddingHorizontal: 20 }}>
-        <Text style={Typography(props, 'h3', 'medium', 'left', colors.shark)}>
-          {textList.item.header}
-        </Text>
-        <Text style={Typography(props, 'h3', 'regular', 'left', colors.shark)}>
-          {textList.item.text}
-        </Text>
-      </View>
-    )
-  }
-
   var titleSection = (
     <View style={styles.titlesContainer}>
       <Text
@@ -903,220 +694,73 @@ function PlayScreen (props) {
     </View>
   )
 
-  // render the middle section of the screen conditionally
-  // 1. if we're in an audio book lesson, show the book text
-  // 2. if we're on a video chapter, show the video player
-  // 3. show the default option, which is the album art and questions/scripture
-  var middleSection =
-    props.route.params.lessonType === 'a' ? (
-      <View
-        style={{
-          borderRadius: 10,
-          backgroundColor: colors.porcelain,
-          borderWidth: 4,
-          borderColor: colors.chateau,
-          marginHorizontal: 10,
-          marginTop: 10
-        }}
-      >
-        <FlatList
-          data={props.route.params.thisLesson.text.split('\n')}
-          renderItem={paragraphList => (
-            <Text
-              style={[
-                Typography(props, 'h4', 'regular', 'left', colors.shark),
-                { marginHorizontal: 10 }
-              ]}
-            >
-              {paragraphList.item}
-            </Text>
-          )}
-          keyExtractor={item => item}
-          ListHeaderComponent={
-            <View style={{ marginVertical: 20 }}>{titleSection}</View>
-          }
-        />
-      </View>
-    ) : activeChapter === 'training' ? (
-      <TouchableWithoutFeedback
-        onPress={() => {
-          if (!showVideoControls) {
-            setShowVideoControls(true)
-            setTimeout(() => setShowVideoControls(false), 1000)
-          }
-        }}
-        style={{ width: '100%' }}
-      >
-        <View
-          style={{
-            height: Dimensions.get('window').width - 80,
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'center'
-            // backgroundColor: 'black'
-          }}
-        >
-          <Video
-            ref={ref => setVideoObject(ref)}
-            rate={1.0}
-            volume={1.0}
-            isMuted={false}
-            resizeMode='contain'
-            shouldPlay
-            usePoster
-            onLoad={() => setIsLoaded(true)}
-            style={{ flex: 1 }}
-            onPlaybackStatusUpdate={status => {
-              // match up so there's a single source of truth between
-              // waha controls and native video controls
-              if (status.isPlaying) setIsPlaying(true)
-              else if (!status.isPlaying) setIsPlaying(false)
-
-              // if we're buffering, turn play icon into activity indicator
-              if (!status.isBuffering) setIsVideoBuffering(false)
-              else if (status.isBuffering) setIsVideoBuffering(true)
-
-              // if video finishes, switch to last chapter
-              if (status.didJustFinish && props.route.params.lessonType !== 'v')
-                changeChapter('application')
-            }}
-            onLoadStart={() => setIsLoaded(false)}
-            onLoad={() => setIsLoaded(true)}
-            onFullscreenUpdate={({ fullscreenUpdate, status }) => {
-              console.log(fullscreenUpdate)
-            }}
-          />
-          {/* display a video icon placeholder when we're loading */}
-          {isLoaded ? null : (
-            <View
-              style={{
-                alignSelf: 'center',
-                width: '100%',
-                position: 'absolute',
-                alignItems: 'center'
-              }}
-            >
-              <Icon
-                name='video'
-                size={100 * scaleMultiplier}
-                color={colors.oslo}
-              />
-            </View>
-          )}
-          {/* video controls overlay */}
-          {showVideoControls ? (
-            <View
-              style={{
-                width: '100%',
-                height: 65 * scaleMultiplier,
-                position: 'absolute',
-                alignSelf: 'flex-end',
-                backgroundColor: colors.shark + '50',
-                justifyContent: 'center'
-              }}
-            >
-              <TouchableOpacity
-                style={{ alignSelf: 'flex-end' }}
-                onPress={() => {
-                  videoObject.presentFullscreenPlayer()
-                }}
-              >
-                <Icon
-                  name='fullscreen-enter'
-                  size={50 * scaleMultiplier}
-                  color={colors.white}
-                />
-              </TouchableOpacity>
-            </View>
-          ) : null}
-        </View>
-      </TouchableWithoutFeedback>
-    ) : (
-      <View
-        style={{
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        <FlatList
-          data={albumArtData}
-          renderItem={renderAlbumArtItem}
-          ref={ref => setAlbumArtRef(ref)}
-          horizontal={true}
-          pagingEnabled={true}
-          snapToAlignment={'start'}
-          snapToInterval={Dimensions.get('window').width - 60}
-          decelerationRate={'fast'}
-          showsHorizontalScrollIndicator={false}
-          ItemSeparatorComponent={() => (
-            <View style={{ width: 20, height: '100%' }} />
-          )}
-          ListHeaderComponent={() => <View style={{ width: 40 }} />}
-          ListFooterComponent={() => <View style={{ width: 40 }} />}
-          getItemLayout={(data, index) => ({
-            length: Dimensions.get('window').width - 60,
-            offset: Dimensions.get('window').width - 60 * index,
-            index
-          })}
-          initialScrollIndex={1}
-          viewabilityConfig={viewConfigRef.current}
-          onViewableItemsChanged={onViewRef.current}
-        />
-      </View>
-    )
-
-  // entire playback control section
-  // isLoaded ?
-  //  true: show scrubber
-  //        show play/pause
-  //        isLessonType = video only ?
-  //          true: hide chapter select
-  //          false: show chapter select
-  //  false: show loading circle
-  var audioControlContainer = isLoaded ? (
-    <View style={styles.audioControlContainer}>
-      {props.route.params.lessonType !== 'v' &&
-      props.route.params.lessonType !== 'a' ? (
-        <ChapterSelect
-          activeChapter={activeChapter}
-          lessonID={props.route.params.thisLesson.id}
-          onPress={chapter => changeChapter(chapter)}
-          lessonType={props.route.params.lessonType}
-          isDownloaded={props.route.params.isDownloaded}
-        />
-      ) : null}
-      <Scrubber
-        value={seekPosition}
-        onSlidingComplete={onSeekRelease}
-        onValueChange={onSeekDrag}
-        maximumValue={audioFileLength}
-        seekPosition={seekPosition}
-      />
-      <PlayPauseSkip
-        isPlaying={isPlaying}
-        isVideoBuffering={isVideoBuffering}
-        onPlayPress={playHandler}
-        onSkipPress={value => {
-          skip(value)
-        }}
-        hasHomework={props.route.params.thisLesson.homework ? true : false}
-        showHomeworkModal={() => setShowHomeworkModal(true)}
-      />
-    </View>
-  ) : (
-    <View style={styles.audioControlContainer}>
-      <ActivityIndicator size='large' color={colors.shark} />
-    </View>
-  )
-
   return (
     <View style={styles.screen}>
       <View style={styles.topHalfContainer}>
         {props.route.params.lessonType === 'a' ? null : titleSection}
-        {middleSection}
+
+        {/* MIDDLE SECTION */}
+        {props.route.params.lessonType === 'a' ? (
+          <BookView
+            thisLesson={props.route.params.thisLesson}
+            titleSection={titleSection}
+          />
+        ) : activeChapter === 'training' ? (
+          <VideoPlayer
+            setVideoObject={setVideoObject}
+            setIsLoaded={setIsLoaded}
+            setIsPlaying={setIsPlaying}
+            setIsVideoBuffering={setIsVideoBuffering}
+            changeChapter={changeChapter}
+            isLoaded={isLoaded}
+          />
+        ) : (
+          <AlbumArtSwiper
+            setAlbumArtSwiperRef={setAlbumArtSwiperRef}
+            iconName={props.route.params.thisSet.iconName}
+            thisLesson={props.route.params.thisLesson}
+            playHandler={playHandler}
+            playOpacity={playOpacity}
+            animationZIndex={animationZIndex}
+            isPlaying={isPlaying}
+          />
+        )}
       </View>
-      {audioControlContainer}
+
+      {/* AUDIO CONTROLS */}
+      {isLoaded ? (
+        <View style={styles.audioControlContainer}>
+          {props.route.params.lessonType !== 'v' &&
+          props.route.params.lessonType !== 'a' ? (
+            <ChapterSelect
+              activeChapter={activeChapter}
+              lessonID={props.route.params.thisLesson.id}
+              onPress={chapter => changeChapter(chapter)}
+              lessonType={props.route.params.lessonType}
+              isDownloaded={props.route.params.isDownloaded}
+            />
+          ) : null}
+          <Scrubber
+            value={seekPosition}
+            onSlidingComplete={onSeekRelease}
+            onValueChange={onSeekDrag}
+            maximumValue={audioFileLength}
+            seekPosition={seekPosition}
+          />
+          <PlayPauseSkip
+            isPlaying={isPlaying}
+            isVideoBuffering={isVideoBuffering}
+            onPlayPress={playHandler}
+            onSkipPress={value => {
+              skip(value)
+            }}
+          />
+        </View>
+      ) : (
+        <View style={styles.audioControlContainer}>
+          <ActivityIndicator size='large' color={colors.shark} />
+        </View>
+      )}
 
       {/* MODALS */}
       <ShareModal
@@ -1158,12 +802,6 @@ const styles = StyleSheet.create({
     flexWrap: 'nowrap',
     paddingHorizontal: 20
   },
-  title: {
-    color: colors.shark,
-    textAlign: 'center',
-    fontSize: 24 * scaleMultiplier,
-    flexWrap: 'nowrap'
-  },
   albumArtContainer: {
     width: Dimensions.get('window').width - 80,
     height: Dimensions.get('window').width - 80,
@@ -1174,21 +812,6 @@ const styles = StyleSheet.create({
     borderColor: colors.chateau,
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  scrollBarContainer: {
-    height: '100%',
-    width: 24,
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 3,
-    marginLeft: -4
-  },
-  scrollBar: {
-    width: 4,
-    height: 75 * scaleMultiplier,
-    backgroundColor: colors.chateau,
-    borderRadius: 10
   },
   audioControlContainer: {
     justifyContent: 'space-evenly',

@@ -1,8 +1,8 @@
 //basic imports
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { colors } from '../constants'
 function TimeDisplay (props) {
   //function to convert a time in milliseconds to a
   //nicely formatted string (for the scrubber)
@@ -30,13 +30,6 @@ function TimeDisplay (props) {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  timeText: {
-    color: colors.shark,
-    fontSize: 12 * scaleMultiplier
-  }
-})
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

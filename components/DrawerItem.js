@@ -48,13 +48,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 50 * scaleMultiplier
-  },
-  title: {
-    color: colors.tuna,
-    fontSize: 18 * scaleMultiplier,
-    textAlignVertical: 'center',
-    paddingHorizontal: 10,
-    textAlign: 'center'
   }
 })
 

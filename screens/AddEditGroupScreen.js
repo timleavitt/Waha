@@ -348,10 +348,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 15
   },
-  buttonText: {
-    textAlign: 'center',
-    fontSize: 18 * scaleMultiplier
-  },
   buttonContainer: {
     width:
       Dimensions.get('window').height < 550

@@ -163,17 +163,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20 * scaleMultiplier
   },
-  title: {
-    textAlign: 'center',
-    fontSize: 24 * scaleMultiplier,
-    color: colors.shark
-  },
-  message: {
-    textAlign: 'center',
-    fontSize: 18 * scaleMultiplier,
-    color: colors.oslo,
-    marginVertical: 20
-  },
   dot: {
     marginHorizontal: 10
   }
