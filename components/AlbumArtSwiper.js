@@ -14,7 +14,7 @@ import SwipeBar from '../components/SwipeBar'
 import { colors, scaleMultiplier } from '../constants'
 
 function AlbumArtSwiper (props) {
-  //// STATE
+  //+ STATE
   const [albumArtRef, setAlbumArtRef] = useState()
   const [isMiddle, setIsMiddle] = useState(true)
   const onViewRef = useRef(info => {
@@ -40,7 +40,7 @@ function AlbumArtSwiper (props) {
     }
   ]
 
-  //// ANIMATION STUFF
+  //+ ANIMATION STUFF
 
   const [middleScrollBarOpacity, setMiddleScrollBarOpacity] = useState(
     new Animated.Value(0)
@@ -176,7 +176,7 @@ function AlbumArtSwiper (props) {
             }}
           >
             <Icon
-              name={props.isPlaying ? 'play' : 'pause'}
+              name={props.isMediaPlaying ? 'play' : 'pause'}
               size={100 * scaleMultiplier}
               color={colors.white}
             />

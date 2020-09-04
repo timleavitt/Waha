@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 // component rendered behind a lesson item that shows the swipe options
 function LessonSwipeBackdrop (props) {
-  //// RENDER
+  //+ RENDER
 
   // render complete button conditionally since it could be complete or incomplete
   var completeButton = props.isComplete ? (
@@ -69,7 +69,7 @@ function LessonSwipeBackdrop (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   lessonSwipeBackdropContainer: {

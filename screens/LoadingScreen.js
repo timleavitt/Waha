@@ -58,7 +58,7 @@ function LoadingScreen (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {

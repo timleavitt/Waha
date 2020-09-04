@@ -4,7 +4,7 @@ import TimeDisplay from '../components/TimeDisplay'
 import { colors } from '../constants'
 // scrubber component rendered on play screen
 function Scrubber (props) {
-  //// RENDER
+  //+ RENDER
 
   return (
     <View style={styles.scrubberContainer}>
@@ -36,7 +36,7 @@ function Scrubber (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   scrubberContainer: {

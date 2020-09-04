@@ -14,17 +14,17 @@ import Separator from '../components/Separator'
 import { colors, scaleMultiplier } from '../constants'
 
 function GroupsScreen (props) {
-  //// STATE
+  //+ STATE
 
   const [isEditing, setIsEditing] = useState(false)
 
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
   }, [isEditing, props])
 
-  //// NAV OPTIONS
+  //+ NAV OPTIONS
 
   function getNavOptions () {
     return {
@@ -75,7 +75,7 @@ function GroupsScreen (props) {
     }
   }
 
-  //// FUNCTIONS
+  //+ FUNCTIONS
 
   // get the list of installed languages and all the groups with that language
   //  to populate section list
@@ -97,7 +97,7 @@ function GroupsScreen (props) {
     return installedLanguageInstances
   }
 
-  //// RENDER
+  //+ RENDER
 
   function renderLanguageInstanceItem (section) {
     return (
@@ -195,7 +195,7 @@ function GroupsScreen (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

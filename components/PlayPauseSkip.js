@@ -9,7 +9,7 @@ import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 // play, pause, and skip controls for play screen
 function PlayPauseSkip (props) {
-  //// RENDER
+  //+ RENDER
 
   return (
     <View style={styles.playPauseSkipContainer}>
@@ -56,7 +56,7 @@ function PlayPauseSkip (props) {
           onPress={props.onPlayPress}
         >
           <Icon
-            name={props.isPlaying ? 'pause' : 'play'}
+            name={props.isMediaPlaying ? 'pause' : 'play'}
             size={100 * scaleMultiplier}
             color={props.primaryColor}
           />
@@ -76,7 +76,7 @@ function PlayPauseSkip (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   playPauseSkipContainer: {
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

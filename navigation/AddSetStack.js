@@ -33,7 +33,7 @@ function AddSetStack (props) {
   )
 }
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

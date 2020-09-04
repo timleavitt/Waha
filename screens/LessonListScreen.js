@@ -20,7 +20,7 @@ import {
 import { toggleComplete } from '../redux/actions/groupsActions'
 
 function LessonListScreen (props) {
-  //// STATE
+  //+ STATE
 
   // read downloaded files for testing purposes
   // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
@@ -44,7 +44,7 @@ function LessonListScreen (props) {
   const [thisSetProgress, setThisSetProgress] = useState([])
   const [thisSetBookmark, setThisSetBookmark] = useState(1)
 
-  //// NAV OPTIONS
+  //+ NAV OPTIONS
 
   function getNavOptions () {
     return {
@@ -68,7 +68,7 @@ function LessonListScreen (props) {
     }
   }
 
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
@@ -107,7 +107,7 @@ function LessonListScreen (props) {
     )
   }, [props.activeGroup.addedSets, props.activeGroup.setBookmark])
 
-  //// FUNCTIONS
+  //+ FUNCTIONS
 
   // gets the type of a lesson in string form
   // note: not stored in db for ssot purposes
@@ -319,7 +319,7 @@ function LessonListScreen (props) {
   //   }
   // }
 
-  //// RENDER
+  //+ RENDER
 
   function renderLessonItem (lessonList) {
     return (
@@ -482,7 +482,7 @@ function LessonListScreen (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

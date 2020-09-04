@@ -28,7 +28,7 @@ export default function App () {
     loadFonts()
   }, [])
 
-  //// FUNCTIONS
+  //+ FUNCTIONS
 
   // lock orientation to portrait or upside down
   ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)

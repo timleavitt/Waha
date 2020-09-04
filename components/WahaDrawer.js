@@ -14,14 +14,14 @@ import DrawerItem from '../components/DrawerItem'
 import SmallDrawerItem from '../components/SmallDrawerItem'
 import { colors, scaleMultiplier } from '../constants'
 function WahaDrawer (props) {
-  //// FUNCTIONS
+  //+ FUNCTIONS
 
   // opens a local browser
   async function openBrowser (url) {
     await WebBrowser.openBrowserAsync(url)
   }
 
-  //// RENDER
+  //+ RENDER
 
   return (
     <SafeAreaView
@@ -136,7 +136,7 @@ function WahaDrawer (props) {
   )
 }
 
-//// REDUX
+//+ REDUX
 
 const styles = StyleSheet.create({
   container: {
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

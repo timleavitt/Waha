@@ -129,7 +129,7 @@ function AddSetScreen (props) {
     />
   )
 
-  //// RENDER
+  //+ RENDER
   function renderStudySetItem (setList) {
     return (
       <SetItem

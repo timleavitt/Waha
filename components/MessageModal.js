@@ -20,7 +20,7 @@ function MessageModal (props) {
     </TouchableOpacity>
   ) : null
 
-  //// RENDER
+  //+ RENDER
   return (
     <Modal
       isVisible={props.isVisible}

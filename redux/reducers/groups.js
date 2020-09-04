@@ -1,11 +1,11 @@
 import {
+  ADD_SET,
   CREATE_GROUP,
   DELETE_GROUP,
-  UPDATE_PROGRESS,
-  RESET_PROGRESS,
   EDIT_GROUP,
-  ADD_SET,
-  SET_SHOW_TOOLKIT
+  RESET_PROGRESS,
+  SET_SHOW_TOOLKIT,
+  UPDATE_PROGRESS
 } from '../actions/groupsActions'
 
 export function groups (state = [], action) {
@@ -101,7 +101,7 @@ export function groups (state = [], action) {
             // return the rest of the group stuff as is
             ...group,
 
-            //// ADDED SETS (progress and lesson bookmark setting)
+            //+ ADDED SETS (progress and lesson bookmark setting)
             addedSets: group.addedSets.map(set => {
               // get the set we're changing
               if (set.id === action.set.id) {
@@ -166,10 +166,10 @@ export function groups (state = [], action) {
               }
             }),
 
-            //// MOST RECENT CORE OR TOOLKIT SET
+            //+ MOST RECENT CORE OR TOOLKIT SET
             recentCoreOrTool: recentCoreOrTool,
 
-            //// SET BOOKMARK
+            //+ SET BOOKMARK
             setBookmark: setBookmark
           }
         }

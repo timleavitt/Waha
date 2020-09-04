@@ -114,7 +114,7 @@ function MainDrawer (props) {
   //   }
   // }, [props.isConnected])
 
-  //// FUNCTIONS
+  //+ FUNCTIONS
   // async function checkPausedDownloads () {
   //   var downloadedStuff = {}
   //   await FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(

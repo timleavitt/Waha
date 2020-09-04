@@ -15,12 +15,12 @@ import { colors, scaleMultiplier } from '../constants'
 import { setIsMuted, setIsTimedOut } from '../redux/actions/securityActions'
 
 function GameScreen (props) {
-  //// STATE
+  //+ STATE
 
   const [pattern, setPattern] = useState('')
   const [countdown, setCountdown] = useState('')
   const [isPlaying, setIsPlaying] = useState(false)
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     if (pattern.includes(props.security.code)) {
@@ -42,7 +42,7 @@ function GameScreen (props) {
     }
   }, [pattern])
 
-  //// RENDER
+  //+ RENDER
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -180,7 +180,7 @@ function GameScreen (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {

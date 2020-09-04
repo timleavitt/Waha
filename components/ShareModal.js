@@ -71,7 +71,7 @@ function ShareModal (props) {
         break
     }
   }
-  //// RENDER
+  //+ RENDER
   return (
     <OptionsModal
       isVisible={props.isVisible}

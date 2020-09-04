@@ -92,7 +92,7 @@ export function addLanguage (language) {
     // set isFetching to true to signal that we're doing stuff and don't want to load the rest of the app
     dispatch(setIsFetching(true))
 
-    //// FIREBASE FETCH
+    //+ FIREBASE FETCH
 
     // get language object from database and throw it in redux
     db.collection('languages')

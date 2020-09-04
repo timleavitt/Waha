@@ -20,7 +20,7 @@ import {
 } from '../redux/actions/securityActions'
 
 function SecurityScreen (props) {
-  //// STATE
+  //+ STATE
   const [showSecurityWarningModal, setShowSecurityWarningModal] = useState(
     false
   )
@@ -28,7 +28,7 @@ function SecurityScreen (props) {
   const [showViewKeyOrderModal, setShowViewKeyOrderModal] = useState(false)
 
   const [showChangeTimeoutModal, setShowChangeTimeoutModal] = useState(false)
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
@@ -49,7 +49,7 @@ function SecurityScreen (props) {
       return props.translations.security.instant_label
   }
 
-  //// NAV OPTIONS
+  //+ NAV OPTIONS
   function getNavOptions () {
     return {
       headerRight: props.isRTL
@@ -133,7 +133,7 @@ function SecurityScreen (props) {
     </View>
   ) : null
 
-  //// RENDER
+  //+ RENDER
 
   return (
     <View style={styles.screen}>
@@ -311,7 +311,7 @@ function SecurityScreen (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
