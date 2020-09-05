@@ -27,13 +27,14 @@ function SetItem (props) {
 
   //+ CONSTRUCTOR
 
+  //- sets components of the set items based on the type prop
   useEffect(() => {
     // big switch statement that renders the 2 dynamic components (the big icon,
     // and the action button) of a set item based on props.mode
     // 1. SHOWN is for sets that have been added to the set screen
     // 2. LESSONLIST is for the set component on the lesson list screen
-    // 3. HIDDEN is for sets that have not been added and live on the add set screen
-    // 4. FOLDER is for set folders in the add set screen
+    // 3. ADDSET is for sets that have not been added and live on the add set screen
+    // 4. SETINFO is for the set on the top of the setinfo screen
 
     switch (props.mode) {
       case 'shown':
@@ -188,6 +189,8 @@ function SetItem (props) {
         break
     }
   }, [
+    // need to rerender the sets whenever any progress, bookmarks, or RTL
+    //  changes
     progressPercentage,
     fullyCompleted,
     props.activeGroup.setBookmark,
@@ -195,12 +198,21 @@ function SetItem (props) {
     props.isRTL
   ])
 
-  //+ FUNCTIONS
+  //- sets the progress through this set
+  function setProgress () {
+    // set the percentage through a set
+    setProgressPercentage(
+      props.activeGroup.addedSets.filter(set => set.id === props.thisSet.id)[0]
+        .progress.length / props.thisSet.length
+    )
+  }
 
+  //- whenever progress changes for a set, handle the changes
   useEffect(() => {
     progressCases()
   }, [progressPercentage])
 
+  //- handles special cases regarding changes in progress
   function progressCases () {
     // if it's fully completed, set fully completed to true, which renders
     // the shown and lessonlist variants as grayed out
@@ -231,22 +243,9 @@ function SetItem (props) {
             .filter(set => set.category === 'core')
             .filter(set => set.index === props.thisSet.index + 1)[0].id
         )
-        showModal()
+        setShowUnlockModal(true)
       }
     }
-  }
-
-  // sets the progress through this set
-  function setProgress () {
-    // set the percentage through a set
-    setProgressPercentage(
-      props.activeGroup.addedSets.filter(set => set.id === props.thisSet.id)[0]
-        .progress.length / props.thisSet.length
-    )
-  }
-
-  function showModal () {
-    setShowUnlockModal(true)
   }
 
   //+ RENDER

@@ -3,7 +3,7 @@ import { StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 import { addSet, setShowToolkit } from '../redux/actions/groupsActions'
-import AvatarImage from './AvatarImage'
+import GroupAvatar from './GroupAvatar'
 // variant of group list item that shows only avatar image, group name, and a switch to enable MTs
 function GroupItemMT (props) {
   // FUNCTIONS
@@ -22,7 +22,7 @@ function GroupItemMT (props) {
           marginHorizontal: 20
         }}
       >
-        <AvatarImage
+        <GroupAvatar
           style={{ backgroundColor: colors.athens }}
           size={50 * scaleMultiplier}
           emoji={props.group.emoji}

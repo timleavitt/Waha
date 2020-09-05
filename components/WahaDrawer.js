@@ -9,8 +9,8 @@ import {
 } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
 import { connect } from 'react-redux'
-import AvatarImage from '../components/AvatarImage'
 import DrawerItem from '../components/DrawerItem'
+import GroupAvatar from '../components/GroupAvatar'
 import SmallDrawerItem from '../components/SmallDrawerItem'
 import { colors, scaleMultiplier } from '../constants'
 function WahaDrawer (props) {
@@ -30,7 +30,7 @@ function WahaDrawer (props) {
     >
       <View style={styles.drawerHeaderContainer}>
         <View style={styles.groupIconContainer}>
-          <AvatarImage
+          <GroupAvatar
             style={{ backgroundColor: colors.athens }}
             emoji={props.activeGroup.emoji}
             size={120}

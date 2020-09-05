@@ -11,6 +11,8 @@ import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 
 function VideoPlayer (props) {
+  //+ STATE
+
   const [showVideoControls, setShowVideoControls] = useState(false)
   const [video, setVideo] = useState()
 

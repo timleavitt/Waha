@@ -15,8 +15,12 @@ import { colors, scaleMultiplier } from '../constants'
 
 function AlbumArtSwiper (props) {
   //+ STATE
-  const [albumArtRef, setAlbumArtRef] = useState()
+
+  // keeps track of whether we're in the middle pane or not
   const [isMiddle, setIsMiddle] = useState(true)
+
+  // refs for determining when we're in the middle
+  // todo: is extremely jank and inconsistent
   const onViewRef = useRef(info => {
     if (info.viewableItems.some(item => item.index === 0)) setIsMiddle(true)
     else setIsMiddle(false)
@@ -42,6 +46,7 @@ function AlbumArtSwiper (props) {
 
   //+ ANIMATION STUFF
 
+  // opacities for the scroll bar opacities
   const [middleScrollBarOpacity, setMiddleScrollBarOpacity] = useState(
     new Animated.Value(0)
   )
@@ -49,9 +54,8 @@ function AlbumArtSwiper (props) {
     new Animated.Value(0.8)
   )
 
-  // animation state
-  const [animationZIndex, setAnimationZIndex] = useState(0)
-
+  //- whenever we switch to and from the middle pane, change which scroll bars
+  //-   are visible
   useEffect(() => {
     if (isMiddle)
       Animated.sequence([
@@ -82,8 +86,9 @@ function AlbumArtSwiper (props) {
     }
   }, [isMiddle])
 
-  // render either text or album art
+  //- render either text or album art
   function renderAlbumArtItem ({ item }) {
+    // for text panes
     if (item.type === 'text') {
       return (
         <View style={styles.albumArtContainer}>

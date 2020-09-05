@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 import { changeActiveGroup, deleteGroup } from '../redux/actions/groupsActions'
-import AvatarImage from './AvatarImage'
+import GroupAvatar from './GroupAvatar'
 // renders a list item for a single group
 function GroupItem (props) {
   // FUNCTIONS
@@ -122,7 +122,7 @@ function GroupItem (props) {
               }
         }
       >
-        <AvatarImage
+        <GroupAvatar
           style={{ backgroundColor: colors.athens }}
           size={50 * scaleMultiplier}
           emoji={props.emoji}

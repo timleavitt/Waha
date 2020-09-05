@@ -3,7 +3,7 @@ import * as FileSystem from 'expo-file-system'
 import React from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import AvatarImage from '../components/AvatarImage'
+import GroupAvatar from '../components/GroupAvatar'
 import { colors } from '../constants'
 import AddSetStack from './AddSetStack'
 import SetTabs from './SetTabs'
@@ -46,7 +46,7 @@ function SetsRoot (props) {
             ? () => <View></View>
             : () => (
                 <View style={{ paddingHorizontal: 10 }}>
-                  <AvatarImage
+                  <GroupAvatar
                     style={{ backgroundColor: colors.white }}
                     emoji={props.activeGroup.emoji}
                     size={35}
@@ -58,7 +58,7 @@ function SetsRoot (props) {
           headerRight: props.isRTL
             ? () => (
                 <View style={{ paddingHorizontal: 10 }}>
-                  <AvatarImage
+                  <GroupAvatar
                     style={{ backgroundColor: colors.white }}
                     emoji={props.activeGroup.emoji}
                     size={35}

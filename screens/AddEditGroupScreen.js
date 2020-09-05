@@ -12,8 +12,8 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import AvatarImage from '../components/AvatarImage'
 import BackButton from '../components/BackButton'
+import GroupAvatar from '../components/GroupAvatar'
 import WahaButton from '../components/WahaButton'
 import {
   colors,
@@ -202,7 +202,7 @@ function AddEditGroupScreen (props) {
     <SafeAreaView style={styles.screen}>
       <View style={{ flex: 1 }}>
         <View style={styles.photoContainer}>
-          <AvatarImage
+          <GroupAvatar
             style={{ backgroundColor: colors.athens }}
             emoji={emoji}
             size={120}

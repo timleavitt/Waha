@@ -3,7 +3,14 @@ import { Audio } from 'expo-av'
 import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
-import { Alert, SectionList, StyleSheet, Text, View } from 'react-native'
+import {
+  Alert,
+  Dimensions,
+  SectionList,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
 import LanguageSelectItem from '../components/LanguageSelectItem'
 import Separator from '../components/Separator'
@@ -111,6 +118,7 @@ function LanguageSelectScreen (props) {
           : i18n.t('addLanguage') + ' '
       }
       style={{
+        width: Dimensions.get('window').width - 40,
         marginHorizontal: 20,
         height: 68 * scaleMultiplier
       }}
@@ -135,7 +143,6 @@ function LanguageSelectScreen (props) {
             Typography(props, 'h1', '', 'center', colors.shark),
             { fontWeight: 'bold', margin: 5 }
           ]}
-          style={styles.title}
         >
           {i18n.t('welcome')}
         </Text>
@@ -285,7 +292,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//+REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   return {

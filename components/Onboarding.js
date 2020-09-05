@@ -70,20 +70,14 @@ function Onboarding (props) {
           <Image style={styles.image} source={props.sources[index]} />
           <Text
             style={[
-              {
-                fontFamily: props.font ? props.font + '-medium' : null,
-                fontWeight: props.font ? null : 'bold'
-              },
-              styles.title
+              Typography(props, 'h2', 'medium', 'center', colors.shark),
+              { fontWeight: props.font ? null : 'bold', marginVertical: 10 }
             ]}
           >
             {props.titles[index]}
           </Text>
           <Text
-            style={[
-              { fontFamily: props.font ? props.font + '-regular' : null },
-              styles.message
-            ]}
+            style={Typography(props, 'h3', 'regular', 'center', colors.chateau)}
           >
             {props.messages[index]}
           </Text>
