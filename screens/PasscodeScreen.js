@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Dimensions, Image, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
@@ -84,15 +84,6 @@ function PasscodeScreen (props) {
       </Text>
       <SmoothPinCodeInput
         ref={ref => setPinRef(ref)}
-        cellStyle={{
-          width: Dimensions.get('window').width / 8,
-          height: Dimensions.get('window').width / 8,
-          borderRadius: Dimensions.get('window').width / 16,
-          backgroundColor: colors.white,
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderWidth: 2
-        }}
         value={passcode}
         codeLength={6}
         autoFocus={true}
