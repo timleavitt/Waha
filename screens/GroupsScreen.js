@@ -214,8 +214,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   addGroupContainer: {
-    // height: 80 * scaleMultiplier,
-    aspectRatio: 5,
+    height: 80 * scaleMultiplier,
+    // aspectRatio: 5,
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',

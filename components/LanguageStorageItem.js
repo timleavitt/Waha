@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     width: '100%',
-    // height: 80 * scaleMultiplier,
-    aspectRatio: 5,
+    height: 80 * scaleMultiplier,
+    // aspectRatio: 5,
     backgroundColor: colors.white,
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    // height: 40 * scaleMultiplier,
-    aspectRatio: 8.7,
+    height: 40 * scaleMultiplier,
+    // aspectRatio: 8.7,
     backgroundColor: colors.aquaHaze,
     paddingHorizontal: 20
   },

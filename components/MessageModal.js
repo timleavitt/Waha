@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
@@ -29,7 +29,7 @@ function MessageModal (props) {
       backdropOpacity={0.3}
       style={{ justifyContent: 'flex-end', flex: 1, margin: 0 }}
     >
-      <View style={styles.contentContainer}>
+      <SafeAreaView style={styles.contentContainer}>
         {props.children}
         <Text
           style={[
@@ -64,7 +64,7 @@ function MessageModal (props) {
           </Text>
         </TouchableOpacity>
         {cancelButton}
-      </View>
+      </SafeAreaView>
     </Modal>
   )
 }

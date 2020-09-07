@@ -34,6 +34,7 @@ import { toggleComplete } from '../redux/actions/groupsActions'
 console.disableYellowBox = true
 
 function PlayScreen (props) {
+  console.log(Dimensions.get('window').width)
   //+ AUDIO / VIDEO STATE
 
   // objects for storing audio/video

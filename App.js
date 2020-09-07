@@ -31,7 +31,14 @@ export default function App () {
   //+ FUNCTIONS
 
   // lock orientation to portrait or upside down
-  ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
+  ScreenOrientation.supportsOrientationLockAsync(
+    ScreenOrientation.OrientationLock.PORTRAIT
+  ).then(isSupported => {
+    if (isSupported)
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
+    else
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)
+  })
 
   // loads up all the fonts for all languages
   async function loadFonts () {

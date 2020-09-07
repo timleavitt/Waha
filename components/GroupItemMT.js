@@ -66,8 +66,8 @@ function GroupItemMT (props) {
 
 const styles = StyleSheet.create({
   groupListItemContainer: {
-    // height: 80 * scaleMultiplier,
-    aspectRatio: 5,
+    height: 80 * scaleMultiplier,
+    // aspectRatio: 5,
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',

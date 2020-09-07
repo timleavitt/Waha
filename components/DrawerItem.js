@@ -37,8 +37,8 @@ function DrawerItem (props) {
 
 const styles = StyleSheet.create({
   settingsItem: {
-    // height: 50 * scaleMultiplier,
-    aspectRatio: 5.5,
+    height: 55 * scaleMultiplier,
+    // aspectRatio: 5.5,
     paddingHorizontal: 10,
     justifyContent: 'flex-start',
     flexDirection: 'row',

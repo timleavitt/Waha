@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 import {
   Alert,
   Dimensions,
+  SafeAreaView,
   SectionList,
   StyleSheet,
   Text,
@@ -175,8 +176,8 @@ function LanguageSelectScreen (props) {
     return (
       <View
         style={{
-          // height: 40 * scaleMultiplier,
-          aspectRatio: 8.7,
+          height: 40 * scaleMultiplier,
+          // aspectRatio: 8.7,
           width: '100%',
           flexDirection: 'row',
           alignItems: 'center',
@@ -195,7 +196,7 @@ function LanguageSelectScreen (props) {
   }
 
   return (
-    <View
+    <SafeAreaView
       style={[
         styles.screen,
         {
@@ -277,7 +278,7 @@ function LanguageSelectScreen (props) {
         />
       </View>
       {startButton}
-    </View>
+    </SafeAreaView>
   )
 }
 

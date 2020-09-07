@@ -92,7 +92,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 10,
     marginVertical: 20 * scaleMultiplier,
-    height: 60 * scaleMultiplier,
+    // paddingVertical: 10 * scaleMultiplier,
+    height: 65 * scaleMultiplier,
     paddingHorizontal: 15,
     alignItems: 'center',
     justifyContent: 'center',

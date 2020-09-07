@@ -20,8 +20,8 @@ function LanguageSelectItem (props) {
   return (
     <View
       style={{
-        // height: 80 * scaleMultiplier,
-        aspectRatio: 5,
+        height: 80 * scaleMultiplier,
+        // aspectRatio: 5,
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',

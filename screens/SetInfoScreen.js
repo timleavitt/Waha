@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   studySetItemContainer: {
     width: '100%',
-    aspectRatio: 4
+    height: 100 * scaleMultiplier
   }
 })
 

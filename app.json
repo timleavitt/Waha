@@ -5,7 +5,7 @@
     "description": "Mobilize the Believer. Disciple the Lost.",
     "privacy": "public",
     "platforms": ["ios", "android"],
-    "version": "0.5.1",
+    "version": "0.5.2",
     "orientation": "portrait",
     "splash": {
       "image": "./assets/splash.png",
@@ -13,20 +13,20 @@
       "backgroundColor": "#e43c44"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "enabled": false
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "requireFullScreen": true,
       "bundleIdentifier": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/GoogleService-Info.plist",
       "supportsTablet": true,
-      "requireFullScreen": true,
-      "buildNumber": "0.5.1"
+      "buildNumber": "0.5.2"
     },
     "android": {
       "package": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/google-services.json",
-      "versionCode": 1
+      "versionCode": 2
     },
     "githubUrl": "https://github.com/trentcowden/Waha",
     "icon": "./assets/wahaIcon.png",

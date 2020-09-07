@@ -340,8 +340,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     flex: 1,
-    // height: 100 * scaleMultiplier,
-    aspectRatio: 4,
+    height: 100 * scaleMultiplier,
+    // aspectRatio: 4,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20
