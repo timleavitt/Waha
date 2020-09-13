@@ -54,8 +54,8 @@ function PasscodeScreen (props) {
       props.setMTUnlockAttempts(props.mtUnlockAttempts + 1)
       pinRef.shake().then(() => setPasscode(''))
       Alert.alert(
-        props.translations.passcode.popups.unlock_unsucessful_message,
         props.translations.passcode.popups.unlock_unsucessful_title,
+        props.translations.passcode.popups.unlock_unsucessful_message,
         [
           {
             text: props.translations.general.ok,

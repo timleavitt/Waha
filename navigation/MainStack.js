@@ -53,7 +53,7 @@ function MainStack (props) {
           props.navigation.navigate('Game')
         } else {
           // check if we are now timed out
-          // if we are, set isTimedOut to true and navigate to game
+          // if we are, set isTimedOut to true and navigate to gamez
           if (
             Date.now() - props.security.timer >
             props.security.timeoutDuration
