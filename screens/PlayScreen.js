@@ -125,6 +125,9 @@ function PlayScreen (props) {
     //set nav options
     props.navigation.setOptions(getNavOptions())
 
+    // enable audio to play on silent mode for IOS
+    Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
+
     // set sources and download stuff if we need to
     setSources()
 
