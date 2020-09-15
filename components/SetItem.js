@@ -76,7 +76,7 @@ function SetItem (props) {
               <Icon
                 name='check-outline'
                 size={30 * scaleMultiplier}
-                color={colors.oslo}
+                color={colors.chateau}
               />
             </View>
           ) : (
@@ -257,6 +257,8 @@ function SetItem (props) {
         { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
       ]}
       onPress={props.onSetSelect}
+      // disable feedback if there's no onSetSelect
+      activeOpacity={props.onSetSelect ? 0.2 : 1}
     >
       {/* large icon rendered earlier */}
       {icon}

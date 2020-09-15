@@ -127,11 +127,17 @@ function AlbumArtSwiper (props) {
                   item.key === '0'
                   ? props.activeDatabase.questions[
                       props.thisLesson.fellowshipType
-                    ].concat(
-                      props.activeDatabase.questions[
-                        props.thisLesson.applicationType
-                      ]
-                    )
+                    ]
+                      // combine fellowship and application questions
+                      .concat(
+                        props.activeDatabase.questions[
+                          props.thisLesson.applicationType
+                        ]
+                      )
+                      // add newline after each question for spacing
+                      .map(question => {
+                        return { ...question, text: question.text + '\n' }
+                      })
                   : props.thisLesson.scripture
                 : []
             }

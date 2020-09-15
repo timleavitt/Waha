@@ -77,7 +77,7 @@ function LessonItem (props) {
                 : null
             }
             size={24 * scaleMultiplier}
-            color={props.isComplete ? colors.oslo : props.primaryColor}
+            color={props.isComplete ? colors.chateau : props.primaryColor}
           />
         </View>
 
