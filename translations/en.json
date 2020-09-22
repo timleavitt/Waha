@@ -28,9 +28,12 @@
   "prev": "Previous",
   "next": "Next",
   "finish": "Finish",
-  "loadingMessage": "Hang on, we're setting things up...",
+  "loadingMessage": "Downloading necessary files...",
   "errorMessage": "Sorry, there was a problem during fetching. Please check your connection and try again.",
   "retry": "Retry",
   "addLanguage": "Add Language",
-  "newLanguage": "New Language"
+  "newLanguage": "New Language",
+  "protip1": "Tip: Struggling to reach for that small play button from across the table during your lessons? You can tap the large album art area to play or pause as well.",
+  "protip2": "Tip: Worried about internet for your lesson? With Waha, you can download it ahead of time.",
+  "protip3": "Tip: Concerned about security? Check out Waha's security mode feature from the navigation drawer."
 }

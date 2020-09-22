@@ -1,14 +1,21 @@
 import i18n from 'i18n-js'
-import React from 'react'
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import * as Progress from 'react-native-progress'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 import { addLanguage, setFetchError } from '../redux/actions/databaseActions'
 // translations import
 import en from '../translations/en.json'
 function LoadingScreen (props) {
+  const [proTipNum, setProTipNum] = useState(1)
+
+  useEffect(() => {
+    if (proTipNum !== 3)
+      setTimeout(() => setProTipNum(current => current + 1), 8000)
+    else setTimeout(() => setProTipNum(1), 8000)
+  }, [proTipNum])
+
   i18n.translations = {
     en
   }
@@ -22,7 +29,7 @@ function LoadingScreen (props) {
     <View style={styles.screen}>
       <Text
         style={[
-          Typography(props, 'h1', '', 'center', colors.chateau),
+          Typography(props, 'h2', '', 'center', colors.shark),
           { padding: 10 }
         ]}
       >
@@ -36,23 +43,45 @@ function LoadingScreen (props) {
     </View>
   ) : (
     <View style={styles.screen}>
-      <Image
-        style={{
-          resizeMode: 'center',
-          width: 300 * scaleMultiplier,
-          height: 100 * scaleMultiplier
-        }}
-        source={require('../assets/logo.png')}
-      />
-      <Text style={Typography(props, 'h1', '', 'center', colors.shark)}>
-        {i18n.t('loadingMessage')}
-      </Text>
-      <View style={styles.progressBarContainer}>
+      <View style={{ flex: 2, justifyContent: 'flex-end' }}>
+        <Image
+          style={{
+            resizeMode: 'center',
+            width: 200 * scaleMultiplier,
+            height: 200 * scaleMultiplier,
+            tintColor: '#e43c44'
+          }}
+          source={require('../assets/icon_transparent.png')}
+        />
+      </View>
+      <View style={{ flex: 1, paddingHorizontal: 20 }}>
+        <ActivityIndicator
+          size='large'
+          color={colors.shark}
+          style={{ margin: 5 }}
+        />
+        <Text style={Typography(props, 'h2', '', 'center', colors.shark)}>
+          {i18n.t('loadingMessage')}
+        </Text>
+        <Text style={Typography(props, 'h1', '', 'center', colors.shark)}>
+          {props.totalToDownload
+            ? props.currentFetchProgress + '/' + props.totalToDownload
+            : ''}
+        </Text>
+      </View>
+      {/* <View style={styles.progressBarContainer}>
         <Progress.Bar
           progress={props.progress}
           width={Dimensions.get('window').width - 50}
-          color={colors.shark}
+          color={colors.chateau}
+          borderWidth={2}
+          borderColor={colors.shark}
         />
+      </View> */}
+      <View style={{ paddingHorizontal: 20, flex: 1 }}>
+        <Text style={Typography(props, 'h3', '', 'center', colors.chateau)}>
+          {i18n.t('protip' + proTipNum)}
+        </Text>
       </View>
     </View>
   )
@@ -77,14 +106,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.shark,
-    borderRadius: 5
+    borderRadius: 10
   }
 })
 
 function mapStateToProps (state) {
   console.log(state.fetchingStatus)
   return {
-    progress: state.database.currentFetchProgress,
+    currentFetchProgress: state.database.currentFetchProgress,
+    totalToDownload: state.database.totalToDownload,
     fetchError: state.fetchingStatus.fetchError,
     errorLanguage: state.fetchingStatus.errorLanguage
   }

@@ -4,6 +4,7 @@ import firebase from 'firebase'
 import i18n from 'i18n-js'
 import { changeActiveGroup, createGroup } from '../actions/groupsActions'
 import { logInstallLanguage } from '../LogEventFunctions'
+
 export const ADD_LANGUAGE = 'ADD_LANGUAGE'
 export const SET_FETCH_ERROR = 'SET_FETCH_ERROR'
 export const STORE_DATA = 'STORE_DATA'
@@ -15,6 +16,7 @@ export const DELETE_LANGUAGE = 'DELETE_LANGUAGE'
 export const ADD_SCRIPT = 'ADD_SCRIPT'
 export const REMOVE_SCRIPT = 'REMOVE_SCRIPT'
 export const SET_CURRENT_FETCH_PROGRESS = 'SET_CURRENT_FETCH_PROGRESS'
+export const SET_TOTAL_TO_DOWNLOAD = 'SET_TOTAL_TO_DOWNLOAD'
 
 // firebase initializing
 const config = {
@@ -71,6 +73,12 @@ export function setCurrentFetchProgress (progress) {
   }
 }
 
+export function setTotalToDownload (total) {
+  return {
+    type: SET_TOTAL_TO_DOWNLOAD,
+    total
+  }
+}
 export function setFetchError (status, language) {
   return {
     type: SET_FETCH_ERROR,
@@ -99,54 +107,54 @@ export function addLanguage (language) {
     db.collection('languages')
       .doc(language)
       .get()
-      .then(doc => {
+      .then(async doc => {
         if (doc.exists) {
           dispatch(storeData(doc.data(), language))
+          dispatch(setTotalToDownload(doc.data().files.length))
+          // var totalProgressObject = {}
+          // var isFirstCallBackObject = {}
+          // var totalToDownload = 0
+          // var counter = 0
 
-          var totalProgressObject = {}
-          var isFirstCallBackObject = {}
-          var totalToDownload = 0
-          var counter = 0
+          // // callback function
+          // function callback ({ totalBytesWritten, totalBytesExpectedToWrite }) {
+          //   var allGood = true
+          //   // every first callback, update the total bytes to download across all downloads
+          //   if (!isFirstCallBackObject[totalBytesExpectedToWrite]) {
+          //     isFirstCallBackObject[totalBytesExpectedToWrite] = true
+          //     totalToDownload += totalBytesExpectedToWrite
+          //     for (value in isFirstCallBackObject) {
+          //       if (!isFirstCallBackObject[value]) {
+          //         allGood = false
+          //       }
+          //     }
+          //   }
 
-          // callback function
-          function callback ({ totalBytesWritten, totalBytesExpectedToWrite }) {
-            var allGood = true
-            // every first callback, update the total bytes to download across all downloads
-            if (!isFirstCallBackObject[totalBytesExpectedToWrite]) {
-              isFirstCallBackObject[totalBytesExpectedToWrite] = true
-              totalToDownload += totalBytesExpectedToWrite
-              for (value in isFirstCallBackObject) {
-                if (!isFirstCallBackObject[value]) {
-                  allGood = false
-                }
-              }
-            }
+          //   if (allGood) {
+          //     // update fetch progress every 100 callbacks (for performance) or if we're just about done
+          //     if (
+          //       counter % 100 == 0 ||
+          //       totalBytesWritten / totalBytesExpectedToWrite > 0.99
+          //     ) {
+          //       // update progress specific to this download
+          //       totalProgressObject[
+          //         totalBytesExpectedToWrite
+          //       ] = totalBytesWritten
 
-            if (allGood) {
-              // update fetch progress every 100 callbacks (for performance) or if we're just about done
-              if (
-                counter % 100 == 0 ||
-                totalBytesWritten / totalBytesExpectedToWrite > 0.99
-              ) {
-                // update progress specific to this download
-                totalProgressObject[
-                  totalBytesExpectedToWrite
-                ] = totalBytesWritten
-
-                // re add up the total progress each time
-                var totalProgress = 0
-                for (download in totalProgressObject) {
-                  totalProgress += totalProgressObject[download]
-                }
-                if (totalToDownload != 0) {
-                  dispatch(
-                    setCurrentFetchProgress(totalProgress / totalToDownload)
-                  )
-                }
-              }
-              counter += 1
-            }
-          }
+          //       // re add up the total progress each time
+          //       var totalProgress = 0
+          //       for (download in totalProgressObject) {
+          //         totalProgress += totalProgressObject[download]
+          //       }
+          //       if (totalToDownload != 0) {
+          //         dispatch(
+          //           setCurrentFetchProgress(totalProgress / totalToDownload)
+          //         )
+          //       }
+          //     }
+          //     counter += 1
+          //   }
+          // }
 
           //- OLD
           // downloads a file from url into local storage
@@ -163,51 +171,92 @@ export function addLanguage (language) {
           // }
 
           // downloads a file from url into local storage
-          function downloadSomething (url, fileName) {
-            var downloadResumable = FileSystem.createDownloadResumable(
-              url,
-              FileSystem.documentDirectory + language + '-' + fileName,
-              {},
-              callback
-            )
-            return downloadResumable.downloadAsync().catch(error => {
-              throw error
-            })
-          }
+          // function downloadSomething (url, fileName) {
+          //   var downloadResumable = FileSystem.createDownloadResumable(
+          //     url,
+          //     FileSystem.documentDirectory + language + '-' + fileName,
+          //     {},
+          //     callback
+          //   )
+          //   return downloadResumable.downloadAsync().catch(error => {
+          //     throw error
+          //   })
+          // }
 
           // downloads everything we need
-          function downloadEverything () {
-            return Promise.all([
-              doc.data().files.map(fileName => {
-                if (fileName.includes('header'))
-                  return downloadSomething(
-                    `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.png?alt=media`,
-                    fileName.slice(0, -3) + '.png'
-                  )
-                else
-                  return downloadSomething(
-                    `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.mp3?alt=media`,
-                    fileName.slice(0, -3) + '.mp3'
-                  )
-              })
-            ])
+          // function downloadEverything () {
+          //   return Promise.all([
+          //     doc.data().files.map(fileName => {
+          //       if (fileName.includes('header'))
+          //         return downloadSomething(
+          //           `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.png?alt=media`,
+          //           fileName.slice(0, -3) + '.png'
+          //         )
+          //       else
+          //         return downloadSomething(
+          //           `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.mp3?alt=media`,
+          //           fileName.slice(0, -3) + '.mp3'
+          //         )
+          //     })
+          //   ])
+          // }
+
+          var goodToGo = true
+
+          async function asyncForEach (array, callback) {
+            for (let index = 0; index < array.length; index++) {
+              console.log('downloading new file')
+              await callback(array[index], index, array)
+            }
           }
 
-          // actually download everything, then create a group, set the active group to the
-          // new group, and finally set isfetching to false so we can go into the app
-          downloadEverything()
-            .then(() => {
+          var totalDownloaded = 0
+
+          const downloadStuff = async () => {
+            try {
+              await asyncForEach(
+                doc.data().files,
+                async (fileName, index, files) => {
+                  if (fileName.includes('header')) {
+                    await FileSystem.downloadAsync(
+                      `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.png?alt=media`,
+                      FileSystem.documentDirectory +
+                        language +
+                        '-' +
+                        fileName.slice(0, -3) +
+                        '.png'
+                    )
+                  } else {
+                    await FileSystem.downloadAsync(
+                      `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.mp3?alt=media`,
+                      FileSystem.documentDirectory +
+                        language +
+                        '-' +
+                        fileName.slice(0, -3) +
+                        '.mp3'
+                    ).catch(error => {
+                      console.log(error)
+                      setFetchError(true, language)
+                    })
+                  }
+                  totalDownloaded += 1
+                  dispatch(setCurrentFetchProgress(totalDownloaded))
+                }
+              )
               logInstallLanguage(language, i18n.locale)
               dispatch(createGroup(groupNames[language], language, 'default'))
               dispatch(changeActiveGroup(groupNames[language]))
               dispatch(setIsFetching(false))
               dispatch(setFinishedInitialFetch(true))
               dispatch(setCurrentFetchProgress(0))
-            })
-            .catch(error => {
+            } catch (error) {
+              goodToGo = false
               console.log(error)
-              dispatch(setFetchError(true, language))
-            })
+              setFetchError(true, language)
+            }
+          }
+
+          downloadStuff()
         } else {
           dispatch(setFetchError(true, language))
         }

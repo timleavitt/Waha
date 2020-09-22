@@ -138,7 +138,9 @@ function LanguageSelectScreen (props) {
 
   var headerText =
     props.route.name === 'LanguageSelect' ? (
-      <View style={{ marginVertical: 40 * scaleMultiplier }}>
+      <View
+        style={{ marginVertical: 40 * scaleMultiplier, paddingHorizontal: 20 }}
+      >
         <Text
           style={[
             Typography(props, 'h1', '', 'center', colors.shark),

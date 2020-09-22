@@ -122,7 +122,6 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
-  console.log(activeGroup.setBookmark)
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
