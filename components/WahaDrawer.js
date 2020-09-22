@@ -98,7 +98,7 @@ function WahaDrawer (props) {
             {
               flexDirection:
                 Dimensions.get('window').height < 550
-                  ? props.isRLT
+                  ? props.isRTL
                     ? 'row-reverse'
                     : 'row'
                   : 'column'
@@ -127,7 +127,7 @@ function WahaDrawer (props) {
             <Text
               style={Typography(props, 'd', 'regular', 'left', colors.chateau)}
             >
-              v0.6.0
+              v0.6.1
             </Text>
           </View>
         </SafeAreaView>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   smallDrawerItemsContainer: {
     width: '100%',
-    justifyContent: 'center'
+    justifyContent: 'space-between'
   }
 })
 

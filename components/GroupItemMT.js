@@ -8,7 +8,6 @@ import GroupAvatar from './GroupAvatar'
 // variant of group list item that shows only avatar image, group name, and a switch to enable MTs
 function GroupItemMT (props) {
   // FUNCTIONS
-
   return (
     <View
       style={[
@@ -27,7 +26,7 @@ function GroupItemMT (props) {
           style={{ backgroundColor: colors.athens }}
           size={50 * scaleMultiplier}
           emoji={props.group.emoji}
-          isActive={props.activeGroup === props.group.name}
+          isActive={props.activeGroup.name === props.group.name}
         />
       </View>
       <View style={styles.groupNameContainer}>
@@ -95,7 +94,6 @@ function mapStateToProps (state) {
     database: state.database,
     isRTL: state.database[activeGroup.language].isRTL,
     groups: state.groups,
-    activeGroup: state.activeGroup,
     font: state.database[activeGroup.language].font,
     toolkitEnabled: state.toolkitEnabled,
     activeGroup: activeGroup

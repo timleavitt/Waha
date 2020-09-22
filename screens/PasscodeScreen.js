@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Image, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, Keyboard, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
@@ -48,6 +48,7 @@ function PasscodeScreen (props) {
 
   function checkPasscode (passcode) {
     if (passcode === '281820') {
+      Keyboard.dismiss()
       logUnlockMobilizationTools(props.activeGroup.language)
       setUnlockSuccessModal(true)
       props.setToolkitEnabled(true)
