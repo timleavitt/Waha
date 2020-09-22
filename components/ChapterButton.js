@@ -57,19 +57,23 @@ function ChapterButton (props) {
       style={[styles.chapterButton, buttonStyles[props.mode]]}
       // no onPress if button is disabled
       onPress={
-        props.mode === 'disabled' ? () => {} : () => props.onPress(props.name)
+        props.mode === 'disabled' || props.mode === 'downloading'
+          ? () => {}
+          : () => props.onPress(props.name)
       }
-      activeOpacity={props.mode === 'disabled' ? 1 : 0.2}
+      activeOpacity={
+        props.mode === 'disabled' || props.mode === 'downloading' ? 1 : 0.2
+      }
     >
       {props.mode === 'downloading' ? (
         <AnimatedCircularProgress
-          size={20 * scaleMultiplier}
+          size={22 * scaleMultiplier}
           width={4}
           fill={props.downloadProgress * 100}
           tintColor={props.primaryColor}
           rotation={0}
           backgroundColor={colors.white}
-          style={{ margin: 2 }}
+          padding={4}
         />
       ) : (
         <Icon

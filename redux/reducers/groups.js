@@ -183,7 +183,7 @@ export function groups (state = [], action) {
         if (group.name === action.groupName) {
           return {
             ...group,
-            setBookmark: group.language + '.1.1   ',
+            setBookmark: group.language + '.1.1',
             addedSets: group.addedSets.map(set => {
               return { ...set, progress: [], bookmark: 1 }
             })

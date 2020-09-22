@@ -31,8 +31,8 @@ function ShareModal (props) {
                   ' ' +
                   props.translations.general.share_toolkit_unlock_code
               : Platform.OS === 'ios'
-              ? 'www.appstorelink.com'
-              : 'www.playstorelink.com'
+              ? 'www.waha.app'
+              : 'www.waha.app'
         })
         break
       // share the passage text for this lesson
