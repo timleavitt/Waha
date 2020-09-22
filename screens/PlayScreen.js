@@ -23,7 +23,7 @@ import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
 import Scrubber from '../components/Scrubber'
 import ShareModal from '../components/ShareModal'
 import VideoPlayer from '../components/VideoPlayer'
-import { colors } from '../constants'
+import { colors, getLessonInfo } from '../constants'
 import {
   downloadLesson,
   downloadVideo,
@@ -92,7 +92,7 @@ function PlayScreen (props) {
 
   function getNavOptions () {
     return {
-      headerTitle: props.route.params.thisLesson.subtitle,
+      headerTitle: getLessonInfo('subtitle', props.route.params.thisLesson.id),
       headerRight: props.isRTL
         ? () => <BackButton onPress={() => props.navigation.goBack()} />
         : () => (
@@ -100,7 +100,7 @@ function PlayScreen (props) {
               shareOnPress={() => setShowShareLessonModal(true)}
               completeOnPress={changeCompleteStatus}
               completeCondition={props.route.params.thisSetProgress.includes(
-                props.route.params.thisLesson.index
+                getLessonInfo('index', props.route.params.thisLesson.id)
               )}
             />
           ),
@@ -110,7 +110,7 @@ function PlayScreen (props) {
               shareOnPress={() => setShowShareLessonModal(true)}
               completeOnPress={changeCompleteStatus}
               completeCondition={props.route.params.thisSetProgress.includes(
-                props.route.params.thisLesson.index
+                getLessonInfo('index', props.route.params.thisLesson.id)
               )}
             />
           )
@@ -124,8 +124,16 @@ function PlayScreen (props) {
     //set nav options
     props.navigation.setOptions(getNavOptions())
 
-    // enable audio to play on silent mode for IOS
-    Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
+    // set some audio settings
+    Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true,
+      allowsRecordingIOS: false,
+      staysActiveInBackground: false,
+      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DUCK_OTHERS,
+      shouldDuckAndroid: true,
+      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
+      playThroughEarpieceAndroid: false
+    })
 
     // set sources and download stuff if we need to
     setSources()
@@ -168,7 +176,10 @@ function PlayScreen (props) {
     var storyLocal =
       FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
 
-    var storyStream = props.route.params.thisLesson.audioSource
+    var storyStream = getLessonInfo(
+      'audioSource',
+      props.route.params.thisLesson.id
+    )
 
     var storyDummy =
       FileSystem.documentDirectory +
@@ -179,7 +190,10 @@ function PlayScreen (props) {
     var trainingLocal =
       FileSystem.documentDirectory + props.route.params.thisLesson.id + 'v.mp4'
 
-    var trainingStream = props.route.params.thisLesson.videoSource
+    var trainingStream = getLessonInfo(
+      'videoSource',
+      props.route.params.thisLesson.id
+    )
 
     // set sources appropriately based on the lesson type
     switch (props.route.params.lessonType) {
@@ -196,7 +210,7 @@ function PlayScreen (props) {
         )
           props.downloadLesson(
             props.route.params.thisLesson.id,
-            props.route.params.thisLesson.audioSource
+            getLessonInfo('audioSource', props.route.params.thisLesson.id)
           )
         break
       case 'qav':
@@ -212,11 +226,11 @@ function PlayScreen (props) {
         ) {
           props.downloadLesson(
             props.route.params.thisLesson.id,
-            props.route.params.thisLesson.audioSource
+            getLessonInfo('audioSource', props.route.params.thisLesson.id)
           )
           props.downloadVideo(
             props.route.params.thisLesson.id,
-            props.route.params.thisLesson.videoSource
+            getLessonInfo('videoSource', props.route.params.thisLesson.id)
           )
         }
         break
@@ -233,7 +247,7 @@ function PlayScreen (props) {
         )
           props.downloadVideo(
             props.route.params.thisLesson.id,
-            props.route.params.thisLesson.videoSource
+            getLessonInfo('videoSource', props.route.params.thisLesson.id)
           )
         break
       case 'v':
@@ -328,7 +342,9 @@ function PlayScreen (props) {
   //! only for lessons with videos
   useEffect(() => {
     if (video && trainingSource) {
-      loadVideoFile(props.route.params.thisLesson.videoSource)
+      loadVideoFile(
+        getLessonInfo('videoSource', props.route.params.thisLesson.id)
+      )
 
       // orientation listener to activate full screen when switched to landscape and vice versa
       DeviceMotion.addListener(({ orientation }) => {
@@ -549,7 +565,7 @@ function PlayScreen (props) {
         //  1. there's no audio source
         //  2. we're currently downloading the lesson
         //  3. there's an audio source, it's not downloading, and there's no internet
-        if (!props.route.params.thisLesson.audioSource) swipeToScripture()
+        if (!props.route.params.thisLesson.hasAudio) swipeToScripture()
       } else if (chapter === 'application') {
         setSeekPosition(0)
         loadAudioFile(applicationSource)
@@ -571,7 +587,7 @@ function PlayScreen (props) {
     // chapter once we finish or toggle the whole lesson as complete
     if (playbackStatus.didJustFinish) {
       if (activeChapter === 'fellowship') {
-        if (!props.route.params.thisLesson.audioSource) {
+        if (!props.route.params.thisLesson.hasAudio) {
           changeChapter('story')
           swipeToScripture()
         } else if (
@@ -600,7 +616,7 @@ function PlayScreen (props) {
           case 'a':
             if (
               !props.route.params.thisSetProgress.includes(
-                props.route.params.thisLesson.index
+                getLessonInfo('index', props.route.params.thisLesson.id)
               )
             ) {
               changeCompleteStatus()
@@ -609,7 +625,7 @@ function PlayScreen (props) {
       } else if (
         activeChapter === 'application' &&
         !props.route.params.thisSetProgress.includes(
-          props.route.params.thisLesson.index
+          getLessonInfo('index', props.route.params.thisLesson.id)
         )
       ) {
         changeCompleteStatus()
@@ -674,12 +690,12 @@ function PlayScreen (props) {
     props.toggleComplete(
       props.activeGroup.name,
       props.route.params.thisSet,
-      props.route.params.thisLesson.index
+      getLessonInfo('index', props.route.params.thisLesson.id)
     )
 
     if (
       props.route.params.thisSetProgress.includes(
-        props.route.params.thisLesson.index
+        getLessonInfo('index', props.route.params.thisLesson.id)
       )
     ) {
       Alert.alert(
@@ -721,9 +737,19 @@ function PlayScreen (props) {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.topHalfContainer}>
+      <View
+        style={[
+          styles.topHalfContainer,
+          {
+            marginBottom: props.route.params.lessonType === '' ? 10 : 0
+          }
+        ]}
+      >
         {/* don't display title section on audio book lessons */}
-        {props.route.params.lessonType !== 'a' ? titleSection : null}
+        {props.route.params.lessonType !== 'a' &&
+        props.route.params.lessonType !== ''
+          ? titleSection
+          : null}
 
         {/* 
           MIDDLE SECTION 
@@ -731,7 +757,8 @@ function PlayScreen (props) {
           2. video player for lessons with videos
           3. album art swiper to display album art, scripture, and questions
         */}
-        {props.route.params.lessonType === 'a' ? (
+        {props.route.params.lessonType === 'a' ||
+        props.route.params.lessonType === '' ? (
           <BookView
             thisLesson={props.route.params.thisLesson}
             titleSection={titleSection}
@@ -746,7 +773,7 @@ function PlayScreen (props) {
             isMediaLoaded={isMediaLoaded}
             lessonType={props.route.params.lessonType}
             isComplete={props.route.params.thisSetProgress.includes(
-              props.route.params.thisLesson.index
+              getLessonInfo('index', props.route.params.thisLesson.id)
             )}
             changeCompleteStatus={changeCompleteStatus}
           />
@@ -764,39 +791,41 @@ function PlayScreen (props) {
       </View>
 
       {/* AUDIO CONTROLS */}
-      {isMediaLoaded ? (
-        <View style={styles.audioControlContainer}>
-          {props.route.params.lessonType !== 'v' &&
-          props.route.params.lessonType !== 'a' ? (
-            <ChapterSelect
-              activeChapter={activeChapter}
-              lessonID={props.route.params.thisLesson.id}
-              onPress={chapter => changeChapter(chapter)}
-              lessonType={props.route.params.lessonType}
-              isDownloaded={props.route.params.isDownloaded}
+      {props.route.params.lessonType !== '' ? (
+        isMediaLoaded ? (
+          <View style={styles.audioControlContainer}>
+            {props.route.params.lessonType !== 'v' &&
+            props.route.params.lessonType !== 'a' ? (
+              <ChapterSelect
+                activeChapter={activeChapter}
+                lessonID={props.route.params.thisLesson.id}
+                onPress={chapter => changeChapter(chapter)}
+                lessonType={props.route.params.lessonType}
+                isDownloaded={props.route.params.isDownloaded}
+              />
+            ) : null}
+            <Scrubber
+              value={seekPosition}
+              onSlidingComplete={onSeekRelease}
+              onValueChange={onSeekDrag}
+              maximumValue={mediaLength}
+              seekPosition={seekPosition}
             />
-          ) : null}
-          <Scrubber
-            value={seekPosition}
-            onSlidingComplete={onSeekRelease}
-            onValueChange={onSeekDrag}
-            maximumValue={mediaLength}
-            seekPosition={seekPosition}
-          />
-          <PlayPauseSkip
-            isMediaPlaying={isMediaPlaying}
-            isVideoBuffering={isVideoBuffering}
-            onPlayPress={playHandler}
-            onSkipPress={value => {
-              skip(value)
-            }}
-          />
-        </View>
-      ) : (
-        <View style={styles.audioControlContainer}>
-          <ActivityIndicator size='large' color={colors.shark} />
-        </View>
-      )}
+            <PlayPauseSkip
+              isMediaPlaying={isMediaPlaying}
+              isVideoBuffering={isVideoBuffering}
+              onPlayPress={playHandler}
+              onSkipPress={value => {
+                skip(value)
+              }}
+            />
+          </View>
+        ) : (
+          <View style={styles.audioControlContainer}>
+            <ActivityIndicator size='large' color={colors.shark} />
+          </View>
+        )
+      ) : null}
 
       {/* MODALS */}
       <ShareModal

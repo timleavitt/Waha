@@ -42,32 +42,68 @@ function MainDrawer (props) {
     db.collection('languages')
       .doc(props.activeGroup.language)
       .onSnapshot(function (doc) {
-        function downloadSomething (source, fileName) {
+        // function downloadSomething (source, fileName) {
+        //   var downloadResumable = FileSystem.createDownloadResumable(
+        //     doc.data().sources[source],
+        //     FileSystem.documentDirectory +
+        //       props.activeGroup.language +
+        //       '-' +
+        //       fileName,
+        //     {}
+        //   )
+        //   downloadResumable.downloadAsync().catch(error => {
+        //     throw error
+        //   })
+        // }
+
+        // check for new fellowship or application chapters
+        // Object.keys(doc.data().sources).forEach(source => {
+        //   if (
+        //     doc.data().sources[source] !== props.activeDatabase.sources[source]
+        //   ) {
+        //     // ALERT
+        //     Alert.alert(
+        //       props.translations.general.popups.new_chapter_downloading_title,
+        //       props.translations.general.popups.new_chapter_downloading_message,
+        //       [{ text: props.translations.general.ok, onPress: () => {} }]
+        //     )
+        //     downloadSomething(source, source + '.mp3')
+        //   }
+        // })
+
+        function downloadSomething (url, fileName) {
           var downloadResumable = FileSystem.createDownloadResumable(
-            doc.data().sources[source],
+            url,
             FileSystem.documentDirectory +
               props.activeGroup.language +
               '-' +
               fileName,
             {}
           )
-          downloadResumable.downloadAsync().catch(error => {
+          return downloadResumable.downloadAsync().catch(error => {
             throw error
           })
         }
 
         // check for new fellowship or application chapters
-        Object.keys(doc.data().sources).forEach(source => {
-          if (
-            doc.data().sources[source] !== props.activeDatabase.sources[source]
-          ) {
+        doc.data().files.forEach(fileName => {
+          if (!props.activeDatabase.files.includes(fileName)) {
             // ALERT
             Alert.alert(
               props.translations.general.popups.new_chapter_downloading_title,
               props.translations.general.popups.new_chapter_downloading_message,
               [{ text: props.translations.general.ok, onPress: () => {} }]
             )
-            downloadSomething(source, source + '.mp3')
+            if (fileName.includes('header'))
+              return downloadSomething(
+                `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.png?alt=media`,
+                fileName.slice(0, -3) + '.png'
+              )
+            else
+              return downloadSomething(
+                `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.mp3?alt=media`,
+                fileName.slice(0, -3) + '.mp3'
+              )
           }
         })
 
@@ -175,6 +211,7 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
+  console.log(state.database[activeGroup.language].files)
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],

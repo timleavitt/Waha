@@ -10,7 +10,7 @@ import {
   setMTUnlockTimeout
 } from '../redux/actions/securityActions'
 import { setToolkitEnabled } from '../redux/actions/toolkitEnabledActions'
-
+import { logUnlockMobilizationTools } from '../redux/LogEventFunctions'
 function PasscodeScreen (props) {
   //+ STATE
   const [passcode, setPasscode] = useState('')
@@ -48,6 +48,7 @@ function PasscodeScreen (props) {
 
   function checkPasscode (passcode) {
     if (passcode === '281820') {
+      logUnlockMobilizationTools(props.activeGroup.language)
       setUnlockSuccessModal(true)
       props.setToolkitEnabled(true)
     } else {

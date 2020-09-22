@@ -61,7 +61,8 @@ function KeyLabels (props) {
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'center',
-        padding: 20
+        padding: 20,
+        flexDirection: props.isRTL ? 'row-reverse' : 'row'
       }}
     >
       <View style={styles.keyPlaceholder}>{keyLabel1}</View>
@@ -95,7 +96,8 @@ function mapStateToProps (state) {
   )[0]
   return {
     font: state.database[activeGroup.language].font,
-    security: state.security
+    security: state.security,
+    isRTL: state.database[activeGroup.language].isRTL
   }
 }
 

@@ -31,11 +31,12 @@ function SecurityOnboardingScreen (props) {
   return (
     <View style={styles.screen}>
       <Onboarding
+        isRTL={props.isRTL ? true : false}
         sources={[
           require('../assets/onboarding/security_onboarding1.png'),
-          require('../assets/onboarding/security_onboarding1.png'),
           require('../assets/onboarding/security_onboarding2.png'),
-          require('../assets/onboarding/security_onboarding3.png')
+          require('../assets/onboarding/security_onboarding3.png'),
+          require('../assets/onboarding/security_onboarding4.png')
         ]}
         titles={[
           props.translations.security.popups.onboarding_1_title,
@@ -74,7 +75,8 @@ function mapStateToProps (state) {
   )[0]
   return {
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    isRTL: state.database[activeGroup.language].isRTL
   }
 }
 

@@ -1,8 +1,9 @@
 import React from 'react'
 import { StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getSetInfo, scaleMultiplier } from '../constants'
 import { addSet, setShowToolkit } from '../redux/actions/groupsActions'
+import { logEnableMobilizationToolsForAGroup } from '../redux/LogEventFunctions'
 import GroupAvatar from './GroupAvatar'
 // variant of group list item that shows only avatar image, group name, and a switch to enable MTs
 function GroupItemMT (props) {
@@ -44,15 +45,18 @@ function GroupItemMT (props) {
             props.setShowToolkit(props.group.name, !props.group.showToolkit)
 
             // if we're toggling MTs on for the first time, add the first 2 MT sets
-            if (!props.group.showToolkit)
+            if (!props.group.showToolkit) {
+              logEnableMobilizationToolsForAGroup(props.activeGroup.language)
               for (const set of props.database[props.group.language].sets) {
                 if (
-                  set.category === 'mt' &&
-                  (set.index === 1 || set.index === 2)
+                  getSetInfo('category', set.id) === 'mt' &&
+                  (getSetInfo('index', set.id) === 1 ||
+                    getSetInfo('index', set.id) === 2)
                 ) {
-                  props.addSet(props.group.name, set.id)
+                  props.addSet(props.group.name, set)
                 }
               }
+            }
           }}
           value={props.group.showToolkit}
           disabled={props.toolkitEnabled ? false : true}
@@ -93,7 +97,8 @@ function mapStateToProps (state) {
     groups: state.groups,
     activeGroup: state.activeGroup,
     font: state.database[activeGroup.language].font,
-    toolkitEnabled: state.toolkitEnabled
+    toolkitEnabled: state.toolkitEnabled,
+    activeGroup: activeGroup
   }
 }
 
@@ -102,8 +107,8 @@ function mapDispatchToProps (dispatch) {
     setShowToolkit: (groupName, toSet) => {
       dispatch(setShowToolkit(groupName, toSet))
     },
-    addSet: (groupName, setID) => {
-      dispatch(addSet(groupName, setID))
+    addSet: (groupName, set) => {
+      dispatch(addSet(groupName, set))
     }
   }
 }

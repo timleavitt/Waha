@@ -21,10 +21,11 @@ function GroupListHeader (props) {
     // and clear out the already downloaded content if there was
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
-        Object.keys(props.activeDatabase.sources).forEach(source => {
+        props.activeDatabase.files.forEach(fileName => {
+          var tempFileName = fileName.slice(0, -3)
           if (
-            !contents.includes(`${props.languageID}-${source}.mp3`) &&
-            !contents.includes(`${props.languageID}-${source}.png`)
+            !contents.includes(`${props.languageID}-${tempFileName}.mp3`) &&
+            !contents.includes(`${props.languageID}-${tempFileName}.png`)
           )
             deleteLanguageInstance()
         })

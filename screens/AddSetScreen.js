@@ -12,7 +12,7 @@ import TagGroup from 'react-native-tag-group'
 import { connect } from 'react-redux'
 import Separator from '../components/Separator'
 import SetItem from '../components/SetItem'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getSetInfo, scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
 
 YellowBox.ignoreWarnings([
@@ -38,7 +38,7 @@ function AddSetScreen (props) {
         setHeaderTitle(props.translations.add_set.header_topical)
         var tempTags = [props.translations.add_set.all_tag_label]
         props.activeDatabase.sets
-          .filter(set => set.category === 'topical')
+          .filter(set => getSetInfo('category', set.id) === 'topical')
           .forEach(topicalSet => {
             topicalSet.tags.forEach(tag => {
               if (!tempTags.some(tempTag => tempTag === tag)) {
@@ -110,7 +110,7 @@ function AddSetScreen (props) {
       tagStyle={{
         borderRadius: 30,
         borderColor: colors.oslo,
-        height: 40 * scaleMultiplier,
+        height: 35 * scaleMultiplier,
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 20 * scaleMultiplier
@@ -157,7 +157,11 @@ function AddSetScreen (props) {
         data={
           props.route.params.category === 'topical'
             ? props.activeDatabase.sets
-                .filter(set => set.category === props.route.params.category)
+                .filter(
+                  set =>
+                    getSetInfo('category', set.id) ===
+                    props.route.params.category
+                )
                 .filter(
                   topicalSet =>
                     !props.activeGroup.addedSets.some(
@@ -173,7 +177,11 @@ function AddSetScreen (props) {
                     : topicalAddedSet.tags.some(tag => activeTags.includes(tag))
                 })
             : props.activeDatabase.sets
-                .filter(set => set.category === props.route.params.category)
+                .filter(
+                  set =>
+                    getSetInfo('category', set.id) ===
+                    props.route.params.category
+                )
                 .filter(
                   set =>
                     !props.activeGroup.addedSets.some(

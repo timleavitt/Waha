@@ -1,7 +1,7 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import React from 'react'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getSetInfo, scaleMultiplier } from '../constants'
 import SetScreen from '../screens/SetScreen'
 const Tab = createMaterialTopTabNavigator()
 
@@ -16,9 +16,12 @@ function SetTabs (props) {
     />
   ) : null
 
-  var bookmarkSetCategory = props.activeDatabase.sets.filter(
-    set => set.id === props.activeGroup.setBookmark
-  )[0].category
+  var bookmarkSetCategory = getSetInfo(
+    'category',
+    props.activeDatabase.sets.filter(
+      set => set.id === props.activeGroup.setBookmark
+    )[0].id
+  )
   var initialRouteName
 
   switch (bookmarkSetCategory) {
@@ -119,6 +122,7 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
+  console.log(activeGroup.setBookmark)
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,

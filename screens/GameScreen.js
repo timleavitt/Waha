@@ -141,7 +141,18 @@ function GameScreen (props) {
             />
           </TouchableOpacity>
         </View>
-        <Piano setPattern={setPattern} isMuted={props.security.isMuted} />
+        <View>
+          <Image
+            style={{
+              resizeMode: 'contain',
+              width: Dimensions.get('window').width,
+              height: 60 * scaleMultiplier,
+              borderRadius: 10
+            }}
+            source={require('../assets/piano.png')}
+          />
+          <Piano setPattern={setPattern} isMuted={props.security.isMuted} />
+        </View>
         <View
           style={{
             width: Dimensions.get('window').width,

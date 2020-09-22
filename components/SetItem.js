@@ -5,8 +5,14 @@ import { connect } from 'react-redux'
 import Icon from '../assets/fonts/icons'
 import SVG from '../assets/svg.js'
 import MessageModal from '../components/MessageModal'
-import { colors, scaleMultiplier } from '../constants'
+import {
+  colors,
+  getLessonInfo,
+  getSetInfo,
+  scaleMultiplier
+} from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
+import { logCompleteStorySet } from '../redux/LogEventFunctions'
 function SetItem (props) {
   //+ STATE
 
@@ -200,10 +206,13 @@ function SetItem (props) {
 
   //- sets the progress through this set
   function setProgress () {
+    var setLength = props.activeDatabase.lessons.filter(
+      lesson => getLessonInfo('setID', lesson.id) === props.thisSet.id
+    ).length
     // set the percentage through a set
     setProgressPercentage(
       props.activeGroup.addedSets.filter(set => set.id === props.thisSet.id)[0]
-        .progress.length / props.thisSet.length
+        .progress.length / setLength
     )
   }
 
@@ -216,22 +225,26 @@ function SetItem (props) {
   function progressCases () {
     // if it's fully completed, set fully completed to true, which renders
     // the shown and lessonlist variants as grayed out
-    if (progressPercentage === 1) setFullyCompleted(true)
-    else setFullyCompleted(false)
+    if (progressPercentage === 1) {
+      logCompleteStorySet(props.thisSet, props.activeGroup.language)
+      setFullyCompleted(true)
+    } else setFullyCompleted(false)
 
     // get the set AFTER the one that you're setting progress for
     var nextSet = props.activeDatabase.sets.filter(
       dbSet =>
-        dbSet.category === 'core' && dbSet.index === props.thisSet.index + 1
+        getSetInfo('category', dbSet.id) === 'core' &&
+        getSetInfo('index', dbSet.id) ===
+          getSetInfo('index', props.thisSet.id) + 1
     )[0]
 
     // we want to automatically add the next set if the next set exists AND
     if (nextSet) {
       if (
-        // we've completed 75% of a set AND
+        // we've completed 85% of a set AND
         progressPercentage > 0.85 &&
         // this set is a core set AND
-        props.thisSet.category === 'core' &&
+        getSetInfo('category', props.thisSet.id) === 'core' &&
         // the next set after this one hasn't already been added AND
         !props.activeGroup.addedSets.some(
           addedSet => addedSet.id === nextSet.id
@@ -240,8 +253,12 @@ function SetItem (props) {
         props.addSet(
           props.activeGroup.name,
           props.activeDatabase.sets
-            .filter(set => set.category === 'core')
-            .filter(set => set.index === props.thisSet.index + 1)[0].id
+            .filter(set => getSetInfo('category', set.id) === 'core')
+            .filter(
+              set =>
+                getSetInfo('index', set.id) ===
+                getSetInfo('index', props.thisSet.id) + 1
+            )[0]
         )
         setShowUnlockModal(true)
       }
@@ -322,7 +339,7 @@ function SetItem (props) {
         confirmOnPress={() => setShowUnlockModal(false)}
       >
         <Image
-          // source={require('../assets/splash.png')}
+          source={require('../assets/gifs/new_set.gif')}
           style={{
             height: 200 * scaleMultiplier,
             margin: 20,
@@ -385,8 +402,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    addSet: (groupName, setID) => {
-      dispatch(addSet(groupName, setID))
+    addSet: (groupName, set) => {
+      dispatch(addSet(groupName, set))
     }
   }
 }

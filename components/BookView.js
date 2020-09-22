@@ -12,7 +12,8 @@ function BookView (props) {
         borderWidth: 4,
         borderColor: colors.chateau,
         marginHorizontal: 10,
-        marginTop: 10
+        marginTop: 10,
+        flex: 1
       }}
     >
       <FlatList

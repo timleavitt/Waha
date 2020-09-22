@@ -49,7 +49,7 @@ function StorageScreen (props) {
   // gets the storage size in megabytes for all the downloaded chapter 2s for a specific language
   async function getStorageUsedByLanguage (language) {
     var storageUsed = 0
-    var regex = new RegExp('[a-z]{2}[0-9]{3}..*')
+    var regex = new RegExp('[a-z]{2}.[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}.*')
     return await FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
       .then(async contents => {
         for (const item of contents) {
@@ -92,7 +92,7 @@ function StorageScreen (props) {
   async function deleteDownloadedLessons (language) {
     await FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
       .then(contents => {
-        var regex = new RegExp('[a-z]{2}[0-9]{3}..*')
+        var regex = new RegExp('[a-z]{2}.[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}.*')
         for (const item of contents) {
           var hasMatch = regex.exec(item)
           if (hasMatch) {

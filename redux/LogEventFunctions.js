@@ -1,5 +1,5 @@
 import * as Analytics from 'expo-firebase-analytics'
-
+import { getSetInfo } from '../constants'
 export async function logInstallLanguage (languageName, phoneLanguage) {
   await Analytics.logEvent('InstallLanguage', {
     languageName: languageName,
@@ -11,28 +11,30 @@ export async function logCompleteLesson (lesson, set, currentLanguage) {
   await Analytics.logEvent('CompleteLesson', {
     lessonID: lesson.id,
     setID: set.id,
-    setCategory: set.category,
-    currentLanguage: currentLanguage
+    setCategory: getSetInfo('category', set.id),
+    language: currentLanguage
   })
 }
+
 export async function logCompleteStorySet (set, currentLanguage) {
   await Analytics.logEvent('CompleteStorySet', {
     setID: set.id,
-    setCategory: set.category,
-    currentLanguage: currentLanguage
+    setCategory: getSetInfo('category', set.id),
+    language: currentLanguage
   })
 }
 export async function logUnlockMobilizationTools (currentLanguage) {
   await Analytics.logEvent('UnlockMobilizationTools', {
-    currentLanguage: currentLanguage
+    language: currentLanguage
   })
 }
 export async function logCreateGroup (currentLanguage) {
   await Analytics.logEvent('CreateGroup', {
-    currentLanguage: currentLanguage
+    language: currentLanguage
   })
 }
 export async function logEnableMobilizationToolsForAGroup (currentLanguage) {
+  console.log(currentLanguage)
   await Analytics.logEvent('EnableMobilizationToolsForAGroup', {
     currentLanguage: currentLanguage
   })
@@ -40,7 +42,7 @@ export async function logEnableMobilizationToolsForAGroup (currentLanguage) {
 export async function logAddStorySet (set) {
   await Analytics.logEvent('AddStorySet', {
     setID: set.id,
-    setCategory: set.category
+    setCategory: getSetInfo('category', set.id)
   })
 }
 export async function logShareApp (lesson) {
