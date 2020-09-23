@@ -5,7 +5,7 @@
     "description": "Mobilize the Believer. Disciple the Lost.",
     "privacy": "public",
     "platforms": ["ios", "android"],
-    "version": "0.5.4",
+    "version": "0.6.2",
     "orientation": "portrait",
     "splash": {
       "image": "./assets/splash.png",
@@ -21,12 +21,12 @@
       "bundleIdentifier": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/GoogleService-Info.plist",
       "supportsTablet": true,
-      "buildNumber": "0.5.4"
+      "buildNumber": "0.6.2"
     },
     "android": {
       "package": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/google-services.json",
-      "versionCode": 4
+      "versionCode": 5
     },
     "githubUrl": "https://github.com/trentcowden/Waha",
     "icon": "./assets/wahaIcon.png",
