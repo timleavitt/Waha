@@ -18,7 +18,7 @@ function WahaDrawer (props) {
 
   // opens a local browser
   async function openBrowser (url) {
-    await WebBrowser.openBrowserAsync(url)
+    await WebBrowser.openBrowserAsync(url, { dismissButtonStyle: 'cancel' })
   }
 
   //+ RENDER
