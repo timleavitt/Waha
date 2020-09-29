@@ -169,32 +169,36 @@ function AlbumArtSwiper (props) {
             keyExtractor={item => item.header}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={() => <View style={{ height: 10 }} />}
-            ListFooterComponent={() => (
-              <View style={{ paddingHorizontal: 10, marginBottom: 10 }}>
-                <Text
-                  style={Typography(
-                    props,
-                    'd',
-                    'regular',
-                    'center',
-                    colors.chateau
-                  )}
-                >
-                  {props.translations.play.copyright_for_text}
-                </Text>
-                <Text
-                  style={Typography(
-                    props,
-                    'd',
-                    'regular',
-                    'center',
-                    colors.chateau
-                  )}
-                >
-                  {props.translations.play.copyright_for_audio}
-                </Text>
-              </View>
-            )}
+            ListFooterComponent={
+              item.key === '2'
+                ? () => (
+                    <View style={{ paddingHorizontal: 10, marginBottom: 10 }}>
+                      <Text
+                        style={Typography(
+                          props,
+                          'd',
+                          'regular',
+                          'center',
+                          colors.chateau
+                        )}
+                      >
+                        {props.translations.play.copyright_for_text + '\n'}
+                      </Text>
+                      <Text
+                        style={Typography(
+                          props,
+                          'd',
+                          'regular',
+                          'center',
+                          colors.chateau
+                        )}
+                      >
+                        {props.translations.play.copyright_for_audio}
+                      </Text>
+                    </View>
+                  )
+                : null
+            }
           />
         </View>
       )

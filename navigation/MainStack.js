@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
-import { AppState, StyleSheet, View } from 'react-native'
+import { AppState, StyleSheet, View, YellowBox } from 'react-native'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
 import { colors, scaleMultiplier } from '../constants'
@@ -21,6 +21,7 @@ import SplashScreen from '../screens/SplashScreen'
 import StorageScreen from '../screens/StorageScreen'
 import en from '../translations/en.json'
 import SetsRoot from './SetsRoot'
+YellowBox.ignoreWarnings(['Setting a timer'])
 
 i18n.translations = {
   en
@@ -38,9 +39,15 @@ function MainStack (props) {
     setAppState(change)
   }
 
+  function handleBlurStateChange (change) {
+    console.log(change)
+  }
+
   useEffect(() => {
+    console.log(appState)
     if (appState === 'inactive' || appState === 'background') {
       // hide screen during multitasking / going home
+      console.log('navigating')
       props.navigation.navigate('Splash')
 
       // store current time for timeout checking later
@@ -77,11 +84,16 @@ function MainStack (props) {
       'change',
       handleAppStateChange
     )
+    const blurUnsubscribe = AppState.addEventListener(
+      'blur',
+      handleBlurStateChange
+    )
 
     return function cleanup () {
       AppState.removeEventListener('change', handleAppStateChange)
+      AppState.removeEventListener('blur', handleBlurStateChange)
     }
-  }, [props.security.securityEnabled, props.security.activateOnSwitch])
+  }, [])
 
   const forFade = ({ current }) => ({
     cardStyle: {

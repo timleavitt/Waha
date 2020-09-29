@@ -2,13 +2,15 @@
 import { decode, encode } from 'base-64'
 import * as Font from 'expo-font'
 import * as ScreenOrientation from 'expo-screen-orientation'
+import { DeviceMotion } from 'expo-sensors'
 import React, { useEffect, useState } from 'react'
+// import { StatusBar } from 'react-native'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
 import LoadingView from './components/LoadingView'
+// import { colors } from './constants'
 import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
-
 if (!global.btoa) {
   global.btoa = encode
 }
@@ -34,11 +36,29 @@ export default function App () {
   ScreenOrientation.supportsOrientationLockAsync(
     ScreenOrientation.OrientationLock.PORTRAIT
   ).then(isSupported => {
-    if (isSupported)
+    if (isSupported) {
       ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
-    else
+      // ScreenOrientation.lockPlatformAsync({
+      //   screenOrientationConstantAndroid: 9
+      // })
+    } else
       ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)
   })
+
+  DeviceMotion.addListener(({ orientation }) => {
+    // if (orientation === 0) console.log('portrait')
+    // ScreenOrientation.lockPlatformAsync({
+    //   screenOrientationConstantAndroid: 1
+    // })
+    // else if (orientation === 180) console.log('upside down portrait')
+    // ScreenOrientation.lockPlatformAsync({
+    //   screenOrientationConstantAndroid: 9
+    // })
+  })
+
+  // ScreenOrientation.getOrientationLockAsync().then(orientation =>
+  //   console.log(ScreenOrientation.OrientationLock[orientation])
+  // )
 
   // loads up all the fonts for all languages
   async function loadFonts () {
@@ -72,6 +92,10 @@ export default function App () {
     return (
       <Provider store={store}>
         <PersistGate loading={<LoadingView />} persistor={persistor}>
+          {/* <StatusBar
+            backgroundColor={colors.aquaHaze}
+            barStyle='dark-content'
+          /> */}
           <Root />
         </PersistGate>
       </Provider>
