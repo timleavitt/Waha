@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import {
   FlatList,
+  LogBox,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  YellowBox
+  View
 } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
 import TagGroup from 'react-native-tag-group'
@@ -15,7 +15,7 @@ import SetItem from '../components/SetItem'
 import { colors, getSetInfo, scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
 
-YellowBox.ignoreWarnings([
+LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state'
 ])
 

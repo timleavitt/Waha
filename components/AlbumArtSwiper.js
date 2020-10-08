@@ -166,6 +166,7 @@ function AlbumArtSwiper (props) {
           <FlatList
             data={getTextData(item.key)}
             renderItem={renderTextContent}
+            initialNumToRender={3}
             keyExtractor={item => item.header}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={() => <View style={{ height: 10 }} />}

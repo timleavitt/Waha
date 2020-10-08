@@ -5,7 +5,7 @@
     "description": "Mobilize the Believer. Disciple the Lost.",
     "privacy": "public",
     "platforms": ["ios", "android"],
-    "orientation": "default",
+    "orientation": "portrait",
     "primaryColor": "#e43c44",
     "version": "0.6.2",
     "splash": {

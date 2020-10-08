@@ -1,7 +1,8 @@
 import useInterval from '@use-it/interval'
-import { Audio } from 'expo-av'
+import { Audio, Video } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
 import { useKeepAwake } from 'expo-keep-awake'
+import * as ScreenOrientation from 'expo-screen-orientation'
 import { DeviceMotion } from 'expo-sensors'
 import React, { useEffect, useRef, useState } from 'react'
 import {
@@ -9,7 +10,6 @@ import {
   Alert,
   Animated,
   Dimensions,
-  StatusBar,
   StyleSheet,
   Text,
   View
@@ -32,8 +32,6 @@ import {
 } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
 
-console.disableYellowBox = true
-
 function PlayScreen (props) {
   //+ AUDIO / VIDEO STATE
 
@@ -48,7 +46,7 @@ function PlayScreen (props) {
   const [isMediaLoaded, setIsMediaLoaded] = useState(false)
 
   // keeps track of if the video is buffering
-  const [isVideoBuffering, setIsVideoBuffering] = useState(false)
+  // const [isVideoBuffering, setIsVideoBuffering] = useState(false)
 
   // keeps track of whether the audio/video file is playing or paused
   const [isMediaPlaying, setIsMediaPlaying] = useState(false)
@@ -58,7 +56,7 @@ function PlayScreen (props) {
 
   // keeps track of if the seeker should update every second
   // note: only time it shouldn't is during seeking, skipping, or loading a new //  chapter
-  const shouldTickUpdate = useRef(false)
+  const shouldThumbUpdate = useRef(false)
 
   //+ CHAPTER SOURCES STATE
 
@@ -84,7 +82,67 @@ function PlayScreen (props) {
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
 
   // keeps track of the current screen orientation for fullscreen videos
-  const [screenOrientation, setScreenOrientation] = useState(0)
+  const [fullscreenStatus, setFullscreenStatus] = useState(
+    Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS
+  )
+  const [deviceOrientation, setDeviceOrientation] = useState('portrait_up')
+  const [deviceRotation, setDeviceRotation] = useState({})
+  const [lastPortraitOrientation, setLastPortraitOrientation] = useState(
+    ScreenOrientation.OrientationLock.PORTRAIT_UP
+  )
+
+  // handle device rotation changes and set device orientation accordingly
+  useEffect(() => {
+    if (deviceRotation) {
+      if (fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS) {
+        if (
+          video &&
+          trainingSource &&
+          deviceRotation &&
+          (deviceRotation.alpha > 1 || deviceRotation.alpha < -1) &&
+          deviceRotation.beta > -0.2 &&
+          deviceRotation.beta < 0.2
+        )
+          video.presentFullscreenPlayer()
+        else if (deviceRotation.beta < -0.7) {
+          ScreenOrientation.supportsOrientationLockAsync(
+            ScreenOrientation.OrientationLock.PORTRAIT_DOWN
+          ).then(isSupported => {
+            if (isSupported) {
+              ScreenOrientation.lockAsync(
+                ScreenOrientation.OrientationLock.PORTRAIT_DOWN
+              )
+              setLastPortraitOrientation(
+                ScreenOrientation.OrientationLock.PORTRAIT_DOWN
+              )
+            }
+          })
+        } else if (deviceRotation.beta > 0.7) {
+          setLastPortraitOrientation(
+            ScreenOrientation.OrientationLock.PORTRAIT_UP
+          )
+          ScreenOrientation.lockAsync(
+            ScreenOrientation.OrientationLock.PORTRAIT_UP
+          )
+        }
+      }
+    }
+  }, [deviceRotation, video, trainingSource])
+
+  useEffect(() => {
+    if (fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT) {
+      ScreenOrientation.supportsOrientationLockAsync(
+        ScreenOrientation.OrientationLock.ALL
+      ).then(isSupported => {
+        if (isSupported)
+          ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.ALL)
+        else
+          ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.DEFAULT)
+      })
+    } else {
+      ScreenOrientation.lockAsync(lastPortraitOrientation)
+    }
+  }, [fullscreenStatus])
 
   // keeps the screen always awake on this screen
   useKeepAwake()
@@ -139,6 +197,16 @@ function PlayScreen (props) {
     // set sources and download stuff if we need to
     setSources()
 
+    // check if we can get any device motion data and if so, add a listener
+    DeviceMotion.isAvailableAsync().then(isAvailable => {
+      if (isAvailable) {
+        DeviceMotion.setUpdateInterval(1000)
+        DeviceMotion.addListener(({ rotation }) => {
+          setDeviceRotation(rotation)
+        })
+      }
+    })
+
     // when leaving the screen, cancel the interval timer and unload the audio
     //  file
     return function cleanup () {
@@ -151,6 +219,8 @@ function PlayScreen (props) {
         video.unloadAsync()
         setVideo(null)
       }
+      // re-lock orientation to portrait up
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)
     }
   }, [])
 
@@ -281,11 +351,7 @@ function PlayScreen (props) {
   //- once we set a chapter 1 source, load it up
   useEffect(() => {
     if (fellowshipSource) {
-      try {
-        loadAudioFile(fellowshipSource)
-      } catch (error) {
-        console.log(error)
-      }
+      loadMedia('audio', fellowshipSource)
     }
   }, [fellowshipSource])
 
@@ -294,44 +360,22 @@ function PlayScreen (props) {
   useEffect(() => {
     if (props.route.params.lessonType === 'v')
       if (props.isConnected && !isMediaLoaded && trainingSource)
-        loadVideoFile(trainingSource)
+        loadVideoFile('video', trainingSource)
   }, [props.isConnected])
 
   //- loads an audio file, sets the length, and starts playing it
-  async function loadAudioFile (source) {
+  async function loadMedia (type, source) {
+    var media = type === 'video' ? video : audio
     try {
-      await audio
+      await media
         .loadAsync({ uri: source }, { progressUpdateIntervalMillis: 1000 })
         .then(playbackStatus => {
           setMediaLength(playbackStatus.durationMillis)
-          audio.setStatusAsync({
+          media.setStatusAsync({
             progressUpdateIntervalMillis: 1000,
             shouldPlay: true
           })
-          shouldTickUpdate.current = true
-          setIsMediaPlaying(true)
-        })
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  //- loads an video file, sets the length, and starts playing it
-  //! note: basically the same as loadAudioFile()
-  async function loadVideoFile (source) {
-    try {
-      await video
-        .loadAsync(
-          { uri: trainingSource },
-          { progressUpdateIntervalMillis: 100 }
-        )
-        .then(playbackStatus => {
-          setMediaLength(playbackStatus.durationMillis)
-          video.setStatusAsync({
-            progressUpdateIntervalMillis: 1000,
-            shouldPlay: true
-          })
-          shouldTickUpdate.current = true
+          shouldThumbUpdate.current = true
           setIsMediaPlaying(true)
         })
     } catch (error) {
@@ -343,16 +387,10 @@ function PlayScreen (props) {
   //! only for lessons with videos
   useEffect(() => {
     if (video && trainingSource) {
-      loadVideoFile(
+      loadMedia(
+        'video',
         getLessonInfo('videoSource', props.route.params.thisLesson.id)
       )
-
-      // orientation listener to activate full screen when switched to landscape and vice versa
-      DeviceMotion.addListener(({ orientation }) => {
-        if (orientation !== screenOrientation) {
-          setScreenOrientation(orientation)
-        }
-      })
     }
   }, [video, trainingSource])
 
@@ -360,7 +398,7 @@ function PlayScreen (props) {
   //! only for audio book lesosns
   useEffect(() => {
     if (props.route.params.lessonType === 'a' && storySource) {
-      loadAudioFile(storySource)
+      loadMedia('audio', storySource)
     }
   }, [storySource])
 
@@ -368,36 +406,36 @@ function PlayScreen (props) {
 
   //- plays the audio if it's currently paused and pauses the audio if it's currently playing
   function playHandler () {
+    var media = video ? video : audio
+    media.action = isMediaPlaying ? media.pauseAsync : media.playAsync
+
+    startPlayPauseAnimation()
+    setIsMediaPlaying(currentStatus => !currentStatus)
+    updateThumb()
+
     // only play/pause if we're loaded
     if (isMediaLoaded) {
-      // if a video is loaded, it takes priority
-      if (video) {
-        // update the seeker position
-        updateSeekerTick()
+      media.action()
+    }
+  }
 
-        // play or pause
-        isMediaPlaying ? video.pauseAsync() : video.playAsync()
-      } else {
-        // start the animation for the play icon over the album art pane
-        startPlayPauseAnimation()
+  //- plays media from a specified location
+  function playFromLocation (value) {
+    console.log(value)
+    shouldThumbUpdate.current = false
+    setSeekPosition(value)
 
-        // update the seeker position
-        updateSeekerTick()
-
-        // play or pause
-        isMediaPlaying
-          ? audio.setStatusAsync({
-              progressUpdateIntervalMillis: 1000,
-              shouldPlay: false
-            })
-          : audio.setStatusAsync({
-              progressUpdateIntervalMillis: 1000,
-              shouldPlay: true
-            })
-      }
-
-      // update playing state
-      setIsMediaPlaying(currentStatus => !currentStatus)
+    var media = video ? video : audio
+    // only play/pause if we're loaded
+    if (isMediaLoaded) {
+      media
+        .setStatusAsync({
+          shouldPlay: isMediaPlaying ? true : false,
+          positionMillis: value
+        })
+        .then(() => {
+          shouldThumbUpdate.current = true
+        })
     }
   }
 
@@ -419,148 +457,36 @@ function PlayScreen (props) {
   }
 
   //- interval for updating seeker
-  useInterval(updateSeekerTick, 1000)
+  useInterval(updateThumb, 1000)
 
   //- gets called every second by our timer and updates the seeker position based on the progress through the media file
-  async function updateSeekerTick () {
+  async function updateThumb () {
+    var media = video ? video : audio
+
     // only update our seeker position if our state allows
-    if (shouldTickUpdate.current) {
-      // if a video is loaded, it takes priority
-      if (video) {
-        try {
-          // get the current progress through the video and update state
-          await video.getStatusAsync().then(playbackStatus => {
-            setSeekPosition(playbackStatus.positionMillis)
-          })
-        } catch (error) {
-          console.log(error)
-        }
-      } else {
-        try {
-          // get the current progress through the audio and update state
-          await audio.getStatusAsync().then(playbackStatus => {
-            setSeekPosition(playbackStatus.positionMillis)
-          })
-        } catch (error) {
-          console.log(error)
-        }
-      }
+    if (shouldThumbUpdate.current) {
+      // get the current progress through the media and update state
+      await media
+        .getStatusAsync()
+        .then(playbackStatus => {
+          setSeekPosition(playbackStatus.positionMillis)
+        })
+        .catch(error => console.log(error))
     }
-  }
-
-  //- starts playing loaded audio from the position the user releases the thumb
-  //-   at
-  //! note: catchs are empty because of a weird ios-only warning appearing
-  //!   that doesn't seem to affect any functionality--it's being ignored
-  function onSeekRelease (value) {
-    // if a video is loaded, it takes priority
-    if (video) {
-      // if media is playing, continue playing it on seek release
-      //! note: it pauses and then plays because of some strange behavior
-      if (isMediaPlaying) {
-        video
-          .setStatusAsync({
-            shouldPlay: false,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-        video
-          .setStatusAsync({
-            shouldPlay: true,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-      } else {
-        video
-          .setStatusAsync({
-            shouldPlay: false,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-      }
-    } else {
-      if (isMediaPlaying) {
-        audio
-          .setStatusAsync({
-            shouldPlay: false,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-        audio
-          .setStatusAsync({
-            shouldPlay: true,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-      } else {
-        audio
-          .setStatusAsync({
-            shouldPlay: false,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-      }
-    }
-
-    shouldTickUpdate.current = true
-    setSeekPosition(value)
-  }
-
-  //- sets shouldTickUpdate to flase to prevent the seeker from updating while dragging
-  function onSeekDrag (value) {
-    shouldTickUpdate.current = false
-  }
-
-  //- skips an amount of milliseconds through the audio track
-  function skip (amount) {
-    if (video) {
-      isMediaPlaying
-        ? video.setStatusAsync({
-            shouldPlay: true,
-            positionMillis: seekPosition + amount
-          })
-        : video.setStatusAsync({
-            shouldPlay: false,
-            positionMillis: seekPosition + amount
-          })
-    } else {
-      isMediaPlaying
-        ? audio.setStatusAsync({
-            shouldPlay: true,
-            positionMillis: seekPosition + amount
-          })
-        : audio.setStatusAsync({
-            shouldPlay: false,
-            positionMillis: seekPosition + amount
-          })
-    }
-    setSeekPosition(seekPosition => seekPosition + amount)
   }
 
   //- changes the active chapter
   function changeChapter (chapter) {
     if (chapter !== activeChapter) {
       audio.unloadAsync()
-      shouldTickUpdate.current = false
+      shouldThumbUpdate.current = false
       if (chapter === 'fellowship') {
         setSeekPosition(0)
-        loadAudioFile(fellowshipSource)
+        loadMedia('audio', fellowshipSource)
       } else if (chapter === 'story') {
         setSeekPosition(0)
         if (storySource) {
-          loadAudioFile(storySource)
+          loadMedia('audio', storySource)
         }
         // auto scroll to scripture if
         //  1. there's no audio source
@@ -569,7 +495,7 @@ function PlayScreen (props) {
         if (!props.route.params.thisLesson.hasAudio) swipeToScripture()
       } else if (chapter === 'application') {
         setSeekPosition(0)
-        loadAudioFile(applicationSource)
+        loadMedia('audio', applicationSource)
       } else if (chapter === 'training') {
         setIsMediaLoaded(false)
         setSeekPosition(0)
@@ -606,12 +532,12 @@ function PlayScreen (props) {
         switch (props.route.params.lessonType) {
           case 'qa':
             if (!props.isDownloading) {
-              changeChapter('application')
+              setTimeout(() => changeChapter('application'), 1000)
             }
             break
           case 'qav':
             if (!props.downloads[props.route.params.thisLesson.id + 'v']) {
-              changeChapter('training')
+              setTimeout(() => changeChapter('training'), 1000)
             }
             break
           case 'a':
@@ -640,6 +566,7 @@ function PlayScreen (props) {
   useEffect(() => {
     if (isMediaPlaying) playHandler()
   }, [props.navigation.isFocused()])
+
   //+ OTHER FUNCTIONS
 
   //- scrolls the album art swiper to the scripture pane
@@ -676,13 +603,6 @@ function PlayScreen (props) {
         break
     }
   }, [props.downloads])
-
-  //- if screen is rotated to landscape, automatically enter full screen
-  useEffect(() => {
-    if (screenOrientation === -90 || screenOrientation === 90) {
-      video.presentFullscreenPlayer()
-    }
-  }, [screenOrientation])
 
   //- switches the complete status of a lesson to the opposite of its current
   //-  status
@@ -728,8 +648,8 @@ function PlayScreen (props) {
   var titleSection = (
     <View style={styles.titlesContainer}>
       <Text
-        style={Typography(props, 'h2', 'black', 'center', colors.shark)}
-        numberOfLines={1}
+        style={Typography(props, 'h3', 'black', 'center', colors.shark)}
+        numberOfLines={2}
       >
         {props.route.params.thisLesson.title}
       </Text>
@@ -746,7 +666,7 @@ function PlayScreen (props) {
           }
         ]}
       >
-        <StatusBar hidden />
+        {/* <StatusBar hidden /> */}
         {/* don't display title section on audio book lessons */}
         {props.route.params.lessonType !== 'a' &&
         props.route.params.lessonType !== ''
@@ -768,9 +688,10 @@ function PlayScreen (props) {
         ) : activeChapter === 'training' ? (
           <VideoPlayer
             setVideo={setVideo}
+            video={video}
             setIsMediaLoaded={setIsMediaLoaded}
             setIsMediaPlaying={setIsMediaPlaying}
-            setIsVideoBuffering={setIsVideoBuffering}
+            // setIsVideoBuffering={setIsVideoBuffering}
             changeChapter={changeChapter}
             isMediaLoaded={isMediaLoaded}
             lessonType={props.route.params.lessonType}
@@ -778,6 +699,9 @@ function PlayScreen (props) {
               getLessonInfo('index', props.route.params.thisLesson.id)
             )}
             changeCompleteStatus={changeCompleteStatus}
+            setFullScreenStatus={status => setFullscreenStatus(status)}
+            fullscreenStatus={fullscreenStatus}
+            lastPortraitOrientation={lastPortraitOrientation}
           />
         ) : (
           <AlbumArtSwiper
@@ -808,17 +732,17 @@ function PlayScreen (props) {
             ) : null}
             <Scrubber
               value={seekPosition}
-              onSlidingComplete={onSeekRelease}
-              onValueChange={onSeekDrag}
+              onSlidingComplete={playFromLocation}
+              onValueChange={() => (shouldThumbUpdate.current = false)}
               maximumValue={mediaLength}
               seekPosition={seekPosition}
             />
             <PlayPauseSkip
               isMediaPlaying={isMediaPlaying}
-              isVideoBuffering={isVideoBuffering}
+              // isVideoBuffering={isVideoBuffering}
               onPlayPress={playHandler}
               onSkipPress={value => {
-                skip(value)
+                playFromLocation(seekPosition + value)
               }}
             />
           </View>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, getLessonInfo, scaleMultiplier } from '../constants'
 import { changeActiveGroup, deleteGroup } from '../redux/actions/groupsActions'
@@ -60,7 +60,22 @@ function GroupItem (props) {
     deleteButton = (
       <TouchableOpacity
         style={styles.minusButtonContainer}
-        onPress={() => props.deleteGroup(props.groupName)}
+        onPress={() => {
+          Alert.alert(
+            props.translations.groups.popups.delete_group_title,
+            props.translations.groups.popups.delete_group_message,
+            [
+              {
+                text: props.translations.general.cancel,
+                onPress: () => {}
+              },
+              {
+                text: props.translations.general.ok,
+                onPress: () => props.deleteGroup(props.groupName)
+              }
+            ]
+          )
+        }}
       >
         <Icon
           name='minus-filled'
@@ -225,7 +240,8 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     groups: state.groups,
     activeGroup: activeGroup,
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    translations: state.database[activeGroup.language].translations
   }
 }
 

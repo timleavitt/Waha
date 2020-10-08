@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import ModalButton from '../components/ModalButton'
 import OptionsModal from '../components/OptionsModal'
 import Separator from '../components/Separator'
-import { getLessonInfo, getSetInfo } from '../constants'
+import { getLessonInfo } from '../constants'
 import {
   logShareApp,
   logShareAudio,
@@ -21,18 +21,18 @@ function ShareModal (props) {
       case 'app':
         logShareApp(props.lesson)
         Share.share({
-          message:
-            getSetInfo('category', props.set.id) === 'mt'
-              ? Platform.OS === 'ios'
-                ? 'www.appstorelink.com' +
-                  ' ' +
-                  props.translations.general.share_toolkit_unlock_code
-                : 'www.playstorelink.com' +
-                  ' ' +
-                  props.translations.general.share_toolkit_unlock_code
-              : Platform.OS === 'ios'
-              ? 'www.waha.app'
-              : 'www.waha.app'
+          message: 'https://waha.ck.page'
+          // getSetInfo('category', props.set.id) === 'mt'
+          //   ? Platform.OS === 'ios'
+          //     ? 'https://waha.ck.page' +
+          //       ' ' +
+          //       props.translations.general.share_toolkit_unlock_code
+          //     : 'https://waha.ck.page' +
+          //       ' ' +
+          //       props.translations.general.share_toolkit_unlock_code
+          //   : Platform.OS === 'ios'
+          //   ? 'www.waha.app'
+          //   : 'www.waha.app'
         })
         break
       // share the passage text for this lesson

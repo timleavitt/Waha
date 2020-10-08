@@ -112,7 +112,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '09')
+            props.setPattern(pattern => pattern + '08')
             playNote(8)
           }}
         >

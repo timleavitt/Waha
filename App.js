@@ -1,8 +1,6 @@
 // only here because of wack errors, DON'T DELETE
 import { decode, encode } from 'base-64'
 import * as Font from 'expo-font'
-import * as ScreenOrientation from 'expo-screen-orientation'
-import { DeviceMotion } from 'expo-sensors'
 import React, { useEffect, useState } from 'react'
 // import { StatusBar } from 'react-native'
 import { Provider } from 'react-redux'
@@ -31,30 +29,6 @@ export default function App () {
   }, [])
 
   //+ FUNCTIONS
-
-  // lock orientation to portrait or upside down
-  ScreenOrientation.supportsOrientationLockAsync(
-    ScreenOrientation.OrientationLock.PORTRAIT
-  ).then(isSupported => {
-    if (isSupported) {
-      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
-      // ScreenOrientation.lockPlatformAsync({
-      //   screenOrientationConstantAndroid: 9
-      // })
-    } else
-      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)
-  })
-
-  DeviceMotion.addListener(({ orientation }) => {
-    // if (orientation === 0) console.log('portrait')
-    // ScreenOrientation.lockPlatformAsync({
-    //   screenOrientationConstantAndroid: 1
-    // })
-    // else if (orientation === 180) console.log('upside down portrait')
-    // ScreenOrientation.lockPlatformAsync({
-    //   screenOrientationConstantAndroid: 9
-    // })
-  })
 
   // ScreenOrientation.getOrientationLockAsync().then(orientation =>
   //   console.log(ScreenOrientation.OrientationLock[orientation])

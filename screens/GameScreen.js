@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import {
   Dimensions,
   Image,
+  Keyboard,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -23,6 +25,8 @@ function GameScreen (props) {
   //+ CONSTRUCTOR
 
   useEffect(() => {
+    Keyboard.dismiss()
+
     if (pattern.includes(props.security.code)) {
       if (!props.security.isMuted) {
         var note = new Audio.Sound()
@@ -32,7 +36,7 @@ function GameScreen (props) {
       }
       props.setIsTimedOut(false)
       if (props.navigation.canGoBack()) {
-        props.navigation.goBack()
+        if (Platform.OS === 'ios') props.navigation.goBack()
         props.navigation.goBack()
       } else
         props.navigation.reset({
