@@ -1,4 +1,5 @@
 import ViewPager from '@react-native-community/viewpager'
+import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
 import {
   Animated,
@@ -6,9 +7,9 @@ import {
   Image,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native'
+import WahaButton from '../components/WahaButton'
 import { colors, scaleMultiplier } from '../constants'
 
 function Onboarding (props) {
@@ -99,6 +100,12 @@ function Onboarding (props) {
 
   return (
     <View style={{ flex: 1 }}>
+      {/* <TouchableOpacity
+        style={{ position: 'absolute', marginTop: 20, marginLeft: 10 }}
+        onPress={props.onFinish}
+      >
+        <Icon name='cancel' color={colors.oslo} size={40 * scaleMultiplier} />
+      </TouchableOpacity> */}
       <ViewPager
         ref={ref => (ref ? setPagerRef(ref) : null)}
         // showPageIndicator
@@ -111,7 +118,7 @@ function Onboarding (props) {
       <View
         style={{
           width: '100%',
-          height: 80 * scaleMultiplier,
+          // height: 200 * scaleMultiplier,
           flexDirection: 'column',
           alignSelf: 'flex-end',
           alignItems: 'center',
@@ -119,10 +126,32 @@ function Onboarding (props) {
           padding: 20
         }}
       >
+        <WahaButton
+          type='filled'
+          color={
+            onboardingPage === pages.length - 1 ? colors.apple : colors.blue
+          }
+          onPress={
+            onboardingPage === pages.length - 1
+              ? props.onFinish
+              : () => pagerRef.setPage(onboardingPage + 1)
+          }
+          label={
+            onboardingPage === pages.length - 1
+              ? i18n.t('start')
+              : i18n.t('next')
+          }
+          style={{
+            width: Dimensions.get('window').width - 40,
+            marginHorizontal: 20,
+            height: 68 * scaleMultiplier
+          }}
+        />
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           {dots}
         </View>
-        <Animated.View
+
+        {/* <Animated.View
           style={{
             position: 'absolute',
             width: '100%',
@@ -131,10 +160,10 @@ function Onboarding (props) {
           }}
         >
           {/* <TouchableOpacity onPress={props.onFinish}> */}
-          <TouchableOpacity onPress={props.onFinish}>
-            <Icon name='check' size={50} color={colors.tuna} />
-          </TouchableOpacity>
-        </Animated.View>
+        {/* <TouchableOpacity onPress={props.onFinish}>
+          <Icon name='check' size={50} color={colors.tuna} />
+        </TouchableOpacity> */}
+        {/* </Animated.View> */}
       </View>
       {/* <ViewPager ref={ref => (ref ? console.log(ref.setPage) : null)} /> */}
     </View>

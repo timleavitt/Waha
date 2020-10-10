@@ -12,11 +12,16 @@ import GroupItem from '../components/GroupItem'
 import GroupListHeader from '../components/GroupListHeader'
 import Separator from '../components/Separator'
 import { colors, scaleMultiplier } from '../constants'
+import AddEditGroupScreen from '../screens/AddEditGroupScreen'
 
 function GroupsScreen (props) {
   //+ STATE
 
   const [isEditing, setIsEditing] = useState(false)
+  const [showAddGroupModal, setShowAddGroupModal] = useState(false)
+  const [showEditGroupModal, setShowEditGroupModal] = useState(false)
+  const [groupName, setGroupName] = useState(props.activeGroup.name)
+  const [languageID, setLanguageID] = useState(props.activeGroup.languageID)
 
   //+ CONSTRUCTOR
 
@@ -28,21 +33,37 @@ function GroupsScreen (props) {
 
   function getNavOptions () {
     return {
+      headerStyle: {
+        backgroundColor: isEditing ? colors.blue : colors.aquaHaze
+      },
+      headerTitleStyle: {
+        color: isEditing ? colors.white : colors.shark
+      },
       headerRight: props.isRTL
-        ? () => <BackButton onPress={() => props.navigation.goBack()} />
+        ? () => (
+            <BackButton
+              color={isEditing ? colors.white : null}
+              onPress={() => props.navigation.goBack()}
+            />
+          )
         : () => (
             <TouchableOpacity
               style={styles.editButtonContainer}
               onPress={() => setIsEditing(old => !old)}
             >
               <Text
-                style={Typography(
-                  props,
-                  'h3',
-                  'regular',
-                  'center',
-                  colors.shark
-                )}
+                style={[
+                  Typography(
+                    props,
+                    'h3',
+                    isEditing ? 'medium' : 'regular',
+                    'center',
+                    isEditing ? colors.white : colors.shark
+                  ),
+                  {
+                    textDecorationLine: isEditing ? 'underline' : null
+                  }
+                ]}
               >
                 {isEditing
                   ? props.translations.groups.done_button_label
@@ -60,9 +81,9 @@ function GroupsScreen (props) {
                 style={Typography(
                   props,
                   'h3',
-                  'regular',
+                  props.isEditing ? 'medium' : 'regular',
                   'center',
-                  colors.shark
+                  isEditing ? colors.white : colors.shark
                 )}
               >
                 {isEditing
@@ -71,7 +92,12 @@ function GroupsScreen (props) {
               </Text>
             </TouchableOpacity>
           )
-        : () => <BackButton onPress={() => props.navigation.goBack()} />
+        : () => (
+            <BackButton
+              color={isEditing ? colors.white : null}
+              onPress={() => props.navigation.goBack()}
+            />
+          )
     }
   }
 
@@ -114,9 +140,11 @@ function GroupsScreen (props) {
       <GroupItem
         groupName={group.name}
         isEditing={isEditing}
-        goToEditGroupScreen={groupName =>
-          props.navigation.navigate('EditGroup', { groupName: groupName })
-        }
+        goToEditGroupScreen={groupName => {
+          setGroupName(groupName)
+          setShowEditGroupModal(true)
+          // props.navigation.navigate('EditGroup', { groupName: groupName })
+        }}
         emoji={group.emoji}
       />
     )
@@ -140,10 +168,14 @@ function GroupsScreen (props) {
                 styles.addGroupContainer,
                 { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
               ]}
-              onPress={() =>
-                props.navigation.navigate('AddGroup', {
-                  languageID: section.languageID
-                })
+              onPress={
+                () => {
+                  setLanguageID(section.languageID)
+                  setShowAddGroupModal(true)
+                }
+                // props.navigation.navigate('AddGroup', {
+                //   languageID: section.languageID
+                // })
               }
             >
               <View
@@ -191,6 +223,18 @@ function GroupsScreen (props) {
           </TouchableOpacity>
         }
       />
+      <AddEditGroupScreen
+        isVisible={showAddGroupModal}
+        hideModal={() => setShowAddGroupModal(false)}
+        type='AddGroup'
+        languageID={languageID}
+      />
+      <AddEditGroupScreen
+        isVisible={showEditGroupModal}
+        hideModal={() => setShowEditGroupModal(false)}
+        type='EditGroup'
+        groupName={groupName}
+      />
     </View>
   )
 }
@@ -235,7 +279,8 @@ function mapStateToProps (state) {
     translations: state.database[activeGroup.language].translations,
     isConnected: state.network.isConnected,
     font: state.database[activeGroup.language].font,
-    groups: state.groups
+    groups: state.groups,
+    activeGroup: activeGroup
   }
 }
 

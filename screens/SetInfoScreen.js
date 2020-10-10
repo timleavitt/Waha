@@ -1,5 +1,13 @@
 import React, { useEffect } from 'react'
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native'
+import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
 import SetItem from '../components/SetItem'
@@ -15,7 +23,7 @@ function SetInfoScreen (props) {
   function getNavOptions () {
     return {
       title:
-        props.route.params.category === 'core'
+        props.category === 'core'
           ? props.translations.add_set.header_foundational
           : props.translations.add_set.header_topical,
       headerRight: props.isRTL
@@ -30,7 +38,7 @@ function SetInfoScreen (props) {
   //+ CONSTRUCTOR
 
   useEffect(() => {
-    props.navigation.setOptions(getNavOptions())
+    // props.navigation.setOptions(getNavOptions())
   }, [])
 
   //+ FUNCTIONS
@@ -43,7 +51,7 @@ function SetInfoScreen (props) {
       })
 
       return (
-        <View
+        <TouchableOpacity
           style={{
             marginVertical: 10 * scaleMultiplier,
             justifyContent: 'center',
@@ -58,11 +66,11 @@ function SetInfoScreen (props) {
           >
             {scriptureList}
           </Text>
-        </View>
+        </TouchableOpacity>
       )
     } else
       return (
-        <View
+        <TouchableOpacity
           style={{
             marginVertical: 10 * scaleMultiplier,
             justifyContent: 'center',
@@ -72,42 +80,167 @@ function SetInfoScreen (props) {
           <Text style={Typography(props, 'h4', 'medium', 'left', colors.shark)}>
             {item.title}
           </Text>
-        </View>
+        </TouchableOpacity>
       )
   }
 
   return (
-    <View style={styles.screen}>
-      <View style={styles.studySetItemContainer}>
-        <SetItem thisSet={props.route.params.thisSet} mode='setinfo' />
-      </View>
-      <WahaButton
-        type='filled'
-        color={colors.apple}
-        onPress={() => {
-          props.addSet(props.activeGroup.name, props.route.params.thisSet)
-          props.route.params.showSnackbar()
-          props.navigation.goBack()
+    <SafeAreaView>
+      <Modal
+        isVisible={props.isVisible}
+        hasBackdrop={true}
+        onBackdropPress={props.hideModal}
+        backdropOpacity={0.3}
+        onSwipeComplete={props.hideModal}
+        swipeDirection={['down']}
+        propagateSwipe={true}
+        style={{
+          flex: 1,
+          justifyContent: 'flex-end',
+          margin: 0,
+          marginTop: 30
+          // marginVertical: 20 * scaleMultiplier
         }}
-        style={{ marginHorizontal: 20, marginVertical: 10 }}
-        label={props.translations.add_set.add_new_story_set_button_label}
-        extraComponent={
-          <Icon
-            style={{ marginHorizontal: 10 }}
-            color={colors.white}
-            size={36 * scaleMultiplier}
-            name='playlist-add'
+      >
+        <View
+          style={{
+            backgroundColor: colors.white,
+            flex: 1,
+            borderTopLeftRadius: 15,
+            borderTopRightRadius: 15
+          }}
+        >
+          <View
+            style={{
+              width: '100%',
+              // height: 50 * scaleMultiplier,
+              flexDirection: 'row',
+              alignItems: 'center',
+              padding: 10
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                props.hideModal()
+              }}
+              style={{
+                width: 45 * scaleMultiplier,
+                height: 45 * scaleMultiplier
+              }}
+            >
+              <Icon
+                name='cancel'
+                size={45 * scaleMultiplier}
+                color={colors.oslo}
+              />
+            </TouchableOpacity>
+            <View style={{ flex: 1 }}>
+              <Text
+                style={Typography(
+                  props,
+                  'h3',
+                  'medium',
+                  'center',
+                  colors.shark
+                )}
+              >
+                {props.type === 'AddGroup'
+                  ? props.translations.add_edit_group.header_add
+                  : props.translations.add_edit_group.header_edit}
+              </Text>
+            </View>
+            <View
+              style={{
+                width: 45 * scaleMultiplier,
+                height: 45 * scaleMultiplier
+              }}
+            />
+          </View>
+          <View style={styles.studySetItemContainer}>
+            <SetItem thisSet={props.thisSet} mode='setinfo' />
+          </View>
+          <WahaButton
+            type='filled'
+            color={colors.apple}
+            onPress={() => {
+              props.addSet(props.activeGroup.name, props.thisSet)
+              props.showSnackbar()
+              props.hideModal()
+            }}
+            style={{ marginHorizontal: 20, marginVertical: 10 }}
+            label={props.translations.add_set.add_new_story_set_button_label}
+            extraComponent={
+              <Icon
+                style={{ marginHorizontal: 10 }}
+                color={colors.white}
+                size={36 * scaleMultiplier}
+                name='playlist-add'
+              />
+            }
           />
-        }
-      />
-      <FlatList
-        data={props.activeDatabase.lessons.filter(
-          lesson =>
-            props.route.params.thisSet.id === getLessonInfo('setID', lesson.id)
-        )}
-        renderItem={({ item }) => renderLessonInfoItem(item)}
-      />
-    </View>
+          {/* <ScrollView> */}
+          <View
+            style={{
+              width: '100%',
+              flex: 1,
+              alignItems: 'center'
+            }}
+            onStartShouldSetResponder={(): boolean => true}
+          >
+            <FlatList
+              nestedScrollEnabled
+              keyExtractor={item => item.id}
+              data={props.activeDatabase.lessons.filter(
+                lesson => props.thisSet.id === getLessonInfo('setID', lesson.id)
+              )}
+              renderItem={({ item }) => renderLessonInfoItem(item)}
+            />
+          </View>
+          {/* <View
+          style={{
+            width: '100%',
+            flex: 1,
+            alignItems: 'center'
+          }}
+        >
+          <FlatList
+            data={groupIcons}
+            bounces={false}
+            nestedScrollEnabled
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  width: 50 * scaleMultiplier,
+                  height: 50 * scaleMultiplier,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  padding: 2,
+                  // borderWidth: 0,
+                  // borderColor: item === emoji ? colors.blue : null,
+                  borderRadius: 10
+                  // backgroundColor: item === emoji ? colors.blue + '38' : null
+                }}
+                // onPress={() => setEmoji(item)}
+              >
+                <Image
+                  style={{
+                    width: 40 * scaleMultiplier,
+                    height: 40 * scaleMultiplier
+                  }}
+                  source={groupIconSources[item]}
+                />
+              </View>
+            )}
+            keyExtractor={item => item}
+            numColumns={Math.floor(
+              (Dimensions.get('window').width - 50) / (50 * scaleMultiplier)
+            )}
+          />
+        </View> */}
+          {/* </ScrollView> */}
+        </View>
+      </Modal>
+    </SafeAreaView>
   )
 }
 

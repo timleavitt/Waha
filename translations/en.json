@@ -27,6 +27,7 @@
   "body3": "Each story brings insight for your group to discover the love and purpose of God.",
   "prev": "Previous",
   "next": "Next",
+  "start": "Start",
   "finish": "Finish",
   "loadingMessage": "Downloading necessary files...",
   "errorMessage": "Sorry, there was a problem during fetching. Please check your connection and try again.",

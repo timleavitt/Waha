@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import {
-  FlatList,
-  LogBox,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native'
+import { FlatList, LogBox, StyleSheet, Text, View } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
 import TagGroup from 'react-native-tag-group'
 import { connect } from 'react-redux'
+import BackButton from '../components/BackButton'
 import Separator from '../components/Separator'
 import SetItem from '../components/SetItem'
 import { colors, getSetInfo, scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
-
+import SetInfoScreen from '../screens/SetInfoScreen'
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state'
 ])
@@ -28,6 +22,9 @@ function AddSetScreen (props) {
   const [activeTags, setActiveTags] = useState([])
   const [tagSelectRef, setTagSelectRef] = useState()
   const [refresh, setRefresh] = useState(false)
+
+  const [showSetInfoModal, setShowSetInfoModal] = useState(false)
+  const [setInModal, setSetInModal] = useState({})
 
   useEffect(() => {
     switch (props.route.params.category) {
@@ -69,25 +66,9 @@ function AddSetScreen (props) {
       title: headerTitle,
       headerLeft: props.isRTL
         ? () => <View></View>
-        : () => (
-            <TouchableOpacity onPress={() => props.navigation.goBack()}>
-              <Icon
-                name='cancel'
-                size={45 * scaleMultiplier}
-                color={colors.oslo}
-              />
-            </TouchableOpacity>
-          ),
+        : () => <BackButton onPress={() => props.navigation.goBack()} />,
       headerRight: props.isRTL
-        ? () => (
-            <TouchableOpacity onPress={() => props.navigation.goBack()}>
-              <Icon
-                name='cancel'
-                size={45 * scaleMultiplier}
-                color={colors.oslo}
-              />
-            </TouchableOpacity>
-          )
+        ? () => <BackButton onPress={() => props.navigation.goBack()} />
         : () => <View></View>
     }
   }
@@ -137,14 +118,8 @@ function AddSetScreen (props) {
         isSmall={false}
         mode='addset'
         onSetSelect={() => {
-          props.navigation.navigate('SetInfo', {
-            category: props.route.params.category,
-            thisSet: setList.item,
-            showSnackbar: () => {
-              setShowSnackbar(true)
-              setTimeout(() => setShowSnackbar(false), 2000)
-            }
-          })
+          setSetInModal(setList.item)
+          setShowSetInfoModal(true)
         }}
       />
     )
@@ -245,6 +220,16 @@ function AddSetScreen (props) {
           textAlign: 'center'
         }}
         backgroundColor={colors.apple}
+      />
+      <SetInfoScreen
+        isVisible={showSetInfoModal}
+        hideModal={() => setShowSetInfoModal(false)}
+        category={props.route.params.category}
+        thisSet={setInModal}
+        showSnackbar={() => {
+          setShowSnackbar(true)
+          setTimeout(() => setShowSnackbar(false), 2000)
+        }}
       />
     </View>
   )

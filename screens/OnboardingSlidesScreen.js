@@ -1,6 +1,6 @@
 import i18n from 'i18n-js'
 import React, { useEffect } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { SafeAreaView, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import Onboarding from '../components/Onboarding'
 import { colors } from '../constants'
@@ -39,7 +39,7 @@ function OnboardingSlidesScreen (props) {
   //+ RENDER
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <Onboarding
         sources={[
           require('../assets/onboarding/onboarding1.png'),
@@ -61,7 +61,7 @@ function OnboardingSlidesScreen (props) {
         ]}
         onFinish={finishOnboarding}
       />
-    </View>
+    </SafeAreaView>
   )
 }
 

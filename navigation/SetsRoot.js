@@ -21,7 +21,7 @@ function SetsRoot (props) {
         headerTitleAlign: 'center',
         headerMode: 'float'
       }}
-      mode='modal'
+      mode='card'
     >
       {/* Study Set Screen */}
       <Stack.Screen
