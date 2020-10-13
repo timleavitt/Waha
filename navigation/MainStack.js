@@ -107,7 +107,7 @@ function MainStack (props) {
   return (
     //global navigation options
     <Stack.Navigator
-      initialRouteName={props.security.securityEnabled ? 'Game' : 'SetsRoot'}
+      initialRouteName={props.security.securityEnabled ? 'Game' : 'SetTabs'}
       screenOptions={{
         gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
         gestureResponseDistance: {

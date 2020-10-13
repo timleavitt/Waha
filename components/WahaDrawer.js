@@ -1,12 +1,6 @@
 import * as WebBrowser from 'expo-web-browser'
 import React, { useState } from 'react'
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native'
+import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
 import { connect } from 'react-redux'
 import DrawerItem from '../components/DrawerItem'
@@ -38,6 +32,7 @@ function WahaDrawer (props) {
             style={{ backgroundColor: colors.athens }}
             emoji={props.activeGroup.emoji}
             size={120}
+            onPress={() => setShowEditGroupModal(true)}
           />
         </View>
         <Text
@@ -46,7 +41,7 @@ function WahaDrawer (props) {
         >
           {props.activeGroup.name}
         </Text>
-        <View style={styles.pencilIconContainer}>
+        {/* <View style={styles.pencilIconContainer}>
           <TouchableOpacity onPress={() => setShowEditGroupModal(true)}>
             <Icon
               name='pencil'
@@ -54,7 +49,7 @@ function WahaDrawer (props) {
               color={colors.white}
             />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
       <View style={{ backgroundColor: colors.white, flex: 1 }}>
         <View style={{ flex: 1 }}>
@@ -125,7 +120,7 @@ function WahaDrawer (props) {
             <Text
               style={Typography(props, 'd', 'regular', 'left', colors.chateau)}
             >
-              v0.6.3
+              v0.6.4
             </Text>
           </View>
         </SafeAreaView>

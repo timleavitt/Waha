@@ -22,6 +22,7 @@ function GameScreen (props) {
   const [pattern, setPattern] = useState('')
   const [countdown, setCountdown] = useState('')
   const [isPlaying, setIsPlaying] = useState(false)
+
   //+ CONSTRUCTOR
 
   useEffect(() => {
@@ -41,7 +42,7 @@ function GameScreen (props) {
       } else
         props.navigation.reset({
           index: 0,
-          routes: [{ name: 'SetsRoot' }]
+          routes: [{ name: 'SetTabs' }]
         })
     }
   }, [pattern])

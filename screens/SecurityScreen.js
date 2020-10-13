@@ -148,35 +148,22 @@ function SecurityScreen (props) {
         <WahaItem
           title={props.translations.security.security_mode_picker_label}
         >
-          <View
-            style={{
-              flexDirection: props.isRTL ? 'row-reverse' : 'row',
-              alignItems: 'center'
+          <Switch
+            trackColor={{ false: colors.chateau, true: colors.apple }}
+            thumbColor={colors.white}
+            ios_backgroundColor={colors.chateau}
+            onValueChange={() => {
+              // toggle security mode on or off for the active group
+              if (props.security.code) {
+                if (props.security.securityEnabled) {
+                  props.setSecurityEnabled(false)
+                } else props.setSecurityEnabled(true)
+              } else {
+                props.navigation.navigate('SecurityOnboarding')
+              }
             }}
-          >
-            <Icon
-              name='error-filled'
-              size={40 * scaleMultiplier}
-              color={colors.red}
-              style={{ marginHorizontal: 20 }}
-            />
-            <Switch
-              trackColor={{ false: colors.chateau, true: colors.apple }}
-              thumbColor={colors.white}
-              ios_backgroundColor={colors.chateau}
-              onValueChange={() => {
-                // toggle security mode on or off for the active group
-                if (props.security.code) {
-                  if (props.security.securityEnabled) {
-                    props.setSecurityEnabled(false)
-                  } else props.setSecurityEnabled(true)
-                } else {
-                  props.navigation.navigate('SecurityOnboarding')
-                }
-              }}
-              value={props.security.securityEnabled}
-            />
-          </View>
+            value={props.security.securityEnabled}
+          />
         </WahaItem>
         <Separator />
         <WahaItemDescription

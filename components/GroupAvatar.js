@@ -45,9 +45,9 @@ function GroupAvatar (props) {
         {
           borderColor: props.isActive ? colors.blue : null,
           borderWidth: props.isActive ? 2 : null,
-          width: props.size + 5,
-          height: props.size + 5,
-          borderRadius: props.size / 2 + 5,
+          width: props.size * scaleMultiplier + 5,
+          height: props.size * scaleMultiplier + 5,
+          borderRadius: (props.size * scaleMultiplier) / 2 + 5,
           alignItems: 'center',
           justifyContent: 'center'
         }
