@@ -29,8 +29,8 @@ function MainDrawer (props) {
       // In our case, it's "Feed" as that's the first screen inside the navigator
       route.params?.screen || props.security.securityEnabled
       ? 'Game'
-      : 'SetsRoot'
-    if (routeName === 'SetsRoot') return true
+      : 'SetTabs'
+    if (routeName === 'SetTabs') return true
     else return false
   }
   useEffect(() => {

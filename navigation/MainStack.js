@@ -1,12 +1,23 @@
 import { createStackNavigator } from '@react-navigation/stack'
+import * as FileSystem from 'expo-file-system'
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
-import { AppState, LogBox, Platform, StyleSheet, View } from 'react-native'
+import {
+  AppState,
+  Image,
+  LogBox,
+  Platform,
+  StyleSheet,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
+import GroupAvatar from '../components/GroupAvatar'
 import { colors, scaleMultiplier } from '../constants'
+import SetTabs from '../navigation/SetTabs'
 import { setIsTimedOut, setTimer } from '../redux/actions/securityActions'
-import AddEditGroupScreen from '../screens/AddEditGroupScreen'
+import AddEditGroupModal from '../screens/AddEditGroupModal'
+import AddSetScreen from '../screens/AddSetScreen'
 import GameScreen from '../screens/GameScreen'
 import GroupsScreen from '../screens/GroupsScreen'
 import KeyOrderSetScreen from '../screens/KeyOrderSetScreen'
@@ -20,7 +31,7 @@ import SecurityScreen from '../screens/SecurityScreen'
 import SplashScreen from '../screens/SplashScreen'
 import StorageScreen from '../screens/StorageScreen'
 import en from '../translations/en.json'
-import SetsRoot from './SetsRoot'
+
 LogBox.ignoreLogs(['Setting a timer'])
 
 i18n.translations = {
@@ -109,11 +120,51 @@ function MainStack (props) {
     >
       {/* Study Set Screen */}
       <Stack.Screen
-        name='SetsRoot'
-        component={SetsRoot}
-        options={{ headerShown: false }}
+        name='SetTabs'
+        component={SetTabs}
+        options={{
+          headerStyle: {
+            backgroundColor: colors.aquaHaze
+          },
+          headerTitle: () => (
+            <Image
+              style={styles.headerImage}
+              source={{
+                uri:
+                  FileSystem.documentDirectory +
+                  props.activeGroup.language +
+                  '-header.png'
+              }}
+            />
+          ),
+          headerLeft: props.isRTL
+            ? () => <View></View>
+            : () => (
+                <View style={{ paddingHorizontal: 10 }}>
+                  <GroupAvatar
+                    style={{ backgroundColor: colors.white }}
+                    emoji={props.activeGroup.emoji}
+                    size={35}
+                    onPress={() => props.navigation.toggleDrawer()}
+                    isActive={true}
+                  />
+                </View>
+              ),
+          headerRight: props.isRTL
+            ? () => (
+                <View style={{ paddingHorizontal: 10 }}>
+                  <GroupAvatar
+                    style={{ backgroundColor: colors.white }}
+                    emoji={props.activeGroup.emoji}
+                    size={35}
+                    onPress={() => props.navigation.toggleDrawer()}
+                    isActive={true}
+                  />
+                </View>
+              )
+            : () => <View></View>
+        }}
       />
-
       {/* Lesson List Screen */}
       <Stack.Screen
         name='LessonList'
@@ -155,18 +206,10 @@ function MainStack (props) {
         }}
       />
       <Stack.Screen
-        name='AddGroup'
-        component={AddEditGroupScreen}
+        name='AddSet'
+        component={AddSetScreen}
         options={{
-          gestureEnabled: false,
-          headerTitle: props.translations.add_edit_group.header_add,
-          headerStyle: {
-            backgroundColor: colors.white
-          },
-          headerTitleStyle: {
-            color: colors.shark,
-            fontFamily: props.font + '-medium'
-          }
+          title: ''
         }}
       />
       <Stack.Screen
@@ -190,7 +233,7 @@ function MainStack (props) {
       />
       <Stack.Screen
         name='EditGroup'
-        component={AddEditGroupScreen}
+        component={AddEditGroupModal}
         options={{
           gestureEnabled: false,
           headerTitle: props.translations.add_edit_group.header_edit,

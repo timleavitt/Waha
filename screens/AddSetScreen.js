@@ -8,7 +8,7 @@ import Separator from '../components/Separator'
 import SetItem from '../components/SetItem'
 import { colors, getSetInfo, scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
-import SetInfoScreen from '../screens/SetInfoScreen'
+import SetInfoModal from './SetInfoModal'
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state'
 ])
@@ -129,6 +129,7 @@ function AddSetScreen (props) {
     <View style={styles.screen}>
       {props.route.params.category === 'topical' ? tagSelectComponent : null}
       <FlatList
+        style={{ flex: 1 }}
         data={
           props.route.params.category === 'topical'
             ? props.activeDatabase.sets
@@ -221,7 +222,7 @@ function AddSetScreen (props) {
         }}
         backgroundColor={colors.apple}
       />
-      <SetInfoScreen
+      <SetInfoModal
         isVisible={showSetInfoModal}
         hideModal={() => setShowSetInfoModal(false)}
         category={props.route.params.category}

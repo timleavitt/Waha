@@ -111,11 +111,8 @@ function SetScreen (props) {
               { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
             ]}
             onPress={() =>
-              props.navigation.navigate('AddSetStack', {
-                screen: 'AddSet',
-                params: {
-                  category: setCategory
-                }
+              props.navigation.navigate('AddSet', {
+                category: setCategory
               })
             }
           >

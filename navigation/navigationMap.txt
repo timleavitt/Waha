@@ -19,11 +19,8 @@ ROOT (conditionally renders):
       > securityOnboarding  
       > keyOrderSet (5 variants) 
       > game
-      > SETSROOT
-        > SETTABS
-          > set (core)
-          > set (topical)
-          > set (mt) (rendered conditionally)
-        > ADDSETSTACK
-          > addSet
-          > setInfo
+      > SETTABS
+        > set (core)
+        > set (topical)
+        > set (mt) (rendered conditionally)
+      > addSet
