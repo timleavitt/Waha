@@ -17,38 +17,36 @@ function GroupItem (props) {
       group => group.name === props.groupName
     )[0]
 
-    // get the currently bookmarked set object
-    var bookmarkSet = props.database[thisGroup.language].sets.filter(
-      set => set.id === thisGroup.setBookmark
-    )[0]
+    if (thisGroup) {
+      // get the currently bookmarked set object
+      var bookmarkSet = props.database[thisGroup.language].sets.filter(
+        set => set.id === thisGroup.setBookmark
+      )[0]
 
-    // get the id of the bookmarked lesson from the bookmarked set
-    var bookmarkSetBookmarkLesson = thisGroup.addedSets.filter(
-      addedSet => addedSet.id === bookmarkSet.id
-    )[0].bookmark
+      // get the id of the bookmarked lesson from the bookmarked set
+      var bookmarkSetBookmarkLesson = thisGroup.addedSets.filter(
+        addedSet => addedSet.id === bookmarkSet.id
+      )[0].bookmark
 
-    // get the bookmrarked lesson object
-    var bookmarkLesson = props.database[thisGroup.language].lessons
-      .filter(
-        lesson => getLessonInfo('setID', lesson.id) === thisGroup.setBookmark
-      )
-      .filter(
+      // get the bookmrarked lesson object
+      var bookmarkLesson = bookmarkSet.lessons.filter(
         lesson =>
           getLessonInfo('index', lesson.id) === bookmarkSetBookmarkLesson
       )[0]
 
-    // if both those exist, return them to display the bookmarks
-    if (bookmarkLesson && bookmarkSet) {
-      return {
-        lesson:
-          getLessonInfo('subtitle', bookmarkLesson.id) +
-          ' ' +
-          bookmarkLesson.title,
-        set: bookmarkSet.subtitle
+      // if both those exist, return them to display the bookmarks
+      if (bookmarkLesson && bookmarkSet) {
+        return {
+          lesson:
+            getLessonInfo('subtitle', bookmarkLesson.id) +
+            ' ' +
+            bookmarkLesson.title,
+          set: bookmarkSet.subtitle
+        }
+      } else {
+        return ''
       }
-    } else {
-      return ''
-    }
+    } else return ''
   }
 
   // RENDER

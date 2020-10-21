@@ -8,13 +8,24 @@ function TimeDisplay (props) {
   //nicely formatted string (for the scrubber)
   function msToTime (duration) {
     if (duration > 0 && duration <= props.max) {
-      var seconds = Math.floor((duration / 1000) % 60)
-      var minutes = Math.floor((duration / (1000 * 60)) % 60)
+      if (duration >= 3600000) {
+        var seconds = Math.floor((duration / 1000) % 60)
+        var minutes = Math.floor((duration / (1000 * 60)) % 60)
+        var hours = Math.floor((duration / (1000 * 60 * 60)) % 60)
 
-      minutes = minutes < 10 ? '0' + minutes : minutes
-      seconds = seconds < 10 ? '0' + seconds : seconds
+        minutes = minutes < 10 ? '0' + minutes : minutes
+        seconds = seconds < 10 ? '0' + seconds : seconds
 
-      return minutes + ':' + seconds
+        return hours + ':' + minutes + ':' + seconds
+      } else {
+        var seconds = Math.floor((duration / 1000) % 60)
+        var minutes = Math.floor((duration / (1000 * 60)) % 60)
+
+        minutes = minutes < 10 ? '0' + minutes : minutes
+        seconds = seconds < 10 ? '0' + seconds : seconds
+
+        return minutes + ':' + seconds
+      }
     } else if (duration > props.max) {
       return msToTime(props.max)
     } else {

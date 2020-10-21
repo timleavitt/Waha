@@ -1,14 +1,11 @@
 import NetInfo from '@react-native-community/netinfo'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { NavigationContainer } from '@react-navigation/native'
-import * as FileSystem from 'expo-file-system'
-import sizeof from 'firestore-size'
 import React, { useEffect } from 'react'
-import { Alert } from 'react-native'
 import { connect } from 'react-redux'
 import WahaDrawer from '../components/WahaDrawer'
 import { scaleMultiplier } from '../constants'
-import { db, storeData } from '../redux/actions/databaseActions'
+import { storeData } from '../redux/actions/databaseActions'
 import {
   removeDownload,
   resumeDownload
@@ -40,93 +37,92 @@ function MainDrawer (props) {
     })
 
     // add listener for receiving updates in firebase
-    db.collection('languages')
-      .doc(props.activeGroup.language)
-      .onSnapshot(function (doc) {
-        console.log(sizeof(doc.data()))
-        // function downloadSomething (source, fileName) {
-        //   var downloadResumable = FileSystem.createDownloadResumable(
-        //     doc.data().sources[source],
-        //     FileSystem.documentDirectory +
-        //       props.activeGroup.language +
-        //       '-' +
-        //       fileName,
-        //     {}
-        //   )
-        //   downloadResumable.downloadAsync().catch(error => {
-        //     throw error
-        //   })
-        // }
+    // db.collection('languages')
+    //   .doc(props.activeGroup.language)
+    //   .onSnapshot(function (doc) {
+    //     // function downloadSomething (source, fileName) {
+    //     //   var downloadResumable = FileSystem.createDownloadResumable(
+    //     //     doc.data().sources[source],
+    //     //     FileSystem.documentDirectory +
+    //     //       props.activeGroup.language +
+    //     //       '-' +
+    //     //       fileName,
+    //     //     {}
+    //     //   )
+    //     //   downloadResumable.downloadAsync().catch(error => {
+    //     //     throw error
+    //     //   })
+    //     // }
 
-        // check for new fellowship or application chapters
-        // Object.keys(doc.data().sources).forEach(source => {
-        //   if (
-        //     doc.data().sources[source] !== props.activeDatabase.sources[source]
-        //   ) {
-        //     // ALERT
-        //     Alert.alert(
-        //       props.translations.general.popups.new_chapter_downloading_title,
-        //       props.translations.general.popups.new_chapter_downloading_message,
-        //       [{ text: props.translations.general.ok, onPress: () => {} }]
-        //     )
-        //     downloadSomething(source, source + '.mp3')
-        //   }
-        // })
+    //     // check for new fellowship or application chapters
+    //     // Object.keys(doc.data().sources).forEach(source => {
+    //     //   if (
+    //     //     doc.data().sources[source] !== props.activeDatabase.sources[source]
+    //     //   ) {
+    //     //     // ALERT
+    //     //     Alert.alert(
+    //     //       props.translations.general.popups.new_chapter_downloading_title,
+    //     //       props.translations.general.popups.new_chapter_downloading_message,
+    //     //       [{ text: props.translations.general.ok, onPress: () => {} }]
+    //     //     )
+    //     //     downloadSomething(source, source + '.mp3')
+    //     //   }
+    //     // })
 
-        function downloadSomething (url, fileName) {
-          var downloadResumable = FileSystem.createDownloadResumable(
-            url,
-            FileSystem.documentDirectory +
-              props.activeGroup.language +
-              '-' +
-              fileName,
-            {}
-          )
-          return downloadResumable.downloadAsync().catch(error => {
-            throw error
-          })
-        }
+    //     function downloadSomething (url, fileName) {
+    //       var downloadResumable = FileSystem.createDownloadResumable(
+    //         url,
+    //         FileSystem.documentDirectory +
+    //           props.activeGroup.language +
+    //           '-' +
+    //           fileName,
+    //         {}
+    //       )
+    //       return downloadResumable.downloadAsync().catch(error => {
+    //         throw error
+    //       })
+    //     }
 
-        // check for new fellowship or application chapters
-        doc.data().files.forEach(fileName => {
-          if (!props.activeDatabase.files.includes(fileName)) {
-            // ALERT
-            Alert.alert(
-              props.translations.general.popups.new_chapter_downloading_title,
-              props.translations.general.popups.new_chapter_downloading_message,
-              [{ text: props.translations.general.ok, onPress: () => {} }]
-            )
-            if (fileName.includes('header'))
-              return downloadSomething(
-                `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.png?alt=media`,
-                fileName.slice(0, -3) + '.png'
-              )
-            else
-              return downloadSomething(
-                `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.mp3?alt=media`,
-                fileName.slice(0, -3) + '.mp3'
-              )
-          }
-        })
+    //     // check for new fellowship or application chapters
+    //     doc.data().files.forEach(fileName => {
+    //       if (!props.activeDatabase.files.includes(fileName)) {
+    //         // ALERT
+    //         Alert.alert(
+    //           props.translations.general.popups.new_chapter_downloading_title,
+    //           props.translations.general.popups.new_chapter_downloading_message,
+    //           [{ text: props.translations.general.ok, onPress: () => {} }]
+    //         )
+    //         if (fileName.includes('header'))
+    //           return downloadSomething(
+    //             `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.png?alt=media`,
+    //             fileName.slice(0, -3) + '.png'
+    //           )
+    //         else
+    //           return downloadSomething(
+    //             `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.mp3?alt=media`,
+    //             fileName.slice(0, -3) + '.mp3'
+    //           )
+    //       }
+    //     })
 
-        // store data
-        props.storeData(doc.data(), props.activeGroup.language)
+    //     // store data
+    //     props.storeData(doc.data(), props.activeGroup.language)
 
-        // if
-        // 1. all core story sets are completed
-        // 2. a new core story set has been addded
+    //     // if
+    //     // 1. all core story sets are completed
+    //     // 2. a new core story set has been addded
 
-        // 1. add it automatically to added sets for this group
-        // 2. make it display the 'new' icon somehow
+    //     // 1. add it automatically to added sets for this group
+    //     // 2. make it display the 'new' icon somehow
 
-        // if
-        // 1. mobilization tools is unlocked for this group
-        // 2. a new mobilization tools set is added
-        // if (props.activeGroup.showToolkit && )
+    //     // if
+    //     // 1. mobilization tools is unlocked for this group
+    //     // 2. a new mobilization tools set is added
+    //     // if (props.activeGroup.showToolkit && )
 
-        // 1. add it automatically to added sets for htis group
-        // 2. make it dispaly the 'new' icon somehow
-      })
+    //     // 1. add it automatically to added sets for htis group
+    //     // 2. make it dispaly the 'new' icon somehow
+    //   })
 
     return function cleanup () {
       netInfoUnsubscribe()

@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
 })
 
 function mapStateToProps (state) {
-  console.log(state.fetchingStatus)
+  // console.log(state.fetchingStatus)
   return {
     currentFetchProgress: state.database.currentFetchProgress,
     totalToDownload: state.database.totalToDownload,

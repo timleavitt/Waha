@@ -68,14 +68,10 @@ export function toggleComplete (groupName, set, lessonIndex) {
         getSetInfo('category', dbSet.id) === getSetInfo('category', set.id) &&
         getSetInfo('index', dbSet.id) === getSetInfo('index', set.id) + 1
     )[0]
-    var thisLesson = getState().database[thisLanguage].lessons.filter(
-      lesson =>
-        getLessonInfo('setID', lesson.id) === set.id &&
-        getLessonInfo('index', lesson.id) === lessonIndex
+    var thisLesson = set.lessons.filter(
+      lesson => getLessonInfo('index', lesson.id) === lessonIndex
     )[0]
-    var setLength = getState().database[thisLanguage].lessons.filter(
-      lesson => getLessonInfo('setID', lesson.id) === set.id
-    ).length
+    var setLength = set.lessons.length
     logCompleteLesson(thisLesson, set, thisLanguage)
     dispatch(updateProgress(groupName, set, nextSet, lessonIndex, setLength))
   }

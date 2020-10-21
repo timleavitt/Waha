@@ -76,7 +76,7 @@ function LessonListScreen (props) {
     var whichLessonsDownloaded = {}
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
       .then(contents => {
-        props.activeDatabase.lessons.forEach(lesson => {
+        props.route.params.thisSet.lessons.forEach(lesson => {
           if (contents.includes(lesson.id + '.mp3'))
             whichLessonsDownloaded[lesson.id] = true
           if (contents.includes(lesson.id + 'v.mp4')) {
@@ -240,10 +240,8 @@ function LessonListScreen (props) {
   //-   share/mark it as complete
   function onLessonSwipeBegin (data) {
     setActiveLessonInModal(
-      props.activeDatabase.lessons.filter(
-        lesson =>
-          props.route.params.thisSet.id === getLessonInfo('setID', lesson.id) &&
-          getLessonInfo('index', lesson.id) === parseInt(data)
+      props.route.params.thisSet.lessons.filter(
+        lesson => getLessonInfo('index', lesson.id) === parseInt(data)
       )[0]
     )
   }
@@ -314,10 +312,7 @@ function LessonListScreen (props) {
         <SetItem thisSet={props.route.params.thisSet} mode='lessonlist' />
       </View>
       <SwipeListView
-        data={props.activeDatabase.lessons.filter(
-          lesson =>
-            props.route.params.thisSet.id === getLessonInfo('setID', lesson.id)
-        )}
+        data={props.route.params.thisSet.lessons}
         renderItem={renderLessonItem}
         ListFooterComponent={() => <View style={{ height: 30 }} />}
         keyExtractor={item => getLessonInfo('index', item.id).toString()}

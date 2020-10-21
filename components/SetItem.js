@@ -5,12 +5,7 @@ import { connect } from 'react-redux'
 import Icon from '../assets/fonts/icons'
 import SVG from '../assets/svg.js'
 import MessageModal from '../components/MessageModal'
-import {
-  colors,
-  getLessonInfo,
-  getSetInfo,
-  scaleMultiplier
-} from '../constants'
+import { colors, getSetInfo, scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
 import { logCompleteStorySet } from '../redux/LogEventFunctions'
 function SetItem (props) {
@@ -206,9 +201,7 @@ function SetItem (props) {
 
   //- sets the progress through this set
   function setProgress () {
-    var setLength = props.activeDatabase.lessons.filter(
-      lesson => getLessonInfo('setID', lesson.id) === props.thisSet.id
-    ).length
+    var setLength = props.thisSet.lessons.length
     // set the percentage through a set
     setProgressPercentage(
       props.activeGroup.addedSets.filter(set => set.id === props.thisSet.id)[0]

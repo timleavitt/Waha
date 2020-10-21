@@ -19,22 +19,36 @@ export const SET_CURRENT_FETCH_PROGRESS = 'SET_CURRENT_FETCH_PROGRESS'
 export const SET_TOTAL_TO_DOWNLOAD = 'SET_TOTAL_TO_DOWNLOAD'
 
 // firebase initializing
+
+// PRODUCTION
+// const config = {
+//   apiKey: '***REMOVED***',
+//   authDomain: 'waha-app-db.firebaseapp.com',
+//   databaseURL: 'https://waha-app-db.firebaseio.com',
+//   projectId: 'waha-app-db',
+//   storageBucket: 'waha-app-db.appspot.com',
+//   messagingSenderId: '831723165603',
+//   appId: '1:831723165603:web:21a474da50b2d0511bec16',
+//   measurementId: 'G-6SYY2T8DX1'
+// }
+
+// TEST
 const config = {
-  apiKey: '***REMOVED***',
-  authDomain: 'waha-app-db.firebaseapp.com',
-  databaseURL: 'https://waha-app-db.firebaseio.com',
-  projectId: 'waha-app-db',
-  storageBucket: 'waha-app-db.appspot.com',
-  messagingSenderId: '831723165603',
-  appId: '1:831723165603:web:21a474da50b2d0511bec16',
-  measurementId: 'G-6SYY2T8DX1'
+  apiKey: 'AIzaSyCh_ma-QDdHhaImEyedzAC1JJzy7YrwS8c',
+  authDomain: 'waha-app-test-db.firebaseapp.com',
+  databaseURL: 'https://waha-app-test-db.firebaseio.com',
+  projectId: 'waha-app-test-db',
+  storageBucket: 'waha-app-test-db.appspot.com',
+  messagingSenderId: '346600922120',
+  appId: '1:346600922120:web:a27e4abf05c9a7bf3845bd',
+  measurementId: 'G-LSESVSE9SS'
 }
+
 firebase.initializeApp(config)
 export const db = firebase.firestore()
 
 const groupNames = {
-  en: 'Group 1',
-  da: 'Group 1 test'
+  en: 'Group 1'
 }
 
 export function storeData (data, language) {
@@ -97,115 +111,48 @@ export function setFetchError (status, language) {
 // 6. header image
 
 export function addLanguage (language) {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     // set isFetching to true to signal that we're doing stuff and don't want to load the rest of the app
     dispatch(setIsFetching(true))
 
     //+ FIREBASE FETCH
 
+    var sets = []
+
+    await db
+      .collection('languages')
+      .doc(language)
+      .collection('sets')
+      .get()
+      .then(response => {
+        response.forEach(set => {
+          sets.push({
+            id: set.id,
+            ...set.data()
+          })
+        })
+      })
+
     // get language object from database and throw it in redux
-    db.collection('languages')
+    await db
+      .collection('languages')
       .doc(language)
       .get()
       .then(async doc => {
         if (doc.exists) {
-          dispatch(storeData(doc.data(), language))
+          dispatch(
+            storeData(
+              {
+                sets: sets,
+                ...doc.data()
+              },
+              language
+            )
+          )
           dispatch(setTotalToDownload(doc.data().files.length))
-          // var totalProgressObject = {}
-          // var isFirstCallBackObject = {}
-          // var totalToDownload = 0
-          // var counter = 0
-
-          // // callback function
-          // function callback ({ totalBytesWritten, totalBytesExpectedToWrite }) {
-          //   var allGood = true
-          //   // every first callback, update the total bytes to download across all downloads
-          //   if (!isFirstCallBackObject[totalBytesExpectedToWrite]) {
-          //     isFirstCallBackObject[totalBytesExpectedToWrite] = true
-          //     totalToDownload += totalBytesExpectedToWrite
-          //     for (value in isFirstCallBackObject) {
-          //       if (!isFirstCallBackObject[value]) {
-          //         allGood = false
-          //       }
-          //     }
-          //   }
-
-          //   if (allGood) {
-          //     // update fetch progress every 100 callbacks (for performance) or if we're just about done
-          //     if (
-          //       counter % 100 == 0 ||
-          //       totalBytesWritten / totalBytesExpectedToWrite > 0.99
-          //     ) {
-          //       // update progress specific to this download
-          //       totalProgressObject[
-          //         totalBytesExpectedToWrite
-          //       ] = totalBytesWritten
-
-          //       // re add up the total progress each time
-          //       var totalProgress = 0
-          //       for (download in totalProgressObject) {
-          //         totalProgress += totalProgressObject[download]
-          //       }
-          //       if (totalToDownload != 0) {
-          //         dispatch(
-          //           setCurrentFetchProgress(totalProgress / totalToDownload)
-          //         )
-          //       }
-          //     }
-          //     counter += 1
-          //   }
-          // }
-
-          //- OLD
-          // downloads a file from url into local storage
-          // function downloadSomething (source, fileName) {
-          //   var downloadResumable = FileSystem.createDownloadResumable(
-          //     doc.data().sources[source],
-          //     FileSystem.documentDirectory + language + '-' + fileName,
-          //     {},
-          //     callback
-          //   )
-          //   return downloadResumable.downloadAsync().catch(error => {
-          //     throw error
-          //   })
-          // }
-
-          // downloads a file from url into local storage
-          // function downloadSomething (url, fileName) {
-          //   var downloadResumable = FileSystem.createDownloadResumable(
-          //     url,
-          //     FileSystem.documentDirectory + language + '-' + fileName,
-          //     {},
-          //     callback
-          //   )
-          //   return downloadResumable.downloadAsync().catch(error => {
-          //     throw error
-          //   })
-          // }
-
-          // downloads everything we need
-          // function downloadEverything () {
-          //   return Promise.all([
-          //     doc.data().files.map(fileName => {
-          //       if (fileName.includes('header'))
-          //         return downloadSomething(
-          //           `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.png?alt=media`,
-          //           fileName.slice(0, -3) + '.png'
-          //         )
-          //       else
-          //         return downloadSomething(
-          //           `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.mp3?alt=media`,
-          //           fileName.slice(0, -3) + '.mp3'
-          //         )
-          //     })
-          //   ])
-          // }
-
-          var goodToGo = true
 
           async function asyncForEach (array, callback) {
             for (let index = 0; index < array.length; index++) {
-              console.log('downloading new file')
               await callback(array[index], index, array)
             }
           }
@@ -250,7 +197,6 @@ export function addLanguage (language) {
               dispatch(setFinishedInitialFetch(true))
               dispatch(setCurrentFetchProgress(0))
             } catch (error) {
-              goodToGo = false
               console.log(error)
               setFetchError(true, language)
             }
