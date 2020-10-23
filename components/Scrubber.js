@@ -1,42 +1,35 @@
+import Slider from '@react-native-community/slider'
 import React from 'react'
-import { Slider, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import TimeDisplay from '../components/TimeDisplay'
 import { colors } from '../constants'
 // scrubber component rendered on play screen
 function Scrubber (props) {
-  //// RENDER
+  //+ RENDER
 
   return (
     <View style={styles.scrubberContainer}>
       <View style={styles.scrubber}>
         <Slider
           value={props.value}
-          onSlidingComplete={props.onSlidingComplete}
+          onSlidingComplete={value => props.onSlidingComplete(value)}
           onValueChange={props.onValueChange}
           minimumValue={0}
           maximumValue={props.maximumValue}
-          step={1000}
+          step={100}
           minimumTrackTintColor={colors.tuna}
           thumbTintColor={colors.tuna}
         />
       </View>
       <View style={styles.timeInfo}>
-        <TimeDisplay
-          style={styles.scrubberInfo}
-          time={props.seekPosition}
-          max={props.maximumValue}
-        />
-        <TimeDisplay
-          style={styles.scrubberInfo}
-          time={props.maximumValue}
-          max={props.maximumValue}
-        />
+        <TimeDisplay time={props.seekPosition} max={props.maximumValue} />
+        <TimeDisplay time={props.maximumValue} max={props.maximumValue} />
       </View>
     </View>
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   scrubberContainer: {

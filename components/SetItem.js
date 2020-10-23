@@ -5,10 +5,11 @@ import { connect } from 'react-redux'
 import Icon from '../assets/fonts/icons'
 import SVG from '../assets/svg.js'
 import MessageModal from '../components/MessageModal'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getSetInfo, scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
+import { logCompleteStorySet } from '../redux/LogEventFunctions'
 function SetItem (props) {
-  //// STATE
+  //+ STATE
 
   // keeps track of the number of completed lessons in this set
   const [progressPercentage, setProgressPercentage] = useState(0)
@@ -25,15 +26,16 @@ function SetItem (props) {
   const [icon, setIcon] = useState()
   const [action, setAction] = useState()
 
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
+  //- sets components of the set items based on the type prop
   useEffect(() => {
     // big switch statement that renders the 2 dynamic components (the big icon,
     // and the action button) of a set item based on props.mode
     // 1. SHOWN is for sets that have been added to the set screen
     // 2. LESSONLIST is for the set component on the lesson list screen
-    // 3. HIDDEN is for sets that have not been added and live on the add set screen
-    // 4. FOLDER is for set folders in the add set screen
+    // 3. ADDSET is for sets that have not been added and live on the add set screen
+    // 4. SETINFO is for the set on the top of the setinfo screen
 
     switch (props.mode) {
       case 'shown':
@@ -75,7 +77,7 @@ function SetItem (props) {
               <Icon
                 name='check-outline'
                 size={30 * scaleMultiplier}
-                color={colors.oslo}
+                color={colors.chateau}
               />
             </View>
           ) : (
@@ -188,6 +190,8 @@ function SetItem (props) {
         break
     }
   }, [
+    // need to rerender the sets whenever any progress, bookmarks, or RTL
+    //  changes
     progressPercentage,
     fullyCompleted,
     props.activeGroup.setBookmark,
@@ -195,31 +199,45 @@ function SetItem (props) {
     props.isRTL
   ])
 
-  //// FUNCTIONS
+  //- sets the progress through this set
+  function setProgress () {
+    var setLength = props.thisSet.lessons.length
+    // set the percentage through a set
+    setProgressPercentage(
+      props.activeGroup.addedSets.filter(set => set.id === props.thisSet.id)[0]
+        .progress.length / setLength
+    )
+  }
 
+  //- whenever progress changes for a set, handle the changes
   useEffect(() => {
     progressCases()
   }, [progressPercentage])
 
+  //- handles special cases regarding changes in progress
   function progressCases () {
     // if it's fully completed, set fully completed to true, which renders
     // the shown and lessonlist variants as grayed out
-    if (progressPercentage === 1) setFullyCompleted(true)
-    else setFullyCompleted(false)
+    if (progressPercentage === 1) {
+      logCompleteStorySet(props.thisSet, props.activeGroup.language)
+      setFullyCompleted(true)
+    } else setFullyCompleted(false)
 
     // get the set AFTER the one that you're setting progress for
     var nextSet = props.activeDatabase.sets.filter(
       dbSet =>
-        dbSet.category === 'core' && dbSet.index === props.thisSet.index + 1
+        getSetInfo('category', dbSet.id) === 'core' &&
+        getSetInfo('index', dbSet.id) ===
+          getSetInfo('index', props.thisSet.id) + 1
     )[0]
 
     // we want to automatically add the next set if the next set exists AND
     if (nextSet) {
       if (
-        // we've completed 75% of a set AND
+        // we've completed 85% of a set AND
         progressPercentage > 0.85 &&
         // this set is a core set AND
-        props.thisSet.category === 'core' &&
+        getSetInfo('category', props.thisSet.id) === 'core' &&
         // the next set after this one hasn't already been added AND
         !props.activeGroup.addedSets.some(
           addedSet => addedSet.id === nextSet.id
@@ -228,28 +246,19 @@ function SetItem (props) {
         props.addSet(
           props.activeGroup.name,
           props.activeDatabase.sets
-            .filter(set => set.category === 'core')
-            .filter(set => set.index === props.thisSet.index + 1)[0].id
+            .filter(set => getSetInfo('category', set.id) === 'core')
+            .filter(
+              set =>
+                getSetInfo('index', set.id) ===
+                getSetInfo('index', props.thisSet.id) + 1
+            )[0]
         )
-        showModal()
+        setShowUnlockModal(true)
       }
     }
   }
 
-  // sets the progress through this set
-  function setProgress () {
-    // set the percentage through a set
-    setProgressPercentage(
-      props.activeGroup.addedSets.filter(set => set.id === props.thisSet.id)[0]
-        .progress.length / props.thisSet.length
-    )
-  }
-
-  function showModal () {
-    setShowUnlockModal(true)
-  }
-
-  //// RENDER
+  //+ RENDER
 
   return (
     <TouchableOpacity
@@ -258,6 +267,8 @@ function SetItem (props) {
         { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
       ]}
       onPress={props.onSetSelect}
+      // disable feedback if there's no onSetSelect
+      activeOpacity={props.onSetSelect ? 0.2 : 1}
     >
       {/* large icon rendered earlier */}
       {icon}
@@ -273,27 +284,37 @@ function SetItem (props) {
         ]}
       >
         <Text
-          style={{
-            color: fullyCompleted ? colors.chateau : colors.shark,
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontSize: 12 * scaleMultiplier,
-            textAlignVertical: 'center',
-            flexWrap: 'wrap',
-            fontFamily: props.font + '-regular'
-          }}
+          style={[
+            Typography(
+              props,
+              'd',
+              'regular',
+              'left',
+              fullyCompleted ? colors.chateau : colors.shark
+            ),
+            {
+              textAlignVertical: 'center',
+              flexWrap: 'wrap'
+            }
+          ]}
           numberOfLines={1}
         >
           {props.thisSet.subtitle}
         </Text>
         <Text
-          style={{
-            color: fullyCompleted ? colors.chateau : colors.shark,
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontSize: 18 * scaleMultiplier,
-            textAlignVertical: 'center',
-            flexWrap: 'wrap',
-            fontFamily: props.font + '-black'
-          }}
+          style={[
+            Typography(
+              props,
+              'h3',
+              'black',
+              'left',
+              fullyCompleted ? colors.chateau : colors.shark
+            ),
+            {
+              textAlignVertical: 'center',
+              flexWrap: 'wrap'
+            }
+          ]}
           numberOfLines={2}
         >
           {props.thisSet.title}
@@ -311,7 +332,7 @@ function SetItem (props) {
         confirmOnPress={() => setShowUnlockModal(false)}
       >
         <Image
-          // source={require('../assets/splash.png')}
+          source={require('../assets/gifs/new_set.gif')}
           style={{
             height: 200 * scaleMultiplier,
             margin: 20,
@@ -324,15 +345,15 @@ function SetItem (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   studySetItem: {
     flexDirection: 'row',
     width: '100%',
     flex: 1,
-    // height: 100 * scaleMultiplier,
-    aspectRatio: 4,
+    height: 100 * scaleMultiplier,
+    // aspectRatio: 4,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20
@@ -356,7 +377,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
@@ -374,8 +395,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    addSet: (groupName, setID) => {
-      dispatch(addSet(groupName, setID))
+    addSet: (groupName, set) => {
+      dispatch(addSet(groupName, set))
     }
   }
 }

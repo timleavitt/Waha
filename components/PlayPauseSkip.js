@@ -1,15 +1,10 @@
 import React from 'react'
-import {
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  View
-} from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 // play, pause, and skip controls for play screen
 function PlayPauseSkip (props) {
-  //// RENDER
+  //+ RENDER
 
   return (
     <View style={styles.playPauseSkipContainer}>
@@ -39,7 +34,7 @@ function PlayPauseSkip (props) {
           color={colors.tuna}
         />
       </TouchableOpacity>
-      {props.isVideoBuffering ? (
+      {/* {props.isVideoBuffering ? (
         <View
           style={{
             width: 101 * scaleMultiplier,
@@ -50,18 +45,18 @@ function PlayPauseSkip (props) {
         >
           <ActivityIndicator size='large' />
         </View>
-      ) : (
-        <TouchableOpacity
-          style={styles.playPauseSkipButton}
-          onPress={props.onPlayPress}
-        >
-          <Icon
-            name={props.isPlaying ? 'pause' : 'play'}
-            size={100 * scaleMultiplier}
-            color={props.primaryColor}
-          />
-        </TouchableOpacity>
-      )}
+      ) : ( */}
+      <TouchableOpacity
+        style={styles.playPauseSkipButton}
+        onPress={props.onPlayPress}
+      >
+        <Icon
+          name={props.isMediaPlaying ? 'pause' : 'play'}
+          size={100 * scaleMultiplier}
+          color={props.primaryColor}
+        />
+      </TouchableOpacity>
+      {/* )} */}
       <TouchableOpacity
         style={styles.playPauseSkipButton}
         onPress={() => props.onSkipPress(10000)}
@@ -76,7 +71,7 @@ function PlayPauseSkip (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   playPauseSkipContainer: {
@@ -92,7 +87,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

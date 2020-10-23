@@ -1,13 +1,13 @@
 import React from 'react'
 import { StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getSetInfo, scaleMultiplier } from '../constants'
 import { addSet, setShowToolkit } from '../redux/actions/groupsActions'
-import AvatarImage from './AvatarImage'
+import { logEnableMobilizationToolsForAGroup } from '../redux/LogEventFunctions'
+import GroupAvatar from './GroupAvatar'
 // variant of group list item that shows only avatar image, group name, and a switch to enable MTs
 function GroupItemMT (props) {
   // FUNCTIONS
-
   return (
     <View
       style={[
@@ -22,24 +22,15 @@ function GroupItemMT (props) {
           marginHorizontal: 20
         }}
       >
-        <AvatarImage
+        <GroupAvatar
           style={{ backgroundColor: colors.athens }}
           size={50 * scaleMultiplier}
           emoji={props.group.emoji}
-          isActive={props.activeGroup === props.group.name}
+          isActive={props.activeGroup.name === props.group.name}
         />
       </View>
       <View style={styles.groupNameContainer}>
-        <Text
-          style={[
-            styles.groupNameText,
-            {
-              textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-medium',
-              color: props.toolkitEnabled ? colors.shark : colors.chateau
-            }
-          ]}
-        >
+        <Text style={Typography(props, 'h3', 'medium', 'left', colors.shark)}>
           {props.group.name}
         </Text>
       </View>
@@ -53,15 +44,18 @@ function GroupItemMT (props) {
             props.setShowToolkit(props.group.name, !props.group.showToolkit)
 
             // if we're toggling MTs on for the first time, add the first 2 MT sets
-            if (!props.group.showToolkit)
+            if (!props.group.showToolkit) {
+              logEnableMobilizationToolsForAGroup(props.activeGroup.language)
               for (const set of props.database[props.group.language].sets) {
                 if (
-                  set.category === 'mt' &&
-                  (set.index === 1 || set.index === 2)
+                  getSetInfo('category', set.id) === 'mt' &&
+                  (getSetInfo('index', set.id) === 1 ||
+                    getSetInfo('index', set.id) === 2)
                 ) {
-                  props.addSet(props.group.name, set.id)
+                  props.addSet(props.group.name, set)
                 }
               }
+            }
           }}
           value={props.group.showToolkit}
           disabled={props.toolkitEnabled ? false : true}
@@ -75,8 +69,8 @@ function GroupItemMT (props) {
 
 const styles = StyleSheet.create({
   groupListItemContainer: {
-    // height: 80 * scaleMultiplier,
-    aspectRatio: 5,
+    height: 80 * scaleMultiplier,
+    // aspectRatio: 5,
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
@@ -87,11 +81,6 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     flexWrap: 'nowrap'
-  },
-  groupNameText: {
-    color: colors.chateau,
-    fontSize: 18 * scaleMultiplier,
-    textAlign: 'left'
   }
 })
 
@@ -105,9 +94,9 @@ function mapStateToProps (state) {
     database: state.database,
     isRTL: state.database[activeGroup.language].isRTL,
     groups: state.groups,
-    activeGroup: state.activeGroup,
     font: state.database[activeGroup.language].font,
-    toolkitEnabled: state.toolkitEnabled
+    toolkitEnabled: state.toolkitEnabled,
+    activeGroup: activeGroup
   }
 }
 
@@ -116,8 +105,8 @@ function mapDispatchToProps (dispatch) {
     setShowToolkit: (groupName, toSet) => {
       dispatch(setShowToolkit(groupName, toSet))
     },
-    addSet: (groupName, setID) => {
-      dispatch(addSet(groupName, setID))
+    addSet: (groupName, set) => {
+      dispatch(addSet(groupName, set))
     }
   }
 }

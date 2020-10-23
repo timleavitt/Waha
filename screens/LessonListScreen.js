@@ -4,14 +4,13 @@ import { Dimensions, Image, Platform, StyleSheet, View } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
-import HomeworkModal from '../components/HomeworkModal'
 import LessonItem from '../components/LessonItem'
 import LessonSwipeBackdrop from '../components/LessonSwipeBackdrop'
 import ModalButton from '../components/ModalButton'
 import OptionsModal from '../components/OptionsModal'
 import SetItem from '../components/SetItem'
 import ShareModal from '../components/ShareModal'
-import { colors } from '../constants'
+import { colors, getLessonInfo, scaleMultiplier } from '../constants'
 import {
   downloadLesson,
   downloadVideo,
@@ -20,17 +19,13 @@ import {
 import { toggleComplete } from '../redux/actions/groupsActions'
 
 function LessonListScreen (props) {
-  //// STATE
-
-  // read downloaded files for testing purposes
-  // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(contents => {
-  //   console.log(contents)
-  // })
+  //+ STATE
 
   // keeps track of which lessons are downloaded
   const [downloadsInFileSystem, setDownloadsInFileSystem] = useState({})
 
-  // keeps track of the lesson to download/delete/toggle complete when modals are up
+  // keeps track of the lesson to download/delete/toggle complete when modals
+  //  are up
   const [activeLessonInModal, setActiveLessonInModal] = useState({})
 
   // modal states
@@ -44,7 +39,7 @@ function LessonListScreen (props) {
   const [thisSetProgress, setThisSetProgress] = useState([])
   const [thisSetBookmark, setThisSetBookmark] = useState(1)
 
-  //// NAV OPTIONS
+  //+ NAV OPTIONS
 
   function getNavOptions () {
     return {
@@ -68,18 +63,20 @@ function LessonListScreen (props) {
     }
   }
 
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
   }, [])
 
-  // checks which lessons and lesson videos are downloaded and stores in state
+  //+ FUNCTIONS
+
+  //- checks which lessons and lesson videos are downloaded and stores in state
   useEffect(() => {
     var whichLessonsDownloaded = {}
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
       .then(contents => {
-        props.activeDatabase.lessons.forEach(lesson => {
+        props.route.params.thisSet.lessons.forEach(lesson => {
           if (contents.includes(lesson.id + '.mp3'))
             whichLessonsDownloaded[lesson.id] = true
           if (contents.includes(lesson.id + 'v.mp4')) {
@@ -93,7 +90,7 @@ function LessonListScreen (props) {
       })
   }, [props.downloads])
 
-  // whenever progress or bookmarks update, update the progress and bookmarks for this set
+  //- whenever progress or bookmarks update, update the progress and bookmarks for this set
   useEffect(() => {
     setThisSetProgress(
       props.activeGroup.addedSets.filter(
@@ -107,27 +104,31 @@ function LessonListScreen (props) {
     )
   }, [props.activeGroup.addedSets, props.activeGroup.setBookmark])
 
-  //// FUNCTIONS
-
-  // gets the type of a lesson in string form
-  // note: not stored in db for ssot purposes
+  //- gets the type of a lesson in string form
+  //! note: not stored in db for ssot purposes
   function getLessonType (lesson) {
     // q = has questions, a = has audio, v = has video
-    // options not allowed: av, a
+    // options not allowed: av, a, or nothing
     var lessonType = ''
     lessonType += lesson.fellowshipType ? 'q' : ''
-    lessonType += lesson.audioSource ? 'a' : ''
-    lessonType += lesson.videoSource ? 'v' : ''
-    if (lessonType === '') lessonType = 'c'
+    lessonType += lesson.hasAudio ? 'a' : ''
+    lessonType += lesson.hasVideo ? 'v' : ''
 
     return lessonType
   }
 
-  // NOTE: for next 4 functions, what is returned depends on the type of the
-  //  lesson. qa checks only audio file, qav checks both audio and video files,
-  //  and qv and v check only video files.
+  //- hides all the modals
+  function hideModals () {
+    setShowDownloadLessonModal(false)
+    setShowDeleteLessonModal(false)
+    setShowShareModal(false)
+  }
 
-  // determines if a lesson is downloaded based on its type
+  //+ LESSON-TYPE-BASED FUNCTIONS
+  //+ NOTE: for these functions, what is returned depends on the type of the
+  //+   lesson. lesson type with a checks for audio, with v checks for video
+
+  //- determines if a lesson is downloaded based on its type
   function getIsLessonDownloaded (lesson) {
     switch (getLessonType(lesson)) {
       case 'qa':
@@ -151,7 +152,7 @@ function LessonListScreen (props) {
     }
   }
 
-  // determines if a lesson is downloading based on its type
+  //- determines if a lesson is downloading based on its type
   function getIsLessonDownloading (lesson) {
     switch (getLessonType(lesson)) {
       case 'qa':
@@ -172,38 +173,38 @@ function LessonListScreen (props) {
     }
   }
 
-  // downloads a lesson's chapter 2 mp3 via modal press based on its type
+  //- downloads a lesson's scripture mp3 via modal press based on its type
   function downloadLessonFromModal () {
     switch (getLessonType(activeLessonInModal)) {
       case 'qa':
       case 'a':
         props.downloadLesson(
           activeLessonInModal.id,
-          activeLessonInModal.audioSource
+          getLessonInfo('audioSource', activeLessonInModal.id)
         )
         break
       case 'qav':
         props.downloadLesson(
           activeLessonInModal.id,
-          activeLessonInModal.audioSource
+          getLessonInfo('audioSource', activeLessonInModal.id)
         )
         props.downloadVideo(
           activeLessonInModal.id,
-          activeLessonInModal.videoSource
+          getLessonInfo('videoSource', activeLessonInModal.id)
         )
         break
       case 'qv':
       case 'v':
         props.downloadVideo(
           activeLessonInModal.id,
-          activeLessonInModal.videoSource
+          getLessonInfo('videoSource', activeLessonInModal.id)
         )
         break
     }
     hideModals()
   }
 
-  // deletes a lesson's chapter 2 mp3 via modal press based on its type
+  //- deletes a lesson's chapter 2 mp3 via modal press based on its type
   function deleteLessonFromModal () {
     switch (getLessonType(activeLessonInModal)) {
       case 'qa':
@@ -233,123 +234,74 @@ function LessonListScreen (props) {
     hideModals()
   }
 
-  // NOT USED: marks every lesson in current set as complete up until the
-  //  selected lesson via modal press
-  // function markUpToThisPointAsCompleteFromModal () {
-  //   for (var i = 1; i <= activeLessonInModal.index; i++) {
-  //     if (!thisSetProgress.includes(i)) {
-  //       props.toggleComplete(
-  //         props.activeGroup.name,
-  //         props.route.params.thisSet,
-  //         i
-  //       )
-  //     }
-  //   }
-  //   hideModals()
-  // }
+  //+ LESSON SWIPE FUNCTIONS
 
-  // hides all the modals
-  function hideModals () {
-    setShowDownloadLessonModal(false)
-    setShowDeleteLessonModal(false)
-    setShowShareModal(false)
+  //- sets activeLessonInModal to whatever lesson we're swiping so we can
+  //-   share/mark it as complete
+  function onLessonSwipeBegin (data) {
+    setActiveLessonInModal(
+      props.route.params.thisSet.lessons.filter(
+        lesson => getLessonInfo('index', lesson.id) === parseInt(data)
+      )[0]
+    )
   }
 
-  // opens the share sheet to share something
-  // function share (type) {
-  //   switch (type) {
-  //     // share the link to Waha itself
-  //     case 'app':
-  //       Share.share({
-  //         message:
-  //           props.route.params.thisSet.category === 'mt'
-  //             ? Platform.OS === 'ios'
-  //               ? 'www.appstorelink.com' +
-  //                 ' ' +
-  //                 props.translations.general.share_toolkit_unlock_code
-  //               : 'www.playstorelink.com' +
-  //                 ' ' +
-  //                 props.translations.general.share_toolkit_unlock_code
-  //             : Platform.OS === 'ios'
-  //             ? 'www.appstorelink.com'
-  //             : 'www.playstorelink.com'
-  //       })
-  //       break
-  //     // share the passage text for this lesson
-  //     case 'text':
-  //       var scriptureString = ''
-  //       activeLessonInModal.scripture.forEach((scripturePiece, index) => {
-  //         scriptureString += scripturePiece.header + '\n' + scripturePiece.text
-  //         if (index !== activeLessonInModal.scripture.length - 1)
-  //           scriptureString += '\n'
-  //       })
-  //       Share.share({
-  //         message: scriptureString
-  //       })
-  //       break
-  //     // share the audio file for this lesson
-  //     case 'audio':
-  //       FileSystem.getInfoAsync(
-  //         FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
-  //       ).then(({ exists }) => {
-  //         exists
-  //           ? Sharing.shareAsync(
-  //               FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
-  //             )
-  //           : Alert.alert(
-  //               props.translations.general.popups.lessons
-  //                 .share_undownloaded_lesson_title,
-  //               props.translations.general.popups.lessons
-  //                 .share_undownloaded_lesson_message,
-  //               [
-  //                 {
-  //                   text: props.translations.general.ok,
-  //                   onPress: () => {}
-  //                 }
-  //               ]
-  //             )
-  //       })
-  //       break
-  //     // share the video link for this lesson
-  //     case 'video':
-  //       Share.share({
-  //         message: activeLessonInModal.videoSource
-  //       })
-  //       break
-  //   }
-  // }
+  //- marks a lesson as complete from a swipe and closes the row
+  function markLessonAsCompleteFromSwipe (data) {
+    if (data.isActivated)
+      props.toggleComplete(
+        props.activeGroup.name,
+        props.route.params.thisSet,
+        parseInt(data.key)
+      )
+  }
 
-  //// RENDER
+  //+ RENDER
 
-  function renderLessonItem (lessonList) {
+  function renderLessonItem ({ item }) {
     return (
       <LessonItem
-        thisLesson={lessonList.item}
-        onLessonSelect={
-          // go to play screen unless we have a checklist lesson
-          getLessonType(lessonList.item) !== 'c'
-            ? () =>
-                props.navigation.navigate('Play', {
-                  thisLesson: lessonList.item,
-                  thisSet: props.route.params.thisSet,
-                  thisSetProgress: thisSetProgress,
-                  isDownloaded: getIsLessonDownloaded(lessonList.item),
-                  isDownloading: getIsLessonDownloading(lessonList.item),
-                  lessonType: getLessonType(lessonList.item)
-                })
-            : () => {
-                setActiveLessonInModal(lessonList.item)
-                setShowHomeworkModal(true)
-              }
+        thisLesson={item}
+        onLessonSelect={() =>
+          props.navigation.navigate('Play', {
+            thisLesson: item,
+            thisSet: props.route.params.thisSet,
+            thisSetProgress: thisSetProgress,
+            isDownloaded: getIsLessonDownloaded(item),
+            isDownloading: getIsLessonDownloading(item),
+            lessonType: getLessonType(item)
+          })
         }
-        isBookmark={lessonList.item.index === thisSetBookmark}
-        isDownloaded={getIsLessonDownloaded(lessonList.item)}
-        isDownloading={getIsLessonDownloading(lessonList.item)}
-        lessonType={getLessonType(lessonList.item)}
-        isComplete={thisSetProgress.includes(lessonList.item.index)}
-        setActiveLessonInModal={() => setActiveLessonInModal(lessonList.item)}
+        isBookmark={getLessonInfo('index', item.id) === thisSetBookmark}
+        isDownloaded={getIsLessonDownloaded(item)}
+        isDownloading={getIsLessonDownloading(item)}
+        lessonType={getLessonType(item)}
+        isComplete={thisSetProgress.includes(getLessonInfo('index', item.id))}
+        setActiveLessonInModal={() => setActiveLessonInModal(item)}
         setShowDownloadLessonModal={() => setShowDownloadLessonModal(true)}
         setShowDeleteLessonModal={() => setShowDeleteLessonModal(true)}
+      />
+    )
+  }
+
+  function renderLessonSwipeBackdrop (data, rowMap) {
+    return (
+      <LessonSwipeBackdrop
+        isComplete={thisSetProgress.includes(
+          getLessonInfo('index', data.item.id)
+        )}
+        toggleComplete={() => {
+          props.toggleComplete(
+            props.activeGroup.name,
+            props.route.params.thisSet,
+            getLessonInfo('index', data.item.id)
+          )
+          rowMap[getLessonInfo('index', data.item.id)].closeRow()
+        }}
+        showShareModal={() => {
+          setShowShareModal(true)
+          rowMap[getLessonInfo('index', data.item.id)].closeRow()
+        }}
       />
     )
   }
@@ -360,39 +312,15 @@ function LessonListScreen (props) {
         <SetItem thisSet={props.route.params.thisSet} mode='lessonlist' />
       </View>
       <SwipeListView
-        data={props.activeDatabase.lessons.filter(
-          lesson => props.route.params.thisSet.id === lesson.setid
-        )}
+        data={props.route.params.thisSet.lessons}
         renderItem={renderLessonItem}
         ListFooterComponent={() => <View style={{ height: 30 }} />}
-        keyExtractor={item => item.index.toString()}
-        disableLeftSwipe={
-          getLessonType(activeLessonInModal) === 'c' ? true : false
-        }
-        disableRightSwipe={
-          getLessonType(activeLessonInModal) === 'c' ? true : false
-        }
-        renderHiddenItem={(data, rowMap) => (
-          <LessonSwipeBackdrop
-            isComplete={thisSetProgress.includes(data.item.index)}
-            toggleComplete={() => {
-              props.toggleComplete(
-                props.activeGroup.name,
-                props.route.params.thisSet,
-                data.item.index
-              )
-              rowMap[data.item.index].closeRow()
-            }}
-            showShareModal={() => {
-              setShowShareModal(true)
-              rowMap[data.item.index].closeRow()
-            }}
-          />
-        )}
+        keyExtractor={item => getLessonInfo('index', item.id).toString()}
+        renderHiddenItem={renderLessonSwipeBackdrop}
         leftOpenValue={50}
         rightOpenValue={-50}
-        // these are different on platform because the activation is causing a
-        //  crash on android phones
+        //! these are different on platform because the activation is causing a
+        //!   crash on android phones
         leftActivationValue={
           Platform.OS === 'ios' ? Dimensions.get('screen').width / 2 - 10 : 1000
         }
@@ -401,47 +329,19 @@ function LessonListScreen (props) {
             ? -Dimensions.get('screen').width / 2 + 10
             : -1000
         }
-        // leftActivationValue={Dimensions.get('screen').width / 2 - 10}
-        // rightActivationValue={-Dimensions.get('screen').width / 2 + 10}
         stopLeftSwipe={Dimensions.get('screen').width / 2}
         stopRightSwipe={-Dimensions.get('screen').width / 2}
         onLeftActionStatusChange={
           props.isRTL
-            ? data => {
-                setShowShareModal(true)
-              }
-            : data => {
-                if (data.isActivated)
-                  props.toggleComplete(
-                    props.activeGroup.name,
-                    props.route.params.thisSet,
-                    parseInt(data.key)
-                  )
-              }
+            ? data => setShowShareModal(true)
+            : data => markLessonAsCompleteFromSwipe(data)
         }
         onRightActionStatusChange={
           props.isRTL
-            ? data => {
-                if (data.isActivated)
-                  props.toggleComplete(
-                    props.activeGroup.name,
-                    props.route.params.thisSet,
-                    parseInt(data.key)
-                  )
-              }
-            : data => {
-                setShowShareModal(true)
-              }
+            ? data => markLessonAsCompleteFromSwipe(data)
+            : data => setShowShareModal(true)
         }
-        swipeGestureBegan={data => {
-          setActiveLessonInModal(
-            props.activeDatabase.lessons.filter(
-              lesson =>
-                props.route.params.thisSet.id === lesson.setid &&
-                lesson.index === parseInt(data)
-            )[0]
-          )
-        }}
+        swipeGestureBegan={data => onLessonSwipeBegin(data)}
       />
 
       {/* MODALS */}
@@ -473,16 +373,11 @@ function LessonListScreen (props) {
         lessonType={getLessonType(activeLessonInModal)}
         set={props.route.params.thisSet}
       />
-      <HomeworkModal
-        isVisible={showHomeworkModal}
-        hideModal={() => setShowHomeworkModal(false)}
-        homework={activeLessonInModal.homework}
-      />
     </View>
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
@@ -492,7 +387,8 @@ const styles = StyleSheet.create({
   },
   studySetItemContainer: {
     width: '100%',
-    aspectRatio: 4
+    height: 100 * scaleMultiplier
+    // aspectRatio: 4
   },
   headerImage: {
     resizeMode: 'contain',
@@ -503,7 +399,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

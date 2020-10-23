@@ -22,7 +22,7 @@ function HomeworkModal (props) {
       />
     )
   }
-  //// RENDER
+  //+ RENDER
   return (
     <Modal
       isVisible={props.isVisible}

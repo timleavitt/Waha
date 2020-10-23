@@ -4,7 +4,7 @@ import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 function OptionsModal (props) {
-  //// RENDER
+  //+ RENDER
   return (
     <Modal
       isVisible={props.isVisible}
@@ -21,12 +21,7 @@ function OptionsModal (props) {
             style={styles.closeButtonContainer}
           >
             <Text
-              style={{
-                textAlign: 'center',
-                fontFamily: props.font + '-medium',
-                fontSize: 21 * scaleMultiplier,
-                color: colors.red
-              }}
+              style={Typography(props, 'h3', 'medium', 'center', colors.red)}
             >
               {props.closeText}
             </Text>

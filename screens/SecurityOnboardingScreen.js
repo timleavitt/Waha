@@ -6,15 +6,15 @@ import Onboarding from '../components/Onboarding'
 import { colors } from '../constants'
 
 function SecurityOnboardingScreen (props) {
-  //// STATE
+  //+ STATE
 
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
   }, [])
 
-  //// NAV OPTIONS
+  //+ NAV OPTIONS
   function getNavOptions () {
     return {
       headerRight: props.isRTL
@@ -26,16 +26,17 @@ function SecurityOnboardingScreen (props) {
     }
   }
 
-  //// RENDER
+  //+ RENDER
 
   return (
     <View style={styles.screen}>
       <Onboarding
+        isRTL={props.isRTL ? true : false}
         sources={[
           require('../assets/onboarding/security_onboarding1.png'),
-          require('../assets/onboarding/security_onboarding1.png'),
           require('../assets/onboarding/security_onboarding2.png'),
-          require('../assets/onboarding/security_onboarding3.png')
+          require('../assets/onboarding/security_onboarding3.png'),
+          require('../assets/onboarding/security_onboarding4.png')
         ]}
         titles={[
           props.translations.security.popups.onboarding_1_title,
@@ -55,7 +56,7 @@ function SecurityOnboardingScreen (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
   }
 })
 
-////REDUX
+//+REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
@@ -74,7 +75,8 @@ function mapStateToProps (state) {
   )[0]
   return {
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: state.database[activeGroup.language].font,
+    isRTL: state.database[activeGroup.language].isRTL
   }
 }
 

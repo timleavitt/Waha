@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 // simple back button that is shown in almost every screen's header
 function BackButton (props) {
-  //// RENDER
+  //+ RENDER
 
   return (
     <TouchableOpacity
@@ -17,13 +17,13 @@ function BackButton (props) {
       <Icon
         name={props.isRTL ? 'arrow-right' : 'arrow-left'}
         size={45 * scaleMultiplier}
-        color={colors.oslo}
+        color={props.color ? props.color : colors.oslo}
       />
     </TouchableOpacity>
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   backButtonContainer: {
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

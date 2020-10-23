@@ -3,10 +3,11 @@ import React, { useEffect } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import DownloadStatusIndicator from '../components/DownloadStatusIndicator'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLessonInfo, scaleMultiplier } from '../constants'
 import { removeDownload } from '../redux/actions/downloadActions'
+import Typography from '../styles/typography'
 function LessonItem (props) {
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     // if we've completed the download for this lesson, remove the audio/video
@@ -34,7 +35,7 @@ function LessonItem (props) {
     }
   }, [props.downloads])
 
-  //// FUNCTIONS
+  //+ FUNCTIONS
 
   // calls the various modal functions on lessonlistscreen
   function showSaveModal () {
@@ -46,15 +47,13 @@ function LessonItem (props) {
     props.setShowDeleteLessonModal.call()
   }
 
-  //// RENDER
+  //+ RENDER
 
   return (
     <View
       style={[
         styles.lessonItem,
-        {
-          flexDirection: props.isRTL ? 'row-reverse' : 'row'
-        }
+        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
       ]}
     >
       {/* main touchable area */}
@@ -78,7 +77,7 @@ function LessonItem (props) {
                 : null
             }
             size={24 * scaleMultiplier}
-            color={props.isComplete ? colors.oslo : props.primaryColor}
+            color={props.isComplete ? colors.chateau : props.primaryColor}
           />
         </View>
 
@@ -88,40 +87,27 @@ function LessonItem (props) {
             flexDirection: 'column',
             justifyContent: 'center',
             flex: 1,
-            marginLeft: props.isRTL
-              ? props.thisLesson.audioSource
-                ? 0
-                : 20
-              : 20,
-            marginRight: props.isRTL
-              ? 20
-              : props.thisLesson.audioSource
-              ? 0
-              : 20
+            marginLeft: props.isRTL ? (props.thisLesson.hasAudio ? 0 : 20) : 20,
+            marginRight: props.isRTL ? 20 : props.thisLesson.hasAudio ? 0 : 20
           }}
         >
           <Text
-            style={{
-              fontSize: 16 * scaleMultiplier,
-              textAlignVertical: 'center',
-              color: props.isComplete ? colors.chateau : colors.shark,
-              textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-medium'
-            }}
+            style={Typography(
+              props,
+              'h4',
+              'medium',
+              'left',
+              props.isComplete ? colors.chateau : colors.shark
+            )}
             numberOfLines={2}
           >
             {props.thisLesson.title}
           </Text>
           <Text
-            style={{
-              fontSize: 12 * scaleMultiplier,
-              color: colors.chateau,
-              textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-regular'
-            }}
+            style={Typography(props, 'd', 'regular', 'left', colors.chateau)}
             numberOfLines={1}
           >
-            {props.thisLesson.subtitle}
+            {getLessonInfo('subtitle', props.thisLesson.id)}
           </Text>
         </View>
       </TouchableOpacity>
@@ -139,12 +125,12 @@ function LessonItem (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   lessonItem: {
-    // height: 68 * scaleMultiplier,
-    aspectRatio: 6.1,
+    height: 68 * scaleMultiplier,
+    // aspectRatio: 6.1,
     flexDirection: 'row',
     backgroundColor: colors.aquaHaze,
     flex: 1,
@@ -162,7 +148,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

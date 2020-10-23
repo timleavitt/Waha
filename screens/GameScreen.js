@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import {
   Dimensions,
   Image,
+  Keyboard,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -15,14 +17,17 @@ import { colors, scaleMultiplier } from '../constants'
 import { setIsMuted, setIsTimedOut } from '../redux/actions/securityActions'
 
 function GameScreen (props) {
-  //// STATE
+  //+ STATE
 
   const [pattern, setPattern] = useState('')
   const [countdown, setCountdown] = useState('')
   const [isPlaying, setIsPlaying] = useState(false)
-  //// CONSTRUCTOR
+
+  //+ CONSTRUCTOR
 
   useEffect(() => {
+    Keyboard.dismiss()
+
     if (pattern.includes(props.security.code)) {
       if (!props.security.isMuted) {
         var note = new Audio.Sound()
@@ -32,17 +37,17 @@ function GameScreen (props) {
       }
       props.setIsTimedOut(false)
       if (props.navigation.canGoBack()) {
-        props.navigation.goBack()
+        if (Platform.OS === 'ios') props.navigation.goBack()
         props.navigation.goBack()
       } else
         props.navigation.reset({
           index: 0,
-          routes: [{ name: 'SetsRoot' }]
+          routes: [{ name: 'SetTabs' }]
         })
     }
   }, [pattern])
 
-  //// RENDER
+  //+ RENDER
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -65,11 +70,10 @@ function GameScreen (props) {
           }}
         />
         <Text
-          style={{
-            fontFamily: props.font + '-medium',
-            paddingHorizontal: 10,
-            fontSize: 32 * scaleMultiplier
-          }}
+          style={[
+            Typography(props, 'h1', 'medium', 'center', colors.shark),
+            { paddingHorizontal: 10 }
+          ]}
         >
           {props.translations.security.game_screen_title}
         </Text>
@@ -115,11 +119,13 @@ function GameScreen (props) {
               }}
             >
               <Text
-                style={{
-                  fontFamily: props.font + '-regular',
-                  fontSize: 24 * scaleMultiplier,
-                  color: colors.white
-                }}
+                style={Typography(
+                  props,
+                  'h2',
+                  'regular',
+                  'center',
+                  colors.white
+                )}
               >
                 {countdown}
               </Text>
@@ -140,7 +146,18 @@ function GameScreen (props) {
             />
           </TouchableOpacity>
         </View>
-        <Piano setPattern={setPattern} isMuted={props.security.isMuted} />
+        <View>
+          <Image
+            style={{
+              resizeMode: 'contain',
+              width: Dimensions.get('window').width,
+              height: 60 * scaleMultiplier,
+              borderRadius: 10
+            }}
+            source={require('../assets/piano.png')}
+          />
+          <Piano setPattern={setPattern} isMuted={props.security.isMuted} />
+        </View>
         <View
           style={{
             width: Dimensions.get('window').width,
@@ -179,7 +196,7 @@ function GameScreen (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {

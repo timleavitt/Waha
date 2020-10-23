@@ -1,9 +1,9 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { colors } from '../constants'
 function SmallDrawerItem (props) {
-  //// RENDER
+  //+ RENDER
 
   return (
     <TouchableOpacity
@@ -13,32 +13,20 @@ function SmallDrawerItem (props) {
       ]}
       onPress={props.onPress}
     >
-      <Text
-        style={[
-          styles.smallDrawerItemText,
-          {
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-medium'
-          }
-        ]}
-      >
+      <Text style={Typography(props, 'h3', 'medium', 'left', colors.chateau)}>
         {props.label}
       </Text>
     </TouchableOpacity>
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   smallDrawerItemContainer: {
     paddingHorizontal: 10,
     // aspectRatio: 8,
     marginVertical: 5
-  },
-  smallDrawerItemText: {
-    fontSize: 18 * scaleMultiplier,
-    color: colors.chateau
   }
 })
 

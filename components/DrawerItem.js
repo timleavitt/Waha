@@ -23,12 +23,8 @@ function DrawerItem (props) {
       </View>
       <Text
         style={[
-          styles.title,
-          {
-            color: colors.shark,
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-medium'
-          }
+          Typography(props, 'h3', 'medium', 'left', colors.shark),
+          { paddingHorizontal: 10 }
         ]}
       >
         {props.text}
@@ -41,8 +37,8 @@ function DrawerItem (props) {
 
 const styles = StyleSheet.create({
   settingsItem: {
-    // height: 50 * scaleMultiplier,
-    aspectRatio: 5.5,
+    height: 55 * scaleMultiplier,
+    // aspectRatio: 5.5,
     paddingHorizontal: 10,
     justifyContent: 'flex-start',
     flexDirection: 'row',
@@ -52,17 +48,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 50 * scaleMultiplier
-  },
-  title: {
-    color: colors.tuna,
-    fontSize: 18 * scaleMultiplier,
-    textAlignVertical: 'center',
-    paddingHorizontal: 10,
-    textAlign: 'center'
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

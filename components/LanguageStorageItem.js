@@ -16,12 +16,7 @@ function LanguageStorageItem (props) {
         ]}
       >
         <Text
-          style={{
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-regular',
-            fontSize: 18 * scaleMultiplier,
-            color: colors.chateau
-          }}
+          style={Typography(props, 'h3', 'regular', 'left', colors.chateau)}
         >
           {props.languageName +
             ' ' +
@@ -43,24 +38,19 @@ function LanguageStorageItem (props) {
           }
         ]}
       >
-        <Text
-          style={{
-            fontFamily: props.font + '-medium',
-            fontSize: 18 * scaleMultiplier,
-            color: colors.tuna
-          }}
-        >
-          {props.megabytes + ' ' + props.translations.storage.megabyte_label}
+        <Text style={Typography(props, 'h3', 'medium', 'left', colors.tuna)}>
+          {props.megabytes >= 0
+            ? props.megabytes + ' ' + props.translations.storage.megabyte_label
+            : props.translations.storage.megabyte_label}
         </Text>
         <Text
-          style={{
-            fontFamily: props.font + '-regular',
-            fontSize: 18 * scaleMultiplier,
-            color: colors.tuna,
-            flex: 1,
-            paddingHorizontal: 20,
-            textAlign: props.isRTL ? 'right' : 'left'
-          }}
+          style={[
+            Typography(props, 'h3', 'regular', 'left', colors.tuna),
+            {
+              flex: 1,
+              paddingHorizontal: 20
+            }
+          ]}
         >
           {props.translations.storage.storage_used_label}
         </Text>
@@ -85,8 +75,8 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     width: '100%',
-    // height: 80 * scaleMultiplier,
-    aspectRatio: 5,
+    height: 80 * scaleMultiplier,
+    // aspectRatio: 5,
     backgroundColor: colors.white,
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -96,15 +86,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    // height: 40 * scaleMultiplier,
-    aspectRatio: 8.7,
+    height: 40 * scaleMultiplier,
+    // aspectRatio: 8.7,
     backgroundColor: colors.aquaHaze,
     paddingHorizontal: 20
-  },
-  languageHeaderText: {
-    fontSize: 18 * scaleMultiplier,
-    color: colors.chateau,
-    flex: 1
   },
   languageLogo: {
     resizeMode: 'contain',
@@ -120,19 +105,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 10
-  },
-  storageUsedText: {
-    fontSize: 18,
-    color: colors.tuna
-  },
-  mbText: {
-    fontSize: 18,
-    color: colors.chateau,
-    alignSelf: 'center'
-  },
-  deleteText: {
-    fontSize: 18,
-    color: colors.red
   }
 })
 

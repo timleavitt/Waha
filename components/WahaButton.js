@@ -9,9 +9,7 @@ function WahaButton (props) {
       return (
         <TouchableOpacity
           style={[
-            {
-              width: props.width
-            },
+            { width: props.width },
             styles.buttonContainer,
             {
               borderWidth: 2,
@@ -23,12 +21,8 @@ function WahaButton (props) {
         >
           <Text
             style={[
-              styles.buttonText,
-              {
-                fontFamily: props.font ? props.font + '-medium' : null,
-                color: props.color,
-                fontWeight: props.font ? null : 'bold'
-              },
+              Typography(props, 'h3', 'medium', 'center', props.color),
+              { fontWeight: props.font ? null : 'bold' },
               props.textStyle
             ]}
           >
@@ -55,13 +49,8 @@ function WahaButton (props) {
         >
           <Text
             style={[
-              styles.buttonText,
-              {
-                fontFamily: props.font ? props.font + '-medium' : null,
-                color: colors.white,
-                textAlign: 'center',
-                fontWeight: props.font ? null : 'bold'
-              },
+              Typography(props, 'h3', 'medium', 'center', colors.white),
+              { fontWeight: props.font ? null : 'bold' },
               props.textStyle
             ]}
           >
@@ -85,13 +74,8 @@ function WahaButton (props) {
         >
           <Text
             style={[
-              styles.buttonText,
-              {
-                fontSize: 14 * scaleMultiplier,
-                color: colors.chateau,
-                fontFamily: props.font ? props.font + '-medium' : null,
-                fontWeight: props.font ? null : 'bold'
-              },
+              Typography(props, 'p', 'medium', 'center', colors.chateau),
+              { fontWeight: props.font ? null : 'bold' },
               props.textStyle
             ]}
           >
@@ -108,15 +92,12 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 10,
     marginVertical: 20 * scaleMultiplier,
-    height: 60 * scaleMultiplier,
+    // paddingVertical: 10 * scaleMultiplier,
+    height: 65 * scaleMultiplier,
     paddingHorizontal: 15,
     alignItems: 'center',
+    justifyContent: 'center',
     flexDirection: 'row'
-  },
-  buttonText: {
-    textAlign: 'center',
-    fontSize: 18 * scaleMultiplier,
-    flex: 1
   }
 })
 

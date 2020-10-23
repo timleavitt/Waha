@@ -1,13 +1,13 @@
+import { getSetInfo } from '../../constants'
 import {
+  ADD_SET,
   CREATE_GROUP,
   DELETE_GROUP,
-  UPDATE_PROGRESS,
-  RESET_PROGRESS,
   EDIT_GROUP,
-  ADD_SET,
-  SET_SHOW_TOOLKIT
+  RESET_PROGRESS,
+  SET_SHOW_TOOLKIT,
+  UPDATE_PROGRESS
 } from '../actions/groupsActions'
-
 export function groups (state = [], action) {
   switch (action.type) {
     case CREATE_GROUP:
@@ -17,16 +17,16 @@ export function groups (state = [], action) {
           name: action.groupName,
           language: action.language,
           emoji: action.emoji,
-          recentCoreOrTool: action.language + '01',
-          setBookmark: action.language + '01',
+          recentCoreOrTool: action.language + '.1.1',
+          setBookmark: action.language + '.1.1',
           addedSets: [
             {
-              id: action.language + '01',
+              id: action.language + '.1.1',
               progress: [],
               bookmark: 1
             },
             {
-              id: action.language + '02',
+              id: action.language + '.1.2',
               progress: [],
               bookmark: 1
             }
@@ -86,7 +86,10 @@ export function groups (state = [], action) {
       var lessonBookmark = 0
 
       // set the recentcoreortool if this set is a core or toolkit
-      if (action.set.category === 'core' || action.set.category === 'toolkit')
+      if (
+        getSetInfo('category', action.set.id) === 'core' ||
+        getSetInfo('category', action.set.id) === 'toolkit'
+      )
         recentCoreOrTool = action.set.id
 
       return state.map(group => {
@@ -101,7 +104,7 @@ export function groups (state = [], action) {
             // return the rest of the group stuff as is
             ...group,
 
-            //// ADDED SETS (progress and lesson bookmark setting)
+            //+ ADDED SETS (progress and lesson bookmark setting)
             addedSets: group.addedSets.map(set => {
               // get the set we're changing
               if (set.id === action.set.id) {
@@ -127,11 +130,11 @@ export function groups (state = [], action) {
                   // otherwise, mark it as complete and set the bookmark
                 } else {
                   // if we've completed everything in a set
-                  if (set.progress.length + 1 === action.set.length) {
+                  if (set.progress.length + 1 === action.setLength) {
                     // if core or toolkit, set to next in that category
                     if (
-                      action.set.category === 'core' ||
-                      action.set.category === 'toolkit'
+                      getSetInfo('category', action.set.id) === 'core' ||
+                      getSetInfo('category', action.set.id) === 'mt'
                     ) {
                       setBookmark = action.nextSet
                         ? action.nextSet.id
@@ -166,10 +169,10 @@ export function groups (state = [], action) {
               }
             }),
 
-            //// MOST RECENT CORE OR TOOLKIT SET
+            //+ MOST RECENT CORE OR TOOLKIT SET
             recentCoreOrTool: recentCoreOrTool,
 
-            //// SET BOOKMARK
+            //+ SET BOOKMARK
             setBookmark: setBookmark
           }
         }
@@ -180,7 +183,7 @@ export function groups (state = [], action) {
         if (group.name === action.groupName) {
           return {
             ...group,
-            setBookmark: group.language + '01',
+            setBookmark: group.language + '.1.1',
             addedSets: group.addedSets.map(set => {
               return { ...set, progress: [], bookmark: 1 }
             })
@@ -197,7 +200,7 @@ export function groups (state = [], action) {
             addedSets: [
               ...group.addedSets,
               {
-                id: action.setID,
+                id: action.set.id,
                 progress: [],
                 bookmark: 1
               }

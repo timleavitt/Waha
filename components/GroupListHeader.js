@@ -14,15 +14,19 @@ import { deleteLanguage } from '../redux/actions/databaseActions'
 import { removeDownload } from '../redux/actions/downloadActions'
 import { deleteGroup } from '../redux/actions/groupsActions'
 function GroupListHeader (props) {
-  //// FUNCTIONS
+  //+ FUNCTIONS
 
   useEffect(() => {
     // check if there was a failed language add, i.e. if the app crashed/user quit during a fetch
     // and clear out the already downloaded content if there was
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
-        props.activeDatabase.sources.forEach(source => {
-          if (!contents.includes(props.languageID + source + '.mp3'))
+        props.activeDatabase.files.forEach(fileName => {
+          var tempFileName = fileName.slice(0, -3)
+          if (
+            !contents.includes(`${props.languageID}-${tempFileName}.mp3`) &&
+            !contents.includes(`${props.languageID}-${tempFileName}.png`)
+          )
             deleteLanguageInstance()
         })
       }
@@ -109,10 +113,9 @@ function GroupListHeader (props) {
       {trashButton}
       <Text
         style={[
-          styles.languageHeaderText,
+          Typography(props, 'h3', 'regular', 'left', colors.chateau),
           {
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-regular',
+            flex: 1,
             marginLeft: props.isRTL ? 0 : props.isEditing ? 0 : 20,
             marginRight: props.isRTL ? (props.isEditing ? 0 : 20) : 0
           }
@@ -130,20 +133,15 @@ function GroupListHeader (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   languageHeaderContainer: {
     alignItems: 'center',
     width: '100%',
-    // height: 40 * scaleMultiplier,
-    aspectRatio: 8.7,
+    height: 40 * scaleMultiplier,
+    // aspectRatio: 8.7,
     backgroundColor: colors.aquaHaze
-  },
-  languageHeaderText: {
-    fontSize: 18 * scaleMultiplier,
-    color: colors.chateau,
-    flex: 1
   },
   languageLogo: {
     resizeMode: 'contain',
@@ -161,6 +159,7 @@ function mapStateToProps (state) {
   )[0]
   return {
     isRTL: state.database[activeGroup.language].isRTL,
+    activeDatabase: state.database[activeGroup.language],
     groups: state.groups,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,

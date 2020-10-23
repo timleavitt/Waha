@@ -3,7 +3,7 @@ import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 function PlayScreenHeaderButtons (props) {
-  //// RENDER
+  //+ RENDER
 
   return (
     <View
@@ -36,7 +36,7 @@ function PlayScreenHeaderButtons (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   headerButtonsContainer: {
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

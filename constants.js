@@ -6,8 +6,8 @@ export const scaleMultiplier =
     : Dimensions.get('window').width / 400
 
 export const languageT2S = {
-  en: require('./assets/languageT2S/en.mp3'),
-  da: require('./assets/languageT2S/te.mp3')
+  en: require('./assets/languageT2S/en.mp3')
+  // da: require('./assets/languageT2S/te.mp3')
 }
 
 export const groupIcons = [
@@ -256,19 +256,19 @@ export const languages = [
       //   logoSource:
       //     'https://www.arizonachristian.edu/wp-content/uploads/2017/06/logo-placeholder.png'
       // }
-    ]
-  },
-  {
-    i18nName: 'arabic',
-    languageCode: 'ar',
-    data: [
-      {
-        nativeName: 'Test language (RTL)',
-        wahaID: 'da',
-        i18nName: 'testLanguage',
-        logoSource:
-          'https://res.cloudinary.com/waha/image/upload/v1596578895/English/logo-1_kr9nno.png'
-      }
+      //   ]
+      // },
+      // {
+      //   i18nName: 'arabic',
+      //   languageCode: 'ar',
+      //   data: [
+      //     {
+      //       nativeName: 'Test language (RTL)',
+      //       wahaID: 'da',
+      //       i18nName: 'testLanguage',
+      //       logoSource:
+      //         'https://res.cloudinary.com/waha/image/upload/v1596578895/English/logo-1_kr9nno.png'
+      //     }
       // {
       //   nativeName: 'ليبي‎',
       //   wahaID: 'la',
@@ -333,4 +333,79 @@ export const colors = {
   apple: '#60C239',
   red: '#FF0800',
   blue: '#2D9CDB'
+}
+
+// get various information about a lesson based off its id
+export function getLessonInfo (type, lessonID) {
+  var idComponents = lessonID.split('.')
+
+  switch (type) {
+    // lesson ids are in format en.1.1.1
+    case 'language':
+      return idComponents[0]
+      break
+    case 'index':
+      return parseInt(idComponents[3])
+      break
+    case 'setID':
+      return idComponents[0] + '.' + idComponents[1] + '.' + idComponents[2]
+      break
+    case 'subtitle':
+      return idComponents[1] + '.' + idComponents[2] + '.' + idComponents[3]
+      break
+    case 'category':
+      switch (idComponents[1]) {
+        case '1':
+          return 'core'
+          break
+        case '2':
+          return 'topical'
+          break
+        case '3':
+          return 'mt'
+          break
+      }
+      break
+    case 'audioSource':
+      return `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${
+        idComponents[0]
+      }%2Fsets%2F${idComponents[1] +
+        '.' +
+        idComponents[2]}%2F${lessonID}.mp3?alt=media`
+      break
+    case 'videoSource':
+      return `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${
+        idComponents[0]
+      }%2Fsets%2F${idComponents[1] + '.' + idComponents[2]}%2F${lessonID +
+        'v'}.mp4?alt=media`
+      break
+  }
+}
+
+// get various information about a set based off its id
+export function getSetInfo (type, setID) {
+  var idComponents = setID.split('.')
+
+  switch (type) {
+    // set ids are in format en.1.1
+    case 'language':
+      return idComponents[0]
+      break
+    case 'index':
+      return parseInt(idComponents[2])
+      break
+    case 'category':
+      switch (idComponents[1]) {
+        case '1':
+          return 'core'
+          break
+        case '2':
+          return 'topical'
+          break
+        case '3':
+          return 'mt'
+          break
+      }
+      break
+  }
 }
