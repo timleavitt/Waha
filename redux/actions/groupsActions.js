@@ -1,3 +1,10 @@
+import { getLessonInfo, getSetInfo } from '../../constants'
+import {
+  logAddStorySet,
+  logCompleteLesson,
+  logCreateGroup
+} from '../LogEventFunctions'
+
 export const CHANGE_ACTIVE_GROUP = 'CHANGE_ACTIVE_GROUP'
 export const CREATE_GROUP = 'CREATE_GROUP'
 export const EDIT_GROUP = 'EDIT_GROUP'
@@ -15,6 +22,7 @@ export function changeActiveGroup (groupName) {
 }
 
 export function createGroup (groupName, language, emoji) {
+  logCreateGroup(language)
   return {
     type: CREATE_GROUP,
     groupName,
@@ -39,26 +47,33 @@ export function deleteGroup (groupName) {
   }
 }
 
-function updateProgress (groupName, set, nextSet, lessonIndex) {
+function updateProgress (groupName, set, nextSet, lessonIndex, setLength) {
   return {
     type: UPDATE_PROGRESS,
     groupName,
     set,
     nextSet,
-    lessonIndex
+    lessonIndex,
+    setLength
   }
 }
 
 export function toggleComplete (groupName, set, lessonIndex) {
-  // logToggleComplete(set)
   return (dispatch, getState) => {
     var thisLanguage = getState().groups.filter(
       group => group.name === groupName
     )[0].language
     var nextSet = getState().database[thisLanguage].sets.filter(
-      dbSet => dbSet.category === set.category && dbSet.index === set.index + 1
+      dbSet =>
+        getSetInfo('category', dbSet.id) === getSetInfo('category', set.id) &&
+        getSetInfo('index', dbSet.id) === getSetInfo('index', set.id) + 1
     )[0]
-    dispatch(updateProgress(groupName, set, nextSet, lessonIndex))
+    var thisLesson = set.lessons.filter(
+      lesson => getLessonInfo('index', lesson.id) === lessonIndex
+    )[0]
+    var setLength = set.lessons.length
+    logCompleteLesson(thisLesson, set, thisLanguage)
+    dispatch(updateProgress(groupName, set, nextSet, lessonIndex, setLength))
   }
 }
 
@@ -69,11 +84,12 @@ export function resetProgress (groupName) {
   }
 }
 
-export function addSet (groupName, setID) {
+export function addSet (groupName, set) {
+  logAddStorySet(set)
   return {
     type: ADD_SET,
     groupName,
-    setID
+    set
   }
 }
 

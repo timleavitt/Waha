@@ -15,13 +15,7 @@ function WahaItem (props) {
       ]}
       onPress={props.onPress}
     >
-      <Text
-        style={{
-          fontFamily: props.font + '-medium',
-          fontSize: 18 * scaleMultiplier,
-          color: colors.shark
-        }}
-      >
+      <Text style={Typography(props, 'h3', 'medium', 'left', colors.shark)}>
         {props.title}
       </Text>
       {props.children}
@@ -36,13 +30,7 @@ function WahaItem (props) {
         props.style
       ]}
     >
-      <Text
-        style={{
-          fontFamily: props.font + '-medium',
-          fontSize: 18 * scaleMultiplier,
-          color: colors.shark
-        }}
-      >
+      <Text style={Typography(props, 'h3', 'medium', 'left', colors.shark)}>
         {props.title}
       </Text>
       {props.children}
@@ -53,8 +41,8 @@ function WahaItem (props) {
 const styles = StyleSheet.create({
   itemContainer: {
     width: '100%',
-    // height: 80 * scaleMultiplier,
-    aspectRatio: 5,
+    height: 80 * scaleMultiplier,
+    // aspectRatio: 5,
     backgroundColor: colors.white,
     alignItems: 'center',
     paddingHorizontal: 20,

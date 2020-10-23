@@ -59,7 +59,6 @@ export function setMTUnlockTimeout (time) {
 }
 
 export function setMTUnlockAttempts (numAttempts) {
-  console.log(numAttempts)
   return {
     type: SET_MT_UNLOCK_ATTEMPTS,
     numAttempts

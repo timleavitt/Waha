@@ -1,6 +1,13 @@
 import * as FileSystem from 'expo-file-system'
 import React, { useEffect, useState } from 'react'
-import { Alert, Dimensions, FlatList, StyleSheet, View } from 'react-native'
+import {
+  Alert,
+  Dimensions,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
 import LanguageStorageItem from '../components/LanguageStorageItem'
@@ -9,7 +16,7 @@ import { colors } from '../constants'
 import { removeDownload } from '../redux/actions/downloadActions'
 
 function StorageScreen (props) {
-  //// STATE
+  //+ STATE
 
   // keeps track of storage size of each language's downloaded chapter 2s
   const [storageObject, setStorageObject] = useState({})
@@ -17,14 +24,14 @@ function StorageScreen (props) {
   // keeps track of total storage for all downloaded chapter 2s
   const [totalStorage, setTotalStorage] = useState(0)
 
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
     getAllStorageUsed()
   }, [])
 
-  //// NAV OPTIONS
+  //+ NAV OPTIONS
 
   function getNavOptions () {
     return {
@@ -37,12 +44,12 @@ function StorageScreen (props) {
     }
   }
 
-  //// FUNCTIONS
+  //+ FUNCTIONS
 
   // gets the storage size in megabytes for all the downloaded chapter 2s for a specific language
   async function getStorageUsedByLanguage (language) {
     var storageUsed = 0
-    var regex = new RegExp('[a-z]{2}[0-9]{3}..*')
+    var regex = new RegExp('[a-z]{2}.[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}.*')
     return await FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
       .then(async contents => {
         for (const item of contents) {
@@ -85,7 +92,7 @@ function StorageScreen (props) {
   async function deleteDownloadedLessons (language) {
     await FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
       .then(contents => {
-        var regex = new RegExp('[a-z]{2}[0-9]{3}..*')
+        var regex = new RegExp('[a-z]{2}.[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}.*')
         for (const item of contents) {
           var hasMatch = regex.exec(item)
           if (hasMatch) {
@@ -118,7 +125,7 @@ function StorageScreen (props) {
     return installedLanguageInstances
   }
 
-  //// RENDER
+  //+ RENDER
 
   function renderLanguageStorageItem (languageList) {
     return (
@@ -150,7 +157,7 @@ function StorageScreen (props) {
   }
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <FlatList
         data={getInstalledLanguageInstances()}
         renderItem={renderLanguageStorageItem}
@@ -194,11 +201,11 @@ function StorageScreen (props) {
         }
         style={{ alignSelf: 'center' }}
       />
-    </View>
+    </SafeAreaView>
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
@@ -207,7 +214,7 @@ const styles = StyleSheet.create({
   }
 })
 
-////REDUX
+//+REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

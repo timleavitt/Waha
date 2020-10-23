@@ -4,11 +4,11 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 function GroupListHeaderMT (props) {
-  //// FUNCTIONS
+  //+ FUNCTIONS
 
   useEffect(() => {}, [])
 
-  //// RENDER
+  //+ RENDER
 
   // if our active language has a toolkit, show the list of groups
   // var list = props.activeDatabase.hasToolkit ? (
@@ -59,25 +59,13 @@ function GroupListHeaderMT (props) {
       ]}
     >
       <View>
-        <Text
-          style={{
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-medium',
-            fontSize: 18 * scaleMultiplier,
-            color: colors.chateau
-          }}
-        >
+        <Text style={Typography(props, 'h3', 'medium', 'left', colors.chateau)}>
           {props.languageName +
             ' ' +
             props.translations.mobilization_tools.groups_label}
         </Text>
         <Text
-          style={{
-            textAlign: props.isRTL ? 'right' : 'left',
-            fontFamily: props.font + '-regular',
-            fontSize: 18 * scaleMultiplier,
-            color: colors.chateau
-          }}
+          style={Typography(props, 'h3', 'regular', 'left', colors.chateau)}
         >
           {
             props.translations.mobilization_tools
@@ -95,7 +83,7 @@ function GroupListHeaderMT (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   languageHeaderContainer: {

@@ -1,11 +1,12 @@
 import {
-  STORE_DATA,
-  SET_FETCH_ERROR,
-  SET_IS_FETCHING,
-  SET_FINISHED_ONBOARDING,
-  SET_FINISHED_INITIAL_FETCH,
   DELETE_LANGUAGE,
-  SET_CURRENT_FETCH_PROGRESS
+  SET_CURRENT_FETCH_PROGRESS,
+  SET_FETCH_ERROR,
+  SET_FINISHED_INITIAL_FETCH,
+  SET_FINISHED_ONBOARDING,
+  SET_IS_FETCHING,
+  SET_TOTAL_TO_DOWNLOAD,
+  STORE_DATA
 } from '../actions/databaseActions'
 
 export function database (
@@ -28,6 +29,8 @@ export function database (
       }
     case SET_CURRENT_FETCH_PROGRESS:
       return { ...state, currentFetchProgress: action.progress }
+    case SET_TOTAL_TO_DOWNLOAD:
+      return { ...state, totalToDownload: action.total }
     case DELETE_LANGUAGE:
       const languageToDelete = action.language
       const { [languageToDelete]: value, ...newObject } = state

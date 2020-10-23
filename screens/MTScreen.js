@@ -18,16 +18,16 @@ import WahaItem from '../components/WahaItem'
 import { colors, scaleMultiplier } from '../constants'
 
 function MTScreen (props) {
-  //// STATE
+  //+ STATE
   const [showHowMTsWorkModal, setShowHowMTsWorkModal] = useState(false)
 
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
   }, [])
 
-  //// NAV OPTIONS
+  //+ NAV OPTIONS
   function getNavOptions () {
     return {
       headerRight: props.isRTL
@@ -59,7 +59,7 @@ function MTScreen (props) {
     return installedLanguageInstances
   }
 
-  //// RENDER
+  //+ RENDER
 
   // section list render functions
   function renderLanguageInstanceItem (section) {
@@ -115,7 +115,9 @@ function MTScreen (props) {
           <SectionList
             sections={getLanguageAndGroupData()}
             renderItem={({ item, section }) => {
-              return props.database[section.languageID].hasToolkit ? (
+              return props.database[section.languageID].sets.some(set => {
+                return /[a-z]{2}.3.[0-9]+/.test(set.id)
+              }) ? (
                 renderGroupItem(item)
               ) : (
                 <View
@@ -129,12 +131,13 @@ function MTScreen (props) {
                   }}
                 >
                   <Text
-                    style={{
-                      fontFamily: props.font + '-regular',
-                      fontSize: 14 * scaleMultiplier,
-                      color: colors.chateau,
-                      textAlign: 'center'
-                    }}
+                    style={Typography(
+                      props,
+                      'p',
+                      'regular',
+                      'center',
+                      colors.chateau
+                    )}
                   >
                     {
                       props.translations.mobilization_tools
@@ -202,7 +205,7 @@ function MTScreen (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
@@ -223,7 +226,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

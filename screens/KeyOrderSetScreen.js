@@ -12,14 +12,14 @@ import BackButton from '../components/BackButton'
 import KeyLabels from '../components/KeyLabels'
 import Piano from '../components/Piano'
 import WahaButton from '../components/WahaButton'
-import { colors, scaleMultiplier } from '../constants'
+import { colors } from '../constants'
 import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
 function KeyOrderSetScreen (props) {
-  //// STATE
+  //+ STATE
 
   const [keyOrder, setKeyOrder] = useState('')
   const [instructionText, setInstructionText] = useState('')
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     switch (props.route.name) {
@@ -165,19 +165,14 @@ function KeyOrderSetScreen (props) {
     }
   }
 
-  //// RENDER
+  //+ RENDER
 
   return (
     <SafeAreaView style={styles.screen}>
       <View style={{ width: '100%', alignItems: 'center' }}>
         <View style={{ width: '100%' }}>
           <Text
-            style={{
-              color: colors.shark,
-              fontFamily: props.font + '-medium',
-              fontSize: 24 * scaleMultiplier,
-              textAlign: 'center'
-            }}
+            style={Typography(props, 'h2', 'medium', 'center', colors.shark)}
           >
             {instructionText}
           </Text>
@@ -197,7 +192,7 @@ function KeyOrderSetScreen (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {

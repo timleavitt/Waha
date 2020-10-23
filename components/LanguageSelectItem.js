@@ -20,8 +20,8 @@ function LanguageSelectItem (props) {
   return (
     <View
       style={{
-        // height: 80 * scaleMultiplier,
-        aspectRatio: 5,
+        height: 80 * scaleMultiplier,
+        // aspectRatio: 5,
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -47,12 +47,10 @@ function LanguageSelectItem (props) {
           }}
         >
           <Text
-            style={{
-              color: colors.shark,
-              fontSize: 18 * scaleMultiplier,
-              fontWeight: 'bold',
-              textAlign: 'left'
-            }}
+            style={[
+              Typography(props, 'h3', '', 'left', colors.shark),
+              { fontWeight: 'bold' }
+            ]}
           >
             {props.nativeName}
           </Text>

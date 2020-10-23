@@ -4,11 +4,8 @@ import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
 import Blurb from '../components/Blurb'
 import Hero from '../components/Hero'
-import KeyLabels from '../components/KeyLabels'
-import MessageModal from '../components/MessageModal'
 import ModalButton from '../components/ModalButton'
 import OptionsModal from '../components/OptionsModal'
-import Piano from '../components/Piano'
 import Separator from '../components/Separator'
 import WahaItem from '../components/WahaItem'
 import WahaItemDescription from '../components/WahaItemDescription'
@@ -20,7 +17,7 @@ import {
 } from '../redux/actions/securityActions'
 
 function SecurityScreen (props) {
-  //// STATE
+  //+ STATE
   const [showSecurityWarningModal, setShowSecurityWarningModal] = useState(
     false
   )
@@ -28,7 +25,7 @@ function SecurityScreen (props) {
   const [showViewKeyOrderModal, setShowViewKeyOrderModal] = useState(false)
 
   const [showChangeTimeoutModal, setShowChangeTimeoutModal] = useState(false)
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
@@ -49,7 +46,7 @@ function SecurityScreen (props) {
       return props.translations.security.instant_label
   }
 
-  //// NAV OPTIONS
+  //+ NAV OPTIONS
   function getNavOptions () {
     return {
       headerRight: props.isRTL
@@ -96,11 +93,7 @@ function SecurityScreen (props) {
           }}
         >
           <Text
-            style={{
-              fontFamily: props.font + '-regular',
-              fontSize: 16 * scaleMultiplier,
-              color: colors.chateau
-            }}
+            style={Typography(props, 'h4', 'regular', 'left', colors.chateau)}
           >
             {getTimeoutText()}
           </Text>
@@ -123,7 +116,7 @@ function SecurityScreen (props) {
         />
       </WahaItem>
       <Separator />
-      <WahaItem
+      {/* <WahaItem
         title={props.translations.security.view_key_order_button_label}
         onPress={() => setShowViewKeyOrderModal(true)}
       >
@@ -133,11 +126,11 @@ function SecurityScreen (props) {
           size={50 * scaleMultiplier}
         />
       </WahaItem>
-      <Separator />
+      <Separator /> */}
     </View>
   ) : null
 
-  //// RENDER
+  //+ RENDER
 
   return (
     <View style={styles.screen}>
@@ -155,35 +148,22 @@ function SecurityScreen (props) {
         <WahaItem
           title={props.translations.security.security_mode_picker_label}
         >
-          <View
-            style={{
-              flexDirection: props.isRTL ? 'row-reverse' : 'row',
-              alignItems: 'center'
+          <Switch
+            trackColor={{ false: colors.chateau, true: colors.apple }}
+            thumbColor={colors.white}
+            ios_backgroundColor={colors.chateau}
+            onValueChange={() => {
+              // toggle security mode on or off for the active group
+              if (props.security.code) {
+                if (props.security.securityEnabled) {
+                  props.setSecurityEnabled(false)
+                } else props.setSecurityEnabled(true)
+              } else {
+                props.navigation.navigate('SecurityOnboarding')
+              }
             }}
-          >
-            <Icon
-              name='error-filled'
-              size={40 * scaleMultiplier}
-              color={colors.red}
-              style={{ marginHorizontal: 20 }}
-            />
-            <Switch
-              trackColor={{ false: colors.chateau, true: colors.apple }}
-              thumbColor={colors.white}
-              ios_backgroundColor={colors.chateau}
-              onValueChange={() => {
-                // toggle security mode on or off for the active group
-                if (props.security.code) {
-                  if (props.security.securityEnabled) {
-                    props.setSecurityEnabled(false)
-                  } else props.setSecurityEnabled(true)
-                } else {
-                  props.navigation.navigate('SecurityOnboarding')
-                }
-              }}
-              value={props.security.securityEnabled}
-            />
-          </View>
+            value={props.security.securityEnabled}
+          />
         </WahaItem>
         <Separator />
         <WahaItemDescription
@@ -195,7 +175,7 @@ function SecurityScreen (props) {
         />
         {securityControls}
       </ScrollView>
-      <MessageModal
+      {/* <MessageModal
         isVisible={showViewKeyOrderModal}
         hideModal={() => setShowViewKeyOrderModal(false)}
         title={props.translations.security.your_key_order_label}
@@ -205,7 +185,7 @@ function SecurityScreen (props) {
       >
         <Piano setPattern={() => {}} />
         <KeyLabels keyOrder={props.security.code} />
-      </MessageModal>
+      </MessageModal> */}
       <OptionsModal
         isVisible={showChangeTimeoutModal}
         hideModal={() => setShowChangeTimeoutModal(false)}
@@ -315,7 +295,7 @@ function SecurityScreen (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
@@ -324,7 +304,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
@@ -352,47 +332,3 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SecurityScreen)
-
-{
-  /* <MessageModal
-        isVisible={showSecurityWarningModal}
-        hideModal={() => setShowSecurityWarningModal(false)}
-        title={
-          props.translations.security.popups
-            .activate_security_mode_confirmation_title
-        }
-        body={
-          props.translations.security.popups
-            .activate_security_mode_confirmation_message
-        }
-        confirmText={props.translations.general.i_understand}
-        confirmOnPress={() => {
-          props.setSecurityEnabled(true)
-          setShowSecurityWarningModal(false)
-        }}
-        cancelText={props.translations.general.cancel}
-        cancelOnPress={() => setShowSecurityWarningModal(false)}
-        imageSource={require('../assets/gifs/unlock_mob_tools.gif')}
-      /> */
-}
-
-{
-  /* <WahaItem
-        title={props.translations.security.activate_on_switch_picker_label}
-      >
-        <Switch
-          trackColor={{ false: colors.chateau, true: colors.apple }}
-          thumbColor={colors.white}
-          ios_backgroundColor={colors.chateau}
-          onValueChange={() => {
-            // toggle security mode on or off
-            if (props.security.activateOnSwitch)
-              props.setActivateOnSwitch(false)
-            else props.setActivateOnSwitch(true)
-          }}
-          value={props.security.activateOnSwitch}
-          disabled={props.security.securityEnabled ? false : true}
-        />
-      </WahaItem>
-      <Separator /> */
-}

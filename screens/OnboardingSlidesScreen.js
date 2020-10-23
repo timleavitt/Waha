@@ -1,6 +1,6 @@
 import i18n from 'i18n-js'
 import React, { useEffect } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { SafeAreaView, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import Onboarding from '../components/Onboarding'
 import { colors } from '../constants'
@@ -14,21 +14,21 @@ import { changeActiveGroup } from '../redux/actions/groupsActions'
 import en from '../translations/en.json'
 
 function OnboardingSlidesScreen (props) {
-  //// STATE
+  //+ STATE
 
   // translations for language select
   i18n.translations = {
     en
   }
 
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     var language = props.route.params.selectedLanguage
     props.addLanguage(language)
   }, [])
 
-  // //// FUNCTIONS
+  // //+ FUNCTIONS
 
   // tells redux that we're ready to go to loading screen once onboarding is finished
   function finishOnboarding () {
@@ -36,10 +36,10 @@ function OnboardingSlidesScreen (props) {
     props.navigation.navigate('Loading')
   }
 
-  //// RENDER
+  //+ RENDER
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <Onboarding
         sources={[
           require('../assets/onboarding/onboarding1.png'),
@@ -61,11 +61,11 @@ function OnboardingSlidesScreen (props) {
         ]}
         onFinish={finishOnboarding}
       />
-    </View>
+    </SafeAreaView>
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   }
 })
 
-////REDUX
+//+REDUX
 
 function mapStateToProps (state) {
   return {
@@ -98,95 +98,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(OnboardingSlidesScreen)
-
-// function renderOnboardingSlide (slideList) {
-//   return (
-//     <View style={styles.pageContainer}>
-//       <View style={styles.titleContainer}>
-//         <Text style={styles.title}>{slideList.item.title}</Text>
-//       </View>
-//       <View style={styles.bodyContainer}>
-//         <Text style={styles.body}>{slideList.item.body}</Text>
-//       </View>
-//       <View style={styles.imageContainer}>
-//         <Image source={slideList.item.imageSource} style={styles.image} />
-//       </View>
-//     </View>
-//   )
-// }
-
-/* <View style={styles.onboardingSequence}>
-        <FlatList
-          renderItem={renderOnboardingSlide}
-          data={onboardingData}
-          ref={ref => {
-            setFlatListRef(ref)
-          }}
-          horizontal={true}
-          pagingEnabled={true}
-          snapToAlignment={'start'}
-          snapToInterval={Dimensions.get('window').width - 64}
-          decelerationRate={'fast'}
-          getItemLayout={(data, index) => ({
-            length: Dimensions.get('window').width - 64,
-            offset: Dimensions.get('window').width - 64 * index,
-            index
-          })}
-          onViewableItemsChanged={onViewRef.current}
-          viewabilityConfig={viewConfigRef.current}
-          showsHorizontalScrollIndicator={false}
-        />
-        <View style={styles.buttonsContainer}>
-          <View>
-            {pageNumber > 0 ? (
-              <TouchableOpacity onPress={() => incrementPageNumber('prev')}>
-                <Text>{i18n.t('prev')}</Text>
-              </TouchableOpacity>
-            ) : null}
-          </View>
-          <View>
-            <TouchableOpacity
-              onPress={
-                pageNumber !== 3
-                  ? () => incrementPageNumber('next')
-                  : finishOnboarding
-              }
-            >
-              <Text>
-                {pageNumber !== 3 ? i18n.t('next') : i18n.t('finish')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View> */
-
-// // updates scroll when page number updates
-// useEffect(() => {
-//   if (flatListRef) {
-//     flatListRef.scrollToIndex({ index: pageNumber })
-//   }
-// }, [pageNumber])
-
-// // decrements / increments page number
-// function incrementPageNumber (direction) {
-//   if (direction === 'next') {
-//     setPageNumber(oldPageNumber => (oldPageNumber += 1))
-//   } else {
-//     setPageNumber(oldPageNumber => (oldPageNumber -= 1))
-//   }
-// }
-
-// // stuff for flatlist
-// const onViewRef = useRef(info => {
-//   console.log(info)
-//   // if (viewableItems) {
-//   //   setPageNumber(viewableItems[0].index)
-//   // }
-// })
-// const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 100 })
-
-// // keeps track of current onboarding page number
-// const [pageNumber, setPageNumber] = useState(0)
-
-// // reference to change flatlist
-// const [flatListRef, setFlatListRef] = useState()

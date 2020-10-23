@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Image, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, Keyboard, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
@@ -10,22 +10,22 @@ import {
   setMTUnlockTimeout
 } from '../redux/actions/securityActions'
 import { setToolkitEnabled } from '../redux/actions/toolkitEnabledActions'
-
+import { logUnlockMobilizationTools } from '../redux/LogEventFunctions'
 function PasscodeScreen (props) {
-  //// STATE
+  //+ STATE
   const [passcode, setPasscode] = useState('')
   const [pinRef, setPinRef] = useState()
   // const [passcodeStatusText, setPasscodeStatusText] = useState('')
   const [unlockSuccessModal, setUnlockSuccessModal] = useState(false)
   // const [numAttempts, setNumAttempts] = useState(0)
 
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
   }, [])
 
-  //// NAV OPTIONS
+  //+ NAV OPTIONS
   function getNavOptions () {
     return {
       headerRight: props.isRTL
@@ -44,18 +44,20 @@ function PasscodeScreen (props) {
     }
   }, [props.mtUnlockAttempts])
 
-  //// FUNCTIONS
+  //+ FUNCTIONS
 
   function checkPasscode (passcode) {
     if (passcode === '281820') {
+      Keyboard.dismiss()
+      logUnlockMobilizationTools(props.activeGroup.language)
       setUnlockSuccessModal(true)
       props.setToolkitEnabled(true)
     } else {
       props.setMTUnlockAttempts(props.mtUnlockAttempts + 1)
       pinRef.shake().then(() => setPasscode(''))
       Alert.alert(
-        props.translations.passcode.popups.unlock_unsucessful_message,
         props.translations.passcode.popups.unlock_unsucessful_title,
+        props.translations.passcode.popups.unlock_unsucessful_message,
         [
           {
             text: props.translations.general.ok,
@@ -67,19 +69,18 @@ function PasscodeScreen (props) {
     }
   }
 
-  //// RENDER
+  //+ RENDER
 
   return (
     <View style={styles.screen}>
       <Text
-        style={{
-          color: colors.shark,
-          fontFamily: props.font + '-regular',
-          fontSize: 18,
-          marginVertical: 30 * scaleMultiplier,
-          textAlign: 'center',
-          paddingHorizontal: 20
-        }}
+        style={[
+          Typography(props, 'h3', 'regular', 'center', colors.shark),
+          {
+            marginVertical: 30 * scaleMultiplier,
+            paddingHorizontal: 20
+          }
+        ]}
       >
         {props.translations.passcode.enter_passcode_text}
       </Text>
@@ -102,14 +103,13 @@ function PasscodeScreen (props) {
         }
       />
       <Text
-        style={{
-          fontFamily: props.font + '-regular',
-          fontSize: 18 * scaleMultiplier,
-          color: colors.red,
-          marginTop: 30 * scaleMultiplier,
-          paddingHorizontal: 20,
-          textAlign: 'center'
-        }}
+        style={[
+          Typography(props, 'h3', 'regular', 'center', colors.red),
+          {
+            marginTop: 30 * scaleMultiplier,
+            paddingHorizontal: 20
+          }
+        ]}
       >
         {/* conditional text based on how many attempts user has left / if they're currently locked out */}
         {Date.now() - props.security.mtUnlockTimeout < 0
@@ -152,7 +152,7 @@ function PasscodeScreen (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
@@ -162,13 +162,12 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
-  console.log(state.mtUnlockAttempts)
   return {
     activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,

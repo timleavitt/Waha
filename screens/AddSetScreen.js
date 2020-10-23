@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  YellowBox
-} from 'react-native'
+import { FlatList, LogBox, StyleSheet, Text, View } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
 import TagGroup from 'react-native-tag-group'
 import { connect } from 'react-redux'
+import BackButton from '../components/BackButton'
 import Separator from '../components/Separator'
 import SetItem from '../components/SetItem'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getSetInfo, scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
-
-YellowBox.ignoreWarnings([
+import SetInfoModal from './SetInfoModal'
+LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state'
 ])
 
@@ -29,6 +23,9 @@ function AddSetScreen (props) {
   const [tagSelectRef, setTagSelectRef] = useState()
   const [refresh, setRefresh] = useState(false)
 
+  const [showSetInfoModal, setShowSetInfoModal] = useState(false)
+  const [setInModal, setSetInModal] = useState({})
+
   useEffect(() => {
     switch (props.route.params.category) {
       case 'core':
@@ -38,7 +35,7 @@ function AddSetScreen (props) {
         setHeaderTitle(props.translations.add_set.header_topical)
         var tempTags = [props.translations.add_set.all_tag_label]
         props.activeDatabase.sets
-          .filter(set => set.category === 'topical')
+          .filter(set => getSetInfo('category', set.id) === 'topical')
           .forEach(topicalSet => {
             topicalSet.tags.forEach(tag => {
               if (!tempTags.some(tempTag => tempTag === tag)) {
@@ -69,25 +66,9 @@ function AddSetScreen (props) {
       title: headerTitle,
       headerLeft: props.isRTL
         ? () => <View></View>
-        : () => (
-            <TouchableOpacity onPress={() => props.navigation.goBack()}>
-              <Icon
-                name='cancel'
-                size={45 * scaleMultiplier}
-                color={colors.oslo}
-              />
-            </TouchableOpacity>
-          ),
+        : () => <BackButton onPress={() => props.navigation.goBack()} />,
       headerRight: props.isRTL
-        ? () => (
-            <TouchableOpacity onPress={() => props.navigation.goBack()}>
-              <Icon
-                name='cancel'
-                size={45 * scaleMultiplier}
-                color={colors.oslo}
-              />
-            </TouchableOpacity>
-          )
+        ? () => <BackButton onPress={() => props.navigation.goBack()} />
         : () => <View></View>
     }
   }
@@ -110,7 +91,7 @@ function AddSetScreen (props) {
       tagStyle={{
         borderRadius: 30,
         borderColor: colors.oslo,
-        height: 40 * scaleMultiplier,
+        height: 35 * scaleMultiplier,
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 20 * scaleMultiplier
@@ -129,7 +110,7 @@ function AddSetScreen (props) {
     />
   )
 
-  //// RENDER
+  //+ RENDER
   function renderStudySetItem (setList) {
     return (
       <SetItem
@@ -137,14 +118,8 @@ function AddSetScreen (props) {
         isSmall={false}
         mode='addset'
         onSetSelect={() => {
-          props.navigation.navigate('SetInfo', {
-            category: props.route.params.category,
-            thisSet: setList.item,
-            showSnackbar: () => {
-              setShowSnackbar(true)
-              setTimeout(() => setShowSnackbar(false), 2000)
-            }
-          })
+          setSetInModal(setList.item)
+          setShowSetInfoModal(true)
         }}
       />
     )
@@ -154,10 +129,15 @@ function AddSetScreen (props) {
     <View style={styles.screen}>
       {props.route.params.category === 'topical' ? tagSelectComponent : null}
       <FlatList
+        style={{ flex: 1 }}
         data={
           props.route.params.category === 'topical'
             ? props.activeDatabase.sets
-                .filter(set => set.category === props.route.params.category)
+                .filter(
+                  set =>
+                    getSetInfo('category', set.id) ===
+                    props.route.params.category
+                )
                 .filter(
                   topicalSet =>
                     !props.activeGroup.addedSets.some(
@@ -173,7 +153,11 @@ function AddSetScreen (props) {
                     : topicalAddedSet.tags.some(tag => activeTags.includes(tag))
                 })
             : props.activeDatabase.sets
-                .filter(set => set.category === props.route.params.category)
+                .filter(
+                  set =>
+                    getSetInfo('category', set.id) ===
+                    props.route.params.category
+                )
                 .filter(
                   set =>
                     !props.activeGroup.addedSets.some(
@@ -214,12 +198,13 @@ function AddSetScreen (props) {
         ListEmptyComponent={
           <View style={{ width: '100%', margin: 10 }}>
             <Text
-              style={{
-                fontFamily: props.font + '-regular',
-                color: colors.chateau,
-                fontSize: 14 * scaleMultiplier,
-                textAlign: 'center'
-              }}
+              style={Typography(
+                props,
+                'p',
+                'regular',
+                'center',
+                colors.chateau
+              )}
             >
               {props.translations.add_set.no_more_sets_text}
             </Text>
@@ -236,6 +221,16 @@ function AddSetScreen (props) {
           textAlign: 'center'
         }}
         backgroundColor={colors.apple}
+      />
+      <SetInfoModal
+        isVisible={showSetInfoModal}
+        hideModal={() => setShowSetInfoModal(false)}
+        category={props.route.params.category}
+        thisSet={setInModal}
+        showSnackbar={() => {
+          setShowSnackbar(true)
+          setTimeout(() => setShowSnackbar(false), 2000)
+        }}
       />
     </View>
   )

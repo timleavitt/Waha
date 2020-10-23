@@ -1,27 +1,25 @@
 import * as WebBrowser from 'expo-web-browser'
-import React from 'react'
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native'
+import React, { useState } from 'react'
+import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
 import { connect } from 'react-redux'
-import AvatarImage from '../components/AvatarImage'
 import DrawerItem from '../components/DrawerItem'
+import GroupAvatar from '../components/GroupAvatar'
 import SmallDrawerItem from '../components/SmallDrawerItem'
 import { colors, scaleMultiplier } from '../constants'
+import AddEditGroupModal from '../screens/AddEditGroupModal'
+
 function WahaDrawer (props) {
-  //// FUNCTIONS
+  const [showEditGroupModal, setShowEditGroupModal] = useState(false)
+
+  //+ FUNCTIONS
 
   // opens a local browser
   async function openBrowser (url) {
-    await WebBrowser.openBrowserAsync(url)
+    await WebBrowser.openBrowserAsync(url, { dismissButtonStyle: 'cancel' })
   }
 
-  //// RENDER
+  //+ RENDER
 
   return (
     <SafeAreaView
@@ -30,33 +28,28 @@ function WahaDrawer (props) {
     >
       <View style={styles.drawerHeaderContainer}>
         <View style={styles.groupIconContainer}>
-          <AvatarImage
+          <GroupAvatar
             style={{ backgroundColor: colors.athens }}
             emoji={props.activeGroup.emoji}
             size={120}
+            onPress={() => setShowEditGroupModal(true)}
           />
         </View>
         <Text
-          style={[styles.groupName, { fontFamily: props.font + '-black' }]}
+          style={Typography(props, 'h2', 'black', 'center', colors.white)}
           numberOfLines={2}
         >
           {props.activeGroup.name}
         </Text>
-        <View style={styles.pencilIconContainer}>
-          <TouchableOpacity
-            onPress={() =>
-              props.navigation.navigate('EditGroup', {
-                groupName: props.activeGroup.name
-              })
-            }
-          >
+        {/* <View style={styles.pencilIconContainer}>
+          <TouchableOpacity onPress={() => setShowEditGroupModal(true)}>
             <Icon
               name='pencil'
               size={25 * scaleMultiplier}
               color={colors.white}
             />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
       <View style={{ backgroundColor: colors.white, flex: 1 }}>
         <View style={{ flex: 1 }}>
@@ -98,7 +91,7 @@ function WahaDrawer (props) {
             {
               flexDirection:
                 Dimensions.get('window').height < 550
-                  ? props.isRLT
+                  ? props.isRTL
                     ? 'row-reverse'
                     : 'row'
                   : 'column'
@@ -109,14 +102,14 @@ function WahaDrawer (props) {
             onPress={() => openBrowser('https://waha.app/privacy-policy/')}
             label={props.translations.general.privacy}
           />
-          <SmallDrawerItem
+          {/* <SmallDrawerItem
             onPress={() =>
               openBrowser(
                 'https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif'
               )
             }
             label={props.translations.general.credits}
-          />
+          /> */}
           <View
             style={{
               justifyContent: 'center',
@@ -125,24 +118,24 @@ function WahaDrawer (props) {
             }}
           >
             <Text
-              style={[
-                styles.versionText,
-                {
-                  fontFamily: props.font + '-regular',
-                  textAlign: props.isRTL ? 'right' : 'left'
-                }
-              ]}
+              style={Typography(props, 'd', 'regular', 'left', colors.chateau)}
             >
-              v0.5.1.1
+              v0.6.5
             </Text>
           </View>
         </SafeAreaView>
       </View>
+      <AddEditGroupModal
+        isVisible={showEditGroupModal}
+        hideModal={() => setShowEditGroupModal(false)}
+        type='EditGroup'
+        groupName={props.activeGroup.name}
+      />
     </SafeAreaView>
   )
 }
 
-//// REDUX
+//+ REDUX
 
 const styles = StyleSheet.create({
   container: {
@@ -159,11 +152,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10
   },
-  groupName: {
-    color: colors.white,
-    textAlign: 'center',
-    fontSize: 25 * scaleMultiplier
-  },
   pencilIconContainer: {
     alignSelf: 'flex-end',
     position: 'absolute',
@@ -174,17 +162,11 @@ const styles = StyleSheet.create({
   },
   smallDrawerItemsContainer: {
     width: '100%',
-    justifyContent: 'center'
-  },
-  versionText: {
-    fontSize: 10 * scaleMultiplier,
-    color: colors.chateau,
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: 'space-between'
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

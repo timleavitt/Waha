@@ -1,9 +1,7 @@
 import NetInfo from '@react-native-community/netinfo'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { NavigationContainer } from '@react-navigation/native'
-import * as FileSystem from 'expo-file-system'
 import React, { useEffect } from 'react'
-import { Alert } from 'react-native'
 import { connect } from 'react-redux'
 import WahaDrawer from '../components/WahaDrawer'
 import { scaleMultiplier } from '../constants'
@@ -15,6 +13,7 @@ import {
 import { addSet } from '../redux/actions/groupsActions'
 import { updateConnectionStatus } from '../redux/actions/networkActions'
 import MainStack from './MainStack'
+
 const Drawer = createDrawerNavigator()
 
 function MainDrawer (props) {
@@ -28,8 +27,8 @@ function MainDrawer (props) {
       // In our case, it's "Feed" as that's the first screen inside the navigator
       route.params?.screen || props.security.securityEnabled
       ? 'Game'
-      : 'SetsRoot'
-    if (routeName === 'SetsRoot') return true
+      : 'SetTabs'
+    if (routeName === 'SetTabs') return true
     else return false
   }
   useEffect(() => {
@@ -42,52 +41,79 @@ function MainDrawer (props) {
     db.collection('languages')
       .doc(props.activeGroup.language)
       .onSnapshot(function (doc) {
-        function downloadSomething (source, fileName) {
+        // download a file
+        function downloadSomething (url, fileName) {
           var downloadResumable = FileSystem.createDownloadResumable(
-            doc.data().sources[source],
+            url,
             FileSystem.documentDirectory +
               props.activeGroup.language +
               '-' +
               fileName,
             {}
           )
-          downloadResumable.downloadAsync().catch(error => {
+          return downloadResumable.downloadAsync().catch(error => {
             throw error
           })
         }
 
-        // check for new fellowship or application chapters
-        Object.keys(doc.data().sources).forEach(source => {
-          if (
-            doc.data().sources[source] !== props.activeDatabase.sources[source]
-          ) {
+        // check for new fellowship or application chapters or header image
+        doc.data().files.forEach(fileName => {
+          if (!props.activeDatabase.files.includes(fileName)) {
             // ALERT
             Alert.alert(
               props.translations.general.popups.new_chapter_downloading_title,
               props.translations.general.popups.new_chapter_downloading_message,
               [{ text: props.translations.general.ok, onPress: () => {} }]
             )
-            downloadSomething(source, source + '.mp3')
+            if (fileName.includes('header'))
+              return downloadSomething(
+                `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.png?alt=media`,
+                fileName.slice(0, -3) + '.png'
+              )
+            else
+              return downloadSomething(
+                `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.mp3?alt=media`,
+                fileName.slice(0, -3) + '.mp3'
+              )
           }
         })
 
         // store data
-        props.storeData(doc.data(), props.activeGroup.language)
+        props.storeData(
+          { ...doc.data(), sets: props.activeDatabase.sets },
+          props.activeGroup.language
+        )
 
-        // if
-        // 1. all core story sets are completed
-        // 2. a new core story set has been addded
+        //     // if
+        //     // 1. all core story sets are completed
+        //     // 2. a new core story set has been addded
 
-        // 1. add it automatically to added sets for this group
-        // 2. make it display the 'new' icon somehow
+        //     // 1. add it automatically to added sets for this group
+        //     // 2. make it display the 'new' icon somehow
 
-        // if
-        // 1. mobilization tools is unlocked for this group
-        // 2. a new mobilization tools set is added
-        // if (props.activeGroup.showToolkit && )
+        //     // if
+        //     // 1. mobilization tools is unlocked for this group
+        //     // 2. a new mobilization tools set is added
+        //     // if (props.activeGroup.showToolkit && )
 
-        // 1. add it automatically to added sets for htis group
-        // 2. make it dispaly the 'new' icon somehow
+        //     // 1. add it automatically to added sets for htis group
+        //     // 2. make it dispaly the 'new' icon somehow
+      })
+
+    db.collection('sets')
+      .where('languageID', '==', props.activeGroup.language)
+      .onSnapshot(querySnapshot => {
+        var sets = []
+        querySnapshot.forEach(doc => {
+          sets.push({
+            id: doc.id,
+            ...doc.data()
+          })
+        })
+        props.storeData(
+          { ...props.activeDatabase, sets: sets },
+          props.activeGroup.language
+        )
       })
 
     return function cleanup () {
@@ -114,7 +140,7 @@ function MainDrawer (props) {
   //   }
   // }, [props.isConnected])
 
-  //// FUNCTIONS
+  //+ FUNCTIONS
   // async function checkPausedDownloads () {
   //   var downloadedStuff = {}
   //   await FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
@@ -175,6 +201,7 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
+  // console.log(state.database[activeGroup.language])
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],

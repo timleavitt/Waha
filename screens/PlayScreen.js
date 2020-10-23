@@ -2,6 +2,7 @@ import useInterval from '@use-it/interval'
 import { Audio, Video } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
 import { useKeepAwake } from 'expo-keep-awake'
+import * as ScreenOrientation from 'expo-screen-orientation'
 import { DeviceMotion } from 'expo-sensors'
 import React, { useEffect, useRef, useState } from 'react'
 import {
@@ -9,24 +10,21 @@ import {
   Alert,
   Animated,
   Dimensions,
-  FlatList,
   StyleSheet,
   Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import SVG from '../assets/svg'
+import AlbumArtSwiper from '../components/AlbumArtSwiper'
 import BackButton from '../components/BackButton'
+import BookView from '../components/BookView'
 import ChapterSelect from '../components/ChapterSelect'
-import HomeworkModal from '../components/HomeworkModal'
 import PlayPauseSkip from '../components/PlayPauseSkip'
 import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
 import Scrubber from '../components/Scrubber'
 import ShareModal from '../components/ShareModal'
-import { colors, scaleMultiplier } from '../constants'
+import VideoPlayer from '../components/VideoPlayer'
+import { colors, getLessonInfo } from '../constants'
 import {
   downloadLesson,
   downloadVideo,
@@ -34,49 +32,33 @@ import {
 } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
 
-console.disableYellowBox = true
-
 function PlayScreen (props) {
-  //// STATE
+  //+ AUDIO / VIDEO STATE
 
-  //// AUDIO SPECIFIC STATE
+  // objects for storing audio/video
+  const [audio, setAudio] = useState(new Audio.Sound())
+  const [video, setVideo] = useState()
 
-  // stores loaded audio file
-  const [soundObject, setSoundObject] = useState(new Audio.Sound())
+  // stores the length of the current media file in milliseconds (loaded by sound object)
+  const [mediaLength, setMediaLength] = useState(null)
 
-  // stores the length of the current audio file in milliseconds (loaded by sound object)
-  const [audioFileLength, setAudioFileLength] = useState(null)
-
-  // keeps track of if the audio file is loaded
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  //// VIDEO SPECIFIC STATE
-
-  // stores loaded video file
-  const [videoObject, setVideoObject] = useState()
+  // keeps track of if the media file is loaded
+  const [isMediaLoaded, setIsMediaLoaded] = useState(false)
 
   // keeps track of if the video is buffering
-  const [isVideoBuffering, setIsVideoBuffering] = useState(false)
-
-  // keeps track of whether the video controls overlay is visible
-  const [showVideoControls, setShowVideoControls] = useState(false)
-
-  // keeps track of the current screen orientation for fullscreen videos
-  const [screenOrientation, setScreenOrientation] = useState(0)
-
-  //// AUDIO + VIDEO STATE
+  // const [isVideoBuffering, setIsVideoBuffering] = useState(false)
 
   // keeps track of whether the audio/video file is playing or paused
-  const [isPlaying, setIsPlaying] = useState(false)
+  const [isMediaPlaying, setIsMediaPlaying] = useState(false)
 
-  // keeps track of the current position of the seeker
+  // keeps track of the current position of the seeker in ms
   const [seekPosition, setSeekPosition] = useState(0)
 
   // keeps track of if the seeker should update every second
-  // note: only time it shouldn't is during seeking, skipping, or loading a new chapter
-  const shouldTickUpdate = useRef(false)
+  // note: only time it shouldn't is during seeking, skipping, or loading a new //  chapter
+  const shouldThumbUpdate = useRef(false)
 
-  //// CHAPTER STATE
+  //+ CHAPTER SOURCES STATE
 
   // keeps track of currently playing chapter
   const [activeChapter, setActiveChapter] = useState('fellowship')
@@ -87,96 +69,88 @@ function PlayScreen (props) {
   const [trainingSource, setTrainingSource] = useState()
   const [applicationSource, setApplicationSource] = useState()
 
-  //// ALBUM ART STATE
+  //+ MISCELLANEOUS STATE
+
+  // opacity/z-index of play button that pops up on play/pause
+  const [playOpacity, setPlayOpacity] = useState(new Animated.Value(0))
+  const [animationZIndex, setAnimationZIndex] = useState(0)
 
   // ref for the middle album art scroller
-  const [albumArtRef, setAlbumArtRef] = useState()
-  const [isMiddle, setIsMiddle] = useState(true)
-  const [middleScrollBarOpacity, setMiddleScrollBarOpacity] = useState(
-    new Animated.Value(0)
-  )
-  const [sideScrollBarOpacity, setSideScrollBarOpacity] = useState(
-    new Animated.Value(0.8)
-  )
-
-  const onViewRef = useRef(info => {
-    if (info.viewableItems.some(item => item.index === 0)) setIsMiddle(true)
-    else setIsMiddle(false)
-  })
-  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
-
-  // keeps the screen always awake on this screen
-  useKeepAwake()
-
-  useEffect(() => {
-    if (isMiddle)
-      Animated.sequence([
-        Animated.timing(middleScrollBarOpacity, {
-          toValue: 0,
-          duration: 100,
-          useNativeDriver: true
-        }),
-        Animated.timing(sideScrollBarOpacity, {
-          toValue: 0.8,
-          duration: 100,
-          useNativeDriver: true
-        })
-      ]).start()
-    else {
-      Animated.sequence([
-        Animated.timing(sideScrollBarOpacity, {
-          toValue: 0,
-          duration: 100,
-          useNativeDriver: true
-        }),
-        Animated.timing(middleScrollBarOpacity, {
-          toValue: 0.8,
-          duration: 100,
-          useNativeDriver: true
-        })
-      ]).start()
-    }
-  }, [isMiddle])
-
-  // pause lesson if we move to a different screen (i.e. when switching to
-  //  splash / game for security mode)
-  useEffect(() => {
-    if (isPlaying) playHandler()
-  }, [props.navigation.isFocused()])
-
-  //// OTHER STATE
+  const [albumArtSwiperRef, setAlbumArtSwiperRef] = useState()
 
   // share modal
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
 
-  // homework modal
-  const [showHomeworkModal, setShowHomeworkModal] = useState(false)
+  // keeps track of the current screen orientation for fullscreen videos
+  const [fullscreenStatus, setFullscreenStatus] = useState(
+    Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS
+  )
+  const [deviceRotation, setDeviceRotation] = useState({})
+  const [lastPortraitOrientation, setLastPortraitOrientation] = useState(
+    ScreenOrientation.OrientationLock.PORTRAIT_UP
+  )
 
-  // animation state
-  const [playOpacity, setPlayOpacity] = useState(new Animated.Value(0))
-  const [animationZIndex, setAnimationZIndex] = useState(0)
-
-  // data for album art flatlist
-  const albumArtData = [
-    {
-      key: '0',
-      type: 'text'
-    },
-    {
-      key: '1',
-      type: 'image',
-      svgName: props.route.params.thisSet.iconName
-    },
-    {
-      key: '2',
-      type: 'text'
+  // handle device rotation changes and set device orientation accordingly
+  useEffect(() => {
+    if (deviceRotation) {
+      if (fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS) {
+        if (
+          video &&
+          trainingSource &&
+          deviceRotation &&
+          (deviceRotation.alpha > 1 || deviceRotation.alpha < -1) &&
+          deviceRotation.beta > -0.2 &&
+          deviceRotation.beta < 0.2
+        )
+          video.presentFullscreenPlayer()
+        else if (deviceRotation.beta < -0.7) {
+          ScreenOrientation.supportsOrientationLockAsync(
+            ScreenOrientation.OrientationLock.PORTRAIT_DOWN
+          ).then(isSupported => {
+            if (isSupported) {
+              ScreenOrientation.lockAsync(
+                ScreenOrientation.OrientationLock.PORTRAIT_DOWN
+              )
+              setLastPortraitOrientation(
+                ScreenOrientation.OrientationLock.PORTRAIT_DOWN
+              )
+            }
+          })
+        } else if (deviceRotation.beta > 0.7) {
+          setLastPortraitOrientation(
+            ScreenOrientation.OrientationLock.PORTRAIT_UP
+          )
+          ScreenOrientation.lockAsync(
+            ScreenOrientation.OrientationLock.PORTRAIT_UP
+          )
+        }
+      }
     }
-  ]
+  }, [deviceRotation, video, trainingSource])
 
-  //// NAV OPTIONS
+  useEffect(() => {
+    if (fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT) {
+      ScreenOrientation.supportsOrientationLockAsync(
+        ScreenOrientation.OrientationLock.ALL
+      ).then(isSupported => {
+        if (isSupported)
+          ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.ALL)
+        else
+          ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.DEFAULT)
+      })
+    } else {
+      ScreenOrientation.lockAsync(lastPortraitOrientation)
+    }
+  }, [fullscreenStatus])
+
+  // keeps the screen always awake on this screen
+  useKeepAwake()
+
+  //+ NAV OPTIONS
+
   function getNavOptions () {
     return {
-      headerTitle: props.route.params.thisLesson.subtitle,
+      headerTitle: getLessonInfo('subtitle', props.route.params.thisLesson.id),
       headerRight: props.isRTL
         ? () => <BackButton onPress={() => props.navigation.goBack()} />
         : () => (
@@ -184,7 +158,7 @@ function PlayScreen (props) {
               shareOnPress={() => setShowShareLessonModal(true)}
               completeOnPress={changeCompleteStatus}
               completeCondition={props.route.params.thisSetProgress.includes(
-                props.route.params.thisLesson.index
+                getLessonInfo('index', props.route.params.thisLesson.id)
               )}
             />
           ),
@@ -194,7 +168,7 @@ function PlayScreen (props) {
               shareOnPress={() => setShowShareLessonModal(true)}
               completeOnPress={changeCompleteStatus}
               completeCondition={props.route.params.thisSetProgress.includes(
-                props.route.params.thisLesson.index
+                getLessonInfo('index', props.route.params.thisLesson.id)
               )}
             />
           )
@@ -202,55 +176,61 @@ function PlayScreen (props) {
     }
   }
 
-  //// CONSTRUCTOR
+  //+ CONSTRUCTOR
 
   useEffect(() => {
     //set nav options
     props.navigation.setOptions(getNavOptions())
 
+    // set some audio settings
+    Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true,
+      allowsRecordingIOS: false,
+      staysActiveInBackground: false,
+      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DUCK_OTHERS,
+      shouldDuckAndroid: true,
+      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
+      playThroughEarpieceAndroid: false
+    })
+
     // set sources and download stuff if we need to
     setSources()
 
-    //when leaving the screen, cancel the interval timer and unload the audio file
-    return function cleanup () {
-      // clearInterval(interval)
+    // check if we can get any device motion data and if so, add a listener
+    DeviceMotion.isAvailableAsync().then(isAvailable => {
+      if (isAvailable) {
+        DeviceMotion.setUpdateInterval(1000)
+        DeviceMotion.addListener(({ rotation }) => {
+          setDeviceRotation(rotation)
+        })
+      }
+    })
 
-      if (soundObject) {
-        soundObject.unloadAsync()
-        setSoundObject(null)
+    // when leaving the screen, cancel the interval timer and unload the audio
+    //  file
+    return async function cleanup () {
+      if (audio) {
+        setAudio(null)
+        await audio.unloadAsync()
       }
 
-      if (videoObject) {
-        videoObject.unloadAsync()
-        setVideoObject(null)
+      if (video) {
+        setVideo(null)
+        await video.unloadAsync()
       }
+      // re-lock orientation to portrait up
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)
     }
   }, [])
 
-  // once we set a chapter 1 source, load it up
-  useEffect(() => {
-    if (fellowshipSource) {
-      try {
-        loadAudioFile(fellowshipSource)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  }, [fellowshipSource])
+  //+ LOADING FUNCTIONS
 
   useEffect(() => {
-    if (props.route.params.lessonType === 'v')
-      if (props.isConnected && !isLoaded && trainingSource)
-        loadVideoFile(trainingSource)
-  }, [props.isConnected])
+    console.log(trainingSource)
+  }, [trainingSource])
 
-  // interval for updating seeker
-  useInterval(updateSeekerTick, 1000)
-
-  //// CONSTRUCTOR FUNCTIONS
-
-  // sets the sources for all the chapters based on lesson type and whether
-  // various chapters are downloaded or not
+  //- sets the sources for all the chapters based on lesson type and whether
+  //-   various chapters are downloaded or not
   function setSources () {
     // set all possible sources for ease of use later
     var fellowshipLocal =
@@ -270,7 +250,10 @@ function PlayScreen (props) {
     var storyLocal =
       FileSystem.documentDirectory + props.route.params.thisLesson.id + '.mp3'
 
-    var storyStream = props.route.params.thisLesson.audioSource
+    var storyStream = getLessonInfo(
+      'audioSource',
+      props.route.params.thisLesson.id
+    )
 
     var storyDummy =
       FileSystem.documentDirectory +
@@ -281,8 +264,12 @@ function PlayScreen (props) {
     var trainingLocal =
       FileSystem.documentDirectory + props.route.params.thisLesson.id + 'v.mp4'
 
-    var trainingStream = props.route.params.thisLesson.videoSource
+    var trainingStream = getLessonInfo(
+      'videoSource',
+      props.route.params.thisLesson.id
+    )
 
+    // set sources appropriately based on the lesson type
     switch (props.route.params.lessonType) {
       case 'qa':
         setFellowshipSource(fellowshipLocal)
@@ -297,7 +284,7 @@ function PlayScreen (props) {
         )
           props.downloadLesson(
             props.route.params.thisLesson.id,
-            props.route.params.thisLesson.audioSource
+            getLessonInfo('audioSource', props.route.params.thisLesson.id)
           )
         break
       case 'qav':
@@ -313,11 +300,11 @@ function PlayScreen (props) {
         ) {
           props.downloadLesson(
             props.route.params.thisLesson.id,
-            props.route.params.thisLesson.audioSource
+            getLessonInfo('audioSource', props.route.params.thisLesson.id)
           )
           props.downloadVideo(
             props.route.params.thisLesson.id,
-            props.route.params.thisLesson.videoSource
+            getLessonInfo('videoSource', props.route.params.thisLesson.id)
           )
         }
         break
@@ -334,7 +321,7 @@ function PlayScreen (props) {
         )
           props.downloadVideo(
             props.route.params.thisLesson.id,
-            props.route.params.thisLesson.videoSource
+            getLessonInfo('videoSource', props.route.params.thisLesson.id)
           )
         break
       case 'v':
@@ -364,50 +351,236 @@ function PlayScreen (props) {
     }
   }
 
-  // loads an audio file, sets the length, and starts playing it
-  async function loadAudioFile (source) {
+  //- once we set a chapter 1 source, load it up
+  useEffect(() => {
+    if (fellowshipSource) {
+      loadMedia('audio', fellowshipSource)
+    }
+  }, [fellowshipSource])
+
+  //- if we lose connection during a video-only lesson, reload it once we come
+  //-  back online
+  useEffect(() => {
+    if (props.route.params.lessonType === 'v')
+      if (props.isConnected && !isMediaLoaded && trainingSource)
+        loadVideoFile('video', trainingSource)
+  }, [props.isConnected])
+
+  //- loads an audio file, sets the length, and starts playing it
+  async function loadMedia (type, source) {
+    var media = type === 'video' ? video : audio
     try {
-      await soundObject
+      await media
         .loadAsync({ uri: source }, { progressUpdateIntervalMillis: 1000 })
         .then(playbackStatus => {
-          setAudioFileLength(playbackStatus.durationMillis)
-          soundObject.setStatusAsync({
+          setMediaLength(playbackStatus.durationMillis)
+          media.setStatusAsync({
             progressUpdateIntervalMillis: 1000,
             shouldPlay: true
           })
-          shouldTickUpdate.current = true
-          setIsPlaying(true)
+          shouldThumbUpdate.current = true
+          setIsMediaPlaying(true)
         })
     } catch (error) {
       console.log(error)
     }
   }
-  // loads an video file, sets the length, and starts playing it
-  // note: basically the same as loadAudioFile()
-  async function loadVideoFile (source) {
-    try {
-      await videoObject
-        .loadAsync(
-          { uri: trainingSource },
-          { progressUpdateIntervalMillis: 100 }
-        )
+
+  //- load video once we have our video object and training source
+  //! only for lessons with videos
+  useEffect(() => {
+    if (video && trainingSource) {
+      loadMedia('video', trainingSource)
+    }
+  }, [video, trainingSource])
+
+  //- load audio file for audio books once we have a story source
+  //! only for audio book lesosns
+  useEffect(() => {
+    if (props.route.params.lessonType === 'a' && storySource) {
+      loadMedia('audio', storySource)
+    }
+  }, [storySource])
+
+  //+ PLAYBACK CONTROL FUNCTIONS
+
+  //- plays the audio if it's currently paused and pauses the audio if it's currently playing
+  function playHandler () {
+    var media = video ? video : audio
+    media.action = isMediaPlaying ? media.pauseAsync : media.playAsync
+
+    setIsMediaPlaying(currentStatus => !currentStatus)
+    startPlayPauseAnimation()
+    updateThumb()
+
+    // only play/pause if we're loaded
+    if (isMediaLoaded) {
+      media.action()
+    }
+  }
+
+  //- plays media from a specified location
+  function playFromLocation (value) {
+    console.log(value)
+    shouldThumbUpdate.current = false
+    setSeekPosition(value)
+
+    var media = video ? video : audio
+    // only play/pause if we're loaded
+    if (isMediaLoaded) {
+      media
+        .setStatusAsync({
+          shouldPlay: isMediaPlaying ? true : false,
+          positionMillis: value
+        })
+        .then(() => {
+          shouldThumbUpdate.current = true
+        })
+    }
+  }
+
+  //- starts the animation for the play button over the album art pane
+  function startPlayPauseAnimation () {
+    setAnimationZIndex(2)
+    Animated.sequence([
+      Animated.timing(playOpacity, {
+        toValue: 1,
+        duration: 0,
+        useNativeDriver: true
+      }),
+      Animated.timing(playOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true
+      })
+    ]).start(() => setAnimationZIndex(0))
+  }
+
+  //- interval for updating seeker
+  useInterval(updateThumb, 1000)
+
+  //- gets called every second by our timer and updates the seeker position based on the progress through the media file
+  async function updateThumb () {
+    var media = video ? video : audio
+
+    // only update our seeker position if our state allows
+    if (shouldThumbUpdate.current) {
+      // get the current progress through the media and update state
+      await media
+        .getStatusAsync()
         .then(playbackStatus => {
-          setAudioFileLength(playbackStatus.durationMillis)
-          videoObject.setStatusAsync({
-            progressUpdateIntervalMillis: 1000,
-            shouldPlay: true
-          })
-          shouldTickUpdate.current = true
-          setIsPlaying(true)
+          setSeekPosition(playbackStatus.positionMillis)
         })
-    } catch (error) {
-      console.log(error)
+        .catch(error => console.log(error))
     }
   }
 
-  //// UTILITY FUNCTIONS
+  //- changes the active chapter
+  function changeChapter (chapter) {
+    if (chapter !== activeChapter) {
+      audio.unloadAsync()
+      shouldThumbUpdate.current = false
+      if (chapter === 'fellowship') {
+        setSeekPosition(0)
+        loadMedia('audio', fellowshipSource)
+      } else if (chapter === 'story') {
+        setSeekPosition(0)
+        if (storySource) {
+          loadMedia('audio', storySource)
+        }
+        // auto scroll to scripture if
+        //  1. there's no audio source
+        //  2. we're currently downloading the lesson
+        //  3. there's an audio source, it's not downloading, and there's no
+        //    internet
+        if (!props.route.params.thisLesson.hasAudio) swipeToScripture()
+      } else if (chapter === 'application') {
+        setSeekPosition(0)
+        loadMedia('audio', applicationSource)
+      } else if (chapter === 'training') {
+        setIsMediaLoaded(false)
+        setSeekPosition(0)
+      }
+      setActiveChapter(chapter)
+    }
+  }
 
-  // if a download finishes, remove it from download tracker
+  //- updates something on every api call to audio object and every second
+  audio.setOnPlaybackStatusUpdate(playbackStatus => {
+    if (playbackStatus.isLoaded) {
+      setIsMediaLoaded(true)
+    }
+
+    // depending on what chapter we're on, either jump to the next
+    //  chapter once we finish or toggle the whole lesson as complete
+    if (playbackStatus.didJustFinish) {
+      if (activeChapter === 'fellowship') {
+        if (!props.route.params.thisLesson.hasAudio) {
+          changeChapter('story')
+          swipeToScripture()
+        } else if (
+          props.downloads[props.route.params.thisLesson.id] ||
+          ((props.route.params.lessonType === 'qa' ||
+            props.route.params.lessonType === 'qav') &&
+            !props.isConnected &&
+            !props.route.params.isDownloaded)
+        ) {
+          swipeToScripture()
+        } else {
+          changeChapter('story')
+        }
+      } else if (activeChapter === 'story') {
+        switch (props.route.params.lessonType) {
+          case 'qa':
+            if (!props.isDownloading) {
+              setTimeout(() => changeChapter('application'), 1000)
+            }
+            break
+          case 'qav':
+            if (!props.downloads[props.route.params.thisLesson.id + 'v']) {
+              setTimeout(() => changeChapter('training'), 1000)
+            }
+            break
+          case 'a':
+            if (
+              !props.route.params.thisSetProgress.includes(
+                getLessonInfo('index', props.route.params.thisLesson.id)
+              )
+            ) {
+              changeCompleteStatus()
+            }
+        }
+      } else if (
+        activeChapter === 'application' &&
+        !props.route.params.thisSetProgress.includes(
+          getLessonInfo('index', props.route.params.thisLesson.id)
+        )
+      ) {
+        changeCompleteStatus()
+      }
+    }
+  })
+
+  //- pause lesson if we move to a different screen (i.e. when switching to
+  //-   splash / game for security mode)
+  useEffect(() => {
+    if (isMediaPlaying) playHandler()
+  }, [props.navigation.isFocused()])
+
+  //+ OTHER FUNCTIONS
+
+  //- scrolls the album art swiper to the scripture pane
+  function swipeToScripture () {
+    if (albumArtSwiperRef)
+      albumArtSwiperRef.scrollToIndex({
+        animated: true,
+        viewPosition: 0.5,
+        viewOffset: -Dimensions.get('screen').width,
+        index: 0
+      })
+  }
+
+  //- if a download finishes, remove it from download tracker
   useEffect(() => {
     switch (props.route.params.lessonType) {
       case 'qa':
@@ -431,293 +604,21 @@ function PlayScreen (props) {
     }
   }, [props.downloads])
 
-  useEffect(() => {
-    if (videoObject && trainingSource) {
-      loadVideoFile(props.route.params.thisLesson.videoSource)
-
-      // orientation listener to activate full screen when switched to landscape and vice versa
-      DeviceMotion.addListener(({ orientation }) => {
-        if (orientation !== screenOrientation) {
-          setScreenOrientation(orientation)
-        }
-      })
-    }
-  }, [videoObject, trainingSource])
-
-  // TODO: load audio file for audio books
-  useEffect(() => {
-    if (props.route.params.lessonType === 'a' && storySource) {
-      loadAudioFile(storySource)
-    }
-  }, [storySource])
-
-  useEffect(() => {
-    if (screenOrientation === -90 || screenOrientation === 90) {
-      videoObject.presentFullscreenPlayer()
-    }
-  }, [screenOrientation])
-
-  //// PLAYBACK CONTROL FUNCTIONS
-
-  // updates something on every api call to audio object and every second
-  soundObject.setOnPlaybackStatusUpdate(playbackStatus => {
-    if (playbackStatus.isLoaded) {
-      setIsLoaded(true)
-    }
-
-    // depending on what chapter we're on, either jump to the next
-    // chapter once we finish or toggle the whole lesson as complete
-    if (playbackStatus.didJustFinish) {
-      if (activeChapter === 'fellowship') {
-        if (!props.route.params.thisLesson.audioSource) {
-          changeChapter('story')
-          swipeToScripture()
-        } else if (
-          props.downloads[props.route.params.thisLesson.id] ||
-          ((props.route.params.lessonType === 'qa' ||
-            props.route.params.lessonType === 'qav') &&
-            !props.isConnected &&
-            !props.route.params.isDownloaded)
-        ) {
-          swipeToScripture()
-        } else {
-          changeChapter('story')
-        }
-      } else if (activeChapter === 'story') {
-        switch (props.route.params.lessonType) {
-          case 'qa':
-            if (!props.isDownloading) {
-              changeChapter('application')
-            }
-            break
-          case 'qav':
-            if (!props.downloads[props.route.params.thisLesson.id + 'v']) {
-              changeChapter('training')
-            }
-            break
-        }
-      } else if (
-        activeChapter === 'application' &&
-        !props.route.params.thisSetProgress.includes(
-          props.route.params.thisLesson.index
-        )
-      ) {
-        changeCompleteStatus()
-      }
-    }
-  })
-
-  // gets called every second by our timer and updates the seeker position based on the progress through the audio file
-  async function updateSeekerTick () {
-    if (shouldTickUpdate.current) {
-      if (videoObject) {
-        try {
-          await videoObject.getStatusAsync().then(playbackStatus => {
-            setSeekPosition(playbackStatus.positionMillis)
-          })
-          //.catch(err => console.log(err))
-        } catch (error) {
-          console.log(error)
-        }
-      } else {
-        try {
-          await soundObject.getStatusAsync().then(playbackStatus => {
-            setSeekPosition(playbackStatus.positionMillis)
-          })
-          //.catch(err => console.log(err))
-        } catch (error) {
-          console.log(error)
-        }
-      }
-    }
-  }
-
-  // plays the audio if it's currently paused and pauses the audio if it's currently playing
-  function playHandler () {
-    if (isLoaded) {
-      if (videoObject) {
-        updateSeekerTick()
-        isPlaying ? videoObject.pauseAsync() : videoObject.playAsync()
-      } else {
-        startPlayPauseAnimation()
-        updateSeekerTick()
-        isPlaying
-          ? soundObject.setStatusAsync({
-              progressUpdateIntervalMillis: 1000,
-              shouldPlay: false
-            })
-          : soundObject.setStatusAsync({
-              progressUpdateIntervalMillis: 1000,
-              shouldPlay: true
-            })
-      }
-      setIsPlaying(currentStatus => !currentStatus)
-    }
-  }
-
-  // starts playing loaded audio from the position the user releases the thumb at
-  // note: catchs are empty because of a weird ios-only warning appearing
-  // that doesn't seem to affect any functionality--it's being ignored
-  function onSeekRelease (value) {
-    if (videoObject) {
-      if (isPlaying) {
-        videoObject
-          .setStatusAsync({
-            shouldPlay: false,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-        videoObject
-          .setStatusAsync({
-            shouldPlay: true,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-      } else {
-        videoObject
-          .setStatusAsync({
-            shouldPlay: false,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-      }
-    } else {
-      if (isPlaying) {
-        soundObject
-          .setStatusAsync({
-            shouldPlay: false,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-        soundObject
-          .setStatusAsync({
-            shouldPlay: true,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-      } else {
-        soundObject
-          .setStatusAsync({
-            shouldPlay: false,
-            positionMillis: value,
-            seekMillisToleranceBefore: 10000,
-            seekMillisToleranceAfter: 10000
-          })
-          .catch(err => {})
-      }
-    }
-
-    shouldTickUpdate.current = true
-    setSeekPosition(value)
-  }
-
-  // sets shouldTickUpdate to flase to prevent the seeker from updating while dragging
-  function onSeekDrag (value) {
-    shouldTickUpdate.current = false
-  }
-
-  // skips an amount of milliseconds through the audio track
-  function skip (amount) {
-    if (videoObject) {
-      isPlaying
-        ? videoObject.setStatusAsync({
-            shouldPlay: true,
-            positionMillis: seekPosition + amount
-          })
-        : videoObject.setStatusAsync({
-            shouldPlay: false,
-            positionMillis: seekPosition + amount
-          })
-    } else {
-      isPlaying
-        ? soundObject.setStatusAsync({
-            shouldPlay: true,
-            positionMillis: seekPosition + amount
-          })
-        : soundObject.setStatusAsync({
-            shouldPlay: false,
-            positionMillis: seekPosition + amount
-          })
-    }
-    setSeekPosition(seekPosition => seekPosition + amount)
-  }
-
-  // changes the active chapter
-  function changeChapter (chapter) {
-    if (chapter !== activeChapter) {
-      soundObject.unloadAsync()
-      shouldTickUpdate.current = false
-      if (chapter === 'fellowship') {
-        setSeekPosition(0)
-        loadAudioFile(fellowshipSource)
-      } else if (chapter === 'story') {
-        setSeekPosition(0)
-        if (storySource) {
-          loadAudioFile(storySource)
-        }
-        // auto scroll to scripture if
-        //  1. there's no audio source
-        //  2. we're currently downloading the lesson
-        //  3. there's an audio source, it's not downloading, and there's no internet
-        if (!props.route.params.thisLesson.audioSource) swipeToScripture()
-      } else if (chapter === 'application') {
-        setSeekPosition(0)
-        loadAudioFile(applicationSource)
-      } else if (chapter === 'training') {
-        setIsLoaded(false)
-        setSeekPosition(0)
-      }
-      setActiveChapter(chapter)
-    }
-  }
-
-  function swipeToScripture () {
-    if (albumArtRef)
-      albumArtRef.scrollToIndex({
-        animated: true,
-        viewPosition: 0.5,
-        viewOffset: -Dimensions.get('screen').width,
-        index: 0
-      })
-  }
-
-  //// OTHER FUNCTIONS
-
-  // switches the complete status of a lesson to the opposite of its current status
+  //- switches the complete status of a lesson to the opposite of its current
+  //-  status
   // and alerts the user of the change
   function changeCompleteStatus () {
     props.toggleComplete(
       props.activeGroup.name,
       props.route.params.thisSet,
-      props.route.params.thisLesson.index
+      getLessonInfo('index', props.route.params.thisLesson.id)
     )
 
     if (
-      props.route.params.thisSetProgress.includes(
-        props.route.params.thisLesson.index
+      !props.route.params.thisSetProgress.includes(
+        getLessonInfo('index', props.route.params.thisLesson.id)
       )
     ) {
-      Alert.alert(
-        props.translations.play.popups.marked_as_incomplete_title,
-        props.translations.play.popups.marked_as_incomplete_message,
-        [
-          {
-            text: props.translations.general.ok,
-            onPress: () => props.navigation.goBack()
-          }
-        ]
-      )
-    } else {
       Alert.alert(
         props.translations.play.popups.marked_as_complete_title,
         props.translations.play.popups.marked_as_complete_message,
@@ -731,409 +632,115 @@ function PlayScreen (props) {
     }
   }
 
-  function startPlayPauseAnimation () {
-    setAnimationZIndex(2)
-    Animated.sequence([
-      Animated.timing(playOpacity, {
-        toValue: 1,
-        duration: 0,
-        useNativeDriver: true
-      }),
-      Animated.timing(playOpacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true
-      })
-    ]).start(() => setAnimationZIndex(0))
-  }
-
-  //// RENDER
-
-  // renders the album art section in the middle of the screen
-  function renderAlbumArtItem ({ item }) {
-    var scrollBarLeft = (
-      <View
-        style={[
-          styles.scrollBarContainer,
-          {
-            alignSelf: 'flex-start'
-          }
-        ]}
-      >
-        <Animated.View
-          style={[
-            styles.scrollBar,
-            {
-              opacity:
-                item.key === '1' ? middleScrollBarOpacity : sideScrollBarOpacity
-            }
-          ]}
-        />
-      </View>
-    )
-    var scrollBarRight = (
-      <View
-        style={[
-          styles.scrollBarContainer,
-          {
-            alignSelf: 'flex-end'
-          }
-        ]}
-      >
-        <Animated.View
-          style={[
-            styles.scrollBar,
-            {
-              opacity:
-                item.key === '1' ? middleScrollBarOpacity : sideScrollBarOpacity
-            }
-          ]}
-        />
-      </View>
-    )
-
-    if (item.type === 'text') {
-      return (
-        <View style={styles.albumArtContainer}>
-          {scrollBarLeft}
-          {scrollBarRight}
-          <FlatList
-            data={
-              props.route.params.thisLesson.fellowshipType
-                ? // render questions on the first pane and scripture on the last
-                  item.key === '0'
-                  ? props.activeDatabase.questions[
-                      props.route.params.thisLesson.fellowshipType
-                    ].concat(
-                      props.activeDatabase.questions[
-                        props.route.params.thisLesson.applicationType
-                      ]
-                    )
-                  : props.route.params.thisLesson.scripture
-                : []
-            }
-            renderItem={renderTextContent}
-            keyExtractor={item => item.header}
-            showsVerticalScrollIndicator={false}
-            ListHeaderComponent={() => <View style={{ height: 10 }} />}
-          />
-        </View>
-      )
-    } else {
-      return (
-        <View style={styles.albumArtContainer}>
-          {scrollBarLeft}
-          {scrollBarRight}
-          <View
-            style={{
-              zIndex: 1,
-              width: '100%',
-              height: '100%',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <TouchableHighlight
-              style={{
-                width: '100%',
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-              onPress={playHandler}
-              underlayColor={colors.white + '00'}
-              activeOpacity={1}
-            >
-              <SVG
-                name={item.svgName}
-                width={Dimensions.get('window').width - 80}
-                height={Dimensions.get('window').width - 80}
-                fill='#1D1E20'
-              />
-            </TouchableHighlight>
-          </View>
-          <Animated.View
-            style={{
-              position: 'absolute',
-              opacity: playOpacity,
-              transform: [
-                {
-                  scale: playOpacity.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [2, 1]
-                  })
-                }
-              ],
-              zIndex: animationZIndex
-            }}
-          >
-            <Icon
-              name={isPlaying ? 'play' : 'pause'}
-              size={100 * scaleMultiplier}
-              color={colors.white}
-            />
-          </Animated.View>
-        </View>
-      )
-    }
-  }
-
-  // renders the questions/scripture text content
-  function renderTextContent (textList) {
-    return (
-      <View style={{ paddingHorizontal: 20 }}>
-        <Text
-          style={{
-            color: colors.shark,
-            fontSize: 18 * scaleMultiplier,
-            fontFamily: props.font + '-medium',
-            textAlign: props.isRTL ? 'right' : 'left'
-          }}
-        >
-          {textList.item.header}
-        </Text>
-        <Text
-          style={{
-            color: colors.shark,
-            fontSize: 18 * scaleMultiplier,
-            fontFamily: props.font + '-regular',
-            textAlign: props.isRTL ? 'right' : 'left'
-          }}
-        >
-          {textList.item.text}
-        </Text>
-      </View>
-    )
-  }
+  //+ RENDER
 
   var titleSection = (
     <View style={styles.titlesContainer}>
       <Text
-        numberOfLines={1}
-        style={[styles.title, { fontFamily: props.font + '-black' }]}
+        style={Typography(props, 'h3', 'black', 'center', colors.shark)}
+        numberOfLines={2}
       >
         {props.route.params.thisLesson.title}
       </Text>
     </View>
   )
 
-  // render the middle section of the screen conditionally
-  // 1. if we're in an audio book lesson, show the book text
-  // 2. if we're on a video chapter, show the video player
-  // 3. show the default option, which is the album art and questions/scripture
-  var middleSection =
-    props.route.params.lessonType === 'a' ? (
-      <View
-        style={{
-          borderRadius: 10,
-          backgroundColor: colors.porcelain,
-          borderWidth: 4,
-          borderColor: colors.chateau,
-          marginHorizontal: 10,
-          marginTop: 10
-        }}
-      >
-        <FlatList
-          data={props.route.params.thisLesson.text.split('\n')}
-          renderItem={paragraphList => (
-            <Text
-              style={{
-                color: colors.shark,
-                fontSize: 16 * scaleMultiplier,
-                fontFamily: props.font + '-regular',
-                textAlign: props.isRTL ? 'right' : 'left',
-                marginHorizontal: 10
-              }}
-            >
-              {paragraphList.item}
-            </Text>
-          )}
-          keyExtractor={item => item}
-          ListHeaderComponent={
-            <View style={{ marginVertical: 20 }}>{titleSection}</View>
-          }
-        />
-      </View>
-    ) : activeChapter === 'training' ? (
-      <TouchableWithoutFeedback
-        onPress={() => {
-          if (!showVideoControls) {
-            setShowVideoControls(true)
-            setTimeout(() => setShowVideoControls(false), 1000)
-          }
-        }}
-        style={{ width: '100%' }}
-      >
-        <View
-          style={{
-            height: Dimensions.get('window').width - 80,
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'center'
-            // backgroundColor: 'black'
-          }}
-        >
-          <Video
-            ref={ref => setVideoObject(ref)}
-            rate={1.0}
-            volume={1.0}
-            isMuted={false}
-            resizeMode='contain'
-            shouldPlay
-            usePoster
-            onLoad={() => setIsLoaded(true)}
-            style={{ flex: 1 }}
-            onPlaybackStatusUpdate={status => {
-              // match up so there's a single source of truth between
-              // waha controls and native video controls
-              if (status.isPlaying) setIsPlaying(true)
-              else if (!status.isPlaying) setIsPlaying(false)
-
-              // if we're buffering, turn play icon into activity indicator
-              if (!status.isBuffering) setIsVideoBuffering(false)
-              else if (status.isBuffering) setIsVideoBuffering(true)
-
-              // if video finishes, switch to last chapter
-              if (status.didJustFinish && props.route.params.lessonType !== 'v')
-                changeChapter('application')
-            }}
-            onLoadStart={() => setIsLoaded(false)}
-            onLoad={() => setIsLoaded(true)}
-            onFullscreenUpdate={({ fullscreenUpdate, status }) => {
-              console.log(fullscreenUpdate)
-            }}
-          />
-          {/* display a video icon placeholder when we're loading */}
-          {isLoaded ? null : (
-            <View
-              style={{
-                alignSelf: 'center',
-                width: '100%',
-                position: 'absolute',
-                alignItems: 'center'
-              }}
-            >
-              <Icon
-                name='video'
-                size={100 * scaleMultiplier}
-                color={colors.oslo}
-              />
-            </View>
-          )}
-          {/* video controls overlay */}
-          {showVideoControls ? (
-            <View
-              style={{
-                width: '100%',
-                height: 65 * scaleMultiplier,
-                position: 'absolute',
-                alignSelf: 'flex-end',
-                backgroundColor: colors.shark + '50',
-                justifyContent: 'center'
-              }}
-            >
-              <TouchableOpacity
-                style={{ alignSelf: 'flex-end' }}
-                onPress={() => {
-                  videoObject.presentFullscreenPlayer()
-                }}
-              >
-                <Icon
-                  name='fullscreen-enter'
-                  size={50 * scaleMultiplier}
-                  color={colors.white}
-                />
-              </TouchableOpacity>
-            </View>
-          ) : null}
-        </View>
-      </TouchableWithoutFeedback>
-    ) : (
-      <View
-        style={{
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        <FlatList
-          data={albumArtData}
-          renderItem={renderAlbumArtItem}
-          ref={ref => setAlbumArtRef(ref)}
-          horizontal={true}
-          pagingEnabled={true}
-          snapToAlignment={'start'}
-          snapToInterval={Dimensions.get('window').width - 60}
-          decelerationRate={'fast'}
-          showsHorizontalScrollIndicator={false}
-          ItemSeparatorComponent={() => (
-            <View style={{ width: 20, height: '100%' }} />
-          )}
-          ListHeaderComponent={() => <View style={{ width: 40 }} />}
-          ListFooterComponent={() => <View style={{ width: 40 }} />}
-          getItemLayout={(data, index) => ({
-            length: Dimensions.get('window').width - 60,
-            offset: Dimensions.get('window').width - 60 * index,
-            index
-          })}
-          initialScrollIndex={1}
-          viewabilityConfig={viewConfigRef.current}
-          onViewableItemsChanged={onViewRef.current}
-        />
-      </View>
-    )
-
-  // entire playback control section
-  // isLoaded ?
-  //  true: show scrubber
-  //        show play/pause
-  //        isLessonType = video only ?
-  //          true: hide chapter select
-  //          false: show chapter select
-  //  false: show loading circle
-  var audioControlContainer = isLoaded ? (
-    <View style={styles.audioControlContainer}>
-      {props.route.params.lessonType !== 'v' &&
-      props.route.params.lessonType !== 'a' ? (
-        <ChapterSelect
-          activeChapter={activeChapter}
-          lessonID={props.route.params.thisLesson.id}
-          onPress={chapter => changeChapter(chapter)}
-          lessonType={props.route.params.lessonType}
-          isDownloaded={props.route.params.isDownloaded}
-        />
-      ) : null}
-      <Scrubber
-        value={seekPosition}
-        onSlidingComplete={onSeekRelease}
-        onValueChange={onSeekDrag}
-        maximumValue={audioFileLength}
-        seekPosition={seekPosition}
-      />
-      <PlayPauseSkip
-        isPlaying={isPlaying}
-        isVideoBuffering={isVideoBuffering}
-        onPlayPress={playHandler}
-        onSkipPress={value => {
-          skip(value)
-        }}
-        hasHomework={props.route.params.thisLesson.homework ? true : false}
-        showHomeworkModal={() => setShowHomeworkModal(true)}
-      />
-    </View>
-  ) : (
-    <View style={styles.audioControlContainer}>
-      <ActivityIndicator size='large' color={colors.shark} />
-    </View>
-  )
-
   return (
     <View style={styles.screen}>
-      <View style={styles.topHalfContainer}>
-        {props.route.params.lessonType === 'a' ? null : titleSection}
-        {middleSection}
+      <View
+        style={[
+          styles.topHalfContainer,
+          {
+            marginBottom: props.route.params.lessonType === '' ? 10 : 0
+          }
+        ]}
+      >
+        {/* <StatusBar hidden /> */}
+        {/* don't display title section on audio book lessons */}
+        {props.route.params.lessonType !== 'a' &&
+        props.route.params.lessonType !== ''
+          ? titleSection
+          : null}
+
+        {/* 
+          MIDDLE SECTION 
+          1. book reading view for audio book lessons
+          2. video player for lessons with videos
+          3. album art swiper to display album art, scripture, and questions
+        */}
+        {props.route.params.lessonType === 'a' ||
+        props.route.params.lessonType === '' ? (
+          <BookView
+            thisLesson={props.route.params.thisLesson}
+            titleSection={titleSection}
+          />
+        ) : activeChapter === 'training' ? (
+          <VideoPlayer
+            setVideo={setVideo}
+            video={video}
+            setIsMediaLoaded={setIsMediaLoaded}
+            setIsMediaPlaying={setIsMediaPlaying}
+            // setIsVideoBuffering={setIsVideoBuffering}
+            changeChapter={changeChapter}
+            isMediaLoaded={isMediaLoaded}
+            lessonType={props.route.params.lessonType}
+            isComplete={props.route.params.thisSetProgress.includes(
+              getLessonInfo('index', props.route.params.thisLesson.id)
+            )}
+            changeCompleteStatus={changeCompleteStatus}
+            setFullScreenStatus={status => setFullscreenStatus(status)}
+            fullscreenStatus={fullscreenStatus}
+            lastPortraitOrientation={lastPortraitOrientation}
+          />
+        ) : (
+          <AlbumArtSwiper
+            setAlbumArtSwiperRef={setAlbumArtSwiperRef}
+            iconName={props.route.params.thisSet.iconName}
+            thisLesson={props.route.params.thisLesson}
+            playHandler={playHandler}
+            playOpacity={playOpacity}
+            animationZIndex={animationZIndex}
+            isMediaPlaying={isMediaPlaying}
+          />
+        )}
       </View>
-      {audioControlContainer}
+
+      {/* AUDIO CONTROLS */}
+      {props.route.params.lessonType !== '' ? (
+        isMediaLoaded ? (
+          <View style={styles.audioControlContainer}>
+            {props.route.params.lessonType !== 'v' &&
+            props.route.params.lessonType !== 'a' ? (
+              <ChapterSelect
+                activeChapter={activeChapter}
+                lessonID={props.route.params.thisLesson.id}
+                onPress={chapter => changeChapter(chapter)}
+                lessonType={props.route.params.lessonType}
+                isDownloaded={props.route.params.isDownloaded}
+              />
+            ) : null}
+            <Scrubber
+              value={seekPosition}
+              onSlidingComplete={playFromLocation}
+              onValueChange={() => (shouldThumbUpdate.current = false)}
+              maximumValue={mediaLength}
+              seekPosition={seekPosition}
+            />
+            <PlayPauseSkip
+              isMediaPlaying={isMediaPlaying}
+              // isVideoBuffering={isVideoBuffering}
+              onPlayPress={playHandler}
+              onSkipPress={value => {
+                playFromLocation(seekPosition + value)
+              }}
+            />
+          </View>
+        ) : (
+          <View style={styles.audioControlContainer}>
+            <ActivityIndicator size='large' color={colors.shark} />
+          </View>
+        )
+      ) : null}
 
       {/* MODALS */}
       <ShareModal
@@ -1144,16 +751,11 @@ function PlayScreen (props) {
         lessonType={props.route.params.lessonType}
         set={props.route.params.thisSet}
       />
-      <HomeworkModal
-        isVisible={showHomeworkModal}
-        hideModal={() => setShowHomeworkModal(false)}
-        homework={props.route.params.thisLesson.homework}
-      />
     </View>
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
@@ -1175,38 +777,6 @@ const styles = StyleSheet.create({
     flexWrap: 'nowrap',
     paddingHorizontal: 20
   },
-  title: {
-    color: colors.shark,
-    textAlign: 'center',
-    fontSize: 24 * scaleMultiplier,
-    flexWrap: 'nowrap'
-  },
-  albumArtContainer: {
-    width: Dimensions.get('window').width - 80,
-    height: Dimensions.get('window').width - 80,
-    borderRadius: 10,
-    backgroundColor: colors.porcelain,
-    overflow: 'hidden',
-    borderWidth: 4,
-    borderColor: colors.chateau,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  scrollBarContainer: {
-    height: '100%',
-    width: 24,
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 3,
-    marginLeft: -4
-  },
-  scrollBar: {
-    width: 4,
-    height: 75 * scaleMultiplier,
-    backgroundColor: colors.chateau,
-    borderRadius: 10
-  },
   audioControlContainer: {
     justifyContent: 'space-evenly',
     flexDirection: 'column',
@@ -1216,7 +786,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
@@ -1253,3 +823,9 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayScreen)
+
+/* <HomeworkModal
+        isVisible={showHomeworkModal}
+        hideModal={() => setShowHomeworkModal(false)}
+        homework={props.route.params.thisLesson.homework}
+/> */

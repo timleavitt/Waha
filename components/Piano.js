@@ -112,7 +112,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '09')
+            props.setPattern(pattern => pattern + '08')
             playNote(8)
           }}
         >
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   }
 })
 
-//// REDUX
+//+ REDUX
 
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(

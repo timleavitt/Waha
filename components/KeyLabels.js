@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Dimensions, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import KeyLabel from '../components/KeyLabel'
 import { colors, keyColors, scaleMultiplier } from '../constants'
@@ -61,7 +61,8 @@ function KeyLabels (props) {
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'center',
-        padding: 20
+        padding: 20,
+        flexDirection: props.isRTL ? 'row-reverse' : 'row'
       }}
     >
       <View style={styles.keyPlaceholder}>{keyLabel1}</View>
@@ -74,15 +75,15 @@ function KeyLabels (props) {
   )
 }
 
-//// STYLES
+//+ STYLES
 
 const styles = StyleSheet.create({
   keyPlaceholder: {
-    width: 50 * scaleMultiplier,
-    height: 50 * scaleMultiplier,
-    borderRadius: 25 * scaleMultiplier,
+    width: Dimensions.get('window').width / 12 + 12,
+    height: Dimensions.get('window').width / 12 + 12,
+    borderRadius: Dimensions.get('window').width / 24 + 6,
     backgroundColor: colors.white,
-    margin: 5,
+    margin: 5 * scaleMultiplier,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2
@@ -95,7 +96,8 @@ function mapStateToProps (state) {
   )[0]
   return {
     font: state.database[activeGroup.language].font,
-    security: state.security
+    security: state.security,
+    isRTL: state.database[activeGroup.language].isRTL
   }
 }
 
