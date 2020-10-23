@@ -69,8 +69,8 @@ function DownloadStatusIndicator (props) {
             rotation={0}
             backgroundColor={colors.white}
             padding={2}
-          >
-            {() => (
+          />
+          {/* {() => (
               <TouchableOpacity
                 style={{
                   width: 5 * scaleMultiplier,
@@ -79,7 +79,7 @@ function DownloadStatusIndicator (props) {
                 }}
               />
             )}
-          </AnimatedCircularProgress>
+          </AnimatedCircularProgress> */}
         </View>
       ) : (
         // if not downloaded, not downloading, and connected, show download icon
