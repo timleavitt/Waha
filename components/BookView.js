@@ -25,7 +25,7 @@ function BookView (props) {
               { marginHorizontal: 10 }
             ]}
           >
-            {paragraphList.item}
+            {paragraphList.item + '\n'}
           </Text>
         )}
         keyExtractor={item => item}

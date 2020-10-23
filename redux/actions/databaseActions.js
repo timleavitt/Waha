@@ -120,12 +120,12 @@ export function addLanguage (language) {
     var sets = []
 
     await db
-      .collection('languages')
-      .doc(language)
       .collection('sets')
+      .where('languageID', '==', language)
       .get()
       .then(response => {
         response.forEach(set => {
+          console.log(set.id)
           sets.push({
             id: set.id,
             ...set.data()

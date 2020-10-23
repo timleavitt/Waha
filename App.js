@@ -2,10 +2,11 @@
 import { decode, encode } from 'base-64'
 import * as Font from 'expo-font'
 import React, { useEffect, useState } from 'react'
-// import { StatusBar } from 'react-native'
+import { StatusBar } from 'react-native'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
 import LoadingView from './components/LoadingView'
+import { colors } from './constants'
 // import { colors } from './constants'
 import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
@@ -66,10 +67,10 @@ export default function App () {
     return (
       <Provider store={store}>
         <PersistGate loading={<LoadingView />} persistor={persistor}>
-          {/* <StatusBar
+          <StatusBar
             backgroundColor={colors.aquaHaze}
             barStyle='dark-content'
-          /> */}
+          />
           <Root />
         </PersistGate>
       </Provider>

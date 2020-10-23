@@ -1,9 +1,9 @@
+import Constants from 'expo-constants'
 import React from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
-
 function ModalScreen (props) {
   return (
     <View>
@@ -19,7 +19,12 @@ function ModalScreen (props) {
           flex: 1,
           justifyContent: 'flex-end',
           margin: 0,
-          marginTop: 30
+          marginTop:
+            Platform.OS === 'ios'
+              ? Constants.statusBarHeight > 40
+                ? 60
+                : 30
+              : 20
           // marginVertical: 20 * scaleMultiplier
         }}
         onModalWillShow={props.onModalWillShow}

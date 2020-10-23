@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Dimensions,
   FlatList,
   StyleSheet,
   Text,
@@ -28,7 +29,8 @@ function SetInfoModal (props) {
           style={{
             marginVertical: 10 * scaleMultiplier,
             justifyContent: 'center',
-            paddingHorizontal: 40
+            paddingHorizontal: 40,
+            width: Dimensions.get('window').width
           }}
         >
           <Text style={Typography(props, 'h4', 'medium', 'left', colors.shark)}>
@@ -47,7 +49,8 @@ function SetInfoModal (props) {
           style={{
             marginVertical: 10 * scaleMultiplier,
             justifyContent: 'center',
-            paddingHorizontal: 40
+            paddingHorizontal: 40,
+            width: Dimensions.get('window').width
           }}
         >
           <Text style={Typography(props, 'h4', 'medium', 'left', colors.shark)}>

@@ -6,7 +6,6 @@ import { connect } from 'react-redux'
 import ModalButton from '../components/ModalButton'
 import OptionsModal from '../components/OptionsModal'
 import Separator from '../components/Separator'
-import { getLessonInfo } from '../constants'
 import {
   logShareApp,
   logShareAudio,
@@ -33,6 +32,8 @@ function ShareModal (props) {
           //   : Platform.OS === 'ios'
           //   ? 'www.waha.app'
           //   : 'www.waha.app'
+        }).then(() => {
+          props.hideModal()
         })
         break
       // share the passage text for this lesson
@@ -46,6 +47,8 @@ function ShareModal (props) {
         })
         Share.share({
           message: scriptureString
+        }).then(() => {
+          props.hideModal()
         })
         break
       // share the audio file for this lesson
@@ -57,7 +60,9 @@ function ShareModal (props) {
           exists
             ? Sharing.shareAsync(
                 FileSystem.documentDirectory + props.lesson.id + '.mp3'
-              )
+              ).then(() => {
+                props.hideModal()
+              })
             : Alert.alert(
                 props.translations.general.popups
                   .share_undownloaded_lesson_title,
@@ -75,7 +80,9 @@ function ShareModal (props) {
       // share the video link for this lesson
       case 'video':
         Share.share({
-          message: getLessonInfo('videoSource', props.lesson.id)
+          message: props.lesson.videoShareLink
+        }).then(() => {
+          props.hideModal()
         })
         break
     }
@@ -109,7 +116,9 @@ function ShareModal (props) {
           />
         </View>
       ) : null}
-      {props.lessonType.includes('v') && !props.downloads[props.lesson.id] ? (
+      {props.lessonType.includes('v') &&
+      props.lesson.videoShareLink &&
+      !props.downloads[props.lesson.id] ? (
         <View>
           <Separator />
           <ModalButton

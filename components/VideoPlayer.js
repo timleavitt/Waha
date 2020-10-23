@@ -34,7 +34,8 @@ function VideoPlayer (props) {
           width: Dimensions.get('window').width,
           flexDirection: 'row',
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
+          backgroundColor: colors.shark
         }}
       >
         {/* <View

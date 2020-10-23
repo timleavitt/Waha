@@ -85,7 +85,6 @@ function PlayScreen (props) {
   const [fullscreenStatus, setFullscreenStatus] = useState(
     Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS
   )
-  const [deviceOrientation, setDeviceOrientation] = useState('portrait_up')
   const [deviceRotation, setDeviceRotation] = useState({})
   const [lastPortraitOrientation, setLastPortraitOrientation] = useState(
     ScreenOrientation.OrientationLock.PORTRAIT_UP
@@ -225,6 +224,10 @@ function PlayScreen (props) {
   }, [])
 
   //+ LOADING FUNCTIONS
+
+  useEffect(() => {
+    console.log(trainingSource)
+  }, [trainingSource])
 
   //- sets the sources for all the chapters based on lesson type and whether
   //-   various chapters are downloaded or not
@@ -387,10 +390,7 @@ function PlayScreen (props) {
   //! only for lessons with videos
   useEffect(() => {
     if (video && trainingSource) {
-      loadMedia(
-        'video',
-        getLessonInfo('videoSource', props.route.params.thisLesson.id)
-      )
+      loadMedia('video', trainingSource)
     }
   }, [video, trainingSource])
 
@@ -409,8 +409,8 @@ function PlayScreen (props) {
     var media = video ? video : audio
     media.action = isMediaPlaying ? media.pauseAsync : media.playAsync
 
-    startPlayPauseAnimation()
     setIsMediaPlaying(currentStatus => !currentStatus)
+    startPlayPauseAnimation()
     updateThumb()
 
     // only play/pause if we're loaded
