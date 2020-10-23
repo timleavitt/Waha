@@ -120,11 +120,7 @@ function WahaDrawer (props) {
             <Text
               style={Typography(props, 'd', 'regular', 'left', colors.chateau)}
             >
-<<<<<<< HEAD
-              v0.5.1.2
-=======
               v0.6.5
->>>>>>> e9b6bdd28e101064a5769dd049d6e7c04c803348
             </Text>
           </View>
         </SafeAreaView>
