@@ -10,6 +10,7 @@ import {
   Alert,
   Animated,
   Dimensions,
+  Image,
   StyleSheet,
   Text,
   View
@@ -19,12 +20,13 @@ import AlbumArtSwiper from '../components/AlbumArtSwiper'
 import BackButton from '../components/BackButton'
 import BookView from '../components/BookView'
 import ChapterSelect from '../components/ChapterSelect'
+import MessageModal from '../components/MessageModal'
 import PlayPauseSkip from '../components/PlayPauseSkip'
 import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
 import Scrubber from '../components/Scrubber'
 import ShareModal from '../components/ShareModal'
 import VideoPlayer from '../components/VideoPlayer'
-import { colors, getLessonInfo } from '../constants'
+import { colors, getLessonInfo, scaleMultiplier } from '../constants'
 import {
   downloadLesson,
   downloadVideo,
@@ -71,6 +73,8 @@ function PlayScreen (props) {
 
   //+ MISCELLANEOUS STATE
 
+  const [thisSetProgress, setThisSetProgress] = useState([])
+
   // opacity/z-index of play button that pops up on play/pause
   const [playOpacity, setPlayOpacity] = useState(new Animated.Value(0))
   const [animationZIndex, setAnimationZIndex] = useState(0)
@@ -80,6 +84,7 @@ function PlayScreen (props) {
 
   // share modal
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
+  const [showSetCompleteModal, setShowSetCompleteModal] = useState(false)
 
   // keeps track of the current screen orientation for fullscreen videos
   const [fullscreenStatus, setFullscreenStatus] = useState(
@@ -143,6 +148,18 @@ function PlayScreen (props) {
     }
   }, [fullscreenStatus])
 
+  useEffect(() => {
+    setThisSetProgress(
+      props.activeGroup.addedSets.filter(
+        set => set.id === props.route.params.thisSet.id
+      )[0].progress
+    )
+  }, [props.activeGroup.addedSets])
+
+  useEffect(() => {
+    props.navigation.setOptions(getNavOptions())
+  }, [thisSetProgress])
+
   // keeps the screen always awake on this screen
   useKeepAwake()
 
@@ -157,7 +174,7 @@ function PlayScreen (props) {
             <PlayScreenHeaderButtons
               shareOnPress={() => setShowShareLessonModal(true)}
               completeOnPress={changeCompleteStatus}
-              completeCondition={props.route.params.thisSetProgress.includes(
+              completeCondition={thisSetProgress.includes(
                 getLessonInfo('index', props.route.params.thisLesson.id)
               )}
             />
@@ -167,7 +184,7 @@ function PlayScreen (props) {
             <PlayScreenHeaderButtons
               shareOnPress={() => setShowShareLessonModal(true)}
               completeOnPress={changeCompleteStatus}
-              completeCondition={props.route.params.thisSetProgress.includes(
+              completeCondition={thisSetProgress.includes(
                 getLessonInfo('index', props.route.params.thisLesson.id)
               )}
             />
@@ -179,9 +196,6 @@ function PlayScreen (props) {
   //+ CONSTRUCTOR
 
   useEffect(() => {
-    //set nav options
-    props.navigation.setOptions(getNavOptions())
-
     // set some audio settings
     Audio.setAudioModeAsync({
       playsInSilentModeIOS: true,
@@ -223,11 +237,13 @@ function PlayScreen (props) {
     }
   }, [])
 
-  //+ LOADING FUNCTIONS
+  // useEffect(() => {
+  //   //set nav options
+  //   console.log('setting nav options')
 
-  useEffect(() => {
-    console.log(trainingSource)
-  }, [trainingSource])
+  // }, [props.activeGroup])
+
+  //+ LOADING FUNCTIONS
 
   //- sets the sources for all the chapters based on lesson type and whether
   //-   various chapters are downloaded or not
@@ -543,7 +559,7 @@ function PlayScreen (props) {
             break
           case 'a':
             if (
-              !props.route.params.thisSetProgress.includes(
+              !thisSetProgress.includes(
                 getLessonInfo('index', props.route.params.thisLesson.id)
               )
             ) {
@@ -552,7 +568,7 @@ function PlayScreen (props) {
         }
       } else if (
         activeChapter === 'application' &&
-        !props.route.params.thisSetProgress.includes(
+        !thisSetProgress.includes(
           getLessonInfo('index', props.route.params.thisLesson.id)
         )
       ) {
@@ -614,22 +630,40 @@ function PlayScreen (props) {
       getLessonInfo('index', props.route.params.thisLesson.id)
     )
 
-    if (
-      !props.route.params.thisSetProgress.includes(
-        getLessonInfo('index', props.route.params.thisLesson.id)
-      )
-    ) {
-      Alert.alert(
-        props.translations.play.popups.marked_as_complete_title,
-        props.translations.play.popups.marked_as_complete_message,
-        [
-          {
-            text: props.translations.general.ok,
-            onPress: () => props.navigation.goBack()
-          }
-        ]
-      )
+    props.navigation.setOptions(getNavOptions())
+
+    if (checkForFullyComplete()) {
+      setShowSetCompleteModal(true)
+    } else {
+      if (
+        !thisSetProgress.includes(
+          getLessonInfo('index', props.route.params.thisLesson.id)
+        )
+      ) {
+        Alert.alert(
+          props.translations.play.popups.marked_as_complete_title,
+          props.translations.play.popups.marked_as_complete_message,
+          [
+            {
+              text: props.translations.general.ok,
+              onPress: () => props.navigation.goBack()
+            }
+          ]
+        )
+      }
     }
+  }
+
+  function checkForFullyComplete () {
+    if (
+      props.activeGroup.addedSets.filter(
+        set => set.id === props.route.params.thisSet.id
+      )[0].progress.length /
+        (props.route.params.thisSet.lessons.length - 1) ===
+      1
+    ) {
+      return true
+    } else return false
   }
 
   //+ RENDER
@@ -684,7 +718,7 @@ function PlayScreen (props) {
             changeChapter={changeChapter}
             isMediaLoaded={isMediaLoaded}
             lessonType={props.route.params.lessonType}
-            isComplete={props.route.params.thisSetProgress.includes(
+            isComplete={thisSetProgress.includes(
               getLessonInfo('index', props.route.params.thisLesson.id)
             )}
             changeCompleteStatus={changeCompleteStatus}
@@ -751,6 +785,27 @@ function PlayScreen (props) {
         lessonType={props.route.params.lessonType}
         set={props.route.params.thisSet}
       />
+      <MessageModal
+        isVisible={showSetCompleteModal}
+        hideModal={() => setShowSetCompleteModal(false)}
+        title={props.translations.general.popups.new_story_set_unlocked_title}
+        body={props.translations.general.popups.new_story_set_unlocked_message}
+        confirmText={props.translations.general.got_it}
+        confirmOnPress={() => {
+          setShowSetCompleteModal(false)
+          props.navigation.goBack()
+        }}
+      >
+        <Image
+          source={require('../assets/gifs/new_set.gif')}
+          style={{
+            height: 200 * scaleMultiplier,
+            margin: 20,
+            // padding: 20,
+            resizeMode: 'contain'
+          }}
+        />
+      </MessageModal>
     </View>
   )
 }

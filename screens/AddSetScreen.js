@@ -152,6 +152,17 @@ function AddSetScreen (props) {
                     ? true
                     : topicalAddedSet.tags.some(tag => activeTags.includes(tag))
                 })
+                .sort((a, b) => {
+                  if (
+                    parseInt(a.id.match(/[0-9]*$/)[0]) -
+                      parseInt(b.id.match(/[0-9]*$/)[0]) <
+                    0
+                  ) {
+                    return -1
+                  } else {
+                    return 1
+                  }
+                })
             : props.activeDatabase.sets
                 .filter(
                   set =>
@@ -164,6 +175,17 @@ function AddSetScreen (props) {
                       addedSet => addedSet.id === set.id
                     )
                 )
+                .sort((a, b) => {
+                  if (
+                    parseInt(a.id.match(/[0-9]*$/)[0]) -
+                      parseInt(b.id.match(/[0-9]*$/)[0]) <
+                    0
+                  ) {
+                    return -1
+                  } else {
+                    return 1
+                  }
+                })
           // NOT USED: for folders
           // // if we're displaying topical sets:
           // // 1. filter by all sets that are topical,

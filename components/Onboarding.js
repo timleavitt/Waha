@@ -5,6 +5,7 @@ import {
   Animated,
   Dimensions,
   Image,
+  SafeAreaView,
   StyleSheet,
   Text,
   View
@@ -99,7 +100,7 @@ function Onboarding (props) {
   })
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
       {/* <TouchableOpacity
         style={{ position: 'absolute', marginTop: 20, marginLeft: 10 }}
         onPress={props.onFinish}
@@ -166,7 +167,7 @@ function Onboarding (props) {
         {/* </Animated.View> */}
       </View>
       {/* <ViewPager ref={ref => (ref ? console.log(ref.setPage) : null)} /> */}
-    </View>
+    </SafeAreaView>
   )
 }
 

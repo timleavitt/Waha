@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
 import LessonItem from '../components/LessonItem'
 import LessonSwipeBackdrop from '../components/LessonSwipeBackdrop'
+import MessageModal from '../components/MessageModal'
 import ModalButton from '../components/ModalButton'
 import OptionsModal from '../components/OptionsModal'
 import SetItem from '../components/SetItem'
@@ -34,6 +35,7 @@ function LessonListScreen (props) {
   const [showLessonOptionsModal, setShowLessonOptionsModal] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
   const [showHomeworkModal, setShowHomeworkModal] = useState(false)
+  const [showSetCompleteModal, setShowSetCompleteModal] = useState(false)
 
   // progress and bookmark for the set we're looking at
   const [thisSetProgress, setThisSetProgress] = useState([])
@@ -246,14 +248,28 @@ function LessonListScreen (props) {
     )
   }
 
+  function checkForFullyComplete () {
+    if (
+      thisSetProgress.length ===
+        props.route.params.thisSet.lessons.length - 1 &&
+      !thisSetProgress.includes(getLessonInfo('index', activeLessonInModal.id))
+    ) {
+      setShowSetCompleteModal(true)
+    }
+  }
+
   //- marks a lesson as complete from a swipe and closes the row
   function markLessonAsCompleteFromSwipe (data) {
-    if (data.isActivated)
+    if (data.isActivated) {
       props.toggleComplete(
         props.activeGroup.name,
         props.route.params.thisSet,
         parseInt(data.key)
       )
+
+      // check if we just fully completed the set
+      checkForFullyComplete()
+    }
   }
 
   //+ RENDER
@@ -266,7 +282,7 @@ function LessonListScreen (props) {
           props.navigation.navigate('Play', {
             thisLesson: item,
             thisSet: props.route.params.thisSet,
-            thisSetProgress: thisSetProgress,
+            // thisSetProgress: thisSetProgress,
             isDownloaded: getIsLessonDownloaded(item),
             isDownloading: getIsLessonDownloading(item),
             lessonType: getLessonType(item)
@@ -296,6 +312,7 @@ function LessonListScreen (props) {
             props.route.params.thisSet,
             getLessonInfo('index', data.item.id)
           )
+          checkForFullyComplete()
           rowMap[getLessonInfo('index', data.item.id)].closeRow()
         }}
         showShareModal={() => {
@@ -334,7 +351,9 @@ function LessonListScreen (props) {
         onLeftActionStatusChange={
           props.isRTL
             ? data => setShowShareModal(true)
-            : data => markLessonAsCompleteFromSwipe(data)
+            : data => {
+                markLessonAsCompleteFromSwipe(data)
+              }
         }
         onRightActionStatusChange={
           props.isRTL
@@ -373,6 +392,26 @@ function LessonListScreen (props) {
         lessonType={getLessonType(activeLessonInModal)}
         set={props.route.params.thisSet}
       />
+      <MessageModal
+        isVisible={showSetCompleteModal}
+        hideModal={() => setShowSetCompleteModal(false)}
+        title={props.translations.general.popups.new_story_set_unlocked_title}
+        body={props.translations.general.popups.new_story_set_unlocked_message}
+        confirmText={props.translations.general.got_it}
+        confirmOnPress={() => {
+          setShowSetCompleteModal(false)
+        }}
+      >
+        <Image
+          source={require('../assets/gifs/new_set.gif')}
+          style={{
+            height: 200 * scaleMultiplier,
+            margin: 20,
+            // padding: 20,
+            resizeMode: 'contain'
+          }}
+        />
+      </MessageModal>
     </View>
   )
 }
