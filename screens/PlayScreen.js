@@ -788,8 +788,8 @@ function PlayScreen (props) {
       <MessageModal
         isVisible={showSetCompleteModal}
         hideModal={() => setShowSetCompleteModal(false)}
-        title={props.translations.general.popups.new_story_set_unlocked_title}
-        body={props.translations.general.popups.new_story_set_unlocked_message}
+        title={props.translations.general.popups.set_complete_title}
+        body={props.translations.general.popups.set_complete_message}
         confirmText={props.translations.general.got_it}
         confirmOnPress={() => {
           setShowSetCompleteModal(false)
@@ -797,7 +797,7 @@ function PlayScreen (props) {
         }}
       >
         <Image
-          source={require('../assets/gifs/new_set.gif')}
+          source={require('../assets/gifs/set_complete.gif')}
           style={{
             height: 200 * scaleMultiplier,
             margin: 20,
