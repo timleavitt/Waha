@@ -1,9 +1,9 @@
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { colors } from '../constants'
 import { addLanguage, setFetchError } from '../redux/actions/databaseActions'
 // translations import
 import en from '../translations/en.json'
@@ -43,7 +43,7 @@ function LoadingScreen (props) {
     </View>
   ) : (
     <View style={styles.screen}>
-      <View style={{ flex: 2, justifyContent: 'flex-end' }}>
+      {/* <View style={{ flex: 2, justifyContent: 'flex-end' }}>
         <Image
           style={{
             resizeMode: 'center',
@@ -53,8 +53,16 @@ function LoadingScreen (props) {
           }}
           source={require('../assets/icon_transparent.png')}
         />
-      </View>
-      <View style={{ flex: 1, paddingHorizontal: 20 }}>
+      </View> */}
+      <View style={{ flex: 1 }} />
+      <View
+        style={{
+          flex: 2,
+          paddingHorizontal: 20,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
         <ActivityIndicator
           size='large'
           color={colors.shark}
@@ -78,7 +86,14 @@ function LoadingScreen (props) {
           borderColor={colors.shark}
         />
       </View> */}
-      <View style={{ paddingHorizontal: 20, flex: 1 }}>
+      <View
+        style={{
+          paddingHorizontal: 20,
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
         <Text style={Typography(props, 'h3', '', 'center', colors.chateau)}>
           {i18n.t('protip' + proTipNum)}
         </Text>

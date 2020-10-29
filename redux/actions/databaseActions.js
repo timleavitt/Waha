@@ -1,10 +1,9 @@
-import '@firebase/firestore'
 import * as FileSystem from 'expo-file-system'
-import firebase from 'firebase'
 import i18n from 'i18n-js'
+import { groupNames } from '../../constants'
+import db from '../../firebase/db'
 import { changeActiveGroup, createGroup } from '../actions/groupsActions'
 import { logInstallLanguage } from '../LogEventFunctions'
-
 export const ADD_LANGUAGE = 'ADD_LANGUAGE'
 export const SET_FETCH_ERROR = 'SET_FETCH_ERROR'
 export const STORE_DATA = 'STORE_DATA'
@@ -17,39 +16,6 @@ export const ADD_SCRIPT = 'ADD_SCRIPT'
 export const REMOVE_SCRIPT = 'REMOVE_SCRIPT'
 export const SET_CURRENT_FETCH_PROGRESS = 'SET_CURRENT_FETCH_PROGRESS'
 export const SET_TOTAL_TO_DOWNLOAD = 'SET_TOTAL_TO_DOWNLOAD'
-
-// firebase initializing
-
-// PRODUCTION
-// const config = {
-//   apiKey: '***REMOVED***',
-//   authDomain: 'waha-app-db.firebaseapp.com',
-//   databaseURL: 'https://waha-app-db.firebaseio.com',
-//   projectId: 'waha-app-db',
-//   storageBucket: 'waha-app-db.appspot.com',
-//   messagingSenderId: '831723165603',
-//   appId: '1:831723165603:web:21a474da50b2d0511bec16',
-//   measurementId: 'G-6SYY2T8DX1'
-// }
-
-// TEST
-const config = {
-  apiKey: 'AIzaSyCh_ma-QDdHhaImEyedzAC1JJzy7YrwS8c',
-  authDomain: 'waha-app-test-db.firebaseapp.com',
-  databaseURL: 'https://waha-app-test-db.firebaseio.com',
-  projectId: 'waha-app-test-db',
-  storageBucket: 'waha-app-test-db.appspot.com',
-  messagingSenderId: '346600922120',
-  appId: '1:346600922120:web:a27e4abf05c9a7bf3845bd',
-  measurementId: 'G-LSESVSE9SS'
-}
-
-firebase.initializeApp(config)
-export const db = firebase.firestore()
-
-const groupNames = {
-  en: 'Group 1'
-}
 
 export function storeData (data, language) {
   return {
@@ -101,15 +67,7 @@ export function setFetchError (status, language) {
   }
 }
 
-// thunk function for adding a language
-// data to add during fetch:
-// 1. firebase data (translations, sets, lessons, urls for downloads, colors)
-// 2. lesson 1 chapter 1 mp3
-// 3. lesson 1 chapter 3 mp3
-// 4. generic chapter 1 mp3
-// 5. generic chapter 3 mp3
-// 6. header image
-
+// thunk function for adding a new language
 export function addLanguage (language) {
   return async (dispatch, getState) => {
     // set isFetching to true to signal that we're doing stuff and don't want to load the rest of the app
@@ -117,6 +75,7 @@ export function addLanguage (language) {
 
     //+ FIREBASE FETCH
 
+    //- get sets first
     var sets = []
 
     await db
@@ -133,13 +92,14 @@ export function addLanguage (language) {
         })
       })
 
-    // get language object from database and throw it in redux
+    //- then get language object from database and throw all of it in redux
     await db
       .collection('languages')
       .doc(language)
       .get()
       .then(async doc => {
         if (doc.exists) {
+          // store the language data and sets in redux
           dispatch(
             storeData(
               {
@@ -149,16 +109,24 @@ export function addLanguage (language) {
               language
             )
           )
+
+          // set total to download so we can display progress through downloads
           dispatch(setTotalToDownload(doc.data().files.length))
 
+          // used to track progress through downloads
+          var totalDownloaded = 0
+
+          //+ DOWNLOAD FUNCTIONS
+
+          //- some magic for downloading a bunch of files and doing something
+          //-  when all of them are done
           async function asyncForEach (array, callback) {
             for (let index = 0; index < array.length; index++) {
               await callback(array[index], index, array)
             }
           }
 
-          var totalDownloaded = 0
-
+          //- some more magic
           const downloadStuff = async () => {
             try {
               await asyncForEach(
@@ -181,6 +149,7 @@ export function addLanguage (language) {
                         '-' +
                         fileName.slice(0, -3) +
                         '.mp3'
+                      // if there's an error downloading a file
                     ).catch(error => {
                       console.log(error)
                       setFetchError(true, language)
@@ -190,11 +159,26 @@ export function addLanguage (language) {
                   dispatch(setCurrentFetchProgress(totalDownloaded))
                 }
               )
+
+              //+ STUFF TO DO WHEN DONE DOWNLOADING
+
+              // log the language install for firebase analytics
               logInstallLanguage(language, i18n.locale)
+
+              // create a new group using the default group name in constants.js
               dispatch(createGroup(groupNames[language], language, 'default'))
+
+              // change the active group to the new group we just created
               dispatch(changeActiveGroup(groupNames[language]))
+
+              // set isFetching to false since we're no longer fetching
               dispatch(setIsFetching(false))
+
+              // set setFinishedInitialFetch to true because we're done fetching
               dispatch(setFinishedInitialFetch(true))
+
+              // set fetchProgress back to 0 (in case user downloads another
+              //  language later)
               dispatch(setCurrentFetchProgress(0))
             } catch (error) {
               console.log(error)
@@ -202,11 +186,15 @@ export function addLanguage (language) {
             }
           }
 
+          //+ ACTUALLY DOWNLOAD STUFF
+
           downloadStuff()
         } else {
+          // if doc doesn't exist, throw an error
           dispatch(setFetchError(true, language))
         }
       })
+      // if there's an error fetching from firebase
       .catch(error => {
         console.log(error)
         dispatch(setFetchError(true, language))
