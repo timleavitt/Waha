@@ -10,6 +10,7 @@ import {
   setFinishedOnboarding
 } from '../redux/actions/databaseActions'
 import { changeActiveGroup } from '../redux/actions/groupsActions'
+import ar from '../translations/ar.json'
 // translations import
 import en from '../translations/en.json'
 
@@ -18,7 +19,8 @@ function OnboardingSlidesScreen (props) {
 
   // translations for language select
   i18n.translations = {
-    en
+    en,
+    ar
   }
 
   //+ CONSTRUCTOR

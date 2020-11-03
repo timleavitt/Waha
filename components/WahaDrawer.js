@@ -120,7 +120,7 @@ function WahaDrawer (props) {
             <Text
               style={Typography(props, 'd', 'regular', 'left', colors.chateau)}
             >
-              v0.6.5
+              v0.7.0
             </Text>
           </View>
         </SafeAreaView>

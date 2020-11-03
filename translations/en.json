@@ -7,8 +7,6 @@
   "ok": "OK",
   "pleaseSelectLanguageTitle": "You have to select a language before continuing.",
   "pleaseSelectLanguageMessage": "Please select your preferred language and try again.",
-  "english": "English",
-  "englishGlobal": "English (Global)",
   "title0": "Welcome!",
   "body0": "Waha is an audio-based Discovery Bible Study App.",
   "title1": "Gather",
@@ -26,5 +24,9 @@
   "newLanguage": "New Language",
   "protip1": "Tip: Struggling to reach for that small play button from across the table during your lessons? You can tap the large album art area to play or pause as well.",
   "protip2": "Tip: Worried about internet for your lesson? With Waha, you can download it ahead of time.",
-  "protip3": "Tip: Concerned about security? Check out Waha's security mode feature from the navigation drawer."
+  "protip3": "Tip: Concerned about security? Check out Waha's security mode feature from the navigation drawer.",
+  "english": "English",
+  "englishGlobal": "English (Global)",
+  "arabic": "Arabic",
+  "gulfArabic": "Gulf Arabic"
 }

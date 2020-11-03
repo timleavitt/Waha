@@ -7,11 +7,11 @@ export const scaleMultiplier =
 
 export const languageT2S = {
   en: require('./assets/languageT2S/en.mp3')
-  // da: require('./assets/languageT2S/te.mp3')
 }
 
 export const groupNames = {
-  en: 'Group 1'
+  en: 'Group 1',
+  ga: 'المجموعة الأولى'
 }
 
 export const groupIcons = [
@@ -243,6 +243,19 @@ export const languages = [
         nativeName: 'English (Global)',
         wahaID: 'en',
         i18nName: 'englishGlobal',
+        logoSource:
+          'https://res.cloudinary.com/waha/image/upload/v1594243650/English/Discovering_God_eorblz.png'
+      }
+    ]
+  },
+  {
+    i18nName: 'arabic',
+    languageCode: 'ar',
+    data: [
+      {
+        nativeName: 'Gulf Arabic (NEED TRANSLATION)',
+        wahaID: 'ga',
+        i18nName: 'gulfArabic',
         logoSource:
           'https://res.cloudinary.com/waha/image/upload/v1594243650/English/Discovering_God_eorblz.png'
       }
