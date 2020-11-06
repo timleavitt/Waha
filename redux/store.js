@@ -2,14 +2,11 @@ import { AsyncStorage } from 'react-native'
 import { applyMiddleware, createStore } from 'redux'
 import { persistReducer, persistStore } from 'redux-persist'
 import thunkMiddleware from 'redux-thunk'
+import { reduxMode } from '../modeSwitch'
 import rootReducer from './reducers/combiner'
 
-// switch mode between test and prod
-// note: test means that data isn't stored between app restarts
-const mode = 'test'
-
 const blacklist =
-  mode === 'test'
+  reduxMode === 'test'
     ? [
         'downloads',
         'fetchingStatus',

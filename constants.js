@@ -306,6 +306,7 @@ export const colors = {
 }
 
 // get various information about a lesson based off its id
+// this is neat :)
 export function getLessonInfo (type, lessonID) {
   var idComponents = lessonID.split('.')
 
