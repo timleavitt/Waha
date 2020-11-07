@@ -11,7 +11,7 @@ const blacklist =
         'downloads',
         'fetchingStatus',
         'mtUnlockAttempts',
-        'toolkitEnabled',
+        'areMobilizationToolsUnlocked',
         'groups',
         'database',
         'security'

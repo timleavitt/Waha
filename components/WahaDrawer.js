@@ -3,11 +3,11 @@ import React, { useState } from 'react'
 import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
 import { connect } from 'react-redux'
-import DrawerItem from '../components/DrawerItem'
 import GroupAvatar from '../components/GroupAvatar'
-import SmallDrawerItem from '../components/SmallDrawerItem'
+import DrawerItem from '../components/list-items/DrawerItem'
+import SmallDrawerItem from '../components/list-items/SmallDrawerItem'
 import { colors, scaleMultiplier } from '../constants'
-import AddEditGroupModal from '../screens/AddEditGroupModal'
+import AddEditGroupModal from '../modals/AddEditGroupModal'
 
 function WahaDrawer (props) {
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
@@ -66,7 +66,7 @@ function WahaDrawer (props) {
           <DrawerItem
             iconName='boat'
             text={props.translations.mobilization_tools.header}
-            onPress={() => props.navigation.navigate('MT')}
+            onPress={() => props.navigation.navigate('MobilizationTools')}
           />
           <DrawerItem
             iconName='storage'

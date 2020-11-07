@@ -3,12 +3,12 @@ import { FlatList, LogBox, StyleSheet, Text, View } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
 import TagGroup from 'react-native-tag-group'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
-import Separator from '../components/Separator'
-import SetItem from '../components/SetItem'
+import SetItem from '../components/list-items/SetItem'
+import BackButton from '../components/standard/BackButton'
+import Separator from '../components/standard/Separator'
 import { colors, getSetInfo, scaleMultiplier } from '../constants'
+import SetInfoModal from '../modals/SetInfoModal'
 import { addSet } from '../redux/actions/groupsActions'
-import SetInfoModal from './SetInfoModal'
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state'
 ])
@@ -28,7 +28,7 @@ function AddSetScreen (props) {
 
   useEffect(() => {
     switch (props.route.params.category) {
-      case 'core':
+      case 'foundational':
         setHeaderTitle(props.translations.add_set.header_foundational)
         break
       case 'topical':
@@ -45,7 +45,7 @@ function AddSetScreen (props) {
           })
         setTags(tempTags)
         break
-      case 'mt':
+      case 'mobilization tools':
         setHeaderTitle(props.translations.add_set.header_mt)
         break
     }

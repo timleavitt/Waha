@@ -17,16 +17,16 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import AlbumArtSwiper from '../components/AlbumArtSwiper'
-import BackButton from '../components/BackButton'
 import BookView from '../components/BookView'
 import ChapterSelect from '../components/ChapterSelect'
-import MessageModal from '../components/MessageModal'
-import PlayPauseSkip from '../components/PlayPauseSkip'
+import PlaybackControls from '../components/PlaybackControls'
 import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
 import Scrubber from '../components/Scrubber'
-import ShareModal from '../components/ShareModal'
+import BackButton from '../components/standard/BackButton'
 import VideoPlayer from '../components/VideoPlayer'
 import { colors, getLessonInfo, scaleMultiplier } from '../constants'
+import MessageModal from '../modals/MessageModal'
+import ShareModal from '../modals/ShareModal'
 import {
   downloadLesson,
   downloadVideo,
@@ -760,7 +760,7 @@ function PlayScreen (props) {
               maximumValue={mediaLength}
               seekPosition={seekPosition}
             />
-            <PlayPauseSkip
+            <PlaybackControls
               isMediaPlaying={isMediaPlaying}
               // isVideoBuffering={isVideoBuffering}
               onPlayPress={playHandler}

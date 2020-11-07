@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { Alert, Image, Keyboard, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
-import MessageModal from '../components/MessageModal'
+import BackButton from '../components/standard/BackButton'
 import { colors, scaleMultiplier } from '../constants'
+import MessageModal from '../modals/MessageModal'
+import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
 import {
   setMTUnlockAttempts,
   setMTUnlockTimeout
 } from '../redux/actions/securityActions'
-import { setToolkitEnabled } from '../redux/actions/toolkitEnabledActions'
 import { logUnlockMobilizationTools } from '../redux/LogEventFunctions'
 function PasscodeScreen (props) {
   //+ STATE
@@ -51,7 +51,7 @@ function PasscodeScreen (props) {
       Keyboard.dismiss()
       logUnlockMobilizationTools(props.activeGroup.language)
       setUnlockSuccessModal(true)
-      props.setToolkitEnabled(true)
+      props.setAreMobilizationToolsUnlocked(true)
     } else {
       props.setMTUnlockAttempts(props.mtUnlockAttempts + 1)
       pinRef.shake().then(() => setPasscode(''))
@@ -181,8 +181,8 @@ function mapStateToProps (state) {
 }
 function mapDispatchToProps (dispatch) {
   return {
-    setToolkitEnabled: toSet => {
-      dispatch(setToolkitEnabled(toSet))
+    setAreMobilizationToolsUnlocked: toSet => {
+      dispatch(setAreMobilizationToolsUnlocked(toSet))
     },
     setMTUnlockTimeout: time => {
       dispatch(setMTUnlockTimeout(time))

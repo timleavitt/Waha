@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
-import Blurb from '../components/Blurb'
-import Hero from '../components/Hero'
-import ModalButton from '../components/ModalButton'
-import OptionsModal from '../components/OptionsModal'
-import Separator from '../components/Separator'
-import WahaItem from '../components/WahaItem'
-import WahaItemDescription from '../components/WahaItemDescription'
+import OptionsModalButton from '../components/OptionsModalButton'
+import BackButton from '../components/standard/BackButton'
+import Blurb from '../components/standard/Blurb'
+import Hero from '../components/standard/Hero'
+import Separator from '../components/standard/Separator'
+import WahaItem from '../components/standard/WahaItem'
+import WahaItemDescription from '../components/standard/WahaItemDescription'
 import { colors, scaleMultiplier } from '../constants'
+import OptionsModal from '../modals/OptionsModal'
 import {
   setIsTimedOut,
   setSecurityEnabled,
@@ -159,7 +159,7 @@ function SecurityScreen (props) {
                   props.setSecurityEnabled(false)
                 } else props.setSecurityEnabled(true)
               } else {
-                props.navigation.navigate('SecurityOnboarding')
+                props.navigation.navigate('SecurityOnboardingSlides')
               }
             }}
             value={props.security.securityEnabled}
@@ -191,7 +191,7 @@ function SecurityScreen (props) {
         hideModal={() => setShowChangeTimeoutModal(false)}
         closeText={props.translations.general.cancel}
       >
-        <ModalButton
+        <OptionsModalButton
           title={props.translations.security.instant_label}
           onPress={() => {
             props.setTimeoutDuration(0), setShowChangeTimeoutModal(false)
@@ -209,9 +209,9 @@ function SecurityScreen (props) {
               }}
             />
           ) : null}
-        </ModalButton>
+        </OptionsModalButton>
         <Separator />
-        <ModalButton
+        <OptionsModalButton
           title={props.translations.security.one_minute_label}
           onPress={() => {
             props.setTimeoutDuration(60000), setShowChangeTimeoutModal(false)
@@ -229,9 +229,9 @@ function SecurityScreen (props) {
               }}
             />
           ) : null}
-        </ModalButton>
+        </OptionsModalButton>
         <Separator />
-        <ModalButton
+        <OptionsModalButton
           title={props.translations.security.five_minutes_label}
           onPress={() => {
             props.setTimeoutDuration(300000), setShowChangeTimeoutModal(false)
@@ -249,9 +249,9 @@ function SecurityScreen (props) {
               }}
             />
           ) : null}
-        </ModalButton>
+        </OptionsModalButton>
         <Separator />
-        <ModalButton
+        <OptionsModalButton
           title={props.translations.security.fifteen_minutes_label}
           onPress={() => {
             props.setTimeoutDuration(900000), setShowChangeTimeoutModal(false)
@@ -269,9 +269,9 @@ function SecurityScreen (props) {
               }}
             />
           ) : null}
-        </ModalButton>
+        </OptionsModalButton>
         <Separator />
-        <ModalButton
+        <OptionsModalButton
           title={props.translations.security.one_hour_label}
           onPress={() => {
             props.setTimeoutDuration(3600000), setShowChangeTimeoutModal(false)
@@ -289,7 +289,7 @@ function SecurityScreen (props) {
               }}
             />
           ) : null}
-        </ModalButton>
+        </OptionsModalButton>
       </OptionsModal>
     </View>
   )
@@ -318,7 +318,7 @@ function mapStateToProps (state) {
     translations: state.database[activeGroup.language].translations,
     font: state.database[activeGroup.language].font,
     activeGroup: activeGroup,
-    toolkitEnabled: state.toolkitEnabled,
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
     security: state.security
   }
 }

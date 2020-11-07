@@ -12,7 +12,8 @@ export const DELETE_GROUP = 'DELETE_GROUP'
 export const UPDATE_PROGRESS = 'UPDATE_PROGRESS'
 export const RESET_PROGRESS = 'RESET_PROGRESS'
 export const ADD_SET = 'ADD_SET'
-export const SET_SHOW_TOOLKIT = 'SET_SHOW_TOOLKIT'
+export const SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB =
+  'SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB'
 
 export function changeActiveGroup (groupName) {
   return {
@@ -93,9 +94,9 @@ export function addSet (groupName, set) {
   }
 }
 
-export function setShowToolkit (groupName, toSet) {
+export function setShouldShowMobilizationToolsTab (groupName, toSet) {
   return {
-    type: SET_SHOW_TOOLKIT,
+    type: SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB,
     groupName,
     toSet
   }

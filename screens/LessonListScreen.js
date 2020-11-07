@@ -3,15 +3,15 @@ import React, { useEffect, useState } from 'react'
 import { Dimensions, Image, Platform, StyleSheet, View } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
-import LessonItem from '../components/LessonItem'
-import LessonSwipeBackdrop from '../components/LessonSwipeBackdrop'
-import MessageModal from '../components/MessageModal'
-import ModalButton from '../components/ModalButton'
-import OptionsModal from '../components/OptionsModal'
-import SetItem from '../components/SetItem'
-import ShareModal from '../components/ShareModal'
+import LessonItem from '../components/list-items/LessonItem'
+import LessonSwipeBackdrop from '../components/list-items/LessonSwipeBackdrop'
+import SetItem from '../components/list-items/SetItem'
+import OptionsModalButton from '../components/OptionsModalButton'
+import BackButton from '../components/standard/BackButton'
 import { colors, getLessonInfo, scaleMultiplier } from '../constants'
+import MessageModal from '../modals/MessageModal'
+import OptionsModal from '../modals/OptionsModal'
+import ShareModal from '../modals/ShareModal'
 import {
   downloadLesson,
   downloadVideo,
@@ -369,7 +369,7 @@ function LessonListScreen (props) {
         hideModal={hideModals}
         closeText={props.translations.general.cancel}
       >
-        <ModalButton
+        <OptionsModalButton
           title={props.translations.lessons.popups.download_lesson_button_label}
           onPress={downloadLessonFromModal}
         />
@@ -379,7 +379,7 @@ function LessonListScreen (props) {
         hideModal={hideModals}
         closeText={props.translations.general.cancel}
       >
-        <ModalButton
+        <OptionsModalButton
           title={props.translations.lessons.popups.delete_lesson_button_label}
           onPress={deleteLessonFromModal}
         />

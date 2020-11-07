@@ -7,42 +7,36 @@ import WahaDrawer from '../components/WahaDrawer'
 import { scaleMultiplier } from '../constants'
 import db from '../firebase/db'
 import { storeData } from '../redux/actions/databaseActions'
-import {
-  removeDownload,
-  resumeDownload
-} from '../redux/actions/downloadActions'
-import { addSet } from '../redux/actions/groupsActions'
 import { updateConnectionStatus } from '../redux/actions/networkActions'
 import MainStack from './MainStack'
 
 const Drawer = createDrawerNavigator()
 
 function MainDrawer (props) {
-  //allows only accessing hamburger swipe from study set screen
+  //- allows only accessing hamburger swipe from study set screen
   function getGestureEnabled (route) {
-    // Access the tab navigator's state using `route.state`
     const routeName = route.state
-      ? // Get the currently active route name in the tab navigator
-        route.state.routes[route.state.index].name
-      : // If state doesn't exist, we need to default to `screen` param if available, or the initial screen
-      // In our case, it's "Feed" as that's the first screen inside the navigator
-      route.params?.screen || props.security.securityEnabled
-      ? 'Game'
+      ? route.state.routes[route.state.index].name
+      : route.params?.screen || props.security.securityEnabled
+      ? 'PianoApp'
       : 'SetTabs'
     if (routeName === 'SetTabs') return true
     else return false
   }
+
   useEffect(() => {
     // add listener for connection status and update it accordingly
     const netInfoUnsubscribe = NetInfo.addEventListener(state => {
       props.updateConnectionStatus(state.isConnected)
     })
 
-    // add listener for receiving updates in firebase
+    //+ FIRESTORE LISTENERS
+
+    // listener for languages collection
     db.collection('languages')
       .doc(props.activeGroup.language)
       .onSnapshot(function (doc) {
-        // download a file
+        //- download a file
         function downloadSomething (url, fileName) {
           var downloadResumable = FileSystem.createDownloadResumable(
             url,
@@ -60,7 +54,6 @@ function MainDrawer (props) {
         // check for new fellowship or application chapters or header image
         doc.data().files.forEach(fileName => {
           if (!props.activeDatabase.files.includes(fileName)) {
-            // ALERT
             Alert.alert(
               props.translations.general.popups.new_chapter_downloading_title,
               props.translations.general.popups.new_chapter_downloading_message,
@@ -79,31 +72,34 @@ function MainDrawer (props) {
           }
         })
 
-        // store data
+        // store data from update
         props.storeData(
           { ...doc.data(), sets: props.activeDatabase.sets },
           props.activeGroup.language
         )
 
-        //     // if
-        //     // 1. all core story sets are completed
-        //     // 2. a new core story set has been addded
+        // TODO at some point
+        // if
+        // 1. all core story sets are completed
+        // 2. a new core story set has been addded
 
-        //     // 1. add it automatically to added sets for this group
-        //     // 2. make it display the 'new' icon somehow
+        // 1. add it automatically to added sets for this group
+        // 2. make it display the 'new' icon somehow
 
-        //     // if
-        //     // 1. mobilization tools is unlocked for this group
-        //     // 2. a new mobilization tools set is added
-        //     // if (props.activeGroup.showToolkit && )
+        // if
+        // 1. mobilization tools is unlocked for this group
+        // 2. a new mobilization tools set is added
+        // if (props.activeGroup.setShouldShowMobilizationToolsTab && )
 
-        //     // 1. add it automatically to added sets for htis group
-        //     // 2. make it dispaly the 'new' icon somehow
+        // 1. add it automatically to added sets for htis group
+        // 2. make it dispaly the 'new' icon somehow
       })
 
+    // listener for sets collection
     db.collection('sets')
       .where('languageID', '==', props.activeGroup.language)
       .onSnapshot(querySnapshot => {
+        // get all sets and put them in one object for redux storage
         var sets = []
         querySnapshot.forEach(doc => {
           sets.push({
@@ -111,6 +107,8 @@ function MainDrawer (props) {
             ...doc.data()
           })
         })
+
+        // store the new sets object
         props.storeData(
           { ...props.activeDatabase, sets: sets },
           props.activeGroup.language
@@ -122,60 +120,9 @@ function MainDrawer (props) {
     }
   }, [])
 
-  // useEffect(() => {
-  //   // add any new mt sets to active group
-  //   props.activeDatabase.sets
-  //     .filter(set => set.category === 'mt')
-  //     .forEach(set => {
-  //       if (
-  //         !props.activeGroup.addedSets.some(addedSet => addedSet.id === set.id)
-  //       )
-  //         props.addSet(props.activeGroup.name, set.id)
-  //     })
-  // }, [props.activeDatabase, props.activeGroup])
-
-  // if we connect to internet, check to see if we have any paused downloads
-  // useEffect(() => {
-  //   if (props.isConnected) {
-  //     checkPausedDownloads()
-  //   }
-  // }, [props.isConnected])
-
-  //+ FUNCTIONS
-  // async function checkPausedDownloads () {
-  //   var downloadedStuff = {}
-  //   await FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-  //     contents => {
-  //       downloadedStuff = contents
-  //     }
-  //   )
-  //   // get paused downloads from asyncstorage
-  //   await AsyncStorage.getItem('pausedDownloads')
-  //     .then(async downloads => {
-  //       // if anything is there
-  //       if (downloads) {
-  //         // convert string to object and iterate through
-  //         Object.keys(JSON.parse(downloads)).forEach(lessonID => {
-  //           if (!downloadedStuff.includes(downloads[lessonID] + '.mp3')) {
-  //             props.resumeDownload(lessonID, value)
-  //           } else {
-  //             AsyncStorage.removeItem(lessonID)
-  //           }
-  //           if (!downloadedStuff.includes(lessonID + 'v.mp4')) {
-  //             props.resumeDownload(lessonID + 'v', value)
-  //           } else {
-  //             AsyncStorage.removeItem(lessonID + 'v')
-  //           }
-  //         })
-  //       }
-  //     })
-  //     .catch(err => {
-  //       props.removeDownload(lessonID)
-  //       props.removeDownload(lessonID + 'v')
-  //     })
-  // }
-
+  // side of navigation drawer
   var direction = props.isRTL ? 'right' : 'left'
+
   return (
     <NavigationContainer>
       <Drawer.Navigator
@@ -209,8 +156,6 @@ function mapStateToProps (state) {
     isConnected: state.network.isConnected,
     translations: state.database[activeGroup.language].translations,
     activeGroup: activeGroup,
-    toolkitEnabled: state.toolkitEnabled,
-    groups: state.groups,
     security: state.security
   }
 }
@@ -220,17 +165,8 @@ function mapDispatchToProps (dispatch) {
     updateConnectionStatus: status => {
       dispatch(updateConnectionStatus(status))
     },
-    resumeDownload: (lessonID, downloadSnapshotJSON) => {
-      dispatch(resumeDownload(lessonID, downloadSnapshotJSON))
-    },
-    removeDownload: lessonID => {
-      dispatch(removeDownload(lessonID))
-    },
     storeData: (data, language) => {
       dispatch(storeData(data, language))
-    },
-    addSet: (groupName, setID) => {
-      dispatch(addSet(groupName, setID))
     }
   }
 }

@@ -8,7 +8,7 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import SetItem from '../components/SetItem'
+import SetItem from '../components/list-items/SetItem'
 import { colors, getSetInfo, scaleMultiplier } from '../constants'
 
 function SetScreen (props) {
@@ -29,11 +29,11 @@ function SetScreen (props) {
 
   useEffect(() => {
     // console.log(props.route.name)
-    if (props.route.name === 'Core') {
+    if (props.route.name === 'Foundational') {
       setAddNewSetLabel(
         props.translations.sets.add_foundational_story_set_button_label
       )
-      setSetCategory('core')
+      setSetCategory('foundational')
     } else if (props.route.name === 'Topical') {
       setAddNewSetLabel(props.translations.sets.add_topical_set_button_label)
       setSetCategory('topical')
@@ -41,7 +41,7 @@ function SetScreen (props) {
       setAddNewSetLabel(
         props.translations.sets.add_mobilization_tool_button_label
       )
-      setSetCategory('mt')
+      setSetCategory('mobilization tools')
     }
   }, [])
 
@@ -50,7 +50,7 @@ function SetScreen (props) {
   // get the sets for whatever tab we're on
   function getSetData () {
     // if we're adding core sets, display them in numerical order
-    return props.route.name === 'Core'
+    return props.route.name === 'Foundational'
       ? props.activeDatabase.sets
           .filter(set => getSetInfo('category', set.id) === setCategory)
           .filter(set =>

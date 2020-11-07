@@ -5,7 +5,7 @@ import {
   DELETE_GROUP,
   EDIT_GROUP,
   RESET_PROGRESS,
-  SET_SHOW_TOOLKIT,
+  SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB,
   UPDATE_PROGRESS
 } from '../actions/groupsActions'
 export function groups (state = [], action) {
@@ -31,7 +31,7 @@ export function groups (state = [], action) {
               bookmark: 1
             }
           ],
-          showToolkit: false,
+          shouldShowMobilizationToolsTab: false,
           securityEnabled: false
         }
       ]
@@ -87,8 +87,8 @@ export function groups (state = [], action) {
 
       // set the recentcoreortool if this set is a core or toolkit
       if (
-        getSetInfo('category', action.set.id) === 'core' ||
-        getSetInfo('category', action.set.id) === 'toolkit'
+        getSetInfo('category', action.set.id) === 'foundational' ||
+        getSetInfo('category', action.set.id) === 'mobilization tools'
       )
         recentCoreOrTool = action.set.id
 
@@ -133,8 +133,10 @@ export function groups (state = [], action) {
                   if (set.progress.length + 1 === action.setLength) {
                     // if core or toolkit, set to next in that category
                     if (
-                      getSetInfo('category', action.set.id) === 'core' ||
-                      getSetInfo('category', action.set.id) === 'mt'
+                      getSetInfo('category', action.set.id) ===
+                        'foundational' ||
+                      getSetInfo('category', action.set.id) ===
+                        'mobilization tools'
                     ) {
                       setBookmark = action.nextSet
                         ? action.nextSet.id
@@ -209,10 +211,13 @@ export function groups (state = [], action) {
         }
         return group
       })
-    case SET_SHOW_TOOLKIT:
+    case SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB:
       return state.map(group => {
         if (group.name === action.groupName) {
-          return { ...group, showToolkit: action.toSet }
+          return {
+            ...group,
+            shouldShowMobilizationToolsTab: action.toSet
+          }
         }
         return group
       })

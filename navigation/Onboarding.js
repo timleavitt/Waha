@@ -8,6 +8,7 @@ import OnboardingSlidesScreen from '../screens/OnboardingSlidesScreen'
 const Stack = createStackNavigator()
 
 function Onboarding () {
+  //+ RENDER
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>

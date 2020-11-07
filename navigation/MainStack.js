@@ -1,6 +1,5 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import * as FileSystem from 'expo-file-system'
-import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
 import {
   AppState,
@@ -11,32 +10,28 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
 import GroupAvatar from '../components/GroupAvatar'
+import BackButton from '../components/standard/BackButton'
 import { colors, scaleMultiplier } from '../constants'
+import AddEditGroupModal from '../modals/AddEditGroupModal'
 import SetTabs from '../navigation/SetTabs'
 import { setIsTimedOut, setTimer } from '../redux/actions/securityActions'
-import AddEditGroupModal from '../screens/AddEditGroupModal'
 import AddSetScreen from '../screens/AddSetScreen'
-import GameScreen from '../screens/GameScreen'
 import GroupsScreen from '../screens/GroupsScreen'
 import KeyOrderSetScreen from '../screens/KeyOrderSetScreen'
 import LanguageSelectScreen from '../screens/LanguageSelectScreen'
 import LessonListScreen from '../screens/LessonListScreen'
-import MTScreen from '../screens/MTScreen'
+import MobilizationToolsScreen from '../screens/MobilizationToolsScreen'
 import PasscodeScreen from '../screens/PasscodeScreen'
+import PianoAppScreen from '../screens/PianoAppScreen'
 import PlayScreen from '../screens/PlayScreen'
-import SecurityOnboardingScreen from '../screens/SecurityOnboardingScreen'
+import SecurityOnboardingSlidesScreen from '../screens/SecurityOnboardingSlidesScreen'
 import SecurityScreen from '../screens/SecurityScreen'
 import SplashScreen from '../screens/SplashScreen'
 import StorageScreen from '../screens/StorageScreen'
-import en from '../translations/en.json'
 
 LogBox.ignoreLogs(['Setting a timer'])
 
-i18n.translations = {
-  en
-}
 const Stack = createStackNavigator()
 
 function MainStack (props) {
@@ -44,7 +39,7 @@ function MainStack (props) {
     return Date.now()
   }
 
-  //+APP STATE STUFF
+  //+ APP STATE STUFF
 
   const [appState, setAppState] = useState('')
 
@@ -64,7 +59,7 @@ function MainStack (props) {
       if (props.security.securityEnabled) {
         // if we've already timed out, go straight to game
         if (props.security.isTimedOut) {
-          props.navigation.navigate('Game')
+          props.navigation.navigate('PianoApp')
         } else {
           // check if we are now timed out
           // if we are, set isTimedOut to true and navigate to gamez
@@ -73,7 +68,7 @@ function MainStack (props) {
             props.security.timeoutDuration
           ) {
             props.setIsTimedOut(true)
-            props.navigation.navigate('Game')
+            props.navigation.navigate('PianoApp')
             // otherwise, if we haven't timed out, just go back to normal screen
           } else {
             if (Platform.OS === 'ios') props.navigation.goBack()
@@ -86,6 +81,7 @@ function MainStack (props) {
     }
   }, [appState])
 
+  // start up app state listeners
   useEffect(() => {
     const appStateUnsubscribe = AppState.addEventListener(
       'change',
@@ -104,10 +100,12 @@ function MainStack (props) {
     }
   })
 
+  //+ RENDER
+
   return (
-    //global navigation options
     <Stack.Navigator
-      initialRouteName={props.security.securityEnabled ? 'Game' : 'SetTabs'}
+      // set the initial screen based on whether security is enabled or not
+      initialRouteName={props.security.securityEnabled ? 'PianoApp' : 'SetTabs'}
       screenOptions={{
         gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
         gestureResponseDistance: {
@@ -118,7 +116,6 @@ function MainStack (props) {
       }}
       mode='card'
     >
-      {/* Study Set Screen */}
       <Stack.Screen
         name='SetTabs'
         component={SetTabs}
@@ -165,12 +162,10 @@ function MainStack (props) {
             : () => <View></View>
         }}
       />
-      {/* Lesson List Screen */}
       <Stack.Screen
         name='LessonList'
         component={LessonListScreen}
         options={{
-          //gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -261,8 +256,8 @@ function MainStack (props) {
         }}
       />
       <Stack.Screen
-        name='MT'
-        component={MTScreen}
+        name='MobilizationTools'
+        component={MobilizationToolsScreen}
         options={{
           headerTitle: props.translations.mobilization_tools.header,
           headerStyle: {
@@ -303,8 +298,8 @@ function MainStack (props) {
         }}
       />
       <Stack.Screen
-        name='SecurityOnboarding'
-        component={SecurityOnboardingScreen}
+        name='SecurityOnboardingSlides'
+        component={SecurityOnboardingSlidesScreen}
         options={{
           headerTitle: props.translations.security.header,
           headerStyle: {
@@ -382,8 +377,8 @@ function MainStack (props) {
         }}
       />
       <Stack.Screen
-        name='Game'
-        component={GameScreen}
+        name='PianoApp'
+        component={PianoAppScreen}
         options={{
           gestureEnabled: false,
           headerShown: false,

@@ -2,8 +2,8 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import ChapterButton from '../components/ChapterButton'
-import ChapterSeparator from '../components/ChapterSeparator'
 import { scaleMultiplier } from '../constants'
+import ChapterSeparator from './ChapterSeparator'
 
 function ChapterSelect (props) {
   // order of chapters is

@@ -7,12 +7,12 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
-import GroupItem from '../components/GroupItem'
-import GroupListHeader from '../components/GroupListHeader'
-import Separator from '../components/Separator'
+import GroupListHeader from '../components/list-headers/GroupListHeader'
+import GroupItem from '../components/list-items/GroupItem'
+import BackButton from '../components/standard/BackButton'
+import Separator from '../components/standard/Separator'
 import { colors, scaleMultiplier } from '../constants'
-import AddEditGroupModal from './AddEditGroupModal'
+import AddEditGroupModal from '../modals/AddEditGroupModal'
 
 function GroupsScreen (props) {
   //+ STATE

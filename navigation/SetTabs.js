@@ -3,12 +3,14 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { colors, getSetInfo, scaleMultiplier } from '../constants'
 import SetScreen from '../screens/SetScreen'
+
 const Tab = createMaterialTopTabNavigator()
 
 function SetTabs (props) {
-  var toolkit = props.activeGroup.showToolkit ? (
+  var MobilizationToolsScreen = props.activeGroup
+    .shouldShowMobilizationToolsTab ? (
     <Tab.Screen
-      name='Mobilization Tools'
+      name='MobilizationTools'
       component={SetScreen}
       options={{
         title: props.translations.sets.mobilization_tools_sets_tab_label
@@ -16,31 +18,56 @@ function SetTabs (props) {
     />
   ) : null
 
-  var bookmarkSetCategory = getSetInfo(
-    'category',
-    props.activeDatabase.sets.filter(
-      set => set.id === props.activeGroup.setBookmark
-    )[0].id
+  var FoundationalScreen = (
+    <Tab.Screen
+      name='Foundational'
+      component={SetScreen}
+      options={{
+        title: props.translations.sets.foundational_story_sets_tab_label
+      }}
+    />
   )
-  var initialRouteName
 
-  switch (bookmarkSetCategory) {
-    case 'core':
-      initialRouteName = 'Core'
-      break
-    case 'topical':
-      initialRouteName = 'Topical'
-      break
-    case 'mt':
-      initialRouteName = 'Mobilization Tools'
-      break
-    default:
-      initialRouteName = 'Core'
+  var TopicalScreen = (
+    <Tab.Screen
+      name='Topical'
+      component={SetScreen}
+      options={{
+        title: props.translations.sets.topical_sets_tab_label
+      }}
+    />
+  )
+
+  // get the initial tab, which is whatever the category of the bookmarked set
+  //  is
+  function getInitialRouteName () {
+    var bookmarkSetCategory = getSetInfo(
+      'category',
+      props.activeDatabase.sets.filter(
+        set => set.id === props.activeGroup.setBookmark
+      )[0].id
+    )
+
+    var initialRouteName
+
+    switch (bookmarkSetCategory) {
+      case 'foundational':
+        return 'Foundational'
+        break
+      case 'topical':
+        return 'Topical'
+        break
+      case 'mobilization tools':
+        return 'MobilizationTools'
+        break
+      default:
+        return 'Foundational'
+    }
   }
 
-  var tabs = props.isRTL ? (
+  return (
     <Tab.Navigator
-      initialRouteName={initialRouteName}
+      initialRouteName={getInitialRouteName()}
       swipeEnabled={true}
       tabBarOptions={{
         style: {
@@ -58,62 +85,11 @@ function SetTabs (props) {
         }
       }}
     >
-      {toolkit}
-      <Tab.Screen
-        name='Topical'
-        component={SetScreen}
-        options={{
-          title: props.translations.sets.topical_sets_tab_label
-        }}
-      />
-      <Tab.Screen
-        name='Core'
-        component={SetScreen}
-        options={{
-          title: props.translations.sets.foundational_story_sets_tab_label
-        }}
-      />
-    </Tab.Navigator>
-  ) : (
-    <Tab.Navigator
-      initialRouteName={initialRouteName}
-      swipeEnabled={true}
-      tabBarOptions={{
-        style: {
-          backgroundColor: colors.aquaHaze
-        },
-        labelStyle: {
-          fontSize: 14 * scaleMultiplier,
-          fontFamily: props.font + '-medium',
-          textTransform: 'none'
-        },
-        activeTintColor: props.primaryColor,
-        inactiveTintColor: colors.chateau,
-        indicatorStyle: {
-          backgroundColor: props.primaryColor
-        }
-      }}
-    >
-      <Tab.Screen
-        name='Core'
-        component={SetScreen}
-        options={{
-          title: props.translations.sets.foundational_story_sets_tab_label
-        }}
-      />
-
-      <Tab.Screen
-        name='Topical'
-        component={SetScreen}
-        options={{
-          title: props.translations.sets.topical_sets_tab_label
-        }}
-      />
-      {toolkit}
+      {props.isRTL ? MobilizationToolsScreen : FoundationalScreen}
+      {TopicalScreen}
+      {props.isRTL ? FoundationalScreen : MobilizationToolsScreen}
     </Tab.Navigator>
   )
-
-  return tabs
 }
 
 //+ REDUX
