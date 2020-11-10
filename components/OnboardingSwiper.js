@@ -1,8 +1,6 @@
 import ViewPager from '@react-native-community/viewpager'
-import i18n from 'i18n-js'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
-  Animated,
   Dimensions,
   Image,
   SafeAreaView,
@@ -15,29 +13,7 @@ import WahaButton from './standard/WahaButton'
 
 function OnboardingSwiper (props) {
   const [onboardingPage, setOnboardingPage] = useState(1)
-  const [checkmarkOpacity, setCheckmarkOpacity] = useState(
-    new Animated.Value(0)
-  )
   const [pagerRef, setPagerRef] = useState()
-
-  useEffect(() => {
-    if (
-      (props.isRTL && onboardingPage === 0) ||
-      (!props.isRTL && onboardingPage === props.titles.length - 1)
-    ) {
-      Animated.timing(checkmarkOpacity, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true
-      }).start()
-    } else {
-      Animated.timing(checkmarkOpacity, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true
-      }).start()
-    }
-  }, [onboardingPage])
 
   var dots = []
   props.titles.forEach((title, index) => {
@@ -130,17 +106,31 @@ function OnboardingSwiper (props) {
         <WahaButton
           type='filled'
           color={
-            onboardingPage === pages.length - 1 ? colors.apple : colors.blue
+            props.isRTL
+              ? onboardingPage === 0
+                ? colors.apple
+                : colors.blue
+              : onboardingPage === pages.length - 1
+              ? colors.apple
+              : colors.blue
           }
           onPress={
-            onboardingPage === pages.length - 1
+            props.isRTL
+              ? onboardingPage === 0
+                ? props.onFinish
+                : () => pagerRef.setPage(onboardingPage - 1)
+              : onboardingPage === pages.length - 1
               ? props.onFinish
               : () => pagerRef.setPage(onboardingPage + 1)
           }
           label={
-            onboardingPage === pages.length - 1
-              ? i18n.t('start')
-              : i18n.t('next')
+            props.isRTL
+              ? onboardingPage === 0
+                ? props.startTranslation
+                : props.nextTranslation
+              : onboardingPage === pages.length - 1
+              ? props.startTranslation
+              : props.nextTranslation
           }
           style={{
             width: Dimensions.get('window').width - 40,

@@ -37,7 +37,8 @@ function GroupsScreen (props) {
         backgroundColor: isEditing ? colors.blue : colors.aquaHaze
       },
       headerTitleStyle: {
-        color: isEditing ? colors.white : colors.shark
+        color: isEditing ? colors.white : colors.shark,
+        fontFamily: props.font + '-medium'
       },
       headerRight: props.isRTL
         ? () => (

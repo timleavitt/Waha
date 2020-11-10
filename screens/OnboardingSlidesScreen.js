@@ -62,6 +62,8 @@ function OnboardingSlidesScreen (props) {
           i18n.t('body3')
         ]}
         onFinish={finishOnboarding}
+        nextTranslation={i18n.t('next')}
+        startTranslation={i18n.t('start')}
       />
     </SafeAreaView>
   )

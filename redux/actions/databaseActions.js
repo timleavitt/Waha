@@ -180,6 +180,7 @@ export function addLanguage (language) {
               // set fetchProgress back to 0 (in case user downloads another
               //  language later)
               dispatch(setCurrentFetchProgress(0))
+              dispatch(setTotalToDownload(doc.data().files.length))
             } catch (error) {
               console.log(error)
               setFetchError(true, language)

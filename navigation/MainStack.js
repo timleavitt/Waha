@@ -7,13 +7,14 @@ import {
   LogBox,
   Platform,
   StyleSheet,
+  Text,
   View
 } from 'react-native'
 import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import BackButton from '../components/standard/BackButton'
 import { colors, scaleMultiplier } from '../constants'
-import AddEditGroupModal from '../modals/AddEditGroupModal'
+import { analyticsMode, dbMode, reduxMode } from '../modeSwitch'
 import SetTabs from '../navigation/SetTabs'
 import { setIsTimedOut, setTimer } from '../redux/actions/securityActions'
 import AddSetScreen from '../screens/AddSetScreen'
@@ -135,7 +136,24 @@ function MainStack (props) {
             />
           ),
           headerLeft: props.isRTL
-            ? () => <View></View>
+            ? () => (
+                <View>
+                  {dbMode === 'test' ||
+                  reduxMode === 'test' ||
+                  analyticsMode === 'test' ? (
+                    <Text
+                      style={[
+                        Typography(props, 'p', 'regular', 'center', colors.red),
+                        {
+                          paddingHorizontal: 20
+                        }
+                      ]}
+                    >
+                      TEST MODE
+                    </Text>
+                  ) : null}
+                </View>
+              )
             : () => (
                 <View style={{ paddingHorizontal: 10 }}>
                   <GroupAvatar
@@ -159,7 +177,24 @@ function MainStack (props) {
                   />
                 </View>
               )
-            : () => <View></View>
+            : () => (
+                <View>
+                  {dbMode === 'test' ||
+                  reduxMode === 'test' ||
+                  analyticsMode === 'test' ? (
+                    <Text
+                      style={[
+                        Typography(props, 'p', 'regular', 'center', colors.red),
+                        {
+                          paddingHorizontal: 20
+                        }
+                      ]}
+                    >
+                      TEST MODE
+                    </Text>
+                  ) : null}
+                </View>
+              )
         }}
       />
       <Stack.Screen
@@ -193,10 +228,6 @@ function MainStack (props) {
           headerTitle: props.translations.groups.header,
           headerStyle: {
             backgroundColor: colors.aquaHaze
-          },
-          headerTitleStyle: {
-            color: colors.shark,
-            fontFamily: props.font + '-medium'
           }
         }}
       />
@@ -204,7 +235,11 @@ function MainStack (props) {
         name='AddSet'
         component={AddSetScreen}
         options={{
-          title: ''
+          title: '',
+          headerTitleStyle: {
+            color: colors.shark,
+            fontFamily: props.font + '-medium'
+          }
         }}
       />
       <Stack.Screen
@@ -224,21 +259,6 @@ function MainStack (props) {
           headerLeft: props.isRTL
             ? () => <View></View>
             : () => <BackButton onPress={() => props.navigation.goBack()} />
-        }}
-      />
-      <Stack.Screen
-        name='EditGroup'
-        component={AddEditGroupModal}
-        options={{
-          gestureEnabled: false,
-          headerTitle: props.translations.add_edit_group.header_edit,
-          headerStyle: {
-            backgroundColor: colors.aquaHaze
-          },
-          headerTitleStyle: {
-            color: colors.shark,
-            fontFamily: props.font + '-medium'
-          }
         }}
       />
       <Stack.Screen
@@ -401,8 +421,8 @@ function MainStack (props) {
 const styles = StyleSheet.create({
   headerImage: {
     resizeMode: 'contain',
-    width: 120,
-    height: 40,
+    width: 150,
+    flex: 1,
     alignSelf: 'center'
   }
 })

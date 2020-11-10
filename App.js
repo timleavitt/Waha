@@ -46,6 +46,33 @@ export default function App () {
     await Font.loadAsync({
       'roboto-regular': require('./assets/fonts/Roboto/Roboto-Regular.ttf')
     })
+    await Font.loadAsync({
+      'almarai-black': require('./assets/fonts/Almarai/Almarai-Black.ttf')
+    })
+    await Font.loadAsync({
+      'almarai-medium': require('./assets/fonts/Almarai/Almarai-Medium.ttf')
+    })
+    await Font.loadAsync({
+      'almarai-regular': require('./assets/fonts/Almarai/Almarai-Regular.ttf')
+    })
+    await Font.loadAsync({
+      'cairo-black': require('./assets/fonts/Cairo/Cairo-Black.ttf')
+    })
+    await Font.loadAsync({
+      'cairo-medium': require('./assets/fonts/Cairo/Cairo-Medium.ttf')
+    })
+    await Font.loadAsync({
+      'cairo-regular': require('./assets/fonts/Cairo/Cairo-Regular.ttf')
+    })
+    await Font.loadAsync({
+      'tajawal-black': require('./assets/fonts/Tajawal/Tajawal-Black.ttf')
+    })
+    await Font.loadAsync({
+      'tajawal-medium': require('./assets/fonts/Tajawal/Tajawal-Medium.ttf')
+    })
+    await Font.loadAsync({
+      'tajawal-regular': require('./assets/fonts/Tajawal/Tajawal-Regular.ttf')
+    })
     setFontsLoaded(true)
   }
 

@@ -21,7 +21,7 @@ function GroupListHeader (props) {
     // and clear out the already downloaded content if there was
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
-        props.activeDatabase.files.forEach(fileName => {
+        props.database[props.languageID].files.forEach(fileName => {
           var tempFileName = fileName.slice(0, -3)
           if (
             !contents.includes(`${props.languageID}-${tempFileName}.mp3`) &&
@@ -159,6 +159,7 @@ function mapStateToProps (state) {
   )[0]
   return {
     isRTL: state.database[activeGroup.language].isRTL,
+    database: state.database,
     activeDatabase: state.database[activeGroup.language],
     groups: state.groups,
     activeGroup: activeGroup,

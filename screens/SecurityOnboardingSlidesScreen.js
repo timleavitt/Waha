@@ -51,6 +51,8 @@ function SecurityOnboardingSlidesScreen (props) {
           props.translations.security.popups.onboarding_4_message
         ]}
         onFinish={() => props.navigation.navigate('KeyOrderSet_Initial')}
+        nextTranslation={props.translations.general.next}
+        startTranslation={props.translations.general.start}
       />
     </View>
   )

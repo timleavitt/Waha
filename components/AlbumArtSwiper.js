@@ -347,7 +347,8 @@ function mapStateToProps (state) {
     activeGroup: activeGroup,
     activeDatabase: state.database[activeGroup.language],
     font: state.database[activeGroup.language].font,
-    translations: state.database[activeGroup.language].translations
+    translations: state.database[activeGroup.language].translations,
+    isRTL: state.database[activeGroup.language].isRTL
   }
 }
 
