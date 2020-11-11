@@ -1,12 +1,5 @@
 import React from 'react'
-import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native'
+import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
 import WahaButton from '../components/standard/WahaButton'
@@ -25,7 +18,7 @@ function SetInfoModal (props) {
       })
 
       return (
-        <TouchableOpacity
+        <View
           style={{
             marginVertical: 10 * scaleMultiplier,
             justifyContent: 'center',
@@ -41,11 +34,11 @@ function SetInfoModal (props) {
           >
             {scriptureList}
           </Text>
-        </TouchableOpacity>
+        </View>
       )
     } else
       return (
-        <TouchableOpacity
+        <View
           style={{
             marginVertical: 10 * scaleMultiplier,
             justifyContent: 'center',
@@ -56,7 +49,7 @@ function SetInfoModal (props) {
           <Text style={Typography(props, 'h4', 'medium', 'left', colors.shark)}>
             {item.title}
           </Text>
-        </TouchableOpacity>
+        </View>
       )
   }
 

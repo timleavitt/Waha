@@ -21,6 +21,7 @@
     "base-64": "^0.1.0",
     "expo": "^39.0.0",
     "expo-av": "~8.6.0",
+    "expo-constants": "~9.2.0",
     "expo-file-system": "~9.2.0",
     "expo-firebase-analytics": "~2.5.0",
     "expo-image-picker": "~9.1.0",
@@ -29,6 +30,7 @@
     "expo-screen-orientation": "~2.0.0",
     "expo-sensors": "~9.1.0",
     "expo-sharing": "~8.4.1",
+    "expo-video-player": "^1.6.1",
     "expo-web-browser": "~8.5.0",
     "firebase": "7.9.0",
     "firestore-size": "^2.0.6",
@@ -59,8 +61,7 @@
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^2.3.0",
-    "expo-constants": "~9.2.0"
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "babel-preset-expo": "^8.3.0",

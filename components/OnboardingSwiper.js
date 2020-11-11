@@ -100,7 +100,8 @@ function OnboardingSwiper (props) {
           alignSelf: 'flex-end',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 20
+          paddingHorizontal: 20,
+          marginBottom: 20
         }}
       >
         <WahaButton

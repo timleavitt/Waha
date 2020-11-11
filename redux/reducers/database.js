@@ -6,14 +6,16 @@ import {
   SET_FINISHED_ONBOARDING,
   SET_IS_FETCHING,
   SET_TOTAL_TO_DOWNLOAD,
-  STORE_DATA
+  STORE_DATA,
+  STORE_DOWNLOAD
 } from '../actions/databaseActions'
 
 export function database (
   state = {
     haveFinishedOnboarding: false,
     haveFinishedInitialFetch: false,
-    currentFetchProgress: 0
+    currentFetchProgress: 0,
+    storedDownloads: []
   },
   action
 ) {
@@ -35,6 +37,11 @@ export function database (
       const languageToDelete = action.language
       const { [languageToDelete]: value, ...newObject } = state
       return newObject
+    case STORE_DOWNLOAD:
+      return {
+        ...state,
+        storedDownload: action.downloadResumable
+      }
     default:
       return state
   }

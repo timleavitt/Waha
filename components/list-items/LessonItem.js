@@ -14,13 +14,18 @@ function LessonItem (props) {
     switch (props.lessonType) {
       case 'qa':
       case 'a':
-        if (props.downloads[props.thisLesson.id] === 1)
+        if (
+          props.downloads[props.thisLesson.id] &&
+          props.downloads[props.thisLesson.id].progress === 1
+        )
           props.removeDownload(props.thisLesson.id)
         break
       case 'qav':
         if (
-          props.downloads[props.thisLesson.id] === 1 &&
-          props.downloads[props.thisLesson.id + 'v'] === 1
+          props.downloads[props.thisLesson.id] &&
+          props.downloads[props.thisLesson.id] + 'v' &&
+          props.downloads[props.thisLesson.id].progress === 1 &&
+          props.downloads[props.thisLesson.id + 'v'].progress === 1
         ) {
           props.removeDownload(props.thisLesson.id)
           props.removeDownload(props.thisLesson.id + 'v')
@@ -28,7 +33,10 @@ function LessonItem (props) {
         break
       case 'qv':
       case 'v':
-        if (props.downloads[props.thisLesson.id + 'v'] === 1)
+        if (
+          props.downloads[props.thisLesson.id + 'v'] &&
+          props.downloads[props.thisLesson.id + 'v'].progress === 1
+        )
           props.removeDownload(props.thisLesson.id + 'v')
         break
     }

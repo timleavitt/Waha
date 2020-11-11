@@ -27,11 +27,7 @@ import VideoPlayer from '../components/VideoPlayer'
 import { colors, getLessonInfo, scaleMultiplier } from '../constants'
 import MessageModal from '../modals/MessageModal'
 import ShareModal from '../modals/ShareModal'
-import {
-  downloadLesson,
-  downloadVideo,
-  removeDownload
-} from '../redux/actions/downloadActions'
+import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
 
 function PlayScreen (props) {
@@ -298,7 +294,8 @@ function PlayScreen (props) {
           !props.route.params.isDownloaded &&
           !props.route.params.isDownloading
         )
-          props.downloadLesson(
+          props.downloadMedia(
+            'audio',
             props.route.params.thisLesson.id,
             getLessonInfo('audioSource', props.route.params.thisLesson.id)
           )
@@ -314,11 +311,13 @@ function PlayScreen (props) {
           !props.route.params.isDownloaded &&
           !props.route.params.isDownloading
         ) {
-          props.downloadLesson(
+          props.downloadMedia(
+            'audio',
             props.route.params.thisLesson.id,
             getLessonInfo('audioSource', props.route.params.thisLesson.id)
           )
-          props.downloadVideo(
+          props.downloadMedia(
+            'video',
             props.route.params.thisLesson.id,
             getLessonInfo('videoSource', props.route.params.thisLesson.id)
           )
@@ -335,7 +334,8 @@ function PlayScreen (props) {
           !props.route.params.isDownloaded &&
           !props.route.params.isDownloading
         )
-          props.downloadVideo(
+          props.downloadMedia(
+            'video',
             props.route.params.thisLesson.id,
             getLessonInfo('videoSource', props.route.params.thisLesson.id)
           )
@@ -600,13 +600,18 @@ function PlayScreen (props) {
   useEffect(() => {
     switch (props.route.params.lessonType) {
       case 'qa':
-        if (props.downloads[props.route.params.thisLesson.id] === 1)
+        if (
+          props.downloads[props.route.params.thisLesson.id] &&
+          props.downloads[props.route.params.thisLesson.id].progress === 1
+        )
           props.removeDownload(props.route.params.thisLesson.id)
         break
       case 'qav':
         if (
-          props.downloads[props.route.params.thisLesson.id] === 1 &&
-          props.downloads[props.route.params.thisLesson.id + 'v'] === 1
+          props.downloads[props.route.params.thisLesson.id] &&
+          props.downloads[props.route.params.thisLesson.id + 'v'] &&
+          props.downloads[props.route.params.thisLesson.id].progress === 1 &&
+          props.downloads[props.route.params.thisLesson.id + 'v'].progress === 1
         ) {
           props.removeDownload(props.route.params.thisLesson.id)
           props.removeDownload(props.route.params.thisLesson.id + 'v')
@@ -614,7 +619,10 @@ function PlayScreen (props) {
         break
       case 'qv':
       case 'v':
-        if (props.downloads[props.route.params.thisLesson.id + 'v'] === 1)
+        if (
+          props.downloads[props.route.params.thisLesson.id + 'v'] &&
+          props.downloads[props.route.params.thisLesson.id + 'v'].progress === 1
+        )
           props.removeDownload(props.route.params.thisLesson.id + 'v')
         break
     }
@@ -710,6 +718,7 @@ function PlayScreen (props) {
           />
         ) : activeChapter === 'training' ? (
           <VideoPlayer
+            videoSource={trainingSource}
             setVideo={setVideo}
             video={video}
             setIsMediaLoaded={setIsMediaLoaded}
@@ -865,11 +874,8 @@ function mapDispatchToProps (dispatch) {
     toggleComplete: (groupName, set, lessonIndex) => {
       dispatch(toggleComplete(groupName, set, lessonIndex))
     },
-    downloadLesson: (lessonID, source) => {
-      dispatch(downloadLesson(lessonID, source))
-    },
-    downloadVideo: (lessonID, source) => {
-      dispatch(downloadVideo(lessonID, source))
+    downloadMedia: (type, lessonID, source) => {
+      dispatch(downloadMedia(type, lessonID, source))
     },
     removeDownload: lessonID => {
       dispatch(removeDownload(lessonID))
