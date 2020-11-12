@@ -96,7 +96,6 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
-  console.log(activeGroup)
   return {
     database: state.database,
     isRTL: state.database[activeGroup.language].isRTL,

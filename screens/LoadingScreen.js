@@ -1,15 +1,18 @@
 import NetInfo from '@react-native-community/netinfo'
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import { colors } from '../constants'
 import {
   addLanguage,
+  setCurrentFetchProgress,
   setFetchError,
+  setFinishedInitialFetch,
   setFinishedOnboarding,
-  setIsFetching
+  setIsFetching,
+  setTotalToDownload
 } from '../redux/actions/databaseActions'
 import ar from '../translations/ar.json'
 // translations import
@@ -20,9 +23,9 @@ function LoadingScreen (props) {
   const [isConnected, setIsConnected] = useState(true)
 
   useEffect(() => {
-    if (proTipNum !== 3)
-      setTimeout(() => setProTipNum(current => current + 1), 8000)
-    else setTimeout(() => setProTipNum(1), 8000)
+    // if (proTipNum !== 3)
+    //   setTimeout(() => setProTipNum(current => current + 1), 8000)
+    // else setTimeout(() => setProTipNum(1), 8000)
   }, [proTipNum])
 
   useEffect(() => {
@@ -73,49 +76,96 @@ function LoadingScreen (props) {
           source={require('../assets/icon_transparent.png')}
         />
       </View> */}
-      <View style={{ flex: 1 }} />
-      <View
+      {/* <View style={{ flex: 1 }} /> */}
+      <Image
+        style={{
+          width: Dimensions.get('window').width / 2,
+          height: Dimensions.get('window').width / 2,
+          tintColor: '#e43c44'
+        }}
+        source={require('../assets/adaptive-icon-foreground.png')}
+        resizeMode='contain'
+      />
+
+      {/* <View
         style={{
           flex: 2,
           paddingHorizontal: 20,
           alignItems: 'center',
           justifyContent: 'center'
         }}
-      >
-        <ActivityIndicator
+      > */}
+      {/* <ActivityIndicator
           size='large'
           color={colors.shark}
           style={{ margin: 5 }}
-        />
+        /> */}
 
-        <Text style={Typography(props, 'h2', '', 'center', colors.shark)}>
+      {/* <Text style={Typography(props, 'h2', '', 'center', colors.shark)}>
           {i18n.t('loadingMessage')}
-        </Text>
-        <Text style={Typography(props, 'h1', '', 'center', colors.shark)}>
+        </Text> */}
+      <View
+        style={{
+          width: Dimensions.get('window').width - 40,
+          height: 20,
+          borderRadius: 20,
+          flexDirection: 'row',
+          overflow: 'hidden',
+          justifyContent: 'center'
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: '#e43c44',
+            height: '100%',
+            flex: props.currentFetchProgress,
+            borderRadius: 20
+          }}
+        />
+        <View
+          style={{
+            backgroundColor: colors.white,
+            height: '100%',
+            flex: props.totalToDownload - props.currentFetchProgress
+          }}
+        />
+      </View>
+      <Image
+        style={{
+          height: 50
+        }}
+        source={require('../assets/gifs/equalizer.gif')}
+        resizeMode='contain'
+      />
+      {/* <Text style={Typography(props, 'h1', '', 'center', colors.shark)}>
           {props.totalToDownload
             ? props.currentFetchProgress + '/' + props.totalToDownload
             : ''}
-        </Text>
-        {isConnected ? null : <Text>Trying to reconnect...</Text>}
-        <TouchableOpacity
-          onPress={() => {
-            // props.navigation.reset({
-            //   index: 0,
-            //   routes: [{ name: 'LanguageSelect' }]
-            // })
-            props.setIsFetching(false)
-            if (!props.finishedInitialFetch) {
-              props.setFinishedOnboarding(false)
-            }
-            props.storedDownload
-              .pauseAsync()
-              .then(() => console.log('successfully paused'))
-          }}
-          style={{ width: '100%', height: 100 }}
-        >
-          <Text>Cancel</Text>
-        </TouchableOpacity>
-      </View>
+        </Text> */}
+      {isConnected ? null : <Text>Trying to reconnect...</Text>}
+      <TouchableOpacity
+        onPress={() => {
+          props.setCurrentFetchProgress(0)
+          props.setTotalToDownload(0)
+          props.setIsFetching(false)
+          // only if adding language for the first time
+          if (!props.haveFinishedInitialFetch) {
+            console.log('go to language select')
+            props.setFinishedOnboarding(false)
+            props.navigation.reset({
+              index: 0,
+              routes: [{ name: 'LanguageSelect' }]
+            })
+          }
+          props.storedDownloads.forEach(download => {
+            download.pauseAsync()
+          })
+        }}
+        style={{ width: '100%', height: 100, marginVertical: 20 }}
+      >
+        <Icon name='cancel' size={50} color={colors.shark} />
+      </TouchableOpacity>
+      {/* </View> */}
       {/* <View style={styles.progressBarContainer}>
         <Progress.Bar
           progress={props.progress}
@@ -125,7 +175,7 @@ function LoadingScreen (props) {
           borderColor={colors.shark}
         />
       </View> */}
-      <View
+      {/* <View
         style={{
           paddingHorizontal: 20,
           flex: 1,
@@ -136,7 +186,7 @@ function LoadingScreen (props) {
         <Text style={Typography(props, 'h3', '', 'center', colors.chateau)}>
           {i18n.t('protip' + proTipNum)}
         </Text>
-      </View>
+      </View> */}
     </View>
   )
 }
@@ -147,7 +197,8 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: colors.white
   },
   progressBarContainer: {
     width: '100%',
@@ -159,21 +210,20 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.shark,
+    backgroundColor: colors.aquaHaze,
     borderRadius: 10
   }
 })
 
 function mapStateToProps (state) {
-  // console.log(state.fetchingStatus)
-  console.log(state.database.storedDownloads.length)
   return {
     currentFetchProgress: state.database.currentFetchProgress,
     totalToDownload: state.database.totalToDownload,
     fetchError: state.fetchingStatus.fetchError,
     errorLanguage: state.fetchingStatus.errorLanguage,
-    finishedInitialFetch: state.fetchingStatus.finishedInitialFetch,
-    storedDownload: state.database.storedDownload
+    haveFinishedInitialFetch: state.database.haveFinishedInitialFetch,
+    storedDownloads: state.storedDownloads,
+    database: state.database
   }
 }
 
@@ -190,6 +240,15 @@ function mapDispatchToProps (dispatch) {
     },
     setFinishedOnboarding: status => {
       dispatch(setFinishedOnboarding(status))
+    },
+    setFinishedInitialFetch: status => {
+      dispatch(setFinishedInitialFetch(status))
+    },
+    setTotalToDownload: totalToDownload => {
+      dispatch(setTotalToDownload(totalToDownload))
+    },
+    setCurrentFetchProgress: progress => {
+      dispatch(setCurrentFetchProgress(progress))
     }
   }
 }

@@ -59,7 +59,7 @@ function GroupsScreen (props) {
                     'h3',
                     isEditing ? 'medium' : 'regular',
                     'center',
-                    isEditing ? colors.white : colors.shark
+                    isEditing ? colors.white : colors.blue
                   ),
                   {
                     textDecorationLine: isEditing ? 'underline' : null
@@ -84,7 +84,7 @@ function GroupsScreen (props) {
                   'h3',
                   props.isEditing ? 'medium' : 'regular',
                   'center',
-                  isEditing ? colors.white : colors.shark
+                  isEditing ? colors.white : colors.blue
                 )}
               >
                 {isEditing

@@ -2,7 +2,7 @@
 export const dbMode = 'test'
 
 // test means that data isn't stored between app restarts
-export const reduxMode = 'prod'
+export const reduxMode = 'test'
 
 // test means analytics aren't tracked
 export const analyticsMode = 'test'

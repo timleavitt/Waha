@@ -14,9 +14,10 @@ const blacklist =
         'areMobilizationToolsUnlocked',
         'groups',
         'database',
-        'security'
+        'security',
+        'storedDownloads'
       ]
-    : ['downloads', 'fetchingStatus', 'mtUnlockAttempts']
+    : ['downloads', 'fetchingStatus', 'mtUnlockAttempts', 'storedDownloads']
 
 const persistConfig = {
   key: 'root',
