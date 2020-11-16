@@ -8,6 +8,7 @@ import { colors, getSetInfo, scaleMultiplier } from '../../constants'
 import MessageModal from '../../modals/MessageModal'
 import { addSet } from '../../redux/actions/groupsActions'
 import { logCompleteStorySet } from '../../redux/LogEventFunctions'
+import { BrandTypography } from '../../styles/typography'
 function SetItem (props) {
   //+ STATE
 
@@ -285,7 +286,7 @@ function SetItem (props) {
       >
         <Text
           style={[
-            Typography(
+            BrandTypography(
               props,
               'd',
               'regular',
@@ -303,7 +304,7 @@ function SetItem (props) {
         </Text>
         <Text
           style={[
-            Typography(
+            BrandTypography(
               props,
               'h3',
               'black',

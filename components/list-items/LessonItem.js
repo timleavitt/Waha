@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, getLessonInfo, scaleMultiplier } from '../../constants'
 import { removeDownload } from '../../redux/actions/downloadActions'
+import { BrandTypography } from '../../styles/typography'
 import DownloadStatusIndicator from '../DownloadStatusIndicator'
 function LessonItem (props) {
   //+ CONSTRUCTOR
@@ -99,7 +100,7 @@ function LessonItem (props) {
           }}
         >
           <Text
-            style={Typography(
+            style={BrandTypography(
               props,
               'h4',
               'medium',
@@ -111,7 +112,13 @@ function LessonItem (props) {
             {props.thisLesson.title}
           </Text>
           <Text
-            style={Typography(props, 'd', 'regular', 'left', colors.chateau)}
+            style={BrandTypography(
+              props,
+              'd',
+              'regular',
+              'left',
+              colors.chateau
+            )}
             numberOfLines={1}
           >
             {getLessonInfo('subtitle', props.thisLesson.id)}

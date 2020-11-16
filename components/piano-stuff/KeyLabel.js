@@ -2,6 +2,7 @@ import React from 'react'
 import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors } from '../../constants'
+import { BrandTypography } from '../../styles/typography'
 function KeyLabel (props) {
   // RENDER
 
@@ -13,7 +14,9 @@ function KeyLabel (props) {
         props.style
       ]}
     >
-      <Text style={Typography(props, 'h2', 'medium', 'center', colors.shark)}>
+      <Text
+        style={BrandTypography(props, 'h2', 'medium', 'center', colors.shark)}
+      >
         {props.number}
       </Text>
     </View>

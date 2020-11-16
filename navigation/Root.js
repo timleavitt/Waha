@@ -29,7 +29,7 @@ function mapStateToProps (state) {
   return {
     haveFinishedOnboarding: state.database.haveFinishedOnboarding,
     haveFinishedInitialFetch: state.database.haveFinishedInitialFetch,
-    isFetching: state.fetchingStatus.isFetching
+    isFetching: state.isFetching
   }
 }
 

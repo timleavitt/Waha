@@ -15,6 +15,7 @@ import {
   setSecurityEnabled,
   setTimeoutDuration
 } from '../redux/actions/securityActions'
+import { BrandTypography } from '../styles/typography'
 
 function SecurityScreen (props) {
   //+ STATE
@@ -93,7 +94,13 @@ function SecurityScreen (props) {
           }}
         >
           <Text
-            style={Typography(props, 'h4', 'regular', 'left', colors.chateau)}
+            style={BrandTypography(
+              props,
+              'h4',
+              'regular',
+              'left',
+              colors.chateau
+            )}
           >
             {getTimeoutText()}
           </Text>

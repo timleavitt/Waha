@@ -1,6 +1,8 @@
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { colors, scaleMultiplier } from '../../constants'
+import { colors, getSystemIsRTL, scaleMultiplier } from '../../constants'
+import { SystemTypography } from '../../styles/typography'
+
 function LanguageSelectItem (props) {
   // FUNCTIONS
 
@@ -23,7 +25,7 @@ function LanguageSelectItem (props) {
         height: 80 * scaleMultiplier,
         // aspectRatio: 5,
         width: '100%',
-        flexDirection: 'row',
+        flexDirection: getSystemIsRTL() ? 'row-reverse' : 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: props.isSelected ? '#BFE5AF' : colors.white
@@ -36,7 +38,7 @@ function LanguageSelectItem (props) {
           height: '100%',
           alignItems: 'center',
           justifyContent: 'space-around',
-          flexDirection: 'row'
+          flexDirection: getSystemIsRTL() ? 'row-reverse' : 'row'
         }}
         onPress={props.onPress}
       >
@@ -47,18 +49,25 @@ function LanguageSelectItem (props) {
           }}
         >
           <Text
-            style={[
-              Typography(props, 'h3', '', 'left', colors.shark),
-              { fontWeight: 'bold' }
-            ]}
+            style={SystemTypography(
+              false,
+              'h3',
+              'medium',
+              'left',
+              colors.shark,
+              languages[]
+            )}
           >
             {props.nativeName}
           </Text>
           <Text
-            style={{
-              color: colors.shark,
-              fontSize: 14 * scaleMultiplier
-            }}
+            style={SystemTypography(
+              false,
+              'p',
+              'regular',
+              'left',
+              colors.shark
+            )}
           >
             {props.localeName}
           </Text>
@@ -81,7 +90,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     width: 120 * scaleMultiplier,
     height: 16.8 * scaleMultiplier,
-    marginRight: 20
+    marginHorizontal: 20
   }
 })
 

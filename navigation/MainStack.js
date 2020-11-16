@@ -30,6 +30,7 @@ import SecurityOnboardingSlidesScreen from '../screens/SecurityOnboardingSlidesS
 import SecurityScreen from '../screens/SecurityScreen'
 import SplashScreen from '../screens/SplashScreen'
 import StorageScreen from '../screens/StorageScreen'
+import { BrandTypography, SystemTypography } from '../styles/typography'
 
 LogBox.ignoreLogs(['Setting a timer'])
 
@@ -143,7 +144,13 @@ function MainStack (props) {
                   analyticsMode === 'test' ? (
                     <Text
                       style={[
-                        Typography(props, 'p', 'regular', 'center', colors.red),
+                        BrandTypography(
+                          props,
+                          'p',
+                          'regular',
+                          'center',
+                          colors.red
+                        ),
                         {
                           paddingHorizontal: 20
                         }
@@ -184,7 +191,13 @@ function MainStack (props) {
                   analyticsMode === 'test' ? (
                     <Text
                       style={[
-                        Typography(props, 'p', 'regular', 'center', colors.red),
+                        BrandTypography(
+                          props,
+                          'p',
+                          'regular',
+                          'center',
+                          colors.red
+                        ),
                         {
                           paddingHorizontal: 20
                         }
@@ -249,10 +262,13 @@ function MainStack (props) {
           headerStyle: {
             backgroundColor: colors.white
           },
-          headerTitleStyle: {
-            color: colors.shark,
-            fontFamily: props.font + '-medium'
-          },
+          headerTitleStyle: SystemTypography(
+            true,
+            '',
+            'medium',
+            'center',
+            colors.shark
+          ),
           headerRight: props.isRTL
             ? () => <BackButton onPress={() => props.navigation.goBack()} />
             : () => <View></View>,

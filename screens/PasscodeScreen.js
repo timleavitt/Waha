@@ -11,6 +11,7 @@ import {
   setMTUnlockTimeout
 } from '../redux/actions/securityActions'
 import { logUnlockMobilizationTools } from '../redux/LogEventFunctions'
+import { BrandTypography } from '../styles/typography'
 function PasscodeScreen (props) {
   //+ STATE
   const [passcode, setPasscode] = useState('')
@@ -75,7 +76,7 @@ function PasscodeScreen (props) {
     <View style={styles.screen}>
       <Text
         style={[
-          Typography(props, 'h3', 'regular', 'center', colors.shark),
+          BrandTypography(props, 'h3', 'regular', 'center', colors.shark),
           {
             marginVertical: 30 * scaleMultiplier,
             paddingHorizontal: 20
@@ -104,7 +105,7 @@ function PasscodeScreen (props) {
       />
       <Text
         style={[
-          Typography(props, 'h3', 'regular', 'center', colors.red),
+          BrandTypography(props, 'h3', 'regular', 'center', colors.red),
           {
             marginTop: 30 * scaleMultiplier,
             paddingHorizontal: 20

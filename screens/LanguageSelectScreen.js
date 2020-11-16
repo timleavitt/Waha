@@ -17,14 +17,25 @@ import LanguageSelectItem from '../components/list-items/LanguageSelectItem'
 import Separator from '../components/standard/Separator'
 import WahaButton from '../components/standard/WahaButton'
 import { colors, languages, languageT2S, scaleMultiplier } from '../constants'
-import { addLanguage } from '../redux/actions/databaseActions'
-import Typography from '../styles/typography'
+import db from '../firebase/db'
+import {
+  downloadLanguageFiles,
+  storeData
+} from '../redux/actions/databaseActions'
+import { setIsFetching } from '../redux/actions/isFetchingActions'
+import { SystemTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
-// translations import
 import en from '../translations/en.json'
+
+i18n.translations = {
+  en,
+  ar
+}
 
 function LanguageSelectScreen (props) {
   //+ STATE
+
+  console.log(i18n.locale)
 
   // keeps track of language selected in picker (TODO: change default to user's default language)
   const [selectedLanguage, setSelectedLanguage] = useState('')
@@ -37,12 +48,6 @@ function LanguageSelectScreen (props) {
   i18n.fallbacks = true
 
   // sound for the text to speech
-
-  // translations for language select
-  i18n.translations = {
-    en,
-    ar
-  }
 
   const soundObject = new Audio.Sound()
 
@@ -77,7 +82,77 @@ function LanguageSelectScreen (props) {
 
   //+ FUNCTIONS
 
-  // plays text-to-speech audio file of language
+  async function fetchFirebaseData () {
+    props.setIsFetching(true)
+    //- get sets first
+    var sets = []
+
+    await db
+      .collection('sets')
+      .where('languageID', '==', selectedLanguage)
+      .get()
+      .then(response => {
+        response.forEach(set => {
+          sets.push({
+            id: set.id,
+            ...set.data()
+          })
+        })
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
+
+    //- then get language object from database and throw all of it in redux
+    await db
+      .collection('languages')
+      .doc(selectedLanguage)
+      .get()
+      .then(async doc => {
+        if (doc.exists) {
+          props.storeData(
+            {
+              sets: sets,
+              ...doc.data()
+            },
+            selectedLanguage
+          )
+        }
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
+    return
+  }
+
+  function onStartPress () {
+    if (selectedLanguage) {
+      fetchFirebaseData()
+        .then(() => {
+          props.downloadLanguageFiles(selectedLanguage)
+        })
+        .catch(error => {
+          Alert.alert(i18n.t('fetchErrorTitle'), i18n.t('fetchErrorMessage'), [
+            {
+              text: i18n.t('ok'),
+              onPress: () => {
+                props.navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'LanguageSelect' }]
+                })
+              }
+            }
+          ])
+        })
+      if (props.route.name === 'LanguageSelect') {
+        props.navigation.navigate('OnboardingSlides', {
+          selectedLanguage: selectedLanguage
+        })
+      }
+    }
+  }
 
   // updates language on picker change
   function onPickerChange (language) {
@@ -96,26 +171,13 @@ function LanguageSelectScreen (props) {
         height: 68 * scaleMultiplier
       }}
       label={i18n.t('noMoreLanguages')}
+      useDefaultFont={true}
     />
   ) : isConnected ? (
     <WahaButton
       type='filled'
       color={colors.apple}
-      onPress={
-        selectedLanguage
-          ? props.route.name === 'LanguageSelect'
-            ? () =>
-                props.navigation.navigate('OnboardingSlides', {
-                  selectedLanguage: selectedLanguage
-                })
-            : () => props.addLanguage(selectedLanguage)
-          : () =>
-              Alert.alert(
-                i18n.t('pleaseSelectLanguageTitle'),
-                i18n.t('pleaseSelectLanguageMessage'),
-                [{ text: i18n.t('ok'), onPress: () => {} }]
-              )
-      }
+      onPress={onStartPress}
       label={
         props.route.name === 'LanguageSelect'
           ? i18n.t('letsBegin')
@@ -126,6 +188,7 @@ function LanguageSelectScreen (props) {
         marginHorizontal: 20,
         height: 68 * scaleMultiplier
       }}
+      useDefaultFont={true}
     />
   ) : (
     <WahaButton
@@ -136,6 +199,7 @@ function LanguageSelectScreen (props) {
         height: 68 * scaleMultiplier
       }}
       label={i18n.t('noInternet')}
+      useDefaultFont={true}
     />
   )
 
@@ -146,13 +210,20 @@ function LanguageSelectScreen (props) {
       >
         <Text
           style={[
-            Typography(props, 'h1', '', 'center', colors.shark),
-            { fontWeight: 'bold', margin: 5 }
+            SystemTypography(false, 'h1', 'medium', 'center', colors.shark)
           ]}
         >
           {i18n.t('welcome')}
         </Text>
-        <Text style={Typography(props, 'h2', '', 'center', colors.shark)}>
+        <Text
+          style={SystemTypography(
+            false,
+            'h2',
+            'regular',
+            'center',
+            colors.shark
+          )}
+        >
           {i18n.t('selectLanguage')}
         </Text>
       </View>
@@ -193,7 +264,15 @@ function LanguageSelectScreen (props) {
               : colors.white
         }}
       >
-        <Text style={Typography(props, 'h3', '', 'left', colors.chateau)}>
+        <Text
+          style={SystemTypography(
+            false,
+            'h3',
+            'regular',
+            'left',
+            colors.chateau
+          )}
+        >
           {i18n.t(section.i18nName)}
         </Text>
       </View>
@@ -295,20 +374,32 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: 40 * scaleMultiplier
+  },
+  buttonContainer: {
+    borderRadius: 10,
+    width: Dimensions.get('window').width - 40,
+    marginVertical: 20 * scaleMultiplier,
+    marginHorizontal: 20,
+    height: 65 * scaleMultiplier,
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row'
   }
 })
 
 //+ REDUX
 
 function mapStateToProps (state) {
-  return {
-    isFetching: state.database.isFetching
-  }
+  return {}
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    addLanguage: language => dispatch(addLanguage(language))
+    downloadLanguageFiles: language =>
+      dispatch(downloadLanguageFiles(language)),
+    storeData: (data, language) => dispatch(storeData(data, language)),
+    setIsFetching: toSet => dispatch(setIsFetching(toSet))
   }
 }
 

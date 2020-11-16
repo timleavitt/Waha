@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
+import { BrandTypography } from '../styles/typography'
 function OptionsModal (props) {
   //+ RENDER
   return (
@@ -21,7 +22,13 @@ function OptionsModal (props) {
             style={styles.closeButtonContainer}
           >
             <Text
-              style={Typography(props, 'h3', 'medium', 'center', colors.red)}
+              style={BrandTypography(
+                props,
+                'h3',
+                'medium',
+                'center',
+                colors.red
+              )}
             >
               {props.closeText}
             </Text>

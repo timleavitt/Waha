@@ -20,18 +20,10 @@ function ShareModal (props) {
       case 'app':
         logShareApp(props.lesson)
         Share.share({
-          message: 'https://waha.ck.page'
-          // getSetInfo('category', props.set.id) === 'mt'
-          //   ? Platform.OS === 'ios'
-          //     ? 'https://waha.ck.page' +
-          //       ' ' +
-          //       props.translations.general.share_toolkit_unlock_code
-          //     : 'https://waha.ck.page' +
-          //       ' ' +
-          //       props.translations.general.share_toolkit_unlock_code
-          //   : Platform.OS === 'ios'
-          //   ? 'www.waha.app'
-          //   : 'www.waha.app'
+          message:
+            Platform.OS === 'ios'
+              ? 'https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294'
+              : 'https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
         }).then(() => {
           props.hideModal()
         })

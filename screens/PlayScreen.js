@@ -29,6 +29,7 @@ import MessageModal from '../modals/MessageModal'
 import ShareModal from '../modals/ShareModal'
 import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
+import { BrandTypography } from '../styles/typography'
 
 function PlayScreen (props) {
   //+ AUDIO / VIDEO STATE
@@ -679,7 +680,7 @@ function PlayScreen (props) {
   var titleSection = (
     <View style={styles.titlesContainer}>
       <Text
-        style={Typography(props, 'h3', 'black', 'center', colors.shark)}
+        style={BrandTypography(props, 'h3', 'black', 'center', colors.shark)}
         numberOfLines={2}
       >
         {props.route.params.thisLesson.title}

@@ -8,7 +8,9 @@ import {
   Text,
   View
 } from 'react-native'
+import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
+import { BrandTypography, SystemTypography } from '../styles/typography'
 import WahaButton from './standard/WahaButton'
 
 function OnboardingSwiper (props) {
@@ -51,14 +53,44 @@ function OnboardingSwiper (props) {
           <Image style={styles.image} source={props.sources[index]} />
           <Text
             style={[
-              Typography(props, 'h2', 'medium', 'center', colors.shark),
-              { fontWeight: props.font ? null : 'bold', marginVertical: 10 }
+              props.useDefaultFont
+                ? SystemTypography(
+                    false,
+                    'h2',
+                    'medium',
+                    'center',
+                    colors.shark
+                  )
+                : BrandTypography(
+                    props,
+                    'h2',
+                    'medium',
+                    'center',
+                    colors.shark
+                  ),
+              { marginVertical: 10 }
             ]}
           >
             {props.titles[index]}
           </Text>
           <Text
-            style={Typography(props, 'h3', 'regular', 'center', colors.chateau)}
+            style={
+              props.useDefaultFont
+                ? SystemTypography(
+                    false,
+                    'h3',
+                    'regular',
+                    'center',
+                    colors.chateau
+                  )
+                : BrandTypography(
+                    props,
+                    'h3',
+                    'regular',
+                    'center',
+                    colors.chateau
+                  )
+            }
           >
             {props.messages[index]}
           </Text>
@@ -187,4 +219,16 @@ const styles = StyleSheet.create({
   }
 })
 
-export default OnboardingSwiper
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return activeGroup
+    ? {
+        font: state.database[activeGroup.language].font,
+        isRTL: state.database[activeGroup.language].isRTL
+      }
+    : {}
+}
+
+export default connect(mapStateToProps)(OnboardingSwiper)

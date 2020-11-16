@@ -3,9 +3,10 @@
 import { combineReducers } from 'redux'
 import { activeGroup } from '../reducers/activeGroup'
 import { areMobilizationToolsUnlocked } from '../reducers/areMobilizationToolsUnlocked'
-import { database, fetchingStatus } from '../reducers/database'
+import { database } from '../reducers/database'
 import { downloads } from '../reducers/downloads'
 import { groups } from '../reducers/groups'
+import { isFetching } from '../reducers/isFetching'
 import { mtUnlockAttempts } from '../reducers/mtUnlockAttempts'
 import { network } from '../reducers/network'
 import { security } from '../reducers/security'
@@ -17,7 +18,7 @@ export default rootReducer = combineReducers({
   groups,
   activeGroup,
   network,
-  fetchingStatus,
+  isFetching,
   areMobilizationToolsUnlocked,
   security,
   mtUnlockAttempts,

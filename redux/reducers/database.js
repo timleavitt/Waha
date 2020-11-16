@@ -1,13 +1,10 @@
 import {
   DELETE_LANGUAGE,
   SET_CURRENT_FETCH_PROGRESS,
-  SET_FETCH_ERROR,
   SET_FINISHED_INITIAL_FETCH,
   SET_FINISHED_ONBOARDING,
-  SET_IS_FETCHING,
   SET_TOTAL_TO_DOWNLOAD,
-  STORE_DATA,
-  STORE_DOWNLOAD
+  STORE_DATA
 } from '../actions/databaseActions'
 
 export function database (
@@ -15,6 +12,7 @@ export function database (
     haveFinishedOnboarding: false,
     haveFinishedInitialFetch: false,
     currentFetchProgress: 0,
+    fetchSuccess: null,
     storedDownloads: []
   },
   action
@@ -37,33 +35,7 @@ export function database (
       const languageToDelete = action.language
       const { [languageToDelete]: value, ...newObject } = state
       return newObject
-    case STORE_DOWNLOAD:
-      return {
-        ...state,
-        storedDownloads: {
-          ...state.storedDownloads,
-          [action.fileName]: action.resumable
-        }
-      }
-    default:
-      return state
-  }
-}
 
-export function fetchingStatus (
-  state = { isFetching: false, fetchError: false, errorLanguage: null },
-  action
-) {
-  switch (action.type) {
-    case SET_IS_FETCHING:
-      // true whenever we're getting data from firebase
-      return { ...state, isFetching: action.isFetching }
-    case SET_FETCH_ERROR:
-      return {
-        ...state,
-        fetchError: action.status,
-        errorLanguage: action.language
-      }
     default:
       return state
   }

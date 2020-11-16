@@ -53,6 +53,7 @@ function SecurityOnboardingSlidesScreen (props) {
         onFinish={() => props.navigation.navigate('KeyOrderSet_Initial')}
         nextTranslation={props.translations.general.next}
         startTranslation={props.translations.general.start}
+        useDefaultFont={false}
       />
     </View>
   )

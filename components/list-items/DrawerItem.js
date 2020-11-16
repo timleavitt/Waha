@@ -2,6 +2,8 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../../constants'
+import { BrandTypography } from '../../styles/typography'
+
 // renders a simple touchable item within the main navigation drawer
 function DrawerItem (props) {
   // RENDER
@@ -23,7 +25,7 @@ function DrawerItem (props) {
       </View>
       <Text
         style={[
-          Typography(props, 'h3', 'medium', 'left', colors.shark),
+          BrandTypography(props, 'h3', 'medium', 'left', colors.shark),
           { paddingHorizontal: 10 }
         ]}
       >
