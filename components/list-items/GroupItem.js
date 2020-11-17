@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, getLessonInfo, scaleMultiplier } from '../../constants'
 import {
@@ -8,7 +8,6 @@ import {
 } from '../../redux/actions/groupsActions'
 import { BrandTypography } from '../../styles/typography'
 import GroupAvatar from '../GroupAvatar'
-// renders a list item for a single group
 function GroupItem (props) {
   // FUNCTIONS
 

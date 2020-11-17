@@ -35,7 +35,16 @@ function GroupItemMT (props) {
       </View>
       <View style={styles.groupNameContainer}>
         <Text
-          style={BrandTypography(props, 'h3', 'medium', 'left', colors.shark)}
+          style={BrandTypography(
+            {
+              font: props.database[props.group.language].font,
+              isRTL: props.isRTL
+            },
+            'h3',
+            'medium',
+            'left',
+            colors.shark
+          )}
         >
           {props.group.name}
         </Text>

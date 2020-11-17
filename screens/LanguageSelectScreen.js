@@ -234,6 +234,7 @@ function LanguageSelectScreen (props) {
       <LanguageSelectItem
         nativeName={item.section.data[item.index].nativeName}
         localeName={i18n.t(item.section.data[item.index].i18nName)}
+        font={item.section.font}
         logoSource={item.section.data[item.index].logoSource}
         onPress={() =>
           setSelectedLanguage(item.section.data[item.index].wahaID)

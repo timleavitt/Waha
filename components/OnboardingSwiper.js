@@ -16,8 +16,8 @@ import WahaButton from './standard/WahaButton'
 function OnboardingSwiper (props) {
   const [onboardingPage, setOnboardingPage] = useState(1)
   const [pagerRef, setPagerRef] = useState()
-
   var dots = []
+
   props.titles.forEach((title, index) => {
     dots.push(
       <View
@@ -225,8 +225,7 @@ function mapStateToProps (state) {
   )[0]
   return activeGroup
     ? {
-        font: state.database[activeGroup.language].font,
-        isRTL: state.database[activeGroup.language].isRTL
+        font: state.database[activeGroup.language].font
       }
     : {}
 }

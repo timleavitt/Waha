@@ -63,7 +63,7 @@ function GroupListHeaderMT (props) {
         <Text
           style={BrandTypography(props, 'h3', 'medium', 'left', colors.chateau)}
         >
-          {props.languageName +
+          {props.translations.general.brands[props.languageID] +
             ' ' +
             props.translations.mobilization_tools.groups_label}
         </Text>

@@ -3,7 +3,7 @@ import React from 'react'
 import { SafeAreaView, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import OnboardingSwiper from '../components/OnboardingSwiper'
-import { colors } from '../constants'
+import { colors, getSystemIsRTL } from '../constants'
 import { setFinishedOnboarding } from '../redux/actions/databaseActions'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
@@ -51,6 +51,7 @@ function OnboardingSlidesScreen (props) {
         nextTranslation={i18n.t('next')}
         startTranslation={i18n.t('start')}
         useDefaultFont={true}
+        isRTL={getSystemIsRTL()}
       />
     </SafeAreaView>
   )

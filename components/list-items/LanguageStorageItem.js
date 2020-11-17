@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
   languageHeaderContainer: {
     alignItems: 'center',
-    // justifyContent: 'space-between',
+    justifyContent: 'space-between',
     width: '100%',
     height: 40 * scaleMultiplier,
     // aspectRatio: 8.7,

@@ -130,7 +130,9 @@ function StorageScreen (props) {
   function renderLanguageStorageItem (languageList) {
     return (
       <LanguageStorageItem
-        languageName={languageList.item.languageName}
+        languageName={
+          props.translations.general.brands[languageList.item.languageID]
+        }
         languageID={languageList.item.languageID}
         megabytes={storageObject[languageList.item.languageID]}
         clearDownloads={() => {

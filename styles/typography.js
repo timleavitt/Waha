@@ -60,7 +60,6 @@ export function SystemTypography (
 
   languages.forEach(languageFamily => {
     if (i18n.locale.slice(0, 2) === languageFamily.languageCode) {
-      console.log('found!')
       defaultFont = languageFamily.font
       defaultIsRTL = languageFamily.isRTL
     }
@@ -71,18 +70,12 @@ export function SystemTypography (
     center: 'center'
   }
 
-  if (isHeader) {
-    return {
-      fontFamily: getSystemFont() + '-' + fontFamily,
-      textAlign: alignments[textAlign],
-      color: color
-    }
-  } else {
-    return {
-      fontSize: sizes[fontSize],
-      fontFamily: getSystemFont() + '-' + fontFamily,
-      textAlign: alignments[textAlign],
-      color: color
-    }
+  return {
+    fontSize: isHeader ? null : sizes[fontSize],
+    fontFamily: overrideFont
+      ? overrideFont + '-' + fontFamily
+      : getSystemFont() + '-' + fontFamily,
+    textAlign: alignments[textAlign],
+    color: color
   }
 }

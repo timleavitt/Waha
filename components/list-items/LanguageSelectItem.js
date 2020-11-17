@@ -5,7 +5,6 @@ import { SystemTypography } from '../../styles/typography'
 
 function LanguageSelectItem (props) {
   // FUNCTIONS
-
   var iconComponent = props.isSelected ? (
     <View style={{ marginHorizontal: 20 }}>
       <Icon name='check' size={30} color={colors.apple} />
@@ -55,7 +54,7 @@ function LanguageSelectItem (props) {
               'medium',
               'left',
               colors.shark,
-              languages[]
+              props.font
             )}
           >
             {props.nativeName}

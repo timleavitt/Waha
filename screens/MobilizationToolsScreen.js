@@ -118,35 +118,9 @@ function MobilizationToolsScreen (props) {
             renderItem={({ item, section }) => {
               return props.database[section.languageID].sets.some(set => {
                 return /[a-z]{2}.3.[0-9]+/.test(set.id)
-              }) ? (
-                renderGroupItem(item)
-              ) : (
-                <View
-                  style={{
-                    height: 80 * scaleMultiplier,
-                    justifyContent: 'flex-start',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    backgroundColor: colors.white,
-                    justifyContent: 'center'
-                  }}
-                >
-                  <Text
-                    style={BrandTypography(
-                      props,
-                      'p',
-                      'regular',
-                      'center',
-                      colors.chateau
-                    )}
-                  >
-                    {
-                      props.translations.mobilization_tools
-                        .no_mobilization_tools_content_text
-                    }
-                  </Text>
-                </View>
-              )
+              })
+                ? renderGroupItem(item)
+                : null
             }}
             ListHeaderComponent={() => (
               <View>
@@ -193,12 +167,58 @@ function MobilizationToolsScreen (props) {
             renderSectionHeader={({ section }) =>
               renderLanguageInstanceItem(section)
             }
-            renderSectionFooter={() => (
-              <View style={{ height: 20, width: '100%' }} />
-            )}
+            renderSectionFooter={({ section }) => {
+              var hasMTContent = props.database[section.languageID].sets.some(
+                set => {
+                  return /[a-z]{2}.3.[0-9]+/.test(set.id)
+                }
+              )
+              return hasMTContent ? (
+                <View style={{ width: '100%', height: 20 }} />
+              ) : (
+                // <Separator />
+                <View>
+                  <View
+                    style={{
+                      height: 80 * scaleMultiplier,
+                      justifyContent: 'flex-start',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      backgroundColor: colors.white,
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Text
+                      style={BrandTypography(
+                        props,
+                        'p',
+                        'regular',
+                        'center',
+                        colors.chateau
+                      )}
+                    >
+                      {
+                        props.translations.mobilization_tools
+                          .no_mobilization_tools_content_text
+                      }
+                    </Text>
+                  </View>
+                  <Separator />
+                  <View style={{ width: '100%', height: 20 }} />
+                </View>
+              )
+            }}
             keyExtractor={item => item.name}
             ItemSeparatorComponent={() => <Separator />}
-            SectionSeparatorComponent={() => <Separator />}
+            SectionSeparatorComponent={({ section }) => {
+              var hasMTContent = props.database[section.languageID].sets.some(
+                set => {
+                  return /[a-z]{2}.3.[0-9]+/.test(set.id)
+                }
+              )
+
+              return hasMTContent ? <Separator /> : null
+            }}
           />
         ) : null}
       </View>
