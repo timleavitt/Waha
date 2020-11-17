@@ -21,9 +21,7 @@ function ShareModal (props) {
         logShareApp(props.lesson)
         Share.share({
           message:
-            Platform.OS === 'ios'
-              ? 'https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294'
-              : 'https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
+            'iOS: https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294\n\nAndroid: https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
         }).then(() => {
           props.hideModal()
         })
