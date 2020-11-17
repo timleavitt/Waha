@@ -12,7 +12,12 @@ function LanguageSelectItem (props) {
   ) : (
     <TouchableOpacity
       onPress={props.playAudio}
-      style={{ marginHorizontal: 20 }}
+      style={{
+        height: '100%',
+        width: 70,
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
     >
       <Icon name='volume' size={30} color={colors.tuna} />
     </TouchableOpacity>

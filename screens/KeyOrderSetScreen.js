@@ -171,7 +171,7 @@ function KeyOrderSetScreen (props) {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={{ width: '100%', alignItems: 'center' }}>
-        <View style={{ width: '100%' }}>
+        <View style={{ width: '100%', paddingHorizontal: 20 }}>
           <Text
             style={BrandTypography(
               props,

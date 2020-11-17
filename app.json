@@ -7,7 +7,7 @@
     "platforms": ["ios", "android"],
     "orientation": "portrait",
     "primaryColor": "#e43c44",
-    "version": "0.7.0",
+    "version": "0.9.0",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -22,12 +22,12 @@
       "bundleIdentifier": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/GoogleService-Info.plist",
       "supportsTablet": true,
-      "buildNumber": "0.7.0"
+      "buildNumber": "0.9.0"
     },
     "android": {
       "package": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/google-services.json",
-      "versionCode": 9,
+      "versionCode": 10,
       "icon": "./assets/adaptive-icon-foreground.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon-foreground.png",

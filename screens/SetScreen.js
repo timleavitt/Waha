@@ -44,7 +44,7 @@ function SetScreen (props) {
       )
       setSetCategory('mobilization tools')
     }
-  }, [props.activeGroup])
+  }, [props.activeGroup, props.translations])
 
   //+ NAV OPTIONS
 

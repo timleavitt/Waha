@@ -15,7 +15,13 @@ function KeyLabel (props) {
       ]}
     >
       <Text
-        style={BrandTypography(props, 'h2', 'medium', 'center', colors.shark)}
+        style={BrandTypography(
+          { font: 'roboto' },
+          'h2',
+          'medium',
+          'center',
+          colors.shark
+        )}
       >
         {props.number}
       </Text>

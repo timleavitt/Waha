@@ -176,8 +176,8 @@ function MobilizationToolsScreen (props) {
               return hasMTContent ? (
                 <View style={{ width: '100%', height: 20 }} />
               ) : (
-                // <Separator />
                 <View>
+                  <Separator />
                   <View
                     style={{
                       height: 80 * scaleMultiplier,
@@ -185,7 +185,8 @@ function MobilizationToolsScreen (props) {
                       flexDirection: 'row',
                       alignItems: 'center',
                       backgroundColor: colors.white,
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      paddingHorizontal: 20
                     }}
                   >
                     <Text
@@ -209,8 +210,16 @@ function MobilizationToolsScreen (props) {
               )
             }}
             keyExtractor={item => item.name}
-            ItemSeparatorComponent={() => <Separator />}
             SectionSeparatorComponent={({ section }) => {
+              var hasMTContent = props.database[section.languageID].sets.some(
+                set => {
+                  return /[a-z]{2}.3.[0-9]+/.test(set.id)
+                }
+              )
+
+              return hasMTContent ? <Separator /> : null
+            }}
+            ItemSeparatorComponent={({ section }) => {
               var hasMTContent = props.database[section.languageID].sets.some(
                 set => {
                   return /[a-z]{2}.3.[0-9]+/.test(set.id)

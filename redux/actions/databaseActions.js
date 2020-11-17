@@ -14,6 +14,8 @@ import { changeActiveGroup, createGroup } from './groupsActions'
 import { storeDownloads } from './storedDownloadsActions'
 
 export function storeData (data, language) {
+  console.log('beep')
+  console.log(data.translations.sets.add_foundational_story_set_button_label)
   return {
     type: STORE_DATA,
     data,

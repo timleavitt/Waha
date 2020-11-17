@@ -32,6 +32,9 @@ function MainDrawer (props) {
 
     //+ FIRESTORE LISTENERS
 
+    var localLanguageInfo = {}
+    var localSets = []
+
     // listener for languages collection
     db.collection('languages')
       .doc(props.activeGroup.language)
@@ -78,6 +81,10 @@ function MainDrawer (props) {
           props.activeGroup.language
         )
 
+        localLanguageInfo = doc.data()
+
+        // console.log(props.activeDatabase.translations)
+
         // TODO at some point
         // if
         // 1. all core story sets are completed
@@ -110,7 +117,7 @@ function MainDrawer (props) {
 
         // store the new sets object
         props.storeData(
-          { ...props.activeDatabase, sets: sets },
+          { ...localLanguageInfo, sets: sets },
           props.activeGroup.language
         )
       })
@@ -149,7 +156,7 @@ function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
-  // console.log(state.database[activeGroup.language])
+
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],

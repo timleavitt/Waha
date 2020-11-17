@@ -46,7 +46,6 @@ function LoadingScreen (props) {
 
     // only if adding language for the first time
     if (!props.haveFinishedInitialFetch) {
-      console.log('go to language select')
       props.setFinishedOnboarding(false)
       props.navigation.reset({
         index: 0,

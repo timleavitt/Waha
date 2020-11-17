@@ -114,7 +114,16 @@ function GroupListHeader (props) {
       {trashButton}
       <Text
         style={[
-          BrandTypography(props, 'h3', 'regular', 'left', colors.chateau),
+          BrandTypography(
+            {
+              font: props.database[props.languageID].font,
+              isRTL: props.isRTL
+            },
+            'h3',
+            'regular',
+            'left',
+            colors.chateau
+          ),
           {
             flex: 1,
             marginLeft: props.isRTL ? 0 : props.isEditing ? 0 : 20,
@@ -122,7 +131,7 @@ function GroupListHeader (props) {
           }
         ]}
       >
-        {props.translations.general.brands[props.languageID]}
+        {props.languageName}
       </Text>
       <Image
         style={styles.languageLogo}

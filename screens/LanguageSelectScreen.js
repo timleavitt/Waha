@@ -35,8 +35,6 @@ i18n.translations = {
 function LanguageSelectScreen (props) {
   //+ STATE
 
-  console.log(i18n.locale)
-
   // keeps track of language selected in picker (TODO: change default to user's default language)
   const [selectedLanguage, setSelectedLanguage] = useState('')
   const [isListEmpty, setIsListEmpty] = useState(false)
