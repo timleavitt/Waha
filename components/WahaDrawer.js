@@ -123,7 +123,7 @@ function WahaDrawer (props) {
                 colors.chateau
               )}
             >
-              v0.9.0
+              v0.9.1
             </Text>
           </View>
         </SafeAreaView>

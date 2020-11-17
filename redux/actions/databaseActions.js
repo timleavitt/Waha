@@ -58,8 +58,9 @@ export function downloadLanguageFiles (language) {
 
     function callback ({ totalBytesWritten, totalBytesExpectedToWrite }) {
       if (totalBytesWritten === totalBytesExpectedToWrite) {
-        console.log('file downloaded')
-        totalDownloaded += 1
+        // totalDownloaded += 1
+
+        // console.log(`file ${totalDownloaded} downloaded`)
         dispatch(setCurrentFetchProgress(totalDownloaded))
       }
     }
@@ -104,6 +105,10 @@ export function downloadLanguageFiles (language) {
       return resumable
         .downloadAsync()
         .catch(error => console.log('download error'))
+        .then(() => {
+          totalDownloaded += 1
+          dispatch(setCurrentFetchProgress(totalDownloaded))
+        })
     }
 
     const downloadFunctions = filesToDownload.map(resumable =>
@@ -112,6 +117,7 @@ export function downloadLanguageFiles (language) {
 
     Promise.all(downloadFunctions)
       .then(() => {
+        console.log(`total downloaded: ${totalDownloaded}`)
         if (totalDownloaded === getState().database[language].files.length) {
           console.log('resolved')
           // var stupid = false
