@@ -71,12 +71,22 @@ export function SystemTypography (
     center: 'center'
   }
 
-  return {
-    fontSize: isHeader ? null : sizes[fontSize],
-    fontFamily: overrideFont
-      ? overrideFont + '-' + fontFamily
-      : getSystemFont() + '-' + fontFamily,
-    textAlign: alignments[textAlign],
-    color: color
+  if (isHeader) {
+    return {
+      fontFamily: overrideFont
+        ? overrideFont + '-' + fontFamily
+        : getSystemFont() + '-' + fontFamily,
+      textAlign: alignments[textAlign],
+      color: color
+    }
+  } else {
+    return {
+      fontSize: sizes[fontSize],
+      fontFamily: overrideFont
+        ? overrideFont + '-' + fontFamily
+        : getSystemFont() + '-' + fontFamily,
+      textAlign: alignments[textAlign],
+      color: color
+    }
   }
 }

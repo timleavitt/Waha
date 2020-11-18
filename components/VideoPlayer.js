@@ -1,4 +1,5 @@
 import { Video } from 'expo-av'
+import * as ScreenOrientation from 'expo-screen-orientation'
 import React, { useState } from 'react'
 import {
   Dimensions,
@@ -15,74 +16,6 @@ function VideoPlayer (props) {
 
   const [showVideoControls, setShowVideoControls] = useState(false)
   const [video, setVideo] = useState()
-
-  // return (
-  // <ExpoVideoPlayer
-  //   videoProps={{
-  //     shouldPlay: true,
-  //     isMuted: false,
-  //     resizeMode: Video.RESIZE_MODE_CONTAIN,
-  //     source: { uri: props.videoSource }
-  //   }}
-  //   onPlaybackStatusUpdate: status => {
-  //     // match up so there's a single source of truth between
-  //     //  waha controls and full screen native video controls
-  //     if (
-  //       props.fullscreenStatus ===
-  //       Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
-  //     ) {
-  //       if (status.isPlaying) props.setIsMediaPlaying(true)
-  //       else if (!status.isPlaying) props.setIsMediaPlaying(false)
-  //     }
-
-  //     if (status.isLoaded && !props.isMediaLoaded) {
-  //       console.log('loaded')
-  //       props.setIsMediaLoaded(true)
-  //     }
-
-  //     // if we're buffering, turn play icon into activity indicator
-  //     // if (!status.isBuffering) props.setIsVideoBuffering(false)
-  //     // else if (status.isBuffering) props.setIsVideoBuffering(true)
-
-  //     // if video finishes, switch to last chapter
-
-  //     // if (
-  //     //   props.fullscreenStatus ===
-  //     //   Video.IOS_FULLSCREEN_UPDATE_PLAYER_DID_DISMISS
-  //     // )
-
-  //     // exit fullscreen once video finishes
-  //     if (
-  //       status.didJustFinish &&
-  //       props.fullscreenStatus ===
-  //         Video.IOS_FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
-  //     ) {
-  //       ScreenOrientation.lockAsync(props.lastPortraitOrientation)
-  //       props.video.dismissFullscreenPlayer()
-  //     }
-
-  //     if (status.didJustFinish && props.lessonType !== 'v')
-  //       setTimeout(() => props.changeChapter('application'), 500)
-  //     else if (
-  //       status.didJustFinish &&
-  //       props.lessonType === 'v' &&
-  //       !props.isComplete
-  //     ) {
-  //       setTimeout(() => props.changeCompleteStatus(), 1000)
-  //     }
-  //   }
-  // }}
-  // videoRef={ref => {
-  //   console.log(ref)
-  //   setVideo(ref)
-  //   props.setVideo(ref)
-  // }}
-  //     disableSlider
-  //     inFullscreen={true}
-  //     width={Dimensions.get('window').width}
-  //     height={Dimensions.get('window').width - 80}
-  //   />
-  // )
 
   return (
     <TouchableWithoutFeedback
