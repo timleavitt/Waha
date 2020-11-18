@@ -19,10 +19,12 @@ import WahaButton from '../components/standard/WahaButton'
 import { colors, languages, languageT2S, scaleMultiplier } from '../constants'
 import db from '../firebase/db'
 import {
-  downloadLanguageFiles,
-  storeData
+  downloadLanguageCoreFiles,
+  setHasFetchedLanguageData,
+  storeLanguageData
 } from '../redux/actions/databaseActions'
-import { setIsFetching } from '../redux/actions/isFetchingActions'
+import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
+import { storeDownloads } from '../redux/actions/storedDownloadsActions'
 import { SystemTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
@@ -81,7 +83,8 @@ function LanguageSelectScreen (props) {
   //+ FUNCTIONS
 
   async function fetchFirebaseData () {
-    props.setIsFetching(true)
+    props.storeDownloads([])
+    props.setIsInstallingLanguageInstance(true)
     //- get sets first
     var sets = []
 
@@ -109,7 +112,7 @@ function LanguageSelectScreen (props) {
       .get()
       .then(async doc => {
         if (doc.exists) {
-          props.storeData(
+          props.storeLanguageData(
             {
               sets: sets,
               ...doc.data()
@@ -129,7 +132,8 @@ function LanguageSelectScreen (props) {
     if (selectedLanguage) {
       fetchFirebaseData()
         .then(() => {
-          props.downloadLanguageFiles(selectedLanguage)
+          props.setHasFetchedLanguageData(true)
+          props.downloadLanguageCoreFiles(selectedLanguage)
         })
         .catch(error => {
           Alert.alert(i18n.t('fetchErrorTitle'), i18n.t('fetchErrorMessage'), [
@@ -395,10 +399,15 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    downloadLanguageFiles: language =>
-      dispatch(downloadLanguageFiles(language)),
-    storeData: (data, language) => dispatch(storeData(data, language)),
-    setIsFetching: toSet => dispatch(setIsFetching(toSet))
+    downloadLanguageCoreFiles: languageInstanceID =>
+      dispatch(downloadLanguageCoreFiles(languageInstanceID)),
+    storeLanguageData: (data, languageInstanceID) =>
+      dispatch(storeLanguageData(data, languageInstanceID)),
+    setIsInstallingLanguageInstance: toSet =>
+      dispatch(setIsInstallingLanguageInstance(toSet)),
+    storeDownloads: downloads => dispatch(storeDownloads(downloads)),
+    setHasFetchedLanguageData: hasFetchedLanguageData =>
+      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
   }
 }
 

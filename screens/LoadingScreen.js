@@ -12,11 +12,12 @@ import {
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
 import {
-  setCurrentFetchProgress,
-  setFinishedOnboarding,
-  setTotalToDownload
+  setHasFetchedLanguageData,
+  setHasOnboarded,
+  setLanguageCoreFilesDownloadProgress,
+  setTotalLanguageCoreFilesToDownload
 } from '../redux/actions/databaseActions'
-import { setIsFetching } from '../redux/actions/isFetchingActions'
+import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
 import { SystemTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
@@ -40,20 +41,21 @@ function LoadingScreen (props) {
   }, [])
 
   function cancelDownloads () {
-    props.setCurrentFetchProgress(0)
-    props.setTotalToDownload(0)
-    props.setIsFetching(false)
+    props.setLanguageCoreFilesDownloadProgress(0)
+    props.setTotalLanguageCoreFilesToDownload(0)
+    props.setIsInstallingLanguageInstance(false)
+    props.setHasFetchedLanguageData(false)
 
     // only if adding language for the first time
-    if (!props.haveFinishedInitialFetch) {
-      props.setFinishedOnboarding(false)
+    if (!props.hasInstalledFirstLanguageInstance) {
+      props.setHasOnboarded(false)
       props.navigation.reset({
         index: 0,
         routes: [{ name: 'LanguageSelect' }]
       })
     }
     props.storedDownloads.forEach(download => {
-      download.pauseAsync()
+      download.pauseAsync().catch(() => console.log('error pausing download'))
     })
   }
 
@@ -87,22 +89,24 @@ function LoadingScreen (props) {
             borderColor: colors.porcelain
           }}
         >
-          {props.currentFetchProgress ? (
+          {props.languageCoreFilesDownloadProgress ? (
             <View
               style={{
                 backgroundColor: '#e43c44',
                 height: '100%',
-                flex: props.currentFetchProgress,
+                flex: props.languageCoreFilesDownloadProgress,
                 borderRadius: 20
               }}
             />
           ) : null}
-          {props.currentFetchProgress ? (
+          {props.languageCoreFilesDownloadProgress ? (
             <View
               style={{
                 backgroundColor: '#F1FAEE',
                 height: '100%',
-                flex: props.totalToDownload - props.currentFetchProgress
+                flex:
+                  props.totalLanguageCoreFilesToDownload -
+                  props.languageCoreFilesDownloadProgress
               }}
             />
           ) : null}
@@ -123,14 +127,6 @@ function LoadingScreen (props) {
               {i18n.t('lostConnection')}
             </Text>
           )}
-          {isConnected ? null : (
-            <TouchableOpacity
-              style={{ width: 100, height: 30 }}
-              onPress={retryDownloads}
-            >
-              <Text>Retry</Text>
-            </TouchableOpacity>
-          )}
         </View>
       </View>
       <View
@@ -141,8 +137,7 @@ function LoadingScreen (props) {
           alignItems: 'center'
         }}
       >
-        <TouchableOpacity
-          onPress={cancelDownloads}
+        <View
           style={{
             width: '100%',
             height: 100,
@@ -151,9 +146,19 @@ function LoadingScreen (props) {
             alignItems: 'center'
           }}
         >
-          <Icon name='cancel' color={colors.shark} size={50} />
-          <Text>{i18n.t('cancel')}</Text>
-        </TouchableOpacity>
+          {props.hasFetchedLanguageData ? (
+            <TouchableOpacity
+              onPress={cancelDownloads}
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <Icon name='cancel' color={colors.shark} size={50} />
+              <Text>{i18n.t('cancel')}</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
       </View>
     </View>
   )
@@ -185,28 +190,36 @@ const styles = StyleSheet.create({
 
 function mapStateToProps (state) {
   return {
-    currentFetchProgress: state.database.currentFetchProgress,
-    totalToDownload: state.database.totalToDownload,
-    haveFinishedInitialFetch: state.database.haveFinishedInitialFetch,
+    languageCoreFilesDownloadProgress:
+      state.database.languageCoreFilesDownloadProgress,
+    totalLanguageCoreFilesToDownload:
+      state.database.totalLanguageCoreFilesToDownload,
+    hasInstalledFirstLanguageInstance:
+      state.database.hasInstalledFirstLanguageInstance,
     storedDownloads: state.storedDownloads,
-    database: state.database
+    database: state.database,
+    hasFetchedLanguageData: state.database.hasFetchedLanguageData
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    setIsFetching: status => {
-      dispatch(setIsFetching(status))
+    setIsInstallingLanguageInstance: status => {
+      dispatch(setIsInstallingLanguageInstance(status))
     },
-    setFinishedOnboarding: status => {
-      dispatch(setFinishedOnboarding(status))
+    setHasOnboarded: status => {
+      dispatch(setHasOnboarded(status))
     },
-    setTotalToDownload: totalToDownload => {
-      dispatch(setTotalToDownload(totalToDownload))
+    setTotalLanguageCoreFilesToDownload: totalLanguageCoreFilesToDownload => {
+      dispatch(
+        setTotalLanguageCoreFilesToDownload(totalLanguageCoreFilesToDownload)
+      )
     },
-    setCurrentFetchProgress: progress => {
-      dispatch(setCurrentFetchProgress(progress))
-    }
+    setLanguageCoreFilesDownloadProgress: progress => {
+      dispatch(setLanguageCoreFilesDownloadProgress(progress))
+    },
+    setHasFetchedLanguageData: hasFetchedLanguageData =>
+      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
   }
 }
 

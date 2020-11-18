@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import WahaDrawer from '../components/WahaDrawer'
 import { scaleMultiplier } from '../constants'
 import db from '../firebase/db'
-import { storeData } from '../redux/actions/databaseActions'
+import { storeLanguageData } from '../redux/actions/databaseActions'
 import { updateConnectionStatus } from '../redux/actions/networkActions'
 import MainStack from './MainStack'
 
@@ -76,7 +76,7 @@ function MainDrawer (props) {
         })
 
         // store data from update
-        props.storeData(
+        props.storeLanguageData(
           { ...doc.data(), sets: props.activeDatabase.sets },
           props.activeGroup.language
         )
@@ -116,7 +116,7 @@ function MainDrawer (props) {
         })
 
         // store the new sets object
-        props.storeData(
+        props.storeLanguageData(
           { ...localLanguageInfo, sets: sets },
           props.activeGroup.language
         )
@@ -172,8 +172,8 @@ function mapDispatchToProps (dispatch) {
     updateConnectionStatus: status => {
       dispatch(updateConnectionStatus(status))
     },
-    storeData: (data, language) => {
-      dispatch(storeData(data, language))
+    storeLanguageData: (data, language) => {
+      dispatch(storeLanguageData(data, language))
     }
   }
 }

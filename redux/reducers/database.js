@@ -1,41 +1,51 @@
 import {
-  DELETE_LANGUAGE,
-  SET_CURRENT_FETCH_PROGRESS,
-  SET_FINISHED_INITIAL_FETCH,
-  SET_FINISHED_ONBOARDING,
-  SET_TOTAL_TO_DOWNLOAD,
-  STORE_DATA
+  DELETE_LANGUAGE_DATA,
+  SET_HAS_FETCHED_LANGUAGE_DATA,
+  SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE,
+  SET_HAS_ONBOARDED,
+  SET_LANGUAGE_CORE_FILES_DOWNLOAD_PROGRESS,
+  SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD,
+  STORE_LANGUAGE_DATA
 } from '../actions/databaseActions'
 
 export function database (
   state = {
-    haveFinishedOnboarding: false,
-    haveFinishedInitialFetch: false,
-    currentFetchProgress: 0,
-    fetchSuccess: null,
+    hasOnboarded: false,
+    hasInstalledFirstLanguageInstance: false,
+    languageCoreFilesDownloadProgress: 0,
     storedDownloads: []
   },
   action
 ) {
   switch (action.type) {
-    case STORE_DATA:
-      return { ...state, [action.language]: action.data }
-    case SET_FINISHED_ONBOARDING:
-      return { ...state, haveFinishedOnboarding: action.haveFinishedOnboarding }
-    case SET_FINISHED_INITIAL_FETCH:
+    case STORE_LANGUAGE_DATA:
+      return { ...state, [action.languageInstanceID]: action.languageData }
+    case SET_HAS_ONBOARDED:
+      return { ...state, hasOnboarded: action.hasOnboarded }
+    case SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE:
       return {
         ...state,
-        haveFinishedInitialFetch: action.haveFinishedInitialFetch
+        hasInstalledFirstLanguageInstance:
+          action.hasInstalledFirstLanguageInstance
       }
-    case SET_CURRENT_FETCH_PROGRESS:
-      return { ...state, currentFetchProgress: action.progress }
-    case SET_TOTAL_TO_DOWNLOAD:
-      return { ...state, totalToDownload: action.total }
-    case DELETE_LANGUAGE:
-      const languageToDelete = action.language
+    case SET_LANGUAGE_CORE_FILES_DOWNLOAD_PROGRESS:
+      return {
+        ...state,
+        languageCoreFilesDownloadProgress:
+          action.languageCoreFilesDownloadProgress
+      }
+    case SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD:
+      return {
+        ...state,
+        totalLanguageCoreFilesToDownload:
+          action.totalLanguageCoreFilesToDownload
+      }
+    case DELETE_LANGUAGE_DATA:
+      const languageToDelete = action.languageInstanceID
       const { [languageToDelete]: value, ...newObject } = state
       return newObject
-
+    case SET_HAS_FETCHED_LANGUAGE_DATA:
+      return { ...state, hasFetchedLanguageData: action.hasFetchedLanguageData }
     default:
       return state
   }

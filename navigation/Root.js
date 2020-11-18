@@ -10,14 +10,14 @@ function Root (props) {
   // if we're not done with those things, render the onboarding screens
   // otherwise, we're fetching, so render the loading screen
   if (
-    props.haveFinishedInitialFetch &&
-    !props.isFetching &&
-    props.haveFinishedOnboarding
+    props.hasInstalledFirstLanguageInstance &&
+    !props.isInstallingLanguageInstance &&
+    props.hasOnboarded
   ) {
     return <MainDrawer />
   } else if (
-    !props.haveFinishedInitialFetch ||
-    (props.haveFinishedInitialFetch && !props.haveFinishedOnboarding)
+    !props.hasInstalledFirstLanguageInstance ||
+    (props.hasInstalledFirstLanguageInstance && !props.hasOnboarded)
   ) {
     return <Onboarding />
   } else {
@@ -27,9 +27,10 @@ function Root (props) {
 
 function mapStateToProps (state) {
   return {
-    haveFinishedOnboarding: state.database.haveFinishedOnboarding,
-    haveFinishedInitialFetch: state.database.haveFinishedInitialFetch,
-    isFetching: state.isFetching
+    hasOnboarded: state.database.hasOnboarded,
+    hasInstalledFirstLanguageInstance:
+      state.database.hasInstalledFirstLanguageInstance,
+    isInstallingLanguageInstance: state.isInstallingLanguageInstance
   }
 }
 

@@ -4,7 +4,7 @@ import { SafeAreaView, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import OnboardingSwiper from '../components/OnboardingSwiper'
 import { colors, getSystemIsRTL } from '../constants'
-import { setFinishedOnboarding } from '../redux/actions/databaseActions'
+import { setHasOnboarded } from '../redux/actions/databaseActions'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
 
@@ -18,7 +18,7 @@ function OnboardingSlidesScreen (props) {
 
   // tells redux that we're ready to go to loading screen once onboarding is finished
   function finishOnboarding () {
-    props.setFinishedOnboarding(true)
+    props.setHasOnboarded(true)
     props.navigation.navigate('Loading', {
       selectedLanguage: props.route.params.selectedLanguage
     })
@@ -75,7 +75,7 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    setFinishedOnboarding: toSet => dispatch(setFinishedOnboarding(toSet))
+    setHasOnboarded: toSet => dispatch(setHasOnboarded(toSet))
   }
 }
 

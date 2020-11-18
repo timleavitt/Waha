@@ -9,7 +9,7 @@ const blacklist =
   reduxMode === 'test'
     ? [
         'downloads',
-        'isFetching',
+        'isInstallingLanguageInstance',
         'mtUnlockAttempts',
         'areMobilizationToolsUnlocked',
         'groups',
@@ -17,7 +17,12 @@ const blacklist =
         'security',
         'storedDownloads'
       ]
-    : ['downloads', 'isFetching', 'mtUnlockAttempts', 'storedDownloads']
+    : [
+        'downloads',
+        'isInstallingLanguageInstance',
+        'mtUnlockAttempts',
+        'storedDownloads'
+      ]
 
 const persistConfig = {
   key: 'root',

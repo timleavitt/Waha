@@ -1,58 +1,87 @@
 export const ADD_LANGUAGE = 'ADD_LANGUAGE'
-export const STORE_DATA = 'STORE_DATA'
-export const SET_FINISHED_ONBOARDING = 'SET_FINISHED_ONBOARDING'
-export const SET_FINISHED_INITIAL_FETCH = 'SET_FINISHED_INITIAL_FETCH'
-export const DELETE_LANGUAGE = 'DELETE_LANGUAGE'
-export const SET_CURRENT_FETCH_PROGRESS = 'SET_CURRENT_FETCH_PROGRESS'
-export const SET_TOTAL_TO_DOWNLOAD = 'SET_TOTAL_TO_DOWNLOAD'
+export const STORE_LANGUAGE_DATA = 'STORE_LANGUAGE_DATA'
+export const SET_HAS_ONBOARDED = 'SET_HAS_ONBOARDED'
+export const SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE =
+  'SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE'
+export const DELETE_LANGUAGE_DATA = 'DELETE_LANGUAGE_DATA'
+export const SET_LANGUAGE_CORE_FILES_DOWNLOAD_PROGRESS =
+  'SET_LANGUAGE_CORE_FILES_DOWNLOAD_PROGRESS'
+export const SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD =
+  'SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD'
+export const SET_HAS_FETCHED_LANGUAGE_DATA = 'SET_HAS_FETCHED_LANGUAGE_DATA'
+
 import * as FileSystem from 'expo-file-system'
 import i18n from 'i18n-js'
 import { groupNames } from '../../constants'
-import { setIsFetching } from '../actions/isFetchingActions'
 import { logInstallLanguage } from '../LogEventFunctions'
 import { changeActiveGroup, createGroup } from './groupsActions'
+import { setIsInstallingLanguageInstance } from './isInstallingLanguageInstanceActions'
 import { storeDownloads } from './storedDownloadsActions'
 
-export function storeData (data, language) {
+export function storeLanguageData (languageData, languageInstanceID) {
   return {
-    type: STORE_DATA,
-    data,
-    language
+    type: STORE_LANGUAGE_DATA,
+    languageData,
+    languageInstanceID
   }
 }
 
-export function setFinishedOnboarding (haveFinishedOnboarding) {
+export function setHasOnboarded (hasOnboarded) {
   return {
-    type: SET_FINISHED_ONBOARDING,
-    haveFinishedOnboarding
+    type: SET_HAS_ONBOARDED,
+    hasOnboarded
   }
 }
 
-export function setFinishedInitialFetch (haveFinishedInitialFetch) {
+export function setHasInstalledFirstLanguageInstance (
+  hasInstalledFirstLanguageInstance
+) {
   return {
-    type: SET_FINISHED_INITIAL_FETCH,
-    haveFinishedInitialFetch
+    type: SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE,
+    hasInstalledFirstLanguageInstance
   }
 }
 
-export function setCurrentFetchProgress (progress) {
+export function setHasFetchedLanguageData (hasFetchedLanguageData) {
   return {
-    type: SET_CURRENT_FETCH_PROGRESS,
-    progress
+    type: SET_HAS_FETCHED_LANGUAGE_DATA,
+    hasFetchedLanguageData
   }
 }
 
-export function setTotalToDownload (total) {
+export function setLanguageCoreFilesDownloadProgress (
+  languageCoreFilesDownloadProgress
+) {
   return {
-    type: SET_TOTAL_TO_DOWNLOAD,
-    total
+    type: SET_LANGUAGE_CORE_FILES_DOWNLOAD_PROGRESS,
+    languageCoreFilesDownloadProgress
   }
 }
 
-export function downloadLanguageFiles (language) {
+export function setTotalLanguageCoreFilesToDownload (
+  totalLanguageCoreFilesToDownload
+) {
+  return {
+    type: SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD,
+    totalLanguageCoreFilesToDownload
+  }
+}
+
+export function deleteLanguageData (languageInstanceID) {
+  return {
+    type: DELETE_LANGUAGE_DATA,
+    languageInstanceID
+  }
+}
+
+export function downloadLanguageCoreFiles (language) {
   return async (dispatch, getState) => {
     var totalDownloaded = 0
-    dispatch(setTotalToDownload(getState().database[language].files.length))
+    dispatch(
+      setTotalLanguageCoreFilesToDownload(
+        getState().database[language].files.length
+      )
+    )
 
     function callback ({ totalBytesWritten, totalBytesExpectedToWrite }) {
       if (totalBytesWritten === totalBytesExpectedToWrite) {
@@ -92,9 +121,9 @@ export function downloadLanguageFiles (language) {
       }
 
       filesToDownload.push(download)
-      // 2. add those download resumables to redux
     })
 
+    // 2. add those download resumables to redux
     dispatch(storeDownloads(filesToDownload))
 
     // 3. start downloads in parallel
@@ -105,7 +134,7 @@ export function downloadLanguageFiles (language) {
         .then(status => {
           if (status) {
             totalDownloaded += 1
-            dispatch(setCurrentFetchProgress(totalDownloaded))
+            dispatch(setLanguageCoreFilesDownloadProgress(totalDownloaded))
           }
         })
     }
@@ -114,46 +143,40 @@ export function downloadLanguageFiles (language) {
       downloadFile(resumable)
     )
 
-    Promise.all(downloadFunctions)
-      .then(() => {
-        if (totalDownloaded === getState().database[language].files.length) {
-          console.log('resolved')
-          // var stupid = false
-          // if (stupid) {
-          //log the language install for firebase analytics
-          logInstallLanguage(language, i18n.locale)
+    Promise.all(downloadFunctions).then(() => {
+      if (totalDownloaded === getState().database[language].files.length) {
+        console.log('resolved')
+        // var stupid = false
+        // if (stupid) {
 
-          // create a new group using the default group name in constants.js
-          dispatch(createGroup(groupNames[language], language, 'default'))
+        //log the language install for firebase analytics
+        logInstallLanguage(language, i18n.locale)
 
-          // change the active group to the new group we just created
-          dispatch(changeActiveGroup(groupNames[language]))
+        // create a new group using the default group name in constants.js
+        dispatch(createGroup(groupNames[language], language, 'default'))
 
-          // set isFetching to false since we're no longer fetching
-          dispatch(setIsFetching(false))
+        // change the active group to the new group we just created
+        dispatch(changeActiveGroup(groupNames[language]))
 
-          // set setFinishedInitialFetch to true because we're done fetching
-          dispatch(setFinishedInitialFetch(true))
+        // set isFetching to false since we're no longer fetching
+        dispatch(setIsInstallingLanguageInstance(false))
 
-          // set fetchProgress back to 0 (in case user downloads another
-          //  language later)
-          dispatch(setCurrentFetchProgress(0))
-          dispatch(
-            setTotalToDownload(getState().database[language].files.length)
+        // set setFinishedInitialFetch to true because we're done fetching
+        dispatch(setHasInstalledFirstLanguageInstance(true))
+
+        dispatch(setHasFetchedLanguageData(false))
+
+        // set fetchProgress back to 0 (in case user downloads another
+        //  language later)
+        dispatch(setLanguageCoreFilesDownloadProgress(0))
+        dispatch(
+          setTotalLanguageCoreFilesToDownload(
+            getState().database[language].files.length
           )
-        }
-        // }
-      })
-      .catch(error => {
-        // FIREBASE ERROR
-      })
-  }
-}
-
-export function deleteLanguage (language) {
-  return {
-    type: DELETE_LANGUAGE,
-    language
+        )
+      }
+      // }
+    })
   }
 }
 

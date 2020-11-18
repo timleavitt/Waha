@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../../constants'
-import { deleteLanguage } from '../../redux/actions/databaseActions'
+import { deleteLanguageData } from '../../redux/actions/databaseActions'
 import { removeDownload } from '../../redux/actions/downloadActions'
 import { deleteGroup } from '../../redux/actions/groupsActions'
 import { BrandTypography } from '../../styles/typography'
@@ -56,7 +56,7 @@ function GroupListHeader (props) {
     )
 
     // delete section of database for this language
-    props.deleteLanguage(props.languageID)
+    props.deleteLanguageData(props.languageID)
   }
 
   // render trash button conditionally because it's only shown when editing mode is active
@@ -183,8 +183,8 @@ function mapDispatchToProps (dispatch) {
     deleteGroup: name => {
       dispatch(deleteGroup(name))
     },
-    deleteLanguage: language => {
-      dispatch(deleteLanguage(language))
+    deleteLanguageData: language => {
+      dispatch(deleteLanguageData(language))
     },
     removeDownload: lessonID => {
       dispatch(removeDownload(lessonID))

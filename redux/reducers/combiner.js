@@ -6,7 +6,7 @@ import { areMobilizationToolsUnlocked } from '../reducers/areMobilizationToolsUn
 import { database } from '../reducers/database'
 import { downloads } from '../reducers/downloads'
 import { groups } from '../reducers/groups'
-import { isFetching } from '../reducers/isFetching'
+import { isInstallingLanguageInstance } from '../reducers/isInstallingLanguageInstance'
 import { mtUnlockAttempts } from '../reducers/mtUnlockAttempts'
 import { network } from '../reducers/network'
 import { security } from '../reducers/security'
@@ -18,7 +18,7 @@ export default rootReducer = combineReducers({
   groups,
   activeGroup,
   network,
-  isFetching,
+  isInstallingLanguageInstance,
   areMobilizationToolsUnlocked,
   security,
   mtUnlockAttempts,
