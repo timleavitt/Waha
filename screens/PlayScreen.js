@@ -193,17 +193,6 @@ function PlayScreen (props) {
   //+ CONSTRUCTOR
 
   useEffect(() => {
-    // set some audio settings
-    Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true,
-      allowsRecordingIOS: false,
-      staysActiveInBackground: false,
-      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-      shouldDuckAndroid: true,
-      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-      playThroughEarpieceAndroid: false
-    })
-
     // set sources and download stuff if we need to
     setSources()
 

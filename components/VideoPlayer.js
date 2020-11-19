@@ -55,12 +55,7 @@ function VideoPlayer (props) {
           rate={1.0}
           volume={1.0}
           isMuted={false}
-          resizeMode={
-            props.fullscreenStatus ===
-            Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
-              ? Video.RESIZE_MODE_CONTAIN
-              : Video.RESIZE_MODE_STRETCH
-          }
+          resizeMode={Video.RESIZE_MODE_CONTAIN}
           shouldPlay
           // onLoad={() => {
           //   console.log('loaded')
