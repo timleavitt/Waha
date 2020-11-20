@@ -83,9 +83,9 @@ function WahaButton (props) {
           style={[
             styles.buttonContainer,
             {
-              width: props.width
+              width: props.width,
+              backgroundColor: props.color
             },
-            { borderWidth: 2, borderColor: colors.chateau },
             props.style
           ]}
         >

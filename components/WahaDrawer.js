@@ -75,7 +75,7 @@ function WahaDrawer (props) {
             onPress={() => props.navigation.navigate('Storage')}
           />
           <DrawerItem
-            iconName='bug'
+            iconName='email'
             text={props.translations.general.feedback}
             onPress={() =>
               openBrowser('https://airtable.com/shrGQY4b3FSPprzmt')
