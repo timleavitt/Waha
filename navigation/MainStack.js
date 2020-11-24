@@ -30,8 +30,8 @@ import SecurityOnboardingSlidesScreen from '../screens/SecurityOnboardingSlidesS
 import SecurityScreen from '../screens/SecurityScreen'
 import SplashScreen from '../screens/SplashScreen'
 import StorageScreen from '../screens/StorageScreen'
+// import VideoScreen from '../screens/VideoScreen'
 import { BrandTypography, SystemTypography } from '../styles/typography'
-
 LogBox.ignoreLogs(['Setting a timer'])
 
 const Stack = createStackNavigator()
@@ -431,6 +431,14 @@ function MainStack (props) {
           animationEnabled: false
         }}
       />
+      {/* <Stack.Screen
+        name='Video'
+        component={VideoScreen}
+        options={{
+          headerShown: false,
+          cardStyleInterpolator: forFade
+        }}
+      /> */}
     </Stack.Navigator>
   )
 }

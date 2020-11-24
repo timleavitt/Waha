@@ -1,6 +1,7 @@
 import { decode, encode } from 'base-64'
 import { Audio } from 'expo-av'
 import * as Font from 'expo-font'
+import * as ScreenOrientation from 'expo-screen-orientation'
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'react-native'
 import { Provider } from 'react-redux'
@@ -27,7 +28,23 @@ export default function App () {
   //+ CONSTRUCTOR
 
   useEffect(() => {
+    // load up fonts
     loadFonts()
+
+    // lock orientation
+    ScreenOrientation.supportsOrientationLockAsync(
+      ScreenOrientation.OrientationLock.PORTRAIT
+    ).then(isSupported => {
+      if (isSupported) {
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
+      } else {
+        ScreenOrientation.lockAsync(
+          ScreenOrientation.OrientationLock.PORTRAIT_UP
+        )
+      }
+    })
+
+    // set audio mode
     Audio.setAudioModeAsync({
       playsInSilentModeIOS: true,
       allowsRecordingIOS: false,

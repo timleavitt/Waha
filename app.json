@@ -22,7 +22,8 @@
       "bundleIdentifier": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/GoogleService-Info.plist",
       "supportsTablet": true,
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.0",
+      "appStoreUrl": "https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294"
     },
     "android": {
       "package": "com.kingdomstrategies.waha",
@@ -32,7 +33,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon-foreground.png",
         "backgroundColor": "#e43c44"
-      }
+      },
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha"
     },
     "githubUrl": "https://github.com/trentcowden/Waha",
     "icon": "./assets/wahaIcon.png",
