@@ -3,6 +3,7 @@ import * as ScreenOrientation from 'expo-screen-orientation'
 import React, { useState } from 'react'
 import {
   Dimensions,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -112,32 +113,40 @@ function VideoPlayer (props) {
           onLoadStart={() => props.setIsMediaLoaded(false)}
           onLoad={() => props.setIsMediaLoaded(true)}
           onFullscreenUpdate={({ fullscreenUpdate, status }) => {
-            switch (fullscreenUpdate) {
-              // lock video to landscape whenever you enter full screen
-              case Video.FULLSCREEN_UPDATE_PLAYER_WILL_PRESENT:
-                ScreenOrientation.lockAsync(
-                  ScreenOrientation.OrientationLock.LANDSCAPE
-                )
-                break
-              // lock video to portrait when we exit full screen
-              case Video.FULLSCREEN_UPDATE_PLAYER_WILL_DISMISS:
-                ScreenOrientation.supportsOrientationLockAsync(
-                  ScreenOrientation.OrientationLock.PORTRAIT
-                ).then(isSupported => {
-                  if (isSupported) {
-                    ScreenOrientation.lockAsync(
-                      ScreenOrientation.OrientationLock.PORTRAIT
-                    )
-                  } else {
-                    ScreenOrientation.lockAsync(
-                      ScreenOrientation.OrientationLock.PORTRAIT_UP
-                    )
-                  }
-                })
-                break
-              case Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS:
-                props.video.playAsync()
-                props.setIsMediaPlaying(true)
+            if (Platform.OS === 'android') {
+              switch (fullscreenUpdate) {
+                // lock video to landscape whenever you enter full screen
+                case Video.FULLSCREEN_UPDATE_PLAYER_WILL_PRESENT:
+                  ScreenOrientation.lockAsync(
+                    ScreenOrientation.OrientationLock.LANDSCAPE
+                  )
+                  break
+                // lock video to portrait when we exit full screen
+                case Video.FULLSCREEN_UPDATE_PLAYER_WILL_DISMISS:
+                  ScreenOrientation.supportsOrientationLockAsync(
+                    ScreenOrientation.OrientationLock.PORTRAIT
+                  ).then(isSupported => {
+                    if (isSupported) {
+                      ScreenOrientation.lockAsync(
+                        ScreenOrientation.OrientationLock.PORTRAIT
+                      )
+                    } else {
+                      ScreenOrientation.lockAsync(
+                        ScreenOrientation.OrientationLock.PORTRAIT_UP
+                      )
+                    }
+                  })
+                  break
+                case Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS:
+                  props.video.playAsync()
+                  props.setIsMediaPlaying(true)
+              }
+            } else {
+              if (
+                fullscreenUpdate === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS
+              ) {
+                props.setIsMediaPlaying(false)
+              }
             }
             props.setFullScreenStatus(fullscreenUpdate)
           }}

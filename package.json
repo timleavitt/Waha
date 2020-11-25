@@ -58,7 +58,8 @@
     "redux": "^4.0.5",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
-    "expo-store-review": "~2.2.0"
+    "expo-store-review": "~2.2.0",
+    "expo-sensors": "~9.1.0"
   },
   "devDependencies": {
     "babel-preset-expo": "^8.3.0",

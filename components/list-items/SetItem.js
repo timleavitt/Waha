@@ -7,7 +7,6 @@ import SVG from '../../assets/svg.js'
 import { colors, getSetInfo, scaleMultiplier } from '../../constants'
 import MessageModal from '../../modals/MessageModal'
 import { addSet } from '../../redux/actions/groupsActions'
-import { logCompleteStorySet } from '../../redux/LogEventFunctions'
 import { BrandTypography } from '../../styles/typography'
 function SetItem (props) {
   //+ STATE
@@ -220,7 +219,6 @@ function SetItem (props) {
     // if it's fully completed, set fully completed to true, which renders
     // the shown and lessonlist variants as grayed out
     if (progressPercentage === 1) {
-      logCompleteStorySet(props.thisSet, props.activeGroup.language)
       setFullyCompleted(true)
     } else setFullyCompleted(false)
 

@@ -73,7 +73,13 @@ export function toggleComplete (groupName, set, lessonIndex) {
       lesson => getLessonInfo('index', lesson.id) === lessonIndex
     )[0]
     var setLength = set.lessons.length
-    logCompleteLesson(thisLesson, set, thisLanguage)
+    var thisGroup = getState().groups.filter(item => item.name === groupName)[0]
+    var thisSetProgress = thisGroup.addedSets.filter(
+      addedSet => addedSet.id === set.id
+    )[0].progress
+    if (!thisSetProgress.includes(lessonIndex)) {
+      logCompleteLesson(thisLesson, set, thisLanguage)
+    }
     dispatch(updateProgress(groupName, set, nextSet, lessonIndex, setLength))
   }
 }
