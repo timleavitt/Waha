@@ -36,7 +36,6 @@
     "firebase": "7.9.0",
     "firestore-size": "^2.0.6",
     "i18n-js": "^3.5.1",
-    "jsdoc": "^3.6.6",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.0.tar.gz",
