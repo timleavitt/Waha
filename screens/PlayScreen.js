@@ -385,7 +385,11 @@ function PlayScreen (props) {
         loadVideoFile('video', trainingSource)
   }, [props.isConnected])
 
-  //- loads an audio file, sets the length, and starts playing it
+  /**
+   * Loads audio or video for playing.
+   * @param type - The type of media--either audio or video
+   * @param source - The local or remote source of the media to load
+   */
   async function loadMedia (type, source) {
     var media = type === 'video' ? video : audio
     try {
@@ -407,6 +411,9 @@ function PlayScreen (props) {
 
   //- load video once we have our video object and training source
   //! only for lessons with videos
+  /**
+   *
+   */
   useEffect(() => {
     if (video && trainingSource) {
       loadMedia('video', trainingSource)
