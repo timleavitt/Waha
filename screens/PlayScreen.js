@@ -30,78 +30,85 @@ import ShareModal from '../modals/ShareModal'
 import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
 import { BrandTypography } from '../styles/typography'
+/**
+ * Component for the Play Screen, where the user listens to or watches the lesson.
+ * @component
+ * @category Screen
+ * @param props
+ */
 function PlayScreen (props) {
   //+ AUDIO / VIDEO STATE
 
-  // objects for storing audio/video
+  /** State for audio object. */
   const [audio, setAudio] = useState(new Audio.Sound())
+
+  /** State for video object. */
   const [video, setVideo] = useState()
 
-  // stores the length of the current media file in milliseconds (loaded by sound object)
+  /** Stores the length of the current media file in ms. */
   const [mediaLength, setMediaLength] = useState(null)
 
-  // keeps track of if the media file is loaded
+  /** Keeps track of whether the media file is loaded. */
   const [isMediaLoaded, setIsMediaLoaded] = useState(false)
 
-  // keeps track of if the video is buffering
-  // const [isVideoBuffering, setIsVideoBuffering] = useState(false)
-
-  // keeps track of whether the audio/video file is playing or paused
+  /** Keeps track of whether the media file is currently playing or paused. */
   const [isMediaPlaying, setIsMediaPlaying] = useState(false)
 
-  // keeps track of the current position of the seeker in ms
+  /** Keeps track of the current position of the seeker in ms. */
   const [seekPosition, setSeekPosition] = useState(0)
 
-  // keeps track of if the seeker should update every second
-  // note: only time it shouldn't is during seeking, skipping, or loading a new //  chapter
+  /** Keeps track of whether the seeker should update every second. Note: only time it shouldn't is during seeking, skipping, or loading a new chapter. */
   const shouldThumbUpdate = useRef(false)
 
   //+ CHAPTER SOURCES STATE
 
-  // keeps track of currently playing chapter
+  /** Keeps track of the currently playing chapter. Options are 'fellowship', 'story', 'training', or 'application'. */
   const [activeChapter, setActiveChapter] = useState('fellowship')
 
-  // sources for all 3 audio files
+  /** Local source for fellowship chapter audio file. */
   const [fellowshipSource, setFellowshipSource] = useState()
+
+  /** Local source for fellowship chapter audio file. */
   const [storySource, setStorySource] = useState()
+
+  /** Local or remote source for fellowship chapter video file. */
   const [trainingSource, setTrainingSource] = useState()
+
+  /** Local source for fellowship chapter audio file. */
   const [applicationSource, setApplicationSource] = useState()
 
   //+ MISCELLANEOUS STATE
 
+  /** An object to store the progress of the set this lesson is a part of. */
   const [thisSetProgress, setThisSetProgress] = useState([])
 
-  // opacity/z-index of play button that pops up on play/pause
+  /** Stores the opacity of the play button that pops up on play/pause press. */
   const [playOpacity, setPlayOpacity] = useState(new Animated.Value(0))
+
+  /** Stores the z-index of the play button that pops up on play/pause press. */
   const [animationZIndex, setAnimationZIndex] = useState(0)
 
-  // ref for the middle album art scroller
+  /** Reference for the AlbumArtSwiper component. */
   const [albumArtSwiperRef, setAlbumArtSwiperRef] = useState()
 
-  // share modal
+  /** Keeps track of whether the lesson share modal is visible. */
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
+
+  /** Keeps track of whether the set complete share modal is visible. */
   const [showSetCompleteModal, setShowSetCompleteModal] = useState(false)
 
-  // keeps track of the current screen orientation for fullscreen videos
+  /** Keeps track of the current fullscreen status for videos. */
   const [fullscreenStatus, setFullscreenStatus] = useState(
     Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS
   )
 
-  // const [orientation, setOrientation] = useState()
-
-  // useEffect(() => {
-  //   console.log(orientation)
-  //   ScreenOrientation.getOrientationAsync().then(orientation =>
-  //     setOrientation(orientation)
-  //   )
-  // }, [fullscreenStatus])
-
+  /** Keeps track of the device rotation in an object (alpha, beta, and gamma). */
   const [deviceRotation, setDeviceRotation] = useState({})
-  // const [lastPortraitOrientation, setLastPortraitOrientation] = useState(
-  //   ScreenOrientation.OrientationLock.PORTRAIT_UP
-  // )
 
-  // handle device rotation changes and set device orientation accordingly
+  /**
+   * useEffect function that enters fullscreen mode when the video component is present, the video source is loaded, we're on ios (this feature doesn't work on android), and the device rotation matches that of landscape.
+   * @function
+   */
   useEffect(() => {
     if (deviceRotation && Platform.OS === 'ios') {
       if (fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS) {
@@ -115,47 +122,14 @@ function PlayScreen (props) {
           deviceRotation.beta < 0.2
         )
           video.presentFullscreenPlayer()
-        // else
-        // if (deviceRotation.beta < -0.7) {
-        //   ScreenOrientation.supportsOrientationLockAsync(
-        //     ScreenOrientation.OrientationLock.PORTRAIT_DOWN
-        //   ).then(isSupported => {
-        //     if (isSupported) {
-        //       ScreenOrientation.lockAsync(
-        //         ScreenOrientation.OrientationLock.PORTRAIT_DOWN
-        //       )
-        //       setLastPortraitOrientation(
-        //         ScreenOrientation.OrientationLock.PORTRAIT_DOWN
-        //       )
-        //     }
-        //   })
-        // } else if (deviceRotation.beta > 0.7) {
-        //   setLastPortraitOrientation(
-        //     ScreenOrientation.OrientationLock.PORTRAIT_UP
-        //   )
-        //   ScreenOrientation.lockAsync(
-        //     ScreenOrientation.OrientationLock.PORTRAIT_UP
-        //   )
-        // }
       }
     }
   }, [deviceRotation, video, trainingSource])
 
-  // useEffect(() => {
-  //   if (fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT) {
-  //     ScreenOrientation.supportsOrientationLockAsync(
-  //       ScreenOrientation.OrientationLock.ALL
-  //     ).then(isSupported => {
-  //       if (isSupported)
-  //         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.ALL)
-  //       else
-  //         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.DEFAULT)
-  //     })
-  //   } else {
-  //     ScreenOrientation.lockAsync(lastPortraitOrientation)
-  //   }
-  // }, [fullscreenStatus])
-
+  /**
+   * useEffect function that updates the thisSetProgress state variable with the most updated version of the set that this lesson is a part of's progress.
+   * @function
+   */
   useEffect(() => {
     setThisSetProgress(
       props.activeGroup.addedSets.filter(
@@ -164,15 +138,18 @@ function PlayScreen (props) {
     )
   }, [props.activeGroup.addedSets])
 
+  /**
+   * useEffect function that sets the header for this screen. Dependent on thisSetProgress because we want to update the "Set as complete" header button whenever the complete status of this lesson changes.
+   * @function
+   */
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
   }, [thisSetProgress])
 
-  // keeps the screen always awake on this screen
+  /** Keeps the screen from auto-dimming or auto-locking on this screen. */
   useKeepAwake()
 
-  //+ NAV OPTIONS
-
+  /** Sets the navigation options for this screen. */
   function getNavOptions () {
     return {
       headerTitle: getLessonInfo('subtitle', props.route.params.thisLesson.id),
@@ -201,8 +178,10 @@ function PlayScreen (props) {
     }
   }
 
-  //+ CONSTRUCTOR
-
+  /**
+   * useEffect function that acts as a constructor to set the sources for the various chapters, enable the device rotation listener, and upon exiting the screen, unloading the audio/video files.
+   * @function
+   */
   useEffect(() => {
     // set sources and download stuff if we need to
     setSources()
@@ -231,21 +210,14 @@ function PlayScreen (props) {
         setVideo(null)
         await video.unloadAsync()
       }
-      // re-lock orientation to portrait up
-      // ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)
     }
   }, [])
 
-  // useEffect(() => {
-  //   //set nav options
-  //   console.log('setting nav options')
-
-  // }, [props.activeGroup])
-
   //+ LOADING FUNCTIONS
 
-  //- sets the sources for all the chapters based on lesson type and whether
-  //-   various chapters are downloaded or not
+  /**
+   * Sets all the source state files appropriately based on the lesson type and what is downloaded.
+   */
   function setSources () {
     // set all possible sources for ease of use later
     var fellowshipLocal =
@@ -370,6 +342,10 @@ function PlayScreen (props) {
     }
   }
 
+  /**
+   * useEffect function that loads the fellowship audio once we have a fellowship source set. We have this only for fellowship because the changeChapter function handles any chapter changes passed the initial load.
+   * @function
+   */
   //- once we set a chapter 1 source, load it up
   useEffect(() => {
     if (fellowshipSource) {
@@ -377,8 +353,10 @@ function PlayScreen (props) {
     }
   }, [fellowshipSource])
 
-  //- if we lose connection during a video-only lesson, reload it once we come
-  //-  back online
+  /**
+   * useEffect function that reloads the video file if we end up going offline and come online again.
+   * @function
+   */
   useEffect(() => {
     if (props.route.params.lessonType === 'v')
       if (props.isConnected && !isMediaLoaded && trainingSource)
@@ -387,8 +365,8 @@ function PlayScreen (props) {
 
   /**
    * Loads audio or video for playing.
-   * @param type - The type of media--either audio or video
-   * @param source - The local or remote source of the media to load
+   * @param type - The type of media--either audio or video.
+   * @param source - The local or remote source of the media to load.
    */
   async function loadMedia (type, source) {
     var media = type === 'video' ? video : audio
@@ -409,10 +387,9 @@ function PlayScreen (props) {
     }
   }
 
-  //- load video once we have our video object and training source
-  //! only for lessons with videos
   /**
-   *
+   * useEffect function that loads the video file once we have our video object and training chapter source set.
+   * @function
    */
   useEffect(() => {
     if (video && trainingSource) {
@@ -420,8 +397,10 @@ function PlayScreen (props) {
     }
   }, [video, trainingSource])
 
-  //- load audio file for audio books once we have a story source
-  //! only for audio book lesosns
+  /**
+   * useEffect function that loads the story chapter file once the story source is set. For audiobook lessons only. In every other case, we load the fellowship chapter first.
+   * @function
+   */
   useEffect(() => {
     if (props.route.params.lessonType === 'a' && storySource) {
       loadMedia('audio', storySource)
@@ -430,7 +409,9 @@ function PlayScreen (props) {
 
   //+ PLAYBACK CONTROL FUNCTIONS
 
-  //- plays the audio if it's currently paused and pauses the audio if it's currently playing
+  /**
+   * Plays the audio if it's currently paused and pauses the audio if it's currently playing.
+   */
   function playHandler () {
     var media = video ? video : audio
     media.action = isMediaPlaying ? media.pauseAsync : media.playAsync
@@ -445,7 +426,10 @@ function PlayScreen (props) {
     }
   }
 
-  //- plays media from a specified location
+  /**
+   * Plays media from a specified location
+   * @param value - The location to start playing from.
+   */
   function playFromLocation (value) {
     console.log(value)
     shouldThumbUpdate.current = false
@@ -501,7 +485,10 @@ function PlayScreen (props) {
     }
   }
 
-  //- changes the active chapter
+  /**
+   * Changes the active chapter and loads its media file.
+   * @param chapter
+   */
   function changeChapter (chapter) {
     if (chapter !== activeChapter) {
       audio.unloadAsync()
