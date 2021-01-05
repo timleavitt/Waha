@@ -1,6 +1,9 @@
 import NetInfo from '@react-native-community/netinfo'
 import { createDrawerNavigator } from '@react-navigation/drawer'
-import { NavigationContainer } from '@react-navigation/native'
+import {
+  getFocusedRouteNameFromRoute,
+  NavigationContainer
+} from '@react-navigation/native'
 import * as FileSystem from 'expo-file-system'
 import React, { useEffect } from 'react'
 import { Alert } from 'react-native'
@@ -17,13 +20,16 @@ const Drawer = createDrawerNavigator()
 function MainDrawer (props) {
   //- allows only accessing hamburger swipe from study set screen
   function getGestureEnabled (route) {
-    const routeName = route.state
-      ? route.state.routes[route.state.index].name
-      : route.params?.screen || props.security.securityEnabled
-      ? 'PianoApp'
-      : 'SetTabs'
-    if (routeName === 'SetTabs') return true
+    if (getFocusedRouteNameFromRoute(route) === 'SetTabs') return true
     else return false
+
+    // const routeName = route.state
+    //   ? route.state.routes[route.state.index].name
+    //   : route.params?.screen || props.security.securityEnabled
+    //   ? 'PianoApp'
+    //   : 'SetTabs'
+    // if (routeName === 'SetTabs') return true
+    // else return false
   }
 
   useEffect(() => {
