@@ -38,7 +38,7 @@ export function BrandTypography (
     fontFamily: props.font ? families[fontFamily] : null,
     textAlign: alignments[textAlign],
     color: color,
-    paddingTop: 3
+    lineHeight: sizes[fontSize] + 4
   }
 }
 
