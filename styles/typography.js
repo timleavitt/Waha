@@ -6,12 +6,12 @@ import {
   scaleMultiplier
 } from '../constants'
 
-const lineSpacingStandard = {
+const lineSpacingByFont = {
   roboto: 4,
   tajawal: 8
 }
 
-const lineSpacingSystem = {
+const lineSpacingBySystemLanguage = {
   en: 4,
   ar: 8
 }
@@ -48,7 +48,7 @@ export function StandardTypography (
     fontFamily: props.font ? families[fontFamily] : null,
     textAlign: alignments[textAlign],
     color: color,
-    lineHeight: sizes[fontSize] + lineSpacingStandard[props.font]
+    lineHeight: sizes[fontSize] + lineSpacingByFont[props.font]
   }
 }
 
@@ -97,8 +97,8 @@ export function SystemTypography (
         : getSystemFont() + '-' + fontFamily,
       textAlign: alignments[textAlign],
       color: color,
-      lineHeight: lineSpacingSystem[i18n.locale.slice(0, 2)]
-        ? sizes[fontSize] + lineSpacingSystem[i18n.locale.slice(0, 2)]
+      lineHeight: lineSpacingBySystemLanguage[i18n.locale.slice(0, 2)]
+        ? sizes[fontSize] + lineSpacingBySystemLanguage[i18n.locale.slice(0, 2)]
         : null
     }
   }
