@@ -153,6 +153,17 @@ function LanguageSelectScreen (props) {
           selectedLanguage: selectedLanguage
         })
       }
+    } else {
+      Alert.alert(
+        i18n.t('pleaseSelectLanguageTitle'),
+        i18n.t('pleaseSelectLanguageMessage'),
+        [
+          {
+            text: i18n.t('ok'),
+            onPress: () => {}
+          }
+        ]
+      )
     }
   }
 
