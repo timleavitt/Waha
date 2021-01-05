@@ -13,7 +13,7 @@ import BackButton from '../components/standard/BackButton'
 import Separator from '../components/standard/Separator'
 import { colors, scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 
 function GroupsScreen (props) {
   //+ STATE
@@ -55,7 +55,7 @@ function GroupsScreen (props) {
             >
               <Text
                 style={[
-                  BrandTypography(
+                  StandardTypography(
                     props,
                     'h3',
                     isEditing ? 'medium' : 'regular',
@@ -80,7 +80,7 @@ function GroupsScreen (props) {
               onPress={() => setIsEditing(old => !old)}
             >
               <Text
-                style={BrandTypography(
+                style={StandardTypography(
                   props,
                   'h3',
                   props.isEditing ? 'medium' : 'regular',
@@ -196,7 +196,7 @@ function GroupsScreen (props) {
                 />
               </View>
               <Text
-                style={BrandTypography(
+                style={StandardTypography(
                   props,
                   'h3',
                   'medium',
@@ -224,7 +224,7 @@ function GroupsScreen (props) {
             }
           >
             <Text
-              style={BrandTypography(
+              style={StandardTypography(
                 props,
                 'h3',
                 'medium',

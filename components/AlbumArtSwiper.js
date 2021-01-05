@@ -12,7 +12,7 @@ import { connect } from 'react-redux'
 import SVG from '../assets/svg'
 import SwipeBar from '../components/SwipeBar'
 import { colors, scaleMultiplier } from '../constants'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 
 function AlbumArtSwiper (props) {
   //+ STATE
@@ -176,7 +176,7 @@ function AlbumArtSwiper (props) {
                 ? () => (
                     <View style={{ paddingHorizontal: 10, marginBottom: 10 }}>
                       <Text
-                        style={BrandTypography(
+                        style={StandardTypography(
                           props,
                           'd',
                           'regular',
@@ -187,7 +187,7 @@ function AlbumArtSwiper (props) {
                         {props.translations.play.copyright_for_text + '\n'}
                       </Text>
                       <Text
-                        style={BrandTypography(
+                        style={StandardTypography(
                           props,
                           'd',
                           'regular',
@@ -283,12 +283,24 @@ function AlbumArtSwiper (props) {
     return (
       <View style={{ paddingHorizontal: 20 }}>
         <Text
-          style={BrandTypography(props, 'h3', 'medium', 'left', colors.shark)}
+          style={StandardTypography(
+            props,
+            'h3',
+            'medium',
+            'left',
+            colors.shark
+          )}
         >
           {textList.item.header}
         </Text>
         <Text
-          style={BrandTypography(props, 'h3', 'regular', 'left', colors.shark)}
+          style={StandardTypography(
+            props,
+            'h3',
+            'regular',
+            'left',
+            colors.shark
+          )}
         >
           {textList.item.text}
         </Text>

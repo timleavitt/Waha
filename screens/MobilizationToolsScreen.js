@@ -16,7 +16,7 @@ import Hero from '../components/standard/Hero'
 import Separator from '../components/standard/Separator'
 import WahaItem from '../components/standard/WahaItem'
 import { colors, scaleMultiplier } from '../constants'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 
 function MobilizationToolsScreen (props) {
   //+ STATE
@@ -190,7 +190,7 @@ function MobilizationToolsScreen (props) {
                     }}
                   >
                     <Text
-                      style={BrandTypography(
+                      style={StandardTypography(
                         props,
                         'p',
                         'regular',

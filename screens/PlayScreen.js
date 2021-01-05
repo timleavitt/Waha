@@ -29,7 +29,7 @@ import MessageModal from '../modals/MessageModal'
 import ShareModal from '../modals/ShareModal'
 import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 /**
  * Component for the Play Screen, where the user listens to or watches the lesson.
  * @component
@@ -680,7 +680,7 @@ function PlayScreen (props) {
   var titleSection = (
     <View style={styles.titlesContainer}>
       <Text
-        style={BrandTypography(props, 'h3', 'black', 'center', colors.shark)}
+        style={StandardTypography(props, 'h3', 'black', 'center', colors.shark)}
         numberOfLines={2}
       >
         {props.route.params.thisLesson.title}

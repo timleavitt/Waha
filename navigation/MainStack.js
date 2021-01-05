@@ -31,7 +31,7 @@ import SecurityScreen from '../screens/SecurityScreen'
 import SplashScreen from '../screens/SplashScreen'
 import StorageScreen from '../screens/StorageScreen'
 // import VideoScreen from '../screens/VideoScreen'
-import { BrandTypography, SystemTypography } from '../styles/typography'
+import { StandardTypography, SystemTypography } from '../styles/typography'
 LogBox.ignoreLogs(['Setting a timer'])
 
 const Stack = createStackNavigator()
@@ -145,7 +145,7 @@ function MainStack (props) {
                   analyticsMode === 'test' ? (
                     <Text
                       style={[
-                        BrandTypography(
+                        StandardTypography(
                           props,
                           'p',
                           'regular',
@@ -192,7 +192,7 @@ function MainStack (props) {
                   analyticsMode === 'test' ? (
                     <Text
                       style={[
-                        BrandTypography(
+                        StandardTypography(
                           props,
                           'p',
                           'regular',

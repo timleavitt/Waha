@@ -6,7 +6,7 @@ import {
   changeActiveGroup,
   deleteGroup
 } from '../../redux/actions/groupsActions'
-import { BrandTypography } from '../../styles/typography'
+import { StandardTypography } from '../../styles/typography'
 import GroupAvatar from '../GroupAvatar'
 function GroupItem (props) {
   // FUNCTIONS
@@ -162,7 +162,7 @@ function GroupItem (props) {
           ]}
         >
           <Text
-            style={BrandTypography(
+            style={StandardTypography(
               {
                 font: props.database[thisGroup.language].font,
                 isRTL: props.isRTL
@@ -178,7 +178,7 @@ function GroupItem (props) {
           </Text>
           {getBookmarkText() === '' ? null : (
             <Text
-              style={BrandTypography(
+              style={StandardTypography(
                 {
                   font: props.database[thisGroup.language].font,
                   isRTL: props.isRTL
@@ -195,7 +195,7 @@ function GroupItem (props) {
           )}
           {getBookmarkText() === '' ? null : (
             <Text
-              style={BrandTypography(
+              style={StandardTypography(
                 {
                   font: props.database[thisGroup.language].font,
                   isRTL: props.isRTL

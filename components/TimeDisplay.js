@@ -3,7 +3,7 @@ import React from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors } from '../constants'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 function TimeDisplay (props) {
   //function to convert a time in milliseconds to a
   //nicely formatted string (for the scrubber)
@@ -37,7 +37,7 @@ function TimeDisplay (props) {
   return (
     <View styles={props.style}>
       <Text
-        style={BrandTypography(
+        style={StandardTypography(
           { font: 'roboto' },
           'd',
           'regular',

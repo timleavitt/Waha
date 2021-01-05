@@ -2,7 +2,7 @@ import React from 'react'
 import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors } from '../../constants'
-import { BrandTypography } from '../../styles/typography'
+import { StandardTypography } from '../../styles/typography'
 function KeyLabel (props) {
   // RENDER
 
@@ -15,7 +15,7 @@ function KeyLabel (props) {
       ]}
     >
       <Text
-        style={BrandTypography(
+        style={StandardTypography(
           { font: 'roboto' },
           'h2',
           'medium',

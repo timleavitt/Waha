@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, getLessonInfo, scaleMultiplier } from '../../constants'
 import { removeDownload } from '../../redux/actions/downloadActions'
-import { BrandTypography } from '../../styles/typography'
+import { StandardTypography } from '../../styles/typography'
 import DownloadStatusIndicator from '../DownloadStatusIndicator'
 function LessonItem (props) {
   //+ CONSTRUCTOR
@@ -100,7 +100,7 @@ function LessonItem (props) {
           }}
         >
           <Text
-            style={BrandTypography(
+            style={StandardTypography(
               props,
               'h4',
               'medium',
@@ -112,7 +112,7 @@ function LessonItem (props) {
             {props.thisLesson.title}
           </Text>
           <Text
-            style={BrandTypography(
+            style={StandardTypography(
               props,
               'd',
               'regular',

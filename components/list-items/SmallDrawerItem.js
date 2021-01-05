@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
 import { colors } from '../../constants'
-import { BrandTypography } from '../../styles/typography'
+import { StandardTypography } from '../../styles/typography'
 
 function SmallDrawerItem (props) {
   //+ RENDER
@@ -16,7 +16,13 @@ function SmallDrawerItem (props) {
       onPress={props.onPress}
     >
       <Text
-        style={BrandTypography(props, 'h3', 'medium', 'left', colors.chateau)}
+        style={StandardTypography(
+          props,
+          'h3',
+          'medium',
+          'left',
+          colors.chateau
+        )}
       >
         {props.label}
       </Text>

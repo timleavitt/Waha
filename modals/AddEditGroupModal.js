@@ -26,7 +26,7 @@ import {
   editGroup,
   resetProgress
 } from '../redux/actions/groupsActions'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 
 function AddEditGroupModal (props) {
   //+ STATE
@@ -169,7 +169,13 @@ function AddEditGroupModal (props) {
         }}
       >
         <Text
-          style={BrandTypography(props, 'p', 'regular', 'left', colors.chateau)}
+          style={StandardTypography(
+            props,
+            'p',
+            'regular',
+            'left',
+            colors.chateau
+          )}
         >
           {props.translations.add_edit_group.group_name_form_label}
         </Text>
@@ -195,7 +201,7 @@ function AddEditGroupModal (props) {
       </View>
       <Text
         style={[
-          BrandTypography(props, 'p', 'regular', 'left', colors.chateau),
+          StandardTypography(props, 'p', 'regular', 'left', colors.chateau),
           {
             marginHorizontal: 20,
             marginTop: 20 * scaleMultiplier,

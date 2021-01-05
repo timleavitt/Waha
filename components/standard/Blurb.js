@@ -2,13 +2,19 @@ import React from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../../constants'
-import { BrandTypography } from '../../styles/typography'
+import { StandardTypography } from '../../styles/typography'
 
 function Blurb (props) {
   return (
     <View style={{ width: '100%', padding: 20 * scaleMultiplier }}>
       <Text
-        style={BrandTypography(props, 'p', 'regular', 'center', colors.shark)}
+        style={StandardTypography(
+          props,
+          'p',
+          'regular',
+          'center',
+          colors.shark
+        )}
       >
         {props.text}
       </Text>

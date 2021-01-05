@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../constants'
-import { BrandTypography, SystemTypography } from '../styles/typography'
+import { StandardTypography, SystemTypography } from '../styles/typography'
 import WahaButton from './standard/WahaButton'
 
 function OnboardingSwiper (props) {
@@ -61,7 +61,7 @@ function OnboardingSwiper (props) {
                     'center',
                     colors.shark
                   )
-                : BrandTypography(
+                : StandardTypography(
                     props,
                     'h2',
                     'medium',
@@ -83,7 +83,7 @@ function OnboardingSwiper (props) {
                     'center',
                     colors.chateau
                   )
-                : BrandTypography(
+                : StandardTypography(
                     props,
                     'h3',
                     'regular',

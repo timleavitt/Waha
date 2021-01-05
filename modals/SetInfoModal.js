@@ -5,7 +5,7 @@ import SetItem from '../components/list-items/SetItem'
 import WahaButton from '../components/standard/WahaButton'
 import { colors, scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 import ModalScreen from './ModalScreen'
 
 function SetInfoModal (props) {
@@ -28,12 +28,18 @@ function SetInfoModal (props) {
           }}
         >
           <Text
-            style={BrandTypography(props, 'h4', 'medium', 'left', colors.shark)}
+            style={StandardTypography(
+              props,
+              'h4',
+              'medium',
+              'left',
+              colors.shark
+            )}
           >
             {item.title}
           </Text>
           <Text
-            style={BrandTypography(
+            style={StandardTypography(
               props,
               'p',
               'regular',
@@ -56,7 +62,13 @@ function SetInfoModal (props) {
           }}
         >
           <Text
-            style={BrandTypography(props, 'h4', 'medium', 'left', colors.shark)}
+            style={StandardTypography(
+              props,
+              'h4',
+              'medium',
+              'left',
+              colors.shark
+            )}
           >
             {item.title}
           </Text>
