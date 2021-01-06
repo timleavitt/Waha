@@ -518,7 +518,10 @@ function PlayScreen (props) {
     }
   }
 
-  //- updates something on every api call to audio object and every second
+  /**
+   * Updates on every api call to the audio object as well as every second. Covers the automatic switch of one chapter to the next and marking a lesson as complete at the finish of the last chapter.
+   * @function
+   */
   audio.setOnPlaybackStatusUpdate(playbackStatus => {
     if (playbackStatus.isLoaded) {
       setIsMediaLoaded(true)
@@ -576,13 +579,19 @@ function PlayScreen (props) {
 
   //- pause lesson if we move to a different screen (i.e. when switching to
   //-   splash / game for security mode)
+  /**
+   * useEffect function that automatically pauses the media when the play screen becomes unfocused.
+   * @function
+   */
   useEffect(() => {
     if (isMediaPlaying) playHandler()
   }, [props.navigation.isFocused()])
 
   //+ OTHER FUNCTIONS
 
-  //- scrolls the album art swiper to the scripture pane
+  /**
+   * Scrolls the album art swiper to the scripture pane.
+   */
   function swipeToScripture () {
     if (albumArtSwiperRef)
       albumArtSwiperRef.scrollToIndex({
@@ -594,6 +603,10 @@ function PlayScreen (props) {
   }
 
   //- if a download finishes, remove it from download tracker
+  /**
+   * useEffect function that removes a download record from the download tracker redux object once it's finished. Removes audio and video download records when necessary.
+   * @function
+   */
   useEffect(() => {
     switch (props.route.params.lessonType) {
       case 'qa':
@@ -625,9 +638,9 @@ function PlayScreen (props) {
     }
   }, [props.downloads])
 
-  //- switches the complete status of a lesson to the opposite of its current
-  //-  status
-  // and alerts the user of the change
+  /**
+   * Switches the complete status of a lesson to the opposite of its current status and alerts the user of the change. Also shows the set complete modal if this is the last lesson to complete in a story set.
+   */
   function changeCompleteStatus () {
     props.toggleComplete(
       props.activeGroup.name,
@@ -635,6 +648,7 @@ function PlayScreen (props) {
       getLessonInfo('index', props.route.params.thisLesson.id)
     )
 
+    // update the nav options since our header button has changed
     props.navigation.setOptions(getNavOptions())
 
     if (checkForFullyComplete()) {
@@ -662,7 +676,10 @@ function PlayScreen (props) {
       }
     }
   }
-
+  /**
+   * Checks if the set that this lesson is a part of is fully completed.
+   * @returns true if the set is fully complete and false if it's not.
+   */
   function checkForFullyComplete () {
     if (
       props.activeGroup.addedSets.filter(
@@ -677,6 +694,7 @@ function PlayScreen (props) {
 
   //+ RENDER
 
+  /** The title section at the top of the screen. Only hidden on audio book lessons to make more room for the book viewer. */
   var titleSection = (
     <View style={styles.titlesContainer}>
       <Text
@@ -698,7 +716,6 @@ function PlayScreen (props) {
           }
         ]}
       >
-        {/* <StatusBar hidden /> */}
         {/* don't display title section on audio book lessons */}
         {props.route.params.lessonType !== 'a' &&
         props.route.params.lessonType !== ''
