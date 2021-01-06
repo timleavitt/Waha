@@ -3,7 +3,7 @@ import { Audio } from 'expo-av'
 import * as Font from 'expo-font'
 import * as ScreenOrientation from 'expo-screen-orientation'
 import React, { useEffect, useState } from 'react'
-import { StatusBar } from 'react-native'
+import { StatusBar, Text } from 'react-native'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
 import LoadingView from './components/LoadingView'
@@ -11,6 +11,10 @@ import { colors } from './constants'
 import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
 
+Text.defaultProps = {
+  ...Text.defaultProps,
+  maxFontSizeMultiplier: 1.2
+}
 // only here because of wack errors, DON'T DELETE
 if (!global.btoa) {
   global.btoa = encode

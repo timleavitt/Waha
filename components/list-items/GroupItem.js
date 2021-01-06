@@ -178,16 +178,22 @@ function GroupItem (props) {
           </Text>
           {getBookmarkText() === '' ? null : (
             <Text
-              style={StandardTypography(
+              maxFontSizeMultiplier={1.2}
+              style={[
+                StandardTypography(
+                  {
+                    font: props.database[thisGroup.language].font,
+                    isRTL: props.isRTL
+                  },
+                  'd',
+                  'regular',
+                  'left',
+                  colors.chateau
+                ),
                 {
-                  font: props.database[thisGroup.language].font,
-                  isRTL: props.isRTL
-                },
-                'd',
-                'regular',
-                'left',
-                colors.chateau
-              )}
+                  lineHeight: 12 * scaleMultiplier
+                }
+              ]}
               numberOfLines={1}
             >
               {getBookmarkText().set}
@@ -195,16 +201,21 @@ function GroupItem (props) {
           )}
           {getBookmarkText() === '' ? null : (
             <Text
-              style={StandardTypography(
+              style={[
+                StandardTypography(
+                  {
+                    font: props.database[thisGroup.language].font,
+                    isRTL: props.isRTL
+                  },
+                  'd',
+                  'regular',
+                  'left',
+                  colors.chateau
+                ),
                 {
-                  font: props.database[thisGroup.language].font,
-                  isRTL: props.isRTL
-                },
-                'd',
-                'regular',
-                'left',
-                colors.chateau
-              )}
+                  lineHeight: 12 * scaleMultiplier
+                }
+              ]}
               numberOfLines={1}
             >
               {getBookmarkText().lesson}
@@ -221,7 +232,7 @@ function GroupItem (props) {
 
 const styles = StyleSheet.create({
   groupListItemContainer: {
-    height: 85 * scaleMultiplier,
+    height: 80 * scaleMultiplier,
     // aspectRatio: 5,
     justifyContent: 'flex-start',
     flexDirection: 'row',

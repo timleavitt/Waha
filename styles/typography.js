@@ -6,14 +6,14 @@ import {
   scaleMultiplier
 } from '../constants'
 
-const lineSpacingByFont = {
+const lineHeightByFont = {
   roboto: 5,
-  tajawal: 7
+  tajawal: 9
 }
 
-const lineSpacingBySystemLanguage = {
+const lineHeightBySystemLanguage = {
   en: 5,
-  ar: 7
+  ar: 9
 }
 
 export function StandardTypography (
@@ -23,6 +23,8 @@ export function StandardTypography (
   textAlign,
   color
 ) {
+  const lineHeightModifier = fontFamily === 'black' ? 2 : 0
+
   const families = {
     regular: props.font + '-regular',
     medium: props.font + '-medium',
@@ -48,7 +50,8 @@ export function StandardTypography (
     fontFamily: props.font ? families[fontFamily] : null,
     textAlign: alignments[textAlign],
     color: color,
-    lineHeight: sizes[fontSize] + lineSpacingByFont[props.font]
+    lineHeight:
+      sizes[fontSize] + lineHeightByFont[props.font] + lineHeightModifier
   }
 }
 
@@ -97,8 +100,8 @@ export function SystemTypography (
         : getSystemFont() + '-' + fontFamily,
       textAlign: alignments[textAlign],
       color: color,
-      lineHeight: lineSpacingBySystemLanguage[i18n.locale.slice(0, 2)]
-        ? sizes[fontSize] + lineSpacingBySystemLanguage[i18n.locale.slice(0, 2)]
+      lineHeight: lineHeightBySystemLanguage[i18n.locale.slice(0, 2)]
+        ? sizes[fontSize] + lineHeightBySystemLanguage[i18n.locale.slice(0, 2)]
         : null
     }
   }
