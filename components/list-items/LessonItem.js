@@ -2,7 +2,12 @@
 import React, { useEffect } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLessonInfo, scaleMultiplier } from '../../constants'
+import {
+  colors,
+  getLessonInfo,
+  itemHeights,
+  scaleMultiplier
+} from '../../constants'
 import { removeDownload } from '../../redux/actions/downloadActions'
 import { StandardTypography } from '../../styles/typography'
 import DownloadStatusIndicator from '../DownloadStatusIndicator'
@@ -61,7 +66,10 @@ function LessonItem (props) {
     <View
       style={[
         styles.lessonItem,
-        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        {
+          flexDirection: props.isRTL ? 'row-reverse' : 'row',
+          height: itemHeights[props.font].LessonItem
+        }
       ]}
     >
       {/* main touchable area */}
@@ -143,12 +151,13 @@ function LessonItem (props) {
 
 const styles = StyleSheet.create({
   lessonItem: {
-    height: 68 * scaleMultiplier,
+    // height: 80 * scaleMultiplier,
     // aspectRatio: 6.1,
     flexDirection: 'row',
     backgroundColor: colors.aquaHaze,
     flex: 1,
     paddingLeft: 20
+    // paddingVertical: 5
   },
   progressAndTitle: {
     justifyContent: 'flex-start',

@@ -24,6 +24,7 @@ export function StandardTypography (
   color
 ) {
   const lineHeightModifier = fontFamily === 'black' ? 2 : 0
+  const fontSizeModifier = props.font === 'tajawal' ? -1 : 0
 
   const families = {
     regular: props.font + '-regular',
@@ -46,12 +47,12 @@ export function StandardTypography (
   }
 
   return {
-    fontSize: sizes[fontSize],
+    fontSize: sizes[fontSize] + fontSizeModifier,
     fontFamily: props.font ? families[fontFamily] : null,
     textAlign: alignments[textAlign],
-    color: color,
-    lineHeight:
-      sizes[fontSize] + lineHeightByFont[props.font] + lineHeightModifier
+    color: color
+    // lineHeight:
+    //   sizes[fontSize] + lineHeightByFont[props.font] + lineHeightModifier
   }
 }
 

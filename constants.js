@@ -1,10 +1,23 @@
 import i18n from 'i18n-js'
-import { Dimensions } from 'react-native'
+import { Dimensions, PixelRatio } from 'react-native'
 
+const fontScale = PixelRatio.getFontScale()
+const heightScaleModifier = 1 + (fontScale - 1) / 2
 export const scaleMultiplier =
   Dimensions.get('window').width > 400
     ? 1
     : Dimensions.get('window').width / 400
+
+export const itemHeights = {
+  roboto: {
+    LessonItem: 60 * heightScaleModifier,
+    SetItem: 95 * heightScaleModifier
+  },
+  tajawal: {
+    LessonItem: 72 * heightScaleModifier,
+    SetItem: 90 * heightScaleModifier
+  }
+}
 
 export const languageT2S = {
   en: require('./assets/languageT2S/en.mp3'),

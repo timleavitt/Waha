@@ -8,7 +8,12 @@ import LessonSwipeBackdrop from '../components/list-items/LessonSwipeBackdrop'
 import SetItem from '../components/list-items/SetItem'
 import OptionsModalButton from '../components/OptionsModalButton'
 import BackButton from '../components/standard/BackButton'
-import { colors, getLessonInfo, scaleMultiplier } from '../constants'
+import {
+  colors,
+  getLessonInfo,
+  itemHeights,
+  scaleMultiplier
+} from '../constants'
 import MessageModal from '../modals/MessageModal'
 import OptionsModal from '../modals/OptionsModal'
 import ShareModal from '../modals/ShareModal'
@@ -330,7 +335,14 @@ function LessonListScreen (props) {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.studySetItemContainer}>
+      <View
+        style={[
+          styles.studySetItemContainer,
+          {
+            height: itemHeights[props.font].SetItem
+          }
+        ]}
+      >
         <SetItem thisSet={props.route.params.thisSet} mode='lessonlist' />
       </View>
       <SwipeListView
@@ -454,7 +466,8 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],
     activeGroup: activeGroup,
-    translations: state.database[activeGroup.language].translations
+    translations: state.database[activeGroup.language].translations,
+    font: state.database[activeGroup.language].font
   }
 }
 

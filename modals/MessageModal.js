@@ -37,7 +37,7 @@ function MessageModal (props) {
         {props.children}
         <Text
           style={[
-            StandardTypography(props, 'h1', 'black', 'center', colors.shark),
+            StandardTypography(props, 'h2', 'black', 'center', colors.shark),
             { marginVertical: 10 }
           ]}
         >
@@ -45,7 +45,7 @@ function MessageModal (props) {
         </Text>
         <Text
           style={[
-            StandardTypography(props, 'h3', 'medium', 'center', colors.shark),
+            StandardTypography(props, 'h4', 'medium', 'center', colors.shark),
             { paddingHorizontal: 20 }
           ]}
         >

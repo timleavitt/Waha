@@ -4,7 +4,12 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
 import Icon from '../../assets/fonts/icons'
 import SVG from '../../assets/svg.js'
-import { colors, getSetInfo, scaleMultiplier } from '../../constants'
+import {
+  colors,
+  getSetInfo,
+  itemHeights,
+  scaleMultiplier
+} from '../../constants'
 import MessageModal from '../../modals/MessageModal'
 import { addSet } from '../../redux/actions/groupsActions'
 import { StandardTypography } from '../../styles/typography'
@@ -263,7 +268,10 @@ function SetItem (props) {
     <TouchableOpacity
       style={[
         styles.studySetItem,
-        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        {
+          flexDirection: props.isRTL ? 'row-reverse' : 'row',
+          height: itemHeights[props.font].SetItem
+        }
       ]}
       onPress={props.onSetSelect}
       // disable feedback if there's no onSetSelect
@@ -351,11 +359,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     flex: 1,
-    height: 100 * scaleMultiplier,
+    // height: 100 * scaleMultiplier,
     // aspectRatio: 4,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20
+    // borderWidth: 1
   },
   iconContainer: {
     flexDirection: 'column',

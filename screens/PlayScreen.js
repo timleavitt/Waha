@@ -699,7 +699,7 @@ function PlayScreen (props) {
     <View style={styles.titlesContainer}>
       <Text
         style={StandardTypography(props, 'h3', 'black', 'center', colors.shark)}
-        numberOfLines={2}
+        numberOfLines={1}
       >
         {props.route.params.thisLesson.title}
       </Text>

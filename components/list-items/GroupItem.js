@@ -176,29 +176,24 @@ function GroupItem (props) {
           >
             {props.groupName}
           </Text>
-          {getBookmarkText() === '' ? null : (
+          {/* {getBookmarkText() === '' ? null : (
             <Text
               maxFontSizeMultiplier={1.2}
-              style={[
-                StandardTypography(
-                  {
-                    font: props.database[thisGroup.language].font,
-                    isRTL: props.isRTL
-                  },
-                  'd',
-                  'regular',
-                  'left',
-                  colors.chateau
-                ),
+              style={StandardTypography(
                 {
-                  lineHeight: 12 * scaleMultiplier
-                }
-              ]}
+                  font: props.database[thisGroup.language].font,
+                  isRTL: props.isRTL
+                },
+                'd',
+                'regular',
+                'left',
+                colors.chateau
+              )}
               numberOfLines={1}
             >
               {getBookmarkText().set}
             </Text>
-          )}
+          )} */}
           {getBookmarkText() === '' ? null : (
             <Text
               style={[
@@ -213,7 +208,7 @@ function GroupItem (props) {
                   colors.chateau
                 ),
                 {
-                  lineHeight: 12 * scaleMultiplier
+                  // lineHeight: 12 * scaleMultiplier
                 }
               ]}
               numberOfLines={1}
