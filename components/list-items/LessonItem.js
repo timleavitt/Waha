@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import {
   colors,
+  getLanguageFont,
   getLessonInfo,
   itemHeights,
   scaleMultiplier
@@ -111,7 +112,7 @@ function LessonItem (props) {
             style={StandardTypography(
               props,
               'h4',
-              'medium',
+              'Bold',
               'left',
               props.isComplete ? colors.chateau : colors.shark
             )}
@@ -123,7 +124,7 @@ function LessonItem (props) {
             style={StandardTypography(
               props,
               'd',
-              'regular',
+              'Regular',
               'left',
               colors.chateau
             )}
@@ -184,7 +185,7 @@ function mapStateToProps (state) {
     downloads: state.downloads,
     translations: state.database[activeGroup.language].translations,
     isConnected: state.network.isConnected,
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language)
   }
 }
 

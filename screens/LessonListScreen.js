@@ -10,6 +10,7 @@ import OptionsModalButton from '../components/OptionsModalButton'
 import BackButton from '../components/standard/BackButton'
 import {
   colors,
+  getLanguageFont,
   getLessonInfo,
   itemHeights,
   scaleMultiplier
@@ -467,7 +468,7 @@ function mapStateToProps (state) {
     activeDatabase: state.database[activeGroup.language],
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language)
   }
 }
 

@@ -8,7 +8,7 @@ import Hero from '../components/standard/Hero'
 import Separator from '../components/standard/Separator'
 import WahaItem from '../components/standard/WahaItem'
 import WahaItemDescription from '../components/standard/WahaItemDescription'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import OptionsModal from '../modals/OptionsModal'
 import {
   setIsTimedOut,
@@ -97,7 +97,7 @@ function SecurityScreen (props) {
             style={StandardTypography(
               props,
               'h4',
-              'regular',
+              'Regular',
               'left',
               colors.chateau
             )}
@@ -324,7 +324,7 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup,
     areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
     security: state.security

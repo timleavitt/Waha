@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import { StandardTypography } from '../styles/typography'
 
 function ChapterButton (props) {
@@ -28,22 +28,22 @@ function ChapterButton (props) {
   }
 
   const textStyles = {
-    active: StandardTypography(props, 'p', 'black', 'center', colors.white),
+    active: StandardTypography(props, 'p', 'Black', 'center', colors.white),
     inactive: StandardTypography(
       props,
       'p',
-      'black',
+      'Black',
       'center',
       props.primaryColor
     ),
     downloading: StandardTypography(
       props,
       'p',
-      'black',
+      'Black',
       'center',
       colors.chateau
     ),
-    disabled: StandardTypography(props, 'p', 'black', 'center', colors.chateau)
+    disabled: StandardTypography(props, 'p', 'Black', 'center', colors.chateau)
   }
 
   // get the icon name depending on the mode/if this button is active or not
@@ -125,7 +125,8 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup,
     primaryColor: state.database[activeGroup.language].primaryColor,
     translations: state.database[activeGroup.language].translations
   }

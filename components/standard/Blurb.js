@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
 import { StandardTypography } from '../../styles/typography'
 
 function Blurb (props) {
@@ -11,7 +11,7 @@ function Blurb (props) {
         style={StandardTypography(
           props,
           'p',
-          'regular',
+          'Regular',
           'center',
           colors.shark
         )}
@@ -27,7 +27,8 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup
   }
 }
 

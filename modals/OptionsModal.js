@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import { StandardTypography } from '../styles/typography'
 function OptionsModal (props) {
   //+ RENDER
@@ -25,7 +25,7 @@ function OptionsModal (props) {
               style={StandardTypography(
                 props,
                 'h3',
-                'medium',
+                'Bold',
                 'center',
                 colors.red
               )}
@@ -60,7 +60,8 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup
   }
 }
 

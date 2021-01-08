@@ -1,7 +1,12 @@
 import React from 'react'
 import { StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getSetInfo, scaleMultiplier } from '../../constants'
+import {
+  colors,
+  getLanguageFont,
+  getSetInfo,
+  scaleMultiplier
+} from '../../constants'
 import {
   addSet,
   setShouldShowMobilizationToolsTab
@@ -37,11 +42,11 @@ function GroupItemMT (props) {
         <Text
           style={StandardTypography(
             {
-              font: props.database[props.group.language].font,
+              font: getLanguageFont(props.group.language),
               isRTL: props.isRTL
             },
             'h3',
-            'medium',
+            'Bold',
             'left',
             colors.shark
           )}
@@ -112,7 +117,7 @@ function mapStateToProps (state) {
     database: state.database,
     isRTL: state.database[activeGroup.language].isRTL,
     groups: state.groups,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
     activeGroup: activeGroup
   }

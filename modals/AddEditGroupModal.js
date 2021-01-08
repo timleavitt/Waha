@@ -14,6 +14,7 @@ import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import {
   colors,
+  getLanguageFont,
   groupIcons,
   groupIconSources,
   scaleMultiplier
@@ -172,7 +173,7 @@ function AddEditGroupModal (props) {
           style={StandardTypography(
             props,
             'p',
-            'regular',
+            'Regular',
             'left',
             colors.chateau
           )}
@@ -182,10 +183,11 @@ function AddEditGroupModal (props) {
         <TextInput
           style={[
             styles.addNewGroupContainer,
-            {
-              textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-regular'
-            }
+            StandardTypography(props, 'h3', 'Regular', 'left', colors.shark)
+            // {
+            //   textAlign: props.isRTL ? 'right' : 'left',
+            //   fontFamily: props.font + '-Regular'
+            // }
           ]}
           onChangeText={text => setGroupName(text)}
           value={groupName}
@@ -201,7 +203,7 @@ function AddEditGroupModal (props) {
       </View>
       <Text
         style={[
-          StandardTypography(props, 'p', 'regular', 'left', colors.chateau),
+          StandardTypography(props, 'p', 'Regular', 'left', colors.chateau),
           {
             marginHorizontal: 20,
             marginTop: 20 * scaleMultiplier,
@@ -296,7 +298,7 @@ function mapStateToProps (state) {
     groups: state.groups,
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup
   }
 }

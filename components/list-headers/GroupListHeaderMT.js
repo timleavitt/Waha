@@ -2,7 +2,7 @@ import * as FileSystem from 'expo-file-system'
 import React, { useEffect } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
 import { StandardTypography } from '../../styles/typography'
 function GroupListHeaderMT (props) {
   //+ FUNCTIONS
@@ -33,7 +33,7 @@ function GroupListHeaderMT (props) {
   //   >
   //     <Text
   //       style={{
-  //         fontFamily: props.font + '-regular',
+  //         fontFamily: props.font + '-Regular',
   //         fontSize: 14 * scaleMultiplier,
   //         color: colors.chateau,
   //         textAlign: 'center'
@@ -64,7 +64,7 @@ function GroupListHeaderMT (props) {
           style={StandardTypography(
             props,
             'h3',
-            'medium',
+            'Bold',
             'left',
             colors.chateau
           )}
@@ -80,7 +80,7 @@ function GroupListHeaderMT (props) {
           style={StandardTypography(
             props,
             'h3',
-            'regular',
+            'Regular',
             'left',
             colors.chateau
           )}
@@ -132,7 +132,7 @@ function mapStateToProps (state) {
     groups: state.groups,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language)
   }
 }
 

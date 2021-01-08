@@ -6,16 +6,6 @@ import {
   scaleMultiplier
 } from '../constants'
 
-const lineHeightByFont = {
-  roboto: 5,
-  tajawal: 9
-}
-
-const lineHeightBySystemLanguage = {
-  en: 5,
-  ar: 9
-}
-
 export function StandardTypography (
   props,
   fontSize,
@@ -23,13 +13,12 @@ export function StandardTypography (
   textAlign,
   color
 ) {
-  const lineHeightModifier = fontFamily === 'black' ? 2 : 0
-  const fontSizeModifier = props.font === 'tajawal' ? -1 : 0
+  const fontSizeModifier = props.font === 'NotoSansArabic' ? -1 : 0
 
   const families = {
-    regular: props.font + '-regular',
-    medium: props.font + '-medium',
-    black: props.font + '-black'
+    Regular: props.font + '-Regular',
+    Bold: props.font + '-Bold',
+    Black: props.font + '-Black'
   }
 
   const sizes = {
@@ -51,8 +40,6 @@ export function StandardTypography (
     fontFamily: props.font ? families[fontFamily] : null,
     textAlign: alignments[textAlign],
     color: color
-    // lineHeight:
-    //   sizes[fontSize] + lineHeightByFont[props.font] + lineHeightModifier
   }
 }
 
@@ -100,10 +87,7 @@ export function SystemTypography (
         ? overrideFont + '-' + fontFamily
         : getSystemFont() + '-' + fontFamily,
       textAlign: alignments[textAlign],
-      color: color,
-      lineHeight: lineHeightBySystemLanguage[i18n.locale.slice(0, 2)]
-        ? sizes[fontSize] + lineHeightBySystemLanguage[i18n.locale.slice(0, 2)]
-        : null
+      color: color
     }
   }
 }

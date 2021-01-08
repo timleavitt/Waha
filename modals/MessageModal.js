@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import { StandardTypography } from '../styles/typography'
 // modal variant that shows some information
 function MessageModal (props) {
@@ -15,9 +15,7 @@ function MessageModal (props) {
       }}
       onPress={props.cancelOnPress}
     >
-      <Text
-        style={StandardTypography(props, 'h2', 'medium', 'left', colors.red)}
-      >
+      <Text style={StandardTypography(props, 'h2', 'Bold', 'left', colors.red)}>
         {props.cancelText}
       </Text>
     </TouchableOpacity>
@@ -37,7 +35,7 @@ function MessageModal (props) {
         {props.children}
         <Text
           style={[
-            StandardTypography(props, 'h2', 'black', 'center', colors.shark),
+            StandardTypography(props, 'h2', 'Black', 'center', colors.shark),
             { marginVertical: 10 }
           ]}
         >
@@ -45,7 +43,7 @@ function MessageModal (props) {
         </Text>
         <Text
           style={[
-            StandardTypography(props, 'h4', 'medium', 'center', colors.shark),
+            StandardTypography(props, 'h4', 'Bold', 'center', colors.shark),
             { paddingHorizontal: 20 }
           ]}
         >
@@ -66,7 +64,7 @@ function MessageModal (props) {
             style={StandardTypography(
               props,
               'h2',
-              'medium',
+              'Bold',
               'center',
               colors.apple
             )}
@@ -97,7 +95,8 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup
   }
 }
 

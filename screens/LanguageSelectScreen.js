@@ -231,7 +231,7 @@ function LanguageSelectScreen (props) {
       >
         <Text
           style={[
-            SystemTypography(false, 'h1', 'medium', 'center', colors.shark)
+            SystemTypography(false, 'h1', 'Bold', 'center', colors.shark)
           ]}
         >
           {i18n.t('welcome')}
@@ -240,7 +240,7 @@ function LanguageSelectScreen (props) {
           style={SystemTypography(
             false,
             'h2',
-            'regular',
+            'Regular',
             'center',
             colors.shark
           )}
@@ -292,7 +292,7 @@ function LanguageSelectScreen (props) {
           style={SystemTypography(
             false,
             'h3',
-            'regular',
+            'Regular',
             'left',
             colors.chateau
           )}

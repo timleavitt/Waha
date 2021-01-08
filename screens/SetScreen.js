@@ -9,7 +9,12 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
-import { colors, getSetInfo, scaleMultiplier } from '../constants'
+import {
+  colors,
+  getLanguageFont,
+  getSetInfo,
+  scaleMultiplier
+} from '../constants'
 import { StandardTypography } from '../styles/typography'
 
 function SetScreen (props) {
@@ -146,7 +151,7 @@ function SetScreen (props) {
                 style={StandardTypography(
                   props,
                   'p',
-                  'regular',
+                  'Regular',
                   'left',
                   colors.chateau
                 )}
@@ -195,7 +200,7 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup
   }
 }

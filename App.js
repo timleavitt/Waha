@@ -70,22 +70,22 @@ export default function App () {
       waha: require('./assets/fonts/waha.ttf')
     })
     await Font.loadAsync({
-      'roboto-black': require('./assets/fonts/Roboto/Roboto-Black.ttf')
+      'Roboto-Black': require('./assets/fonts/Roboto/Roboto-Black.ttf')
     })
     await Font.loadAsync({
-      'roboto-medium': require('./assets/fonts/Roboto/Roboto-Medium.ttf')
+      'Roboto-Bold': require('./assets/fonts/Roboto/Roboto-Medium.ttf')
     })
     await Font.loadAsync({
-      'roboto-regular': require('./assets/fonts/Roboto/Roboto-Regular.ttf')
+      'Roboto-Regular': require('./assets/fonts/Roboto/Roboto-Regular.ttf')
     })
     await Font.loadAsync({
-      'tajawal-black': require('./assets/fonts/Tajawal/Tajawal-Black.ttf')
+      'NotoSansArabic-Black': require('./assets/fonts/NotoSansArabic/NotoSansArabic-SemiCondensedBlack.ttf')
     })
     await Font.loadAsync({
-      'tajawal-medium': require('./assets/fonts/Tajawal/Tajawal-Medium.ttf')
+      'NotoSansArabic-Bold': require('./assets/fonts/NotoSansArabic/NotoSansArabic-SemiCondensedSemiBold.ttf')
     })
     await Font.loadAsync({
-      'tajawal-regular': require('./assets/fonts/Tajawal/Tajawal-Regular.ttf')
+      'NotoSansArabic-Regular': require('./assets/fonts/NotoSansArabic/NotoSansArabic-SemiCondensed.ttf')
     })
     setFontsLoaded(true)
   }

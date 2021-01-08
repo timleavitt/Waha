@@ -6,6 +6,7 @@ import Icon from '../../assets/fonts/icons'
 import SVG from '../../assets/svg.js'
 import {
   colors,
+  getLanguageFont,
   getSetInfo,
   itemHeights,
   scaleMultiplier
@@ -295,7 +296,7 @@ function SetItem (props) {
             StandardTypography(
               props,
               'd',
-              'regular',
+              'Regular',
               'left',
               fullyCompleted ? colors.chateau : colors.shark
             ),
@@ -313,7 +314,7 @@ function SetItem (props) {
             StandardTypography(
               props,
               'h3',
-              'black',
+              'Black',
               'left',
               fullyCompleted ? colors.chateau : colors.shark
             ),
@@ -395,7 +396,7 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],
     primaryColor: state.database[activeGroup.language].primaryColor,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations
   }

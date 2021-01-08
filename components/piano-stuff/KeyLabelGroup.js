@@ -1,7 +1,12 @@
 import React from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, keyColors, scaleMultiplier } from '../../constants'
+import {
+  colors,
+  getLanguageFont,
+  keyColors,
+  scaleMultiplier
+} from '../../constants'
 import KeyLabel from './KeyLabel'
 
 function KeyLabelGroup (props) {
@@ -95,9 +100,10 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     security: state.security,
-    isRTL: state.database[activeGroup.language].isRTL
+    isRTL: state.database[activeGroup.language].isRTL,
+    activeGroup: activeGroup
   }
 }
 
