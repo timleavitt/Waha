@@ -69,11 +69,14 @@ function GroupListHeaderMT (props) {
             colors.chateau
           )}
         >
-          {props.translations.general.brands[props.languageID] +
-            ' ' +
-            props.translations.mobilization_tools.groups_label}
+          {
+            props.translations.general.brands[props.languageID]
+            // +
+            //   ' ' +
+            //   props.translations.mobilization_tools.groups_label
+          }
         </Text>
-        <Text
+        {/* <Text
           style={StandardTypography(
             props,
             'h3',
@@ -86,7 +89,7 @@ function GroupListHeaderMT (props) {
             props.translations.mobilization_tools
               .mobilization_tools_status_label
           }
-        </Text>
+        </Text> */}
       </View>
       <Image
         style={styles.languageLogo}

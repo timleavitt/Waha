@@ -1,3 +1,4 @@
+import { useBackHandler } from '@react-native-community/hooks'
 import { Audio } from 'expo-av'
 import React, { useEffect, useState } from 'react'
 import {
@@ -47,6 +48,11 @@ function PianoAppScreen (props) {
         })
     }
   }, [pattern])
+
+  // disable back button on this screen
+  useBackHandler(() => {
+    return true
+  })
 
   //+ RENDER
 

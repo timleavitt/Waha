@@ -81,20 +81,14 @@ function MobilizationToolsScreen (props) {
 
   return (
     <View style={styles.screen}>
-      {props.areMobilizationToolsUnlocked ? (
-        <Hero source={require('../assets/gifs/unlock_mob_tools.gif')} />
-      ) : null}
-      <Blurb
-        text={
-          props.areMobilizationToolsUnlocked
-            ? props.translations.mobilization_tools.mobilization_tools_vision
-            : props.translations.mobilization_tools
-                .mobilization_tools_pre_unlock
-        }
-      />
-
       {props.areMobilizationToolsUnlocked ? null : (
         <View style={{ width: '100%' }}>
+          <Blurb
+            text={
+              props.translations.mobilization_tools
+                .mobilization_tools_pre_unlock
+            }
+          />
           <Separator />
           <WahaItem
             title={props.translations.mobilization_tools.unlock_mt_button_label}
@@ -124,6 +118,17 @@ function MobilizationToolsScreen (props) {
             }}
             ListHeaderComponent={() => (
               <View>
+                {props.areMobilizationToolsUnlocked ? (
+                  <Hero
+                    source={require('../assets/gifs/unlock_mob_tools.gif')}
+                  />
+                ) : null}
+                <Blurb
+                  text={
+                    props.translations.mobilization_tools
+                      .mobilization_tools_vision
+                  }
+                />
                 <Separator />
                 <WahaItem
                   title={
@@ -161,7 +166,23 @@ function MobilizationToolsScreen (props) {
                   />
                 </WahaItem>
                 <Separator />
-                <View style={{ width: '100%', height: 20 * scaleMultiplier }} />
+                <View style={{ width: '100%', height: 40 * scaleMultiplier }} />
+                <View style={{ width: '100%', paddingHorizontal: 20 }}>
+                  <Text
+                    style={StandardTypography(
+                      props,
+                      'h2',
+                      'black',
+                      'left',
+                      colors.shark
+                    )}
+                  >
+                    {
+                      props.translations.mobilization_tools
+                        .mobilization_tools_status_label
+                    }
+                  </Text>
+                </View>
               </View>
             )}
             renderSectionHeader={({ section }) =>

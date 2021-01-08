@@ -1,7 +1,8 @@
 import i18n from 'i18n-js'
 import { Dimensions, PixelRatio } from 'react-native'
 
-const fontScale = PixelRatio.getFontScale()
+const fontScale =
+  PixelRatio.getFontScale() >= 1.2 ? 1.2 : PixelRatio.getFontScale()
 const heightScaleModifier = 1 + (fontScale - 1) / 2
 export const scaleMultiplier =
   Dimensions.get('window').width > 400
@@ -14,8 +15,8 @@ export const itemHeights = {
     SetItem: 95 * heightScaleModifier
   },
   tajawal: {
-    LessonItem: 72 * heightScaleModifier,
-    SetItem: 90 * heightScaleModifier
+    LessonItem: 83 * heightScaleModifier,
+    SetItem: 108 * heightScaleModifier
   }
 }
 

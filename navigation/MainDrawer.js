@@ -20,7 +20,8 @@ const Drawer = createDrawerNavigator()
 function MainDrawer (props) {
   //- allows only accessing hamburger swipe from study set screen
   function getGestureEnabled (route) {
-    if (getFocusedRouteNameFromRoute(route) === 'SetTabs') return true
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'SetTabs'
+    if (routeName === 'SetTabs') return true
     else return false
 
     // const routeName = route.state

@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    height: 55 * scaleMultiplier,
+    height: 62 * scaleMultiplier,
     justifyContent: 'center',
     borderTopWidth: 2,
     borderBottomWidth: 2

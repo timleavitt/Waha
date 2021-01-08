@@ -224,7 +224,10 @@ function LanguageSelectScreen (props) {
   var headerText =
     props.route.name === 'LanguageSelect' ? (
       <View
-        style={{ marginVertical: 40 * scaleMultiplier, paddingHorizontal: 20 }}
+        style={{
+          marginVertical: 20 * scaleMultiplier,
+          paddingHorizontal: 20
+        }}
       >
         <Text
           style={[
@@ -245,7 +248,9 @@ function LanguageSelectScreen (props) {
           {i18n.t('selectLanguage')}
         </Text>
       </View>
-    ) : null
+    ) : (
+      <View style={{ width: '100%', height: 20 * scaleMultiplier }} />
+    )
 
   function renderLanguage (item) {
     return (
@@ -390,9 +395,9 @@ function LanguageSelectScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 40 * scaleMultiplier
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+    // paddingTop: 40 * scaleMultiplier
   },
   buttonContainer: {
     borderRadius: 10,

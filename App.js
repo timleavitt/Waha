@@ -11,6 +11,7 @@ import { colors } from './constants'
 import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
 
+// set the max font scaling allowed
 Text.defaultProps = {
   ...Text.defaultProps,
   maxFontSizeMultiplier: 1.2

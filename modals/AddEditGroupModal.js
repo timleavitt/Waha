@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
   addNewGroupContainer: {
     borderBottomColor: colors.athens,
     borderBottomWidth: 2,
-    height: 40 * scaleMultiplier,
+    height: 50 * scaleMultiplier,
     fontSize: 18 * scaleMultiplier
   }
 })
