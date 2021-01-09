@@ -20,7 +20,7 @@ import OptionsModal from '../modals/OptionsModal'
 import ShareModal from '../modals/ShareModal'
 import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
-import { logCompleteStorySet } from '../redux/LogEventFunctions'
+// import { logCompleteStorySet } from '../redux/LogEventFunctions'
 
 function LessonListScreen (props) {
   //+ STATE
@@ -261,10 +261,10 @@ function LessonListScreen (props) {
         props.route.params.thisSet.lessons.length - 1 &&
       !thisSetProgress.includes(getLessonInfo('index', activeLessonInModal.id))
     ) {
-      logCompleteStorySet(
-        props.route.params.thisSet,
-        props.activeGroup.language
-      )
+      // logCompleteStorySet(
+      //   props.route.params.thisSet,
+      //   props.activeGroup.language
+      // )
       setShowSetCompleteModal(true)
     }
   }
