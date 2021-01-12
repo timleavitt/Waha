@@ -201,15 +201,9 @@ function OnboardingSwiper (props) {
 const styles = StyleSheet.create({
   image: {
     resizeMode: 'contain',
-    width:
-      (Dimensions.get('window').width - 100) *
-      scaleMultiplier *
-      scaleMultiplier,
+    width: Dimensions.get('window').width * scaleMultiplier * scaleMultiplier,
     height:
-      (Dimensions.get('window').width - 100) *
-      0.6 *
-      scaleMultiplier *
-      scaleMultiplier,
+      Dimensions.get('window').width * 0.6 * scaleMultiplier * scaleMultiplier,
     borderRadius: 20
   },
   pager: {
