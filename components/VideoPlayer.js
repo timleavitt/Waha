@@ -1,5 +1,4 @@
 import { Video } from 'expo-av'
-import * as ScreenOrientation from 'expo-screen-orientation'
 import React, { useState } from 'react'
 import {
   Dimensions,
@@ -10,7 +9,13 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import {
+  colors,
+  getLanguageFont,
+  lockLandscape,
+  lockPortrait,
+  scaleMultiplier
+} from '../constants'
 
 function VideoPlayer (props) {
   //+ STATE
@@ -81,23 +86,24 @@ function VideoPlayer (props) {
               props.fullscreenStatus ===
                 Video.IOS_FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
             ) {
-              ScreenOrientation.supportsOrientationLockAsync(
-                ScreenOrientation.OrientationLock.PORTRAIT
-              ).then(isSupported => {
-                if (isSupported) {
-                  ScreenOrientation.lockAsync(
-                    ScreenOrientation.OrientationLock.PORTRAIT
-                  ).then(() => {
-                    props.video.dismissFullscreenPlayer()
-                  })
-                } else {
-                  ScreenOrientation.lockAsync(
-                    ScreenOrientation.OrientationLock.PORTRAIT_UP
-                  ).then(() => {
-                    props.video.dismissFullscreenPlayer()
-                  })
-                }
-              })
+              lockPortrait(() => props.video.dismissFullscreenPlayer())
+              // ScreenOrientation.supportsOrientationLockAsync(
+              //   ScreenOrientation.OrientationLock.PORTRAIT
+              // ).then(isSupported => {
+              //   if (isSupported) {
+              //     ScreenOrientation.lockAsync(
+              //       ScreenOrientation.OrientationLock.PORTRAIT
+              //     ).then(() => {
+              //       props.video.dismissFullscreenPlayer()
+              //     })
+              //   } else {
+              //     ScreenOrientation.lockAsync(
+              //       ScreenOrientation.OrientationLock.PORTRAIT_UP
+              //     ).then(() => {
+              //       props.video.dismissFullscreenPlayer()
+              //     })
+              //   }
+              // })
             }
 
             if (status.didJustFinish && props.lessonType !== 'v')
@@ -117,29 +123,62 @@ function VideoPlayer (props) {
               switch (fullscreenUpdate) {
                 // lock video to landscape whenever you enter full screen
                 case Video.FULLSCREEN_UPDATE_PLAYER_WILL_PRESENT:
-                  ScreenOrientation.lockAsync(
-                    ScreenOrientation.OrientationLock.LANDSCAPE
-                  )
+                case Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT:
+                  lockLandscape(() => {})
+                  // ScreenOrientation.lockAsync(
+                  //   ScreenOrientation.OrientationLock.LANDSCAPE
+                  // )
                   break
                 // lock video to portrait when we exit full screen
                 case Video.FULLSCREEN_UPDATE_PLAYER_WILL_DISMISS:
-                  ScreenOrientation.supportsOrientationLockAsync(
-                    ScreenOrientation.OrientationLock.PORTRAIT
-                  ).then(isSupported => {
-                    if (isSupported) {
-                      ScreenOrientation.lockAsync(
-                        ScreenOrientation.OrientationLock.PORTRAIT
-                      )
-                    } else {
-                      ScreenOrientation.lockAsync(
-                        ScreenOrientation.OrientationLock.PORTRAIT_UP
-                      )
-                    }
-                  })
+                  lockPortrait(() => {})
+                  // ScreenOrientation.supportsOrientationLockAsync(
+                  //   ScreenOrientation.OrientationLock.PORTRAIT
+                  // ).then(isSupported => {
+                  //   if (isSupported) {
+                  //     ScreenOrientation.lockAsync(
+                  //       ScreenOrientation.OrientationLock.PORTRAIT
+                  //     )
+                  //   } else {
+                  //     ScreenOrientation.lockAsync(
+                  //       ScreenOrientation.OrientationLock.PORTRAIT_UP
+                  //     )
+                  //   }
+                  // })
                   break
                 case Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS:
+                  lockPortrait(() => {})
+                  // ScreenOrientation.supportsOrientationLockAsync(
+                  //   ScreenOrientation.OrientationLock.PORTRAIT
+                  // ).then(isSupported => {
+                  //   if (isSupported) {
+                  //     ScreenOrientation.lockAsync(
+                  //       ScreenOrientation.OrientationLock.PORTRAIT
+                  //     )
+                  //   } else {
+                  //     ScreenOrientation.lockAsync(
+                  //       ScreenOrientation.OrientationLock.PORTRAIT_UP
+                  //     )
+                  //   }
+                  // })
                   props.video.playAsync()
                   props.setIsMediaPlaying(true)
+                  break
+                // default:
+                //   ScreenOrientation.supportsOrientationLockAsync(
+                //     ScreenOrientation.OrientationLock.PORTRAIT
+                //   ).then(isSupported => {
+                //     if (isSupported) {
+                //       ScreenOrientation.lockAsync(
+                //         ScreenOrientation.OrientationLock.PORTRAIT
+                //       )
+                //     } else {
+                //       ScreenOrientation.lockAsync(
+                //         ScreenOrientation.OrientationLock.PORTRAIT_UP
+                //       )
+                //     }
+                //   })
+                //   break
               }
             } else {
               if (

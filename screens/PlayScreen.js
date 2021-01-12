@@ -29,6 +29,7 @@ import {
   colors,
   getLanguageFont,
   getLessonInfo,
+  lockPortrait,
   scaleMultiplier
 } from '../constants'
 import MessageModal from '../modals/MessageModal'
@@ -162,7 +163,14 @@ function PlayScreen (props) {
     return {
       headerTitle: getLessonInfo('subtitle', props.route.params.thisLesson.id),
       headerRight: props.isRTL
-        ? () => <BackButton onPress={() => props.navigation.goBack()} />
+        ? () => (
+            <BackButton
+              onPress={() => {
+                lockPortrait(() => {})
+                props.navigation.goBack()
+              }}
+            />
+          )
         : () => (
             <PlayScreenHeaderButtons
               shareOnPress={() => setShowShareLessonModal(true)}
@@ -182,7 +190,14 @@ function PlayScreen (props) {
               )}
             />
           )
-        : () => <BackButton onPress={() => props.navigation.goBack()} />
+        : () => (
+            <BackButton
+              onPress={() => {
+                lockPortrait(() => {})
+                props.navigation.goBack()
+              }}
+            />
+          )
     }
   }
 
@@ -502,9 +517,11 @@ function PlayScreen (props) {
       audio.unloadAsync()
       shouldThumbUpdate.current = false
       if (chapter === 'fellowship') {
+        lockPortrait(() => {})
         setSeekPosition(0)
         loadMedia('audio', fellowshipSource)
       } else if (chapter === 'story') {
+        lockPortrait(() => {})
         setSeekPosition(0)
         if (storySource) {
           loadMedia('audio', storySource)
@@ -516,6 +533,7 @@ function PlayScreen (props) {
         //    internet
         if (!props.route.params.thisLesson.hasAudio) swipeToScripture()
       } else if (chapter === 'application') {
+        lockPortrait(() => {})
         setSeekPosition(0)
         loadMedia('audio', applicationSource)
       } else if (chapter === 'training') {
@@ -650,6 +668,7 @@ function PlayScreen (props) {
    * Switches the complete status of a lesson to the opposite of its current status and alerts the user of the change. Also shows the set complete modal if this is the last lesson to complete in a story set.
    */
   function changeCompleteStatus () {
+    lockPortrait(() => {})
     props.toggleComplete(
       props.activeGroup.name,
       props.route.params.thisSet,
