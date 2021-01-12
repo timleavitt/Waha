@@ -20,17 +20,9 @@ const Drawer = createDrawerNavigator()
 function MainDrawer (props) {
   //- allows only accessing hamburger swipe from study set screen
   function getGestureEnabled (route) {
-    const routeName = getFocusedRouteNameFromRoute(route) ?? 'SetTabs'
-    if (routeName === 'SetTabs') return true
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'StorySetTabs'
+    if (routeName === 'StorySetTabs') return true
     else return false
-
-    // const routeName = route.state
-    //   ? route.state.routes[route.state.index].name
-    //   : route.params?.screen || props.security.securityEnabled
-    //   ? 'PianoApp'
-    //   : 'SetTabs'
-    // if (routeName === 'SetTabs') return true
-    // else return false
   }
 
   useEffect(() => {

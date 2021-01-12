@@ -83,7 +83,7 @@ function SetInfoModal (props) {
       isVisible={props.isVisible}
     >
       <View style={styles.studySetItemContainer}>
-        <SetItem thisSet={props.thisSet} mode='setinfo' />
+        <SetItem thisSet={props.thisSet} mode='setinfo_modal' />
       </View>
       <WahaButton
         type='filled'

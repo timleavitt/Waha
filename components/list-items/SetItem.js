@@ -103,7 +103,7 @@ function SetItem (props) {
           )
         )
         break
-      case 'lessonlist':
+      case 'lessons_screen':
         setProgress()
         setIcon(
           <View style={styles.iconContainer}>
@@ -138,7 +138,7 @@ function SetItem (props) {
         )
         setAction(<View style={styles.actionContainer} />)
         break
-      case 'addset':
+      case 'addset_screen':
         setIcon(
           <View
             style={[
@@ -170,7 +170,7 @@ function SetItem (props) {
           </View>
         )
         break
-      case 'setinfo':
+      case 'setinfo_modal':
         setIcon(
           <View
             style={[

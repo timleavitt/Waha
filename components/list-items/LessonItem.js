@@ -51,7 +51,7 @@ function LessonItem (props) {
 
   //+ FUNCTIONS
 
-  // calls the various modal functions on lessonlistscreen
+  // calls the various modal functions on LessonsScreen
   function showSaveModal () {
     props.setActiveLessonInModal.call()
     props.setShowDownloadLessonModal.call()

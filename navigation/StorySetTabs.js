@@ -7,18 +7,24 @@ import {
   getSetInfo,
   scaleMultiplier
 } from '../constants'
-import SetScreen from '../screens/SetScreen'
+import StorySetsScreen from '../screens/StorySetsScreen'
 
 const Tab = createMaterialTopTabNavigator()
 
-function SetTabs (props) {
-  var MobilizationToolsScreen = props.activeGroup
-    .shouldShowMobilizationToolsTab ? (
+function StorySetTabs ({
+  activeGroup,
+  translations,
+  activeDatabase,
+  font,
+  primaryColor,
+  isRTL
+}) {
+  var MobilizationToolsScreen = activeGroup.shouldShowMobilizationToolsTab ? (
     <Tab.Screen
       name='MobilizationTools'
-      component={SetScreen}
+      component={StorySetsScreen}
       options={{
-        title: props.translations.sets.mobilization_tools_sets_tab_label
+        title: translations.sets.mobilization_tools_sets_tab_label
       }}
     />
   ) : null
@@ -26,9 +32,9 @@ function SetTabs (props) {
   var FoundationalScreen = (
     <Tab.Screen
       name='Foundational'
-      component={SetScreen}
+      component={StorySetsScreen}
       options={{
-        title: props.translations.sets.foundational_story_sets_tab_label
+        title: translations.sets.foundational_story_sets_tab_label
       }}
     />
   )
@@ -36,9 +42,9 @@ function SetTabs (props) {
   var TopicalScreen = (
     <Tab.Screen
       name='Topical'
-      component={SetScreen}
+      component={StorySetsScreen}
       options={{
-        title: props.translations.sets.topical_sets_tab_label
+        title: translations.sets.topical_sets_tab_label
       }}
     />
   )
@@ -48,9 +54,8 @@ function SetTabs (props) {
   function getInitialRouteName () {
     var bookmarkSetCategory = getSetInfo(
       'category',
-      props.activeDatabase.sets.filter(
-        set => set.id === props.activeGroup.setBookmark
-      )[0].id
+      activeDatabase.sets.filter(set => set.id === activeGroup.setBookmark)[0]
+        .id
     )
 
     var initialRouteName
@@ -80,19 +85,19 @@ function SetTabs (props) {
         },
         labelStyle: {
           fontSize: 14 * scaleMultiplier,
-          fontFamily: props.font + '-Bold',
+          fontFamily: font + '-Bold',
           textTransform: 'none'
         },
-        activeTintColor: props.primaryColor,
+        activeTintColor: primaryColor,
         inactiveTintColor: colors.chateau,
         indicatorStyle: {
-          backgroundColor: props.primaryColor
+          backgroundColor: primaryColor
         }
       }}
     >
-      {props.isRTL ? MobilizationToolsScreen : FoundationalScreen}
+      {isRTL ? MobilizationToolsScreen : FoundationalScreen}
       {TopicalScreen}
-      {props.isRTL ? FoundationalScreen : MobilizationToolsScreen}
+      {isRTL ? FoundationalScreen : MobilizationToolsScreen}
     </Tab.Navigator>
   )
 }
@@ -115,4 +120,4 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(SetTabs)
+export default connect(mapStateToProps)(StorySetTabs)

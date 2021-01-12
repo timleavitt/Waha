@@ -1,4 +1,32 @@
-import useInterval from '@use-it/interval'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: PlayScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: PlayScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import useInterval from '@use-it/interval'
 import { Audio, Video } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
 import { useKeepAwake } from 'expo-keep-awake'
@@ -122,16 +150,16 @@ function PlayScreen (props) {
    * @function
    */
   useEffect(() => {
-    if (deviceRotation && Platform.OS === 'ios') {
+    if (deviceRotation &amp;&amp; Platform.OS === 'ios') {
       if (fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS) {
         if (
-          video &&
-          trainingSource &&
-          deviceRotation &&
-          (deviceRotation.alpha > 1 || deviceRotation.alpha < -1) &&
-          (deviceRotation.gamma > 0.7 || deviceRotation.gamma < -0.7) &&
-          deviceRotation.beta > -0.2 &&
-          deviceRotation.beta < 0.2
+          video &amp;&amp;
+          trainingSource &amp;&amp;
+          deviceRotation &amp;&amp;
+          (deviceRotation.alpha > 1 || deviceRotation.alpha &lt; -1) &amp;&amp;
+          (deviceRotation.gamma > 0.7 || deviceRotation.gamma &lt; -0.7) &amp;&amp;
+          deviceRotation.beta > -0.2 &amp;&amp;
+          deviceRotation.beta &lt; 0.2
         )
           video.presentFullscreenPlayer()
       }
@@ -167,7 +195,7 @@ function PlayScreen (props) {
       headerTitle: getLessonInfo('subtitle', props.route.params.thisLesson.id),
       headerRight: props.isRTL
         ? () => (
-            <BackButton
+            &lt;BackButton
               onPress={() => {
                 lockPortrait(() => {})
                 props.navigation.goBack()
@@ -175,7 +203,7 @@ function PlayScreen (props) {
             />
           )
         : () => (
-            <PlayScreenHeaderButtons
+            &lt;PlayScreenHeaderButtons
               shareOnPress={() => setShowShareLessonModal(true)}
               completeOnPress={changeCompleteStatus}
               completeCondition={thisSetProgress.includes(
@@ -185,7 +213,7 @@ function PlayScreen (props) {
           ),
       headerLeft: props.isRTL
         ? () => (
-            <PlayScreenHeaderButtons
+            &lt;PlayScreenHeaderButtons
               shareOnPress={() => setShowShareLessonModal(true)}
               completeOnPress={changeCompleteStatus}
               completeCondition={thisSetProgress.includes(
@@ -194,7 +222,7 @@ function PlayScreen (props) {
             />
           )
         : () => (
-            <BackButton
+            &lt;BackButton
               onPress={() => {
                 lockPortrait(() => {})
                 props.navigation.goBack()
@@ -292,7 +320,7 @@ function PlayScreen (props) {
 
         // start downloading stuff if it's not downloaded
         if (
-          !props.route.params.isDownloaded &&
+          !props.route.params.isDownloaded &amp;&amp;
           !props.route.params.isDownloading
         )
           props.downloadMedia(
@@ -309,7 +337,7 @@ function PlayScreen (props) {
 
         // start downloading stuff if it's not downloaded
         if (
-          !props.route.params.isDownloaded &&
+          !props.route.params.isDownloaded &amp;&amp;
           !props.route.params.isDownloading
         ) {
           props.downloadMedia(
@@ -332,7 +360,7 @@ function PlayScreen (props) {
 
         // start downloading stuff if it's not downloaded
         if (
-          !props.route.params.isDownloaded &&
+          !props.route.params.isDownloaded &amp;&amp;
           !props.route.params.isDownloading
         )
           props.downloadMedia(
@@ -385,7 +413,7 @@ function PlayScreen (props) {
    */
   useEffect(() => {
     if (props.route.params.lessonType === 'v')
-      if (props.isConnected && !isMediaLoaded && trainingSource)
+      if (props.isConnected &amp;&amp; !isMediaLoaded &amp;&amp; trainingSource)
         loadVideoFile('video', trainingSource)
   }, [props.isConnected])
 
@@ -418,7 +446,7 @@ function PlayScreen (props) {
    * @function
    */
   useEffect(() => {
-    if (video && trainingSource) {
+    if (video &amp;&amp; trainingSource) {
       loadMedia('video', trainingSource)
     }
   }, [video, trainingSource])
@@ -428,7 +456,7 @@ function PlayScreen (props) {
    * @function
    */
   useEffect(() => {
-    if (props.route.params.lessonType === 'a' && storySource) {
+    if (props.route.params.lessonType === 'a' &amp;&amp; storySource) {
       loadMedia('audio', storySource)
     }
   }, [storySource])
@@ -566,8 +594,8 @@ function PlayScreen (props) {
         } else if (
           props.downloads[props.route.params.thisLesson.id] ||
           ((props.route.params.lessonType === 'qa' ||
-            props.route.params.lessonType === 'qav') &&
-            !props.isConnected &&
+            props.route.params.lessonType === 'qav') &amp;&amp;
+            !props.isConnected &amp;&amp;
             !props.route.params.isDownloaded)
         ) {
           swipeToScripture()
@@ -596,7 +624,7 @@ function PlayScreen (props) {
             }
         }
       } else if (
-        activeChapter === 'application' &&
+        activeChapter === 'application' &amp;&amp;
         !thisSetProgress.includes(
           getLessonInfo('index', props.route.params.thisLesson.id)
         )
@@ -640,16 +668,16 @@ function PlayScreen (props) {
     switch (props.route.params.lessonType) {
       case 'qa':
         if (
-          props.downloads[props.route.params.thisLesson.id] &&
+          props.downloads[props.route.params.thisLesson.id] &amp;&amp;
           props.downloads[props.route.params.thisLesson.id].progress === 1
         )
           props.removeDownload(props.route.params.thisLesson.id)
         break
       case 'qav':
         if (
-          props.downloads[props.route.params.thisLesson.id] &&
-          props.downloads[props.route.params.thisLesson.id + 'v'] &&
-          props.downloads[props.route.params.thisLesson.id].progress === 1 &&
+          props.downloads[props.route.params.thisLesson.id] &amp;&amp;
+          props.downloads[props.route.params.thisLesson.id + 'v'] &amp;&amp;
+          props.downloads[props.route.params.thisLesson.id].progress === 1 &amp;&amp;
           props.downloads[props.route.params.thisLesson.id + 'v'].progress === 1
         ) {
           props.removeDownload(props.route.params.thisLesson.id)
@@ -659,7 +687,7 @@ function PlayScreen (props) {
       case 'qv':
       case 'v':
         if (
-          props.downloads[props.route.params.thisLesson.id + 'v'] &&
+          props.downloads[props.route.params.thisLesson.id + 'v'] &amp;&amp;
           props.downloads[props.route.params.thisLesson.id + 'v'].progress === 1
         )
           props.removeDownload(props.route.params.thisLesson.id + 'v')
@@ -726,19 +754,19 @@ function PlayScreen (props) {
 
   /** The title section at the top of the screen. Only hidden on audio book lessons to make more room for the book viewer. */
   var titleSection = (
-    <View style={styles.titlesContainer}>
-      <Text
+    &lt;View style={styles.titlesContainer}>
+      &lt;Text
         style={StandardTypography(props, 'h3', 'Black', 'center', colors.shark)}
         numberOfLines={1}
       >
         {props.route.params.thisLesson.title}
-      </Text>
-    </View>
+      &lt;/Text>
+    &lt;/View>
   )
 
   return (
-    <View style={styles.screen}>
-      <View
+    &lt;View style={styles.screen}>
+      &lt;View
         style={[
           styles.topHalfContainer,
           {
@@ -747,7 +775,7 @@ function PlayScreen (props) {
         ]}
       >
         {/* don't display title section on audio book lessons */}
-        {props.route.params.lessonType !== 'a' &&
+        {props.route.params.lessonType !== 'a' &amp;&amp;
         props.route.params.lessonType !== ''
           ? titleSection
           : null}
@@ -760,12 +788,12 @@ function PlayScreen (props) {
         */}
         {props.route.params.lessonType === 'a' ||
         props.route.params.lessonType === '' ? (
-          <BookView
+          &lt;BookView
             thisLesson={props.route.params.thisLesson}
             titleSection={titleSection}
           />
         ) : activeChapter === 'training' ? (
-          <VideoPlayer
+          &lt;VideoPlayer
             videoSource={trainingSource}
             setVideo={setVideo}
             video={video}
@@ -793,7 +821,7 @@ function PlayScreen (props) {
             // }
           />
         ) : (
-          <AlbumArtSwiper
+          &lt;AlbumArtSwiper
             setAlbumArtSwiperRef={setAlbumArtSwiperRef}
             iconName={props.route.params.thisSet.iconName}
             thisLesson={props.route.params.thisLesson}
@@ -803,15 +831,15 @@ function PlayScreen (props) {
             isMediaPlaying={isMediaPlaying}
           />
         )}
-      </View>
+      &lt;/View>
 
       {/* AUDIO CONTROLS */}
       {props.route.params.lessonType !== '' ? (
         isMediaLoaded ? (
-          <SafeAreaView style={styles.audioControlContainer}>
-            {props.route.params.lessonType !== 'v' &&
+          &lt;SafeAreaView style={styles.audioControlContainer}>
+            {props.route.params.lessonType !== 'v' &amp;&amp;
             props.route.params.lessonType !== 'a' ? (
-              <ChapterSelect
+              &lt;ChapterSelect
                 activeChapter={activeChapter}
                 lessonID={props.route.params.thisLesson.id}
                 onPress={chapter => changeChapter(chapter)}
@@ -819,14 +847,14 @@ function PlayScreen (props) {
                 isDownloaded={props.route.params.isDownloaded}
               />
             ) : null}
-            <Scrubber
+            &lt;Scrubber
               value={seekPosition}
               onSlidingComplete={playFromLocation}
               onValueChange={() => (shouldThumbUpdate.current = false)}
               maximumValue={mediaLength}
               seekPosition={seekPosition}
             />
-            <PlaybackControls
+            &lt;PlaybackControls
               isMediaPlaying={isMediaPlaying}
               // isVideoBuffering={isVideoBuffering}
               onPlayPress={playHandler}
@@ -834,16 +862,16 @@ function PlayScreen (props) {
                 playFromLocation(seekPosition + value)
               }}
             />
-          </SafeAreaView>
+          &lt;/SafeAreaView>
         ) : (
-          <SafeAreaView style={styles.audioControlContainer}>
-            <ActivityIndicator size='large' color={colors.shark} />
-          </SafeAreaView>
+          &lt;SafeAreaView style={styles.audioControlContainer}>
+            &lt;ActivityIndicator size='large' color={colors.shark} />
+          &lt;/SafeAreaView>
         )
       ) : null}
 
       {/* MODALS */}
-      <ShareModal
+      &lt;ShareModal
         isVisible={showShareLessonModal}
         hideModal={() => setShowShareLessonModal(false)}
         closeText={props.translations.general.close}
@@ -851,7 +879,7 @@ function PlayScreen (props) {
         lessonType={props.route.params.lessonType}
         set={props.route.params.thisSet}
       />
-      <MessageModal
+      &lt;MessageModal
         isVisible={showSetCompleteModal}
         hideModal={() => setShowSetCompleteModal(false)}
         title={props.translations.general.popups.set_complete_title}
@@ -862,7 +890,7 @@ function PlayScreen (props) {
           props.navigation.goBack()
         }}
       >
-        <Image
+        &lt;Image
           source={require('../assets/gifs/set_complete.gif')}
           style={{
             height: 200 * scaleMultiplier,
@@ -871,8 +899,8 @@ function PlayScreen (props) {
             resizeMode: 'contain'
           }}
         />
-      </MessageModal>
-    </View>
+      &lt;/MessageModal>
+    &lt;/View>
   )
 }
 
@@ -942,8 +970,31 @@ function mapDispatchToProps (dispatch) {
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayScreen)
 
-/* <HomeworkModal
+/* &lt;HomeworkModal
         isVisible={showHomeworkModal}
         hideModal={() => setShowHomeworkModal(false)}
         homework={props.route.params.thisLesson.homework}
 /> */
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-PlayScreen.html">PlayScreen</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jan 12 2021 10:49:12 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

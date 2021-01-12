@@ -20,13 +20,22 @@ LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state'
 ])
 
+/**
+ * Component for the add set screen, which shows a list of available story sets to add in a specific category.
+ * @param {*} props
+ */
 function AddSetScreen (props) {
-  const [setItemMode, setSetItemMode] = useState('')
-  const [onPress, setOnPress] = useState(() => {})
+  /** Whether the snackbar that pops up upon adding a set is visible or not.  */
   const [showSnackbar, setShowSnackbar] = useState(false)
+
+  /** State for header title. Stored in state because it changes depending on which category we're viewing the story sets for. */
   const [headerTitle, setHeaderTitle] = useState('')
+
+  /** Keeps track of the tags we have. Only for adding topical sets. Tags are retrieved from the database. */
   const [tags, setTags] = useState([])
-  const [activeTags, setActiveTags] = useState([])
+
+  /** Keeps tra */
+  const [activeTag, setActiveTag] = useState([])
   const [tagSelectRef, setTagSelectRef] = useState()
   const [refresh, setRefresh] = useState(false)
 
@@ -89,7 +98,7 @@ function AddSetScreen (props) {
     <TagGroup
       source={tags}
       singleChoiceMode
-      onSelectedTagChange={selected => setActiveTags(selected)}
+      onSelectedTagChange={selected => setActiveTag(selected)}
       style={{
         paddingHorizontal: 10,
         paddingTop: 10,
@@ -123,7 +132,7 @@ function AddSetScreen (props) {
       <SetItem
         thisSet={setList.item}
         isSmall={false}
-        mode='addset'
+        mode='addset_screen'
         onSetSelect={() => {
           setSetInModal(setList.item)
           setShowSetInfoModal(true)
@@ -152,12 +161,10 @@ function AddSetScreen (props) {
                     )
                 )
                 .filter(topicalAddedSet => {
-                  return activeTags.length === 0 ||
-                    activeTags.includes(
-                      props.translations.add_set.all_tag_label
-                    )
+                  return activeTag.length === 0 ||
+                    activeTag.includes(props.translations.add_set.all_tag_label)
                     ? true
-                    : topicalAddedSet.tags.some(tag => activeTags.includes(tag))
+                    : topicalAddedSet.tags.some(tag => activeTag.includes(tag))
                 })
                 .sort((a, b) => {
                   if (

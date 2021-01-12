@@ -6,7 +6,7 @@ ROOT (conditionally renders):
   > MAINDRAWER
     > drawer
     > MAINSTACK
-      > lessonlist
+      > lessons
       > play 
       > groups
       > addEditGroup (add)
@@ -19,7 +19,7 @@ ROOT (conditionally renders):
       > securityOnboarding  
       > keyOrderSet (5 variants) 
       > game
-      > SETTABS
+      > STORYSETTABS
         > set (core)
         > set (topical)
         > set (mt) (rendered conditionally)

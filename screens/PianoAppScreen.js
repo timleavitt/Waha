@@ -44,7 +44,7 @@ function PianoAppScreen (props) {
       } else
         props.navigation.reset({
           index: 0,
-          routes: [{ name: 'SetTabs' }]
+          routes: [{ name: 'StorySetTabs' }]
         })
     }
   }, [pattern])

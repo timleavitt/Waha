@@ -22,7 +22,18 @@ import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
 // import { logCompleteStorySet } from '../redux/LogEventFunctions'
 
-function LessonListScreen (props) {
+function LessonsScreen ({
+  downloads,
+  isRTL,
+  activeDatabase,
+  activeGroup,
+  translations,
+  font,
+  navigation: { goBack, setOptions },
+  route: {
+    params: { thisSet }
+  }
+}) {
   //+ STATE
 
   // keeps track of which lessons are downloaded
@@ -344,7 +355,7 @@ function LessonListScreen (props) {
           }
         ]}
       >
-        <SetItem thisSet={props.route.params.thisSet} mode='lessonlist' />
+        <SetItem thisSet={props.route.params.thisSet} mode='lessons_screen' />
       </View>
       <SwipeListView
         data={props.route.params.thisSet.lessons}
@@ -486,4 +497,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LessonListScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(LessonsScreen)
