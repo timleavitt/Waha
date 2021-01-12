@@ -1,3 +1,4 @@
+import * as ScreenOrientation from 'expo-screen-orientation'
 import i18n from 'i18n-js'
 import { Dimensions, PixelRatio } from 'react-native'
 
@@ -429,4 +430,31 @@ export function getSetInfo (type, setID) {
       }
       break
   }
+}
+
+export function lockPortrait (thenFunction) {
+  ScreenOrientation.supportsOrientationLockAsync(
+    ScreenOrientation.OrientationLock.PORTRAIT
+  ).then(isSupported => {
+    if (isSupported) {
+      console.log('locking portrait')
+      ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT
+      ).then(() => {
+        thenFunction()
+      })
+    } else {
+      console.log('locking portrait up')
+      ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT_UP
+      ).then(() => {
+        thenFunction()
+      })
+    }
+  })
+}
+
+export function lockLandscape () {
+  console.log('locking landscape')
+  ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
 }
