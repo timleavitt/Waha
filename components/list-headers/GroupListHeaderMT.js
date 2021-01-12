@@ -2,8 +2,8 @@ import * as FileSystem from 'expo-file-system'
 import React, { useEffect } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../../constants'
-import { BrandTypography } from '../../styles/typography'
+import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
+import { StandardTypography } from '../../styles/typography'
 function GroupListHeaderMT (props) {
   //+ FUNCTIONS
 
@@ -33,7 +33,7 @@ function GroupListHeaderMT (props) {
   //   >
   //     <Text
   //       style={{
-  //         fontFamily: props.font + '-regular',
+  //         fontFamily: props.font + '-Regular',
   //         fontSize: 14 * scaleMultiplier,
   //         color: colors.chateau,
   //         textAlign: 'center'
@@ -61,17 +61,26 @@ function GroupListHeaderMT (props) {
     >
       <View>
         <Text
-          style={BrandTypography(props, 'h3', 'medium', 'left', colors.chateau)}
-        >
-          {props.translations.general.brands[props.languageID] +
-            ' ' +
-            props.translations.mobilization_tools.groups_label}
-        </Text>
-        <Text
-          style={BrandTypography(
+          style={StandardTypography(
             props,
             'h3',
-            'regular',
+            'Bold',
+            'left',
+            colors.chateau
+          )}
+        >
+          {
+            props.translations.general.brands[props.languageID]
+            // +
+            //   ' ' +
+            //   props.translations.mobilization_tools.groups_label
+          }
+        </Text>
+        {/* <Text
+          style={StandardTypography(
+            props,
+            'h3',
+            'Regular',
             'left',
             colors.chateau
           )}
@@ -80,7 +89,7 @@ function GroupListHeaderMT (props) {
             props.translations.mobilization_tools
               .mobilization_tools_status_label
           }
-        </Text>
+        </Text> */}
       </View>
       <Image
         style={styles.languageLogo}
@@ -123,7 +132,7 @@ function mapStateToProps (state) {
     groups: state.groups,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language)
   }
 }
 

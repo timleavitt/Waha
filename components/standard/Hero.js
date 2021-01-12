@@ -1,7 +1,7 @@
 import React from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
 import Separator from '../standard/Separator'
 
 function Hero (props) {
@@ -35,8 +35,9 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font,
-    isRTL: state.database[activeGroup.language].isRTL
+    font: getLanguageFont(activeGroup.language),
+    isRTL: state.database[activeGroup.language].isRTL,
+    activeGroup: activeGroup
   }
 }
 

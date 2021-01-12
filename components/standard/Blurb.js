@@ -1,14 +1,20 @@
 import React from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../../constants'
-import { BrandTypography } from '../../styles/typography'
+import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
+import { StandardTypography } from '../../styles/typography'
 
 function Blurb (props) {
   return (
     <View style={{ width: '100%', padding: 20 * scaleMultiplier }}>
       <Text
-        style={BrandTypography(props, 'p', 'regular', 'center', colors.shark)}
+        style={StandardTypography(
+          props,
+          'p',
+          'Regular',
+          'center',
+          colors.shark
+        )}
       >
         {props.text}
       </Text>
@@ -21,7 +27,8 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup
   }
 }
 

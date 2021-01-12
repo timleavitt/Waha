@@ -3,7 +3,7 @@ import { Audio } from 'expo-av'
 import * as Font from 'expo-font'
 import * as ScreenOrientation from 'expo-screen-orientation'
 import React, { useEffect, useState } from 'react'
-import { StatusBar } from 'react-native'
+import { StatusBar, Text } from 'react-native'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
 import LoadingView from './components/LoadingView'
@@ -11,6 +11,11 @@ import { colors } from './constants'
 import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
 
+// set the max font scaling allowed
+Text.defaultProps = {
+  ...Text.defaultProps,
+  maxFontSizeMultiplier: 1.2
+}
 // only here because of wack errors, DON'T DELETE
 if (!global.btoa) {
   global.btoa = encode
@@ -65,22 +70,22 @@ export default function App () {
       waha: require('./assets/fonts/waha.ttf')
     })
     await Font.loadAsync({
-      'roboto-black': require('./assets/fonts/Roboto/Roboto-Black.ttf')
+      'Roboto-Black': require('./assets/fonts/Roboto/Roboto-Black.ttf')
     })
     await Font.loadAsync({
-      'roboto-medium': require('./assets/fonts/Roboto/Roboto-Medium.ttf')
+      'Roboto-Bold': require('./assets/fonts/Roboto/Roboto-Medium.ttf')
     })
     await Font.loadAsync({
-      'roboto-regular': require('./assets/fonts/Roboto/Roboto-Regular.ttf')
+      'Roboto-Regular': require('./assets/fonts/Roboto/Roboto-Regular.ttf')
     })
     await Font.loadAsync({
-      'tajawal-black': require('./assets/fonts/Tajawal/Tajawal-Black.ttf')
+      'NotoSansArabic-Black': require('./assets/fonts/NotoSansArabic/NotoSansArabic-SemiCondensedBlack.ttf')
     })
     await Font.loadAsync({
-      'tajawal-medium': require('./assets/fonts/Tajawal/Tajawal-Medium.ttf')
+      'NotoSansArabic-Bold': require('./assets/fonts/NotoSansArabic/NotoSansArabic-SemiCondensedSemiBold.ttf')
     })
     await Font.loadAsync({
-      'tajawal-regular': require('./assets/fonts/Tajawal/Tajawal-Regular.ttf')
+      'NotoSansArabic-Regular': require('./assets/fonts/NotoSansArabic/NotoSansArabic-SemiCondensed.ttf')
     })
     setFontsLoaded(true)
   }

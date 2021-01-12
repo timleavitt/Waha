@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import OnboardingSwiper from '../components/OnboardingSwiper'
 import BackButton from '../components/standard/BackButton'
-import { colors } from '../constants'
+import { colors, getLanguageFont } from '../constants'
 
 function SecurityOnboardingSlidesScreen (props) {
   //+ STATE
@@ -78,8 +78,9 @@ function mapStateToProps (state) {
   )[0]
   return {
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font,
-    isRTL: state.database[activeGroup.language].isRTL
+    font: getLanguageFont(activeGroup.language),
+    isRTL: state.database[activeGroup.language].isRTL,
+    activeGroup: activeGroup
   }
 }
 

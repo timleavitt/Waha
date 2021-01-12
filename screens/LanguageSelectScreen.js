@@ -153,6 +153,17 @@ function LanguageSelectScreen (props) {
           selectedLanguage: selectedLanguage
         })
       }
+    } else {
+      Alert.alert(
+        i18n.t('pleaseSelectLanguageTitle'),
+        i18n.t('pleaseSelectLanguageMessage'),
+        [
+          {
+            text: i18n.t('ok'),
+            onPress: () => {}
+          }
+        ]
+      )
     }
   }
 
@@ -213,11 +224,14 @@ function LanguageSelectScreen (props) {
   var headerText =
     props.route.name === 'LanguageSelect' ? (
       <View
-        style={{ marginVertical: 40 * scaleMultiplier, paddingHorizontal: 20 }}
+        style={{
+          marginVertical: 20 * scaleMultiplier,
+          paddingHorizontal: 20
+        }}
       >
         <Text
           style={[
-            SystemTypography(false, 'h1', 'medium', 'center', colors.shark)
+            SystemTypography(false, 'h1', 'Bold', 'center', colors.shark)
           ]}
         >
           {i18n.t('welcome')}
@@ -226,7 +240,7 @@ function LanguageSelectScreen (props) {
           style={SystemTypography(
             false,
             'h2',
-            'regular',
+            'Regular',
             'center',
             colors.shark
           )}
@@ -234,7 +248,9 @@ function LanguageSelectScreen (props) {
           {i18n.t('selectLanguage')}
         </Text>
       </View>
-    ) : null
+    ) : (
+      <View style={{ width: '100%', height: 20 * scaleMultiplier }} />
+    )
 
   function renderLanguage (item) {
     return (
@@ -276,7 +292,7 @@ function LanguageSelectScreen (props) {
           style={SystemTypography(
             false,
             'h3',
-            'regular',
+            'Regular',
             'left',
             colors.chateau
           )}
@@ -379,9 +395,9 @@ function LanguageSelectScreen (props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 40 * scaleMultiplier
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+    // paddingTop: 40 * scaleMultiplier
   },
   buttonContainer: {
     borderRadius: 10,

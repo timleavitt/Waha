@@ -8,7 +8,7 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 
 // renders a simple touchable item within the main navigation drawer
 function HomeworkItem (props) {
@@ -42,7 +42,7 @@ function HomeworkItem (props) {
           style={{
             fontSize: 16 * scaleMultiplier,
             color: colors.shark,
-            fontFamily: props.font + '-black',
+            fontFamily: props.font + '-Black',
             marginVertical: 5
           }}
         >
@@ -52,7 +52,7 @@ function HomeworkItem (props) {
           style={{
             fontSize: 14 * scaleMultiplier,
             color: colors.tuna,
-            fontFamily: props.font + '-regular'
+            fontFamily: props.font + '-Regular'
           }}
         >
           {props.description}
@@ -87,7 +87,8 @@ function mapStateToProps (state) {
   )[0]
   return {
     isRTL: state.database[activeGroup.language].isRTL,
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup
   }
 }
 

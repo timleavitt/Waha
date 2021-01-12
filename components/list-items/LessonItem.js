@@ -2,9 +2,15 @@
 import React, { useEffect } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLessonInfo, scaleMultiplier } from '../../constants'
+import {
+  colors,
+  getLanguageFont,
+  getLessonInfo,
+  itemHeights,
+  scaleMultiplier
+} from '../../constants'
 import { removeDownload } from '../../redux/actions/downloadActions'
-import { BrandTypography } from '../../styles/typography'
+import { StandardTypography } from '../../styles/typography'
 import DownloadStatusIndicator from '../DownloadStatusIndicator'
 function LessonItem (props) {
   //+ CONSTRUCTOR
@@ -61,7 +67,10 @@ function LessonItem (props) {
     <View
       style={[
         styles.lessonItem,
-        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        {
+          flexDirection: props.isRTL ? 'row-reverse' : 'row',
+          height: itemHeights[props.font].LessonItem
+        }
       ]}
     >
       {/* main touchable area */}
@@ -100,10 +109,10 @@ function LessonItem (props) {
           }}
         >
           <Text
-            style={BrandTypography(
+            style={StandardTypography(
               props,
               'h4',
-              'medium',
+              'Bold',
               'left',
               props.isComplete ? colors.chateau : colors.shark
             )}
@@ -112,10 +121,10 @@ function LessonItem (props) {
             {props.thisLesson.title}
           </Text>
           <Text
-            style={BrandTypography(
+            style={StandardTypography(
               props,
               'd',
-              'regular',
+              'Regular',
               'left',
               colors.chateau
             )}
@@ -143,12 +152,13 @@ function LessonItem (props) {
 
 const styles = StyleSheet.create({
   lessonItem: {
-    height: 68 * scaleMultiplier,
+    // height: 80 * scaleMultiplier,
     // aspectRatio: 6.1,
     flexDirection: 'row',
     backgroundColor: colors.aquaHaze,
     flex: 1,
     paddingLeft: 20
+    // paddingVertical: 5
   },
   progressAndTitle: {
     justifyContent: 'flex-start',
@@ -175,7 +185,7 @@ function mapStateToProps (state) {
     downloads: state.downloads,
     translations: state.database[activeGroup.language].translations,
     isConnected: state.network.isConnected,
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language)
   }
 }
 

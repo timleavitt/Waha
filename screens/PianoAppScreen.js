@@ -1,3 +1,4 @@
+import { useBackHandler } from '@react-native-community/hooks'
 import { Audio } from 'expo-av'
 import React, { useEffect, useState } from 'react'
 import {
@@ -13,9 +14,9 @@ import {
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import Piano from '../components/piano-stuff/Piano'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import { setIsMuted, setIsTimedOut } from '../redux/actions/securityActions'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 
 function PianoAppScreen (props) {
   //+ STATE
@@ -48,6 +49,11 @@ function PianoAppScreen (props) {
     }
   }, [pattern])
 
+  // disable back button on this screen
+  useBackHandler(() => {
+    return true
+  })
+
   //+ RENDER
 
   return (
@@ -72,7 +78,7 @@ function PianoAppScreen (props) {
         />
         <Text
           style={[
-            BrandTypography(props, 'h1', 'medium', 'center', colors.shark),
+            StandardTypography(props, 'h1', 'Bold', 'center', colors.shark),
             { paddingHorizontal: 10 }
           ]}
         >
@@ -120,10 +126,10 @@ function PianoAppScreen (props) {
               }}
             >
               <Text
-                style={BrandTypography(
+                style={StandardTypography(
                   props,
                   'h2',
-                  'regular',
+                  'Regular',
                   'center',
                   colors.white
                 )}
@@ -214,7 +220,8 @@ function mapStateToProps (state) {
   )[0]
   return {
     security: state.security,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations
   }
 }

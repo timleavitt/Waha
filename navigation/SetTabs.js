@@ -1,7 +1,12 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import React from 'react'
 import { connect } from 'react-redux'
-import { colors, getSetInfo, scaleMultiplier } from '../constants'
+import {
+  colors,
+  getLanguageFont,
+  getSetInfo,
+  scaleMultiplier
+} from '../constants'
 import SetScreen from '../screens/SetScreen'
 
 const Tab = createMaterialTopTabNavigator()
@@ -75,7 +80,7 @@ function SetTabs (props) {
         },
         labelStyle: {
           fontSize: 14 * scaleMultiplier,
-          fontFamily: props.font + '-medium',
+          fontFamily: props.font + '-Bold',
           textTransform: 'none'
         },
         activeTintColor: props.primaryColor,
@@ -103,7 +108,7 @@ function mapStateToProps (state) {
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     primaryColor: state.database[activeGroup.language].primaryColor,
     activeGroup: activeGroup,
     activeDatabase: state.database[activeGroup.language]

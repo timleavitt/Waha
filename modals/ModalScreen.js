@@ -3,8 +3,8 @@ import React from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
-import { BrandTypography } from '../styles/typography'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { StandardTypography } from '../styles/typography'
 
 function ModalScreen (props) {
   return (
@@ -67,10 +67,10 @@ function ModalScreen (props) {
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
               <Text
-                style={BrandTypography(
+                style={StandardTypography(
                   props,
                   'h3',
-                  'medium',
+                  'Bold',
                   'center',
                   colors.shark
                 )}
@@ -106,7 +106,7 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language)
   }
 }
 

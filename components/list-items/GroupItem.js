@@ -1,12 +1,17 @@
 import React, { useState } from 'react'
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLessonInfo, scaleMultiplier } from '../../constants'
+import {
+  colors,
+  getLanguageFont,
+  getLessonInfo,
+  scaleMultiplier
+} from '../../constants'
 import {
   changeActiveGroup,
   deleteGroup
 } from '../../redux/actions/groupsActions'
-import { BrandTypography } from '../../styles/typography'
+import { StandardTypography } from '../../styles/typography'
 import GroupAvatar from '../GroupAvatar'
 function GroupItem (props) {
   // FUNCTIONS
@@ -162,13 +167,13 @@ function GroupItem (props) {
           ]}
         >
           <Text
-            style={BrandTypography(
+            style={StandardTypography(
               {
-                font: props.database[thisGroup.language].font,
+                font: getLanguageFont(thisGroup.language),
                 isRTL: props.isRTL
               },
               'h3',
-              'black',
+              'Black',
               'left',
               colors.shark
             )}
@@ -176,15 +181,16 @@ function GroupItem (props) {
           >
             {props.groupName}
           </Text>
-          {getBookmarkText() === '' ? null : (
+          {/* {getBookmarkText() === '' ? null : (
             <Text
-              style={BrandTypography(
+              maxFontSizeMultiplier={1.2}
+              style={StandardTypography(
                 {
                   font: props.database[thisGroup.language].font,
                   isRTL: props.isRTL
                 },
                 'd',
-                'regular',
+                'Regular',
                 'left',
                 colors.chateau
               )}
@@ -192,19 +198,24 @@ function GroupItem (props) {
             >
               {getBookmarkText().set}
             </Text>
-          )}
+          )} */}
           {getBookmarkText() === '' ? null : (
             <Text
-              style={BrandTypography(
+              style={[
+                StandardTypography(
+                  {
+                    font: getLanguageFont(thisGroup.language),
+                    isRTL: props.isRTL
+                  },
+                  'd',
+                  'Regular',
+                  'left',
+                  colors.chateau
+                ),
                 {
-                  font: props.database[thisGroup.language].font,
-                  isRTL: props.isRTL
-                },
-                'd',
-                'regular',
-                'left',
-                colors.chateau
-              )}
+                  // lineHeight: 12 * scaleMultiplier
+                }
+              ]}
               numberOfLines={1}
             >
               {getBookmarkText().lesson}
@@ -267,7 +278,7 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     groups: state.groups,
     activeGroup: activeGroup,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     translations: state.database[activeGroup.language].translations
   }
 }

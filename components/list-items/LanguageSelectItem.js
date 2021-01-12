@@ -56,7 +56,7 @@ function LanguageSelectItem (props) {
             style={SystemTypography(
               false,
               'h3',
-              'medium',
+              'Bold',
               'left',
               colors.shark,
               props.font
@@ -68,7 +68,7 @@ function LanguageSelectItem (props) {
             style={SystemTypography(
               false,
               'p',
-              'regular',
+              'Regular',
               'left',
               colors.shark
             )}

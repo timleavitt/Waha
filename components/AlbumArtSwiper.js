@@ -11,8 +11,8 @@ import {
 import { connect } from 'react-redux'
 import SVG from '../assets/svg'
 import SwipeBar from '../components/SwipeBar'
-import { colors, scaleMultiplier } from '../constants'
-import { BrandTypography } from '../styles/typography'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { StandardTypography } from '../styles/typography'
 
 function AlbumArtSwiper (props) {
   //+ STATE
@@ -176,10 +176,10 @@ function AlbumArtSwiper (props) {
                 ? () => (
                     <View style={{ paddingHorizontal: 10, marginBottom: 10 }}>
                       <Text
-                        style={BrandTypography(
+                        style={StandardTypography(
                           props,
                           'd',
-                          'regular',
+                          'Regular',
                           'center',
                           colors.chateau
                         )}
@@ -187,10 +187,10 @@ function AlbumArtSwiper (props) {
                         {props.translations.play.copyright_for_text + '\n'}
                       </Text>
                       <Text
-                        style={BrandTypography(
+                        style={StandardTypography(
                           props,
                           'd',
-                          'regular',
+                          'Regular',
                           'center',
                           colors.chateau
                         )}
@@ -283,12 +283,18 @@ function AlbumArtSwiper (props) {
     return (
       <View style={{ paddingHorizontal: 20 }}>
         <Text
-          style={BrandTypography(props, 'h3', 'medium', 'left', colors.shark)}
+          style={StandardTypography(props, 'h3', 'Bold', 'left', colors.shark)}
         >
           {textList.item.header}
         </Text>
         <Text
-          style={BrandTypography(props, 'h3', 'regular', 'left', colors.shark)}
+          style={StandardTypography(
+            props,
+            'h3',
+            'Regular',
+            'left',
+            colors.shark
+          )}
         >
           {textList.item.text}
         </Text>
@@ -351,7 +357,7 @@ function mapStateToProps (state) {
   return {
     activeGroup: activeGroup,
     activeDatabase: state.database[activeGroup.language],
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     translations: state.database[activeGroup.language].translations,
     isRTL: state.database[activeGroup.language].isRTL
   }

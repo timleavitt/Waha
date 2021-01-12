@@ -1,8 +1,8 @@
 import React from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
-import { BrandTypography } from '../styles/typography'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { StandardTypography } from '../styles/typography'
 
 function BookView (props) {
   return (
@@ -22,7 +22,7 @@ function BookView (props) {
         renderItem={paragraphList => (
           <Text
             style={[
-              BrandTypography(props, 'h4', 'regular', 'left', colors.shark),
+              StandardTypography(props, 'h4', 'Regular', 'left', colors.shark),
               { marginHorizontal: 10 }
             ]}
           >
@@ -57,7 +57,8 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup,
     isRTL: state.database[activeGroup.language].isRTL
   }
 }

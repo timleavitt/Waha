@@ -1,10 +1,26 @@
+import * as ScreenOrientation from 'expo-screen-orientation'
 import i18n from 'i18n-js'
-import { Dimensions } from 'react-native'
+import { Dimensions, PixelRatio } from 'react-native'
+
+const fontScale =
+  PixelRatio.getFontScale() >= 1.2 ? 1.2 : PixelRatio.getFontScale()
+const heightScaleModifier = 1 + (fontScale - 1) / 2
 
 export const scaleMultiplier =
   Dimensions.get('window').width > 400
     ? 1
     : Dimensions.get('window').width / 400
+
+export const itemHeights = {
+  Roboto: {
+    LessonItem: 60 * heightScaleModifier,
+    SetItem: 95 * heightScaleModifier
+  },
+  NotoSansArabic: {
+    LessonItem: 83 * heightScaleModifier,
+    SetItem: 108 * heightScaleModifier
+  }
+}
 
 export const languageT2S = {
   en: require('./assets/languageT2S/en.mp3'),
@@ -240,7 +256,7 @@ export const languages = [
   {
     i18nName: 'english',
     languageCode: 'en',
-    font: 'roboto',
+    font: 'Roboto',
     isRTL: false,
     data: [
       {
@@ -255,7 +271,7 @@ export const languages = [
   {
     i18nName: 'arabic',
     languageCode: 'ar',
-    font: 'tajawal',
+    font: 'NotoSansArabic',
     isRTL: true,
     data: [
       {
@@ -280,13 +296,22 @@ export function getSystemIsRTL () {
 }
 
 export function getSystemFont () {
-  systemFont = 'roboto'
+  systemFont = 'Roboto'
   languages.forEach(languageFamily => {
     if (i18n.locale.slice(0, 2) === languageFamily.languageCode) {
       systemFont = languageFamily.font
     }
   })
   return systemFont
+}
+
+export function getLanguageFont (languageID) {
+  var languageFont
+  languages.forEach(languageFamily => {
+    if (languageFamily.data.some(language => language.wahaID === languageID))
+      languageFont = languageFamily.font
+  })
+  return languageFont
 }
 
 export const keyColors = {
@@ -405,4 +430,31 @@ export function getSetInfo (type, setID) {
       }
       break
   }
+}
+
+export function lockPortrait (thenFunction) {
+  ScreenOrientation.supportsOrientationLockAsync(
+    ScreenOrientation.OrientationLock.PORTRAIT
+  ).then(isSupported => {
+    if (isSupported) {
+      console.log('locking portrait')
+      ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT
+      ).then(() => {
+        thenFunction()
+      })
+    } else {
+      console.log('locking portrait up')
+      ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT_UP
+      ).then(() => {
+        thenFunction()
+      })
+    }
+  })
+}
+
+export function lockLandscape () {
+  console.log('locking landscape')
+  ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
 }

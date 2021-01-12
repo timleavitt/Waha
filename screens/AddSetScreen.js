@@ -6,10 +6,15 @@ import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
 import BackButton from '../components/standard/BackButton'
 import Separator from '../components/standard/Separator'
-import { colors, getSetInfo, scaleMultiplier } from '../constants'
+import {
+  colors,
+  getLanguageFont,
+  getSetInfo,
+  scaleMultiplier
+} from '../constants'
 import SetInfoModal from '../modals/SetInfoModal'
 import { addSet } from '../redux/actions/groupsActions'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state'
@@ -98,7 +103,7 @@ function AddSetScreen (props) {
         alignItems: 'center',
         paddingHorizontal: 20 * scaleMultiplier
       }}
-      textStyle={{ color: colors.oslo, fontFamily: props.font + '-regular' }}
+      textStyle={{ color: colors.oslo, fontFamily: props.font + '-Regular' }}
       activeTagStyle={{
         borderRadius: 20,
         // make primary color
@@ -107,7 +112,7 @@ function AddSetScreen (props) {
       }}
       activeTextStyle={{
         color: colors.white,
-        fontFamily: props.font + '-regular'
+        fontFamily: props.font + '-Regular'
       }}
     />
   )
@@ -222,10 +227,10 @@ function AddSetScreen (props) {
         ListEmptyComponent={
           <View style={{ width: '100%', margin: 10 }}>
             <Text
-              style={BrandTypography(
+              style={StandardTypography(
                 props,
                 'p',
-                'regular',
+                'Regular',
                 'center',
                 colors.chateau
               )}
@@ -241,7 +246,7 @@ function AddSetScreen (props) {
         messageStyle={{
           color: colors.white,
           fontSize: 24 * scaleMultiplier,
-          fontFamily: props.font + '-black',
+          fontFamily: props.font + '-Black',
           textAlign: 'center'
         }}
         backgroundColor={colors.apple}
@@ -272,7 +277,7 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     translations: state.database[activeGroup.language].translations,
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],

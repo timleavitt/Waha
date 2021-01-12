@@ -8,13 +8,19 @@ import LessonSwipeBackdrop from '../components/list-items/LessonSwipeBackdrop'
 import SetItem from '../components/list-items/SetItem'
 import OptionsModalButton from '../components/OptionsModalButton'
 import BackButton from '../components/standard/BackButton'
-import { colors, getLessonInfo, scaleMultiplier } from '../constants'
+import {
+  colors,
+  getLanguageFont,
+  getLessonInfo,
+  itemHeights,
+  scaleMultiplier
+} from '../constants'
 import MessageModal from '../modals/MessageModal'
 import OptionsModal from '../modals/OptionsModal'
 import ShareModal from '../modals/ShareModal'
 import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
-import { logCompleteStorySet } from '../redux/LogEventFunctions'
+// import { logCompleteStorySet } from '../redux/LogEventFunctions'
 
 function LessonListScreen (props) {
   //+ STATE
@@ -255,10 +261,10 @@ function LessonListScreen (props) {
         props.route.params.thisSet.lessons.length - 1 &&
       !thisSetProgress.includes(getLessonInfo('index', activeLessonInModal.id))
     ) {
-      logCompleteStorySet(
-        props.route.params.thisSet,
-        props.activeGroup.language
-      )
+      // logCompleteStorySet(
+      //   props.route.params.thisSet,
+      //   props.activeGroup.language
+      // )
       setShowSetCompleteModal(true)
     }
   }
@@ -330,7 +336,14 @@ function LessonListScreen (props) {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.studySetItemContainer}>
+      <View
+        style={[
+          styles.studySetItemContainer,
+          {
+            height: itemHeights[props.font].SetItem
+          }
+        ]}
+      >
         <SetItem thisSet={props.route.params.thisSet} mode='lessonlist' />
       </View>
       <SwipeListView
@@ -454,7 +467,8 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],
     activeGroup: activeGroup,
-    translations: state.database[activeGroup.language].translations
+    translations: state.database[activeGroup.language].translations,
+    font: getLanguageFont(activeGroup.language)
   }
 }
 

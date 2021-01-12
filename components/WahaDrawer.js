@@ -6,9 +6,9 @@ import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import DrawerItem from '../components/list-items/DrawerItem'
 import SmallDrawerItem from '../components/list-items/SmallDrawerItem'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 
 function WahaDrawer (props) {
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
@@ -37,7 +37,13 @@ function WahaDrawer (props) {
           />
         </View>
         <Text
-          style={BrandTypography(props, 'h2', 'black', 'center', colors.white)}
+          style={StandardTypography(
+            props,
+            'h2',
+            'Black',
+            'center',
+            colors.white
+          )}
           numberOfLines={2}
         >
           {props.activeGroup.name}
@@ -115,15 +121,15 @@ function WahaDrawer (props) {
             }}
           >
             <Text
-              style={BrandTypography(
+              style={StandardTypography(
                 props,
                 'd',
-                'regular',
+                'Regular',
                 'left',
                 colors.chateau
               )}
             >
-              v1.0.3
+              v1.0.1
             </Text>
           </View>
         </SafeAreaView>
@@ -180,7 +186,7 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language)
   }
 }
 

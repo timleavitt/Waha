@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../../constants'
-import { BrandTypography, SystemTypography } from '../../styles/typography'
+import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
+import { StandardTypography, SystemTypography } from '../../styles/typography'
 
 function WahaButton (props) {
   switch (props.type) {
@@ -23,8 +23,14 @@ function WahaButton (props) {
           <Text
             style={[
               props.useDefaultFont
-                ? SystemTypography(false, 'h3', 'medium', 'center', props.color)
-                : BrandTypography(props, 'h3', 'medium', 'center', props.color),
+                ? SystemTypography(false, 'h3', 'Bold', 'center', props.color)
+                : StandardTypography(
+                    props,
+                    'h3',
+                    'Bold',
+                    'center',
+                    props.color
+                  ),
               { fontWeight: props.font ? null : 'bold' },
               props.textStyle
             ]}
@@ -53,17 +59,11 @@ function WahaButton (props) {
           <Text
             style={[
               props.useDefaultFont
-                ? SystemTypography(
-                    false,
-                    'h3',
-                    'medium',
-                    'center',
-                    colors.white
-                  )
-                : BrandTypography(
+                ? SystemTypography(false, 'h3', 'Bold', 'center', colors.white)
+                : StandardTypography(
                     props,
                     'h3',
-                    'medium',
+                    'Bold',
                     'center',
                     colors.white
                   ),
@@ -92,17 +92,11 @@ function WahaButton (props) {
           <Text
             style={[
               props.useDefaultFont
-                ? SystemTypography(
-                    false,
-                    'p',
-                    'medium',
-                    'center',
-                    colors.chateau
-                  )
-                : BrandTypography(
+                ? SystemTypography(false, 'p', 'Bold', 'center', colors.chateau)
+                : StandardTypography(
                     props,
                     'p',
-                    'medium',
+                    'Bold',
                     'center',
                     colors.chateau
                   ),
@@ -122,6 +116,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 10,
     marginVertical: 20 * scaleMultiplier,
+    // paddingVertical: 20 * scaleMultiplier,
     // paddingVertical: 10 * scaleMultiplier,
     height: 65 * scaleMultiplier,
     paddingHorizontal: 15,
@@ -137,8 +132,9 @@ function mapStateToProps (state) {
   )[0]
   return activeGroup
     ? {
-        font: state.database[activeGroup.language].font,
-        isRTL: state.database[activeGroup.language].isRTL
+        font: getLanguageFont(activeGroup.language),
+        isRTL: state.database[activeGroup.language].isRTL,
+        activeGroup: activeGroup
       }
     : {}
 }

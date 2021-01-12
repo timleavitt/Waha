@@ -2,8 +2,8 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
-import { BrandTypography } from '../styles/typography'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { StandardTypography } from '../styles/typography'
 
 function ChapterButton (props) {
   // styles for the different modes
@@ -28,16 +28,22 @@ function ChapterButton (props) {
   }
 
   const textStyles = {
-    active: BrandTypography(props, 'p', 'black', 'center', colors.white),
-    inactive: BrandTypography(
+    active: StandardTypography(props, 'p', 'Black', 'center', colors.white),
+    inactive: StandardTypography(
       props,
       'p',
-      'black',
+      'Black',
       'center',
       props.primaryColor
     ),
-    downloading: BrandTypography(props, 'p', 'black', 'center', colors.chateau),
-    disabled: BrandTypography(props, 'p', 'black', 'center', colors.chateau)
+    downloading: StandardTypography(
+      props,
+      'p',
+      'Black',
+      'center',
+      colors.chateau
+    ),
+    disabled: StandardTypography(props, 'p', 'Black', 'center', colors.chateau)
   }
 
   // get the icon name depending on the mode/if this button is active or not
@@ -107,7 +113,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    height: 55 * scaleMultiplier,
+    height: 62 * scaleMultiplier,
     justifyContent: 'center',
     borderTopWidth: 2,
     borderBottomWidth: 2
@@ -119,7 +125,8 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup,
     primaryColor: state.database[activeGroup.language].primaryColor,
     translations: state.database[activeGroup.language].translations
   }

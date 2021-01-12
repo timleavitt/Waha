@@ -6,17 +6,19 @@ import {
   scaleMultiplier
 } from '../constants'
 
-export function BrandTypography (
+export function StandardTypography (
   props,
   fontSize,
   fontFamily,
   textAlign,
   color
 ) {
+  const fontSizeModifier = props.font === 'NotoSansArabic' ? -1 : 0
+
   const families = {
-    regular: props.font + '-regular',
-    medium: props.font + '-medium',
-    black: props.font + '-black'
+    Regular: props.font + '-Regular',
+    Bold: props.font + '-Bold',
+    Black: props.font + '-Black'
   }
 
   const sizes = {
@@ -34,11 +36,10 @@ export function BrandTypography (
   }
 
   return {
-    fontSize: sizes[fontSize],
+    fontSize: sizes[fontSize] + fontSizeModifier,
     fontFamily: props.font ? families[fontFamily] : null,
     textAlign: alignments[textAlign],
-    color: color,
-    paddingTop: 3
+    color: color
   }
 }
 

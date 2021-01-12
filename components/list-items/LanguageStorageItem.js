@@ -2,8 +2,8 @@ import * as FileSystem from 'expo-file-system'
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../../constants'
-import { BrandTypography } from '../../styles/typography'
+import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
+import { StandardTypography } from '../../styles/typography'
 import Separator from '../standard/Separator'
 import WahaButton from '../standard/WahaButton'
 
@@ -17,10 +17,10 @@ function LanguageStorageItem (props) {
         ]}
       >
         <Text
-          style={BrandTypography(
+          style={StandardTypography(
             props,
             'h3',
-            'regular',
+            'Regular',
             'left',
             colors.chateau
           )}
@@ -46,7 +46,7 @@ function LanguageStorageItem (props) {
         ]}
       >
         <Text
-          style={BrandTypography(props, 'h3', 'medium', 'left', colors.tuna)}
+          style={StandardTypography(props, 'h3', 'Bold', 'left', colors.tuna)}
         >
           {props.megabytes >= 0
             ? props.megabytes + ' ' + props.translations.storage.megabyte_label
@@ -54,7 +54,7 @@ function LanguageStorageItem (props) {
         </Text>
         <Text
           style={[
-            BrandTypography(props, 'h3', 'regular', 'left', colors.tuna),
+            StandardTypography(props, 'h3', 'Regular', 'left', colors.tuna),
             {
               flex: 1,
               paddingHorizontal: 20
@@ -70,7 +70,7 @@ function LanguageStorageItem (props) {
           width={92 * scaleMultiplier}
           onPress={props.clearDownloads}
           style={{ height: 45 * scaleMultiplier }}
-          textStyle={{ fontFamily: props.font + '-regular' }}
+          textStyle={{ fontFamily: props.font + '-Regular' }}
         />
       </View>
       <Separator />
@@ -122,9 +122,10 @@ function mapStateToProps (state) {
     item => item.name === state.activeGroup
   )[0]
   return {
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     isRTL: state.database[activeGroup.language].isRTL,
-    translations: state.database[activeGroup.language].translations
+    translations: state.database[activeGroup.language].translations,
+    activeGroup: activeGroup
   }
 }
 

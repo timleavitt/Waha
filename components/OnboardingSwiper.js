@@ -9,8 +9,8 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
-import { BrandTypography, SystemTypography } from '../styles/typography'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { StandardTypography, SystemTypography } from '../styles/typography'
 import WahaButton from './standard/WahaButton'
 
 function OnboardingSwiper (props) {
@@ -51,49 +51,51 @@ function OnboardingSwiper (props) {
       <View style={{ flexDirection: 'row', flex: 1 }} key={index}>
         <View style={styles.page}>
           <Image style={styles.image} source={props.sources[index]} />
-          <Text
-            style={[
-              props.useDefaultFont
-                ? SystemTypography(
-                    false,
-                    'h2',
-                    'medium',
-                    'center',
-                    colors.shark
-                  )
-                : BrandTypography(
-                    props,
-                    'h2',
-                    'medium',
-                    'center',
-                    colors.shark
-                  ),
-              { marginVertical: 10 }
-            ]}
-          >
-            {props.titles[index]}
-          </Text>
-          <Text
-            style={
-              props.useDefaultFont
-                ? SystemTypography(
-                    false,
-                    'h3',
-                    'regular',
-                    'center',
-                    colors.chateau
-                  )
-                : BrandTypography(
-                    props,
-                    'h3',
-                    'regular',
-                    'center',
-                    colors.chateau
-                  )
-            }
-          >
-            {props.messages[index]}
-          </Text>
+          <View>
+            <Text
+              style={[
+                props.useDefaultFont
+                  ? SystemTypography(
+                      false,
+                      'h2',
+                      'Bold',
+                      'center',
+                      colors.shark
+                    )
+                  : StandardTypography(
+                      props,
+                      'h2',
+                      'Bold',
+                      'center',
+                      colors.shark
+                    ),
+                { marginVertical: 10 }
+              ]}
+            >
+              {props.titles[index]}
+            </Text>
+            <Text
+              style={
+                props.useDefaultFont
+                  ? SystemTypography(
+                      false,
+                      'h3',
+                      'Regular',
+                      'center',
+                      colors.chateau
+                    )
+                  : StandardTypography(
+                      props,
+                      'h3',
+                      'Regular',
+                      'center',
+                      colors.chateau
+                    )
+              }
+            >
+              {props.messages[index]}
+            </Text>
+          </View>
         </View>
 
         {/* <View style={{}}>
@@ -199,8 +201,9 @@ function OnboardingSwiper (props) {
 const styles = StyleSheet.create({
   image: {
     resizeMode: 'contain',
-    width: Dimensions.get('window').width - 100 * scaleMultiplier,
-    height: Dimensions.get('window').width - 100 * scaleMultiplier,
+    width: Dimensions.get('window').width * scaleMultiplier * scaleMultiplier,
+    height:
+      Dimensions.get('window').width * 0.6 * scaleMultiplier * scaleMultiplier,
     borderRadius: 20
   },
   pager: {
@@ -209,7 +212,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   page: {
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     flex: 1,
     alignItems: 'center',
     paddingHorizontal: 20 * scaleMultiplier
@@ -225,7 +228,8 @@ function mapStateToProps (state) {
   )[0]
   return activeGroup
     ? {
-        font: state.database[activeGroup.language].font
+        font: getLanguageFont(activeGroup.language),
+        activeGroup: activeGroup
       }
     : {}
 }

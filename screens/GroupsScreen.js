@@ -11,9 +11,9 @@ import GroupListHeader from '../components/list-headers/GroupListHeader'
 import GroupItem from '../components/list-items/GroupItem'
 import BackButton from '../components/standard/BackButton'
 import Separator from '../components/standard/Separator'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 
 function GroupsScreen (props) {
   //+ STATE
@@ -39,7 +39,7 @@ function GroupsScreen (props) {
       },
       headerTitleStyle: {
         color: isEditing ? colors.white : colors.shark,
-        fontFamily: props.font + '-medium'
+        fontFamily: props.font + '-Bold'
       },
       headerRight: props.isRTL
         ? () => (
@@ -55,10 +55,10 @@ function GroupsScreen (props) {
             >
               <Text
                 style={[
-                  BrandTypography(
+                  StandardTypography(
                     props,
                     'h3',
-                    isEditing ? 'medium' : 'regular',
+                    isEditing ? 'Bold' : 'Regular',
                     'center',
                     isEditing ? colors.white : colors.blue
                   ),
@@ -80,10 +80,10 @@ function GroupsScreen (props) {
               onPress={() => setIsEditing(old => !old)}
             >
               <Text
-                style={BrandTypography(
+                style={StandardTypography(
                   props,
                   'h3',
-                  props.isEditing ? 'medium' : 'regular',
+                  props.isEditing ? 'Bold' : 'Regular',
                   'center',
                   isEditing ? colors.white : colors.blue
                 )}
@@ -196,10 +196,10 @@ function GroupsScreen (props) {
                 />
               </View>
               <Text
-                style={BrandTypography(
+                style={StandardTypography(
                   props,
                   'h3',
-                  'medium',
+                  'Bold',
                   'left',
                   colors.blue
                 )}
@@ -224,10 +224,10 @@ function GroupsScreen (props) {
             }
           >
             <Text
-              style={BrandTypography(
+              style={StandardTypography(
                 props,
                 'h3',
-                'medium',
+                'Bold',
                 'left',
                 colors.chateau
               )}
@@ -292,7 +292,7 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
     isConnected: state.network.isConnected,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     groups: state.groups,
     activeGroup: activeGroup
   }

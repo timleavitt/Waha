@@ -13,7 +13,7 @@ import {
 import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import BackButton from '../components/standard/BackButton'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import { analyticsMode, dbMode, reduxMode } from '../modeSwitch'
 import SetTabs from '../navigation/SetTabs'
 import { setIsTimedOut, setTimer } from '../redux/actions/securityActions'
@@ -31,7 +31,7 @@ import SecurityScreen from '../screens/SecurityScreen'
 import SplashScreen from '../screens/SplashScreen'
 import StorageScreen from '../screens/StorageScreen'
 // import VideoScreen from '../screens/VideoScreen'
-import { BrandTypography, SystemTypography } from '../styles/typography'
+import { StandardTypography, SystemTypography } from '../styles/typography'
 LogBox.ignoreLogs(['Setting a timer'])
 
 const Stack = createStackNavigator()
@@ -145,10 +145,10 @@ function MainStack (props) {
                   analyticsMode === 'test' ? (
                     <Text
                       style={[
-                        BrandTypography(
+                        StandardTypography(
                           props,
                           'p',
-                          'regular',
+                          'Regular',
                           'center',
                           colors.red
                         ),
@@ -192,10 +192,10 @@ function MainStack (props) {
                   analyticsMode === 'test' ? (
                     <Text
                       style={[
-                        BrandTypography(
+                        StandardTypography(
                           props,
                           'p',
-                          'regular',
+                          'Regular',
                           'center',
                           colors.red
                         ),
@@ -230,7 +230,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.chateau,
-            fontFamily: 'roboto-medium'
+            fontFamily: 'Roboto-Bold'
           },
           gestureEnabled: false
         }}
@@ -252,7 +252,7 @@ function MainStack (props) {
           title: '',
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-Bold'
           }
         }}
       />
@@ -266,7 +266,7 @@ function MainStack (props) {
           headerTitleStyle: SystemTypography(
             true,
             '',
-            'medium',
+            'Bold',
             'center',
             colors.shark
           ),
@@ -288,7 +288,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-Bold'
           }
         }}
       />
@@ -302,7 +302,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-Bold'
           }
         }}
       />
@@ -316,7 +316,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-Bold'
           }
         }}
       />
@@ -330,7 +330,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-Bold'
           }
         }}
       />
@@ -344,7 +344,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-Bold'
           }
         }}
       />
@@ -357,7 +357,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-Bold'
           }
         }}
       />
@@ -370,7 +370,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-Bold'
           }
         }}
       />
@@ -383,7 +383,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-Bold'
           }
         }}
       />
@@ -396,7 +396,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-Bold'
           }
         }}
       />
@@ -409,7 +409,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-medium'
+            fontFamily: props.font + '-Bold'
           }
         }}
       />
@@ -461,7 +461,7 @@ function mapStateToProps (state) {
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup,
     security: state.security
   }

@@ -4,10 +4,16 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
 import Icon from '../../assets/fonts/icons'
 import SVG from '../../assets/svg.js'
-import { colors, getSetInfo, scaleMultiplier } from '../../constants'
+import {
+  colors,
+  getLanguageFont,
+  getSetInfo,
+  itemHeights,
+  scaleMultiplier
+} from '../../constants'
 import MessageModal from '../../modals/MessageModal'
 import { addSet } from '../../redux/actions/groupsActions'
-import { BrandTypography } from '../../styles/typography'
+import { StandardTypography } from '../../styles/typography'
 function SetItem (props) {
   //+ STATE
 
@@ -263,7 +269,10 @@ function SetItem (props) {
     <TouchableOpacity
       style={[
         styles.studySetItem,
-        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        {
+          flexDirection: props.isRTL ? 'row-reverse' : 'row',
+          height: itemHeights[props.font].SetItem
+        }
       ]}
       onPress={props.onSetSelect}
       // disable feedback if there's no onSetSelect
@@ -284,10 +293,10 @@ function SetItem (props) {
       >
         <Text
           style={[
-            BrandTypography(
+            StandardTypography(
               props,
               'd',
-              'regular',
+              'Regular',
               'left',
               fullyCompleted ? colors.chateau : colors.shark
             ),
@@ -302,10 +311,10 @@ function SetItem (props) {
         </Text>
         <Text
           style={[
-            BrandTypography(
+            StandardTypography(
               props,
               'h3',
-              'black',
+              'Black',
               'left',
               fullyCompleted ? colors.chateau : colors.shark
             ),
@@ -351,11 +360,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     flex: 1,
-    height: 100 * scaleMultiplier,
+    // height: 100 * scaleMultiplier,
     // aspectRatio: 4,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20
+    // borderWidth: 1
   },
   iconContainer: {
     flexDirection: 'column',
@@ -386,7 +396,7 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeDatabase: state.database[activeGroup.language],
     primaryColor: state.database[activeGroup.language].primaryColor,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations
   }

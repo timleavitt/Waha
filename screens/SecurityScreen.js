@@ -8,14 +8,14 @@ import Hero from '../components/standard/Hero'
 import Separator from '../components/standard/Separator'
 import WahaItem from '../components/standard/WahaItem'
 import WahaItemDescription from '../components/standard/WahaItemDescription'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import OptionsModal from '../modals/OptionsModal'
 import {
   setIsTimedOut,
   setSecurityEnabled,
   setTimeoutDuration
 } from '../redux/actions/securityActions'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 
 function SecurityScreen (props) {
   //+ STATE
@@ -94,10 +94,10 @@ function SecurityScreen (props) {
           }}
         >
           <Text
-            style={BrandTypography(
+            style={StandardTypography(
               props,
               'h4',
-              'regular',
+              'Regular',
               'left',
               colors.chateau
             )}
@@ -141,16 +141,17 @@ function SecurityScreen (props) {
 
   return (
     <View style={styles.screen}>
-      <Hero source={require('../assets/gifs/piano_unlock.gif')} />
-
-      <Blurb
-        text={props.translations.security.security_mode_description_text}
-      />
       <ScrollView
         style={{
           width: '100%'
         }}
       >
+        <Hero source={require('../assets/gifs/piano_unlock.gif')} />
+
+        <Blurb
+          text={props.translations.security.security_mode_description_text}
+        />
+
         <Separator />
         <WahaItem
           title={props.translations.security.security_mode_picker_label}
@@ -323,7 +324,7 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup,
     areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
     security: state.security

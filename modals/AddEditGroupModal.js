@@ -14,6 +14,7 @@ import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import {
   colors,
+  getLanguageFont,
   groupIcons,
   groupIconSources,
   scaleMultiplier
@@ -26,7 +27,7 @@ import {
   editGroup,
   resetProgress
 } from '../redux/actions/groupsActions'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 
 function AddEditGroupModal (props) {
   //+ STATE
@@ -169,17 +170,24 @@ function AddEditGroupModal (props) {
         }}
       >
         <Text
-          style={BrandTypography(props, 'p', 'regular', 'left', colors.chateau)}
+          style={StandardTypography(
+            props,
+            'p',
+            'Regular',
+            'left',
+            colors.chateau
+          )}
         >
           {props.translations.add_edit_group.group_name_form_label}
         </Text>
         <TextInput
           style={[
             styles.addNewGroupContainer,
-            {
-              textAlign: props.isRTL ? 'right' : 'left',
-              fontFamily: props.font + '-regular'
-            }
+            StandardTypography(props, 'h3', 'Regular', 'left', colors.shark)
+            // {
+            //   textAlign: props.isRTL ? 'right' : 'left',
+            //   fontFamily: props.font + '-Regular'
+            // }
           ]}
           onChangeText={text => setGroupName(text)}
           value={groupName}
@@ -195,7 +203,7 @@ function AddEditGroupModal (props) {
       </View>
       <Text
         style={[
-          BrandTypography(props, 'p', 'regular', 'left', colors.chateau),
+          StandardTypography(props, 'p', 'Regular', 'left', colors.chateau),
           {
             marginHorizontal: 20,
             marginTop: 20 * scaleMultiplier,
@@ -275,7 +283,7 @@ const styles = StyleSheet.create({
   addNewGroupContainer: {
     borderBottomColor: colors.athens,
     borderBottomWidth: 2,
-    height: 40 * scaleMultiplier,
+    height: 50 * scaleMultiplier,
     fontSize: 18 * scaleMultiplier
   }
 })
@@ -290,7 +298,7 @@ function mapStateToProps (state) {
     groups: state.groups,
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font,
+    font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup
   }
 }

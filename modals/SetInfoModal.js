@@ -3,9 +3,9 @@ import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
 import WahaButton from '../components/standard/WahaButton'
-import { colors, scaleMultiplier } from '../constants'
+import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
-import { BrandTypography } from '../styles/typography'
+import { StandardTypography } from '../styles/typography'
 import ModalScreen from './ModalScreen'
 
 function SetInfoModal (props) {
@@ -28,15 +28,21 @@ function SetInfoModal (props) {
           }}
         >
           <Text
-            style={BrandTypography(props, 'h4', 'medium', 'left', colors.shark)}
+            style={StandardTypography(
+              props,
+              'h4',
+              'Bold',
+              'left',
+              colors.shark
+            )}
           >
             {item.title}
           </Text>
           <Text
-            style={BrandTypography(
+            style={StandardTypography(
               props,
               'p',
-              'regular',
+              'Regular',
               'left',
               colors.chateau
             )}
@@ -56,7 +62,13 @@ function SetInfoModal (props) {
           }}
         >
           <Text
-            style={BrandTypography(props, 'h4', 'medium', 'left', colors.shark)}
+            style={StandardTypography(
+              props,
+              'h4',
+              'Bold',
+              'left',
+              colors.shark
+            )}
           >
             {item.title}
           </Text>
@@ -128,7 +140,7 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
-    font: state.database[activeGroup.language].font
+    font: getLanguageFont(activeGroup.language)
   }
 }
 
