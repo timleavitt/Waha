@@ -3,21 +3,27 @@ import { StyleSheet, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../../constants'
 // simple back button that is shown in almost every screen's header
-function BackButton (props) {
+function BackButton ({
+  // passed from parent
+  onPress,
+  color,
+  // passed from redux
+  isRTL
+}) {
   //+ RENDER
 
   return (
     <TouchableOpacity
       style={[
         styles.backButtonContainer,
-        { justifyContent: props.isRTL ? 'flex-end' : 'flex-start' }
+        { justifyContent: isRTL ? 'flex-end' : 'flex-start' }
       ]}
-      onPress={props.onPress}
+      onPress={onPress}
     >
       <Icon
-        name={props.isRTL ? 'arrow-right' : 'arrow-left'}
+        name={isRTL ? 'arrow-right' : 'arrow-left'}
         size={45 * scaleMultiplier}
-        color={props.color ? props.color : colors.oslo}
+        color={color ? color : colors.oslo}
       />
     </TouchableOpacity>
   )

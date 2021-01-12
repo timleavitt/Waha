@@ -12,53 +12,72 @@ import {
 import { removeDownload } from '../../redux/actions/downloadActions'
 import { StandardTypography } from '../../styles/typography'
 import DownloadStatusIndicator from '../DownloadStatusIndicator'
-function LessonItem (props) {
+
+function LessonItem ({
+  // passed from parent
+  thisLesson,
+  onLessonSelect,
+  isBookmark,
+  isDownloaded,
+  isDownloading,
+  lessonType,
+  isComplete,
+  setActiveLessonInModal,
+  setShowDownloadLessonModal,
+  setShowDeleteLessonModal,
+  // passed from redux
+  primaryColor,
+  isRTL,
+  activeGroup,
+  downloads,
+  translations,
+  isConnected,
+  font,
+  removeDownload
+}) {
   //+ CONSTRUCTOR
 
   useEffect(() => {
     // if we've completed the download for this lesson, remove the audio/video
     //  download from redux
-    switch (props.lessonType) {
+    switch (lessonType) {
       case 'qa':
       case 'a':
-        if (
-          props.downloads[props.thisLesson.id] &&
-          props.downloads[props.thisLesson.id].progress === 1
-        )
-          props.removeDownload(props.thisLesson.id)
+        if (downloads[thisLesson.id] && downloads[thisLesson.id].progress === 1)
+          removeDownload(thisLesson.id)
         break
       case 'qav':
         if (
-          props.downloads[props.thisLesson.id] &&
-          props.downloads[props.thisLesson.id] + 'v' &&
-          props.downloads[props.thisLesson.id].progress === 1 &&
-          props.downloads[props.thisLesson.id + 'v'].progress === 1
+          downloads[thisLesson.id] &&
+          downloads[thisLesson.id] + 'v' &&
+          downloads[thisLesson.id].progress === 1 &&
+          downloads[thisLesson.id + 'v'].progress === 1
         ) {
-          props.removeDownload(props.thisLesson.id)
-          props.removeDownload(props.thisLesson.id + 'v')
+          removeDownload(thisLesson.id)
+          removeDownload(thisLesson.id + 'v')
         }
         break
       case 'qv':
       case 'v':
         if (
-          props.downloads[props.thisLesson.id + 'v'] &&
-          props.downloads[props.thisLesson.id + 'v'].progress === 1
+          downloads[thisLesson.id + 'v'] &&
+          downloads[thisLesson.id + 'v'].progress === 1
         )
-          props.removeDownload(props.thisLesson.id + 'v')
+          removeDownload(thisLesson.id + 'v')
         break
     }
-  }, [props.downloads])
+  }, [downloads])
 
   //+ FUNCTIONS
 
   // calls the various modal functions on LessonsScreen
   function showSaveModal () {
-    props.setActiveLessonInModal.call()
-    props.setShowDownloadLessonModal.call()
+    setActiveLessonInModal.call()
+    setShowDownloadLessonModal.call()
   }
   function showDeleteModal () {
-    props.setActiveLessonInModal.call()
-    props.setShowDeleteLessonModal.call()
+    setActiveLessonInModal.call()
+    setShowDeleteLessonModal.call()
   }
 
   //+ RENDER
@@ -68,8 +87,8 @@ function LessonItem (props) {
       style={[
         styles.lessonItem,
         {
-          flexDirection: props.isRTL ? 'row-reverse' : 'row',
-          height: itemHeights[props.font].LessonItem
+          flexDirection: isRTL ? 'row-reverse' : 'row',
+          height: itemHeights[font].LessonItem
         }
       ]}
     >
@@ -77,24 +96,24 @@ function LessonItem (props) {
       <TouchableOpacity
         style={[
           styles.progressAndTitle,
-          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
         ]}
-        onPress={props.onLessonSelect}
+        onPress={onLessonSelect}
       >
         {/* complete status indicator */}
         <View style={styles.completeStatusContainer}>
           <Icon
             name={
-              props.isComplete
+              isComplete
                 ? 'check-outline'
-                : props.isBookmark
-                ? props.isRTL
+                : isBookmark
+                ? isRTL
                   ? 'triangle-left'
                   : 'triangle-right'
                 : null
             }
             size={24 * scaleMultiplier}
-            color={props.isComplete ? colors.chateau : props.primaryColor}
+            color={isComplete ? colors.chateau : primaryColor}
           />
         </View>
 
@@ -104,25 +123,25 @@ function LessonItem (props) {
             flexDirection: 'column',
             justifyContent: 'center',
             flex: 1,
-            marginLeft: props.isRTL ? (props.thisLesson.hasAudio ? 0 : 20) : 20,
-            marginRight: props.isRTL ? 20 : props.thisLesson.hasAudio ? 0 : 20
+            marginLeft: isRTL ? (thisLesson.hasAudio ? 0 : 20) : 20,
+            marginRight: isRTL ? 20 : thisLesson.hasAudio ? 0 : 20
           }}
         >
           <Text
             style={StandardTypography(
-              props,
+              { font, isRTL },
               'h4',
               'Bold',
               'left',
-              props.isComplete ? colors.chateau : colors.shark
+              isComplete ? colors.chateau : colors.shark
             )}
             numberOfLines={2}
           >
-            {props.thisLesson.title}
+            {thisLesson.title}
           </Text>
           <Text
             style={StandardTypography(
-              props,
+              { font, isRTL },
               'd',
               'Regular',
               'left',
@@ -130,19 +149,19 @@ function LessonItem (props) {
             )}
             numberOfLines={1}
           >
-            {getLessonInfo('subtitle', props.thisLesson.id)}
+            {getLessonInfo('subtitle', thisLesson.id)}
           </Text>
         </View>
       </TouchableOpacity>
       {/* cloud icon/download indicator */}
       <DownloadStatusIndicator
-        isDownloaded={props.isDownloaded}
-        isDownloading={props.isDownloading}
-        isConnected={props.isConnected}
+        isDownloaded={isDownloaded}
+        isDownloading={isDownloading}
+        isConnected={isConnected}
         showDeleteModal={showDeleteModal}
         showSaveModal={showSaveModal}
-        lessonID={props.thisLesson.id}
-        lessonType={props.lessonType}
+        lessonID={thisLesson.id}
+        lessonType={lessonType}
       />
     </View>
   )

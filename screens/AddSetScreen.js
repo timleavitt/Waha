@@ -131,7 +131,6 @@ function AddSetScreen (props) {
     return (
       <SetItem
         thisSet={setList.item}
-        isSmall={false}
         mode='addset_screen'
         onSetSelect={() => {
           setSetInModal(setList.item)

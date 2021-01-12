@@ -1,11 +1,21 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import ChapterButton from '../components/ChapterButton'
-import { scaleMultiplier } from '../constants'
+import ChapterButton from './ChapterButton'
 import ChapterSeparator from './ChapterSeparator'
 
-function ChapterSelect (props) {
+function ChapterSelector ({
+  // passed from parent
+  activeChapter,
+  lessonID,
+  onPress,
+  lessonType,
+  isDownloaded,
+  // passed from redux
+  primaryColor,
+  downloads,
+  isConnected
+}) {
   // order of chapters is
   //  1. fellowship
   //  2. story
@@ -15,7 +25,7 @@ function ChapterSelect (props) {
   // RENDER
 
   function getActiveNumber () {
-    switch (props.activeChapter) {
+    switch (activeChapter) {
       case 'fellowship':
         return 1
         break
@@ -26,7 +36,7 @@ function ChapterSelect (props) {
         return 3
         break
       case 'application':
-        if (props.lessonType === 'qav' || props.lessonType === 'qv') return 4
+        if (lessonType === 'qav' || lessonType === 'qv') return 4
         else return 3
         break
     }
@@ -36,57 +46,54 @@ function ChapterSelect (props) {
     <View style={styles.chapterSelectContainer}>
       <ChapterButton
         name='fellowship'
-        mode={props.activeChapter === 'fellowship' ? 'active' : 'inactive'}
+        mode={activeChapter === 'fellowship' ? 'active' : 'inactive'}
         number={1}
         activeNumber={getActiveNumber()}
-        onPress={props.onPress}
+        onPress={onPress}
       />
       <ChapterSeparator />
       <ChapterButton
         name='story'
         mode={
-          (props.lessonType === 'qa' || props.lessonType === 'qav') &&
-          !props.isConnected &&
-          !props.isDownloaded
+          (lessonType === 'qa' || lessonType === 'qav') &&
+          !isConnected &&
+          !isDownloaded
             ? 'disabled'
-            : props.downloads[props.lessonID] &&
-              props.downloads[props.lessonID].progress < 1
+            : downloads[lessonID] && downloads[lessonID].progress < 1
             ? 'downloading'
-            : props.activeChapter === 'story'
+            : activeChapter === 'story'
             ? 'active'
             : 'inactive'
         }
         number={2}
         activeNumber={getActiveNumber()}
-        onPress={props.onPress}
+        onPress={onPress}
         downloadProgress={
-          props.downloads[props.lessonID]
-            ? props.downloads[props.lessonID].progress
-            : null
+          downloads[lessonID] ? downloads[lessonID].progress : null
         }
       />
-      {props.lessonType === 'qav' || props.lessonType === 'qv' ? (
+      {lessonType === 'qav' || lessonType === 'qv' ? (
         <ChapterSeparator />
       ) : null}
-      {props.lessonType === 'qav' || props.lessonType === 'qv' ? (
+      {lessonType === 'qav' || lessonType === 'qv' ? (
         <ChapterButton
           name='training'
           mode={
-            !props.isConnected && !props.isDownloaded
+            !isConnected && !isDownloaded
               ? 'disabled'
-              : props.downloads[props.lessonID + 'v'] &&
-                props.downloads[props.lessonID + 'v'].progress < 1
+              : downloads[lessonID + 'v'] &&
+                downloads[lessonID + 'v'].progress < 1
               ? 'downloading'
-              : props.activeChapter === 'training'
+              : activeChapter === 'training'
               ? 'active'
               : 'inactive'
           }
           number={3}
           activeNumber={getActiveNumber()}
-          onPress={props.onPress}
+          onPress={onPress}
           downloadProgress={
-            props.downloads[props.lessonID + 'v']
-              ? props.downloads[props.lessonID + 'v'].progress
+            downloads[lessonID + 'v']
+              ? downloads[lessonID + 'v'].progress
               : null
           }
         />
@@ -94,10 +101,10 @@ function ChapterSelect (props) {
       <ChapterSeparator />
       <ChapterButton
         name='application'
-        mode={props.activeChapter === 'application' ? 'active' : 'inactive'}
-        number={props.lessonType === 'qav' || props.lessonType === 'qv' ? 4 : 3}
+        mode={activeChapter === 'application' ? 'active' : 'inactive'}
+        number={lessonType === 'qav' || lessonType === 'qv' ? 4 : 3}
         activeNumber={getActiveNumber()}
-        onPress={props.onPress}
+        onPress={onPress}
       />
     </View>
   )
@@ -109,14 +116,6 @@ const styles = StyleSheet.create({
   chapterSelectContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between'
-  },
-  chapterSelect: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    height: 55 * scaleMultiplier,
-    justifyContent: 'center',
-    borderWidth: 2
   }
 })
 
@@ -133,4 +132,4 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(ChapterSelect)
+export default connect(mapStateToProps)(ChapterSelector)
