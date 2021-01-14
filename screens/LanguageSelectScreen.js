@@ -34,7 +34,21 @@ i18n.translations = {
   ar
 }
 
-function LanguageSelectScreen (props) {
+function LanguageSelectScreen ({
+  navigation: { setOptions, goBack, reset, navigate },
+  route: {
+    name: routeName,
+    params: { installedLanguageInstances } = {
+      installedLanguageInstances: null
+    }
+  },
+  // passed from redux
+  downloadLanguageCoreFiles,
+  storeLanguageData,
+  setIsInstallingLanguageInstance,
+  storeDownloads,
+  setHasFetchedLanguageData
+}) {
   //+ STATE
 
   // keeps track of language selected in picker (TODO: change default to user's default language)
@@ -61,7 +75,7 @@ function LanguageSelectScreen (props) {
   //+ CONSTRUCTOR
 
   useEffect(() => {
-    props.navigation.setOptions(getNavOptions())
+    setOptions(getNavOptions())
 
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected)
@@ -73,7 +87,7 @@ function LanguageSelectScreen (props) {
   }, [])
 
   function getNavOptions () {
-    return props.route.name === 'AddLanguage'
+    return routeName === 'AddLanguage'
       ? {
           headerTitle: i18n.t('newLanguage')
         }
@@ -83,8 +97,8 @@ function LanguageSelectScreen (props) {
   //+ FUNCTIONS
 
   async function fetchFirebaseData () {
-    props.storeDownloads([])
-    props.setIsInstallingLanguageInstance(true)
+    storeDownloads([])
+    setIsInstallingLanguageInstance(true)
     //- get sets first
     var sets = []
 
@@ -112,7 +126,7 @@ function LanguageSelectScreen (props) {
       .get()
       .then(async doc => {
         if (doc.exists) {
-          props.storeLanguageData(
+          storeLanguageData(
             {
               sets: sets,
               ...doc.data()
@@ -132,15 +146,15 @@ function LanguageSelectScreen (props) {
     if (selectedLanguage) {
       fetchFirebaseData()
         .then(() => {
-          props.setHasFetchedLanguageData(true)
-          props.downloadLanguageCoreFiles(selectedLanguage)
+          setHasFetchedLanguageData(true)
+          downloadLanguageCoreFiles(selectedLanguage)
         })
         .catch(error => {
           Alert.alert(i18n.t('fetchErrorTitle'), i18n.t('fetchErrorMessage'), [
             {
               text: i18n.t('ok'),
               onPress: () => {
-                props.navigation.reset({
+                reset({
                   index: 0,
                   routes: [{ name: 'LanguageSelect' }]
                 })
@@ -148,8 +162,8 @@ function LanguageSelectScreen (props) {
             }
           ])
         })
-      if (props.route.name === 'LanguageSelect') {
-        props.navigation.navigate('OnboardingSlides', {
+      if (routeName === 'LanguageSelect') {
+        navigate('OnboardingSlides', {
           selectedLanguage: selectedLanguage
         })
       }
@@ -192,7 +206,7 @@ function LanguageSelectScreen (props) {
       color={colors.apple}
       onPress={onStartPress}
       label={
-        props.route.name === 'LanguageSelect'
+        routeName === 'LanguageSelect'
           ? i18n.t('letsBegin')
           : i18n.t('addLanguage') + ' '
       }
@@ -222,7 +236,7 @@ function LanguageSelectScreen (props) {
   )
 
   var headerText =
-    props.route.name === 'LanguageSelect' ? (
+    routeName === 'LanguageSelect' ? (
       <View
         style={{
           marginVertical: 20 * scaleMultiplier,
@@ -283,9 +297,7 @@ function LanguageSelectScreen (props) {
           alignItems: 'center',
           paddingHorizontal: 20,
           backgroundColor:
-            props.route.name === 'LanguageSelect'
-              ? colors.aquaHaze
-              : colors.white
+            routeName === 'LanguageSelect' ? colors.aquaHaze : colors.white
         }}
       >
         <Text
@@ -309,9 +321,7 @@ function LanguageSelectScreen (props) {
         styles.screen,
         {
           backgroundColor:
-            props.route.name === 'LanguageSelect'
-              ? colors.aquaHaze
-              : colors.white
+            routeName === 'LanguageSelect' ? colors.aquaHaze : colors.white
         }
       ]}
     >
@@ -330,7 +340,7 @@ function LanguageSelectScreen (props) {
           //  top
           style={{ height: '100%' }}
           sections={
-            props.route.name === 'LanguageSelect'
+            routeName === 'LanguageSelect'
               ? languages.sort((a, b) => {
                   if (i18n.locale.includes(a.languageCode)) return -1
                   else if (i18n.locale.includes(b.languageCode)) return 1
@@ -352,7 +362,7 @@ function LanguageSelectScreen (props) {
                       //  screen
                       data: languageFamily.data.filter(language => {
                         if (
-                          props.route.params.installedLanguageInstances.some(
+                          installedLanguageInstances.some(
                             installedLanguage =>
                               installedLanguage.languageID === language.wahaID
                           )

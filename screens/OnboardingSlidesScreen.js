@@ -13,14 +13,21 @@ i18n.translations = {
   ar
 }
 
-function OnboardingSlidesScreen (props) {
+function OnboardingSlidesScreen ({
+  navigation: { navigate },
+  route: {
+    params: { selectedLanguage }
+  },
+  // passed from redux
+  setHasOnboarded
+}) {
   //+ FUNCTIONS
 
   // tells redux that we're ready to go to loading screen once onboarding is finished
   function finishOnboarding () {
-    props.setHasOnboarded(true)
-    props.navigation.navigate('Loading', {
-      selectedLanguage: props.route.params.selectedLanguage
+    setHasOnboarded(true)
+    navigate('Loading', {
+      selectedLanguage: selectedLanguage
     })
   }
 

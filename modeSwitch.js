@@ -5,4 +5,4 @@ export const dbMode = 'prod'
 export const reduxMode = 'prod'
 
 // test means analytics aren't tracked
-export const analyticsMode = 'prod'
+export const analyticsMode = 'test'

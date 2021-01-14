@@ -5,18 +5,40 @@ import { connect } from 'react-redux'
 import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import { StandardTypography } from '../styles/typography'
 // modal variant that shows some information
-function MessageModal (props) {
-  var cancelButton = props.cancelText ? (
+function MessageModal ({
+  // passed from parents
+  isVisible,
+  hideModal,
+  title,
+  body,
+  confirmText,
+  confirmOnPress,
+  cancelText = '',
+  children = null,
+  // passed from redux
+  font,
+  activeGroup,
+  isRTL
+}) {
+  var cancelButton = cancelText ? (
     <TouchableOpacity
       style={{
         marginVertical: 15
         // marginBottom: 40 * scaleMultiplier,
         // marginTop: 80 * scaleMultiplier
       }}
-      onPress={props.cancelOnPress}
+      onPress={cancelOnPress}
     >
-      <Text style={StandardTypography(props, 'h2', 'Bold', 'left', colors.red)}>
-        {props.cancelText}
+      <Text
+        style={StandardTypography(
+          { font, isRTL },
+          'h2',
+          'Bold',
+          'left',
+          colors.red
+        )}
+      >
+        {cancelText}
       </Text>
     </TouchableOpacity>
   ) : null
@@ -25,29 +47,41 @@ function MessageModal (props) {
 
   return (
     <Modal
-      isVisible={props.isVisible}
+      isVisible={isVisible}
       hasBackdrop={true}
-      onBackdropPress={props.hideModal}
+      onBackdropPress={hideModal}
       backdropOpacity={0.3}
       style={{ justifyContent: 'flex-end', flex: 1, margin: 0 }}
     >
       <View style={styles.contentContainer}>
-        {props.children}
+        {children}
         <Text
           style={[
-            StandardTypography(props, 'h2', 'Black', 'center', colors.shark),
+            StandardTypography(
+              { font, isRTL },
+              'h2',
+              'Black',
+              'center',
+              colors.shark
+            ),
             { marginVertical: 10 }
           ]}
         >
-          {props.title}
+          {title}
         </Text>
         <Text
           style={[
-            StandardTypography(props, 'h4', 'Bold', 'center', colors.shark),
+            StandardTypography(
+              { font, isRTL },
+              'h4',
+              'Bold',
+              'center',
+              colors.shark
+            ),
             { paddingHorizontal: 20 }
           ]}
         >
-          {props.body}
+          {body}
         </Text>
 
         <TouchableOpacity
@@ -58,18 +92,18 @@ function MessageModal (props) {
             justifyContent: 'center'
             // backgroundColor: 'blue'
           }}
-          onPress={props.confirmOnPress}
+          onPress={confirmOnPress}
         >
           <Text
             style={StandardTypography(
-              props,
+              { font, isRTL },
               'h2',
               'Bold',
               'center',
               colors.apple
             )}
           >
-            {props.confirmText}
+            {confirmText}
           </Text>
         </TouchableOpacity>
         {cancelButton}
@@ -96,7 +130,8 @@ function mapStateToProps (state) {
   )[0]
   return {
     font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    isRTL: state.database[activeGroup.language].isRTL
   }
 }
 

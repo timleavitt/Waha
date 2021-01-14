@@ -9,53 +9,59 @@ import {
 } from '../../constants'
 import KeyLabel from './KeyLabel'
 
-function KeyLabelGroup (props) {
-  var keyLabel1 = props.keyOrder[1] ? (
+function KeyLabelGroup ({
+  // passed from parents
+  keyOrder,
+  // passed from redux
+  font,
+  security,
+  isRTL,
+  activeGroup
+}) {
+  var keyLabel1 = keyOrder[1] ? (
     <KeyLabel
-      backgroundColor={keyColors[props.keyOrder.substr(0, 2).replace(/^0/, '')]}
-      number={props.keyOrder.substr(0, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(0, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(0, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
-  var keyLabel2 = props.keyOrder[3] ? (
+  var keyLabel2 = keyOrder[3] ? (
     <KeyLabel
-      backgroundColor={keyColors[props.keyOrder.substr(2, 2).replace(/^0/, '')]}
-      number={props.keyOrder.substr(2, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(2, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(2, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
-  var keyLabel3 = props.keyOrder[5] ? (
+  var keyLabel3 = keyOrder[5] ? (
     <KeyLabel
-      backgroundColor={keyColors[props.keyOrder.substr(4, 2).replace(/^0/, '')]}
-      number={props.keyOrder.substr(4, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(4, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(4, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
-  var keyLabel4 = props.keyOrder[7] ? (
+  var keyLabel4 = keyOrder[7] ? (
     <KeyLabel
-      backgroundColor={keyColors[props.keyOrder.substr(6, 2).replace(/^0/, '')]}
-      number={props.keyOrder.substr(6, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(6, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(6, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
-  var keyLabel5 = props.keyOrder[9] ? (
+  var keyLabel5 = keyOrder[9] ? (
     <KeyLabel
-      backgroundColor={keyColors[props.keyOrder.substr(8, 2).replace(/^0/, '')]}
-      number={props.keyOrder.substr(8, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(8, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(8, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
-  var keyLabel6 = props.keyOrder[11] ? (
+  var keyLabel6 = keyOrder[11] ? (
     <KeyLabel
-      backgroundColor={
-        keyColors[props.keyOrder.substr(10, 2).replace(/^0/, '')]
-      }
-      number={props.keyOrder.substr(10, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(10, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(10, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
@@ -67,7 +73,7 @@ function KeyLabelGroup (props) {
         flexDirection: 'row',
         justifyContent: 'center',
         padding: 20,
-        flexDirection: props.isRTL ? 'row-reverse' : 'row'
+        flexDirection: isRTL ? 'row-reverse' : 'row'
       }}
     >
       <View style={styles.keyPlaceholder}>{keyLabel1}</View>

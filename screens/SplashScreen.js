@@ -2,7 +2,7 @@ import React from 'react'
 import { Dimensions, Image, StyleSheet, View } from 'react-native'
 import { colors, scaleMultiplier } from '../constants'
 
-function SplashScreen (props) {
+function SplashScreen ({}) {
   return (
     <View style={styles.screen}>
       <Image

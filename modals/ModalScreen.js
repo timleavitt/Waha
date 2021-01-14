@@ -6,16 +6,32 @@ import { connect } from 'react-redux'
 import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import { StandardTypography } from '../styles/typography'
 
-function ModalScreen (props) {
+function ModalScreen ({
+  // passed from parent
+  isVisible,
+  hideModal,
+  topRightComponent,
+  onCancelPress,
+  onModalWillShow,
+  title,
+  children = null,
+  // passed from redux
+  downloads,
+  activeDatabase,
+  isRTL,
+  activeGroup,
+  translations,
+  font
+}) {
   return (
     <View>
       <Modal
-        isVisible={props.isVisible}
+        isVisible={isVisible}
         hasBackdrop={true}
-        onBackdropPress={props.hideModal}
-        onBackButtonPress={props.hideModal}
+        onBackdropPress={hideModal}
+        onBackButtonPress={hideModal}
         backdropOpacity={0.3}
-        onSwipeComplete={props.hideModal}
+        onSwipeComplete={hideModal}
         // swipeDirection={['down']}
         // propagateSwipe={true}
         style={{
@@ -30,7 +46,7 @@ function ModalScreen (props) {
               : 20
           // marginVertical: 20 * scaleMultiplier
         }}
-        onModalWillShow={props.onModalWillShow}
+        onModalWillShow={onModalWillShow}
       >
         <View
           style={{
@@ -51,8 +67,8 @@ function ModalScreen (props) {
           >
             <TouchableOpacity
               onPress={() => {
-                props.onCancelPress ? props.onCancelPress() : null
-                props.hideModal()
+                onCancelPress ? onCancelPress() : null
+                hideModal()
               }}
               style={{
                 width: 45 * scaleMultiplier,
@@ -68,14 +84,14 @@ function ModalScreen (props) {
             <View style={{ flex: 1 }}>
               <Text
                 style={StandardTypography(
-                  props,
+                  { font, isRTL },
                   'h3',
                   'Bold',
                   'center',
                   colors.shark
                 )}
               >
-                {props.title}
+                {title}
               </Text>
             </View>
             <View
@@ -84,10 +100,10 @@ function ModalScreen (props) {
                 height: 45 * scaleMultiplier
               }}
             >
-              {props.topRightComponent}
+              {topRightComponent}
             </View>
           </View>
-          {props.children}
+          {children}
         </View>
       </Modal>
     </View>

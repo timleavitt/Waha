@@ -3,15 +3,24 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { colors, getSystemIsRTL, scaleMultiplier } from '../../constants'
 import { SystemTypography } from '../../styles/typography'
 
-function LanguageSelectItem (props) {
+function LanguageSelectItem ({
+  // passed from parent
+  nativeName,
+  localeName,
+  font,
+  logoSource,
+  onPress,
+  isSelected,
+  playAudio
+}) {
   // FUNCTIONS
-  var iconComponent = props.isSelected ? (
+  var iconComponent = isSelected ? (
     <View style={{ marginHorizontal: 20 }}>
       <Icon name='check' size={30} color={colors.apple} />
     </View>
   ) : (
     <TouchableOpacity
-      onPress={props.playAudio}
+      onPress={playAudio}
       style={{
         height: '100%',
         width: 70,
@@ -32,7 +41,7 @@ function LanguageSelectItem (props) {
         flexDirection: getSystemIsRTL() ? 'row-reverse' : 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: props.isSelected ? '#BFE5AF' : colors.white
+        backgroundColor: isSelected ? '#BFE5AF' : colors.white
       }}
     >
       {iconComponent}
@@ -44,7 +53,7 @@ function LanguageSelectItem (props) {
           justifyContent: 'space-around',
           flexDirection: getSystemIsRTL() ? 'row-reverse' : 'row'
         }}
-        onPress={props.onPress}
+        onPress={onPress}
       >
         <View
           style={{
@@ -59,10 +68,10 @@ function LanguageSelectItem (props) {
               'Bold',
               'left',
               colors.shark,
-              props.font
+              font
             )}
           >
-            {props.nativeName}
+            {nativeName}
           </Text>
           <Text
             style={SystemTypography(
@@ -73,13 +82,13 @@ function LanguageSelectItem (props) {
               colors.shark
             )}
           >
-            {props.localeName}
+            {localeName}
           </Text>
         </View>
         <Image
           style={styles.headerImage}
           source={{
-            uri: props.logoSource
+            uri: logoSource
           }}
         />
       </TouchableOpacity>

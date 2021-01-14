@@ -4,20 +4,24 @@ import LoadingScreen from '../screens/LoadingScreen'
 import MainDrawer from './MainDrawer'
 import Onboarding from './Onboarding'
 
-function Root (props) {
+function Root ({
+  hasOnboarded,
+  hasInstalledFirstLanguageInstance,
+  isInstallingLanguageInstance
+}) {
   // conditionally render the right navigator
   // if we're done with onboarding/fetching, render the main drawer
   // if we're not done with those things, render the onboarding screens
   // otherwise, we're fetching, so render the loading screen
   if (
-    props.hasInstalledFirstLanguageInstance &&
-    !props.isInstallingLanguageInstance &&
-    props.hasOnboarded
+    hasInstalledFirstLanguageInstance &&
+    !isInstallingLanguageInstance &&
+    hasOnboarded
   ) {
     return <MainDrawer />
   } else if (
-    !props.hasInstalledFirstLanguageInstance ||
-    (props.hasInstalledFirstLanguageInstance && !props.hasOnboarded)
+    !hasInstalledFirstLanguageInstance ||
+    (hasInstalledFirstLanguageInstance && !hasOnboarded)
   ) {
     return <Onboarding />
   } else {

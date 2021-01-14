@@ -1,8 +1,8 @@
 //basic imports
 import React from 'react'
-import { View, Text } from 'react-native'
+import { Text, View } from 'react-native'
 
-function LoadingView (props) {
+function LoadingView ({}) {
   return (
     <View>
       <Text>Loading...</Text>

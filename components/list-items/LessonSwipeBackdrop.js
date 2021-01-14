@@ -3,20 +3,28 @@ import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, scaleMultiplier } from '../../constants'
 // component rendered behind a lesson item that shows the swipe options
-function LessonSwipeBackdrop (props) {
+
+function LessonSwipeBackdrop ({
+  // passed from parents
+  isComplete,
+  toggleComplete,
+  showShareModal,
+  // passed from redux
+  isRTL
+}) {
   //+ RENDER
 
   // render complete button conditionally since it could be complete or incomplete
-  var completeButton = props.isComplete ? (
+  var completeButton = isComplete ? (
     <TouchableOpacity
       style={[
         styles.buttonContainer,
         {
           backgroundColor: colors.chateau,
-          alignItems: props.isRTL ? 'flex-end' : 'flex-start'
+          alignItems: isRTL ? 'flex-end' : 'flex-start'
         }
       ]}
-      onPress={props.toggleComplete}
+      onPress={toggleComplete}
     >
       <View style={styles.iconContainer}>
         <Icon name='cancel-filled' size={20} color={colors.white} />
@@ -28,10 +36,10 @@ function LessonSwipeBackdrop (props) {
         styles.buttonContainer,
         {
           backgroundColor: colors.apple,
-          alignItems: props.isRTL ? 'flex-end' : 'flex-start'
+          alignItems: isRTL ? 'flex-end' : 'flex-start'
         }
       ]}
-      onPress={props.toggleComplete}
+      onPress={toggleComplete}
     >
       <View style={styles.iconContainer}>
         <Icon name='check-filled' size={20} color={colors.white} />
@@ -43,7 +51,7 @@ function LessonSwipeBackdrop (props) {
     <View
       style={[
         styles.lessonSwipeBackdropContainer,
-        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        { flexDirection: isRTL ? 'row-reverse' : 'row' }
       ]}
     >
       {completeButton}
@@ -52,10 +60,10 @@ function LessonSwipeBackdrop (props) {
           styles.buttonContainer,
           {
             backgroundColor: colors.blue,
-            alignItems: props.isRTL ? 'flex-start' : 'flex-end'
+            alignItems: isRTL ? 'flex-start' : 'flex-end'
           }
         ]}
-        onPress={props.showShareModal}
+        onPress={showShareModal}
       >
         <View style={styles.iconContainer}>
           <Icon

@@ -12,55 +12,63 @@ import {
 } from '../redux/LogEventFunctions'
 import OptionsModal from './OptionsModal'
 
-function ShareModal (props) {
+function ShareModal ({
+  // passed from parents
+  isVisible,
+  hideModal,
+  closeText,
+  lesson,
+  lessonType,
+  set,
+  // passed from redux
+  translations,
+  downloads
+}) {
   // opens the share sheet to share a chapter of a lesson
   function share (type) {
     switch (type) {
       // share the link to Waha itself
       case 'app':
-        logShareApp(props.lesson)
+        logShareApp(lesson)
         Share.share({
           message:
             'iOS: https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294\n\nAndroid: https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
         }).then(() => {
-          props.hideModal()
+          hideModal()
         })
         break
       // share the passage text for this lesson
       case 'text':
-        logShareText(props.lesson)
+        logShareText(lesson)
         var scriptureString = ''
-        props.lesson.scripture.forEach((scripturePiece, index) => {
+        lesson.scripture.forEach((scripturePiece, index) => {
           scriptureString += scripturePiece.header + '\n' + scripturePiece.text
-          if (index !== props.lesson.scripture.length - 1)
-            scriptureString += '\n'
+          if (index !== lesson.scripture.length - 1) scriptureString += '\n'
         })
         Share.share({
           message: scriptureString
         }).then(() => {
-          props.hideModal()
+          hideModal()
         })
         break
       // share the audio file for this lesson
       case 'audio':
-        logShareAudio(props.lesson)
+        logShareAudio(lesson)
         FileSystem.getInfoAsync(
-          FileSystem.documentDirectory + props.lesson.id + '.mp3'
+          FileSystem.documentDirectory + lesson.id + '.mp3'
         ).then(({ exists }) => {
           exists
             ? Sharing.shareAsync(
-                FileSystem.documentDirectory + props.lesson.id + '.mp3'
+                FileSystem.documentDirectory + lesson.id + '.mp3'
               ).then(() => {
-                props.hideModal()
+                hideModal()
               })
             : Alert.alert(
-                props.translations.general.popups
-                  .share_undownloaded_lesson_title,
-                props.translations.general.popups
-                  .share_undownloaded_lesson_message,
+                translations.general.popups.share_undownloaded_lesson_title,
+                translations.general.popups.share_undownloaded_lesson_message,
                 [
                   {
-                    text: props.translations.general.ok,
+                    text: translations.general.ok,
                     onPress: () => {}
                   }
                 ]
@@ -70,9 +78,9 @@ function ShareModal (props) {
       // share the video link for this lesson
       case 'video':
         Share.share({
-          message: props.lesson.videoShareLink
+          message: lesson.videoShareLink
         }).then(() => {
-          props.hideModal()
+          hideModal()
         })
         break
     }
@@ -80,39 +88,39 @@ function ShareModal (props) {
   //+ RENDER
   return (
     <OptionsModal
-      isVisible={props.isVisible}
-      hideModal={props.hideModal}
-      closeText={props.closeText}
+      isVisible={isVisible}
+      hideModal={hideModal}
+      closeText={closeText}
     >
       <OptionsModalButton
-        title={props.translations.general.share_app}
+        title={translations.general.share_app}
         onPress={() => share('app')}
       />
-      {props.lessonType.includes('q') ? (
+      {lessonType.includes('q') ? (
         <View>
           <Separator />
           <OptionsModalButton
-            title={props.translations.general.share_passage_text}
+            title={translations.general.share_passage_text}
             onPress={() => share('text')}
           />
         </View>
       ) : null}
-      {props.lessonType.includes('a') && !props.downloads[props.lesson.id] ? (
+      {lessonType.includes('a') && !downloads[lesson.id] ? (
         <View>
           <Separator />
           <OptionsModalButton
-            title={props.translations.general.share_passage_audio}
+            title={translations.general.share_passage_audio}
             onPress={() => share('audio')}
           />
         </View>
       ) : null}
-      {props.lessonType.includes('v') &&
-      props.lesson.videoShareLink &&
-      !props.downloads[props.lesson.id] ? (
+      {lessonType.includes('v') &&
+      lesson.videoShareLink &&
+      !downloads[lesson.id] ? (
         <View>
           <Separator />
           <OptionsModalButton
-            title={props.translations.general.share_video_link}
+            title={translations.general.share_video_link}
             onPress={() => share('video')}
           />
         </View>

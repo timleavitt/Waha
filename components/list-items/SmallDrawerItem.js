@@ -4,21 +4,35 @@ import { connect } from 'react-redux'
 import { colors, getLanguageFont } from '../../constants'
 import { StandardTypography } from '../../styles/typography'
 
-function SmallDrawerItem (props) {
+function SmallDrawerItem ({
+  // passed from parents
+  onPress,
+  label,
+  // passed from redux
+  isRTL,
+  font,
+  activeGroup
+}) {
   //+ RENDER
 
   return (
     <TouchableOpacity
       style={[
         styles.smallDrawerItemContainer,
-        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        { flexDirection: isRTL ? 'row-reverse' : 'row' }
       ]}
-      onPress={props.onPress}
+      onPress={onPress}
     >
       <Text
-        style={StandardTypography(props, 'h3', 'Bold', 'left', colors.chateau)}
+        style={StandardTypography(
+          { font, isRTL },
+          'h3',
+          'Bold',
+          'left',
+          colors.chateau
+        )}
       >
-        {props.label}
+        {label}
       </Text>
     </TouchableOpacity>
   )

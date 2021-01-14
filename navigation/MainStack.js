@@ -36,7 +36,16 @@ LogBox.ignoreLogs(['Setting a timer'])
 
 const Stack = createStackNavigator()
 
-function MainStack (props) {
+function MainStack ({
+  navigation: { navigate, goBack, toggleDrawer },
+  isRTL,
+  translations,
+  font,
+  activeGroup,
+  security,
+  setTimer,
+  setIsTimedOut
+}) {
   async function getTime () {
     return Date.now()
   }
@@ -52,33 +61,30 @@ function MainStack (props) {
   useEffect(() => {
     if (appState === 'inactive' || appState === 'background') {
       // hide screen during multitasking / going home
-      if (Platform.OS === 'ios') props.navigation.navigate('Splash')
+      if (Platform.OS === 'ios') navigate('Splash')
 
       // store current time for timeout checking later
-      props.setTimer(Date.now())
+      setTimer(Date.now())
     }
     if (appState === 'active') {
-      if (props.security.securityEnabled) {
+      if (security.securityEnabled) {
         // if we've already timed out, go straight to game
-        if (props.security.isTimedOut) {
-          props.navigation.navigate('PianoApp')
+        if (security.isTimedOut) {
+          navigate('PianoApp')
         } else {
           // check if we are now timed out
           // if we are, set isTimedOut to true and navigate to gamez
-          if (
-            Date.now() - props.security.timer >
-            props.security.timeoutDuration
-          ) {
-            props.setIsTimedOut(true)
-            props.navigation.navigate('PianoApp')
+          if (Date.now() - security.timer > security.timeoutDuration) {
+            setIsTimedOut(true)
+            navigate('PianoApp')
             // otherwise, if we haven't timed out, just go back to normal screen
           } else {
-            if (Platform.OS === 'ios') props.navigation.goBack()
+            if (Platform.OS === 'ios') goBack()
           }
         }
         // default: go back from splash to whatever screen we were on before
       } else {
-        if (Platform.OS === 'ios') props.navigation.goBack()
+        if (Platform.OS === 'ios') goBack()
       }
     }
   }, [appState])
@@ -107,11 +113,9 @@ function MainStack (props) {
   return (
     <Stack.Navigator
       // set the initial screen based on whether security is enabled or not
-      initialRouteName={
-        props.security.securityEnabled ? 'PianoApp' : 'StorySetTabs'
-      }
+      initialRouteName={security.securityEnabled ? 'PianoApp' : 'StorySetTabs'}
       screenOptions={{
-        gestureDirection: props.isRTL ? 'horizontal-inverted' : 'horizontal',
+        gestureDirection: isRTL ? 'horizontal-inverted' : 'horizontal',
         gestureResponseDistance: {
           horizontal: 50 * scaleMultiplier,
           vertical: 135
@@ -134,12 +138,12 @@ function MainStack (props) {
               source={{
                 uri:
                   FileSystem.documentDirectory +
-                  props.activeGroup.language +
+                  activeGroup.language +
                   '-header.png'
               }}
             />
           ),
-          headerLeft: props.isRTL
+          headerLeft: isRTL
             ? () => (
                 <View>
                   {dbMode === 'test' ||
@@ -148,7 +152,7 @@ function MainStack (props) {
                     <Text
                       style={[
                         StandardTypography(
-                          props,
+                          { font, isRTL },
                           'p',
                           'Regular',
                           'center',
@@ -168,21 +172,21 @@ function MainStack (props) {
                 <View style={{ paddingHorizontal: 10 }}>
                   <GroupAvatar
                     style={{ backgroundColor: colors.white }}
-                    emoji={props.activeGroup.emoji}
+                    emoji={activeGroup.emoji}
                     size={35}
-                    onPress={() => props.navigation.toggleDrawer()}
+                    onPress={() => toggleDrawer()}
                     isActive={true}
                   />
                 </View>
               ),
-          headerRight: props.isRTL
+          headerRight: isRTL
             ? () => (
                 <View style={{ paddingHorizontal: 10 }}>
                   <GroupAvatar
                     style={{ backgroundColor: colors.white }}
-                    emoji={props.activeGroup.emoji}
+                    emoji={activeGroup.emoji}
                     size={35}
-                    onPress={() => props.navigation.toggleDrawer()}
+                    onPress={() => toggleDrawer()}
                     isActive={true}
                   />
                 </View>
@@ -195,7 +199,7 @@ function MainStack (props) {
                     <Text
                       style={[
                         StandardTypography(
-                          props,
+                          { font, isRTL },
                           'p',
                           'Regular',
                           'center',
@@ -241,7 +245,7 @@ function MainStack (props) {
         name='Groups'
         component={GroupsScreen}
         options={{
-          headerTitle: props.translations.groups.header,
+          headerTitle: translations.groups.header,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           }
@@ -254,7 +258,7 @@ function MainStack (props) {
           title: '',
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-Bold'
+            fontFamily: font + '-Bold'
           }
         }}
       />
@@ -272,25 +276,25 @@ function MainStack (props) {
             'center',
             colors.shark
           ),
-          headerRight: props.isRTL
-            ? () => <BackButton onPress={() => props.navigation.goBack()} />
+          headerRight: isRTL
+            ? () => <BackButton onPress={() => goBack()} />
             : () => <View></View>,
-          headerLeft: props.isRTL
+          headerLeft: isRTL
             ? () => <View></View>
-            : () => <BackButton onPress={() => props.navigation.goBack()} />
+            : () => <BackButton onPress={() => goBack()} />
         }}
       />
       <Stack.Screen
         name='Storage'
         component={StorageScreen}
         options={{
-          headerTitle: props.translations.storage.header,
+          headerTitle: translations.storage.header,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-Bold'
+            fontFamily: font + '-Bold'
           }
         }}
       />
@@ -298,13 +302,13 @@ function MainStack (props) {
         name='MobilizationTools'
         component={MobilizationToolsScreen}
         options={{
-          headerTitle: props.translations.mobilization_tools.header,
+          headerTitle: translations.mobilization_tools.header,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-Bold'
+            fontFamily: font + '-Bold'
           }
         }}
       />
@@ -312,13 +316,13 @@ function MainStack (props) {
         name='Passcode'
         component={PasscodeScreen}
         options={{
-          headerTitle: props.translations.mobilization_tools.header,
+          headerTitle: translations.mobilization_tools.header,
           headerStyle: {
             backgroundColor: colors.white
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-Bold'
+            fontFamily: font + '-Bold'
           }
         }}
       />
@@ -326,13 +330,13 @@ function MainStack (props) {
         name='Security'
         component={SecurityScreen}
         options={{
-          headerTitle: props.translations.security.header,
+          headerTitle: translations.security.header,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-Bold'
+            fontFamily: font + '-Bold'
           }
         }}
       />
@@ -340,13 +344,13 @@ function MainStack (props) {
         name='SecurityOnboardingSlides'
         component={SecurityOnboardingSlidesScreen}
         options={{
-          headerTitle: props.translations.security.header,
+          headerTitle: translations.security.header,
           headerStyle: {
             backgroundColor: colors.white
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-Bold'
+            fontFamily: font + '-Bold'
           }
         }}
       />
@@ -359,7 +363,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-Bold'
+            fontFamily: font + '-Bold'
           }
         }}
       />
@@ -372,7 +376,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-Bold'
+            fontFamily: font + '-Bold'
           }
         }}
       />
@@ -385,7 +389,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-Bold'
+            fontFamily: font + '-Bold'
           }
         }}
       />
@@ -398,7 +402,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-Bold'
+            fontFamily: font + '-Bold'
           }
         }}
       />
@@ -411,7 +415,7 @@ function MainStack (props) {
           },
           headerTitleStyle: {
             color: colors.shark,
-            fontFamily: props.font + '-Bold'
+            fontFamily: font + '-Bold'
           }
         }}
       />

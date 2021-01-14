@@ -4,7 +4,15 @@ import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, getLanguageFont, keyColors } from '../../constants'
 import KeyLabel from '../piano-stuff/KeyLabel'
-function Piano (props) {
+function Piano ({
+  // passed from parent
+  setPattern,
+  isMuted = false,
+  // passed from redux
+  isRTL,
+  font,
+  activeGroup
+}) {
   // RENDER
 
   // require keyboard notes
@@ -22,7 +30,7 @@ function Piano (props) {
   var B = require('../../assets/notes/B.mp3')
 
   function playNote (number) {
-    if (!props.isMuted) {
+    if (!isMuted) {
       var note = new Audio.Sound()
       switch (number) {
         case 0:
@@ -84,7 +92,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '01')
+            setPattern(pattern => pattern + '01')
             playNote(1)
           }}
         >
@@ -93,7 +101,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '03')
+            setPattern(pattern => pattern + '03')
             playNote(3)
           }}
         >
@@ -103,7 +111,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '06')
+            setPattern(pattern => pattern + '06')
             playNote(6)
           }}
         >
@@ -112,7 +120,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '08')
+            setPattern(pattern => pattern + '08')
             playNote(8)
           }}
         >
@@ -121,7 +129,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '10')
+            setPattern(pattern => pattern + '10')
             playNote(10)
           }}
         >
@@ -138,7 +146,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '00')
+            setPattern(pattern => pattern + '00')
             playNote(0)
           }}
         >
@@ -147,7 +155,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '02')
+            setPattern(pattern => pattern + '02')
             playNote(2)
           }}
         >
@@ -156,7 +164,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '04')
+            setPattern(pattern => pattern + '04')
             playNote(4)
           }}
         >
@@ -165,7 +173,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '05')
+            setPattern(pattern => pattern + '05')
             playNote(5)
           }}
         >
@@ -174,7 +182,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '07')
+            setPattern(pattern => pattern + '07')
             playNote(7)
           }}
         >
@@ -183,7 +191,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '09')
+            setPattern(pattern => pattern + '09')
             playNote(9)
           }}
         >
@@ -192,7 +200,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '11')
+            setPattern(pattern => pattern + '11')
             playNote(11)
           }}
         >

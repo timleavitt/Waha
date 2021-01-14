@@ -15,20 +15,30 @@ import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
 import { StandardTypography } from '../styles/typography'
 
-function GroupsScreen (props) {
+function GroupsScreen ({
+  navigation: { setOptions, goBack, navigate },
+  // passed from redux
+  database,
+  isRTL,
+  translations,
+  isConnected,
+  font,
+  groups,
+  activeGroup
+}) {
   //+ STATE
 
   const [isEditing, setIsEditing] = useState(false)
   const [showAddGroupModal, setShowAddGroupModal] = useState(false)
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
-  const [groupName, setGroupName] = useState(props.activeGroup.name)
-  const [languageID, setLanguageID] = useState(props.activeGroup.languageID)
+  const [groupName, setGroupName] = useState(activeGroup.name)
+  const [languageID, setLanguageID] = useState(activeGroup.languageID)
 
   //+ CONSTRUCTOR
 
   useEffect(() => {
-    props.navigation.setOptions(getNavOptions())
-  }, [isEditing, props])
+    setOptions(getNavOptions())
+  }, [isEditing, isRTL, activeGroup])
 
   //+ NAV OPTIONS
 
@@ -39,13 +49,13 @@ function GroupsScreen (props) {
       },
       headerTitleStyle: {
         color: isEditing ? colors.white : colors.shark,
-        fontFamily: props.font + '-Bold'
+        fontFamily: font + '-Bold'
       },
-      headerRight: props.isRTL
+      headerRight: isRTL
         ? () => (
             <BackButton
               color={isEditing ? colors.white : null}
-              onPress={() => props.navigation.goBack()}
+              onPress={() => goBack()}
             />
           )
         : () => (
@@ -56,7 +66,7 @@ function GroupsScreen (props) {
               <Text
                 style={[
                   StandardTypography(
-                    props,
+                    { font, isRTL },
                     'h3',
                     isEditing ? 'Bold' : 'Regular',
                     'center',
@@ -68,12 +78,12 @@ function GroupsScreen (props) {
                 ]}
               >
                 {isEditing
-                  ? props.translations.groups.done_button_label
-                  : props.translations.groups.edit_button_label}
+                  ? translations.groups.done_button_label
+                  : translations.groups.edit_button_label}
               </Text>
             </TouchableOpacity>
           ),
-      headerLeft: props.isRTL
+      headerLeft: isRTL
         ? () => (
             <TouchableOpacity
               style={styles.editButtonContainer}
@@ -81,23 +91,23 @@ function GroupsScreen (props) {
             >
               <Text
                 style={StandardTypography(
-                  props,
+                  { font, isRTL },
                   'h3',
-                  props.isEditing ? 'Bold' : 'Regular',
+                  isEditing ? 'Bold' : 'Regular',
                   'center',
                   isEditing ? colors.white : colors.blue
                 )}
               >
                 {isEditing
-                  ? props.translations.groups.done_button_label
-                  : props.translations.groups.edit_button_label}
+                  ? translations.groups.done_button_label
+                  : translations.groups.edit_button_label}
               </Text>
             </TouchableOpacity>
           )
         : () => (
             <BackButton
               color={isEditing ? colors.white : null}
-              onPress={() => props.navigation.goBack()}
+              onPress={() => goBack()}
             />
           )
     }
@@ -109,16 +119,14 @@ function GroupsScreen (props) {
   //  to populate section list
   function getLanguageAndGroupData () {
     var installedLanguageInstances = []
-    for (key in props.database) {
+    for (key in database) {
       if (key.length === 2) {
         var languageObject = {}
-        languageObject['title'] = props.database[key].displayName
+        languageObject['title'] = database[key].displayName
         languageObject['languageID'] = key
 
         // get groups for that language
-        languageObject['data'] = props.groups.filter(
-          group => group.language === key
-        )
+        languageObject['data'] = groups.filter(group => group.language === key)
         installedLanguageInstances.push(languageObject)
       }
     }
@@ -145,7 +153,7 @@ function GroupsScreen (props) {
         goToEditGroupScreen={groupName => {
           setGroupName(groupName)
           setShowEditGroupModal(true)
-          // props.navigation.navigate('EditGroup', { groupName: groupName })
+          // navigate('EditGroup', { groupName: groupName })
         }}
         emoji={group.emoji}
       />
@@ -168,14 +176,14 @@ function GroupsScreen (props) {
             <TouchableOpacity
               style={[
                 styles.addGroupContainer,
-                { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+                { flexDirection: isRTL ? 'row-reverse' : 'row' }
               ]}
               onPress={
                 () => {
                   setLanguageID(section.languageID)
                   setShowAddGroupModal(true)
                 }
-                // props.navigation.navigate('AddGroup', {
+                // navigate('AddGroup', {
                 //   languageID: section.languageID
                 // })
               }
@@ -197,14 +205,14 @@ function GroupsScreen (props) {
               </View>
               <Text
                 style={StandardTypography(
-                  props,
+                  { font, isRTL },
                   'h3',
                   'Bold',
                   'left',
                   colors.blue
                 )}
               >
-                {props.translations.groups.new_group_button_label}
+                {translations.groups.new_group_button_label}
               </Text>
             </TouchableOpacity>
             <Separator />
@@ -218,21 +226,21 @@ function GroupsScreen (props) {
           <TouchableOpacity
             style={styles.addNewLanguageContainer}
             onPress={() =>
-              props.navigation.navigate('AddLanguage', {
+              navigate('AddLanguage', {
                 installedLanguageInstances: getLanguageAndGroupData()
               })
             }
           >
             <Text
               style={StandardTypography(
-                props,
+                { font, isRTL },
                 'h3',
                 'Bold',
                 'left',
                 colors.chateau
               )}
             >
-              {props.translations.groups.new_language_button_label}
+              {translations.groups.new_language_button_label}
             </Text>
           </TouchableOpacity>
         }

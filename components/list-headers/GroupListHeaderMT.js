@@ -1,68 +1,36 @@
 import * as FileSystem from 'expo-file-system'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
 import { StandardTypography } from '../../styles/typography'
-function GroupListHeaderMT (props) {
+
+function GroupListHeaderMT ({
+  // passed from parent
+  languageID,
+  // passed from redux
+  activeDatabase,
+  isRTL,
+  groups,
+  activeGroup,
+  translations,
+  font
+}) {
   //+ FUNCTIONS
 
-  useEffect(() => {}, [])
-
   //+ RENDER
-
-  // if our active language has a toolkit, show the list of groups
-  // var list = props.activeDatabase.hasToolkit ? (
-  //   <FlatList
-  //     data={props.groups.filter(group => group.language === props.languageID)}
-  //     renderItem={renderGroupItem}
-  //     keyExtractor={item => item.name}
-  //   />
-  // ) : (
-  //   // otherwise, show a message that says MTs are not available for that language
-  //   <View
-  //     style={{
-  //       height: 80 * scaleMultiplier,
-  //       justifyContent: 'flex-start',
-  //       flexDirection: 'row',
-  //       alignItems: 'center',
-  //       backgroundColor: colors.white,
-  //       margin: 2,
-  //       justifyContent: 'center'
-  //     }}
-  //   >
-  //     <Text
-  //       style={{
-  //         fontFamily: props.font + '-Regular',
-  //         fontSize: 14 * scaleMultiplier,
-  //         color: colors.chateau,
-  //         textAlign: 'center'
-  //       }}
-  //     >
-  //       {
-  //         props.translations.mobilization_tools
-  //           .no_mobilization_tools_content_text
-  //       }
-  //     </Text>
-  //   </View>
-  // )
-
-  // // renders a group item
-  // function renderGroupItem (groups) {
-  //   return <GroupItemMT group={groups.item} />
-  // }
 
   return (
     <View
       style={[
         styles.languageHeaderContainer,
-        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        { flexDirection: isRTL ? 'row-reverse' : 'row' }
       ]}
     >
       <View>
         <Text
           style={StandardTypography(
-            props,
+            { font, isRTL },
             'h3',
             'Bold',
             'left',
@@ -70,10 +38,10 @@ function GroupListHeaderMT (props) {
           )}
         >
           {
-            props.translations.general.brands[props.languageID]
+            translations.general.brands[languageID]
             // +
             //   ' ' +
-            //   props.translations.mobilization_tools.groups_label
+            //   translations.mobilization_tools.groups_label
           }
         </Text>
         {/* <Text
@@ -86,7 +54,7 @@ function GroupListHeaderMT (props) {
           )}
         >
           {
-            props.translations.mobilization_tools
+            translations.mobilization_tools
               .mobilization_tools_status_label
           }
         </Text> */}
@@ -94,7 +62,7 @@ function GroupListHeaderMT (props) {
       <Image
         style={styles.languageLogo}
         source={{
-          uri: FileSystem.documentDirectory + props.languageID + '-header.png'
+          uri: FileSystem.documentDirectory + languageID + '-header.png'
         }}
       />
     </View>
