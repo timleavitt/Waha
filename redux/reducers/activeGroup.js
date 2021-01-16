@@ -2,7 +2,7 @@ import { CHANGE_ACTIVE_GROUP } from '../actions/groupsActions'
 
 /**
  * The active group redux reducer that stores the name of the currently active group.
- * @param {*} action Parameters passed from
+ * @param {*} action Parameters passed from groupsAction.js functions.
  */
 export function activeGroup (state = null, action) {
   switch (action.type) {

@@ -102,7 +102,7 @@ function updateProgress (groupName, set, nextSet, lessonIndex, setLength) {
  * @param {string} groupName The name of the group to update the progress in.
  * @param {Object} set The set to update the progress in.
  * @param {number} lessonIndex The index of the lesson within the set we need to mark/unmark as complete.
- * @return {Object} Object to send to the reducer.
+ * @return {Object} Thunk object that allows us to get the state and dispatch actions.
  */
 export function toggleComplete (groupName, set, lessonIndex) {
   // set up as thunk function so we can get state and dispatch other actions from within
@@ -126,17 +126,31 @@ export function toggleComplete (groupName, set, lessonIndex) {
 
     // get the length of the set that the lesson we're updating the progress of is in
     var setLength = set.lessons.length
+
+    // get the object for the group that we're updating the progress in
     var thisGroup = getState().groups.filter(item => item.name === groupName)[0]
+
+    // get the progress array for the set that we're updating progrses in
     var thisSetProgress = thisGroup.addedSets.filter(
       addedSet => addedSet.id === set.id
     )[0].progress
+
+    // if we're marking a lesson as complete, log the event in firebase
     if (!thisSetProgress.includes(lessonIndex)) {
       logCompleteLesson(thisLesson, set, thisLanguage)
     }
+
+    // finally, dispatch the update progress action with all of our new information
     dispatch(updateProgress(groupName, set, nextSet, lessonIndex, setLength))
   }
 }
 
+/**
+ * DEPRECATED. Resets the progress for a group.
+ * @export
+ * @param {string} groupName The name of the group to reset the progress of.
+ * @return {Object} Object to send to the reducer.
+ */
 export function resetProgress (groupName) {
   return {
     type: RESET_PROGRESS,
@@ -144,8 +158,17 @@ export function resetProgress (groupName) {
   }
 }
 
+/**
+ * Adds a new set to a specified group.
+ * @export
+ * @param {string} groupName The name of the group to add a set in.
+ * @param {Object} set The object for the set that we are adding to this group.
+ * @return {Object} Object to send to the reducer.
+ */
 export function addSet (groupName, set) {
+  // log adding a new story set in firebase
   logAddStorySet(set)
+
   return {
     type: ADD_SET,
     groupName,
@@ -153,6 +176,13 @@ export function addSet (groupName, set) {
   }
 }
 
+/**
+ * Sets whether this group should show the mobilization tools tab or not.
+ * @export
+ * @param {string} groupName The name of the group we want to show/hide the mobilzation tools tab on/from.
+ * @param {boolean} toSet What to set to. True = show, false = don't show.
+ * @return {Object} Object to send to the reducer.
+ */
 export function setShouldShowMobilizationToolsTab (groupName, toSet) {
   return {
     type: SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB,
