@@ -8,6 +8,22 @@ import {
   SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB,
   UPDATE_PROGRESS
 } from '../actions/groupsActions'
+
+/**
+ * The groups redux reducer stores all the information related to groups.
+ * @param {Object} action Parameters passed from groupActions.js functions.
+ * @param {Object[]} groups Stores all the created groups in an array.
+ * @param {string} groups[].name The name of the group.
+ * @param {string} groups[].language The language ID associated with the group.
+ * @param {string} groups[].emoji The name of the emoji used for this group's avatar. Called 'default' by default.
+ * @param {string} groups[].recentCoreOrTool The ID of the most recent foundational or mobilization tools set that has completed a lesson. Note: the name is outdated.
+ * @param {string} groups[].setBookmark The ID of the bookmarked set for this group.
+ * @param {boolean} groups[].shouldShowMobilizationToolsTab Whether the mobilization tools tab should show on the story sets screen.
+ * @param {Object[]} groups[].addedSets An array of sets that have been 'added' to this group. The first 2 foundational sets are added automatically upon creating a new group.
+ * @param {string} groups[].addedSet[].id The ID of the added set.
+ * @param {number[]} groups[].addedSet[].progress Stores the progress for this particular set. Each element is a number for the index of the lesson that has been completed. A set with 0 completed lessons would have an empty progress array.
+ * @param {number} groups[].addedSet[].bookmark The index
+ */
 export function groups (state = [], action) {
   switch (action.type) {
     case CREATE_GROUP:
@@ -31,8 +47,7 @@ export function groups (state = [], action) {
               bookmark: 1
             }
           ],
-          shouldShowMobilizationToolsTab: false,
-          securityEnabled: false
+          shouldShowMobilizationToolsTab: false
         }
       ]
     case EDIT_GROUP:
