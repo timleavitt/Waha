@@ -18,8 +18,8 @@ export const SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB =
 /**
  * Changes the active group. Alters state using the activeGroup.js reducer, NOT the groups.js reducer.
  * @export
- * @param {string} groupName The name of the group to switch to.
- * @return {Object} Object to send to the reducer.
+ * @param {string} groupName - The name of the group to switch to.
+ * @return {Object} - Object to send to the reducer.
  */
 export function changeActiveGroup (groupName) {
   return {
@@ -31,9 +31,9 @@ export function changeActiveGroup (groupName) {
 /**
  * Creates a new group.
  * @export
- * @param {string} groupName The name of the new group.
- * @param {string} language The language ID of the new group.
- * @param {string} emoji The name of the emoji for the new group's avatar.
+ * @param {string} groupName - The name of the new group.
+ * @param {string} language - The language ID of the new group.
+ * @param {string} emoji - The name of the emoji for the new group's avatar.
  * @return {Object} Object to send to the reducer.
  */
 export function createGroup (groupName, language, emoji) {
@@ -49,10 +49,10 @@ export function createGroup (groupName, language, emoji) {
 /**
  * Edits the information for a group.
  * @export
- * @param {string} oldGroupName The name of the group to edit.
- * @param {string} newGroupName The new name to replace oldGroupName.
- * @param {string} emoji The name of the emoji for the group's avatar.
- * @return {Object} Object to send to the reducer.
+ * @param {string} oldGroupName - The name of the group to edit.
+ * @param {string} newGroupName - The new name to replace oldGroupName.
+ * @param {string} emoji - The name of the emoji for the group's avatar.
+ * @return {Object} - Object to send to the reducer.
  */
 export function editGroup (oldGroupName, newGroupName, emoji) {
   return {
@@ -66,8 +66,8 @@ export function editGroup (oldGroupName, newGroupName, emoji) {
 /**
  * Deletes a group.
  * @export
- * @param {string} groupName The name of the group to delete.
- * @return {Object} Object to send to the reducer.
+ * @param {string} groupName - The name of the group to delete.
+ * @return {Object} - Object to send to the reducer.
  */
 export function deleteGroup (groupName) {
   return {
@@ -78,12 +78,12 @@ export function deleteGroup (groupName) {
 
 /**
  * Update the progress of a set for a group, i.e. marking a lesson within a set complete or incomplete. Only called within the toggleComplete function below.
- * @param {string} groupName The name of the group to update the progress in.
- * @param {Object} set The set to update the progress in.
- * @param {Object} nextSet The set after the one to update the progress in. We need this in case the lesson we're marking as complete finishes a set and the bookmark needs to move onto the next set. This only happens for foundational and mobilization tools sets.
- * @param {number} lessonIndex The index of the lesson within the set we need to mark/unmark as complete.
- * @param {number} setLength The length of the set that the lesson we're updating the progress in is a part of.
- * @return {Object} Object to send to the reducer.
+ * @param {string} groupName - The name of the group to update the progress in.
+ * @param {Object} set - The set to update the progress in.
+ * @param {Object} nextSet - The set after the one to update the progress in. We need this in case the lesson we're marking as complete finishes a set and the bookmark needs to move onto the next set. This only happens for foundational and mobilization tools sets.
+ * @param {number} lessonIndex - The index of the lesson within the set we need to mark/unmark as complete.
+ * @param {number} setLength - The length of the set that the lesson we're updating the progress in is a part of.
+ * @return {Object} - Object to send to the reducer.
  */
 function updateProgress (groupName, set, nextSet, lessonIndex, setLength) {
   return {
@@ -99,10 +99,10 @@ function updateProgress (groupName, set, nextSet, lessonIndex, setLength) {
 /**
  * Toggles the complete status of a lesson. This function acts a bridge function. It's called in components but doesn't send anything to the reducer itself. Its purpose is only to use state to get some more information that the above updateProgress function needs in order to work.
  * @export
- * @param {string} groupName The name of the group to update the progress in.
- * @param {Object} set The set to update the progress in.
- * @param {number} lessonIndex The index of the lesson within the set we need to mark/unmark as complete.
- * @return {Object} Thunk object that allows us to get the state and dispatch actions.
+ * @param {string} groupName - The name of the group to update the progress in.
+ * @param {Object} set - The set to update the progress in.
+ * @param {number} lessonIndex - The index of the lesson within the set we need to mark/unmark as complete.
+ * @return {Object} - Thunk object that allows us to get the state and dispatch actions.
  */
 export function toggleComplete (groupName, set, lessonIndex) {
   // set up as thunk function so we can get state and dispatch other actions from within
@@ -148,8 +148,8 @@ export function toggleComplete (groupName, set, lessonIndex) {
 /**
  * DEPRECATED. Resets the progress for a group.
  * @export
- * @param {string} groupName The name of the group to reset the progress of.
- * @return {Object} Object to send to the reducer.
+ * @param {string} groupName - The name of the group to reset the progress of.
+ * @return {Object} - Object to send to the reducer.
  */
 export function resetProgress (groupName) {
   return {
@@ -161,9 +161,9 @@ export function resetProgress (groupName) {
 /**
  * Adds a new set to a specified group.
  * @export
- * @param {string} groupName The name of the group to add a set in.
- * @param {Object} set The object for the set that we are adding to this group.
- * @return {Object} Object to send to the reducer.
+ * @param {string} groupName - The name of the group to add a set in.
+ * @param {Object} set - The object for the set that we are adding to this group.
+ * @return {Object} - Object to send to the reducer.
  */
 export function addSet (groupName, set) {
   // log adding a new story set in firebase
@@ -179,9 +179,9 @@ export function addSet (groupName, set) {
 /**
  * Sets whether this group should show the mobilization tools tab or not.
  * @export
- * @param {string} groupName The name of the group we want to show/hide the mobilzation tools tab on/from.
- * @param {boolean} toSet What to set to. True = show, false = don't show.
- * @return {Object} Object to send to the reducer.
+ * @param {string} groupName - The name of the group we want to show/hide the mobilzation tools tab on/from.
+ * @param {boolean} toSet - What to set to. True = show, false = don't show.
+ * @return {Object} - Object to send to the reducer.
  */
 export function setShouldShowMobilizationToolsTab (groupName, toSet) {
   return {

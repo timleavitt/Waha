@@ -1,5 +1,5 @@
 // test uses the test database
-export const dbMode = 'prod'
+export const dbMode = 'test'
 
 // test means that data isn't stored between app restarts
 export const reduxMode = 'prod'

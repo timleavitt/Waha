@@ -18,6 +18,13 @@ import { changeActiveGroup, createGroup } from './groupsActions'
 import { setIsInstallingLanguageInstance } from './isInstallingLanguageInstanceActions'
 import { storeDownloads } from './storedDownloadsActions'
 
+/**
+ *
+ * @export
+ * @param {*} languageData
+ * @param {*} languageInstanceID
+ * @return {Object} - Object to send to the reducer.
+ */
 export function storeLanguageData (languageData, languageInstanceID) {
   return {
     type: STORE_LANGUAGE_DATA,
@@ -26,6 +33,12 @@ export function storeLanguageData (languageData, languageInstanceID) {
   }
 }
 
+/**
+ *
+ * @export
+ * @param {*} hasOnboarded
+ * @return {Object} - Object to send to the reducer.
+ */
 export function setHasOnboarded (hasOnboarded) {
   return {
     type: SET_HAS_ONBOARDED,
@@ -33,6 +46,12 @@ export function setHasOnboarded (hasOnboarded) {
   }
 }
 
+/**
+ *
+ * @export
+ * @param {*} hasInstalledFirstLanguageInstance
+ * @return {Object} - Object to send to the reducer.
+ */
 export function setHasInstalledFirstLanguageInstance (
   hasInstalledFirstLanguageInstance
 ) {
@@ -42,6 +61,12 @@ export function setHasInstalledFirstLanguageInstance (
   }
 }
 
+/**
+ *
+ * @export
+ * @param {*} hasFetchedLanguageData
+ * @return {Object} - Object to send to the reducer.
+ */
 export function setHasFetchedLanguageData (hasFetchedLanguageData) {
   return {
     type: SET_HAS_FETCHED_LANGUAGE_DATA,
@@ -49,6 +74,12 @@ export function setHasFetchedLanguageData (hasFetchedLanguageData) {
   }
 }
 
+/**
+ *
+ * @export
+ * @param {*} languageCoreFilesDownloadProgress
+ * @return {Object} - Object to send to the reducer.
+ */
 export function setLanguageCoreFilesDownloadProgress (
   languageCoreFilesDownloadProgress
 ) {
@@ -58,6 +89,12 @@ export function setLanguageCoreFilesDownloadProgress (
   }
 }
 
+/**
+ *
+ * @export
+ * @param {*} totalLanguageCoreFilesToDownload
+ * @return {Object} - Object to send to the reducer.
+ */
 export function setTotalLanguageCoreFilesToDownload (
   totalLanguageCoreFilesToDownload
 ) {
@@ -67,6 +104,12 @@ export function setTotalLanguageCoreFilesToDownload (
   }
 }
 
+/**
+ *
+ * @export
+ * @param {*} languageInstanceID
+ * @return {Object} - Object to send to the reducer.
+ */
 export function deleteLanguageData (languageInstanceID) {
   return {
     type: DELETE_LANGUAGE_DATA,
@@ -74,6 +117,12 @@ export function deleteLanguageData (languageInstanceID) {
   }
 }
 
+/**
+ *
+ * @export
+ * @param {*} language
+ * @return {Object} - Thunk object that allows us to get the state and dispatch actions.
+ */
 export function downloadLanguageCoreFiles (language) {
   return async (dispatch, getState) => {
     var totalDownloaded = 0
@@ -175,183 +224,6 @@ export function downloadLanguageCoreFiles (language) {
           )
         )
       }
-      // }
     })
   }
 }
-
-// thunk function for adding a new language
-// export function addLanguage (language) {
-//   return async (dispatch, getState) => {
-//     // set isFetching to true to signal that we're doing stuff and don't want to load the rest of the app
-//     dispatch(setIsFetching(true))
-
-//     //+ FIREBASE FETCH
-
-//     //- get sets first
-//     var sets = []
-
-//     await db
-//       .collection('sets')
-//       .where('languageID', '==', language)
-//       .get()
-//       .then(response => {
-//         response.forEach(set => {
-//           console.log(set.id)
-//           sets.push({
-//             id: set.id,
-//             ...set.data()
-//           })
-//         })
-//       })
-//       .catch(error => dispatch(setFetchError(true, language)))
-
-//     //- then get language object from database and throw all of it in redux
-//     await db
-//       .collection('languages')
-//       .doc(language)
-//       .get()
-//       .then(async doc => {
-//         if (doc.exists) {
-//           // store the language data and sets in redux
-//           dispatch(
-//             storeData(
-//               {
-//                 sets: sets,
-//                 ...doc.data()
-//               },
-//               language
-//             )
-//           )
-
-//           // set total to download so we can display progress through downloads
-//           dispatch(setTotalToDownload(doc.data().files.length))
-
-//           // used to track progress through downloads
-//           var totalDownloaded = 0
-
-//           //+ DOWNLOAD FUNCTIONS
-
-//           // 1. for each file, create a download resumable and store it in redux
-//           // 2. go through each
-
-//           //- some magic for downloading a bunch of files and doing something
-//           //-  when all of them are done
-//           async function asyncForEach (array, callback) {
-//             for (let index = 0; index < array.length; index++) {
-//               await callback(array[index], index, array)
-//             }
-//           }
-
-//           //- some more magic
-//           const downloadStuff = async () => {
-//             try {
-//               await asyncForEach(
-//                 doc.data().files,
-//                 async (fileName, index, files) => {
-//                   if (fileName.includes('header')) {
-//                     var download = FileSystem.createDownloadResumable(
-//                       `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.png?alt=media`,
-//                       FileSystem.documentDirectory +
-//                         language +
-//                         '-' +
-//                         fileName.slice(0, -3) +
-//                         '.png'
-//                     )
-
-//                     // dispatch(storeDownload(download))
-
-//                     // console.log(shouldDownload)
-
-//                     await download
-//                       .downloadAsync()
-//                       .catch(error => dispatch(setFetchError(true, language)))
-
-//                     // await FileSystem.downloadAsync(
-//                     //   `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.png?alt=media`,
-//                     //   FileSystem.documentDirectory +
-//                     //     language +
-//                     //     '-' +
-//                     //     fileName.slice(0, -3) +
-//                     //     '.png'
-//                     // ).catch(error => dispatch(setFetchError(true, language)))
-//                   } else {
-//                     var download = FileSystem.createDownloadResumable(
-//                       `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.mp3?alt=media`,
-//                       FileSystem.documentDirectory +
-//                         language +
-//                         '-' +
-//                         fileName.slice(0, -3) +
-//                         '.mp3'
-//                     )
-
-//                     // dispatch(storeDownload(download))
-
-//                     // console.log(shouldDownload)
-
-//                     await download
-//                       .downloadAsync()
-//                       .catch(error => dispatch(setFetchError(true, language)))
-//                     // await FileSystem.downloadAsync(
-//                     //   `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.mp3?alt=media`,
-//                     //   FileSystem.documentDirectory +
-//                     //     language +
-//                     //     '-' +
-//                     //     fileName.slice(0, -3) +
-//                     //     '.mp3'
-//                     //   // if there's an error downloading a file
-//                     // ).catch(error => {
-//                     //   console.log(error)
-//                     //   dispatch(setFetchError(true, language))
-//                     // })
-//                   }
-//                   totalDownloaded += 1
-//                   dispatch(setCurrentFetchProgress(totalDownloaded))
-//                 }
-//               )
-
-//               //+ STUFF TO DO WHEN DONE DOWNLOADING
-
-//               // log the language install for firebase analytics
-//               logInstallLanguage(language, i18n.locale)
-
-//               // create a new group using the default group name in constants.js
-//               dispatch(createGroup(groupNames[language], language, 'default'))
-
-//               // change the active group to the new group we just created
-//               dispatch(changeActiveGroup(groupNames[language]))
-
-//               // set isFetching to false since we're no longer fetching
-//               dispatch(setIsFetching(false))
-
-//               // set setFinishedInitialFetch to true because we're done fetching
-//               dispatch(setFinishedInitialFetch(true))
-
-//               // set fetchProgress back to 0 (in case user downloads another
-//               //  language later)
-//               dispatch(setCurrentFetchProgress(0))
-//               dispatch(setTotalToDownload(doc.data().files.length))
-//             } catch (error) {
-//               console.log(error)
-//               dispatch(setFetchError(true, language))
-//             }
-//           }
-
-//           //+ ACTUALLY DOWNLOAD STUFF
-//           try {
-//             downloadStuff()
-//           } catch (error) {
-//             dispatch(setFetchError(true, language))
-//           }
-//         } else {
-//           // if doc doesn't exist, throw an error
-//           dispatch(setFetchError(true, language))
-//         }
-//       })
-//       // if there's an error fetching from firebase
-//       .catch(error => {
-//         console.log(error)
-//         dispatch(setFetchError(true, language))
-//       })
-//   }
-// }
