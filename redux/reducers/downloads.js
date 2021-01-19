@@ -7,8 +7,8 @@ import {
  * The downloads reducer stores the progress for any active lesson downloads. Downloads that happen during the initial install of a language are NOT stored here. They are handled by the database.js reducer and the databaseActions.js. This is only for downloading lesson scripture audio files or lesson video files. This state NOT is persisted across app restarts, so all downloads are cancelled if the user quits the app.
  * @param {Object} action - Parameters passed from groupActions.js functions.
  * @param {Object} downloads - (state) All of the currently active downloads. Each key is the ID of the lesson that is downloading so that multiple lesson downloads can be stored at once.
- * @param {number} downloads[key].progress - The progress of this lesson's download from 0 to 1.
- * @param {Object} downloads[key].resumable - The resumable object for this lesson's download saved from the expo download object. This is stored so that we can "cancel" the download later. In this case, cancelling means pausing the download and never resuming it since expo doesn't have a cancel download function.
+ * @param {number} downloads[lessonID].progress - The progress of this lesson's download from 0 to 1.
+ * @param {Object} downloads[lessonID].resumable - The resumable object for this lesson's download saved from the expo download object. This is stored so that we can "cancel" the download later. In this case, cancelling means pausing the download and never resuming it since expo doesn't have a cancel download function.
  */
 export function downloads (state = {}, action) {
   switch (action.type) {
