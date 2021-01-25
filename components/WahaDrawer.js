@@ -14,6 +14,7 @@ function WahaDrawer (props) {
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
 
   //+ FUNCTIONS
+  console.log(props.isConnected)
 
   // opens a local browser
   async function openBrowser (url) {
@@ -129,7 +130,7 @@ function WahaDrawer (props) {
                 colors.chateau
               )}
             >
-              v1.0.1
+              v1.0.2
             </Text>
           </View>
         </SafeAreaView>
@@ -186,7 +187,8 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language)
+    font: getLanguageFont(activeGroup.language),
+    isConnected: state.network.isConnected
   }
 }
 
