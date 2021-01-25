@@ -14,7 +14,6 @@ function WahaDrawer (props) {
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
 
   //+ FUNCTIONS
-  console.log(props.isConnected)
 
   // opens a local browser
   async function openBrowser (url) {
