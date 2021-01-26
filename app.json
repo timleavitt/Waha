@@ -28,7 +28,7 @@
     "android": {
       "package": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/google-services.json",
-      "versionCode": 12,
+      "versionCode": 13,
       "icon": "./assets/adaptive-icon-foreground.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon-foreground.png",
