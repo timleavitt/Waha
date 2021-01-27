@@ -5,6 +5,7 @@ import {
   NavigationContainer
 } from '@react-navigation/native'
 import * as FileSystem from 'expo-file-system'
+import firebase from 'firebase'
 import React, { useEffect } from 'react'
 import { Alert } from 'react-native'
 import { connect } from 'react-redux'
@@ -39,6 +40,19 @@ function MainDrawer (props) {
       props.updateConnectionStatus(state.isConnected)
     })
 
+    console.log(props.coreFilesCreatedTimes)
+
+    // const ref = firebase
+    //   .storage()
+    //   .refFromURL(
+    //     'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/en%2Fother%2Fheader-v1.png?alt=media'
+    //   )
+    // ref.getMetadata().then(metadata => console.log(metadata))
+
+    // ref.getMetadata().then(metaData => {
+    //   console.log(metaData)
+    // })
+
     //+ FIRESTORE LISTENERS
 
     var localLanguageInfo = {}
@@ -67,6 +81,41 @@ function MainDrawer (props) {
 
             // check for new fellowship or application chapters or header image
             doc.data().files.forEach(fileName => {
+              if (fileName.includes('header')) {
+                firebase
+                  .storage()
+                  .refFromURL(
+                    `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.png?alt=media`
+                  )
+                  .getMetadata()
+                  .then(metadata => {
+                    if (
+                      metadata.timeCreated !==
+                      props.coreFilesCreatedTimes[
+                        props.activeGroup.language + '-' + fileName
+                      ]
+                    ) {
+                      console.log('NOT THE SAME')
+                    }
+                  })
+              } else {
+                firebase
+                  .storage()
+                  .refFromURL(
+                    `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.mp3?alt=media`
+                  )
+                  .getMetadata()
+                  .then(metadata => {
+                    if (
+                      metadata.timeCreated !==
+                      props.coreFilesCreatedTimes[
+                        props.activeGroup.language + '-' + fileName
+                      ]
+                    ) {
+                      console.log('NOT THE SAME')
+                    }
+                  })
+              }
               if (!props.activeDatabase.files.includes(fileName)) {
                 Alert.alert(
                   props.translations.general.popups
@@ -179,7 +228,8 @@ function mapStateToProps (state) {
     isConnected: state.network.isConnected,
     translations: state.database[activeGroup.language].translations,
     activeGroup: activeGroup,
-    security: state.security
+    security: state.security,
+    coreFilesCreatedTimes: state.database.coreFilesCreatedTimes
   }
 }
 
