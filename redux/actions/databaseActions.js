@@ -1,5 +1,6 @@
 export const ADD_LANGUAGE = 'ADD_LANGUAGE'
 export const STORE_LANGUAGE_DATA = 'STORE_LANGUAGE_DATA'
+export const STORE_LANGUAGE_SETS = 'STORE_LANGUAGE_SETS'
 export const SET_HAS_ONBOARDED = 'SET_HAS_ONBOARDED'
 export const SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE =
   'SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE'
@@ -22,6 +23,14 @@ export function storeLanguageData (languageData, languageInstanceID) {
   return {
     type: STORE_LANGUAGE_DATA,
     languageData,
+    languageInstanceID
+  }
+}
+
+export function storeLanguageSets (languageSets, languageInstanceID) {
+  return {
+    type: STORE_LANGUAGE_SETS,
+    languageSets,
     languageInstanceID
   }
 }
@@ -153,7 +162,10 @@ export function downloadLanguageCoreFiles (language) {
         logInstallLanguage(language, i18n.locale)
 
         // create a new group using the default group name in constants.js
-        dispatch(createGroup(groupNames[language], language, 'default'))
+        if (
+          !getState().groups.some(group => group.name === groupNames[language])
+        )
+          dispatch(createGroup(groupNames[language], language, 'default'))
 
         // change the active group to the new group we just created
         dispatch(changeActiveGroup(groupNames[language]))

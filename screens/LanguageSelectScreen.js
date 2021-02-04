@@ -1,5 +1,6 @@
 import NetInfo from '@react-native-community/netinfo'
 import { Audio } from 'expo-av'
+import * as FileSystem from 'expo-file-system'
 import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
@@ -19,10 +20,13 @@ import WahaButton from '../components/standard/WahaButton'
 import { colors, languages, languageT2S, scaleMultiplier } from '../constants'
 import db from '../firebase/db'
 import {
+  deleteLanguageData,
   downloadLanguageCoreFiles,
   setHasFetchedLanguageData,
-  storeLanguageData
+  storeLanguageData,
+  storeLanguageSets
 } from '../redux/actions/databaseActions'
+import { deleteGroup } from '../redux/actions/groupsActions'
 import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
 import { storeDownloads } from '../redux/actions/storedDownloadsActions'
 import { SystemTypography } from '../styles/typography'
@@ -63,6 +67,24 @@ function LanguageSelectScreen (props) {
   useEffect(() => {
     props.navigation.setOptions(getNavOptions())
 
+    // Clear out the database and downloaded files in case we somehow come back to the Language Select screen after installing anything.
+    if (props.route.name === 'LanguageSelect') {
+      props.groups.forEach(group => props.deleteGroup(group.name))
+
+      Object.keys(props.database).forEach(languageID => {
+        props.deleteLanguageData(languageID)
+        FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+          contents => {
+            for (const item of contents) {
+              if (item.slice(0, 2) === languageID) {
+                FileSystem.deleteAsync(FileSystem.documentDirectory + item)
+              }
+            }
+          }
+        )
+      })
+    }
+
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected)
     })
@@ -86,19 +108,20 @@ function LanguageSelectScreen (props) {
     props.storeDownloads([])
     props.setIsInstallingLanguageInstance(true)
     //- get sets first
-    var sets = []
 
     await db
       .collection('sets')
       .where('languageID', '==', selectedLanguage)
       .get()
       .then(response => {
+        var sets = []
         response.forEach(set => {
           sets.push({
             id: set.id,
             ...set.data()
           })
         })
+        props.storeLanguageSets(sets, selectedLanguage)
       })
       .catch(error => {
         console.log(error)
@@ -112,13 +135,7 @@ function LanguageSelectScreen (props) {
       .get()
       .then(async doc => {
         if (doc.exists) {
-          props.storeLanguageData(
-            {
-              sets: sets,
-              ...doc.data()
-            },
-            selectedLanguage
-          )
+          props.storeLanguageData(doc.data(), selectedLanguage)
         }
       })
       .catch(error => {
@@ -415,7 +432,10 @@ const styles = StyleSheet.create({
 //+ REDUX
 
 function mapStateToProps (state) {
-  return {}
+  return {
+    database: state.database,
+    groups: state.groups
+  }
 }
 
 function mapDispatchToProps (dispatch) {
@@ -424,11 +444,16 @@ function mapDispatchToProps (dispatch) {
       dispatch(downloadLanguageCoreFiles(languageInstanceID)),
     storeLanguageData: (data, languageInstanceID) =>
       dispatch(storeLanguageData(data, languageInstanceID)),
+    deleteLanguageData: languageInstanceID =>
+      dispatch(deleteLanguageData(languageInstanceID)),
+    storeLanguageSets: (sets, languageInstanceID) =>
+      dispatch(storeLanguageSets(sets, languageInstanceID)),
     setIsInstallingLanguageInstance: toSet =>
       dispatch(setIsInstallingLanguageInstance(toSet)),
     storeDownloads: downloads => dispatch(storeDownloads(downloads)),
     setHasFetchedLanguageData: hasFetchedLanguageData =>
-      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
+      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData)),
+    deleteGroup: groupName => dispatch(deleteGroup(groupName))
   }
 }
 
