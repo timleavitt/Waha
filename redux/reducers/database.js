@@ -5,7 +5,8 @@ import {
   SET_HAS_ONBOARDED,
   SET_LANGUAGE_CORE_FILES_DOWNLOAD_PROGRESS,
   SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD,
-  STORE_LANGUAGE_DATA
+  STORE_LANGUAGE_DATA,
+  STORE_LANGUAGE_SETS
 } from '../actions/databaseActions'
 
 export function database (
@@ -19,7 +20,28 @@ export function database (
 ) {
   switch (action.type) {
     case STORE_LANGUAGE_DATA:
-      return { ...state, [action.languageInstanceID]: action.languageData }
+      return {
+        ...state,
+        [action.languageInstanceID]: {
+          ...state[action.languageInstanceID],
+          // appVersion: action.languageData[appVersion],
+          displayName: action.languageData.displayName,
+          bibleID: action.languageData.bibleID,
+          isRTL: action.languageData.isRTL,
+          primaryColor: action.languageData.primaryColor,
+          files: action.languageData.files,
+          questions: action.languageData.questions,
+          translations: action.languageData.translations
+        }
+      }
+    case STORE_LANGUAGE_SETS:
+      return {
+        ...state,
+        [action.languageInstanceID]: {
+          ...state[action.languageInstanceID],
+          sets: action.languageSets
+        }
+      }
     case SET_HAS_ONBOARDED:
       return { ...state, hasOnboarded: action.hasOnboarded }
     case SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE:
