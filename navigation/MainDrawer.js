@@ -57,7 +57,6 @@ function MainDrawer (props) {
     db.collection('sets')
       .where('languageID', '==', props.activeGroup.language)
       .onSnapshot(querySnapshot => {
-        // make this work without internet
         if (!querySnapshot.empty) {
           var sets = []
           querySnapshot.forEach(doc => {
@@ -66,8 +65,6 @@ function MainDrawer (props) {
               ...doc.data()
             })
           })
-
-          // store the new sets object
           props.storeLanguageSets(sets, props.activeGroup.language)
         }
       })
