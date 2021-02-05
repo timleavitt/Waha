@@ -4,6 +4,8 @@ import {
   getFocusedRouteNameFromRoute,
   NavigationContainer
 } from '@react-navigation/native'
+import * as FileSystem from 'expo-file-system'
+import firebase from 'firebase'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import WahaDrawer from '../components/WahaDrawer'
@@ -64,6 +66,42 @@ function MainDrawer (props) {
         if (doc.data()) {
           props.storeLanguageData(doc.data(), props.activeGroup.language)
           localLanguageInfo = doc.data()
+
+          // 1. Check for changes in already downloaded files by comparing created times in redux with created times of current firebase storage files. If the created times don't match, queue the new file to download.
+          doc.data().files.forEach(fileName => {
+            var fileExtension = fileName.includes('header') ? 'png' : 'mp3'
+            var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
+
+            firebase
+              .storage()
+              .refFromURL(url)
+              .getMetadata()
+              .then(({ timeCreated }) => {
+                if (
+                  timeCreated !==
+                  props.coreFilesCreatedTimes[
+                    props.activeGroup.language + '-' + fileName
+                  ]
+                ) {
+                  // Add file to queue to download.
+                }
+              })
+          })
+
+          // 2. Check for fully new files and queue them to download.
+          FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+            contents => {
+              doc.data().files.forEach(fileName => {
+                if (
+                  !contents.includes(
+                    props.activeGroup.language + '-' + fileName
+                  )
+                ) {
+                  // Add file to queue to download.
+                }
+              })
+            }
+          )
         }
       })
 
