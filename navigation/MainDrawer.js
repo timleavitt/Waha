@@ -4,15 +4,15 @@ import {
   getFocusedRouteNameFromRoute,
   NavigationContainer
 } from '@react-navigation/native'
-import * as FileSystem from 'expo-file-system'
-import firebase from 'firebase'
 import React, { useEffect } from 'react'
-import { Alert } from 'react-native'
 import { connect } from 'react-redux'
 import WahaDrawer from '../components/WahaDrawer'
 import { scaleMultiplier } from '../constants'
 import db from '../firebase/db'
-import { storeLanguageData } from '../redux/actions/databaseActions'
+import {
+  storeLanguageData,
+  storeLanguageSets
+} from '../redux/actions/databaseActions'
 import { updateConnectionStatus } from '../redux/actions/networkActions'
 import MainStack from './MainStack'
 
@@ -58,135 +58,124 @@ function MainDrawer (props) {
     var localLanguageInfo = {}
     var localSets = []
 
-    if (props.isConnected) {
-      try {
-        // listener for languages collection
-        db.collection('languages')
-          .doc(props.activeGroup.language)
-          .onSnapshot(function (doc) {
-            //- download a file
-            function downloadSomething (url, fileName) {
-              var downloadResumable = FileSystem.createDownloadResumable(
-                url,
-                FileSystem.documentDirectory +
-                  props.activeGroup.language +
-                  '-' +
-                  fileName,
-                {}
-              )
-              return downloadResumable.downloadAsync().catch(error => {
-                throw error
-              })
-            }
+    db.collection('languages')
+      .doc(props.activeGroup.language)
+      .onSnapshot(function (doc) {
+        if (doc.data()) {
+          props.storeLanguageData(doc.data(), props.activeGroup.language)
+          localLanguageInfo = doc.data()
+        }
+      })
 
-            // check for new fellowship or application chapters or header image
-            doc.data().files.forEach(fileName => {
-              if (fileName.includes('header')) {
-                firebase
-                  .storage()
-                  .refFromURL(
-                    `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.png?alt=media`
-                  )
-                  .getMetadata()
-                  .then(metadata => {
-                    if (
-                      metadata.timeCreated !==
-                      props.coreFilesCreatedTimes[
-                        props.activeGroup.language + '-' + fileName
-                      ]
-                    ) {
-                      console.log('NOT THE SAME')
-                    }
-                  })
-              } else {
-                firebase
-                  .storage()
-                  .refFromURL(
-                    `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.mp3?alt=media`
-                  )
-                  .getMetadata()
-                  .then(metadata => {
-                    if (
-                      metadata.timeCreated !==
-                      props.coreFilesCreatedTimes[
-                        props.activeGroup.language + '-' + fileName
-                      ]
-                    ) {
-                      console.log('NOT THE SAME')
-                    }
-                  })
-              }
-              if (!props.activeDatabase.files.includes(fileName)) {
-                Alert.alert(
-                  props.translations.general.popups
-                    .new_chapter_downloading_title,
-                  props.translations.general.popups
-                    .new_chapter_downloading_message,
-                  [{ text: props.translations.general.ok, onPress: () => {} }]
-                )
-                if (fileName.includes('header'))
-                  return downloadSomething(
-                    `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.png?alt=media`,
-                    fileName.slice(0, -3) + '.png'
-                  )
-                else
-                  return downloadSomething(
-                    `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.mp3?alt=media`,
-                    fileName.slice(0, -3) + '.mp3'
-                  )
-              }
+    db.collection('sets')
+      .where('languageID', '==', props.activeGroup.language)
+      .onSnapshot(querySnapshot => {
+        if (!querySnapshot.empty) {
+          var sets = []
+          querySnapshot.forEach(doc => {
+            sets.push({
+              id: doc.id,
+              ...doc.data()
             })
-
-            // store data from update
-            props.storeLanguageData(
-              { ...doc.data(), sets: props.activeDatabase.sets },
-              props.activeGroup.language
-            )
-
-            localLanguageInfo = doc.data()
-
-            // console.log(props.activeDatabase.translations)
-
-            // TODO at some point
-            // if
-            // 1. all core story sets are completed
-            // 2. a new core story set has been addded
-
-            // 1. add it automatically to added sets for this group
-            // 2. make it display the 'new' icon somehow
-
-            // if
-            // 1. mobilization tools is unlocked for this group
-            // 2. a new mobilization tools set is added
-            // if (props.activeGroup.setShouldShowMobilizationToolsTab && )
-
-            // 1. add it automatically to added sets for htis group
-            // 2. make it dispaly the 'new' icon somehow
           })
+          props.storeLanguageSets(sets, props.activeGroup.language)
+        }
+      })
 
-        // listener for sets collection
-        db.collection('sets')
-          .where('languageID', '==', props.activeGroup.language)
-          .onSnapshot(querySnapshot => {
-            // get all sets and put them in one object for redux storage
-            var sets = []
-            querySnapshot.forEach(doc => {
-              sets.push({
-                id: doc.id,
-                ...doc.data()
-              })
-            })
+    // if (props.isConnected) {
+    // try {
+    //   // listener for languages collection
+    //   db.collection('languages')
+    //     .doc(props.activeGroup.language)
+    //     .onSnapshot(function (doc) {
+    //       console.log(Object.keys(doc.data()))
+    //       //- download a file
+    //       function downloadSomething (url, fileName) {
+    //         var downloadResumable = FileSystem.createDownloadResumable(
+    //           url,
+    //           FileSystem.documentDirectory +
+    //             props.activeGroup.language +
+    //             '-' +
+    //             fileName,
+    //           {}
+    //         )
+    //         return downloadResumable.downloadAsync().catch(error => {
+    //           throw error
+    //         })
+    //       }
 
-            // store the new sets object
-            props.storeLanguageData(
-              { ...localLanguageInfo, sets: sets },
-              props.activeGroup.language
-            )
-          })
-      } catch (error) {
-        console.log(error)
-      }
-    }
+    //       // check for new fellowship or application chapters or header image
+    //       doc.data().files.forEach(fileName => {
+    //         if (!props.activeDatabase.files.includes(fileName)) {
+    //           Alert.alert(
+    //             props.translations.general.popups.new_chapter_downloading_title,
+    //             props.translations.general.popups
+    //               .new_chapter_downloading_message,
+    //             [{ text: props.translations.general.ok, onPress: () => {} }]
+    //           )
+    //           if (fileName.includes('header'))
+    //             return downloadSomething(
+    //               `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.png?alt=media`,
+    //               fileName.slice(0, -3) + '.png'
+    //             )
+    //           else
+    //             return downloadSomething(
+    //               `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.mp3?alt=media`,
+    //               fileName.slice(0, -3) + '.mp3'
+    //             )
+    //         }
+    //       })
+
+    //       // store data from update
+    //       props.storeLanguageData(
+    //         { ...doc.data(), sets: props.activeDatabase.sets },
+    //         props.activeGroup.language
+    //       )
+
+    //       localLanguageInfo = doc.data()
+
+    //       // console.log(props.activeDatabase.translations)
+
+    //       // TODO at some point
+    //       // if
+    //       // 1. all core story sets are completed
+    //       // 2. a new core story set has been addded
+
+    //       // 1. add it automatically to added sets for this group
+    //       // 2. make it display the 'new' icon somehow
+
+    //       // if
+    //       // 1. mobilization tools is unlocked for this group
+    //       // 2. a new mobilization tools set is added
+    //       // if (props.activeGroup.setShouldShowMobilizationToolsTab && )
+
+    //       // 1. add it automatically to added sets for htis group
+    //       // 2. make it dispaly the 'new' icon somehow
+    //     })
+
+    //   // listener for sets collection
+    //   db.collection('sets')
+    //     .where('languageID', '==', props.activeGroup.language)
+    //     .onSnapshot(querySnapshot => {
+    //       // get all sets and put them in one object for redux storage
+    //       var sets = []
+    //       querySnapshot.forEach(doc => {
+    //         sets.push({
+    //           id: doc.id,
+    //           ...doc.data()
+    //         })
+    //       })
+
+    //       // store the new sets object
+    //       props.storeLanguageData(
+    //         { ...localLanguageInfo, sets: sets },
+    //         props.activeGroup.language
+    //       )
+    //     })
+    // } catch (error) {
+    //   console.log(error)
+    // }
+    // }
     return function cleanup () {
       netInfoUnsubscribe()
     }
@@ -240,6 +229,9 @@ function mapDispatchToProps (dispatch) {
     },
     storeLanguageData: (data, language) => {
       dispatch(storeLanguageData(data, language))
+    },
+    storeLanguageSets: (sets, language) => {
+      dispatch(storeLanguageSets(sets, language))
     }
   }
 }
