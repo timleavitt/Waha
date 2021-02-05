@@ -108,7 +108,7 @@ function WahaDrawer (props) {
             iconName='email'
             text={props.translations.general.feedback}
             onPress={() =>
-              openBrowser('https://airtable.com/shrGQY4b3FSPprzmt')
+              openBrowser('https://coda.io/form/Waha-Bug-Report_dyWvuvL6WTx')
             }
           />
         </View>
@@ -126,17 +126,17 @@ function WahaDrawer (props) {
           ]}
         >
           <SmallDrawerItem
+            onPress={() =>
+              openBrowser(
+                'https://kingdomstrategies.givingfuel.com/general-giving'
+              )
+            }
+            label={props.translations.general.donate_to_waha}
+          />
+          <SmallDrawerItem
             onPress={() => openBrowser('https://waha.app/privacy-policy/')}
             label={props.translations.general.privacy}
           />
-          {/* <SmallDrawerItem
-            onPress={() =>
-              openBrowser(
-                'https://media.giphy.com/media/C4msBrFb6szHG/giphy.gif'
-              )
-            }
-            label={props.translations.general.credits}
-          /> */}
           <View
             style={{
               justifyContent: 'center',
@@ -153,7 +153,7 @@ function WahaDrawer (props) {
                 colors.chateau
               )}
             >
-              v1.0.3
+              v1.0.4
             </Text>
           </View>
         </SafeAreaView>
