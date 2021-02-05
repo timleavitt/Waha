@@ -84,7 +84,7 @@ export function deleteLanguageData (languageInstanceID) {
 }
 
 /**
- * Downloads all the core files for a single language instance and does a whole bunch of stuff once they're done. The core files include the header image, the dummy story mp3, and every question set mp3.
+ * Downloads all the core files for a single language instance and does a whole bunch of stuff once they're done downloading. The core files include the header image, the dummy story mp3, and every question set mp3.
  * @export
  * @param {string} language - The ID for the language instance that we're downloading the core files for.
  */
