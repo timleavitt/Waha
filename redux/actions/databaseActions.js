@@ -83,59 +83,63 @@ export function deleteLanguageData (languageInstanceID) {
   }
 }
 
+/**
+ * Downloads all the core files for a single language instance and does a whole bunch of stuff once they're done. The core files include the header image, the dummy story mp3, and every question set mp3.
+ * @export
+ * @param {string} language - The ID for the language instance that we're downloading the core files for.
+ */
 export function downloadLanguageCoreFiles (language) {
   return async (dispatch, getState) => {
+    // Set the totalDownloaded variable to 0. This is our download progress tracking variable. We add one to this variable whenever we finish downloading a file.
     var totalDownloaded = 0
+
+    // Set the setTotalLanguageCoreFilesToDownload redux variable to the number of files we have to download.
     dispatch(
       setTotalLanguageCoreFilesToDownload(
         getState().database[language].files.length
       )
     )
 
-    function callback ({ totalBytesWritten, totalBytesExpectedToWrite }) {
-      if (totalBytesWritten === totalBytesExpectedToWrite) {
-        // totalDownloaded += 1
-        // console.log(`file ${totalDownloaded} downloaded`)
-        // dispatch(setCurrentFetchProgress(totalDownloaded))
-      }
-    }
-
-    // 1. add all download resumables into one array
+    // 1. Add all the download resumables into one array.
     var filesToDownload = []
 
+    // Run some code for each file we have to download for a language instance. The files we have to download are stored in our redux database (which we fetched from firebase).
     getState().database[language].files.forEach(fileName => {
+      // Create download object.
       var download
-      if (fileName.includes('header')) {
-        download = FileSystem.createDownloadResumable(
-          `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.png?alt=media`,
-          FileSystem.documentDirectory +
-            language +
-            '-' +
-            fileName.slice(0, -3) +
-            '.png',
-          {},
-          callback
-        )
-      } else {
-        download = FileSystem.createDownloadResumable(
-          `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.mp3?alt=media`,
-          FileSystem.documentDirectory +
-            language +
-            '-' +
-            fileName.slice(0, -3) +
-            '.mp3',
-          {},
-          callback
-        )
-      }
 
+      // Set the file extension based on what type of file we're downloading. Every language core file is an mp3 except for the header image which is a png.
+      var fileExtension = fileName.includes('header') ? 'png' : 'mp3'
+
+      // Set the firebase storage URL to download from. The file structure in firebase must be set up exactly right for this link to work.
+      var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
+
+      // Set the local storage path to download to and the name of the file. The format is simple: FileSystem/languageID-fileName.extension.
+      var localPath = `${
+        FileSystem.documentDirectory
+      }${language}-${fileName.slice(0, -3)}.${fileExtension}`
+
+      // Create the download object. Uses url and localPath from above, an empty parameters object, and an empty callback function.
+      download = FileSystem.createDownloadResumable(
+        url,
+        localPath,
+        {},
+        () => {}
+      )
+
+      // Add this download to the filesToDownload object.
       filesToDownload.push(download)
     })
 
-    // 2. add those download resumables to redux
+    // 2. Store out download resumables array in redux.
     dispatch(storeDownloads(filesToDownload))
 
-    // 3. start downloads in parallel
+    // 3. Start all the downloads in the download resumables array in parallel.
+
+    /**
+     * Downloads one file. Updates the total files downloaded redux variable once it's finished so we know how many files we've downloaded.
+     * @param {Object} resumable - The download resumable object.
+     */
     function downloadFile (resumable) {
       return resumable
         .downloadAsync()
@@ -148,222 +152,46 @@ export function downloadLanguageCoreFiles (language) {
         })
     }
 
+    // Create an array of all of our download resumable objects. This is what allows us to execute some code once all the downloads finish using Promise.all.
     const downloadFunctions = filesToDownload.map(resumable =>
       downloadFile(resumable)
     )
 
+    // Start all of our downloads at once.
     Promise.all(downloadFunctions).then(() => {
+      // Once all the downloads have finished...
       if (totalDownloaded === getState().database[language].files.length) {
-        console.log('resolved')
-        // var stupid = false
-        // if (stupid) {
-
-        //log the language install for firebase analytics
+        // Log the language install in firebase for firebase analytics.
         logInstallLanguage(language, i18n.locale)
 
-        // create a new group using the default group name in constants.js
+        // Create a new group using the default group name stored in constants.js. First we make sure there's no duplicates just in case a group has already been created.
         if (
           !getState().groups.some(group => group.name === groupNames[language])
         )
           dispatch(createGroup(groupNames[language], language, 'default'))
 
-        // change the active group to the new group we just created
+        // Change the active group to the new group we just created.
         dispatch(changeActiveGroup(groupNames[language]))
 
-        // set isFetching to false since we're no longer fetching
+        // Set the setIsInstallingLanguageInstance redux variable to false since we're no longer actively installing a language instance.
         dispatch(setIsInstallingLanguageInstance(false))
 
-        // set setFinishedInitialFetch to true because we're done fetching
+        // Set the setHasInstalledFirstLanguageInstance redux variable to true because we've finished installing our first language instance.
         dispatch(setHasInstalledFirstLanguageInstance(true))
 
+        // Set the setHasFetchedLanguageData variable to false so that on the next language install, it starts out as false.
         dispatch(setHasFetchedLanguageData(false))
 
-        // set fetchProgress back to 0 (in case user downloads another
-        //  language later)
+        // Set the setLanguageCoreFilesDownloadProgress to 0 so that next time we install a language instance, our progress starts out at 0.
         dispatch(setLanguageCoreFilesDownloadProgress(0))
+
+        // Set the setTotalLanguageCoreFilesToDownload to the number of files to download for this language. I think this is only here to avoid divide-by-zero erros but I'm not sure. I'm just too scared to delete it.
         dispatch(
           setTotalLanguageCoreFilesToDownload(
             getState().database[language].files.length
           )
         )
       }
-      // }
     })
   }
 }
-
-// thunk function for adding a new language
-// export function addLanguage (language) {
-//   return async (dispatch, getState) => {
-//     // set isFetching to true to signal that we're doing stuff and don't want to load the rest of the app
-//     dispatch(setIsFetching(true))
-
-//     //+ FIREBASE FETCH
-
-//     //- get sets first
-//     var sets = []
-
-//     await db
-//       .collection('sets')
-//       .where('languageID', '==', language)
-//       .get()
-//       .then(response => {
-//         response.forEach(set => {
-//           console.log(set.id)
-//           sets.push({
-//             id: set.id,
-//             ...set.data()
-//           })
-//         })
-//       })
-//       .catch(error => dispatch(setFetchError(true, language)))
-
-//     //- then get language object from database and throw all of it in redux
-//     await db
-//       .collection('languages')
-//       .doc(language)
-//       .get()
-//       .then(async doc => {
-//         if (doc.exists) {
-//           // store the language data and sets in redux
-//           dispatch(
-//             storeData(
-//               {
-//                 sets: sets,
-//                 ...doc.data()
-//               },
-//               language
-//             )
-//           )
-
-//           // set total to download so we can display progress through downloads
-//           dispatch(setTotalToDownload(doc.data().files.length))
-
-//           // used to track progress through downloads
-//           var totalDownloaded = 0
-
-//           //+ DOWNLOAD FUNCTIONS
-
-//           // 1. for each file, create a download resumable and store it in redux
-//           // 2. go through each
-
-//           //- some magic for downloading a bunch of files and doing something
-//           //-  when all of them are done
-//           async function asyncForEach (array, callback) {
-//             for (let index = 0; index < array.length; index++) {
-//               await callback(array[index], index, array)
-//             }
-//           }
-
-//           //- some more magic
-//           const downloadStuff = async () => {
-//             try {
-//               await asyncForEach(
-//                 doc.data().files,
-//                 async (fileName, index, files) => {
-//                   if (fileName.includes('header')) {
-//                     var download = FileSystem.createDownloadResumable(
-//                       `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.png?alt=media`,
-//                       FileSystem.documentDirectory +
-//                         language +
-//                         '-' +
-//                         fileName.slice(0, -3) +
-//                         '.png'
-//                     )
-
-//                     // dispatch(storeDownload(download))
-
-//                     // console.log(shouldDownload)
-
-//                     await download
-//                       .downloadAsync()
-//                       .catch(error => dispatch(setFetchError(true, language)))
-
-//                     // await FileSystem.downloadAsync(
-//                     //   `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.png?alt=media`,
-//                     //   FileSystem.documentDirectory +
-//                     //     language +
-//                     //     '-' +
-//                     //     fileName.slice(0, -3) +
-//                     //     '.png'
-//                     // ).catch(error => dispatch(setFetchError(true, language)))
-//                   } else {
-//                     var download = FileSystem.createDownloadResumable(
-//                       `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.mp3?alt=media`,
-//                       FileSystem.documentDirectory +
-//                         language +
-//                         '-' +
-//                         fileName.slice(0, -3) +
-//                         '.mp3'
-//                     )
-
-//                     // dispatch(storeDownload(download))
-
-//                     // console.log(shouldDownload)
-
-//                     await download
-//                       .downloadAsync()
-//                       .catch(error => dispatch(setFetchError(true, language)))
-//                     // await FileSystem.downloadAsync(
-//                     //   `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.mp3?alt=media`,
-//                     //   FileSystem.documentDirectory +
-//                     //     language +
-//                     //     '-' +
-//                     //     fileName.slice(0, -3) +
-//                     //     '.mp3'
-//                     //   // if there's an error downloading a file
-//                     // ).catch(error => {
-//                     //   console.log(error)
-//                     //   dispatch(setFetchError(true, language))
-//                     // })
-//                   }
-//                   totalDownloaded += 1
-//                   dispatch(setCurrentFetchProgress(totalDownloaded))
-//                 }
-//               )
-
-//               //+ STUFF TO DO WHEN DONE DOWNLOADING
-
-//               // log the language install for firebase analytics
-//               logInstallLanguage(language, i18n.locale)
-
-//               // create a new group using the default group name in constants.js
-//               dispatch(createGroup(groupNames[language], language, 'default'))
-
-//               // change the active group to the new group we just created
-//               dispatch(changeActiveGroup(groupNames[language]))
-
-//               // set isFetching to false since we're no longer fetching
-//               dispatch(setIsFetching(false))
-
-//               // set setFinishedInitialFetch to true because we're done fetching
-//               dispatch(setFinishedInitialFetch(true))
-
-//               // set fetchProgress back to 0 (in case user downloads another
-//               //  language later)
-//               dispatch(setCurrentFetchProgress(0))
-//               dispatch(setTotalToDownload(doc.data().files.length))
-//             } catch (error) {
-//               console.log(error)
-//               dispatch(setFetchError(true, language))
-//             }
-//           }
-
-//           //+ ACTUALLY DOWNLOAD STUFF
-//           try {
-//             downloadStuff()
-//           } catch (error) {
-//             dispatch(setFetchError(true, language))
-//           }
-//         } else {
-//           // if doc doesn't exist, throw an error
-//           dispatch(setFetchError(true, language))
-//         }
-//       })
-//       // if there's an error fetching from firebase
-//       .catch(error => {
-//         console.log(error)
-//         dispatch(setFetchError(true, language))
-//       })
-//   }
-// }
