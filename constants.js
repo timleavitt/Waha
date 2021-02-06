@@ -24,12 +24,14 @@ export const itemHeights = {
 
 export const languageT2S = {
   en: require('./assets/languageT2S/en.mp3'),
-  ga: require('./assets/languageT2S/ga.mp3')
+  ga: require('./assets/languageT2S/ga.mp3'),
+  te: require('./assets/languageT2S/en.mp3')
 }
 
 export const groupNames = {
   en: 'Group 1',
-  ga: 'المجموعة الأولى'
+  ga: 'المجموعة الأولى',
+  te: 'Group 1'
 }
 
 export const groupIcons = [
@@ -262,6 +264,13 @@ export const languages = [
       {
         nativeName: 'English',
         wahaID: 'en',
+        i18nName: 'english',
+        logoSource:
+          'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/en%2Fother%2Fheader-v1.png?alt=media'
+      },
+      {
+        nativeName: 'Test Language',
+        wahaID: 'te',
         i18nName: 'english',
         logoSource:
           'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/en%2Fother%2Fheader-v1.png?alt=media'

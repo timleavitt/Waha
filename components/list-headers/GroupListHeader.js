@@ -23,10 +23,10 @@ function GroupListHeader (props) {
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
         props.database[props.languageID].files.forEach(fileName => {
-          var tempFileName = fileName.slice(0, -3)
+          // SLICE
           if (
-            !contents.includes(`${props.languageID}-${tempFileName}.mp3`) &&
-            !contents.includes(`${props.languageID}-${tempFileName}.png`)
+            !contents.includes(`${props.languageID}-${fileName}.mp3`) &&
+            !contents.includes(`${props.languageID}-${fileName}.png`)
           )
             deleteLanguageInstance()
         })

@@ -164,7 +164,7 @@ function MainStack (props) {
               )
             : () => (
                 <View style={{ paddingHorizontal: 10 }}>
-                  {true ? (
+                  {props.languageCoreFilesToUpdate.length !== 0 ? (
                     // <View
                     //   style={{
                     //     width: '100%',
@@ -487,7 +487,8 @@ function mapStateToProps (state) {
     translations: state.database[activeGroup.language].translations,
     font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup,
-    security: state.security
+    security: state.security,
+    languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
   }
 }
 

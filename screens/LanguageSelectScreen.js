@@ -71,17 +71,19 @@ function LanguageSelectScreen (props) {
     if (props.route.name === 'LanguageSelect') {
       props.groups.forEach(group => props.deleteGroup(group.name))
 
-      Object.keys(props.database).forEach(languageID => {
-        props.deleteLanguageData(languageID)
-        FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-          contents => {
-            for (const item of contents) {
-              if (item.slice(0, 2) === languageID) {
-                FileSystem.deleteAsync(FileSystem.documentDirectory + item)
+      Object.keys(props.database).forEach(key => {
+        if (key.length === 2) {
+          props.deleteLanguageData(key)
+          FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+            contents => {
+              for (const item of contents) {
+                if (item.slice(0, 2) === key) {
+                  FileSystem.deleteAsync(FileSystem.documentDirectory + item)
+                }
               }
             }
-          }
-        )
+          )
+        }
       })
     }
 
