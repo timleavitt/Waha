@@ -1,5 +1,6 @@
 import {
   DELETE_LANGUAGE_DATA,
+  REMOVE_LANGUAGE_CORE_FILE_TO_UPDATE,
   SET_HAS_FETCHED_LANGUAGE_DATA,
   SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE,
   SET_HAS_ONBOARDED,
@@ -84,6 +85,13 @@ export function database (
           ...state.languageCoreFilesToUpdate,
           action.fileName
         ]
+      }
+    case REMOVE_LANGUAGE_CORE_FILE_TO_UPDATE:
+      return {
+        ...state,
+        languageCoreFilesToUpdate: state.languageCoreFilesToUpdate.filter(
+          file => file !== action.fileName
+        )
       }
     case SET_HAS_FETCHED_LANGUAGE_DATA:
       return { ...state, hasFetchedLanguageData: action.hasFetchedLanguageData }

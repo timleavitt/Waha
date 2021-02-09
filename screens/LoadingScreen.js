@@ -77,40 +77,42 @@ function LoadingScreen (props) {
           source={require('../assets/gifs/waha_loading.gif')}
           resizeMode='contain'
         />
-        <View
-          style={{
-            width: Dimensions.get('window').width - 60,
-            height: 40 * scaleMultiplier,
-            borderRadius: 30,
-            flexDirection: 'row',
-            overflow: 'hidden',
-            justifyContent: 'center',
-            borderWidth: 2,
-            borderColor: colors.porcelain
-          }}
-        >
-          {props.languageCoreFilesDownloadProgress ? (
-            <View
-              style={{
-                backgroundColor: '#e43c44',
-                height: '100%',
-                flex: props.languageCoreFilesDownloadProgress,
-                borderRadius: 20
-              }}
-            />
-          ) : null}
-          {props.languageCoreFilesDownloadProgress ? (
-            <View
-              style={{
-                backgroundColor: '#F1FAEE',
-                height: '100%',
-                flex:
-                  props.totalLanguageCoreFilesToDownload -
-                  props.languageCoreFilesDownloadProgress
-              }}
-            />
-          ) : null}
-        </View>
+        {props.route.name === 'Loading' ? (
+          <View
+            style={{
+              width: Dimensions.get('window').width - 60,
+              height: 40 * scaleMultiplier,
+              borderRadius: 30,
+              flexDirection: 'row',
+              overflow: 'hidden',
+              justifyContent: 'center',
+              borderWidth: 2,
+              borderColor: colors.porcelain
+            }}
+          >
+            {props.languageCoreFilesDownloadProgress ? (
+              <View
+                style={{
+                  backgroundColor: '#e43c44',
+                  height: '100%',
+                  flex: props.languageCoreFilesDownloadProgress,
+                  borderRadius: 20
+                }}
+              />
+            ) : null}
+            {props.languageCoreFilesDownloadProgress ? (
+              <View
+                style={{
+                  backgroundColor: '#F1FAEE',
+                  height: '100%',
+                  flex:
+                    props.totalLanguageCoreFilesToDownload -
+                    props.languageCoreFilesDownloadProgress
+                }}
+              />
+            ) : null}
+          </View>
+        ) : null}
         <View
           style={{
             width: Dimensions.get('window').width,

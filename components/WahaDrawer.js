@@ -9,6 +9,12 @@ import SmallDrawerItem from '../components/list-items/SmallDrawerItem'
 import WahaButton from '../components/standard/WahaButton'
 import { colors, getLanguageFont, scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
+import {
+  setHasFetchedLanguageData,
+  updateLanguageCoreFiles
+} from '../redux/actions/databaseActions'
+import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
+import { storeDownloads } from '../redux/actions/storedDownloadsActions'
 import { StandardTypography } from '../styles/typography'
 
 function WahaDrawer (props) {
@@ -19,6 +25,20 @@ function WahaDrawer (props) {
   // opens a local browser
   async function openBrowser (url) {
     await WebBrowser.openBrowserAsync(url, { dismissButtonStyle: 'cancel' })
+  }
+
+  function onUpdatePress () {
+    // Replace our downloads object with an empty array.
+    props.storeDownloads([])
+
+    // Set setIsInstallingLanguageInstance redux variable to true so that the app knows to switch to the loading screen.
+    props.setIsInstallingLanguageInstance(true)
+
+    // Even though we're not fetching any Firebase data here, set this variable to true anyways just to allow the user to cancel the update if they want.
+    props.setHasFetchedLanguageData(true)
+
+    // Update the language core files.
+    props.updateLanguageCoreFiles(props.activeGroup.language)
   }
 
   //+ RENDER
@@ -218,4 +238,16 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(WahaDrawer)
+function mapDispatchToProps (dispatch) {
+  return {
+    updateLanguageCoreFiles: languageInstanceID =>
+      dispatch(updateLanguageCoreFiles(languageInstanceID)),
+    setIsInstallingLanguageInstance: toSet =>
+      dispatch(setIsInstallingLanguageInstance(toSet)),
+    storeDownloads: downloads => dispatch(storeDownloads(downloads)),
+    setHasFetchedLanguageData: hasFetchedLanguageData =>
+      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(WahaDrawer)

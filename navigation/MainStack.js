@@ -22,6 +22,7 @@ import GroupsScreen from '../screens/GroupsScreen'
 import KeyOrderSetScreen from '../screens/KeyOrderSetScreen'
 import LanguageSelectScreen from '../screens/LanguageSelectScreen'
 import LessonListScreen from '../screens/LessonListScreen'
+import LoadingScreen from '../screens/LoadingScreen'
 import MobilizationToolsScreen from '../screens/MobilizationToolsScreen'
 import PasscodeScreen from '../screens/PasscodeScreen'
 import PianoAppScreen from '../screens/PianoAppScreen'
@@ -449,6 +450,15 @@ function MainStack (props) {
       <Stack.Screen
         name='Splash'
         component={SplashScreen}
+        options={{
+          gestureEnabled: false,
+          headerShown: false,
+          animationEnabled: false
+        }}
+      />
+      <Stack.Screen
+        name='Updating'
+        component={LoadingScreen}
         options={{
           gestureEnabled: false,
           headerShown: false,
