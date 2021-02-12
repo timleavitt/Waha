@@ -1,3 +1,4 @@
+import * as FileSystem from 'expo-file-system'
 import React, { useEffect, useState } from 'react'
 import { FlatList, LogBox, StyleSheet, Text, View } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
@@ -6,15 +7,11 @@ import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
 import BackButton from '../components/standard/BackButton'
 import Separator from '../components/standard/Separator'
-import {
-  colors,
-  getLanguageFont,
-  getSetInfo,
-  scaleMultiplier
-} from '../constants'
+import { getSetInfo, scaleMultiplier } from '../constants'
 import SetInfoModal from '../modals/SetInfoModal'
 import { addSet } from '../redux/actions/groupsActions'
-import { StandardTypography } from '../styles/typography'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state'
@@ -32,6 +29,8 @@ function AddSetScreen (props) {
 
   const [showSetInfoModal, setShowSetInfoModal] = useState(false)
   const [setInModal, setSetInModal] = useState({})
+
+  const [downloadedFiles, setDownloadedFiles] = useState([])
 
   useEffect(() => {
     switch (props.route.params.category) {
@@ -59,8 +58,39 @@ function AddSetScreen (props) {
   }, [])
 
   useEffect(() => {
+    FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+      contents => {
+        setDownloadedFiles(contents)
+      }
+    )
+  }, [])
+
+  useEffect(() => {
     props.navigation.setOptions(getNavOptions())
   }, [headerTitle])
+
+  function filterForDownloadedQuestionSets (set) {
+    var requiredQuestionSets = []
+
+    set.lessons.forEach(lesson => {
+      if (!requiredQuestionSets.includes(lesson.fellowshipType)) {
+        requiredQuestionSets.push(lesson.fellowshipType)
+      }
+      if (!requiredQuestionSets.includes(lesson.applicationType)) {
+        requiredQuestionSets.push(lesson.applicationType)
+      }
+    })
+
+    if (
+      requiredQuestionSets.every(questionSet =>
+        downloadedFiles.includes(
+          props.activeGroup.language + '-' + questionSet + '.mp3'
+        )
+      )
+    )
+      return true
+    else return false
+  }
 
   // useEffect(() => {
   //   if (tagSelectRef) {
@@ -159,6 +189,7 @@ function AddSetScreen (props) {
                     ? true
                     : topicalAddedSet.tags.some(tag => activeTags.includes(tag))
                 })
+                .filter(filterForDownloadedQuestionSets)
                 .sort((a, b) => {
                   if (
                     parseInt(a.id.match(/[0-9]*$/)[0]) -
@@ -182,6 +213,7 @@ function AddSetScreen (props) {
                       addedSet => addedSet.id === set.id
                     )
                 )
+                .filter(filterForDownloadedQuestionSets)
                 .sort((a, b) => {
                   if (
                     parseInt(a.id.match(/[0-9]*$/)[0]) -

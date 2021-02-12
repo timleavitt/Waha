@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import React, { useEffect } from 'react'
+import React from 'react'
 import {
   Alert,
   Image,
@@ -9,30 +9,15 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
+import { scaleMultiplier } from '../../constants'
 import { deleteLanguageData } from '../../redux/actions/databaseActions'
 import { removeDownload } from '../../redux/actions/downloadActions'
 import { deleteGroup } from '../../redux/actions/groupsActions'
-import { StandardTypography } from '../../styles/typography'
+import { colors } from '../../styles/colors'
+import { getLanguageFont, StandardTypography } from '../../styles/typography'
+
 function GroupListHeader (props) {
   //+ FUNCTIONS
-
-  useEffect(() => {
-    // check if there was a failed language add, i.e. if the app crashed/user quit during a fetch
-    // and clear out the already downloaded content if there was
-    FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-      contents => {
-        props.database[props.languageID].files.forEach(fileName => {
-          // SLICE
-          if (
-            !contents.includes(`${props.languageID}-${fileName}.mp3`) &&
-            !contents.includes(`${props.languageID}-${fileName}.png`)
-          )
-            deleteLanguageInstance()
-        })
-      }
-    )
-  }, [])
 
   // deletes all material for a language
   function deleteLanguageInstance () {

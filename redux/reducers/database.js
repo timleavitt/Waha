@@ -1,13 +1,14 @@
 import {
+  ADD_LANGUAGE_CORE_FILE_TO_UPDATE,
+  CLEAR_LANGUAGE_CORE_FILES_TO_UPDATE,
   DELETE_LANGUAGE_DATA,
-  REMOVE_LANGUAGE_CORE_FILE_TO_UPDATE,
   SET_HAS_FETCHED_LANGUAGE_DATA,
   SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE,
   SET_HAS_ONBOARDED,
   SET_LANGUAGE_CORE_FILES_DOWNLOAD_PROGRESS,
   SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD,
-  STORE_LANGUAGE_CORE_FILES_CREATED_TIMES,
-  STORE_LANGUAGE_CORE_FILES_TO_UPDATE,
+  STORE_ACTING_LANGUAGE_ID,
+  STORE_LANGUAGE_CORE_FILE_CREATED_TIME,
   STORE_LANGUAGE_DATA,
   STORE_LANGUAGE_SETS
 } from '../actions/databaseActions'
@@ -18,7 +19,8 @@ export function database (
     hasInstalledFirstLanguageInstance: false,
     languageCoreFilesDownloadProgress: 0,
     storedDownloads: [],
-    languageCoreFilesToUpdate: []
+    languageCoreFilesToUpdate: [],
+    actingLanguageID: null
   },
   action
 ) {
@@ -70,7 +72,7 @@ export function database (
       const languageToDelete = action.languageInstanceID
       const { [languageToDelete]: value, ...newObject } = state
       return newObject
-    case STORE_LANGUAGE_CORE_FILES_CREATED_TIMES:
+    case STORE_LANGUAGE_CORE_FILE_CREATED_TIME:
       return {
         ...state,
         languageCoreFilesCreatedTimes: {
@@ -78,7 +80,7 @@ export function database (
           [action.fileName]: action.timeCreated
         }
       }
-    case STORE_LANGUAGE_CORE_FILES_TO_UPDATE:
+    case ADD_LANGUAGE_CORE_FILE_TO_UPDATE:
       return {
         ...state,
         languageCoreFilesToUpdate: [
@@ -86,15 +88,18 @@ export function database (
           action.fileName
         ]
       }
-    case REMOVE_LANGUAGE_CORE_FILE_TO_UPDATE:
+    case CLEAR_LANGUAGE_CORE_FILES_TO_UPDATE:
       return {
         ...state,
-        languageCoreFilesToUpdate: state.languageCoreFilesToUpdate.filter(
-          file => file !== action.fileName
-        )
+        languageCoreFilesToUpdate: []
       }
     case SET_HAS_FETCHED_LANGUAGE_DATA:
       return { ...state, hasFetchedLanguageData: action.hasFetchedLanguageData }
+    case STORE_ACTING_LANGUAGE_ID:
+      return {
+        ...state,
+        actingLanguageID: action.languageID
+      }
     default:
       return state
   }

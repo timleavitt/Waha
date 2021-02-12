@@ -14,11 +14,13 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
+import { languageT2S } from '../assets/languageT2S/languageT2S'
 import LanguageSelectItem from '../components/list-items/LanguageSelectItem'
 import Separator from '../components/standard/Separator'
 import WahaButton from '../components/standard/WahaButton'
-import { colors, languages, languageT2S, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import db from '../firebase/db'
+import { languages } from '../languages'
 import {
   deleteLanguageData,
   downloadLanguageCoreFiles,
@@ -26,9 +28,9 @@ import {
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
-import { deleteGroup } from '../redux/actions/groupsActions'
 import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
 import { storeDownloads } from '../redux/actions/storedDownloadsActions'
+import { colors } from '../styles/colors'
 import { SystemTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
@@ -69,22 +71,35 @@ function LanguageSelectScreen (props) {
 
     // Clear out the database and downloaded files in case we somehow come back to the Language Select screen after installing anything.
     if (props.route.name === 'LanguageSelect') {
-      props.groups.forEach(group => props.deleteGroup(group.name))
-
-      Object.keys(props.database).forEach(key => {
-        if (key.length === 2) {
-          props.deleteLanguageData(key)
-          FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-            contents => {
-              for (const item of contents) {
-                if (item.slice(0, 2) === key) {
-                  FileSystem.deleteAsync(FileSystem.documentDirectory + item)
-                }
-              }
-            }
-          )
+      FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+        contents => {
+          console.log('Files:')
+          console.log(contents)
         }
-      })
+      )
+
+      console.log(`Groups: ${props.groups ? props.groups : null}`)
+
+      console.log(
+        `Languages in DB: ${Object.keys(props.database).filter(
+          key => key.length === 2
+        )}`
+      )
+
+      // Object.keys(props.database).forEach(key => {
+      //   if (key.length === 2) {
+      //     props.deleteLanguageData(key)
+      //     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+      //       contents => {
+      //         for (const item of contents) {
+      //           if (item.slice(0, 2) === key) {
+      //             FileSystem.deleteAsync(FileSystem.documentDirectory + item)
+      //           }
+      //         }
+      //       }
+      //     )
+      //   }
+      // })
     }
 
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -107,7 +122,7 @@ function LanguageSelectScreen (props) {
   //+ FUNCTIONS
 
   async function fetchFirebaseData () {
-    props.storeDownloads([])
+    // props.storeDownloads([])
     props.setIsInstallingLanguageInstance(true)
     //- get sets first
 
@@ -454,8 +469,7 @@ function mapDispatchToProps (dispatch) {
       dispatch(setIsInstallingLanguageInstance(toSet)),
     storeDownloads: downloads => dispatch(storeDownloads(downloads)),
     setHasFetchedLanguageData: hasFetchedLanguageData =>
-      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData)),
-    deleteGroup: groupName => dispatch(deleteGroup(groupName))
+      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
   }
 }
 

@@ -1,21 +1,23 @@
 import * as WebBrowser from 'expo-web-browser'
 import React, { useState } from 'react'
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
 import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import DrawerItem from '../components/list-items/DrawerItem'
-import SmallDrawerItem from '../components/list-items/SmallDrawerItem'
 import WahaButton from '../components/standard/WahaButton'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
+import { appVersion } from '../modeSwitch'
 import {
   setHasFetchedLanguageData,
   updateLanguageCoreFiles
 } from '../redux/actions/databaseActions'
 import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
 import { storeDownloads } from '../redux/actions/storedDownloadsActions'
-import { StandardTypography } from '../styles/typography'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
+import Separator from './standard/Separator'
 
 function WahaDrawer (props) {
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
@@ -29,7 +31,7 @@ function WahaDrawer (props) {
 
   function onUpdatePress () {
     // Replace our downloads object with an empty array.
-    props.storeDownloads([])
+    // props.storeDownloads([])
 
     // Set setIsInstallingLanguageInstance redux variable to true so that the app knows to switch to the loading screen.
     props.setIsInstallingLanguageInstance(true)
@@ -38,7 +40,7 @@ function WahaDrawer (props) {
     props.setHasFetchedLanguageData(true)
 
     // Update the language core files.
-    props.updateLanguageCoreFiles(props.activeGroup.language)
+    props.updateLanguageCoreFiles()
   }
 
   //+ RENDER
@@ -69,43 +71,82 @@ function WahaDrawer (props) {
         >
           {props.activeGroup.name}
         </Text>
-        {/* <View style={styles.pencilIconContainer}>
-          <TouchableOpacity onPress={() => setShowEditGroupModal(true)}>
-            <Icon
-              name='pencil'
-              size={25 * scaleMultiplier}
-              color={colors.white}
-            />
-          </TouchableOpacity>
-        </View> */}
       </View>
-      <View style={{ backgroundColor: colors.white, flex: 1 }}>
-        <View style={{ flex: 1 }}>
+      <View
+        style={{
+          backgroundColor: colors.white,
+          flex: 1
+        }}
+      >
+        <ScrollView bounces={false} style={{ flex: 1 }}>
+          {/* Show an update button if we have any core files to update. */}
           {props.languageCoreFilesToUpdate.length !== 0 ? (
             <WahaButton
-              type='filled'
-              color={colors.apple}
-              onPress={() => {}}
-              label='Update available'
+              type={props.isConnected ? 'filled' : 'inactive'}
+              color={props.isConnected ? colors.apple : colors.geyser}
+              onPress={() => {
+                Alert.alert(
+                  'A new update is available to download.',
+                  'Would you like to download it now?',
+                  [
+                    {
+                      text: props.translations.general.cancel,
+                      onPress: () => {}
+                    },
+                    {
+                      text: props.translations.general.ok,
+                      onPress: onUpdatePress
+                    }
+                  ]
+                )
+              }}
+              label='Download Update'
               extraComponent={
-                <Icon
-                  name='error-filled'
-                  size={45 * scaleMultiplier}
-                  color={colors.white}
-                />
+                props.isConnected ? (
+                  <View
+                    style={{
+                      width: 50 * scaleMultiplier,
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Icon
+                      name='error-filled'
+                      size={30 * scaleMultiplier}
+                      color={colors.white}
+                    />
+                  </View>
+                ) : (
+                  <View style={{ width: 50 * scaleMultiplier }}>
+                    <Icon
+                      name='cloud-slash'
+                      size={30 * scaleMultiplier}
+                      color={colors.chateau}
+                    />
+                  </View>
+                )
               }
               style={{
-                marginHorizontal: 10,
-                marginTop: 10,
-                marginBottom: 2,
-                height: 55 * scaleMultiplier,
+                marginHorizontal: 5,
+                marginTop: 5,
+                marginBottom: 0,
+                height: 50 * scaleMultiplier,
                 flexDirection: props.isRTL ? 'row' : 'row-reverse',
-                justifyContent: props.isRTL ? 'flex-start' : 'flex-end',
-                paddingHorizontal: 2.5
+                justifyContent: 'flex-end',
+                paddingHorizontal: 5
               }}
-              textStyle={{ marginHorizontal: 12.5 }}
+              textStyle={[
+                { paddingHorizontal: 10 },
+                StandardTypography(
+                  props,
+                  'h3',
+                  'Bold',
+                  'center',
+                  props.isConnected ? colors.white : colors.chateau
+                )
+              ]}
             />
           ) : null}
+          <View style={{ width: '100%', height: 5 }} />
           <DrawerItem
             iconName='group'
             text={props.translations.groups.header}
@@ -121,6 +162,9 @@ function WahaDrawer (props) {
             text={props.translations.mobilization_tools.header}
             onPress={() => props.navigation.navigate('MobilizationTools')}
           />
+          <View style={{ width: '100%', height: 5 }} />
+          <Separator />
+          <View style={{ width: '100%', height: 5 }} />
           <DrawerItem
             iconName='storage'
             text={props.translations.storage.header}
@@ -133,8 +177,39 @@ function WahaDrawer (props) {
               openBrowser('https://coda.io/form/Waha-Bug-Report_dyWvuvL6WTx')
             }
           />
-        </View>
-        <SafeAreaView
+          <DrawerItem
+            iconName='language'
+            onPress={() =>
+              openBrowser(
+                'https://kingdomstrategies.givingfuel.com/general-giving'
+              )
+            }
+            text={props.translations.general.donate_to_waha}
+          />
+          <DrawerItem
+            iconName='info'
+            onPress={() => openBrowser('https://waha.app/privacy-policy/')}
+            text={props.translations.general.privacy}
+          />
+          <View style={{ width: '100%', height: 5 }} />
+          <Text
+            style={StandardTypography(
+              props,
+              'd',
+              'Regular',
+              'center',
+              colors.chateau
+            )}
+          >
+            {'v' + appVersion}
+          </Text>
+          {/* <DrawerItem
+            iconName='info'
+            text={'You are using ' + appVersion}
+            onPress={() => {}}
+          /> */}
+        </ScrollView>
+        {/* <SafeAreaView
           style={[
             styles.smallDrawerItemsContainer,
             {
@@ -175,10 +250,10 @@ function WahaDrawer (props) {
                 colors.chateau
               )}
             >
-              v1.0.4
+              {appVersion}
             </Text>
           </View>
-        </SafeAreaView>
+        </SafeAreaView> */}
       </View>
       <AddEditGroupModal
         isVisible={showEditGroupModal}
@@ -217,7 +292,8 @@ const styles = StyleSheet.create({
   },
   smallDrawerItemsContainer: {
     width: '100%',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignSelf: 'flex-end'
   }
 })
 
@@ -240,8 +316,7 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    updateLanguageCoreFiles: languageInstanceID =>
-      dispatch(updateLanguageCoreFiles(languageInstanceID)),
+    updateLanguageCoreFiles: () => dispatch(updateLanguageCoreFiles()),
     setIsInstallingLanguageInstance: toSet =>
       dispatch(setIsInstallingLanguageInstance(toSet)),
     storeDownloads: downloads => dispatch(storeDownloads(downloads)),

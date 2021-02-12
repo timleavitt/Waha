@@ -1,8 +1,9 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
-import { StandardTypography } from '../../styles/typography'
+import { scaleMultiplier } from '../../constants'
+import { colors } from '../../styles/colors'
+import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
 // renders a simple touchable item within the main navigation drawer
 function DrawerItem (props) {
@@ -19,7 +20,7 @@ function DrawerItem (props) {
       <View style={styles.iconContainer}>
         <Icon
           name={props.iconName}
-          size={45 * scaleMultiplier}
+          size={30 * scaleMultiplier}
           color={colors.tuna}
         />
       </View>
@@ -39,7 +40,7 @@ function DrawerItem (props) {
 
 const styles = StyleSheet.create({
   settingsItem: {
-    height: 55 * scaleMultiplier,
+    height: 50 * scaleMultiplier,
     // aspectRatio: 5.5,
     paddingHorizontal: 10,
     justifyContent: 'flex-start',

@@ -13,7 +13,7 @@ import {
 import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import BackButton from '../components/standard/BackButton'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import { analyticsMode, dbMode, reduxMode } from '../modeSwitch'
 import SetTabs from '../navigation/SetTabs'
 import { setIsTimedOut, setTimer } from '../redux/actions/securityActions'
@@ -31,8 +31,13 @@ import SecurityOnboardingSlidesScreen from '../screens/SecurityOnboardingSlidesS
 import SecurityScreen from '../screens/SecurityScreen'
 import SplashScreen from '../screens/SplashScreen'
 import StorageScreen from '../screens/StorageScreen'
-// import VideoScreen from '../screens/VideoScreen'
-import { StandardTypography, SystemTypography } from '../styles/typography'
+import { colors } from '../styles/colors'
+import {
+  getLanguageFont,
+  StandardTypography,
+  SystemTypography
+} from '../styles/typography'
+
 LogBox.ignoreLogs(['Setting a timer'])
 
 const Stack = createStackNavigator()
@@ -165,6 +170,13 @@ function MainStack (props) {
               )
             : () => (
                 <View style={{ paddingHorizontal: 10 }}>
+                  <GroupAvatar
+                    style={{ backgroundColor: colors.white, zIndex: 0 }}
+                    emoji={props.activeGroup.emoji}
+                    size={35}
+                    onPress={() => props.navigation.toggleDrawer()}
+                    isActive={true}
+                  />
                   {props.languageCoreFilesToUpdate.length !== 0 ? (
                     // <View
                     //   style={{
@@ -174,13 +186,19 @@ function MainStack (props) {
                     //     alignSelf: 'flex-start'
                     //   }}
                     // >
-                    <View>
+                    <View
+                      style={{
+                        zIndex: 100,
+                        position: 'absolute',
+                        alignSelf: 'flex-end',
+                        paddingHorizontal: 10
+                      }}
+                    >
                       <View
                         style={{
-                          width: 12,
-                          height: 12,
-                          borderRadius: 6,
-                          position: 'absolute',
+                          width: 13 * scaleMultiplier,
+                          height: 13 * scaleMultiplier,
+                          borderRadius: 6.5 * scaleMultiplier,
                           backgroundColor: colors.apple,
                           alignSelf: 'flex-end',
                           zIndex: 100
@@ -189,13 +207,6 @@ function MainStack (props) {
                       <View style={{ width: 5 }} />
                     </View>
                   ) : null}
-                  <GroupAvatar
-                    style={{ backgroundColor: colors.white }}
-                    emoji={props.activeGroup.emoji}
-                    size={35}
-                    onPress={() => props.navigation.toggleDrawer()}
-                    isActive={true}
-                  />
                 </View>
               ),
           headerRight: props.isRTL
@@ -208,6 +219,36 @@ function MainStack (props) {
                     onPress={() => props.navigation.toggleDrawer()}
                     isActive={true}
                   />
+                  {props.languageCoreFilesToUpdate.length !== 0 ? (
+                    // <View
+                    //   style={{
+                    //     width: '100%',
+                    //     height: 12,
+                    //     position: 'absolute',
+                    //     alignSelf: 'flex-start'
+                    //   }}
+                    // >
+                    <View
+                      style={{
+                        zIndex: 100,
+                        position: 'absolute',
+                        alignSelf: 'flex-start',
+                        paddingHorizontal: 10
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: 13 * scaleMultiplier,
+                          height: 13 * scaleMultiplier,
+                          borderRadius: 6.5 * scaleMultiplier,
+                          backgroundColor: colors.apple,
+                          alignSelf: 'flex-end',
+                          zIndex: 100
+                        }}
+                      />
+                      <View style={{ width: 5 }} />
+                    </View>
+                  ) : null}
                 </View>
               )
             : () => (
