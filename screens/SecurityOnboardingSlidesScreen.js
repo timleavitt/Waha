@@ -3,7 +3,8 @@ import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import OnboardingSwiper from '../components/OnboardingSwiper'
 import BackButton from '../components/standard/BackButton'
-import { colors, getLanguageFont } from '../constants'
+import { colors } from '../styles/colors'
+import { getLanguageFont } from '../styles/typography'
 
 function SecurityOnboardingSlidesScreen ({
   navigation: { setOptions, navigate, goBack },

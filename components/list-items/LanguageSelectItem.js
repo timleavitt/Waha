@@ -1,6 +1,7 @@
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { colors, getSystemIsRTL, scaleMultiplier } from '../../constants'
+import { getSystemIsRTL, scaleMultiplier } from '../../constants'
+import { colors } from '../../styles/colors'
 import { SystemTypography } from '../../styles/typography'
 
 function LanguageSelectItem ({

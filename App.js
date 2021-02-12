@@ -7,9 +7,9 @@ import { StatusBar, Text } from 'react-native'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
 import LoadingView from './components/LoadingView'
-import { colors } from './constants'
 import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
+import { colors } from './styles/colors'
 
 // set the max font scaling allowed
 Text.defaultProps = {

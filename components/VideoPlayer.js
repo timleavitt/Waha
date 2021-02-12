@@ -8,12 +8,8 @@ import {
   TouchableWithoutFeedback,
   View
 } from 'react-native'
-import {
-  colors,
-  lockLandscape,
-  lockPortrait,
-  scaleMultiplier
-} from '../constants'
+import { lockLandscape, lockPortrait, scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
 
 function VideoPlayer ({
   // passed from parent

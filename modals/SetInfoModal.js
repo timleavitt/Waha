@@ -3,9 +3,10 @@ import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
 import WahaButton from '../components/standard/WahaButton'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
-import { StandardTypography } from '../styles/typography'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 import ModalScreen from './ModalScreen'
 
 function SetInfoModal ({

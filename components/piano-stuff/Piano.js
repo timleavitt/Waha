@@ -2,8 +2,10 @@ import { Audio } from 'expo-av'
 import React from 'react'
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, keyColors } from '../../constants'
+import { colors, keyColors } from '../../styles/colors'
+import { getLanguageFont } from '../../styles/typography'
 import KeyLabel from '../piano-stuff/KeyLabel'
+
 function Piano ({
   // passed from parent
   setPattern,

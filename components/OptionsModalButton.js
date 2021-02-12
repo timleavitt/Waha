@@ -1,8 +1,9 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
-import { StandardTypography } from '../styles/typography'
+import { scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 // button rendered on the options modal component
 function OptionsModalButton ({

@@ -11,9 +11,10 @@ import GroupListHeader from '../components/list-headers/GroupListHeader'
 import GroupItem from '../components/list-items/GroupItem'
 import BackButton from '../components/standard/BackButton'
 import Separator from '../components/standard/Separator'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
-import { StandardTypography } from '../styles/typography'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function GroupsScreen ({
   navigation: { setOptions, goBack, navigate },

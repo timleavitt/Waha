@@ -1,7 +1,9 @@
 import React from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
+
 // play, pause, and skip controls for play screen
 function PlaybackControls ({
   // passed from parent

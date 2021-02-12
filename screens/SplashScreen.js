@@ -1,6 +1,7 @@
 import React from 'react'
 import { Dimensions, Image, StyleSheet, View } from 'react-native'
-import { colors, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
 
 function SplashScreen ({}) {
   return (

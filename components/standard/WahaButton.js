@@ -1,8 +1,13 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
-import { StandardTypography, SystemTypography } from '../../styles/typography'
+import { scaleMultiplier } from '../../constants'
+import { colors } from '../../styles/colors'
+import {
+  getLanguageFont,
+  StandardTypography,
+  SystemTypography
+} from '../../styles/typography'
 
 function WahaButton ({
   // passed from parents

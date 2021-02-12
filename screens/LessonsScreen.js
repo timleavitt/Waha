@@ -8,19 +8,14 @@ import LessonSwipeBackdrop from '../components/list-items/LessonSwipeBackdrop'
 import SetItem from '../components/list-items/SetItem'
 import OptionsModalButton from '../components/OptionsModalButton'
 import BackButton from '../components/standard/BackButton'
-import {
-  colors,
-  getLanguageFont,
-  getLessonInfo,
-  itemHeights,
-  scaleMultiplier
-} from '../constants'
+import { getLessonInfo, itemHeights, scaleMultiplier } from '../constants'
 import MessageModal from '../modals/MessageModal'
 import OptionsModal from '../modals/OptionsModal'
 import ShareModal from '../modals/ShareModal'
 import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
 import { toggleComplete } from '../redux/actions/groupsActions'
-// import { logCompleteStorySet } from '../redux/LogEventFunctions'
+import { colors } from '../styles/colors'
+import { getLanguageFont } from '../styles/typography'
 
 function LessonsScreen ({
   navigation: { goBack, setOptions, navigate },

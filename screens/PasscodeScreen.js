@@ -3,7 +3,7 @@ import { Alert, Image, Keyboard, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
 import BackButton from '../components/standard/BackButton'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import MessageModal from '../modals/MessageModal'
 import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
 import {
@@ -11,7 +11,9 @@ import {
   setMTUnlockTimeout
 } from '../redux/actions/securityActions'
 import { logUnlockMobilizationTools } from '../redux/LogEventFunctions'
-import { StandardTypography } from '../styles/typography'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
+
 function PasscodeScreen ({
   navigation: { setOptions, goBack },
   // passed from redux
@@ -26,7 +28,6 @@ function PasscodeScreen ({
   setMTUnlockTimeout,
   setMTUnlockAttempts
 }) {
-  //+ STATE
   const [passcode, setPasscode] = useState('')
   const [pinRef, setPinRef] = useState()
   // const [passcodeStatusText, setPasscodeStatusText] = useState('')

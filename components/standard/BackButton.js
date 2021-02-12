@@ -1,7 +1,9 @@
 import React from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../../constants'
+import { scaleMultiplier } from '../../constants'
+import { colors } from '../../styles/colors'
+
 // simple back button that is shown in almost every screen's header
 function BackButton ({
   // passed from parent

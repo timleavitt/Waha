@@ -2,8 +2,9 @@
 import React from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont } from '../constants'
-import { StandardTypography } from '../styles/typography'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
+
 function TimeDisplay ({
   // passed from parent
   max,

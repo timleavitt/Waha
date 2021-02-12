@@ -1,12 +1,9 @@
 import React from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import {
-  colors,
-  getLanguageFont,
-  keyColors,
-  scaleMultiplier
-} from '../../constants'
+import { scaleMultiplier } from '../../constants'
+import { colors, keyColors } from '../../styles/colors'
+import { getLanguageFont } from '../../styles/typography'
 import KeyLabel from './KeyLabel'
 
 function KeyLabelGroup ({

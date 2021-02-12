@@ -8,7 +8,9 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { colors } from '../../styles/colors'
+import { scaleMultiplier } from '../constants'
+import { getLanguageFont } from '../styles/typography'
 
 // renders a simple touchable item within the main navigation drawer
 function HomeworkItem (props) {

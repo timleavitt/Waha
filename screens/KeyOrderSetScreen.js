@@ -12,9 +12,9 @@ import KeyLabelGroup from '../components/piano-stuff/KeyLabelGroup'
 import Piano from '../components/piano-stuff/Piano'
 import BackButton from '../components/standard/BackButton'
 import WahaButton from '../components/standard/WahaButton'
-import { colors, getLanguageFont } from '../constants'
 import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
-import { StandardTypography } from '../styles/typography'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function KeyOrderSetScreen ({
   navigation: { setOptions, navigate, goBack },
