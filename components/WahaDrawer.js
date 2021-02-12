@@ -6,9 +6,10 @@ import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import DrawerItem from '../components/list-items/DrawerItem'
 import SmallDrawerItem from '../components/list-items/SmallDrawerItem'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
-import { StandardTypography } from '../styles/typography'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function WahaDrawer ({
   navigation: { navigate },
@@ -115,11 +116,11 @@ function WahaDrawer ({
                 'https://kingdomstrategies.givingfuel.com/general-giving'
               )
             }
-            label={props.translations.general.donate_to_waha}
+            label={translations.general.donate_to_waha}
           />
           <SmallDrawerItem
             onPress={() => openBrowser('https://waha.app/privacy-policy/')}
-            label={props.translations.general.privacy}
+            label={translations.general.privacy}
           />
           <View
             style={{

@@ -10,7 +10,7 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import {
   setHasFetchedLanguageData,
   setHasOnboarded,
@@ -18,6 +18,7 @@ import {
   setTotalLanguageCoreFilesToDownload
 } from '../redux/actions/databaseActions'
 import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
+import { colors } from '../styles/colors'
 import { SystemTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'

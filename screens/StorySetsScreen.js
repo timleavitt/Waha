@@ -9,13 +9,9 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
-import {
-  colors,
-  getLanguageFont,
-  getSetInfo,
-  scaleMultiplier
-} from '../constants'
-import { StandardTypography } from '../styles/typography'
+import { getSetInfo, scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 /**
  * Screen component for the story sets screen. This screen shows the list of currently added story sets in a category. Used three times for the three tabs.

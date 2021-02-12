@@ -1,9 +1,8 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
-import { getLanguageFont } from '../../constants'
 import { colors } from '../../styles/colors'
-import { StandardTypography } from '../../styles/typography'
+import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
 function SmallDrawerItem ({
   // passed from parents

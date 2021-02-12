@@ -14,11 +14,13 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
+import { languageT2S } from '../assets/languageT2S/languageT2S'
 import LanguageSelectItem from '../components/list-items/LanguageSelectItem'
 import Separator from '../components/standard/Separator'
 import WahaButton from '../components/standard/WahaButton'
-import { colors, languages, languageT2S, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import db from '../firebase/db'
+import { languages } from '../languages'
 import {
   deleteLanguageData,
   downloadLanguageCoreFiles,
@@ -29,6 +31,7 @@ import {
 import { deleteGroup } from '../redux/actions/groupsActions'
 import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
 import { storeDownloads } from '../redux/actions/storedDownloadsActions'
+import { colors } from '../styles/colors'
 import { SystemTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
@@ -51,7 +54,12 @@ function LanguageSelectScreen ({
   storeLanguageData,
   setIsInstallingLanguageInstance,
   storeDownloads,
-  setHasFetchedLanguageData
+  setHasFetchedLanguageData,
+  storeLanguageSets,
+  deleteLanguageData,
+  deleteGroup,
+  groups,
+  database
 }) {
   //+ STATE
 
@@ -82,11 +90,11 @@ function LanguageSelectScreen ({
     setOptions(getNavOptions())
 
     // Clear out the database and downloaded files in case we somehow come back to the Language Select screen after installing anything.
-    if (props.route.name === 'LanguageSelect') {
-      props.groups.forEach(group => props.deleteGroup(group.name))
+    if (routeName === 'LanguageSelect') {
+      groups.forEach(group => deleteGroup(group.name))
 
-      Object.keys(props.database).forEach(languageID => {
-        props.deleteLanguageData(languageID)
+      Object.keys(database).forEach(languageID => {
+        deleteLanguageData(languageID)
         FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
           contents => {
             for (const item of contents) {
@@ -135,7 +143,7 @@ function LanguageSelectScreen ({
             ...set.data()
           })
         })
-        props.storeLanguageSets(sets, selectedLanguage)
+        storeLanguageSets(sets, selectedLanguage)
       })
       .catch(error => {
         console.log(error)
@@ -149,7 +157,7 @@ function LanguageSelectScreen ({
       .get()
       .then(async doc => {
         if (doc.exists) {
-          props.storeLanguageData(doc.data(), selectedLanguage)
+          storeLanguageData(doc.data(), selectedLanguage)
         }
       })
       .catch(error => {

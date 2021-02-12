@@ -2,13 +2,13 @@ import React from 'react'
 import { View } from 'react-native'
 import { connect } from 'react-redux'
 
-function ChapterSeparator (props) {
+function ChapterSeparator ({ primaryColor }) {
   return (
     <View
       style={{
         height: '100%',
         width: 2,
-        backgroundColor: props.primaryColor
+        backgroundColor: primaryColor
       }}
     />
   )

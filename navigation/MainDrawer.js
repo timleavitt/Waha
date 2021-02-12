@@ -47,16 +47,16 @@ function MainDrawer ({
     var localSets = []
 
     db.collection('languages')
-      .doc(props.activeGroup.language)
+      .doc(activeGroup.language)
       .onSnapshot(function (doc) {
         if (doc.data()) {
-          props.storeLanguageData(doc.data(), props.activeGroup.language)
+          storeLanguageData(doc.data(), activeGroup.language)
           localLanguageInfo = doc.data()
         }
       })
 
     db.collection('sets')
-      .where('languageID', '==', props.activeGroup.language)
+      .where('languageID', '==', activeGroup.language)
       .onSnapshot(querySnapshot => {
         if (!querySnapshot.empty) {
           var sets = []
@@ -66,7 +66,7 @@ function MainDrawer ({
               ...doc.data()
             })
           })
-          props.storeLanguageSets(sets, props.activeGroup.language)
+          storeLanguageSets(sets, activeGroup.language)
         }
       })
 
