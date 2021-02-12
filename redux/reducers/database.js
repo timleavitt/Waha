@@ -10,9 +10,9 @@ import {
 } from '../actions/databaseActions'
 
 /**
- * The database redux reducer stores all the information for all language instances installed on this device. This includes app translations, lesson translations, language instance properties, etc. All of this is fetched from firebase and stored in redux.
- * @param {Object} action Parameters passed from databaseActions.js functions.
- * @param {Object[]} database (state) Stores all of the information for all language instances installed on this device.
+ * The database redux reducer stores all the information for all language instances installed on this device. This includes app translations, lesson translations, language instance properties, etc. All of this is fetched from Firestore and stored in redux.
+ * @param {Object} action - Parameters passed from databaseActions.js functions.
+ * @param {Object[]} database - (state) Stores all of the information for all language instances installed on this device.
  * @param {boolean} database.hasOnboarded - Whether the user has completed the initial onboarding slides that appear after they select their language instance.
  * @param {boolean} database.hasFetchedLanguageData - Whether the app has completed the initial firebase fetch or not. This gets set to true after a successful return of data from firebase. It gets reset every time we install a new language instance. We store this so that we can make the 'cancel' button appear on the loading screen whenever we finish fetching. If the user can cancel before the fetching has completed, there's no way to cancel the downloads that happen automatically after the fetch happens.
  * @param {boolean} database.hasInstalledFirstLanguageInstance - Whether the user has installed their first language instance. We use this to decide what to render in Root.js in /navigation/.
@@ -32,11 +32,18 @@ import {
  * @param {string} database[languageID].sets[].subtitle - The translated subtitle of this story set.
  * @param {string} database[languageID].sets[].iconName - The name of the icon for this story set. See assets/fonts/icons.js for available icons.
  * @param {Object[]} database[languageID].sets[].lessons - An array or objects for the lessons in a story set.
- * @param {string} database[languageID].sets[].lessons[].id -
- * @param {string} database[languageID].sets[].lessons[].title -
- * @param {boolean} database[languageID].sets[].lessons[].hasAudio -
- * @param {boolean} database[languageID].sets[].lessons[].hasVideo -
- * @param {Object[]} database[languageID].sets[].lessons[].scripture -
+ * @param {string} database[languageID].sets[].lessons[].id - The ID for this lesson.
+ * @param {string} database[languageID].sets[].lessons[].title - The title of this lesson.
+ * @param {boolean} database[languageID].sets[].lessons[].hasAudio - Whether this lesson has an mp3 audio file for its Story chapter in Firebase.
+ * @param {boolean} database[languageID].sets[].lessons[].hasVideo - Whether this lesson has an mp4 video file for its Story chapter in Firebase.
+ * @param {Object[]} database[languageID].sets[].lessons[].scripture - An array of objects of the different passages of Scripture that are a part of this lesson.
+ * @param {string} database[languageID].sets[].lessons[].scripture[].header - The header for this scripture passage, which is just the address in the vernacular. This will appear above the passage text in the scripture pane of the Play Screen.
+ * @param {string} database[languageID].sets[].lessons[].scripture[].addressID - The specific API.Bible ID for this passage of scripture. Used to give each scripture passage a unique ID but also to automatically fetch passages of scripture from API.Bible.
+ * @param {string} database[languageID].sets[].lessons[].scripture[].text - The actual text for this scripture passage.
+ * @param {string} database[languageID].sets[].lessons[].fellowshipType - The variety of question set for this lesson's Fellowship chapter. Must be present in database[languageID].files as well.
+ * @param {string} database[languageID].sets[].lessons[].applicationType - The variety of question set for this lesson's Application chapter. Must be present in database[languageID].files as well.
+ * @param {string} database[languageID].sets[].lessons[].videoShareLink - The  link for the video that goes with this lesson. Only necessary if this lesson has a video.
+ * @param {string} database[languageID].sets[].lessons[].text - The text for the chapter of the book that this lesson is. Only necesssary if this lesson is a part of an audio book.
  */
 export function database (
   state = {

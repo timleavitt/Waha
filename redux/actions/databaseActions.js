@@ -20,10 +20,10 @@ import { setIsInstallingLanguageInstance } from './isInstallingLanguageInstanceA
 import { storeDownloads } from './storedDownloadsActions'
 
 /**
- *
+ * Stores the langauge data for a language instance in redux. This includes the display name, the bible ID, whether this language is RTL, the primary color of this language instance, the list of core files to download, the questions for every question set, and all the app translations.
  * @export
- * @param {*} languageData
- * @param {*} languageInstanceID
+ * @param {Object} languageData - All the data for a language.
+ * @param {string} languageaInstanceID - The ID of the language instance that we're storing data for.
  * @return {Object} - Object to send to the reducer.
  */
 export function storeLanguageData (languageData, languageInstanceID) {
@@ -34,6 +34,13 @@ export function storeLanguageData (languageData, languageInstanceID) {
   }
 }
 
+/**
+ * Stores all the sets for a language instance. The sets are stored as individual objects in Firestore but are combined before getting to this action. Then, they are stored as the "sets" key in the language data object.
+ * @export
+ * @param {Object[]} languageSets - An array of all the sets to store in redux.
+ * @param {string} languageInstanceID - The ID of the language instance that we're storing data for.
+ * @return {Object} - Object to send to the reducer.
+ */
 export function storeLanguageSets (languageSets, languageInstanceID) {
   return {
     type: STORE_LANGUAGE_SETS,
@@ -42,9 +49,9 @@ export function storeLanguageSets (languageSets, languageInstanceID) {
   }
 }
 /**
- *
+ * Sets whether the user has completed the initial onboarding or not.
  * @export
- * @param {*} hasOnboarded
+ * @param {boolean} hasOnboarded - Whether the user has onboarded.
  * @return {Object} - Object to send to the reducer.
  */
 export function setHasOnboarded (hasOnboarded) {
@@ -55,9 +62,9 @@ export function setHasOnboarded (hasOnboarded) {
 }
 
 /**
- *
+ * Sets whether the user has installed their first language instance or not.
  * @export
- * @param {*} hasInstalledFirstLanguageInstance
+ * @param {boolean} hasInstalledFirstLanguageInstance - Whether the user has installed their first language instance.
  * @return {Object} - Object to send to the reducer.
  */
 export function setHasInstalledFirstLanguageInstance (
@@ -70,9 +77,9 @@ export function setHasInstalledFirstLanguageInstance (
 }
 
 /**
- *
+ * Sets whether the app has fetched the necessary Firebase data for a language instance install.
  * @export
- * @param {*} hasFetchedLanguageData
+ * @param {boolean} hasFetchedLanguageData
  * @return {Object} - Object to send to the reducer.
  */
 export function setHasFetchedLanguageData (hasFetchedLanguageData) {
@@ -83,9 +90,9 @@ export function setHasFetchedLanguageData (hasFetchedLanguageData) {
 }
 
 /**
- *
+ * Sets the progress of downloading the core files for a language.
  * @export
- * @param {*} languageCoreFilesDownloadProgress
+ * @param {number} languageCoreFilesDownloadProgress - The number of core files that have been downloaded.
  * @return {Object} - Object to send to the reducer.
  */
 export function setLanguageCoreFilesDownloadProgress (
@@ -98,9 +105,9 @@ export function setLanguageCoreFilesDownloadProgress (
 }
 
 /**
- *
+ * Sets the total number of language core files to download. Used in tandem with languageCoreFilesDownloadProgress to calculate the progress through the downloads.
  * @export
- * @param {*} totalLanguageCoreFilesToDownload
+ * @param {number} totalLanguageCoreFilesToDownload - The number of core files to download.
  * @return {Object} - Object to send to the reducer.
  */
 export function setTotalLanguageCoreFilesToDownload (
@@ -113,9 +120,9 @@ export function setTotalLanguageCoreFilesToDownload (
 }
 
 /**
- *
+ * Deletes all of the redux data for a language instance. This includes language data and language sets.
  * @export
- * @param {*} languageInstanceID
+ * @param {string} languageInstanceID - The ID of the language instance to delete.
  * @return {Object} - Object to send to the reducer.
  */
 export function deleteLanguageData (languageInstanceID) {
