@@ -3,7 +3,7 @@ import {
   logAddStorySet,
   logCompleteLesson,
   logCreateGroup
-} from '../../LogEventFunctions'
+} from '../../logEventFunctions'
 
 export const CREATE_GROUP = 'CREATE_GROUP'
 export const EDIT_GROUP = 'EDIT_GROUP'

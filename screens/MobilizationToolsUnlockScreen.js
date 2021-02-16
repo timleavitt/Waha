@@ -4,7 +4,7 @@ import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
 import BackButton from '../components/standard/BackButton'
 import { scaleMultiplier } from '../constants'
-import { logUnlockMobilizationTools } from '../LogEventFunctions'
+import { logUnlockMobilizationTools } from '../logEventFunctions'
 import MessageModal from '../modals/MessageModal'
 import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
 import {

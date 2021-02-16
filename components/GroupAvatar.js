@@ -1,6 +1,5 @@
 import React from 'react'
 import { Image, TouchableOpacity, View } from 'react-native'
-import Icon from '../assets/fonts/icons'
 import { groupIconSources } from '../assets/groupIcons/_groupIcons'
 import { scaleMultiplier } from '../constants'
 import { colors } from '../styles/colors'

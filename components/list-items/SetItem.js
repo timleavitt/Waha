@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
-import Icon from '../../assets/fonts/icons'
-import SVG from '../../assets/svg.js'
+import Icon from '../../assets/fonts/icon_font_config'
 import { getSetInfo, itemHeights, scaleMultiplier } from '../../constants'
 import MessageModal from '../../modals/MessageModal'
 import { addSet } from '../../redux/actions/groupsActions'
 import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
+import SVG from '../SVG.js'
 
 function SetItem ({
   // Props passed from a parent component.
@@ -77,7 +77,7 @@ function SetItem ({
                     name={thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    fill={fullyCompleted ? colors.chateau : colors.shark}
+                    color={fullyCompleted ? colors.chateau : colors.shark}
                   />
                 </View>
               )}
@@ -134,7 +134,7 @@ function SetItem ({
                     name={thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    fill={fullyCompleted ? colors.chateau : colors.shark}
+                    color={fullyCompleted ? colors.chateau : colors.shark}
                   />
                 </View>
               )}
@@ -161,7 +161,7 @@ function SetItem ({
               name={thisSet.iconName}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
-              fill={colors.tuna}
+              color={colors.tuna}
             />
           </View>
         )
@@ -193,7 +193,7 @@ function SetItem ({
               name={thisSet.iconName}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
-              fill={colors.tuna}
+              color={colors.tuna}
             />
           </View>
         )

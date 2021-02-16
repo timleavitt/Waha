@@ -61,7 +61,7 @@ export default function App () {
   async function loadFonts () {
     // Load the icon font.
     await Font.loadAsync({
-      waha: require('./assets/fonts/waha.ttf')
+      waha: require('./assets/fonts/waha_icon_font.ttf')
     })
 
     // Load the language-specific fonts.

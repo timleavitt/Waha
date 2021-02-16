@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { getSetInfo, scaleMultiplier } from '../../constants'
-import { logEnableMobilizationToolsForAGroup } from '../../LogEventFunctions'
+import { logEnableMobilizationToolsForAGroup } from '../../logEventFunctions'
 import {
   addSet,
   setShouldShowMobilizationToolsTab

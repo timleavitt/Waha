@@ -18,18 +18,18 @@ function Piano ({
   // RENDER
 
   // require keyboard notes
-  var C = require('../../assets/notes/C.mp3')
-  var Db = require('../../assets/notes/Db.mp3')
-  var D = require('../../assets/notes/D.mp3')
-  var Eb = require('../../assets/notes/Eb.mp3')
-  var E = require('../../assets/notes/E.mp3')
-  var F = require('../../assets/notes/F.mp3')
-  var Gb = require('../../assets/notes/Gb.mp3')
-  var G = require('../../assets/notes/G.mp3')
-  var Ab = require('../../assets/notes/Ab.mp3')
-  var A = require('../../assets/notes/A.mp3')
-  var Bb = require('../../assets/notes/Bb.mp3')
-  var B = require('../../assets/notes/B.mp3')
+  var C = require('../../assets/pianoNotes/C.mp3')
+  var Db = require('../../assets/pianoNotes/Db.mp3')
+  var D = require('../../assets/pianoNotes/D.mp3')
+  var Eb = require('../../assets/pianoNotes/Eb.mp3')
+  var E = require('../../assets/pianoNotes/E.mp3')
+  var F = require('../../assets/pianoNotes/F.mp3')
+  var Gb = require('../../assets/pianoNotes/Gb.mp3')
+  var G = require('../../assets/pianoNotes/G.mp3')
+  var Ab = require('../../assets/pianoNotes/Ab.mp3')
+  var A = require('../../assets/pianoNotes/A.mp3')
+  var Bb = require('../../assets/pianoNotes/Bb.mp3')
+  var B = require('../../assets/pianoNotes/B.mp3')
 
   function playNote (number) {
     if (!isMuted) {

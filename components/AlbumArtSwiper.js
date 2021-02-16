@@ -9,11 +9,12 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import SVG from '../assets/svg'
 import SwipeBar from '../components/SwipeBar'
 import { scaleMultiplier } from '../constants'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
+import SVG from './SVG'
+
 function AlbumArtSwiper ({
   // Props passed from a parent component.
   setAlbumArtSwiperRef,
@@ -258,7 +259,7 @@ function AlbumArtSwiper ({
                 name={item.svgName}
                 width={Dimensions.get('window').width - marginWidth}
                 height={Dimensions.get('window').width - marginWidth}
-                fill='#1D1E20'
+                color='#1D1E20'
               />
             </TouchableHighlight>
           </View>

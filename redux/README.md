@@ -7,7 +7,7 @@ Additions to the basic Redux setup include:
 - **Redux Thunk**: Redux middleware to assist in the execution of asynchronous tasks like API calls.
 
 ## Directory Structure
-This `/redux/` folder has the following structure:
+This `redux/` folder has the following structure:
 
 - `actions/`: This folder contains all the redux action creators, separated based on the separation of the reducers.
 - `reducers/`: This folder contains all the reducers that transform the state. These are separated based on logical separations of data.

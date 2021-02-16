@@ -14,7 +14,7 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { languageT2S } from '../assets/languageT2S/languageT2S'
+import { languageT2S } from '../assets/languageT2S/_languageT2S'
 import LanguageSelectItem from '../components/list-items/LanguageSelectItem'
 import Separator from '../components/standard/Separator'
 import WahaButton from '../components/standard/WahaButton'
