@@ -1,3 +1,8 @@
+/**
+ * This file contains the information necessary to use the various group icons. These icons are used as the user's group avatar. The way to display a specific group icon in the app is `groupIconSources[groupIconName]`, where the groupIconName is one of the names listed in the groupIcons array.
+ */
+
+// An array of all of the group icon names.
 export const groupIcons = [
   'default',
   '1st-place-medal',
@@ -108,6 +113,7 @@ export const groupIcons = [
   'video-game'
 ]
 
+// An object containing all of the require statements for all of the group icon image files. The keys all match up with names in the groupIcons array.
 export const groupIconSources = {
   default: require('./default.png'),
   '1st-place-medal': require('./1st-place-medal.png'),

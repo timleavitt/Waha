@@ -40,10 +40,10 @@ function WahaOnboardingSlidesScreen ({
     <SafeAreaView style={styles.screen}>
       <OnboardingSwiper
         sources={[
-          require('../assets/onboarding/onboarding1.png'),
-          require('../assets/onboarding/onboarding2.png'),
-          require('../assets/onboarding/onboarding3.png'),
-          require('../assets/onboarding/onboarding4.png')
+          require('../assets/onboardingImages/onboarding1.png'),
+          require('../assets/onboardingImages/onboarding2.png'),
+          require('../assets/onboardingImages/onboarding3.png'),
+          require('../assets/onboardingImages/onboarding4.png')
         ]}
         titles={[
           i18n.t('title0'),

@@ -41,10 +41,10 @@ function SecurityOnboardingSlidesScreen ({
       <OnboardingSwiper
         isRTL={isRTL ? true : false}
         sources={[
-          require('../assets/onboarding/security_onboarding1.png'),
-          require('../assets/onboarding/security_onboarding2.png'),
-          require('../assets/onboarding/security_onboarding3.png'),
-          require('../assets/onboarding/security_onboarding4.png')
+          require('../assets/onboardingImages/security_onboarding1.png'),
+          require('../assets/onboardingImages/security_onboarding2.png'),
+          require('../assets/onboardingImages/security_onboarding3.png'),
+          require('../assets/onboardingImages/security_onboarding4.png')
         ]}
         titles={[
           translations.security.popups.onboarding_1_title,

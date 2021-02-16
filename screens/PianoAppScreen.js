@@ -46,7 +46,7 @@ function PianoAppScreen ({
       if (!security.isMuted) {
         var note = new Audio.Sound()
         note
-          .loadAsync(require('../assets/notes/Success.mp3'))
+          .loadAsync(require('../assets/unlock_security_mode_sound.mp3'))
           .then(() => note.playAsync())
       }
       setIsTimedOut(false)
@@ -80,7 +80,7 @@ function PianoAppScreen ({
         }}
       >
         <Image
-          source={require('../assets/wahaIcon.png')}
+          source={require('../assets/icons/waha_icon.png')}
           style={{
             resizeMode: 'contain',
             width: 50,
