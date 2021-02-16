@@ -36,7 +36,7 @@ function MainDrawer ({
   /**
    * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the StorySetTabs navigator because this is the only spot we should be able to swipe to open the drawer.
    * @param {string} route - The route passed from the navigation component.
-   * @return {boolean}
+   * @return {boolean} - Whether gestures should be enabled or not.
    */
   function getGestureEnabled (route) {
     const routeName = getFocusedRouteNameFromRoute(route) ?? 'StorySetTabs'

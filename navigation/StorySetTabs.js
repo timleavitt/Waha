@@ -56,7 +56,7 @@ function StorySetTabs ({
 
   /**
    * Gets the tab that contains the current set bookmark. This is to that we can default to displaying the most relevant tab when the user opens the app.
-   * @return {string}
+   * @return {string} - The tab for the bookmarked set.
    */
   function getBookmarkedTab () {
     // Get the category of the bookmarked set.

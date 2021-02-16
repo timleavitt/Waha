@@ -1,30 +1,45 @@
+/**
+ * This file contains the hex codes for all colors used in Waha. The normal colors and the colors used for the piano keys are exported from this file.
+ */
+
+// The standard colors used in components in Waha.
 export const colors = {
-  // normal text
+  // Used for almost all text.
   shark: '#1D1E20',
 
-  // secondary text and icons
+  // Used as a secondary text color and for some icons.
   tuna: '#3A3C3F',
 
-  // grayed out stuff
+  // Used for grayed out stuff.
   chateau: '#9FA5AD',
 
-  // gray borders
+  // Used for darker borders.
   oslo: '#828282',
 
+  // Used in miscellaneous places throughout the app.
   geyser: '#DEE3E9',
 
-  // backgrounds, list items, borders
+  // Used for backgrounds, list items, and borders.
+  // Darkest.
   porcelain: '#EAEEF0',
+  // Medium.
   athens: '#EFF2F4',
+  // Light.
   aquaHaze: '#f7f9fa',
+  // Lightest.
   white: '#FFFFFF',
 
-  // other colors
+  // Used for confirms/positive action buttons/highlights.
   apple: '#60C239',
+
+  // Used for cancels/negative action buttons/highlights.
   red: '#FF0800',
+
+  // Used for neutral action buttons/highlights.
   blue: '#2D9CDB'
 }
 
+// The colors used for each piano key in the PianoApp component.
 export const keyColors = {
   0: '#ffe119',
   1: '#3cb44b',
