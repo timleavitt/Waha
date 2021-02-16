@@ -1,7 +1,7 @@
 import * as Analytics from 'expo-firebase-analytics'
 import * as StoreReview from 'expo-store-review'
-import { getSetInfo } from '../constants'
-import { analyticsMode } from '../modeSwitch'
+import { getSetInfo } from './constants'
+import { analyticsMode } from './modeSwitch'
 
 export async function logInstallLanguage (languageName, phoneLanguage) {
   if (analyticsMode !== 'test')

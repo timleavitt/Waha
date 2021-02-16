@@ -26,7 +26,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
  * @param {Object} translations - The translations for the language of the currently selected group.
  * @param {string} font - The name of the font for the langauge script of the currently selected group. Matches with fonts names in the assets folder.
  */
-function StorySetsScreen ({
+function SetsScreen ({
   navigation: { navigate },
   route: { name: routeName },
   // passed from redux
@@ -220,4 +220,4 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(StorySetsScreen)
+export default connect(mapStateToProps)(SetsScreen)

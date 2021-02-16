@@ -66,7 +66,7 @@ function LoadingScreen ({
       setHasOnboarded(false)
       navigation.reset({
         index: 0,
-        routes: [{ name: 'LanguageSelect' }]
+        routes: [{ name: 'InitialLanguageInstanceInstall' }]
       })
     }
     storedDownloads.forEach(download => {

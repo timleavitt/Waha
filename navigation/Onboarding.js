@@ -2,9 +2,9 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
 import { getSystemIsRTL } from '../constants'
-import LanguageSelectScreen from '../screens/LanguageSelectScreen'
+import LanguageInstanceInstallScreen from '../screens/LanguageInstanceInstallScreen'
 import LoadingScreen from '../screens/LoadingScreen'
-import OnboardingSlidesScreen from '../screens/OnboardingSlidesScreen'
+import WahaOnboardingSlidesScreen from '../screens/WahaOnboardingSlidesScreen'
 
 const Stack = createStackNavigator()
 
@@ -20,10 +20,13 @@ function Onboarding () {
             : 'horizontal'
         }}
       >
-        <Stack.Screen name='LanguageSelect' component={LanguageSelectScreen} />
         <Stack.Screen
-          name='OnboardingSlides'
-          component={OnboardingSlidesScreen}
+          name='InitialLanguageInstanceInstall'
+          component={LanguageInstanceInstallScreen}
+        />
+        <Stack.Screen
+          name='WahaOnboardingSlides'
+          component={WahaOnboardingSlidesScreen}
           options={{
             gestureEnabled: false
           }}

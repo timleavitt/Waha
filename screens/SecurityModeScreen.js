@@ -18,7 +18,7 @@ import {
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
-function SecurityScreen ({
+function SecurityModeScreen ({
   navigation: { setOptions, goBack, navigate },
   // passed from redux
   database,
@@ -349,4 +349,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SecurityScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(SecurityModeScreen)

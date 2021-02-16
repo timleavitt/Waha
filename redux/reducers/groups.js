@@ -27,7 +27,7 @@ import {
 export function groups (state = [], params) {
   switch (params.type) {
     /**
-     * Adds a new group to the state. Adds the first 2 sets automatically on creation.
+     * Adds a new group to the state.
      */
     case CREATE_GROUP:
       return [
@@ -36,8 +36,10 @@ export function groups (state = [], params) {
           name: params.groupName,
           language: params.language,
           emoji: params.emoji,
+          // Set the recent Foundational or Mobilization Tool set and the set bookmark to the Set 1.1.
           recentCoreOrTool: params.language + '.1.1',
           setBookmark: params.language + '.1.1',
+          // Adds the first 2 sets automatically.
           addedSets: [
             {
               id: params.language + '.1.1',
@@ -53,24 +55,18 @@ export function groups (state = [], params) {
           shouldShowMobilizationToolsTab: false
         }
       ]
-    /**
-     * Edits a new group in the state. Only allowable changes are to the group name and the emoji.
-     */
     case EDIT_GROUP:
-      // only 2 things that the user can edit are the name and the image
       return state.map(group => {
         if (group.name === params.oldGroupName) {
           return {
             ...group,
+            // Only allowable changes are to the group name and the emoji.
             name: params.newGroupName,
             emoji: params.emoji
           }
         }
         return group
       })
-    /**
-     * Deletes a group from the state.
-     */
     case DELETE_GROUP:
       return state.filter(group => group.name != params.groupName)
     /**
@@ -223,9 +219,6 @@ export function groups (state = [], params) {
         }
         return group
       })
-    /**
-     * Adds a set to a group. Bookmark starts at the first lesson and progress starts at empty.
-     */
     case ADD_SET:
       return state.map(group => {
         if (group.name === params.groupName) {
@@ -234,6 +227,7 @@ export function groups (state = [], params) {
             addedSets: [
               ...group.addedSets,
               {
+                // The bookmark starts at the first lesson and the progress for this set starts at empty.
                 id: params.set.id,
                 progress: [],
                 bookmark: 1
@@ -243,9 +237,6 @@ export function groups (state = [], params) {
         }
         return group
       })
-    /**
-     * Sets whether this group should show the mobilization tools tab or not.
-     */
     case SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB:
       return state.map(group => {
         if (group.name === params.groupName) {

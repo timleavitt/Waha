@@ -15,8 +15,8 @@ import { groupIcons, groupIconSources } from '../assets/groupIcons/groupIcons'
 import GroupAvatar from '../components/GroupAvatar'
 import { scaleMultiplier } from '../constants'
 import ModalScreen from '../modals/ModalScreen'
+import { changeActiveGroup } from '../redux/actions/activeGroupActions'
 import {
-  changeActiveGroup,
   createGroup,
   editGroup,
   resetProgress

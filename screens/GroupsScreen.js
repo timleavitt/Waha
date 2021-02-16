@@ -227,7 +227,7 @@ function GroupsScreen ({
           <TouchableOpacity
             style={styles.addNewLanguageContainer}
             onPress={() =>
-              navigate('AddLanguage', {
+              navigate('SubsequentlLanguageInstanceInstall', {
                 installedLanguageInstances: getLanguageAndGroupData()
               })
             }

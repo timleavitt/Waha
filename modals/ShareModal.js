@@ -5,11 +5,7 @@ import { Alert, Share, View } from 'react-native'
 import { connect } from 'react-redux'
 import OptionsModalButton from '../components/OptionsModalButton'
 import Separator from '../components/standard/Separator'
-import {
-  logShareApp,
-  logShareAudio,
-  logShareText
-} from '../redux/LogEventFunctions'
+import { logShareApp, logShareAudio, logShareText } from '../LogEventFunctions'
 import OptionsModal from './OptionsModal'
 
 function ShareModal ({

@@ -3,9 +3,8 @@ import {
   logAddStorySet,
   logCompleteLesson,
   logCreateGroup
-} from '../LogEventFunctions'
+} from '../../LogEventFunctions'
 
-export const CHANGE_ACTIVE_GROUP = 'CHANGE_ACTIVE_GROUP'
 export const CREATE_GROUP = 'CREATE_GROUP'
 export const EDIT_GROUP = 'EDIT_GROUP'
 export const DELETE_GROUP = 'DELETE_GROUP'
@@ -14,19 +13,6 @@ export const RESET_PROGRESS = 'RESET_PROGRESS'
 export const ADD_SET = 'ADD_SET'
 export const SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB =
   'SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB'
-
-/**
- * Changes the active group. Alters state using the activeGroup.js reducer, NOT the groups.js reducer.
- * @export
- * @param {string} groupName - The name of the group to switch to.
- * @return {Object} - Object to send to the reducer.
- */
-export function changeActiveGroup (groupName) {
-  return {
-    type: CHANGE_ACTIVE_GROUP,
-    groupName
-  }
-}
 
 /**
  * Creates a new group.
@@ -97,7 +83,7 @@ function updateProgress (groupName, set, nextSet, lessonIndex, setLength) {
 }
 
 /**
- * Toggles the complete status of a lesson. This function acts a bridge function. It's called in components but doesn't send anything to the reducer itself. Its purpose is only to use state to get some more information that the above updateProgress function needs in order to work.
+ * Toggles the complete status of a lesson. This function acts a bridge function. It's called in components but doesn't send anything to the reducer itself. Its purpose is only to use state to get some more information that the above updateProgress function needs in order to work and then dispatch the updateProgress action.
  * @export
  * @param {string} groupName - The name of the group to update the progress in.
  * @param {Object} set - The set to update the progress in.

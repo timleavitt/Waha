@@ -10,7 +10,7 @@ import {
 } from '../actions/databaseActions'
 
 /**
- * The database redux reducer stores all the information for all language instances installed on this device. This includes app translations, lesson translations, language instance properties, etc. All of this is fetched from Firestore and stored in redux.
+ * The database redux reducer stores all the information for all language instances installed on this device. This includes app translations, lesson translations, language instance properties, etc. All of this is fetched from Firestore and stored in redux. It also stores the user's progress through setting up the app, such as onboarding, installing their first language instance, etc. This state is persisted across app restarts.
  * @param {Object} action - Parameters passed from databaseActions.js functions.
  * @param {Object[]} database - (state) Stores all of the information for all language instances installed on this device.
  * @param {boolean} database.hasOnboarded - Whether the user has completed the initial onboarding slides that appear after they select their language instance.
@@ -48,8 +48,10 @@ import {
 export function database (
   state = {
     hasOnboarded: false,
+    hasFetchedLanguageData: false,
     hasInstalledFirstLanguageInstance: false,
-    languageCoreFilesDownloadProgress: 0
+    languageCoreFilesDownloadProgress: 0,
+    totalLanguageCoreFilesToDownload: 0
   },
   action
 ) {

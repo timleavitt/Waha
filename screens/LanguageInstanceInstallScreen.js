@@ -41,7 +41,7 @@ i18n.translations = {
   ar
 }
 
-function LanguageSelectScreen ({
+function LanguageInstanceInstallScreen ({
   navigation: { setOptions, goBack, reset, navigate },
   route: {
     name: routeName,
@@ -90,7 +90,7 @@ function LanguageSelectScreen ({
     setOptions(getNavOptions())
 
     // Clear out the database and downloaded files in case we somehow come back to the Language Select screen after installing anything.
-    if (routeName === 'LanguageSelect') {
+    if (routeName === 'InitialLanguageInstanceInstall') {
       groups.forEach(group => deleteGroup(group.name))
 
       Object.keys(database).forEach(languageID => {
@@ -117,7 +117,7 @@ function LanguageSelectScreen ({
   }, [])
 
   function getNavOptions () {
-    return routeName === 'AddLanguage'
+    return routeName === 'SubsequentlLanguageInstanceInstall'
       ? {
           headerTitle: i18n.t('newLanguage')
         }
@@ -181,14 +181,14 @@ function LanguageSelectScreen ({
               onPress: () => {
                 reset({
                   index: 0,
-                  routes: [{ name: 'LanguageSelect' }]
+                  routes: [{ name: 'InitialLanguageInstanceInstall' }]
                 })
               }
             }
           ])
         })
-      if (routeName === 'LanguageSelect') {
-        navigate('OnboardingSlides', {
+      if (routeName === 'InitialLanguageInstanceInstall') {
+        navigate('WahaOnboardingSlides', {
           selectedLanguage: selectedLanguage
         })
       }
@@ -231,7 +231,7 @@ function LanguageSelectScreen ({
       color={colors.apple}
       onPress={onStartPress}
       label={
-        routeName === 'LanguageSelect'
+        routeName === 'InitialLanguageInstanceInstall'
           ? i18n.t('letsBegin')
           : i18n.t('addLanguage') + ' '
       }
@@ -261,7 +261,7 @@ function LanguageSelectScreen ({
   )
 
   var headerText =
-    routeName === 'LanguageSelect' ? (
+    routeName === 'InitialLanguageInstanceInstall' ? (
       <View
         style={{
           marginVertical: 20 * scaleMultiplier,
@@ -322,7 +322,9 @@ function LanguageSelectScreen ({
           alignItems: 'center',
           paddingHorizontal: 20,
           backgroundColor:
-            routeName === 'LanguageSelect' ? colors.aquaHaze : colors.white
+            routeName === 'InitialLanguageInstanceInstall'
+              ? colors.aquaHaze
+              : colors.white
         }}
       >
         <Text
@@ -346,7 +348,9 @@ function LanguageSelectScreen ({
         styles.screen,
         {
           backgroundColor:
-            routeName === 'LanguageSelect' ? colors.aquaHaze : colors.white
+            routeName === 'InitialLanguageInstanceInstall'
+              ? colors.aquaHaze
+              : colors.white
         }
       ]}
     >
@@ -365,7 +369,7 @@ function LanguageSelectScreen ({
           //  top
           style={{ height: '100%' }}
           sections={
-            routeName === 'LanguageSelect'
+            routeName === 'InitialLanguageInstanceInstall'
               ? languages.sort((a, b) => {
                   if (i18n.locale.includes(a.languageCode)) return -1
                   else if (i18n.locale.includes(b.languageCode)) return 1
@@ -478,4 +482,4 @@ function mapDispatchToProps (dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(LanguageSelectScreen)
+)(LanguageInstanceInstallScreen)

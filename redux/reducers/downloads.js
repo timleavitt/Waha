@@ -23,9 +23,6 @@ export function downloads (state = {}, action) {
           resumable: action.resumable
         }
       }
-    /**
-     * Removes a download from the downloads state.
-     */
     case REMOVE_DOWNLOAD:
       // get the key of the download we want to delete
       var idToDelete = action.lessonID

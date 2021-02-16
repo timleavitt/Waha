@@ -99,7 +99,7 @@ function MobilizationToolsScreen ({
           <Separator />
           <WahaItem
             title={translations.mobilization_tools.unlock_mt_button_label}
-            onPress={() => navigate('Passcode')}
+            onPress={() => navigate('MobilizationToolsUnlock')}
           >
             <Icon
               name={isRTL ? 'arrow-left' : 'arrow-right'}
@@ -159,7 +159,7 @@ function MobilizationToolsScreen ({
                               }
                             ]
                           )
-                      : () => navigate('Passcode')
+                      : () => navigate('MobilizationToolsUnlock')
                   }
                 >
                   <Icon

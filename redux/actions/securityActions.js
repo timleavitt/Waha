@@ -5,7 +5,6 @@ export const SET_TIMEOUT_DURATION = 'SET_TIMEOUT_DURATION'
 export const SET_TIMER = 'SET_TIMER'
 export const SET_IS_TIMED_OUT = 'SET_IS_TIMED_OUT'
 export const SET_MT_UNLOCK_TIMEOUT = 'SET_MT_UNLOCK_TIMEOUT'
-export const SET_MT_UNLOCK_ATTEMPTS = 'SET_MT_UNLOCK_ATTEMPTS'
 
 /**
  * Sets whether Security Mode is enabled or not.
@@ -95,18 +94,5 @@ export function setMTUnlockTimeout (time) {
   return {
     type: SET_MT_UNLOCK_TIMEOUT,
     time
-  }
-}
-
-/**
- * Sets the number of times the user has tried unsucessfully to unlock the Mobilization Tools.
- * @export
- * @param {boolean} toSet - Whether Security Mode should be enabled or not.
- * @return {Object} - Object to send to the reducer.
- */
-export function setMTUnlockAttempts (numAttempts) {
-  return {
-    type: SET_MT_UNLOCK_ATTEMPTS,
-    numAttempts
   }
 }

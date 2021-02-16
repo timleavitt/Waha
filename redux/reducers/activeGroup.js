@@ -1,4 +1,4 @@
-import { CHANGE_ACTIVE_GROUP } from '../actions/groupsActions'
+import { CHANGE_ACTIVE_GROUP } from '../actions/activeGroupActions'
 
 /**
  * The active group redux reducer that stores the name of the currently active group. This state is persisted across app restarts.
@@ -7,9 +7,6 @@ import { CHANGE_ACTIVE_GROUP } from '../actions/groupsActions'
  */
 export function activeGroup (state = null, action) {
   switch (action.type) {
-    /**
-     * Updates the name of the currently active group.
-     */
     case CHANGE_ACTIVE_GROUP:
       return action.groupName
     default:

@@ -4,17 +4,17 @@ import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
 import BackButton from '../components/standard/BackButton'
 import { scaleMultiplier } from '../constants'
+import { logUnlockMobilizationTools } from '../LogEventFunctions'
 import MessageModal from '../modals/MessageModal'
 import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
 import {
   setMTUnlockAttempts,
   setMTUnlockTimeout
 } from '../redux/actions/securityActions'
-import { logUnlockMobilizationTools } from '../redux/LogEventFunctions'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
-function PasscodeScreen ({
+function MobilizationToolsUnlockScreen ({
   navigation: { setOptions, goBack },
   // passed from redux
   activeDatabase,
@@ -219,4 +219,7 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PasscodeScreen)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MobilizationToolsUnlockScreen)

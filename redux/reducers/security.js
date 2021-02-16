@@ -18,9 +18,20 @@ import {
  * @param {number} security.timeoutDuration - The timeout duration for Security Mode to activate. This is the amount of time that the user can be away from the app (where appState is "inactive") before the Piano Screen will show up next time they open the app.
  * @param {number} security.timer - The Security Mode timer. This is the amount of time since the app has last been "inactive".
  * @param {boolean} security.isTimedOut - Whether Security Mode is "timed out" or not. This is if the time since the app has gone "inactive" is greater than the timeout duration.
- * @param {boolean} security.mtUnlockTimeout - The Mobilization Tools unlock timeout. If the tries unsucessfully too many times to unlock the Mobilization Tools, they'll be locked out.
+ * @param {boolean} security.mtUnlockTimeout - The Mobilization Tools unlock timeout, as in the amount of time until they can attempt to unlock the Mobilization Tools again. If the tries unsucessfully too many times to unlock the Mobilization Tools, they'll be locked out.
  */
-export function security (state = { timeoutDuration: 0 }, action) {
+export function security (
+  state = {
+    securityEnabled: false,
+    code: null,
+    isMuted: false,
+    timeoutDuration: 0,
+    timer: 0,
+    isTimedOut: false,
+    mtUnlockTimeout: 0
+  },
+  action
+) {
   switch (action.type) {
     case SET_SECURITY_ENABLED:
       return {
