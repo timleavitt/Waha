@@ -6,11 +6,11 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function TimeDisplay ({
-  // passed from parent
+  // Props passed from a parent component.
   max,
   time,
   style,
-  // passed from redux
+  // Props passed from redux.
   font,
   activeGroup
 }) {

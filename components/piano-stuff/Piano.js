@@ -7,10 +7,10 @@ import { getLanguageFont } from '../../styles/typography'
 import KeyLabel from '../piano-stuff/KeyLabel'
 
 function Piano ({
-  // passed from parent
+  // Props passed from a parent component.
   setPattern,
   isMuted = false,
-  // passed from redux
+  // Props passed from redux.
   isRTL,
   font,
   activeGroup

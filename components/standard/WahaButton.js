@@ -10,7 +10,7 @@ import {
 } from '../../styles/typography'
 
 function WahaButton ({
-  // passed from parents
+  // Props passed from a parent component.s
   type,
   color,
   label,
@@ -20,7 +20,7 @@ function WahaButton ({
   onPress,
   useDefaultFont = false,
   extraComponent = null,
-  // passed from redux
+  // Props passed from redux.
   font = null,
   isRTL = null,
   activeGroup = null

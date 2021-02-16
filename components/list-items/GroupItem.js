@@ -9,12 +9,12 @@ import { getLanguageFont, StandardTypography } from '../../styles/typography'
 import GroupAvatar from '../GroupAvatar'
 
 function GroupItem ({
-  // passed from parent
+  // Props passed from a parent component.
   groupName,
   isEditing,
   goToEditGroupScreen,
   emoji,
-  // passed from redux
+  // Props passed from redux.
   database,
   activeDatabase,
   isRTL,

@@ -5,13 +5,13 @@ import ChapterButton from './ChapterButton'
 import ChapterSeparator from './ChapterSeparator'
 
 function ChapterSelector ({
-  // passed from parent
+  // Props passed from a parent component.
   activeChapter,
   lessonID,
   onPress,
   lessonType,
   isDownloaded,
-  // passed from redux
+  // Props passed from redux.
   primaryColor,
   downloads,
   isConnected

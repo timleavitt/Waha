@@ -7,9 +7,9 @@ import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
 function GroupListHeaderMT ({
-  // passed from parent
+  // Props passed from a parent component.
   languageID,
-  // passed from redux
+  // Props passed from redux.
   activeDatabase,
   isRTL,
   groups,

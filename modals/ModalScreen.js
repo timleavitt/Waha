@@ -8,7 +8,7 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function ModalScreen ({
-  // passed from parent
+  // Props passed from a parent component.
   isVisible,
   hideModal,
   topRightComponent,
@@ -16,7 +16,7 @@ function ModalScreen ({
   onModalWillShow,
   title,
   children = null,
-  // passed from redux
+  // Props passed from redux.
   downloads,
   activeDatabase,
   isRTL,

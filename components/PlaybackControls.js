@@ -6,11 +6,11 @@ import { colors } from '../styles/colors'
 
 // play, pause, and skip controls for play screen
 function PlaybackControls ({
-  // passed from parent
+  // Props passed from a parent component.
   isMediaPlaying,
   onPlayPress,
   onSkipPress,
-  // passed from redux
+  // Props passed from redux.
   primaryColor
 }) {
   //+ RENDER

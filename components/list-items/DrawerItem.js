@@ -7,11 +7,11 @@ import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
 // renders a simple touchable item within the main navigation drawer
 function DrawerItem ({
-  // passed from parent
+  // Props passed from a parent component.
   onPress,
   iconName,
   text,
-  // passed from redux
+  // Props passed from redux.
   isRTL,
   font,
   activeGroup

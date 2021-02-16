@@ -17,8 +17,9 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function GroupsScreen ({
+  // Props passed from navigation.
   navigation: { setOptions, goBack, navigate },
-  // passed from redux
+  // Props passed from redux.
   database,
   isRTL,
   translations,

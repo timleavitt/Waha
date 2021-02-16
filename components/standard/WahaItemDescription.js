@@ -6,7 +6,7 @@ import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
 function WahaItemDescription ({
-  // passed from parents
+  // Props passed from a parent component.s
   text,
   font,
   isRTL,

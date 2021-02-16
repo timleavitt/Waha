@@ -25,13 +25,13 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function AddEditGroupModal ({
-  // passed from parent
+  // Props passed from a parent component.
   isVisible,
   hideModal,
   type,
   groupName: currentGroupName = null,
   languageID = null,
-  // passed from redux
+  // Props passed from redux.
   groups,
   isRTL,
   translations,

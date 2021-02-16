@@ -9,14 +9,14 @@ import { logShareApp, logShareAudio, logShareText } from '../LogEventFunctions'
 import OptionsModal from './OptionsModal'
 
 function ShareModal ({
-  // passed from parents
+  // Props passed from a parent component.s
   isVisible,
   hideModal,
   closeText,
   lesson,
   lessonType,
   set,
-  // passed from redux
+  // Props passed from redux.
   translations,
   downloads
 }) {

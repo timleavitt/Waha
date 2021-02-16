@@ -40,11 +40,13 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
  * @module PlayScreen
  */
 function PlayScreen ({
+  // Props passed from navigation.
   navigation: { goBack, setOptions, isFocused },
   route: {
+    // Props passed from previous screen.
     params: { thisLesson, thisSet, isDownloaded, isDownloading, lessonType }
   },
-  // passed from redux
+  // Props passed from redux.
   database,
   activeGroup,
   activeDatabase,

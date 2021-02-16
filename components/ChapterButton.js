@@ -7,14 +7,14 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function ChapterButton ({
-  // passed from parents
+  // Props passed from a parent component.s
   name,
   mode,
   number,
   activeNumber,
   onPress,
   downloadProgress,
-  // passed from redux
+  // Props passed from redux.
   font,
   activeGroup,
   primaryColor,

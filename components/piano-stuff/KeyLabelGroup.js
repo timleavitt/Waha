@@ -7,9 +7,9 @@ import { getLanguageFont } from '../../styles/typography'
 import KeyLabel from './KeyLabel'
 
 function KeyLabelGroup ({
-  // passed from parents
+  // Props passed from a parent component.s
   keyOrder,
-  // passed from redux
+  // Props passed from redux.
   font,
   security,
   isRTL,

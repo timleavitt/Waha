@@ -9,7 +9,7 @@ import { getLanguageFont, StandardTypography } from '../../styles/typography'
 import DownloadStatusIndicator from '../DownloadStatusIndicator'
 
 function LessonItem ({
-  // passed from parent
+  // Props passed from a parent component.
   thisLesson,
   onLessonSelect,
   isBookmark,
@@ -20,7 +20,7 @@ function LessonItem ({
   setActiveLessonInModal,
   setShowDownloadLessonModal,
   setShowDeleteLessonModal,
-  // passed from redux
+  // Props passed from redux.
   primaryColor,
   isRTL,
   activeGroup,

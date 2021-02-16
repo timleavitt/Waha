@@ -27,9 +27,10 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
  * @param {string} font - The name of the font for the langauge script of the currently selected group. Matches with fonts names in the assets folder.
  */
 function SetsScreen ({
+  // Props passed from navigation.
   navigation: { navigate },
   route: { name: routeName },
-  // passed from redux
+  // Props passed from redux.
   activeDatabase,
   isRTL,
   activeGroup,

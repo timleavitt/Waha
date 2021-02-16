@@ -17,11 +17,11 @@ import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
 function GroupListHeader ({
-  // passed from parents
+  // Props passed from a parent component.s
   languageName,
   languageID,
   isEditing,
-  // passed from redux
+  // Props passed from redux.
   isRTL,
   database,
   activeDatabase,

@@ -30,7 +30,7 @@ i18n.translations = {
 
 function LoadingScreen ({
   navigation,
-  // passed from redux
+  // Props passed from redux.
   languageCoreFilesDownloadProgress,
   totalLanguageCoreFilesToDownload,
   hasInstalledFirstLanguageInstance,

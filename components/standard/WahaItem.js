@@ -6,12 +6,12 @@ import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
 function WahaItem ({
-  // passed from parents
+  // Props passed from a parent component.s
   onPress,
   style = {},
   title,
   children = null,
-  // passed from redux
+  // Props passed from redux.
   font,
   isRTL,
   activeGroup

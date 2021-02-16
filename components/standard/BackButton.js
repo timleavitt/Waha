@@ -6,10 +6,10 @@ import { colors } from '../../styles/colors'
 
 // simple back button that is shown in almost every screen's header
 function BackButton ({
-  // passed from parent
+  // Props passed from a parent component.
   onPress,
   color,
-  // passed from redux
+  // Props passed from redux.
   isRTL
 }) {
   //+ RENDER

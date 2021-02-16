@@ -9,14 +9,14 @@ import { colors } from '../styles/colors'
 // renders the icon on the right side of lesson item that shows the download
 //  status
 function DownloadStatusIndicator ({
-  // passed from parents
+  // Props passed from a parent component.s
   isDownloaded,
   isDownloading,
   showDeleteModal,
   showSaveModal,
   lessonID,
   lessonType,
-  // passed from redux
+  // Props passed from redux.
   isConnected,
   downloads,
   removeDownload

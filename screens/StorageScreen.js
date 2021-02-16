@@ -17,6 +17,7 @@ import { colors } from '../styles/colors'
 import { getLanguageFont } from '../styles/typography'
 
 function StorageScreen ({
+  // Props passed from navigation.
   navigation: { setOptions, goBack },
   isRTL,
   database,

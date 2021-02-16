@@ -5,7 +5,7 @@ import { colors } from '../../styles/colors'
 import { SystemTypography } from '../../styles/typography'
 
 function LanguageSelectItem ({
-  // passed from parent
+  // Props passed from a parent component.
   nativeName,
   localeName,
   font,

@@ -12,7 +12,7 @@ import { lockLandscape, lockPortrait, scaleMultiplier } from '../constants'
 import { colors } from '../styles/colors'
 
 function VideoPlayer ({
-  // passed from parent
+  // Props passed from a parent component.
   videoSource,
   video,
   setVideo,

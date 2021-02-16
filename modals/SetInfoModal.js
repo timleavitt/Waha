@@ -10,13 +10,13 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 import ModalScreen from './ModalScreen'
 
 function SetInfoModal ({
-  // passed from parent
+  // Props passed from a parent component.
   isVisible,
   hideModal,
   category,
   thisSet,
   showSnackbar,
-  // passed from redux
+  // Props passed from redux.
   downloads,
   activeDatabase,
   isRTL,

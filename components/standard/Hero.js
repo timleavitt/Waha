@@ -5,7 +5,7 @@ import { colors } from '../../styles/colors'
 import Separator from '../standard/Separator'
 
 function Hero ({
-  // passed from parent
+  // Props passed from a parent component.
   source
 }) {
   return (

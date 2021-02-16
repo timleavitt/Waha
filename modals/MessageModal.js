@@ -8,7 +8,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 // modal variant that shows some information
 function MessageModal ({
-  // passed from parents
+  // Props passed from a parent component.s
   isVisible,
   hideModal,
   title,
@@ -17,7 +17,7 @@ function MessageModal ({
   confirmOnPress,
   cancelText = '',
   children = null,
-  // passed from redux
+  // Props passed from redux.
   font,
   activeGroup,
   isRTL

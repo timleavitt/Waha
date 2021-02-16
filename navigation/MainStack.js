@@ -35,7 +35,9 @@ LogBox.ignoreLogs(['Setting a timer'])
 const Stack = createStackNavigator()
 
 function MainStack ({
+  // Props passed from navigation.
   navigation: { navigate, goBack, toggleDrawer },
+  // Props passed from redux.
   isRTL,
   translations,
   font,

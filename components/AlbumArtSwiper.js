@@ -15,7 +15,7 @@ import { scaleMultiplier } from '../constants'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 function AlbumArtSwiper ({
-  // passed from parent
+  // Props passed from a parent component.
   setAlbumArtSwiperRef,
   iconName,
   thisLesson,
@@ -23,7 +23,7 @@ function AlbumArtSwiper ({
   playOpacity,
   animationZIndex,
   isMediaPlaying,
-  // passed from redux
+  // Props passed from redux.
   activeGroup,
   activeDatabase,
   font,

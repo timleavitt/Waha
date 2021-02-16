@@ -9,12 +9,12 @@ import Separator from '../standard/Separator'
 import WahaButton from '../standard/WahaButton'
 
 function LanguageStorageItem ({
-  // passed from parent
+  // Props passed from a parent component.
   languageName,
   languageID,
   megabytes,
   clearDownloads,
-  // passed from redux
+  // Props passed from redux.
   font,
   isRTL,
   translations,

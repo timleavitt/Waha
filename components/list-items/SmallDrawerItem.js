@@ -5,10 +5,10 @@ import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
 function SmallDrawerItem ({
-  // passed from parents
+  // Props passed from a parent component.s
   onPress,
   label,
-  // passed from redux
+  // Props passed from redux.
   isRTL,
   font,
   activeGroup

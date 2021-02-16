@@ -12,8 +12,9 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function WahaDrawer ({
+  // Props passed from navigation.
   navigation: { navigate },
-  // passed from redux
+  // Props passed from redux.
   primaryColor,
   isRTL,
   activeGroup,

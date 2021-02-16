@@ -19,7 +19,7 @@ import {
 import WahaButton from './standard/WahaButton'
 
 function OnboardingSwiper ({
-  // passed from parent
+  // Props passed from a parent component.
   isRTL,
   sources,
   titles,
@@ -28,7 +28,7 @@ function OnboardingSwiper ({
   nextTranslation,
   startTranslation,
   useDefaultFont,
-  // passed from redux
+  // Props passed from redux.
   font = null
 }) {
   const [onboardingPage, setOnboardingPage] = useState(1)

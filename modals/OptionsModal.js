@@ -7,12 +7,12 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function OptionsModal ({
-  // passed from parent
+  // Props passed from a parent component.
   isVisible,
   hideModal,
   closeText,
   children = null,
-  // passed from redux
+  // Props passed from redux.
   font,
   isRTL
 }) {

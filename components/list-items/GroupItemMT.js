@@ -14,9 +14,9 @@ import GroupAvatar from '../GroupAvatar'
 // variant of group list item that shows only avatar image, group name, and a switch to enable MTs
 
 function GroupItemMT ({
-  // passed from parent
+  // Props passed from a parent component.
   group,
-  // passed from redux
+  // Props passed from redux.
   database,
   isRTL,
   groups,

@@ -7,11 +7,11 @@ import { colors } from '../../styles/colors'
 // component rendered behind a lesson item that shows the swipe options
 
 function LessonSwipeBackdrop ({
-  // passed from parents
+  // Props passed from a parent component.s
   isComplete,
   toggleComplete,
   showShareModal,
-  // passed from redux
+  // Props passed from redux.
   isRTL
 }) {
   //+ RENDER

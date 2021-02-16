@@ -15,11 +15,13 @@ i18n.translations = {
 }
 
 function WahaOnboardingSlidesScreen ({
+  // Props passed from navigation.
   navigation: { navigate },
   route: {
+    // Props passed from previous screen.
     params: { selectedLanguage }
   },
-  // passed from redux
+  // Props passed from redux.
   setHasOnboarded
 }) {
   //+ FUNCTIONS
