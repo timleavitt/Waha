@@ -19,7 +19,13 @@ import MainStack from './MainStack'
 // Create our drawer navigator.
 const Drawer = createDrawerNavigator()
 
+/**
+ *
+ *
+ *
+ */
 function MainDrawer ({
+  // Props passed from redux.
   isRTL,
   activeDatabase,
   isConnected,
