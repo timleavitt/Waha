@@ -9,7 +9,6 @@ import WahaOnboardingSlidesScreen from '../screens/WahaOnboardingSlidesScreen'
 const Stack = createStackNavigator()
 
 function Onboarding () {
-  //+ RENDER
   return (
     <NavigationContainer>
       <Stack.Navigator
