@@ -46,7 +46,9 @@ function PianoAppScreen ({
       if (!security.isMuted) {
         var note = new Audio.Sound()
         note
-          .loadAsync(require('../assets/unlock_security_mode_sound.mp3'))
+          .loadAsync(
+            require('../assets/securityMode/unlock_security_mode_sound.mp3')
+          )
           .then(() => note.playAsync())
       }
       setIsTimedOut(false)
@@ -179,7 +181,7 @@ function PianoAppScreen ({
               height: 60 * scaleMultiplier,
               borderRadius: 10
             }}
-            source={require('../assets/piano.png')}
+            source={require('../assets/securityMode/piano.png')}
           />
           <Piano setPattern={setPattern} isMuted={security.isMuted} />
         </View>
