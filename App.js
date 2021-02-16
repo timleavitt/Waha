@@ -25,10 +25,10 @@ Text.defaultProps = {
   maxFontSizeMultiplier: 1.2
 }
 
-// App.js is the most root level component.
+/**
+ * App.js is the most root level component and is the start of all rendering for Waha.
+ */
 export default function App () {
-  //+ STATE
-
   /**  Keeps track of whether all the fonts are loaded. */
   const [fontsLoaded, setFontsLoaded] = useState(false)
 
@@ -55,12 +55,16 @@ export default function App () {
     })
   }, [])
 
-  // Loads up all the fonts for all languages
-  //! flag: update on new language family
+  /**
+   * Loads all of the fonts to be used across all languages in Waha.
+   */
   async function loadFonts () {
+    // Load the icon font.
     await Font.loadAsync({
       waha: require('./assets/fonts/waha.ttf')
     })
+
+    // Load the language-specific fonts.
     await Font.loadAsync({
       'Roboto-Black': require('./assets/fonts/Roboto/Roboto-Black.ttf')
     })
@@ -79,15 +83,18 @@ export default function App () {
     await Font.loadAsync({
       'NotoSansArabic-Regular': require('./assets/fonts/NotoSansArabic/NotoSansArabic-SemiCondensed.ttf')
     })
+
+    // Once we finish loading every font, set our fontsLoaded state to true so we know we can render the app now.
     setFontsLoaded(true)
   }
 
-  //+ RENDER
-
   if (fontsLoaded) {
     return (
+      // The provider passes the redux store to every component in Waha.
       <Provider store={store}>
+        {/* The persist gate allows the redux data to persist across restarts. */}
         <PersistGate loading={<LoadingView />} persistor={persistor}>
+          {/* Set a few settings related to the status bar. */}
           <StatusBar
             backgroundColor={colors.aquaHaze}
             barStyle='dark-content'

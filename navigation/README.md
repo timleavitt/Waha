@@ -4,7 +4,7 @@ Waha is a complex app with a lot of different screens. In this README, we'll cov
 In the descriptions below, navigators are **`bolded`** and any other files/screens/components are `not` to they can be easily distinguished.
 
 - **`App`**: This is the most top-level navigation component and the start of all rendering for Waha. It renders the **`Root`** component declared in `Root.js`.
-  - **`Root`**: This component is in charge of determining what set of screens to show based on the current state of the app. There are 3 key variables that **`Root`** uses to decide what to show:
+  - **`Root`**: This component is in charge of determining what navigator to show based on the current state of the app. There are 3 key variables that **`Root`** uses to decide what to show:
     1. `hasInstalledFirstLanguageInstance`: Whether the user has installed their first language instance or not.
     2. `isInstallingLanguageInstance`: Whether the app is currently installing a language instance.
     3. `hasOnboarded`: Whether the user has finished the initial onboarding of the app. 

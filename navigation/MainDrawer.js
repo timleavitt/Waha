@@ -16,13 +16,11 @@ import {
 import { updateConnectionStatus } from '../redux/actions/networkActions'
 import MainStack from './MainStack'
 
-// Create our drawer navigator.
+// Create the drawer navigator.
 const Drawer = createDrawerNavigator()
 
 /**
- *
- *
- *
+ * This component renders a drawer navigator that contains Waha's navigation drawer. It's placed around the MainStack navigator. It also contains a ton of logic related to things that happen globally in the background, such as updating the connection status and retrieving updates from Firestore.
  */
 function MainDrawer ({
   // Props passed from redux.
@@ -37,8 +35,8 @@ function MainDrawer ({
 }) {
   /**
    * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the StorySetTabs navigator because this is the only spot we should be able to swipe to open the drawer.
-   * @param {string} route - The route passed from the navigator.
-   * @return {shouldGestureBeEnabled}
+   * @param {string} route - The route passed from the navigation component.
+   * @return {boolean}
    */
   function getGestureEnabled (route) {
     const routeName = getFocusedRouteNameFromRoute(route) ?? 'StorySetTabs'
@@ -108,6 +106,7 @@ function MainDrawer ({
     </NavigationContainer>
   )
 }
+
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup

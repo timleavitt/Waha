@@ -4,7 +4,11 @@ import LoadingScreen from '../screens/LoadingScreen'
 import MainDrawer from './MainDrawer'
 import Onboarding from './Onboarding'
 
+/**
+ * This component renders a navigator conditionally based on state. It's the first thing rendered in App.js.
+ */
 function Root ({
+  // Props passed from redux.
   hasOnboarded,
   hasInstalledFirstLanguageInstance,
   isInstallingLanguageInstance

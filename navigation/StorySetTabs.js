@@ -6,9 +6,14 @@ import SetsScreen from '../screens/SetsScreen'
 import { colors } from '../styles/colors'
 import { getLanguageFont } from '../styles/typography'
 
+// Create the top tab navigator.
 const Tab = createMaterialTopTabNavigator()
 
+/**
+ * This component renders the tab navigator that is used to display the 3 differnet Story Set tabs.
+ */
 function StorySetTabs ({
+  // Props passed from redux.
   activeGroup,
   translations,
   activeDatabase,
@@ -16,6 +21,7 @@ function StorySetTabs ({
   primaryColor,
   isRTL
 }) {
+  // Only dispaly the Mobilization Tools screen if the Mobilization Tools tab has been enabled for this group from the Mobilization Tools screen.
   var MobilizationToolsScreen = activeGroup.shouldShowMobilizationToolsTab ? (
     <Tab.Screen
       name='MobilizationTools'
@@ -26,6 +32,7 @@ function StorySetTabs ({
     />
   ) : null
 
+  // Create the Foundational screen component.
   var FoundationalScreen = (
     <Tab.Screen
       name='Foundational'
@@ -36,6 +43,7 @@ function StorySetTabs ({
     />
   )
 
+  // Create the Topical screen component.
   var TopicalScreen = (
     <Tab.Screen
       name='Topical'
@@ -46,17 +54,19 @@ function StorySetTabs ({
     />
   )
 
-  // get the initial tab, which is whatever the category of the bookmarked set
-  //  is
-  function getInitialRouteName () {
+  /**
+   * Gets the tab that contains the current set bookmark. This is to that we can default to displaying the most relevant tab when the user opens the app.
+   * @return {string}
+   */
+  function getBookmarkedTab () {
+    // Get the category of the bookmarked set.
     var bookmarkSetCategory = getSetInfo(
       'category',
       activeDatabase.sets.filter(set => set.id === activeGroup.setBookmark)[0]
         .id
     )
 
-    var initialRouteName
-
+    // Return the correct name of the tab based on the category of the bookmarked set.
     switch (bookmarkSetCategory) {
       case 'foundational':
         return 'Foundational'
@@ -74,7 +84,8 @@ function StorySetTabs ({
 
   return (
     <Tab.Navigator
-      initialRouteName={getInitialRouteName()}
+      // Set the initial route based on the category of the bookmarked set.
+      initialRouteName={getBookmarkedTab()}
       swipeEnabled={true}
       tabBarOptions={{
         style: {
@@ -92,6 +103,7 @@ function StorySetTabs ({
         }
       }}
     >
+      {/* The components are declared above but rendered below like this because the tabs need to be in reverse order if the active group's language is RTL. */}
       {isRTL ? MobilizationToolsScreen : FoundationalScreen}
       {TopicalScreen}
       {isRTL ? FoundationalScreen : MobilizationToolsScreen}
@@ -99,14 +111,10 @@ function StorySetTabs ({
   )
 }
 
-//+ REDUX
-
 function mapStateToProps (state) {
   var activeGroup = state.groups.filter(
     item => item.name === state.activeGroup
   )[0]
-  // console.log(`sets: ${state.database[activeGroup.language].sets}`)
-
   return {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
