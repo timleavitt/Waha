@@ -3,7 +3,7 @@ import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { analyticsMode, dbMode, reduxMode } from '../modeSwitch'
 import { colors } from '../styles/colors'
-import { getLanguageFont, StandardTypography } from '../styles/typography'
+import { getLanguageFont, SystemTypography } from '../styles/typography'
 
 /**
  * This component displays some simple text that says "TEST MODE" whenever any of the modes in modeSwitch.js are set to "test". This is displayed in the corner on the opposite side of the group avatar on the StorySetTabs screen.
@@ -25,13 +25,7 @@ function TestModeDisplay ({
       {dbMode === 'test' || reduxMode === 'test' || analyticsMode === 'test' ? (
         <Text
           style={[
-            StandardTypography(
-              { font, isRTL },
-              'p',
-              'Bold',
-              'center',
-              colors.white
-            ),
+            SystemTypography(false, 'p', 'Bold', 'center', colors.white),
             {
               paddingHorizontal: 10
             }

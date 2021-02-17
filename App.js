@@ -2,7 +2,7 @@ import { decode, encode } from 'base-64'
 import { Audio } from 'expo-av'
 import * as Font from 'expo-font'
 import React, { useEffect, useState } from 'react'
-import { StatusBar, Text } from 'react-native'
+import { StatusBar } from 'react-native'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
 import LoadingView from './components/LoadingView'
@@ -17,12 +17,6 @@ if (!global.btoa) {
 }
 if (!global.atob) {
   global.atob = decode
-}
-
-// Set the max font scaling allowed. This is based on the system font scaling that the user sets in their phone's accessibility settings. We limit it so that the text in the app isn't allowed to get absolutely massive, which would not be good for the UI.
-Text.defaultProps = {
-  ...Text.defaultProps,
-  maxFontSizeMultiplier: 1.2
 }
 
 /**
