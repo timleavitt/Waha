@@ -12,10 +12,12 @@ const fontScale =
   PixelRatio.getFontScale() >= 1.2 ? 1.2 : PixelRatio.getFontScale()
 
 /** If the font scaling is larger than 1, we need to increase the heights of a few components to be able to fit the larger text. This variable acts as a multiplier for the height of those components. */
-
 const heightScaleModifier = 1 + (fontScale - 1) / 2
 
-/** This object stores the heights of a few specific components in Waha that react particularly badly to large font scaling. We need to declare the height of these dynamically, otherwise the text would never fit between a variety of fonts and font scaling. We have separate heights for each font in Waha as well as adding the heightScaleModifier we declared earlier. */
+/**
+ * This object stores the heights of a few specific components in Waha that react particularly badly to large font scaling. We need to declare the height of these dynamically, otherwise the text would never fit between a variety of fonts and font scaling. We have separate heights for each font in Waha as well as adding the heightScaleModifier we declared earlier.
+ * @export
+ * */
 export const itemHeights = {
   Roboto: {
     LessonItem: 60 * heightScaleModifier,
@@ -27,7 +29,10 @@ export const itemHeights = {
   }
 }
 
-/** This variable stores a multiplier value that we use to scale the dimensions of components throughout the app. It's based on the size of the phone screen. Basically, it shrinks components on smaller phones so that we're able to fit everything we need to on the screen. */
+/**
+ * This variable stores a multiplier value that we use to scale the dimensions of components throughout the app. It's based on the size of the phone screen. Basically, it shrinks components on smaller phones so that we're able to fit everything we need to on the screen.
+ * @export
+ * */
 export const scaleMultiplier =
   Dimensions.get('window').width > 400
     ? 1
