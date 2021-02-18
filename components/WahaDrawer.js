@@ -138,7 +138,7 @@ function WahaDrawer (props) {
         isVisible={showEditGroupModal}
         hideModal={() => setShowEditGroupModal(false)}
         type='EditGroup'
-        groupName={props.activeGroup.name}
+        group={props.activeGroup}
       />
     </SafeAreaView>
   )
