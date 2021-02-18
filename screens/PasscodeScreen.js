@@ -50,7 +50,10 @@ function PasscodeScreen (props) {
   function checkPasscode (passcode) {
     if (passcode === '281820') {
       Keyboard.dismiss()
-      logUnlockMobilizationTools(props.activeGroup.language)
+      logUnlockMobilizationTools(
+        props.activeGroup.language,
+        props.activeGroup.name
+      )
       setUnlockSuccessModal(true)
       props.setAreMobilizationToolsUnlocked(true)
     } else {

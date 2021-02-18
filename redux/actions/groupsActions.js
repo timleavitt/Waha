@@ -2,6 +2,7 @@ import { getLessonInfo, getSetInfo } from '../../constants'
 import {
   logAddStorySet,
   logCompleteLesson,
+  logCompleteStorySet,
   logCreateGroup
 } from '../LogEventFunctions'
 
@@ -22,8 +23,8 @@ export function changeActiveGroup (groupName) {
   }
 }
 
-export function createGroup (groupName, language, emoji) {
-  logCreateGroup(language)
+export function createGroup (groupName, language, emoji, groupNumber) {
+  logCreateGroup(language, groupName, groupNumber)
   return {
     type: CREATE_GROUP,
     groupName,
@@ -77,9 +78,18 @@ export function toggleComplete (groupName, set, lessonIndex) {
     var thisSetProgress = thisGroup.addedSets.filter(
       addedSet => addedSet.id === set.id
     )[0].progress
+
+    // Track analytics.
     if (!thisSetProgress.includes(lessonIndex)) {
-      logCompleteLesson(thisLesson, set, thisLanguage)
+      logCompleteLesson(thisLesson, groupName)
     }
+    if (
+      !thisSetProgress.includes(lessonIndex) &&
+      thisSetProgress.length === setLength - 1
+    ) {
+      logCompleteStorySet(set, groupName)
+    }
+
     dispatch(updateProgress(groupName, set, nextSet, lessonIndex, setLength))
   }
 }
