@@ -168,7 +168,14 @@ export function downloadLanguageCoreFiles (language) {
         if (
           !getState().groups.some(group => group.name === groupNames[language])
         )
-          dispatch(createGroup(groupNames[language], language, 'default'))
+          dispatch(
+            createGroup(
+              groupNames[language],
+              language,
+              'default',
+              getState().groups.length + 1
+            )
+          )
 
         // Change the active group to the new group we just created.
         dispatch(changeActiveGroup(groupNames[language]))

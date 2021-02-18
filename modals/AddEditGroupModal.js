@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Alert,
   Dimensions,
@@ -33,27 +33,17 @@ function AddEditGroupModal (props) {
   //+ STATE
 
   // keeps track of the group name text input value
-  const [groupName, setGroupName] = useState('')
-
-  // the group that is being edited
-  const [editingGroup, setEditingGroup] = useState({})
+  const [groupNameInput, setGroupNameInput] = useState('')
 
   // keeps track of the source for the avatar image
-  const [emoji, setEmoji] = useState('default')
+  const [emojiInput, setEmojiInput] = useState('default')
 
   // keeps track of whether the group being editted is currently the active group
   const [isActive, setIsActive] = useState(
-    props.activeGroup.name === props.groupName
+    props.type === 'EditGroup'
+      ? props.activeGroup.name === props.groupName
+      : false
   )
-
-  //+ CONSTRUCTOR
-
-  useEffect(() => {
-    // props.navigation.setOptions(getNavOptions())
-    setEditingGroup(
-      props.groups.filter(item => item.name === props.groupName)[0]
-    )
-  }, [props.activeGroup])
 
   //+ FUNCTIONS
 
@@ -61,7 +51,7 @@ function AddEditGroupModal (props) {
     var isDuplicate = false
     if (props.type === 'AddGroup') {
       props.groups.forEach(group => {
-        if (group.name === groupName) {
+        if (group.name === groupNameInput) {
           Alert.alert(
             props.translations.add_edit_group.popups.duplicate_group_name_title,
             props.translations.add_edit_group.popups
@@ -73,7 +63,10 @@ function AddEditGroupModal (props) {
       })
     } else {
       props.groups.forEach(group => {
-        if (group.name === groupName && props.groupName !== groupName) {
+        if (
+          group.name === groupNameInput &&
+          props.group.name !== groupNameInput
+        ) {
           Alert.alert(
             props.translations.add_edit_group.popups.duplicate_group_name_title,
             props.translations.add_edit_group.popups
@@ -88,7 +81,7 @@ function AddEditGroupModal (props) {
   }
 
   function checkForBlank () {
-    if (groupName === '') {
+    if (groupNameInput === '') {
       Alert.alert(
         props.translations.add_edit_group.popups.blank_group_name_title,
         props.translations.add_edit_group.popups.blank_group_name_message,
@@ -103,8 +96,13 @@ function AddEditGroupModal (props) {
   function addNewGroup () {
     if (checkForDuplicate() || checkForBlank()) return
 
-    props.createGroup(groupName, props.languageID, emoji)
-    props.changeActiveGroup(groupName)
+    props.createGroup(
+      groupNameInput,
+      props.languageID,
+      emojiInput,
+      props.groups.length + 1
+    )
+    props.changeActiveGroup(groupNameInput)
     props.hideModal()
   }
 
@@ -112,9 +110,9 @@ function AddEditGroupModal (props) {
   function editGroup () {
     if (checkForDuplicate() || checkForBlank()) return
 
-    if (props.groupName === props.activeGroup.name)
-      props.changeActiveGroup(groupName)
-    props.editGroup(props.groupName, groupName, emoji)
+    if (props.group.name === props.activeGroup.name)
+      props.changeActiveGroup(groupNameInput)
+    props.editGroup(props.group.name, groupNameInput, emojiInput)
     props.hideModal()
   }
 
@@ -136,18 +134,18 @@ function AddEditGroupModal (props) {
         </TouchableOpacity>
       }
       onCancelPress={() => {
-        setGroupName('')
-        setEmoji('default')
+        setGroupNameInput('')
+        setEmojiInput('default')
       }}
       onModalWillShow={
         props.type === 'AddGroup'
           ? () => {
-              setGroupName('')
-              setEmoji('default')
+              setGroupNameInput('')
+              setEmojiInput('default')
             }
           : () => {
-              setGroupName(props.groupName)
-              setEmoji(editingGroup.emoji)
+              setGroupNameInput(props.group.name)
+              setEmojiInput(props.group.emoji)
             }
       }
       title={
@@ -159,7 +157,7 @@ function AddEditGroupModal (props) {
       <View style={styles.photoContainer}>
         <GroupAvatar
           style={{ backgroundColor: colors.athens }}
-          emoji={emoji}
+          emoji={emojiInput}
           size={120}
           isChangeable={true}
         />
@@ -189,8 +187,8 @@ function AddEditGroupModal (props) {
             //   fontFamily: props.font + '-Regular'
             // }
           ]}
-          onChangeText={text => setGroupName(text)}
-          value={groupName}
+          onChangeText={text => setGroupNameInput(text)}
+          value={groupNameInput}
           autoCapitalize='words'
           autoCorrect={false}
           placeholder={
@@ -240,12 +238,12 @@ function AddEditGroupModal (props) {
                 justifyContent: 'center',
                 alignItems: 'center',
                 padding: 2,
-                borderWidth: item === emoji ? 2 : 0,
-                borderColor: item === emoji ? colors.blue : null,
+                borderWidth: item === emojiInput ? 2 : 0,
+                borderColor: item === emojiInput ? colors.blue : null,
                 borderRadius: 10,
-                backgroundColor: item === emoji ? colors.blue + '38' : null
+                backgroundColor: item === emojiInput ? colors.blue + '38' : null
               }}
-              onPress={() => setEmoji(item)}
+              onPress={() => setEmojiInput(item)}
             >
               <Image
                 style={{
@@ -307,8 +305,8 @@ function mapDispatchToProps (dispatch) {
   return {
     editGroup: (oldGroupName, newGroupName, emoji) =>
       dispatch(editGroup(oldGroupName, newGroupName, emoji)),
-    createGroup: (groupName, language, emoji) =>
-      dispatch(createGroup(groupName, language, emoji)),
+    createGroup: (groupName, language, emoji, groupNumber) =>
+      dispatch(createGroup(groupName, language, emoji, groupNumber)),
     changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName)),
     deleteGroup: name => {
       dispatch(deleteGroup(name))

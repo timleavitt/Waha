@@ -129,7 +129,7 @@ function WahaDrawer (props) {
                 colors.chateau
               )}
             >
-              v1.0.4
+              v1.0.5
             </Text>
           </View>
         </SafeAreaView>
@@ -138,7 +138,7 @@ function WahaDrawer (props) {
         isVisible={showEditGroupModal}
         hideModal={() => setShowEditGroupModal(false)}
         type='EditGroup'
-        groupName={props.activeGroup.name}
+        group={props.activeGroup}
       />
     </SafeAreaView>
   )

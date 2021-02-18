@@ -68,7 +68,11 @@ function GroupItemMT (props) {
 
             // if we're toggling MTs on for the first time, add the first 2 MT sets
             if (!props.group.shouldShowMobilizationToolsTab) {
-              logEnableMobilizationToolsForAGroup(props.activeGroup.language)
+              logEnableMobilizationToolsForAGroup(
+                props.activeGroup.language,
+                props.activeGroup.name,
+                props.groups.indexOf(props.group) + 1
+              )
               for (const set of props.database[props.group.language].sets) {
                 if (
                   getSetInfo('category', set.id) === 'mobilization tools' &&
