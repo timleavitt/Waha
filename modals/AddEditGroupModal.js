@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Alert,
   Dimensions,
@@ -35,13 +35,6 @@ function AddEditGroupModal (props) {
   // keeps track of the group name text input value
   const [groupNameInput, setGroupNameInput] = useState('')
 
-  useEffect(() => {
-    console.log(groupNameInput)
-  }, [groupNameInput])
-
-  // the group that is being edited
-  // const [editingGroup, setEditingGroup] = useState({})
-
   // keeps track of the source for the avatar image
   const [emojiInput, setEmojiInput] = useState('default')
 
@@ -51,15 +44,6 @@ function AddEditGroupModal (props) {
       ? props.activeGroup.name === props.groupName
       : false
   )
-
-  //+ CONSTRUCTOR
-
-  // useEffect(() => {
-  //   // props.navigation.setOptions(getNavOptions())
-  //   setEditingGroup(
-  //     props.groups.filter(item => item.name === props.groupName)[0]
-  //   )
-  // }, [props.activeGroup])
 
   //+ FUNCTIONS
 
