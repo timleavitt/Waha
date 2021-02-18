@@ -10,7 +10,6 @@ import {
   setMTUnlockAttempts,
   setMTUnlockTimeout
 } from '../redux/actions/securityActions'
-import { logUnlockMobilizationTools } from '../redux/LogEventFunctions'
 import { StandardTypography } from '../styles/typography'
 function PasscodeScreen (props) {
   //+ STATE
@@ -50,10 +49,6 @@ function PasscodeScreen (props) {
   function checkPasscode (passcode) {
     if (passcode === '281820') {
       Keyboard.dismiss()
-      logUnlockMobilizationTools(
-        props.activeGroup.language,
-        props.activeGroup.name
-      )
       setUnlockSuccessModal(true)
       props.setAreMobilizationToolsUnlocked(true)
     } else {

@@ -28,8 +28,7 @@ export async function logInstallLanguage (languageID, phoneLanguageID) {
  * Logs the completion of a lesson.
  * @export
  * @param {Object} lesson - The lesson object of the lesson that was completed.
- * @param {Object} set - The set that the completed lesson is a part of.
- * @param {string} currentLanguage - The ID of the active group's language.
+ * @param {string} groupName - The name of the currently active group.
  */
 export async function logCompleteLesson (lesson, groupName) {
   console.log(
@@ -55,7 +54,7 @@ export async function logCompleteLesson (lesson, groupName) {
  * Logs the completion of a Story Set.
  * @export
  * @param {Object} set - The set object for the set that was completed.
- * @param {string} currentLanguage - The ID of the active group's language.
+ * @param {string} groupName - The name of the currently active group.
  */
 export async function logCompleteStorySet (set, groupName) {
   console.log(
@@ -73,25 +72,11 @@ export async function logCompleteStorySet (set, groupName) {
 }
 
 /**
- * Logs the global unlock of the Mobilization Tools.
- * @export
- * @param {string} currentLanguage - The ID of the active group's language.
- */
-export async function logUnlockMobilizationTools (languageID, groupName) {
-  console.log(
-    `UnlockMobilizationTools logged with languageID: ${languageID} and groupName: ${groupName}.`
-  )
-  if (analyticsMode !== 'test')
-    await Analytics.logEvent('UnlockMobilizationTools', {
-      languageID: languageID,
-      groupName: groupName
-    })
-}
-
-/**
  * Logs the creation of a new group.
  * @export
- * @param {string} currentLanguage - The ID of the active group's language.
+ * @param {string} languageID - The ID of the active group's language.
+ * @param {string} groupName - The name of the currently active group.
+ * @param {number} groupNumber - The number of the new group.
  */
 export async function logCreateGroup (languageID, groupName, groupNumber) {
   console.log(
@@ -108,7 +93,9 @@ export async function logCreateGroup (languageID, groupName, groupNumber) {
 /**
  * Logs enabling the Mobilization Tools for a specific group.
  * @export
- * @param {string} currentLanguage - The ID of the active group's language.
+ * @param {string} languageID - The ID of the active group's language.
+ * @param {string} groupName - The name of the currently active group.
+ * @param {number} groupNumber - The number of the new group.
  */
 export async function logEnableMobilizationToolsForAGroup (
   languageID,
@@ -130,6 +117,7 @@ export async function logEnableMobilizationToolsForAGroup (
  * Logs adding a new story set.
  * @export
  * @param {Object} set - The set object for the set that was added.
+ * @param {string} groupName - The name of the currently active group.
  */
 export async function logAddStorySet (set, groupName) {
   console.log(
@@ -148,7 +136,7 @@ export async function logAddStorySet (set, groupName) {
 /**
  * Logs sharing the app URL.
  * @export
- * @param {Object} lesson - The lesson object for the lesson the user is doing when they share the app.
+ * @param {string} groupName - The name of the currently active group.
  */
 export async function logShareApp (groupName) {
   console.log(`ShareApp logged with groupName: ${groupName}.`)
@@ -158,12 +146,11 @@ export async function logShareApp (groupName) {
     })
 }
 
-// COMBINE
-
 /**
  * Logs sharing the scripture text for a lesson.
  * @export
  * @param {Object} lesson - The lesson object for the lesson the user is doing when they share the scripture text.
+ * @param {string} groupName - The name of the currently active group.
  */
 export async function logShareText (lesson, groupName) {
   console.log(
@@ -180,6 +167,7 @@ export async function logShareText (lesson, groupName) {
  * Logs sharing the app Story chapter mp3.
  * @export
  * @param {Object} lesson - The lesson object for the lesson the user is doing when they share the Story chapter mp3.
+ * @param {string} groupName - The name of the currently active group.
  */
 export async function logShareAudio (lesson, groupName) {
   console.log(

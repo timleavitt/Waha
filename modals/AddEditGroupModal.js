@@ -96,7 +96,12 @@ function AddEditGroupModal (props) {
   function addNewGroup () {
     if (checkForDuplicate() || checkForBlank()) return
 
-    props.createGroup(groupNameInput, props.languageID, emojiInput)
+    props.createGroup(
+      groupNameInput,
+      props.languageID,
+      emojiInput,
+      props.groups.length + 1
+    )
     props.changeActiveGroup(groupNameInput)
     props.hideModal()
   }
@@ -300,8 +305,8 @@ function mapDispatchToProps (dispatch) {
   return {
     editGroup: (oldGroupName, newGroupName, emoji) =>
       dispatch(editGroup(oldGroupName, newGroupName, emoji)),
-    createGroup: (groupName, language, emoji) =>
-      dispatch(createGroup(groupName, language, emoji)),
+    createGroup: (groupName, language, emoji, groupNumber) =>
+      dispatch(createGroup(groupName, language, emoji, groupNumber)),
     changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName)),
     deleteGroup: name => {
       dispatch(deleteGroup(name))
