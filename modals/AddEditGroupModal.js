@@ -62,8 +62,8 @@ function AddEditGroupModal ({
 
   function checkForDuplicate () {
     var isDuplicate = false
-    if (props.type === 'AddGroup') {
-      props.groups.forEach(group => {
+    if (type === 'AddGroup') {
+      groups.forEach(group => {
         if (group.name === groupNameInput) {
           Alert.alert(
             translations.add_edit_group.popups.duplicate_group_name_title,
@@ -74,7 +74,7 @@ function AddEditGroupModal ({
         }
       })
     } else {
-      props.groups.forEach(storedGroup => {
+      groups.forEach(storedGroup => {
         if (
           storedGroup.name === groupNameInput &&
           group.name !== groupNameInput
@@ -109,10 +109,10 @@ function AddEditGroupModal ({
 
     createGroup(
       groupNameInput,
-      props.languageID,
+      languageID,
       emojiInput,
-      props.globalGroupCounter + 1,
-      props.groups.length + 1
+      globalGroupCounter + 1,
+      groups.length + 1
     )
     changeActiveGroup(groupNameInput)
 
@@ -127,7 +127,7 @@ function AddEditGroupModal ({
     if (checkForDuplicate() || checkForBlank()) return
 
     if (group.name === activeGroup.name) changeActiveGroup(groupNameInput)
-    editGroup(props.group.name, groupNameInput, emojiInput)
+    editGroup(group.name, groupNameInput, emojiInput)
     hideModal()
   }
 

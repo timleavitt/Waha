@@ -250,7 +250,7 @@ function SetItem ({
         // the next set after this one hasn't already been added AND
         !activeGroup.addedSets.some(addedSet => addedSet.id === nextSet.id)
       ) {
-        props.addSet(
+        addSet(
           activeGroup.name,
           activeGroup.id,
           activeDatabase.sets

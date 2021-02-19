@@ -14,6 +14,7 @@ import {
  * The database redux reducer stores all the information for all language instances installed on this device. This includes app translations, lesson translations, language instance properties, etc. All of this is fetched from Firestore and stored in redux. It also stores the user's progress through setting up the app, such as onboarding, installing their first language instance, etc. This state is persisted across app restarts.
  * @param {Object} action - Parameters passed from databaseActions.js functions.
  * @param {Object[]} database - (state) Stores all of the information for all language instances installed on this device.
+ * @param {number} database.globalGroupCounter - A simple counter that goes up by 1 with every created group. This is used to give each created group a unique ID.
  * @param {boolean} database.hasOnboarded - Whether the user has completed the initial onboarding slides that appear after they select their language instance.
  * @param {boolean} database.hasFetchedLanguageData - Whether the app has completed the initial firebase fetch or not. This gets set to true after a successful return of data from firebase. It gets reset every time we install a new language instance. We store this so that we can make the 'cancel' button appear on the loading screen whenever we finish fetching. If the user can cancel before the fetching has completed, there's no way to cancel the downloads that happen automatically after the fetch happens.
  * @param {boolean} database.hasInstalledFirstLanguageInstance - Whether the user has installed their first language instance. We use this to decide what to render in Root.js in /navigation/.
@@ -48,12 +49,11 @@ import {
  */
 export function database (
   state = {
+    globalGroupCounter: 0,
     hasOnboarded: false,
     hasFetchedLanguageData: false,
     hasInstalledFirstLanguageInstance: false,
-    languageCoreFilesDownloadProgress: 0,
-    storedDownloads: [],
-    globalGroupCounter: 0
+    languageCoreFilesDownloadProgress: 0
   },
   action
 ) {

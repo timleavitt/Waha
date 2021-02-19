@@ -155,10 +155,10 @@ function GroupItem ({
           }
         ]}
         onPress={
-          props.isEditing
+          isEditing
             ? () => openEditModal()
             : () => {
-                changeActiveGroup(props.group.name)
+                changeActiveGroup(group.name)
               }
         }
       >

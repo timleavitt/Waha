@@ -71,28 +71,28 @@ function WahaDrawer ({
       <View style={{ backgroundColor: colors.white, flex: 1 }}>
         <View style={{ flex: 1 }}>
           <DrawerItem
-            iconName='group'
-            text={translations.groups.header}
+            icon='group'
+            label={translations.groups.header}
             onPress={() => navigate('Groups')}
           />
           <DrawerItem
-            iconName='security'
-            text={translations.security.header}
+            icon='security'
+            label={translations.security.header}
             onPress={() => navigate('SecurityMode')}
           />
           <DrawerItem
-            iconName='boat'
-            text={translations.mobilization_tools.header}
+            icon='boat'
+            label={translations.mobilization_tools.header}
             onPress={() => navigate('MobilizationTools')}
           />
           <DrawerItem
-            iconName='storage'
-            text={translations.storage.header}
+            icon='storage'
+            label={translations.storage.header}
             onPress={() => navigate('Storage')}
           />
           <DrawerItem
-            iconName='email'
-            text={translations.general.feedback}
+            icon='email'
+            label={translations.general.feedback}
             onPress={() =>
               openBrowser('https://coda.io/form/Waha-Bug-Report_dyWvuvL6WTx')
             }
@@ -148,7 +148,7 @@ function WahaDrawer ({
         isVisible={showEditGroupModal}
         hideModal={() => setShowEditGroupModal(false)}
         type='EditGroup'
-        group={props.activeGroup}
+        group={activeGroup}
       />
     </SafeAreaView>
   )

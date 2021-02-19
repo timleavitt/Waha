@@ -105,7 +105,7 @@ function SetInfoModal ({
         type='filled'
         color={colors.apple}
         onPress={() => {
-          addSet(props.activeGroup.name, props.activeGroup.id, props.thisSet)
+          addSet(activeGroup.name, activeGroup.id, thisSet)
           showSnackbar()
           hideModal()
         }}

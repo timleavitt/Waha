@@ -33,8 +33,8 @@ function GroupsScreen ({
   const [isEditing, setIsEditing] = useState(false)
   const [showAddGroupModal, setShowAddGroupModal] = useState(false)
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
-  const [languageID, setLanguageID] = useState(props.activeGroup.languageID)
-  const [editingGroup, setEditingGroup] = useState(props.activeGroup)
+  const [languageID, setLanguageID] = useState(activeGroup.languageID)
+  const [editingGroup, setEditingGroup] = useState(activeGroup)
 
   //+ CONSTRUCTOR
 
@@ -159,7 +159,7 @@ function GroupsScreen ({
         // goToEditGroupScreen={groupName => {
         //   setGroupName(groupName)
         //   setShowEditGroupModal(true)
-        //   // props.navigation.navigate('EditGroup', { groupName: groupName })
+        //   // navigation.navigate('EditGroup', { groupName: groupName })
         // }}
       />
     )

@@ -15,12 +15,17 @@ export const INCREMENT_GLOBAL_GROUP_COUNTER = 'INCREMENT_GLOBAL_GROUP_COUNTER'
 import * as FileSystem from 'expo-file-system'
 import i18n from 'i18n-js'
 import { groupNames } from '../../constants'
-import { logInstallLanguage } from '../../logEventFunctions'
+import { logInstallLanguage } from '../../LogEventFunctions'
 import { changeActiveGroup } from './activeGroupActions'
 import { createGroup } from './groupsActions'
 import { setIsInstallingLanguageInstance } from './isInstallingLanguageInstanceActions'
 import { storeDownloads } from './storedDownloadsActions'
 
+/**
+ * Increments the global group counter redux variable by 1.
+ * @export
+ * @return {Object} - Object to send to the reducer.
+ */
 export function incrementGlobalGroupCounter () {
   return {
     type: INCREMENT_GLOBAL_GROUP_COUNTER
@@ -225,6 +230,7 @@ export function downloadLanguageCoreFiles (language) {
         if (
           !getState().groups.some(group => group.name === groupNames[language])
         ) {
+          // Increment the global group counter so that this group has a unique ID.
           dispatch(incrementGlobalGroupCounter())
           dispatch(
             createGroup(

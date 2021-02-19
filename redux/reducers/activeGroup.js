@@ -13,3 +13,10 @@ export function activeGroup (state = null, action) {
       return state
   }
 }
+
+/**
+ * Takes in state and returns an object for the active group.
+ */
+export function activeGroupSelector (state) {
+  return state.groups.filter(item => item.name === state.activeGroup)[0]
+}

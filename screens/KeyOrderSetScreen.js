@@ -12,8 +12,8 @@ import KeyLabelGroup from '../components/piano-stuff/KeyLabelGroup'
 import Piano from '../components/piano-stuff/Piano'
 import BackButton from '../components/standard/BackButton'
 import WahaButton from '../components/standard/WahaButton'
+import { logEnableSecurityMode } from '../LogEventFunctions'
 import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
-import { logEnableSecurityMode } from '../redux/LogEventFunctions'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
@@ -76,7 +76,7 @@ function KeyOrderSetScreen ({
               [{ text: translations.general.ok, onPress: () => {} }]
             )
             // Log the enabling of Security Mode in Firebase analytics.
-            logEnableSecurityMode(props.activeGroup.id)
+            logEnableSecurityMode(activeGroup.id)
 
             setSecurityEnabled(true)
             setCode(keyOrder)
