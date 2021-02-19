@@ -15,6 +15,7 @@ export function groups (state = [], action) {
         ...state,
         {
           name: action.groupName,
+          id: action.groupID,
           language: action.language,
           emoji: action.emoji,
           recentCoreOrTool: action.language + '.1.1',

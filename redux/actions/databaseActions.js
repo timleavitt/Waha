@@ -10,6 +10,7 @@ export const SET_LANGUAGE_CORE_FILES_DOWNLOAD_PROGRESS =
 export const SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD =
   'SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD'
 export const SET_HAS_FETCHED_LANGUAGE_DATA = 'SET_HAS_FETCHED_LANGUAGE_DATA'
+export const INCREMENT_GLOBAL_GROUP_COUNTER = 'INCREMENT_GLOBAL_GROUP_COUNTER'
 
 import * as FileSystem from 'expo-file-system'
 import i18n from 'i18n-js'
@@ -19,6 +20,11 @@ import { changeActiveGroup, createGroup } from './groupsActions'
 import { setIsInstallingLanguageInstance } from './isInstallingLanguageInstanceActions'
 import { storeDownloads } from './storedDownloadsActions'
 
+export function incrementGlobalGroupCounter () {
+  return {
+    type: INCREMENT_GLOBAL_GROUP_COUNTER
+  }
+}
 export function storeLanguageData (languageData, languageInstanceID) {
   return {
     type: STORE_LANGUAGE_DATA,
@@ -167,15 +173,18 @@ export function downloadLanguageCoreFiles (language) {
         // Create a new group using the default group name stored in constants.js. First we make sure there's no duplicates just in case a group has already been created.
         if (
           !getState().groups.some(group => group.name === groupNames[language])
-        )
+        ) {
+          dispatch(incrementGlobalGroupCounter())
           dispatch(
             createGroup(
               groupNames[language],
               language,
               'default',
+              getState().database.globalGroupCounter,
               getState().groups.length + 1
             )
           )
+        }
 
         // Change the active group to the new group we just created.
         dispatch(changeActiveGroup(groupNames[language]))
