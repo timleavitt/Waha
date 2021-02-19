@@ -217,7 +217,8 @@ function mapStateToProps (state) {
     activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
     font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    globalGroupCounter: state.database.globalGroupCounter
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Alert,
   Dimensions,
@@ -16,6 +16,7 @@ import GroupAvatar from '../components/GroupAvatar'
 import { scaleMultiplier } from '../constants'
 import ModalScreen from '../modals/ModalScreen'
 import { changeActiveGroup } from '../redux/actions/activeGroupActions'
+import { incrementGlobalGroupCounter } from '../redux/actions/databaseActions'
 import {
   createGroup,
   editGroup,
@@ -29,7 +30,7 @@ function AddEditGroupModal ({
   isVisible,
   hideModal,
   type,
-  groupName: currentGroupName = null,
+  group = null,
   languageID = null,
   // Props passed from redux.
   groups,
@@ -41,38 +42,29 @@ function AddEditGroupModal ({
   createGroup,
   changeActiveGroup,
   deleteGroup,
-  resetProgress
+  resetProgress,
+  incrementGlobalGroupCounter
 }) {
   //+ STATE
 
   // keeps track of the group name text input value
-  const [groupName, setGroupName] = useState('')
-
-  // the group that is being edited
-  const [editingGroup, setEditingGroup] = useState({})
+  const [groupNameInput, setGroupNameInput] = useState('')
 
   // keeps track of the source for the avatar image
-  const [emoji, setEmoji] = useState('default')
+  const [emojiInput, setEmojiInput] = useState('default')
 
   // keeps track of whether the group being editted is currently the active group
   const [isActive, setIsActive] = useState(
-    activeGroup.name === currentGroupName
+    type === 'EditGroup' ? activeGroup.name === group.name : false
   )
-
-  //+ CONSTRUCTOR
-
-  useEffect(() => {
-    // navigation.setOptions(getNavOptions())
-    setEditingGroup(groups.filter(item => item.name === currentGroupName)[0])
-  }, [activeGroup])
 
   //+ FUNCTIONS
 
   function checkForDuplicate () {
     var isDuplicate = false
-    if (type === 'AddGroup') {
-      groups.forEach(group => {
-        if (group.name === groupName) {
+    if (props.type === 'AddGroup') {
+      props.groups.forEach(group => {
+        if (group.name === groupNameInput) {
           Alert.alert(
             translations.add_edit_group.popups.duplicate_group_name_title,
             translations.add_edit_group.popups.duplicate_group_name_message,
@@ -82,8 +74,11 @@ function AddEditGroupModal ({
         }
       })
     } else {
-      groups.forEach(group => {
-        if (group.name === groupName && currentGroupName !== groupName) {
+      props.groups.forEach(storedGroup => {
+        if (
+          storedGroup.name === groupNameInput &&
+          group.name !== groupNameInput
+        ) {
           Alert.alert(
             translations.add_edit_group.popups.duplicate_group_name_title,
             translations.add_edit_group.popups.duplicate_group_name_message,
@@ -97,7 +92,7 @@ function AddEditGroupModal ({
   }
 
   function checkForBlank () {
-    if (groupName === '') {
+    if (groupNameInput === '') {
       Alert.alert(
         translations.add_edit_group.popups.blank_group_name_title,
         translations.add_edit_group.popups.blank_group_name_message,
@@ -112,8 +107,18 @@ function AddEditGroupModal ({
   function createGroupHandler () {
     if (checkForDuplicate() || checkForBlank()) return
 
-    createGroup(groupName, languageID, emoji)
-    changeActiveGroup(groupName)
+    createGroup(
+      groupNameInput,
+      props.languageID,
+      emojiInput,
+      props.globalGroupCounter + 1,
+      props.groups.length + 1
+    )
+    changeActiveGroup(groupNameInput)
+
+    // Increment the global group counter redux variable.
+    incrementGlobalGroupCounter()
+
     hideModal()
   }
 
@@ -121,8 +126,8 @@ function AddEditGroupModal ({
   function editGroupHandler () {
     if (checkForDuplicate() || checkForBlank()) return
 
-    if (currentGroupName === activeGroup.name) changeActiveGroup(groupName)
-    editGroup(currentGroupName, groupName, emoji)
+    if (group.name === activeGroup.name) changeActiveGroup(groupNameInput)
+    editGroup(props.group.name, groupNameInput, emojiInput)
     hideModal()
   }
 
@@ -144,18 +149,18 @@ function AddEditGroupModal ({
         </TouchableOpacity>
       }
       onCancelPress={() => {
-        setGroupName('')
-        setEmoji('default')
+        setGroupNameInput('')
+        setEmojiInput('default')
       }}
       onModalWillShow={
         type === 'AddGroup'
           ? () => {
-              setGroupName('')
-              setEmoji('default')
+              setGroupNameInput('')
+              setEmojiInput('default')
             }
           : () => {
-              setGroupName(currentGroupName)
-              setEmoji(editingGroup.emoji)
+              setGroupNameInput(group.name)
+              setEmojiInput(group.emoji)
             }
       }
       title={
@@ -167,7 +172,7 @@ function AddEditGroupModal ({
       <View style={styles.photoContainer}>
         <GroupAvatar
           style={{ backgroundColor: colors.athens }}
-          emoji={emoji}
+          emoji={emojiInput}
           size={120}
         />
       </View>
@@ -202,8 +207,8 @@ function AddEditGroupModal ({
             //   fontFamily: font + '-Regular'
             // }
           ]}
-          onChangeText={text => setGroupName(text)}
-          value={groupName}
+          onChangeText={text => setGroupNameInput(text)}
+          value={groupNameInput}
           autoCapitalize='words'
           autoCorrect={false}
           placeholder={translations.add_edit_group.group_name_form_placeholder}
@@ -257,12 +262,12 @@ function AddEditGroupModal ({
                 justifyContent: 'center',
                 alignItems: 'center',
                 padding: 2,
-                borderWidth: item === emoji ? 2 : 0,
-                borderColor: item === emoji ? colors.blue : null,
+                borderWidth: item === emojiInput ? 2 : 0,
+                borderColor: item === emojiInput ? colors.blue : null,
                 borderRadius: 10,
-                backgroundColor: item === emoji ? colors.blue + '38' : null
+                backgroundColor: item === emojiInput ? colors.blue + '38' : null
               }}
-              onPress={() => setEmoji(item)}
+              onPress={() => setEmojiInput(item)}
             >
               <Image
                 style={{
@@ -316,7 +321,8 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
     font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    globalGroupCounter: state.database.globalGroupCounter
   }
 }
 
@@ -324,12 +330,13 @@ function mapDispatchToProps (dispatch) {
   return {
     editGroup: (oldGroupName, newGroupName, emoji) =>
       dispatch(editGroup(oldGroupName, newGroupName, emoji)),
-    createGroup: (groupName, language, emoji) =>
-      dispatch(createGroup(groupName, language, emoji)),
+    createGroup: (groupName, language, emoji, groupID, groupNumber) =>
+      dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
     changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName)),
     resetProgress: name => {
       dispatch(resetProgress(name))
-    }
+    },
+    incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter())
   }
 }
 

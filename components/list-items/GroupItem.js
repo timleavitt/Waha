@@ -10,10 +10,11 @@ import GroupAvatar from '../GroupAvatar'
 
 function GroupItem ({
   // Props passed from a parent component.
-  groupName,
+  group,
   isEditing,
   goToEditGroupScreen,
   emoji,
+  openEditModal,
   // Props passed from redux.
   database,
   activeDatabase,
@@ -28,7 +29,7 @@ function GroupItem ({
   // FUNCTIONS
 
   const [thisGroup, setThisGroup] = useState(
-    groups.filter(group => group.name === groupName)[0]
+    groups.filter(storedGroup => storedGroup.name === group.name)[0]
   )
 
   // gets a formatted string of this the bookmark lesson for this group
@@ -72,7 +73,7 @@ function GroupItem ({
   // render the delete button
   var deleteButton
   // if we're editing and not in the active group, show tappable delete button
-  if (isEditing && activeGroup.name != groupName) {
+  if (isEditing && activeGroup.name != group.name) {
     deleteButton = (
       <TouchableOpacity
         style={styles.minusButtonContainer}
@@ -87,7 +88,7 @@ function GroupItem ({
               },
               {
                 text: translations.general.ok,
-                onPress: () => deleteGroup(groupName)
+                onPress: () => deleteGroup(group.name)
               }
             ]
           )
@@ -101,7 +102,7 @@ function GroupItem ({
       </TouchableOpacity>
     )
     // if we're editing and in the active group, show an untappable check
-  } else if (isEditing && activeGroup.name === groupName) {
+  } else if (isEditing && activeGroup.name === group.name) {
     deleteButton = (
       <View style={styles.minusButtonContainer}>
         <Icon name='check' size={24 * scaleMultiplier} color={colors.blue} />
@@ -122,7 +123,7 @@ function GroupItem ({
         />
       </View>
     )
-  } else if (activeGroup.name === groupName) {
+  } else if (activeGroup.name === group.name) {
     rightButton = (
       <View style={styles.iconContainer}>
         <Icon name='check' size={24 * scaleMultiplier} color={colors.blue} />
@@ -154,18 +155,18 @@ function GroupItem ({
           }
         ]}
         onPress={
-          isEditing
-            ? () => goToEditGroupScreen(groupName)
+          props.isEditing
+            ? () => openEditModal()
             : () => {
-                changeActiveGroup(groupName)
+                changeActiveGroup(props.group.name)
               }
         }
       >
         <GroupAvatar
           style={{ backgroundColor: colors.athens }}
           size={50 * scaleMultiplier}
-          emoji={emoji}
-          isActive={activeGroup.name === groupName}
+          emoji={group.emoji}
+          isActive={activeGroup.name === group.name}
         />
         {/* text portion includes group name and bookmark text */}
         <View
@@ -190,7 +191,7 @@ function GroupItem ({
             )}
             numberOfLines={1}
           >
-            {groupName}
+            {group.name}
           </Text>
           {/* {getBookmarkText() === '' ? null : (
             <Text

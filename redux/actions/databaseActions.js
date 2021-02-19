@@ -10,6 +10,7 @@ export const SET_LANGUAGE_CORE_FILES_DOWNLOAD_PROGRESS =
 export const SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD =
   'SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD'
 export const SET_HAS_FETCHED_LANGUAGE_DATA = 'SET_HAS_FETCHED_LANGUAGE_DATA'
+export const INCREMENT_GLOBAL_GROUP_COUNTER = 'INCREMENT_GLOBAL_GROUP_COUNTER'
 
 import * as FileSystem from 'expo-file-system'
 import i18n from 'i18n-js'
@@ -19,6 +20,12 @@ import { changeActiveGroup } from './activeGroupActions'
 import { createGroup } from './groupsActions'
 import { setIsInstallingLanguageInstance } from './isInstallingLanguageInstanceActions'
 import { storeDownloads } from './storedDownloadsActions'
+
+export function incrementGlobalGroupCounter () {
+  return {
+    type: INCREMENT_GLOBAL_GROUP_COUNTER
+  }
+}
 
 /**
  * Stores the langauge data for a language instance in redux. This includes the display name, the bible ID, whether this language is RTL, the primary color of this language instance, the list of core files to download, the questions for every question set, and all the app translations.
@@ -217,8 +224,18 @@ export function downloadLanguageCoreFiles (language) {
         // Create a new group using the default group name stored in constants.js. First we make sure there's no duplicates just in case a group has already been created.
         if (
           !getState().groups.some(group => group.name === groupNames[language])
-        )
-          dispatch(createGroup(groupNames[language], language, 'default'))
+        ) {
+          dispatch(incrementGlobalGroupCounter())
+          dispatch(
+            createGroup(
+              groupNames[language],
+              language,
+              'default',
+              getState().database.globalGroupCounter,
+              getState().groups.length + 1
+            )
+          )
+        }
 
         // Change the active group to the new group we just created.
         dispatch(changeActiveGroup(groupNames[language]))

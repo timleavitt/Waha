@@ -25,17 +25,16 @@ function ShareModal ({
     switch (type) {
       // share the link to Waha itself
       case 'app':
-        logShareApp(lesson)
         Share.share({
           message:
             'iOS: https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294\n\nAndroid: https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
         }).then(() => {
+          logShareApp(props.activeGroup.id)
           hideModal()
         })
         break
       // share the passage text for this lesson
       case 'text':
-        logShareText(lesson)
         var scriptureString = ''
         lesson.scripture.forEach((scripturePiece, index) => {
           scriptureString += scripturePiece.header + '\n' + scripturePiece.text
@@ -44,12 +43,12 @@ function ShareModal ({
         Share.share({
           message: scriptureString
         }).then(() => {
+          logShareText(props.lesson, props.activeGroup.id)
           hideModal()
         })
         break
       // share the audio file for this lesson
       case 'audio':
-        logShareAudio(lesson)
         FileSystem.getInfoAsync(
           FileSystem.documentDirectory + lesson.id + '.mp3'
         ).then(({ exists }) => {
@@ -57,6 +56,7 @@ function ShareModal ({
             ? Sharing.shareAsync(
                 FileSystem.documentDirectory + lesson.id + '.mp3'
               ).then(() => {
+                logShareAudio(props.lesson, props.activeGroup.id)
                 hideModal()
               })
             : Alert.alert(
@@ -131,7 +131,8 @@ function mapStateToProps (state) {
   )[0]
   return {
     translations: state.database[activeGroup.language].translations,
-    downloads: state.downloads
+    downloads: state.downloads,
+    activeGroup: activeGroup
   }
 }
 

@@ -34,6 +34,7 @@ export function groups (state = [], params) {
         ...state,
         {
           name: params.groupName,
+          id: action.groupID,
           language: params.language,
           emoji: params.emoji,
           // Set the recent Foundational or Mobilization Tool set and the set bookmark to the Set 1.1.

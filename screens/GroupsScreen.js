@@ -33,8 +33,8 @@ function GroupsScreen ({
   const [isEditing, setIsEditing] = useState(false)
   const [showAddGroupModal, setShowAddGroupModal] = useState(false)
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
-  const [groupName, setGroupName] = useState(activeGroup.name)
-  const [languageID, setLanguageID] = useState(activeGroup.languageID)
+  const [languageID, setLanguageID] = useState(props.activeGroup.languageID)
+  const [editingGroup, setEditingGroup] = useState(props.activeGroup)
 
   //+ CONSTRUCTOR
 
@@ -150,14 +150,17 @@ function GroupsScreen ({
   function renderGroupItem (group) {
     return (
       <GroupItem
-        groupName={group.name}
+        group={group}
         isEditing={isEditing}
-        goToEditGroupScreen={groupName => {
-          setGroupName(groupName)
+        openEditModal={() => {
+          setEditingGroup(group)
           setShowEditGroupModal(true)
-          // navigate('EditGroup', { groupName: groupName })
         }}
-        emoji={group.emoji}
+        // goToEditGroupScreen={groupName => {
+        //   setGroupName(groupName)
+        //   setShowEditGroupModal(true)
+        //   // props.navigation.navigate('EditGroup', { groupName: groupName })
+        // }}
       />
     )
   }
@@ -257,7 +260,8 @@ function GroupsScreen ({
         isVisible={showEditGroupModal}
         hideModal={() => setShowEditGroupModal(false)}
         type='EditGroup'
-        groupName={groupName}
+        // groupName={groupName}
+        group={editingGroup}
       />
     </View>
   )

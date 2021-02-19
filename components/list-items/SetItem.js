@@ -250,8 +250,9 @@ function SetItem ({
         // the next set after this one hasn't already been added AND
         !activeGroup.addedSets.some(addedSet => addedSet.id === nextSet.id)
       ) {
-        addSet(
+        props.addSet(
           activeGroup.name,
+          activeGroup.id,
           activeDatabase.sets
             .filter(set => getSetInfo('category', set.id) === 'foundational')
             .filter(
@@ -406,8 +407,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    addSet: (groupName, set) => {
-      dispatch(addSet(groupName, set))
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
     }
   }
 }
