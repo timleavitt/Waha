@@ -28,7 +28,7 @@ export async function logInstallLanguage (languageID, phoneLanguageID) {
  * Logs the completion of a lesson.
  * @export
  * @param {Object} lesson - The lesson object of the lesson that was completed.
- * @param {string} groupID - The name of the currently active group.
+ * @param {string} groupID - The ID of the currently active group.
  */
 export async function logCompleteLesson (lesson, groupID) {
   console.log(
@@ -54,7 +54,7 @@ export async function logCompleteLesson (lesson, groupID) {
  * Logs the completion of a Story Set.
  * @export
  * @param {Object} set - The set object for the set that was completed.
- * @param {string} groupID - The name of the currently active group.
+ * @param {string} groupID - The ID of the currently active group.
  */
 export async function logCompleteStorySet (set, groupID) {
   console.log(
@@ -75,7 +75,7 @@ export async function logCompleteStorySet (set, groupID) {
  * Logs the creation of a new group.
  * @export
  * @param {string} languageID - The ID of the active group's language.
- * @param {string} groupID - The name of the currently active group.
+ * @param {string} groupID - The ID of the new group.
  * @param {number} groupNumber - The number of the new group.
  */
 export async function logCreateGroup (languageID, groupID, groupNumber) {
@@ -95,8 +95,8 @@ export async function logCreateGroup (languageID, groupID, groupNumber) {
  * Logs enabling the Mobilization Tools for a specific group.
  * @export
  * @param {string} languageID - The ID of the active group's language.
- * @param {string} groupID - The name of the currently active group.
- * @param {number} groupNumber - The number of the new group.
+ * @param {string} groupID - The ID of the group that is enabling the Mobilization Tools.
+ * @param {number} groupNumber - The number of the group that is enabling the Mobilization Tools.
  */
 export async function logEnableMobilizationToolsForAGroup (
   languageID,
@@ -118,7 +118,7 @@ export async function logEnableMobilizationToolsForAGroup (
  * Logs adding a new story set.
  * @export
  * @param {Object} set - The set object for the set that was added.
- * @param {string} groupID - The name of the currently active group.
+ * @param {string} groupID - The ID of the group that is having sets added.
  */
 export async function logAddStorySet (set, groupID) {
   console.log(
@@ -137,7 +137,7 @@ export async function logAddStorySet (set, groupID) {
 /**
  * Logs sharing the app URL.
  * @export
- * @param {string} groupID - The name of the currently active group.
+ * @param {string} groupID - The ID of the currently active group.
  */
 export async function logShareApp (groupID) {
   console.log(`ShareApp logged with groupID: ${groupID}.`)
@@ -151,7 +151,7 @@ export async function logShareApp (groupID) {
  * Logs sharing the scripture text for a lesson.
  * @export
  * @param {Object} lesson - The lesson object for the lesson the user is doing when they share the scripture text.
- * @param {string} groupID - The name of the currently active group.
+ * @param {string} groupID - The ID of the currently active group.
  */
 export async function logShareText (lesson, groupID) {
   console.log(
@@ -168,7 +168,7 @@ export async function logShareText (lesson, groupID) {
  * Logs sharing the app Story chapter mp3.
  * @export
  * @param {Object} lesson - The lesson object for the lesson the user is doing when they share the Story chapter mp3.
- * @param {string} groupID - The name of the currently active group.
+ * @param {string} groupID - The ID of the currently active group.
  */
 export async function logShareAudio (lesson, groupID) {
   console.log(
@@ -184,7 +184,7 @@ export async function logShareAudio (lesson, groupID) {
 /**
  * Logs the first enabling of Security Mode.
  * @exports
- * @param {string} groupID - The name of the currently active group.
+ * @param {string} groupID - The ID of the currently active group.
  */
 export async function logEnableSecurityMode (groupID) {
   console.log(`EnableSecurityMode logged with groupID: ${groupID}.`)
