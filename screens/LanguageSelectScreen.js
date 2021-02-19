@@ -1,6 +1,5 @@
 import NetInfo from '@react-native-community/netinfo'
 import { Audio } from 'expo-av'
-import * as FileSystem from 'expo-file-system'
 import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
@@ -71,18 +70,18 @@ function LanguageSelectScreen (props) {
     if (props.route.name === 'LanguageSelect') {
       props.groups.forEach(group => props.deleteGroup(group.name))
 
-      Object.keys(props.database).forEach(languageID => {
-        props.deleteLanguageData(languageID)
-        FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-          contents => {
-            for (const item of contents) {
-              if (item.slice(0, 2) === languageID) {
-                FileSystem.deleteAsync(FileSystem.documentDirectory + item)
-              }
-            }
-          }
-        )
-      })
+      // Object.keys(props.database).forEach(languageID => {
+      //   props.deleteLanguageData(languageID)
+      //   FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+      //     contents => {
+      //       for (const item of contents) {
+      //         if (item.slice(0, 2) === languageID) {
+      //           FileSystem.deleteAsync(FileSystem.documentDirectory + item)
+      //         }
+      //       }
+      //     }
+      //   )
+      // })
     }
 
     const unsubscribe = NetInfo.addEventListener(state => {

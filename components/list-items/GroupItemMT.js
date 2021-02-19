@@ -70,7 +70,7 @@ function GroupItemMT (props) {
             if (!props.group.shouldShowMobilizationToolsTab) {
               logEnableMobilizationToolsForAGroup(
                 props.activeGroup.language,
-                props.activeGroup.name,
+                props.group.id,
                 props.groups.indexOf(props.group) + 1
               )
               for (const set of props.database[props.group.language].sets) {
@@ -79,7 +79,7 @@ function GroupItemMT (props) {
                   (getSetInfo('index', set.id) === 1 ||
                     getSetInfo('index', set.id) === 2)
                 ) {
-                  props.addSet(props.group.name, set)
+                  props.addSet(props.group.name, props.group.id, set)
                 }
               }
             }
@@ -132,8 +132,8 @@ function mapDispatchToProps (dispatch) {
     setShouldShowMobilizationToolsTab: (groupName, toSet) => {
       dispatch(setShouldShowMobilizationToolsTab(groupName, toSet))
     },
-    addSet: (groupName, set) => {
-      dispatch(addSet(groupName, set))
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
     }
   }
 }

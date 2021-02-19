@@ -23,13 +23,15 @@ export function changeActiveGroup (groupName) {
   }
 }
 
-export function createGroup (groupName, language, emoji, groupNumber) {
-  logCreateGroup(language, groupName, groupNumber)
+export function createGroup (groupName, language, emoji, groupID, groupNumber) {
+  logCreateGroup(language, groupID, groupNumber)
+  // console.log(groupID)
   return {
     type: CREATE_GROUP,
     groupName,
     language,
-    emoji
+    emoji,
+    groupID
   }
 }
 
@@ -81,13 +83,13 @@ export function toggleComplete (groupName, set, lessonIndex) {
 
     // Track analytics.
     if (!thisSetProgress.includes(lessonIndex)) {
-      logCompleteLesson(thisLesson, groupName)
+      logCompleteLesson(thisLesson, thisGroup.id)
     }
     if (
       !thisSetProgress.includes(lessonIndex) &&
       thisSetProgress.length === setLength - 1
     ) {
-      logCompleteStorySet(set, groupName)
+      logCompleteStorySet(set, thisGroup.id)
     }
 
     dispatch(updateProgress(groupName, set, nextSet, lessonIndex, setLength))
@@ -101,8 +103,8 @@ export function resetProgress (groupName) {
   }
 }
 
-export function addSet (groupName, set) {
-  logAddStorySet(set, groupName)
+export function addSet (groupName, groupID, set) {
+  logAddStorySet(set, groupID)
   return {
     type: ADD_SET,
     groupName,

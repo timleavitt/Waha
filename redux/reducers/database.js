@@ -1,5 +1,6 @@
 import {
   DELETE_LANGUAGE_DATA,
+  INCREMENT_GLOBAL_GROUP_COUNTER,
   SET_HAS_FETCHED_LANGUAGE_DATA,
   SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE,
   SET_HAS_ONBOARDED,
@@ -14,11 +15,17 @@ export function database (
     hasOnboarded: false,
     hasInstalledFirstLanguageInstance: false,
     languageCoreFilesDownloadProgress: 0,
-    storedDownloads: []
+    storedDownloads: [],
+    globalGroupCounter: 0
   },
   action
 ) {
   switch (action.type) {
+    case INCREMENT_GLOBAL_GROUP_COUNTER:
+      return {
+        ...state,
+        globalGroupCounter: state.globalGroupCounter + 1
+      }
     case STORE_LANGUAGE_DATA:
       return {
         ...state,

@@ -20,6 +20,7 @@ import {
   scaleMultiplier
 } from '../constants'
 import ModalScreen from '../modals/ModalScreen'
+import { incrementGlobalGroupCounter } from '../redux/actions/databaseActions'
 import {
   changeActiveGroup,
   createGroup,
@@ -100,9 +101,14 @@ function AddEditGroupModal (props) {
       groupNameInput,
       props.languageID,
       emojiInput,
+      props.globalGroupCounter + 1,
       props.groups.length + 1
     )
     props.changeActiveGroup(groupNameInput)
+
+    // Increment the global group counter redux variable.
+    props.incrementGlobalGroupCounter()
+
     props.hideModal()
   }
 
@@ -297,7 +303,8 @@ function mapStateToProps (state) {
     isRTL: state.database[activeGroup.language].isRTL,
     translations: state.database[activeGroup.language].translations,
     font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    globalGroupCounter: state.database.globalGroupCounter
   }
 }
 
@@ -305,15 +312,16 @@ function mapDispatchToProps (dispatch) {
   return {
     editGroup: (oldGroupName, newGroupName, emoji) =>
       dispatch(editGroup(oldGroupName, newGroupName, emoji)),
-    createGroup: (groupName, language, emoji, groupNumber) =>
-      dispatch(createGroup(groupName, language, emoji, groupNumber)),
+    createGroup: (groupName, language, emoji, groupID, groupNumber) =>
+      dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
     changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName)),
     deleteGroup: name => {
       dispatch(deleteGroup(name))
     },
     resetProgress: name => {
       dispatch(resetProgress(name))
-    }
+    },
+    incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter())
   }
 }
 

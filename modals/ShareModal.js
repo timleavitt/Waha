@@ -22,7 +22,7 @@ function ShareModal (props) {
           message:
             'iOS: https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294\n\nAndroid: https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
         }).then(() => {
-          logShareApp(props.activeGroup.name)
+          logShareApp(props.activeGroup.id)
           props.hideModal()
         })
         break
@@ -37,7 +37,7 @@ function ShareModal (props) {
         Share.share({
           message: scriptureString
         }).then(() => {
-          logShareText(props.lesson, props.activeGroup.name)
+          logShareText(props.lesson, props.activeGroup.id)
           props.hideModal()
         })
         break
@@ -50,7 +50,7 @@ function ShareModal (props) {
             ? Sharing.shareAsync(
                 FileSystem.documentDirectory + props.lesson.id + '.mp3'
               ).then(() => {
-                logShareAudio(props.lesson, props.activeGroup.name)
+                logShareAudio(props.lesson, props.activeGroup.id)
                 props.hideModal()
               })
             : Alert.alert(
