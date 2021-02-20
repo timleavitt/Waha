@@ -150,7 +150,7 @@ function GroupsScreen ({
   function renderGroupItem (group) {
     return (
       <GroupItem
-        group={group}
+        thisGroup={group}
         isEditing={isEditing}
         openEditModal={() => {
           setEditingGroup(group)

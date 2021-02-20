@@ -20,3 +20,11 @@ export function activeGroup (state = null, action) {
 export function activeGroupSelector (state) {
   return state.groups.filter(item => item.name === state.activeGroup)[0]
 }
+
+/**
+ * Takes in state and returns the language of the active group.
+ */
+export function activeGroupLanguageSelector (state) {
+  return state.groups.filter(item => item.name === state.activeGroup)[0]
+    .language
+}
