@@ -1,19 +1,13 @@
 import React from 'react'
 import { Dimensions, StyleSheet, Text, View } from 'react-native'
-import { connect } from 'react-redux'
-import { colors, getLanguageFont } from '../../constants'
+import { colors } from '../../styles/colors'
 import { StandardTypography } from '../../styles/typography'
-function KeyLabel (props) {
+
+function KeyLabel ({ backgroundColor, style, number }) {
   // RENDER
 
   return (
-    <View
-      style={[
-        styles.circle,
-        { backgroundColor: props.backgroundColor },
-        props.style
-      ]}
-    >
+    <View style={[styles.circle, { backgroundColor: backgroundColor }, style]}>
       <Text
         style={StandardTypography(
           { font: 'Roboto' },
@@ -23,7 +17,7 @@ function KeyLabel (props) {
           colors.shark
         )}
       >
-        {props.number}
+        {number}
       </Text>
     </View>
   )
@@ -44,17 +38,4 @@ const styles = StyleSheet.create({
   }
 })
 
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
-  }
-}
-
-export default connect(mapStateToProps)(KeyLabel)
+export default KeyLabel

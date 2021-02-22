@@ -31,7 +31,21 @@ i18n.translations = {
   ar
 }
 
-function LoadingScreen (props) {
+function LoadingScreen ({
+  navigation,
+  // Props passed from redux.
+  languageCoreFilesDownloadProgress,
+  totalLanguageCoreFilesToDownload,
+  hasInstalledFirstLanguageInstance,
+  storedDownloads,
+  database,
+  hasFetchedLanguageData,
+  setIsInstallingLanguageInstance,
+  setHasOnboarded,
+  setTotalLanguageCoreFilesToDownload,
+  setLanguageCoreFilesDownloadProgress,
+  setHasFetchedLanguageData
+}) {
   const [isConnected, setIsConnected] = useState(true)
 
   useEffect(() => {
@@ -45,20 +59,20 @@ function LoadingScreen (props) {
   }, [])
 
   function cancelDownloads () {
-    props.setLanguageCoreFilesDownloadProgress(0)
-    props.setTotalLanguageCoreFilesToDownload(0)
-    props.setIsInstallingLanguageInstance(false)
-    props.setHasFetchedLanguageData(false)
+    setLanguageCoreFilesDownloadProgress(0)
+    setTotalLanguageCoreFilesToDownload(0)
+    setIsInstallingLanguageInstance(false)
+    setHasFetchedLanguageData(false)
 
     // only if adding language for the first time
-    if (!props.hasInstalledFirstLanguageInstance) {
-      props.setHasOnboarded(false)
-      props.navigation.reset({
+    if (!hasInstalledFirstLanguageInstance) {
+      setHasOnboarded(false)
+      navigation.reset({
         index: 0,
-        routes: [{ name: 'LanguageSelect' }]
+        routes: [{ name: 'InitialLanguageInstanceInstall' }]
       })
     }
-    props.storedDownloads.forEach(download => {
+    storedDownloads.forEach(download => {
       download.pauseAsync().catch(() => console.log('error pausing download'))
     })
 
@@ -143,24 +157,24 @@ function LoadingScreen (props) {
             borderColor: colors.porcelain
           }}
         >
-          {props.languageCoreFilesDownloadProgress ? (
+          {languageCoreFilesDownloadProgress ? (
             <View
               style={{
                 backgroundColor: '#e43c44',
                 height: '100%',
-                flex: props.languageCoreFilesDownloadProgress,
+                flex: languageCoreFilesDownloadProgress,
                 borderRadius: 20
               }}
             />
           ) : null}
-          {props.languageCoreFilesDownloadProgress ? (
+          {languageCoreFilesDownloadProgress ? (
             <View
               style={{
                 backgroundColor: '#F1FAEE',
                 height: '100%',
                 flex:
-                  props.totalLanguageCoreFilesToDownload -
-                  props.languageCoreFilesDownloadProgress
+                  totalLanguageCoreFilesToDownload -
+                  languageCoreFilesDownloadProgress
               }}
             />
           ) : null}
@@ -200,7 +214,7 @@ function LoadingScreen (props) {
             alignItems: 'center'
           }}
         >
-          {props.hasFetchedLanguageData ? (
+          {hasFetchedLanguageData ? (
             <TouchableOpacity
               onPress={cancelDownloads}
               style={{

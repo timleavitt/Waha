@@ -2,37 +2,47 @@ import * as FileSystem from 'expo-file-system'
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
-import { StandardTypography } from '../../styles/typography'
+import { scaleMultiplier } from '../../constants'
+import { colors } from '../../styles/colors'
+import { getLanguageFont, StandardTypography } from '../../styles/typography'
 import Separator from '../standard/Separator'
 import WahaButton from '../standard/WahaButton'
 
-function LanguageStorageItem (props) {
+function LanguageStorageItem ({
+  // Props passed from a parent component.
+  languageName,
+  languageID,
+  megabytes,
+  clearDownloads,
+  // Props passed from redux.
+  font,
+  isRTL,
+  translations,
+  activeGroup
+}) {
   return (
     <View style={styles.storageContainer}>
       <View
         style={[
           styles.languageHeaderContainer,
-          { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
         ]}
       >
         <Text
           style={StandardTypography(
-            props,
+            { font, isRTL },
             'h3',
             'Regular',
             'left',
             colors.chateau
           )}
         >
-          {props.languageName +
-            ' ' +
-            props.translations.storage.downloads_label}
+          {languageName + ' ' + translations.storage.downloads_label}
         </Text>
         <Image
           style={styles.languageLogo}
           source={{
-            uri: FileSystem.documentDirectory + props.languageID + '-header.png'
+            uri: FileSystem.documentDirectory + languageID + '-header.png'
           }}
         />
       </View>
@@ -41,36 +51,48 @@ function LanguageStorageItem (props) {
         style={[
           styles.itemContainer,
           {
-            flexDirection: props.isRTL ? 'row-reverse' : 'row'
+            flexDirection: isRTL ? 'row-reverse' : 'row'
           }
         ]}
       >
         <Text
-          style={StandardTypography(props, 'h3', 'Bold', 'left', colors.tuna)}
+          style={StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Bold',
+            'left',
+            colors.tuna
+          )}
         >
-          {props.megabytes >= 0
-            ? props.megabytes + ' ' + props.translations.storage.megabyte_label
-            : props.translations.storage.megabyte_label}
+          {megabytes >= 0
+            ? megabytes + ' ' + translations.storage.megabyte_label
+            : translations.storage.megabyte_label}
         </Text>
         <Text
           style={[
-            StandardTypography(props, 'h3', 'Regular', 'left', colors.tuna),
+            StandardTypography(
+              { font, isRTL },
+              'h3',
+              'Regular',
+              'left',
+              colors.tuna
+            ),
             {
               flex: 1,
               paddingHorizontal: 20
             }
           ]}
         >
-          {props.translations.storage.storage_used_label}
+          {translations.storage.storage_used_label}
         </Text>
         <WahaButton
           type='outline'
           color={colors.red}
-          label={props.translations.storage.clear_button_label}
+          label={translations.storage.clear_button_label}
           width={92 * scaleMultiplier}
-          onPress={props.clearDownloads}
+          onPress={clearDownloads}
           style={{ height: 45 * scaleMultiplier }}
-          textStyle={{ fontFamily: props.font + '-Regular' }}
+          textStyle={{ fontFamily: font + '-Regular' }}
         />
       </View>
       <Separator />

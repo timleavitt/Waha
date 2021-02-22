@@ -10,7 +10,9 @@ import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
 import HomeworkItem from '../components/list-items/HomeworkItem'
 import WahaItemDescription from '../components/standard/standard/WahaItemDescription'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
+import { getLanguageFont } from '../styles/typography'
 
 // modal variant that shows some information
 function HomeworkModal (props) {

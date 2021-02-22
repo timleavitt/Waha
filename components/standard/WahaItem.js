@@ -1,44 +1,67 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
-import { StandardTypography } from '../../styles/typography'
+import { scaleMultiplier } from '../../constants'
+import { colors } from '../../styles/colors'
+import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
-function WahaItem (props) {
-  return props.onPress ? (
+function WahaItem ({
+  // Props passed from a parent component.s
+  onPress,
+  style = {},
+  title,
+  children = null,
+  // Props passed from redux.
+  font,
+  isRTL,
+  activeGroup
+}) {
+  return onPress ? (
     <TouchableOpacity
       style={[
         styles.itemContainer,
         {
-          flexDirection: props.isRTL ? 'row-reverse' : 'row'
+          flexDirection: isRTL ? 'row-reverse' : 'row'
         },
-        props.style
+        style
       ]}
-      onPress={props.onPress}
+      onPress={onPress}
     >
       <Text
-        style={StandardTypography(props, 'h3', 'Bold', 'left', colors.shark)}
+        style={StandardTypography(
+          { font, isRTL },
+          'h3',
+          'Bold',
+          'left',
+          colors.shark
+        )}
       >
-        {props.title}
+        {title}
       </Text>
-      {props.children}
+      {children}
     </TouchableOpacity>
   ) : (
     <View
       style={[
         styles.itemContainer,
         {
-          flexDirection: props.isRTL ? 'row-reverse' : 'row'
+          flexDirection: isRTL ? 'row-reverse' : 'row'
         },
-        props.style
+        style
       ]}
     >
       <Text
-        style={StandardTypography(props, 'h3', 'Bold', 'left', colors.shark)}
+        style={StandardTypography(
+          { font, isRTL },
+          'h3',
+          'Bold',
+          'left',
+          colors.shark
+        )}
       >
-        {props.title}
+        {title}
       </Text>
-      {props.children}
+      {children}
     </View>
   )
 }

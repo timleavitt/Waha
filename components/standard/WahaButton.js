@@ -1,43 +1,63 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
-import { StandardTypography, SystemTypography } from '../../styles/typography'
+import { scaleMultiplier } from '../../constants'
+import { colors } from '../../styles/colors'
+import {
+  getLanguageFont,
+  StandardTypography,
+  SystemTypography
+} from '../../styles/typography'
 
-function WahaButton (props) {
-  switch (props.type) {
+function WahaButton ({
+  // Props passed from a parent component.s
+  type,
+  color,
+  label,
+  style = {},
+  textStyle = {},
+  width = null,
+  onPress,
+  useDefaultFont = false,
+  extraComponent = null,
+  // Props passed from redux.
+  font = null,
+  isRTL = null,
+  activeGroup = null
+}) {
+  switch (type) {
     case 'outline':
       return (
         <TouchableOpacity
           style={[
-            { width: props.width },
+            { width: width },
             styles.buttonContainer,
             {
               borderWidth: 2,
-              borderColor: props.color
+              borderColor: color
             },
-            props.style
+            style
           ]}
-          onPress={props.onPress}
+          onPress={onPress}
         >
           <Text
             style={[
-              props.useDefaultFont
-                ? SystemTypography(false, 'h3', 'Bold', 'center', props.color)
+              useDefaultFont
+                ? SystemTypography(false, 'h3', 'Bold', 'center', color)
                 : StandardTypography(
-                    props,
+                    { font, isRTL },
                     'h3',
                     'Bold',
                     'center',
-                    props.color
+                    color
                   ),
-              { fontWeight: props.font ? null : 'bold' },
-              props.textStyle
+              { fontWeight: font ? null : 'bold' },
+              textStyle
             ]}
           >
-            {props.label}
+            {label}
           </Text>
-          {props.extraComponent}
+          {extraComponent}
         </TouchableOpacity>
       )
       break
@@ -46,34 +66,34 @@ function WahaButton (props) {
         <TouchableOpacity
           style={[
             {
-              width: props.width
+              width: width
             },
             styles.buttonContainer,
             {
-              backgroundColor: props.color
+              backgroundColor: color
             },
-            props.style
+            style
           ]}
-          onPress={props.onPress}
+          onPress={onPress}
         >
           <Text
             style={[
-              props.useDefaultFont
+              useDefaultFont
                 ? SystemTypography(false, 'h3', 'Bold', 'center', colors.white)
                 : StandardTypography(
-                    props,
+                    { font, isRTL },
                     'h3',
                     'Bold',
                     'center',
                     colors.white
                   ),
-              { fontWeight: props.font ? null : 'bold' },
-              props.textStyle
+              { fontWeight: font ? null : 'bold' },
+              textStyle
             ]}
           >
-            {props.label}
+            {label}
           </Text>
-          {props.extraComponent}
+          {extraComponent}
         </TouchableOpacity>
       )
       break
@@ -83,29 +103,29 @@ function WahaButton (props) {
           style={[
             styles.buttonContainer,
             {
-              width: props.width,
-              backgroundColor: props.color
+              width: width,
+              backgroundColor: color
             },
-            props.style
+            style
           ]}
         >
           <Text
             style={[
-              props.useDefaultFont
+              useDefaultFont
                 ? SystemTypography(false, 'p', 'Bold', 'center', colors.chateau)
                 : StandardTypography(
-                    props,
+                    { font, isRTL },
                     'p',
                     'Bold',
                     'center',
                     colors.chateau
                   ),
-              props.textStyle
+              textStyle
             ]}
           >
-            {props.label}
+            {label}
           </Text>
-          {props.extraComponent}
+          {extraComponent}
         </View>
       )
       break

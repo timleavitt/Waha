@@ -2,19 +2,28 @@ import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
-import Icon from '../../assets/fonts/icons'
-import SVG from '../../assets/svg.js'
-import {
-  colors,
-  getLanguageFont,
-  getSetInfo,
-  itemHeights,
-  scaleMultiplier
-} from '../../constants'
+import Icon from '../../assets/fonts/icon_font_config'
+import { getSetInfo, itemHeights, scaleMultiplier } from '../../constants'
 import MessageModal from '../../modals/MessageModal'
 import { addSet } from '../../redux/actions/groupsActions'
-import { StandardTypography } from '../../styles/typography'
-function SetItem (props) {
+import { colors } from '../../styles/colors'
+import { getLanguageFont, StandardTypography } from '../../styles/typography'
+import SVG from '../SVG.js'
+
+function SetItem ({
+  // Props passed from a parent component.
+  mode,
+  thisSet,
+  onSetSelect,
+  // Props passed from redux.
+  isRTL,
+  activeDatabase,
+  primaryColor,
+  font,
+  activeGroup,
+  translations,
+  addSet
+}) {
   //+ STATE
 
   // keeps track of the number of completed lessons in this set
@@ -37,13 +46,13 @@ function SetItem (props) {
   //- sets components of the set items based on the type prop
   useEffect(() => {
     // big switch statement that renders the 2 dynamic components (the big icon,
-    // and the action button) of a set item based on props.mode
+    // and the action button) of a set item based on mode
     // 1. SHOWN is for sets that have been added to the set screen
     // 2. LESSONLIST is for the set component on the lesson list screen
     // 3. ADDSET is for sets that have not been added and live on the add set screen
     // 4. SETINFO is for the set on the top of the setinfo screen
 
-    switch (props.mode) {
+    switch (mode) {
       case 'shown':
         setProgress()
         setIcon(
@@ -52,9 +61,7 @@ function SetItem (props) {
               size={78 * scaleMultiplier}
               width={7 * scaleMultiplier}
               fill={progressPercentage * 100}
-              tintColor={
-                fullyCompleted ? props.primaryColor + '50' : props.primaryColor
-              }
+              tintColor={fullyCompleted ? primaryColor + '50' : primaryColor}
               rotation={0}
               backgroundColor={colors.white}
             >
@@ -67,10 +74,10 @@ function SetItem (props) {
                   }}
                 >
                   <SVG
-                    name={props.thisSet.iconName}
+                    name={thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    fill={fullyCompleted ? colors.chateau : colors.shark}
+                    color={fullyCompleted ? colors.chateau : colors.shark}
                   />
                 </View>
               )}
@@ -90,20 +97,20 @@ function SetItem (props) {
             <View style={styles.actionContainer}>
               <Icon
                 name={
-                  props.thisSet.id === props.activeGroup.setBookmark
-                    ? props.isRTL
+                  thisSet.id === activeGroup.setBookmark
+                    ? isRTL
                       ? 'triangle-left'
                       : 'triangle-right'
                     : null
                 }
                 size={30 * scaleMultiplier}
-                color={props.primaryColor}
+                color={primaryColor}
               />
             </View>
           )
         )
         break
-      case 'lessonlist':
+      case 'lessons_screen':
         setProgress()
         setIcon(
           <View style={styles.iconContainer}>
@@ -111,9 +118,7 @@ function SetItem (props) {
               size={78 * scaleMultiplier}
               width={7 * scaleMultiplier}
               fill={progressPercentage * 100}
-              tintColor={
-                fullyCompleted ? props.primaryColor + '50' : props.primaryColor
-              }
+              tintColor={fullyCompleted ? primaryColor + '50' : primaryColor}
               rotation={0}
               backgroundColor={colors.white}
             >
@@ -126,10 +131,10 @@ function SetItem (props) {
                   }}
                 >
                   <SVG
-                    name={props.thisSet.iconName}
+                    name={thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    fill={fullyCompleted ? colors.chateau : colors.shark}
+                    color={fullyCompleted ? colors.chateau : colors.shark}
                   />
                 </View>
               )}
@@ -138,7 +143,7 @@ function SetItem (props) {
         )
         setAction(<View style={styles.actionContainer} />)
         break
-      case 'addset':
+      case 'addset_screen':
         setIcon(
           <View
             style={[
@@ -153,24 +158,24 @@ function SetItem (props) {
             ]}
           >
             <SVG
-              name={props.thisSet.iconName}
+              name={thisSet.iconName}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
-              fill={colors.tuna}
+              color={colors.tuna}
             />
           </View>
         )
         setAction(
           <View style={styles.actionContainer}>
             <Icon
-              name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+              name={isRTL ? 'arrow-left' : 'arrow-right'}
               size={30 * scaleMultiplier}
-              color={props.primaryColor}
+              color={primaryColor}
             />
           </View>
         )
         break
-      case 'setinfo':
+      case 'setinfo_modal':
         setIcon(
           <View
             style={[
@@ -185,10 +190,10 @@ function SetItem (props) {
             ]}
           >
             <SVG
-              name={props.thisSet.iconName}
+              name={thisSet.iconName}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
-              fill={colors.tuna}
+              color={colors.tuna}
             />
           </View>
         )
@@ -200,18 +205,18 @@ function SetItem (props) {
     //  changes
     progressPercentage,
     fullyCompleted,
-    props.activeGroup.setBookmark,
-    props.activeGroup.addedSets,
-    props.isRTL
+    activeGroup.setBookmark,
+    activeGroup.addedSets,
+    isRTL
   ])
 
   //- sets the progress through this set
   function setProgress () {
-    var setLength = props.thisSet.lessons.length
+    var setLength = thisSet.lessons.length
     // set the percentage through a set
     setProgressPercentage(
-      props.activeGroup.addedSets.filter(set => set.id === props.thisSet.id)[0]
-        .progress.length / setLength
+      activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
+        .length / setLength
     )
   }
 
@@ -229,11 +234,10 @@ function SetItem (props) {
     } else setFullyCompleted(false)
 
     // get the set AFTER the one that you're setting progress for
-    var nextSet = props.activeDatabase.sets.filter(
+    var nextSet = activeDatabase.sets.filter(
       dbSet =>
         getSetInfo('category', dbSet.id) === 'foundational' &&
-        getSetInfo('index', dbSet.id) ===
-          getSetInfo('index', props.thisSet.id) + 1
+        getSetInfo('index', dbSet.id) === getSetInfo('index', thisSet.id) + 1
     )[0]
 
     // we want to automatically add the next set if the next set exists AND
@@ -242,21 +246,19 @@ function SetItem (props) {
         // we've completed 85% of a set AND
         progressPercentage > 0.85 &&
         // this set is a core set AND
-        getSetInfo('category', props.thisSet.id) === 'foundational' &&
+        getSetInfo('category', thisSet.id) === 'foundational' &&
         // the next set after this one hasn't already been added AND
-        !props.activeGroup.addedSets.some(
-          addedSet => addedSet.id === nextSet.id
-        )
+        !activeGroup.addedSets.some(addedSet => addedSet.id === nextSet.id)
       ) {
-        props.addSet(
-          props.activeGroup.name,
-          props.activeGroup.id,
-          props.activeDatabase.sets
+        addSet(
+          activeGroup.name,
+          activeGroup.id,
+          activeDatabase.sets
             .filter(set => getSetInfo('category', set.id) === 'foundational')
             .filter(
               set =>
                 getSetInfo('index', set.id) ===
-                getSetInfo('index', props.thisSet.id) + 1
+                getSetInfo('index', thisSet.id) + 1
             )[0]
         )
         setShowUnlockModal(true)
@@ -271,13 +273,13 @@ function SetItem (props) {
       style={[
         styles.studySetItem,
         {
-          flexDirection: props.isRTL ? 'row-reverse' : 'row',
-          height: itemHeights[props.font].SetItem
+          flexDirection: isRTL ? 'row-reverse' : 'row',
+          height: itemHeights[font].SetItem
         }
       ]}
-      onPress={props.onSetSelect}
+      onPress={onSetSelect}
       // disable feedback if there's no onSetSelect
-      activeOpacity={props.onSetSelect ? 0.2 : 1}
+      activeOpacity={onSetSelect ? 0.2 : 1}
     >
       {/* large icon rendered earlier */}
       {icon}
@@ -287,15 +289,15 @@ function SetItem (props) {
         style={[
           styles.titleContainer,
           {
-            marginRight: props.isRTL ? 20 : 0,
-            marginLeft: props.isRTL ? 0 : 20
+            marginRight: isRTL ? 20 : 0,
+            marginLeft: isRTL ? 0 : 20
           }
         ]}
       >
         <Text
           style={[
             StandardTypography(
-              props,
+              { font, isRTL },
               'd',
               'Regular',
               'left',
@@ -308,12 +310,12 @@ function SetItem (props) {
           ]}
           numberOfLines={1}
         >
-          {props.thisSet.subtitle}
+          {thisSet.subtitle}
         </Text>
         <Text
           style={[
             StandardTypography(
-              props,
+              { font, isRTL },
               'h3',
               'Black',
               'left',
@@ -326,7 +328,7 @@ function SetItem (props) {
           ]}
           numberOfLines={2}
         >
-          {props.thisSet.title}
+          {thisSet.title}
         </Text>
       </View>
 
@@ -335,9 +337,9 @@ function SetItem (props) {
       <MessageModal
         isVisible={showUnlockModal}
         hideModal={() => setShowUnlockModal(false)}
-        title={props.translations.general.popups.new_story_set_unlocked_title}
-        body={props.translations.general.popups.new_story_set_unlocked_message}
-        confirmText={props.translations.general.got_it}
+        title={translations.general.popups.new_story_set_unlocked_title}
+        body={translations.general.popups.new_story_set_unlocked_message}
+        confirmText={translations.general.got_it}
         confirmOnPress={() => setShowUnlockModal(false)}
       >
         <Image
@@ -412,39 +414,3 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SetItem)
-
-// case 'folder':
-//   setIcon(
-//     <View style={styles.iconContainer}>
-//       <SVG
-//         name={props.thisSet.icon}
-//         width={80 * scaleMultiplier}
-//         height={80 * scaleMultiplier}
-//         fill='#1D1E20'
-//       />
-//     </View>
-//   )
-//   setAction(
-//     <View style={styles.actionContainer}>
-//       <Icon
-//         name={props.isRTL ? 'arrow-left' : 'arrow-right'}
-//         size={30 * scaleMultiplier}
-//         color={props.primaryColor}
-//       />
-//     </View>
-//   )
-//   setInfo()
-//   // INFO BUTTON (keep for later)
-//   // <TouchableOpacity
-//   //   style={[
-//   //     styles.actionContainer,
-//   //     {
-//   //       marginRight: props.isRTL ? 0 : 10,
-//   //       marginLeft: props.isRTL ? 10 : 0
-//   //     }
-//   //   ]}
-//   //   onPress={() => {}}
-//   // >
-//   //   <Icon name='info' size={30 * scaleMultiplier} color={colors.chateau} />
-//   // </TouchableOpacity>
-//   break

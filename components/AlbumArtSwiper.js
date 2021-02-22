@@ -9,12 +9,28 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import SVG from '../assets/svg'
 import SwipeBar from '../components/SwipeBar'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
-import { StandardTypography } from '../styles/typography'
+import { scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
+import SVG from './SVG'
 
-function AlbumArtSwiper (props) {
+function AlbumArtSwiper ({
+  // Props passed from a parent component.
+  setAlbumArtSwiperRef,
+  iconName,
+  thisLesson,
+  playHandler,
+  playOpacity,
+  animationZIndex,
+  isMediaPlaying,
+  // Props passed from redux.
+  activeGroup,
+  activeDatabase,
+  font,
+  translations,
+  isRTL
+}) {
   //+ STATE
 
   // keeps track of whether we're in the middle pane or not
@@ -40,7 +56,7 @@ function AlbumArtSwiper (props) {
     {
       key: '1',
       type: 'image',
-      svgName: props.iconName
+      svgName: iconName
     },
     {
       key: '2',
@@ -57,24 +73,20 @@ function AlbumArtSwiper (props) {
 
   function getTextData (key) {
     if (key === '2') {
-      if (props.thisLesson.scripture) return props.thisLesson.scripture
+      if (thisLesson.scripture) return thisLesson.scripture
       else return null
     } else {
-      if (props.thisLesson.fellowshipType) {
-        var combinedQuestionList = props.activeDatabase.questions[
-          props.thisLesson.fellowshipType
+      if (thisLesson.fellowshipType) {
+        var combinedQuestionList = activeDatabase.questions[
+          thisLesson.fellowshipType
         ]
           // combine fellowship and application questions
-          .concat(
-            props.activeDatabase.questions[props.thisLesson.applicationType]
-          )
+          .concat(activeDatabase.questions[thisLesson.applicationType])
         var updatedQuestionArray = []
         combinedQuestionList.forEach((question, index) => {
           var temp = {}
           temp['header'] =
-            props.translations.play.question_header +
-            ' ' +
-            (index + 1).toString()
+            translations.play.question_header + ' ' + (index + 1).toString()
           temp['text'] = question + '\n'
           updatedQuestionArray.push(temp)
         })
@@ -82,19 +94,17 @@ function AlbumArtSwiper (props) {
       } else return null
     }
 
-    return props.thisLesson.fellowshipType
+    return thisLesson.fellowshipType
       ? // render questions on the first pane and scripture on the last
         item.key === '0'
-        ? props.activeDatabase.questions[props.thisLesson.fellowshipType]
+        ? activeDatabase.questions[thisLesson.fellowshipType]
             // combine fellowship and application questions
-            .concat(
-              props.activeDatabase.questions[props.thisLesson.applicationType]
-            )
+            .concat(activeDatabase.questions[thisLesson.applicationType])
             // add newline after each question for spacing
             .map(question => {
               return { ...question, text: question.text + '\n' }
             })
-        : props.thisLesson.scripture
+        : thisLesson.scripture
       : []
   }
 
@@ -177,25 +187,25 @@ function AlbumArtSwiper (props) {
                     <View style={{ paddingHorizontal: 10, marginBottom: 10 }}>
                       <Text
                         style={StandardTypography(
-                          props,
+                          { font, isRTL },
                           'd',
                           'Regular',
                           'center',
                           colors.chateau
                         )}
                       >
-                        {props.translations.play.copyright_for_text + '\n'}
+                        {translations.play.copyright_for_text + '\n'}
                       </Text>
                       <Text
                         style={StandardTypography(
-                          props,
+                          { font, isRTL },
                           'd',
                           'Regular',
                           'center',
                           colors.chateau
                         )}
                       >
-                        {props.translations.play.copyright_for_audio}
+                        {translations.play.copyright_for_audio}
                       </Text>
                     </View>
                   )
@@ -241,7 +251,7 @@ function AlbumArtSwiper (props) {
                 justifyContent: 'center',
                 alignItems: 'center'
               }}
-              onPress={props.playHandler}
+              onPress={playHandler}
               underlayColor={colors.white + '00'}
               activeOpacity={1}
             >
@@ -249,27 +259,27 @@ function AlbumArtSwiper (props) {
                 name={item.svgName}
                 width={Dimensions.get('window').width - marginWidth}
                 height={Dimensions.get('window').width - marginWidth}
-                fill='#1D1E20'
+                color='#1D1E20'
               />
             </TouchableHighlight>
           </View>
           <Animated.View
             style={{
               position: 'absolute',
-              opacity: props.playOpacity,
+              opacity: playOpacity,
               transform: [
                 {
-                  scale: props.playOpacity.interpolate({
+                  scale: playOpacity.interpolate({
                     inputRange: [0, 1],
                     outputRange: [2, 1]
                   })
                 }
               ],
-              zIndex: props.animationZIndex
+              zIndex: animationZIndex
             }}
           >
             <Icon
-              name={props.isMediaPlaying ? 'play' : 'pause'}
+              name={isMediaPlaying ? 'play' : 'pause'}
               size={100 * scaleMultiplier}
               color={colors.white}
             />
@@ -283,13 +293,19 @@ function AlbumArtSwiper (props) {
     return (
       <View style={{ paddingHorizontal: 20 }}>
         <Text
-          style={StandardTypography(props, 'h3', 'Bold', 'left', colors.shark)}
+          style={StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Bold',
+            'left',
+            colors.shark
+          )}
         >
           {textList.item.header}
         </Text>
         <Text
           style={StandardTypography(
-            props,
+            { font, isRTL },
             'h3',
             'Regular',
             'left',
@@ -312,7 +328,7 @@ function AlbumArtSwiper (props) {
       <FlatList
         data={albumArtData}
         renderItem={renderAlbumArtItem}
-        ref={ref => props.setAlbumArtSwiperRef(ref)}
+        ref={ref => setAlbumArtSwiperRef(ref)}
         horizontal={true}
         pagingEnabled={true}
         snapToAlignment={'start'}

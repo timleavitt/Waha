@@ -3,16 +3,31 @@ import { Alert, Image, Keyboard, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
 import BackButton from '../components/standard/BackButton'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import MessageModal from '../modals/MessageModal'
 import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
 import {
   setMTUnlockAttempts,
   setMTUnlockTimeout
 } from '../redux/actions/securityActions'
-import { StandardTypography } from '../styles/typography'
-function PasscodeScreen (props) {
-  //+ STATE
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
+
+function MobilizationToolsUnlockScreen ({
+  // Props passed from navigation.
+  navigation: { setOptions, goBack },
+  // Props passed from redux.
+  activeDatabase,
+  isRTL,
+  translations,
+  font,
+  activeGroup,
+  security,
+  mtUnlockAttempts,
+  setAreMobilizationToolsUnlocked,
+  setMTUnlockTimeout,
+  setMTUnlockAttempts
+}) {
   const [passcode, setPasscode] = useState('')
   const [pinRef, setPinRef] = useState()
   // const [passcodeStatusText, setPasscodeStatusText] = useState('')
@@ -22,27 +37,27 @@ function PasscodeScreen (props) {
   //+ CONSTRUCTOR
 
   useEffect(() => {
-    props.navigation.setOptions(getNavOptions())
+    setOptions(getNavOptions())
   }, [])
 
   //+ NAV OPTIONS
   function getNavOptions () {
     return {
-      headerRight: props.isRTL
-        ? () => <BackButton onPress={() => props.navigation.goBack()} />
+      headerRight: isRTL
+        ? () => <BackButton onPress={() => goBack()} />
         : () => <View></View>,
-      headerLeft: props.isRTL
+      headerLeft: isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => props.navigation.goBack()} />
+        : () => <BackButton onPress={() => goBack()} />
     }
   }
 
   useEffect(() => {
-    if (props.mtUnlockAttempts === 5) {
-      props.setMTUnlockAttempts(0)
-      props.setMTUnlockTimeout(Date.now() + 1800000)
+    if (mtUnlockAttempts === 5) {
+      setMTUnlockAttempts(0)
+      setMTUnlockTimeout(Date.now() + 1800000)
     }
-  }, [props.mtUnlockAttempts])
+  }, [mtUnlockAttempts])
 
   //+ FUNCTIONS
 
@@ -50,16 +65,16 @@ function PasscodeScreen (props) {
     if (passcode === '281820') {
       Keyboard.dismiss()
       setUnlockSuccessModal(true)
-      props.setAreMobilizationToolsUnlocked(true)
+      setAreMobilizationToolsUnlocked(true)
     } else {
-      props.setMTUnlockAttempts(props.mtUnlockAttempts + 1)
+      setMTUnlockAttempts(mtUnlockAttempts + 1)
       pinRef.shake().then(() => setPasscode(''))
       Alert.alert(
-        props.translations.passcode.popups.unlock_unsucessful_title,
-        props.translations.passcode.popups.unlock_unsucessful_message,
+        translations.passcode.popups.unlock_unsucessful_title,
+        translations.passcode.popups.unlock_unsucessful_message,
         [
           {
-            text: props.translations.general.ok,
+            text: translations.general.ok,
             onPress: () => {}
           }
         ]
@@ -74,14 +89,20 @@ function PasscodeScreen (props) {
     <View style={styles.screen}>
       <Text
         style={[
-          StandardTypography(props, 'h3', 'Regular', 'center', colors.shark),
+          StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Regular',
+            'center',
+            colors.shark
+          ),
           {
             marginVertical: 30 * scaleMultiplier,
             paddingHorizontal: 20
           }
         ]}
       >
-        {props.translations.passcode.enter_passcode_text}
+        {translations.passcode.enter_passcode_text}
       </Text>
       <SmoothPinCodeInput
         ref={ref => setPinRef(ref)}
@@ -94,8 +115,8 @@ function PasscodeScreen (props) {
         onFulfill={checkPasscode}
         onBackspace={() => {}}
         editable={
-          props.security.mtUnlockTimeout
-            ? Date.now() - props.security.mtUnlockTimeout > 0
+          security.mtUnlockTimeout
+            ? Date.now() - security.mtUnlockTimeout > 0
               ? true
               : false
             : true
@@ -103,7 +124,13 @@ function PasscodeScreen (props) {
       />
       <Text
         style={[
-          StandardTypography(props, 'h3', 'Regular', 'center', colors.red),
+          StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Regular',
+            'center',
+            colors.red
+          ),
           {
             marginTop: 30 * scaleMultiplier,
             paddingHorizontal: 20
@@ -111,30 +138,30 @@ function PasscodeScreen (props) {
         ]}
       >
         {/* conditional text based on how many attempts user has left / if they're currently locked out */}
-        {Date.now() - props.security.mtUnlockTimeout < 0
-          ? props.translations.passcode.too_many_attempts_label +
+        {Date.now() - security.mtUnlockTimeout < 0
+          ? translations.passcode.too_many_attempts_label +
             ' ' +
-            Math.round((props.security.mtUnlockTimeout - Date.now()) / 60000) +
+            Math.round((security.mtUnlockTimeout - Date.now()) / 60000) +
             ' ' +
-            props.translations.passcode.minutes_label
-          : props.mtUnlockAttempts === 3
-          ? props.translations.passcode.two_attempt_remaining_label
-          : props.mtUnlockAttempts === 4
-          ? props.translations.passcode.one_attempt_remaining_label
+            translations.passcode.minutes_label
+          : mtUnlockAttempts === 3
+          ? translations.passcode.two_attempt_remaining_label
+          : mtUnlockAttempts === 4
+          ? translations.passcode.one_attempt_remaining_label
           : ''}
       </Text>
       <MessageModal
         isVisible={unlockSuccessModal}
         hideModal={() => {
           setUnlockSuccessModal(false)
-          props.navigation.goBack()
+          goBack()
         }}
-        title={props.translations.passcode.popups.unlock_successful_title}
-        body={props.translations.passcode.popups.unlock_successful_message}
-        confirmText={props.translations.general.got_it}
+        title={translations.passcode.popups.unlock_successful_title}
+        body={translations.passcode.popups.unlock_successful_message}
+        confirmText={translations.general.got_it}
         confirmOnPress={() => {
           setUnlockSuccessModal(false)
-          props.navigation.goBack()
+          goBack()
         }}
       >
         <Image
@@ -170,7 +197,6 @@ function mapStateToProps (state) {
   return {
     activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
     font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup,
@@ -192,4 +218,7 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PasscodeScreen)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MobilizationToolsUnlockScreen)

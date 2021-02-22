@@ -19,7 +19,16 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 import Separator from './standard/Separator'
 
-function WahaDrawer (props) {
+function WahaDrawer ({
+  // Props passed from navigation.
+  navigation: { navigate },
+  // Props passed from redux.
+  primaryColor,
+  isRTL,
+  activeGroup,
+  translations,
+  font
+}) {
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
 
   //+ FUNCTIONS
@@ -47,21 +56,21 @@ function WahaDrawer (props) {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: props.primaryColor }]}
+      style={[styles.container, { backgroundColor: primaryColor }]}
       forceInset={{ top: 'always', bottom: 'never', horizontal: 'never' }}
     >
       <View style={styles.drawerHeaderContainer}>
         <View style={styles.groupIconContainer}>
           <GroupAvatar
             style={{ backgroundColor: colors.athens }}
-            emoji={props.activeGroup.emoji}
+            emoji={activeGroup.emoji}
             size={120}
             onPress={() => setShowEditGroupModal(true)}
           />
         </View>
         <Text
           style={StandardTypography(
-            props,
+            { font, isRTL },
             'h2',
             'Black',
             'center',
@@ -69,7 +78,7 @@ function WahaDrawer (props) {
           )}
           numberOfLines={2}
         >
-          {props.activeGroup.name}
+          {activeGroup.name}
         </Text>
       </View>
       <View
@@ -148,31 +157,31 @@ function WahaDrawer (props) {
           ) : null}
           <View style={{ width: '100%', height: 5 }} />
           <DrawerItem
-            iconName='group'
-            text={props.translations.groups.header}
-            onPress={() => props.navigation.navigate('Groups')}
+            icon='group'
+            label={translations.groups.header}
+            onPress={() => navigate('Groups')}
           />
           <DrawerItem
-            iconName='security'
-            text={props.translations.security.header}
-            onPress={() => props.navigation.navigate('Security')}
+            icon='security'
+            label={translations.security.header}
+            onPress={() => navigate('SecurityMode')}
           />
           <DrawerItem
-            iconName='boat'
-            text={props.translations.mobilization_tools.header}
-            onPress={() => props.navigation.navigate('MobilizationTools')}
+            icon='boat'
+            label={translations.mobilization_tools.header}
+            onPress={() => navigate('MobilizationTools')}
           />
           <View style={{ width: '100%', height: 5 }} />
           <Separator />
           <View style={{ width: '100%', height: 5 }} />
           <DrawerItem
-            iconName='storage'
-            text={props.translations.storage.header}
-            onPress={() => props.navigation.navigate('Storage')}
+            icon='storage'
+            label={translations.storage.header}
+            onPress={() => navigate('Storage')}
           />
           <DrawerItem
-            iconName='email'
-            text={props.translations.general.feedback}
+            icon='email'
+            label={translations.general.feedback}
             onPress={() =>
               openBrowser('https://coda.io/form/Waha-Bug-Report_dyWvuvL6WTx')
             }
@@ -215,7 +224,7 @@ function WahaDrawer (props) {
             {
               flexDirection:
                 Dimensions.get('window').height < 550
-                  ? props.isRTL
+                  ? isRTL
                     ? 'row-reverse'
                     : 'row'
                   : 'column'
@@ -228,11 +237,11 @@ function WahaDrawer (props) {
                 'https://kingdomstrategies.givingfuel.com/general-giving'
               )
             }
-            label={props.translations.general.donate_to_waha}
+            label={translations.general.donate_to_waha}
           />
           <SmallDrawerItem
             onPress={() => openBrowser('https://waha.app/privacy-policy/')}
-            label={props.translations.general.privacy}
+            label={translations.general.privacy}
           />
           <View
             style={{
@@ -243,7 +252,7 @@ function WahaDrawer (props) {
           >
             <Text
               style={StandardTypography(
-                props,
+                { font, isRTL },
                 'd',
                 'Regular',
                 'left',
@@ -259,7 +268,7 @@ function WahaDrawer (props) {
         isVisible={showEditGroupModal}
         hideModal={() => setShowEditGroupModal(false)}
         type='EditGroup'
-        group={props.activeGroup}
+        group={activeGroup}
       />
     </SafeAreaView>
   )

@@ -6,7 +6,15 @@ import LoadingScreen from '../screens/LoadingScreen'
 import MainDrawer from './MainDrawer'
 import Onboarding from './Onboarding'
 
-function Root (props) {
+/**
+ * This component renders a navigator conditionally based on state. It's the first thing rendered in App.js.
+ */
+function Root ({
+  // Props passed from redux.
+  hasOnboarded,
+  hasInstalledFirstLanguageInstance,
+  isInstallingLanguageInstance
+}) {
   // Below are some failsafes to keep the app functioning in case of group errors.
   if (props.activeGroup) {
     // If somehow, every group got deleted, create a new group in one of the installed languages so that the app can still function.
@@ -25,19 +33,21 @@ function Root (props) {
     }
   }
 
-  // conditionally render the right navigator
-  // if we're done with onboarding/fetching, render the main drawer
-  // if we're not done with those things, render the onboarding screens
-  // otherwise, we're fetching, so render the loading screen
+  /*
+  Conditionally render the navigator based on the state of the 3 redux variables above. There's 3 possible options:
+    1. If the user has already installed their first language instance, isn't currently installing a language instance, and has gone through the onboarding sequence, then show the normal MainDrawer navigator.
+    2. If the user hasn't installed their first language instance OR has but hasn't finished onboarding yet, then the user is opening up the app for the first time, or else cancelled their install and still needs to install their first language instance. In this case, the Onboarding navigator should be rendered.
+    3. If the user has installed their first language instance and is currently installing a language instance, we're installing a subsequent language instance and should render the Loading screen.
+  */
   if (
-    props.hasInstalledFirstLanguageInstance &&
-    !props.isInstallingLanguageInstance &&
-    props.hasOnboarded
+    hasInstalledFirstLanguageInstance &&
+    !isInstallingLanguageInstance &&
+    hasOnboarded
   ) {
     return <MainDrawer />
   } else if (
-    !props.hasInstalledFirstLanguageInstance ||
-    (props.hasInstalledFirstLanguageInstance && !props.hasOnboarded)
+    !hasInstalledFirstLanguageInstance ||
+    (hasInstalledFirstLanguageInstance && !hasOnboarded)
   ) {
     return <Onboarding />
   } else {

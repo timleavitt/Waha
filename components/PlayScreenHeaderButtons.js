@@ -1,8 +1,17 @@
 import React from 'react'
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
-function PlayScreenHeaderButtons (props) {
+import { scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
+
+function PlayScreenHeaderButtons ({
+  // Props passed from a parent component.
+  shareOnPress,
+  completeOnPress,
+  completeCondition,
+  // Props passed from redux.
+  isRTL
+}) {
   //+ RENDER
 
   return (
@@ -10,12 +19,12 @@ function PlayScreenHeaderButtons (props) {
       style={[
         styles.headerButtonsContainer,
         {
-          flexDirection: props.isRTL ? 'row-reverse' : 'row',
+          flexDirection: isRTL ? 'row-reverse' : 'row',
           marginHorizonal: 5
         }
       ]}
     >
-      <TouchableOpacity onPress={props.shareOnPress}>
+      <TouchableOpacity onPress={shareOnPress}>
         <Icon
           name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
           size={32 * scaleMultiplier}
@@ -24,10 +33,10 @@ function PlayScreenHeaderButtons (props) {
       </TouchableOpacity>
       <TouchableOpacity
         style={{ marginHorizontal: 5 }}
-        onPress={props.completeOnPress}
+        onPress={completeOnPress}
       >
         <Icon
-          name={props.completeCondition ? 'check-filled' : 'check-outline'}
+          name={completeCondition ? 'check-filled' : 'check-outline'}
           size={35 * scaleMultiplier}
           color={colors.oslo}
         />

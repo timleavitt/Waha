@@ -9,7 +9,7 @@
     "primaryColor": "#e43c44",
     "version": "1.0.5",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icons/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#e43c44"
     },
@@ -28,17 +28,17 @@
     "android": {
       "package": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/google-services.json",
+      "icon": "./assets/icons/adaptive_icon_foreground.png",
       "versionCode": 16,
-      "icon": "./assets/adaptive-icon-foreground.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon-foreground.png",
+        "foregroundImage": "./assets/icons/adaptive_icon_foreground.png",
         "backgroundColor": "#e43c44"
       },
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha",
       "permissions": []
     },
     "githubUrl": "https://github.com/trentcowden/Waha",
-    "icon": "./assets/wahaIcon.png",
+    "icon": "./assets/icons/waha_icon.png",
     "web": {
       "config": {
         "firebase": {

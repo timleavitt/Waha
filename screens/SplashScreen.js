@@ -1,12 +1,13 @@
 import React from 'react'
 import { Dimensions, Image, StyleSheet, View } from 'react-native'
-import { colors, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
 
-function SplashScreen (props) {
+function SplashScreen ({}) {
   return (
     <View style={styles.screen}>
       <Image
-        source={require('../assets/splash.png')}
+        source={require('../assets/icons/splash.png')}
         style={{
           resizeMode: 'contain',
           width: Dimensions.get('window').width - 100 * scaleMultiplier

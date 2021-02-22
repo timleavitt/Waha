@@ -11,26 +11,40 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
+import { groupIcons, groupIconSources } from '../assets/groupIcons/_groupIcons'
 import GroupAvatar from '../components/GroupAvatar'
-import {
-  colors,
-  getLanguageFont,
-  groupIcons,
-  groupIconSources,
-  scaleMultiplier
-} from '../constants'
+import { scaleMultiplier } from '../constants'
 import ModalScreen from '../modals/ModalScreen'
+import { changeActiveGroup } from '../redux/actions/activeGroupActions'
 import { incrementGlobalGroupCounter } from '../redux/actions/databaseActions'
 import {
-  changeActiveGroup,
   createGroup,
-  deleteGroup,
   editGroup,
   resetProgress
 } from '../redux/actions/groupsActions'
-import { StandardTypography } from '../styles/typography'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
-function AddEditGroupModal (props) {
+function AddEditGroupModal ({
+  // Props passed from a parent component.
+  isVisible,
+  hideModal,
+  type,
+  group = null,
+  languageID = null,
+  // Props passed from redux.
+  groups,
+  isRTL,
+  translations,
+  font,
+  activeGroup,
+  editGroup,
+  createGroup,
+  changeActiveGroup,
+  deleteGroup,
+  resetProgress,
+  incrementGlobalGroupCounter
+}) {
   //+ STATE
 
   // keeps track of the group name text input value
@@ -41,38 +55,34 @@ function AddEditGroupModal (props) {
 
   // keeps track of whether the group being editted is currently the active group
   const [isActive, setIsActive] = useState(
-    props.type === 'EditGroup'
-      ? props.activeGroup.name === props.groupName
-      : false
+    type === 'EditGroup' ? activeGroup.name === group.name : false
   )
 
   //+ FUNCTIONS
 
   function checkForDuplicate () {
     var isDuplicate = false
-    if (props.type === 'AddGroup') {
-      props.groups.forEach(group => {
+    if (type === 'AddGroup') {
+      groups.forEach(group => {
         if (group.name === groupNameInput) {
           Alert.alert(
-            props.translations.add_edit_group.popups.duplicate_group_name_title,
-            props.translations.add_edit_group.popups
-              .duplicate_group_name_message,
-            [{ text: props.translations.general.ok, onPress: () => {} }]
+            translations.add_edit_group.popups.duplicate_group_name_title,
+            translations.add_edit_group.popups.duplicate_group_name_message,
+            [{ text: translations.general.ok, onPress: () => {} }]
           )
           isDuplicate = true
         }
       })
     } else {
-      props.groups.forEach(group => {
+      groups.forEach(storedGroup => {
         if (
-          group.name === groupNameInput &&
-          props.group.name !== groupNameInput
+          storedGroup.name === groupNameInput &&
+          group.name !== groupNameInput
         ) {
           Alert.alert(
-            props.translations.add_edit_group.popups.duplicate_group_name_title,
-            props.translations.add_edit_group.popups
-              .duplicate_group_name_message,
-            [{ text: props.translations.general.ok, onPress: () => {} }]
+            translations.add_edit_group.popups.duplicate_group_name_title,
+            translations.add_edit_group.popups.duplicate_group_name_message,
+            [{ text: translations.general.ok, onPress: () => {} }]
           )
           isDuplicate = true
         }
@@ -84,9 +94,9 @@ function AddEditGroupModal (props) {
   function checkForBlank () {
     if (groupNameInput === '') {
       Alert.alert(
-        props.translations.add_edit_group.popups.blank_group_name_title,
-        props.translations.add_edit_group.popups.blank_group_name_message,
-        [{ text: props.translations.general.ok, onPress: () => {} }]
+        translations.add_edit_group.popups.blank_group_name_title,
+        translations.add_edit_group.popups.blank_group_name_message,
+        [{ text: translations.general.ok, onPress: () => {} }]
       )
       return true
     }
@@ -94,43 +104,42 @@ function AddEditGroupModal (props) {
   }
 
   // adds a group to redux if it passes all error checking
-  function addNewGroup () {
+  function createGroupHandler () {
     if (checkForDuplicate() || checkForBlank()) return
 
-    props.createGroup(
+    createGroup(
       groupNameInput,
-      props.languageID,
+      languageID,
       emojiInput,
-      props.globalGroupCounter + 1,
-      props.groups.length + 1
+      globalGroupCounter + 1,
+      groups.length + 1
     )
-    props.changeActiveGroup(groupNameInput)
+    changeActiveGroup(groupNameInput)
 
     // Increment the global group counter redux variable.
-    props.incrementGlobalGroupCounter()
+    incrementGlobalGroupCounter()
 
-    props.hideModal()
+    hideModal()
   }
 
   // edits a group and sets it as active
-  function editGroup () {
+  function editGroupHandler () {
     if (checkForDuplicate() || checkForBlank()) return
 
-    if (props.group.name === props.activeGroup.name)
-      props.changeActiveGroup(groupNameInput)
-    props.editGroup(props.group.name, groupNameInput, emojiInput)
-    props.hideModal()
+    if (group.name === activeGroup.name) changeActiveGroup(groupNameInput)
+    editGroup(group.name, groupNameInput, emojiInput)
+    hideModal()
   }
 
   //+ RENDER
 
   return (
     <ModalScreen
-      isVisible={props.isVisible}
-      hideModal={props.hideModal}
+      isVisible={isVisible}
+      hideModal={hideModal}
       topRightComponent={
         <TouchableOpacity
-          onPress={props.type === 'AddGroup' ? addNewGroup : editGroup}
+          onPress={type === 'AddGroup' ? createGroupHandler : editGroupHandler}
           style={{
             width: 45 * scaleMultiplier,
             height: 45 * scaleMultiplier
@@ -144,20 +153,20 @@ function AddEditGroupModal (props) {
         setEmojiInput('default')
       }}
       onModalWillShow={
-        props.type === 'AddGroup'
+        type === 'AddGroup'
           ? () => {
               setGroupNameInput('')
               setEmojiInput('default')
             }
           : () => {
-              setGroupNameInput(props.group.name)
-              setEmojiInput(props.group.emoji)
+              setGroupNameInput(group.name)
+              setEmojiInput(group.emoji)
             }
       }
       title={
-        props.type === 'AddGroup'
-          ? props.translations.add_edit_group.header_add
-          : props.translations.add_edit_group.header_edit
+        type === 'AddGroup'
+          ? translations.add_edit_group.header_add
+          : translations.add_edit_group.header_edit
       }
     >
       <View style={styles.photoContainer}>
@@ -165,7 +174,6 @@ function AddEditGroupModal (props) {
           style={{ backgroundColor: colors.athens }}
           emoji={emojiInput}
           size={120}
-          isChangeable={true}
         />
       </View>
       <View
@@ -175,31 +183,35 @@ function AddEditGroupModal (props) {
       >
         <Text
           style={StandardTypography(
-            props,
+            { font, isRTL },
             'p',
             'Regular',
             'left',
             colors.chateau
           )}
         >
-          {props.translations.add_edit_group.group_name_form_label}
+          {translations.add_edit_group.group_name_form_label}
         </Text>
         <TextInput
           style={[
             styles.addNewGroupContainer,
-            StandardTypography(props, 'h3', 'Regular', 'left', colors.shark)
+            StandardTypography(
+              { font, isRTL },
+              'h3',
+              'Regular',
+              'left',
+              colors.shark
+            )
             // {
-            //   textAlign: props.isRTL ? 'right' : 'left',
-            //   fontFamily: props.font + '-Regular'
+            //   textAlign: isRTL ? 'right' : 'left',
+            //   fontFamily: font + '-Regular'
             // }
           ]}
           onChangeText={text => setGroupNameInput(text)}
           value={groupNameInput}
           autoCapitalize='words'
           autoCorrect={false}
-          placeholder={
-            props.translations.add_edit_group.group_name_form_placeholder
-          }
+          placeholder={translations.add_edit_group.group_name_form_placeholder}
           placeholderTextColor={colors.chateau}
           maxLength={50}
           returnKeyType='done'
@@ -207,7 +219,13 @@ function AddEditGroupModal (props) {
       </View>
       <Text
         style={[
-          StandardTypography(props, 'p', 'Regular', 'left', colors.chateau),
+          StandardTypography(
+            { font, isRTL },
+            'p',
+            'Regular',
+            'left',
+            colors.chateau
+          ),
           {
             marginHorizontal: 20,
             marginTop: 20 * scaleMultiplier,
@@ -215,7 +233,7 @@ function AddEditGroupModal (props) {
           }
         ]}
       >
-        {props.translations.add_edit_group.icon_form_label}
+        {translations.add_edit_group.icon_form_label}
       </Text>
       <View
         style={{
@@ -315,9 +333,6 @@ function mapDispatchToProps (dispatch) {
     createGroup: (groupName, language, emoji, groupID, groupNumber) =>
       dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
     changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName)),
-    deleteGroup: name => {
-      dispatch(deleteGroup(name))
-    },
     resetProgress: name => {
       dispatch(resetProgress(name))
     },

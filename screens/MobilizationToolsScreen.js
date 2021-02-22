@@ -15,28 +15,41 @@ import Blurb from '../components/standard/Blurb'
 import Hero from '../components/standard/Hero'
 import Separator from '../components/standard/Separator'
 import WahaItem from '../components/standard/WahaItem'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
-import { StandardTypography } from '../styles/typography'
+import { scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
-function MobilizationToolsScreen (props) {
+function MobilizationToolsScreen ({
+  // Props passed from navigation.
+  navigation: { setOptions, goBack, navigate },
+  // Props passed from redux.
+  database,
+  activeDatabase,
+  isRTL,
+  translations,
+  font,
+  activeGroup,
+  areMobilizationToolsUnlocked,
+  groups
+}) {
   //+ STATE
   const [showHowMTsWorkModal, setShowHowMTsWorkModal] = useState(false)
 
   //+ CONSTRUCTOR
 
   useEffect(() => {
-    props.navigation.setOptions(getNavOptions())
+    setOptions(getNavOptions())
   }, [])
 
   //+ NAV OPTIONS
   function getNavOptions () {
     return {
-      headerRight: props.isRTL
-        ? () => <BackButton onPress={() => props.navigation.goBack()} />
+      headerRight: isRTL
+        ? () => <BackButton onPress={() => goBack()} />
         : () => <View></View>,
-      headerLeft: props.isRTL
+      headerLeft: isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => props.navigation.goBack()} />
+        : () => <BackButton onPress={() => goBack()} />
     }
   }
 
@@ -44,16 +57,14 @@ function MobilizationToolsScreen (props) {
   //  to populate section list
   function getLanguageAndGroupData () {
     var installedLanguageInstances = []
-    for (key in props.database) {
+    for (key in database) {
       if (key.length === 2) {
         var languageObject = {}
-        languageObject['title'] = props.database[key].displayName
+        languageObject['title'] = database[key].displayName
         languageObject['languageID'] = key
 
         // get groups for that language
-        languageObject['data'] = props.groups.filter(
-          group => group.language === key
-        )
+        languageObject['data'] = groups.filter(group => group.language === key)
         installedLanguageInstances.push(languageObject)
       }
     }
@@ -68,7 +79,7 @@ function MobilizationToolsScreen (props) {
       <GroupListHeaderMT
         languageName={section.title}
         languageID={section.languageID}
-        areMobilizationToolsUnlocked={props.areMobilizationToolsUnlocked}
+        areMobilizationToolsUnlocked={areMobilizationToolsUnlocked}
       />
     )
   }
@@ -81,21 +92,18 @@ function MobilizationToolsScreen (props) {
 
   return (
     <View style={styles.screen}>
-      {props.areMobilizationToolsUnlocked ? null : (
+      {areMobilizationToolsUnlocked ? null : (
         <View style={{ width: '100%' }}>
           <Blurb
-            text={
-              props.translations.mobilization_tools
-                .mobilization_tools_pre_unlock
-            }
+            text={translations.mobilization_tools.mobilization_tools_pre_unlock}
           />
           <Separator />
           <WahaItem
-            title={props.translations.mobilization_tools.unlock_mt_button_label}
-            onPress={() => props.navigation.navigate('Passcode')}
+            title={translations.mobilization_tools.unlock_mt_button_label}
+            onPress={() => navigate('MobilizationToolsUnlock')}
           >
             <Icon
-              name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+              name={isRTL ? 'arrow-left' : 'arrow-right'}
               color={colors.tuna}
               size={50 * scaleMultiplier}
             />
@@ -106,11 +114,11 @@ function MobilizationToolsScreen (props) {
 
       {/* list of groups with option to enable MTs for each group */}
       <View style={{ width: '100%', flex: 1 }}>
-        {props.areMobilizationToolsUnlocked ? (
+        {areMobilizationToolsUnlocked ? (
           <SectionList
             sections={getLanguageAndGroupData()}
             renderItem={({ item, section }) => {
-              return props.database[section.languageID].sets.some(set => {
+              return database[section.languageID].sets.some(set => {
                 return /[a-z]{2}.3.[0-9]+/.test(set.id)
               })
                 ? renderGroupItem(item)
@@ -118,49 +126,45 @@ function MobilizationToolsScreen (props) {
             }}
             ListHeaderComponent={() => (
               <View>
-                {props.areMobilizationToolsUnlocked ? (
+                {areMobilizationToolsUnlocked ? (
                   <Hero
                     source={require('../assets/gifs/unlock_mob_tools.gif')}
                   />
                 ) : null}
                 <Blurb
                   text={
-                    props.translations.mobilization_tools
-                      .mobilization_tools_vision
+                    translations.mobilization_tools.mobilization_tools_vision
                   }
                 />
                 <Separator />
                 <WahaItem
                   title={
-                    props.areMobilizationToolsUnlocked
-                      ? props.translations.mobilization_tools
-                          .view_code_button_label
-                      : props.translations.mobilization_tools
-                          .unlock_mt_button_label
+                    areMobilizationToolsUnlocked
+                      ? translations.mobilization_tools.view_code_button_label
+                      : translations.mobilization_tools.unlock_mt_button_label
                   }
                   onPress={
-                    props.areMobilizationToolsUnlocked
+                    areMobilizationToolsUnlocked
                       ? () =>
                           Alert.alert(
-                            props.translations.mobilization_tools.mt_code_title,
+                            translations.mobilization_tools.mt_code_title,
                             '281820',
                             [
                               {
-                                text:
-                                  props.translations.general.copy_to_clipboard,
+                                text: translations.general.copy_to_clipboard,
                                 onPress: () => Clipboard.setString('281820')
                               },
                               {
-                                text: props.translations.general.close,
+                                text: translations.general.close,
                                 onPress: () => {}
                               }
                             ]
                           )
-                      : () => props.navigation.navigate('Passcode')
+                      : () => navigate('MobilizationToolsUnlock')
                   }
                 >
                   <Icon
-                    name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+                    name={isRTL ? 'arrow-left' : 'arrow-right'}
                     color={colors.tuna}
                     size={50 * scaleMultiplier}
                   />
@@ -170,7 +174,7 @@ function MobilizationToolsScreen (props) {
                 <View style={{ width: '100%', paddingHorizontal: 20 }}>
                   <Text
                     style={StandardTypography(
-                      props,
+                      { font, isRTL },
                       'h2',
                       'Black',
                       'left',
@@ -178,7 +182,7 @@ function MobilizationToolsScreen (props) {
                     )}
                   >
                     {
-                      props.translations.mobilization_tools
+                      translations.mobilization_tools
                         .mobilization_tools_status_label
                     }
                   </Text>
@@ -189,11 +193,9 @@ function MobilizationToolsScreen (props) {
               renderLanguageInstanceItem(section)
             }
             renderSectionFooter={({ section }) => {
-              var hasMTContent = props.database[section.languageID].sets.some(
-                set => {
-                  return /[a-z]{2}.3.[0-9]+/.test(set.id)
-                }
-              )
+              var hasMTContent = database[section.languageID].sets.some(set => {
+                return /[a-z]{2}.3.[0-9]+/.test(set.id)
+              })
               return hasMTContent ? (
                 <View style={{ width: '100%', height: 20 }} />
               ) : (
@@ -212,7 +214,7 @@ function MobilizationToolsScreen (props) {
                   >
                     <Text
                       style={StandardTypography(
-                        props,
+                        { font, isRTL },
                         'p',
                         'Regular',
                         'center',
@@ -220,7 +222,7 @@ function MobilizationToolsScreen (props) {
                       )}
                     >
                       {
-                        props.translations.mobilization_tools
+                        translations.mobilization_tools
                           .no_mobilization_tools_content_text
                       }
                     </Text>
@@ -232,20 +234,16 @@ function MobilizationToolsScreen (props) {
             }}
             keyExtractor={item => item.name}
             SectionSeparatorComponent={({ section }) => {
-              var hasMTContent = props.database[section.languageID].sets.some(
-                set => {
-                  return /[a-z]{2}.3.[0-9]+/.test(set.id)
-                }
-              )
+              var hasMTContent = database[section.languageID].sets.some(set => {
+                return /[a-z]{2}.3.[0-9]+/.test(set.id)
+              })
 
               return hasMTContent ? <Separator /> : null
             }}
             ItemSeparatorComponent={({ section }) => {
-              var hasMTContent = props.database[section.languageID].sets.some(
-                set => {
-                  return /[a-z]{2}.3.[0-9]+/.test(set.id)
-                }
-              )
+              var hasMTContent = database[section.languageID].sets.some(set => {
+                return /[a-z]{2}.3.[0-9]+/.test(set.id)
+              })
 
               return hasMTContent ? <Separator /> : null
             }}
@@ -287,7 +285,6 @@ function mapStateToProps (state) {
     database: state.database,
     activeDatabase: state.database[activeGroup.language],
     isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup,
     translations: state.database[activeGroup.language].translations,
     font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup,

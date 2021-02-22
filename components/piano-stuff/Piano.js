@@ -2,27 +2,37 @@ import { Audio } from 'expo-av'
 import React from 'react'
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, keyColors } from '../../constants'
+import { colors, keyColors } from '../../styles/colors'
+import { getLanguageFont } from '../../styles/typography'
 import KeyLabel from '../piano-stuff/KeyLabel'
-function Piano (props) {
+
+function Piano ({
+  // Props passed from a parent component.
+  setPattern,
+  isMuted = false,
+  // Props passed from redux.
+  isRTL,
+  font,
+  activeGroup
+}) {
   // RENDER
 
   // require keyboard notes
-  var C = require('../../assets/notes/C.mp3')
-  var Db = require('../../assets/notes/Db.mp3')
-  var D = require('../../assets/notes/D.mp3')
-  var Eb = require('../../assets/notes/Eb.mp3')
-  var E = require('../../assets/notes/E.mp3')
-  var F = require('../../assets/notes/F.mp3')
-  var Gb = require('../../assets/notes/Gb.mp3')
-  var G = require('../../assets/notes/G.mp3')
-  var Ab = require('../../assets/notes/Ab.mp3')
-  var A = require('../../assets/notes/A.mp3')
-  var Bb = require('../../assets/notes/Bb.mp3')
-  var B = require('../../assets/notes/B.mp3')
+  var C = require('../../assets/pianoNotes/C.mp3')
+  var Db = require('../../assets/pianoNotes/Db.mp3')
+  var D = require('../../assets/pianoNotes/D.mp3')
+  var Eb = require('../../assets/pianoNotes/Eb.mp3')
+  var E = require('../../assets/pianoNotes/E.mp3')
+  var F = require('../../assets/pianoNotes/F.mp3')
+  var Gb = require('../../assets/pianoNotes/Gb.mp3')
+  var G = require('../../assets/pianoNotes/G.mp3')
+  var Ab = require('../../assets/pianoNotes/Ab.mp3')
+  var A = require('../../assets/pianoNotes/A.mp3')
+  var Bb = require('../../assets/pianoNotes/Bb.mp3')
+  var B = require('../../assets/pianoNotes/B.mp3')
 
   function playNote (number) {
-    if (!props.isMuted) {
+    if (!isMuted) {
       var note = new Audio.Sound()
       switch (number) {
         case 0:
@@ -84,7 +94,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '01')
+            setPattern(pattern => pattern + '01')
             playNote(1)
           }}
         >
@@ -93,7 +103,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '03')
+            setPattern(pattern => pattern + '03')
             playNote(3)
           }}
         >
@@ -103,7 +113,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '06')
+            setPattern(pattern => pattern + '06')
             playNote(6)
           }}
         >
@@ -112,7 +122,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '08')
+            setPattern(pattern => pattern + '08')
             playNote(8)
           }}
         >
@@ -121,7 +131,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '10')
+            setPattern(pattern => pattern + '10')
             playNote(10)
           }}
         >
@@ -138,7 +148,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '00')
+            setPattern(pattern => pattern + '00')
             playNote(0)
           }}
         >
@@ -147,7 +157,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '02')
+            setPattern(pattern => pattern + '02')
             playNote(2)
           }}
         >
@@ -156,7 +166,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '04')
+            setPattern(pattern => pattern + '04')
             playNote(4)
           }}
         >
@@ -165,7 +175,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '05')
+            setPattern(pattern => pattern + '05')
             playNote(5)
           }}
         >
@@ -174,7 +184,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '07')
+            setPattern(pattern => pattern + '07')
             playNote(7)
           }}
         >
@@ -183,7 +193,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '09')
+            setPattern(pattern => pattern + '09')
             playNote(9)
           }}
         >
@@ -192,7 +202,7 @@ function Piano (props) {
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            props.setPattern(pattern => pattern + '11')
+            setPattern(pattern => pattern + '11')
             playNote(11)
           }}
         >
