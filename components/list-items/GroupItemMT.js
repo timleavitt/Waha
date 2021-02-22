@@ -68,14 +68,18 @@ function GroupItemMT (props) {
 
             // if we're toggling MTs on for the first time, add the first 2 MT sets
             if (!props.group.shouldShowMobilizationToolsTab) {
-              logEnableMobilizationToolsForAGroup(props.activeGroup.language)
+              logEnableMobilizationToolsForAGroup(
+                props.activeGroup.language,
+                props.group.id,
+                props.groups.indexOf(props.group) + 1
+              )
               for (const set of props.database[props.group.language].sets) {
                 if (
                   getSetInfo('category', set.id) === 'mobilization tools' &&
                   (getSetInfo('index', set.id) === 1 ||
                     getSetInfo('index', set.id) === 2)
                 ) {
-                  props.addSet(props.group.name, set)
+                  props.addSet(props.group.name, props.group.id, set)
                 }
               }
             }
@@ -128,8 +132,8 @@ function mapDispatchToProps (dispatch) {
     setShouldShowMobilizationToolsTab: (groupName, toSet) => {
       dispatch(setShouldShowMobilizationToolsTab(groupName, toSet))
     },
-    addSet: (groupName, set) => {
-      dispatch(addSet(groupName, set))
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
     }
   }
 }

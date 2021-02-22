@@ -28,6 +28,7 @@ import {
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
+import { deleteGroup } from '../redux/actions/groupsActions'
 import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
 import { storeDownloads } from '../redux/actions/storedDownloadsActions'
 import { colors } from '../styles/colors'
@@ -469,7 +470,8 @@ function mapDispatchToProps (dispatch) {
       dispatch(setIsInstallingLanguageInstance(toSet)),
     storeDownloads: downloads => dispatch(storeDownloads(downloads)),
     setHasFetchedLanguageData: hasFetchedLanguageData =>
-      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
+      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData)),
+    deleteGroup: groupName => dispatch(deleteGroup(groupName))
   }
 }
 

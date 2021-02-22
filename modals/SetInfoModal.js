@@ -89,7 +89,11 @@ function SetInfoModal (props) {
         type='filled'
         color={colors.apple}
         onPress={() => {
-          props.addSet(props.activeGroup.name, props.thisSet)
+          props.addSet(
+            props.activeGroup.name,
+            props.activeGroup.id,
+            props.thisSet
+          )
           props.showSnackbar()
           props.hideModal()
         }}
@@ -146,8 +150,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    addSet: (groupName, set) => {
-      dispatch(addSet(groupName, set))
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
     }
   }
 }

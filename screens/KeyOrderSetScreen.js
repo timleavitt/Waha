@@ -14,7 +14,9 @@ import BackButton from '../components/standard/BackButton'
 import WahaButton from '../components/standard/WahaButton'
 import { colors, getLanguageFont } from '../constants'
 import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
+import { logEnableSecurityMode } from '../redux/LogEventFunctions'
 import { StandardTypography } from '../styles/typography'
+
 function KeyOrderSetScreen (props) {
   //+ STATE
 
@@ -67,6 +69,9 @@ function KeyOrderSetScreen (props) {
                 .key_order_set_confirmation_message,
               [{ text: props.translations.general.ok, onPress: () => {} }]
             )
+            // Log the enabling of Security Mode in Firebase analytics.
+            logEnableSecurityMode(props.activeGroup.id)
+
             props.setSecurityEnabled(true)
             props.setCode(keyOrder)
             props.navigation.goBack()

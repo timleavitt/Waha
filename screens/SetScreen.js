@@ -250,7 +250,8 @@ function mapStateToProps (state) {
     font: getLanguageFont(activeGroup.language),
     activeGroup: activeGroup,
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate,
-    languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes
+    languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes,
+    globalGroupCounter: state.database.globalGroupCounter
   }
 }
 

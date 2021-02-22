@@ -250,6 +250,7 @@ function SetItem (props) {
       ) {
         props.addSet(
           props.activeGroup.name,
+          props.activeGroup.id,
           props.activeDatabase.sets
             .filter(set => getSetInfo('category', set.id) === 'foundational')
             .filter(
@@ -404,8 +405,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    addSet: (groupName, set) => {
-      dispatch(addSet(groupName, set))
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
     }
   }
 }

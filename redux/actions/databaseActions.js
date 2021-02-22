@@ -17,6 +17,7 @@ export const ADD_LANGUAGE_CORE_FILE_TO_UPDATE =
 export const CLEAR_LANGUAGE_CORE_FILES_TO_UPDATE =
   'CLEAR_LANGUAGE_CORE_FILES_TO_UPDATE'
 export const STORE_ACTING_LANGUAGE_ID = 'STORE_ACTING_LANGUAGE_ID'
+export const INCREMENT_GLOBAL_GROUP_COUNTER = 'INCREMENT_GLOBAL_GROUP_COUNTER'
 
 import * as FileSystem from 'expo-file-system'
 import firebase from 'firebase'
@@ -27,6 +28,11 @@ import { changeActiveGroup, createGroup } from './groupsActions'
 import { setIsInstallingLanguageInstance } from './isInstallingLanguageInstanceActions'
 import { storeDownloads } from './storedDownloadsActions'
 
+export function incrementGlobalGroupCounter () {
+  return {
+    type: INCREMENT_GLOBAL_GROUP_COUNTER
+  }
+}
 export function storeLanguageData (languageData, languageInstanceID) {
   return {
     type: STORE_LANGUAGE_DATA,
@@ -243,8 +249,18 @@ export function downloadLanguageCoreFiles (language) {
             !getState().groups.some(
               group => group.name === groupNames[language]
             )
-          )
-            dispatch(createGroup(groupNames[language], language, 'default'))
+          ) {
+            dispatch(incrementGlobalGroupCounter())
+            dispatch(
+              createGroup(
+                groupNames[language],
+                language,
+                'default',
+                getState().database.globalGroupCounter,
+                getState().groups.length + 1
+              )
+            )
+          }
 
           // Change the active group to the new group we just created.
           dispatch(changeActiveGroup(groupNames[language]))

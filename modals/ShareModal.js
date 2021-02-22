@@ -18,17 +18,16 @@ function ShareModal (props) {
     switch (type) {
       // share the link to Waha itself
       case 'app':
-        logShareApp(props.lesson)
         Share.share({
           message:
             'iOS: https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294\n\nAndroid: https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
         }).then(() => {
+          logShareApp(props.activeGroup.id)
           props.hideModal()
         })
         break
       // share the passage text for this lesson
       case 'text':
-        logShareText(props.lesson)
         var scriptureString = ''
         props.lesson.scripture.forEach((scripturePiece, index) => {
           scriptureString += scripturePiece.header + '\n' + scripturePiece.text
@@ -38,12 +37,12 @@ function ShareModal (props) {
         Share.share({
           message: scriptureString
         }).then(() => {
+          logShareText(props.lesson, props.activeGroup.id)
           props.hideModal()
         })
         break
       // share the audio file for this lesson
       case 'audio':
-        logShareAudio(props.lesson)
         FileSystem.getInfoAsync(
           FileSystem.documentDirectory + props.lesson.id + '.mp3'
         ).then(({ exists }) => {
@@ -51,6 +50,7 @@ function ShareModal (props) {
             ? Sharing.shareAsync(
                 FileSystem.documentDirectory + props.lesson.id + '.mp3'
               ).then(() => {
+                logShareAudio(props.lesson, props.activeGroup.id)
                 props.hideModal()
               })
             : Alert.alert(
@@ -127,7 +127,8 @@ function mapStateToProps (state) {
   )[0]
   return {
     translations: state.database[activeGroup.language].translations,
-    downloads: state.downloads
+    downloads: state.downloads,
+    activeGroup: activeGroup
   }
 }
 
