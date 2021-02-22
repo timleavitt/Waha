@@ -5,10 +5,10 @@ import { CHANGE_ACTIVE_GROUP } from '../actions/activeGroupActions'
  * @param {Object} action - Parameters passed from groupsAction.js functions.
  * @param {string} activeGroup - (state) The name of the active group.
  */
-export function activeGroup (state = null, action) {
-  switch (action.type) {
+export function activeGroup (state = null, params) {
+  switch (params.type) {
     case CHANGE_ACTIVE_GROUP:
-      return action.groupName
+      return params.groupName
     default:
       return state
   }

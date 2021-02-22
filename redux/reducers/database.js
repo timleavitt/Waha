@@ -62,9 +62,9 @@ export function database (
     actingLanguageID: null,
     globalGroupCounter: 0
   },
-  action
+  params
 ) {
-  switch (action.type) {
+  switch (params.type) {
     case INCREMENT_GLOBAL_GROUP_COUNTER:
       return {
         ...state,
@@ -73,48 +73,48 @@ export function database (
     case STORE_LANGUAGE_DATA:
       return {
         ...state,
-        [action.languageInstanceID]: {
-          ...state[action.languageInstanceID],
-          // appVersion: action.languageData[appVersion],
-          displayName: action.languageData.displayName,
-          bibleID: action.languageData.bibleID,
-          isRTL: action.languageData.isRTL,
-          primaryColor: action.languageData.primaryColor,
-          files: action.languageData.files,
-          questions: action.languageData.questions,
-          translations: action.languageData.translations
+        [params.languageInstanceID]: {
+          ...state[params.languageInstanceID],
+          // appVersion: params.languageData[appVersion],
+          displayName: params.languageData.displayName,
+          bibleID: params.languageData.bibleID,
+          isRTL: params.languageData.isRTL,
+          primaryColor: params.languageData.primaryColor,
+          files: params.languageData.files,
+          questions: params.languageData.questions,
+          translations: params.languageData.translations
         }
       }
     case STORE_LANGUAGE_SETS:
       return {
         ...state,
-        [action.languageInstanceID]: {
-          ...state[action.languageInstanceID],
-          sets: action.languageSets
+        [params.languageInstanceID]: {
+          ...state[params.languageInstanceID],
+          sets: params.languageSets
         }
       }
     case SET_HAS_ONBOARDED:
-      return { ...state, hasOnboarded: action.hasOnboarded }
+      return { ...state, hasOnboarded: params.hasOnboarded }
     case SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE:
       return {
         ...state,
         hasInstalledFirstLanguageInstance:
-          action.hasInstalledFirstLanguageInstance
+          params.hasInstalledFirstLanguageInstance
       }
     case SET_LANGUAGE_CORE_FILES_DOWNLOAD_PROGRESS:
       return {
         ...state,
         languageCoreFilesDownloadProgress:
-          action.languageCoreFilesDownloadProgress
+          params.languageCoreFilesDownloadProgress
       }
     case SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD:
       return {
         ...state,
         totalLanguageCoreFilesToDownload:
-          action.totalLanguageCoreFilesToDownload
+          params.totalLanguageCoreFilesToDownload
       }
     case DELETE_LANGUAGE_DATA:
-      const languageToDelete = action.languageInstanceID
+      const languageToDelete = params.languageInstanceID
       const { [languageToDelete]: value, ...newObject } = state
       return newObject
     case STORE_LANGUAGE_CORE_FILE_CREATED_TIME:
@@ -122,7 +122,7 @@ export function database (
         ...state,
         languageCoreFilesCreatedTimes: {
           ...state.languageCoreFilesCreatedTimes,
-          [action.fileName]: action.timeCreated
+          [params.fileName]: params.timeCreated
         }
       }
     case ADD_LANGUAGE_CORE_FILE_TO_UPDATE:
@@ -130,7 +130,7 @@ export function database (
         ...state,
         languageCoreFilesToUpdate: [
           ...state.languageCoreFilesToUpdate,
-          action.fileName
+          params.fileName
         ]
       }
     case CLEAR_LANGUAGE_CORE_FILES_TO_UPDATE:
@@ -139,11 +139,11 @@ export function database (
         languageCoreFilesToUpdate: []
       }
     case SET_HAS_FETCHED_LANGUAGE_DATA:
-      return { ...state, hasFetchedLanguageData: action.hasFetchedLanguageData }
+      return { ...state, hasFetchedLanguageData: params.hasFetchedLanguageData }
     case STORE_ACTING_LANGUAGE_ID:
       return {
         ...state,
-        actingLanguageID: action.languageID
+        actingLanguageID: params.languageID
       }
     default:
       return state

@@ -107,7 +107,7 @@ function AddSetScreen ({
     if (
       requiredQuestionSets.every(questionSet =>
         downloadedFiles.includes(
-          props.activeGroup.language + '-' + questionSet + '.mp3'
+          activeGroup.language + '-' + questionSet + '.mp3'
         )
       )
     )

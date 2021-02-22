@@ -13,23 +13,31 @@ function Root ({
   // Props passed from redux.
   hasOnboarded,
   hasInstalledFirstLanguageInstance,
-  isInstallingLanguageInstance
+  isInstallingLanguageInstance,
+  activeGroup = null,
+  groups = null,
+  database = null,
+  changeActiveGroup,
+  createGroup
 }) {
+  console.log(
+    `hasOnboarded: ${hasOnboarded}\nhasInstalledFirstLanguageInstance: ${hasInstalledFirstLanguageInstance}\nisInstallingLanguageInstance: ${isInstallingLanguageInstance}\n`
+  )
   // Below are some failsafes to keep the app functioning in case of group errors.
-  if (props.activeGroup) {
+  if (activeGroup) {
     // If somehow, every group got deleted, create a new group in one of the installed languages so that the app can still function.
-    if (props.groups.length === 0) {
+    if (groups.length === 0) {
       var languageID
-      Object.keys(props.database).forEach(key => {
+      Object.keys(database).forEach(key => {
         if (key.length === 2) {
           languageID = key
         }
       })
-      props.createGroup(groupNames[languageID], languageID, 'default')
-      props.changeActiveGroup(groupNames[languageID])
+      createGroup(groupNames[languageID], languageID, 'default')
+      changeActiveGroup(groupNames[languageID])
       // If somehow, we switch to a group that doesn't exist, fall back to the first group in the groups redux array so that the app can still function.
-    } else if (!props.groups.some(group => props.activeGroup === group.name)) {
-      props.changeActiveGroup(props.groups[0].name)
+    } else if (!groups.some(group => activeGroup === group.name)) {
+      changeActiveGroup(groups[0].name)
     }
   }
 

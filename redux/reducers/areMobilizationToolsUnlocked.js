@@ -5,10 +5,10 @@ import { SET_ARE_MOBILIZATION_TOOLS_UNLOCKED } from '../actions/areMobilizationT
  * @param {Object} action - Parameters passed from areMobilizationToolsUnlockedActions.js functions.
  * @param {boolean} areMobilizationToolsUnlocked - (state) Whether the mobilization tools are unlocked globally.
  */
-export function areMobilizationToolsUnlocked (state = false, action) {
-  switch (action.type) {
+export function areMobilizationToolsUnlocked (state = false, params) {
+  switch (params.type) {
     case SET_ARE_MOBILIZATION_TOOLS_UNLOCKED:
-      return action.toSet
+      return params.toSet
     default:
       return state
   }

@@ -19,6 +19,32 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 import Separator from './standard/Separator'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    primaryColor: state.database[activeGroup.language].primaryColor,
+    isRTL: state.database[activeGroup.language].isRTL,
+    activeGroup: activeGroup,
+    translations: state.database[activeGroup.language].translations,
+    font: getLanguageFont(activeGroup.language),
+    isConnected: state.network.isConnected,
+    languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    updateLanguageCoreFiles: () => dispatch(updateLanguageCoreFiles()),
+    setIsInstallingLanguageInstance: toSet =>
+      dispatch(setIsInstallingLanguageInstance(toSet)),
+    storeDownloads: downloads => dispatch(storeDownloads(downloads)),
+    setHasFetchedLanguageData: hasFetchedLanguageData =>
+      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
+  }
+}
+
 function WahaDrawer ({
   // Props passed from navigation.
   navigation: { navigate },
@@ -27,7 +53,12 @@ function WahaDrawer ({
   isRTL,
   activeGroup,
   translations,
-  font
+  font,
+  isConnected,
+  languageCoreFilesToUpdate,
+  updateLanguageCoreFiles,
+  storeDownloads,
+  setHasFetchedLanguageData
 }) {
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
 
@@ -40,16 +71,16 @@ function WahaDrawer ({
 
   function onUpdatePress () {
     // Replace our downloads object with an empty array.
-    // props.storeDownloads([])
+    // storeDownloads([])
 
     // Set setIsInstallingLanguageInstance redux variable to true so that the app knows to switch to the loading screen.
-    props.setIsInstallingLanguageInstance(true)
+    setIsInstallingLanguageInstance(true)
 
     // Even though we're not fetching any Firebase data here, set this variable to true anyways just to allow the user to cancel the update if they want.
-    props.setHasFetchedLanguageData(true)
+    setHasFetchedLanguageData(true)
 
     // Update the language core files.
-    props.updateLanguageCoreFiles()
+    updateLanguageCoreFiles()
   }
 
   //+ RENDER
@@ -89,21 +120,21 @@ function WahaDrawer ({
       >
         <ScrollView bounces={false} style={{ flex: 1 }}>
           {/* Show an update button if we have any core files to update. */}
-          {props.languageCoreFilesToUpdate.length !== 0 ? (
+          {languageCoreFilesToUpdate.length !== 0 ? (
             <WahaButton
-              type={props.isConnected ? 'filled' : 'inactive'}
-              color={props.isConnected ? colors.apple : colors.geyser}
+              type={isConnected ? 'filled' : 'inactive'}
+              color={isConnected ? colors.apple : colors.geyser}
               onPress={() => {
                 Alert.alert(
                   'A new update is available to download.',
                   'Would you like to download it now?',
                   [
                     {
-                      text: props.translations.general.cancel,
+                      text: translations.general.cancel,
                       onPress: () => {}
                     },
                     {
-                      text: props.translations.general.ok,
+                      text: translations.general.ok,
                       onPress: onUpdatePress
                     }
                   ]
@@ -111,7 +142,7 @@ function WahaDrawer ({
               }}
               label='Download Update'
               extraComponent={
-                props.isConnected ? (
+                isConnected ? (
                   <View
                     style={{
                       width: 50 * scaleMultiplier,
@@ -139,18 +170,18 @@ function WahaDrawer ({
                 marginTop: 5,
                 marginBottom: 0,
                 height: 50 * scaleMultiplier,
-                flexDirection: props.isRTL ? 'row' : 'row-reverse',
+                flexDirection: isRTL ? 'row' : 'row-reverse',
                 justifyContent: 'flex-end',
                 paddingHorizontal: 5
               }}
               textStyle={[
                 { paddingHorizontal: 10 },
                 StandardTypography(
-                  props,
+                  { font, isRTL },
                   'h3',
                   'Bold',
                   'center',
-                  props.isConnected ? colors.white : colors.chateau
+                  isConnected ? colors.white : colors.chateau
                 )
               ]}
             />
@@ -193,17 +224,17 @@ function WahaDrawer ({
                 'https://kingdomstrategies.givingfuel.com/general-giving'
               )
             }
-            text={props.translations.general.donate_to_waha}
+            text={translations.general.donate_to_waha}
           />
           <DrawerItem
             iconName='info'
             onPress={() => openBrowser('https://waha.app/privacy-policy/')}
-            text={props.translations.general.privacy}
+            text={translations.general.privacy}
           />
           <View style={{ width: '100%', height: 5 }} />
           <Text
             style={StandardTypography(
-              props,
+              { font, isRTL },
               'd',
               'Regular',
               'center',
@@ -307,31 +338,5 @@ const styles = StyleSheet.create({
 })
 
 //+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    primaryColor: state.database[activeGroup.language].primaryColor,
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup,
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language),
-    isConnected: state.network.isConnected,
-    languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    updateLanguageCoreFiles: () => dispatch(updateLanguageCoreFiles()),
-    setIsInstallingLanguageInstance: toSet =>
-      dispatch(setIsInstallingLanguageInstance(toSet)),
-    storeDownloads: downloads => dispatch(storeDownloads(downloads)),
-    setHasFetchedLanguageData: hasFetchedLanguageData =>
-      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(WahaDrawer)

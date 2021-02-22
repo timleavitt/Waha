@@ -10,22 +10,22 @@ import {
  * @param {number} downloads[lessonID].progress - The progress of this lesson's download from 0 to 1.
  * @param {Object} downloads[lessonID].resumable - The resumable object for this lesson's download saved from the expo download object. This is stored so that we can "cancel" the download later. In this case, cancelling means pausing the download and never resuming it since expo doesn't have a cancel download function.
  */
-export function downloads (state = {}, action) {
-  switch (action.type) {
+export function downloads (state = {}, params) {
+  switch (params.type) {
     /**
      * Adds or updates the progress for a download in the downloads state. The reason these are grouped into one is because the functionality is the same. If the lesson ID is found in the object, it replaces it (updates it). If it's not, it adds it.
      */
     case ADD_UPDATE_DOWNLOAD:
       return {
         ...state,
-        [action.lessonID]: {
-          progress: action.progress,
-          resumable: action.resumable
+        [params.lessonID]: {
+          progress: params.progress,
+          resumable: params.resumable
         }
       }
     case REMOVE_DOWNLOAD:
       // get the key of the download we want to delete
-      var idToDelete = action.lessonID
+      var idToDelete = params.lessonID
 
       // filters the key that should be deleted, then builds a new object from the remaining keys and the initial object
       return Object.keys(state)

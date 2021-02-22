@@ -52,6 +52,8 @@ function LanguageInstanceInstallScreen ({
     }
   },
   // Props passed from redux.
+  groups,
+  database,
   downloadLanguageCoreFiles,
   storeLanguageData,
   setIsInstallingLanguageInstance,
@@ -59,9 +61,7 @@ function LanguageInstanceInstallScreen ({
   setHasFetchedLanguageData,
   storeLanguageSets,
   deleteLanguageData,
-  deleteGroup,
-  groups,
-  database
+  deleteGroup
 }) {
   //+ STATE
 
@@ -92,7 +92,7 @@ function LanguageInstanceInstallScreen ({
     setOptions(getNavOptions())
 
     // Clear out the database and downloaded files in case we somehow come back to the Language Select screen after installing anything.
-    if (props.route.name === 'LanguageSelect') {
+    if (routeName === 'LanguageSelect') {
       FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
         contents => {
           console.log('Files:')
@@ -100,17 +100,17 @@ function LanguageInstanceInstallScreen ({
         }
       )
 
-      console.log(`Groups: ${props.groups ? props.groups : null}`)
+      console.log(`Groups: ${groups ? groups : null}`)
 
       console.log(
-        `Languages in DB: ${Object.keys(props.database).filter(
+        `Languages in DB: ${Object.keys(database).filter(
           key => key.length === 2
         )}`
       )
 
-      // Object.keys(props.database).forEach(key => {
+      // Object.keys(database).forEach(key => {
       //   if (key.length === 2) {
-      //     props.deleteLanguageData(key)
+      //     deleteLanguageData(key)
       //     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       //       contents => {
       //         for (const item of contents) {
@@ -144,7 +144,7 @@ function LanguageInstanceInstallScreen ({
   //+ FUNCTIONS
 
   async function fetchFirebaseData () {
-    // props.storeDownloads([])
+    // storeDownloads([])
     setIsInstallingLanguageInstance(true)
     //- get sets first
 

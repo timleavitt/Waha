@@ -297,6 +297,7 @@ export function downloadLanguageCoreFiles (language) {
       .then(() => {
         // Once all the downloads have finished...
         if (totalDownloaded === getState().database[language].files.length) {
+          console.log('beep')
           // Log the language install in firebase for firebase analytics.
           logInstallLanguage(language, i18n.locale)
 

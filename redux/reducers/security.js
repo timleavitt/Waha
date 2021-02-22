@@ -30,44 +30,44 @@ export function security (
     isTimedOut: false,
     mtUnlockTimeout: 0
   },
-  action
+  params
 ) {
-  switch (action.type) {
+  switch (params.type) {
     case SET_SECURITY_ENABLED:
       return {
         ...state,
-        securityEnabled: action.toSet
+        securityEnabled: params.toSet
       }
 
     case SET_CODE:
       return {
         ...state,
-        code: action.code
+        code: params.code
       }
     case SET_IS_MUTED:
       return {
         ...state,
-        isMuted: action.toSet
+        isMuted: params.toSet
       }
     case SET_TIMEOUT_DURATION:
       return {
         ...state,
-        timeoutDuration: action.ms
+        timeoutDuration: params.ms
       }
     case SET_TIMER:
       return {
         ...state,
-        timer: action.ms
+        timer: params.ms
       }
     case SET_IS_TIMED_OUT:
       return {
         ...state,
-        isTimedOut: action.toSet
+        isTimedOut: params.toSet
       }
     case SET_MT_UNLOCK_TIMEOUT:
       return {
         ...state,
-        mtUnlockTimeout: action.time
+        mtUnlockTimeout: params.time
       }
     default:
       return state

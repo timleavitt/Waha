@@ -44,6 +44,7 @@ function MainStack ({
   font,
   activeGroup,
   security,
+  languageCoreFilesToUpdate,
   setTimer,
   setIsTimedOut
 }) {
@@ -143,7 +144,7 @@ function MainStack ({
                     onPress={() => toggleDrawer()}
                     isActive={true}
                   />
-                  {props.languageCoreFilesToUpdate.length !== 0 ? (
+                  {languageCoreFilesToUpdate.length !== 0 ? (
                     // <View
                     //   style={{
                     //     width: '100%',
@@ -185,7 +186,7 @@ function MainStack ({
                     onPress={() => toggleDrawer()}
                     isActive={true}
                   />
-                  {props.languageCoreFilesToUpdate.length !== 0 ? (
+                  {languageCoreFilesToUpdate.length !== 0 ? (
                     // <View
                     //   style={{
                     //     width: '100%',
