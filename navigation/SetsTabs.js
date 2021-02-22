@@ -12,7 +12,7 @@ const Tab = createMaterialTopTabNavigator()
 /**
  * This component renders the tab navigator that is used to display the 3 differnet Story Set tabs.
  */
-function StorySetTabs ({
+function SetsTabs ({
   // Props passed from redux.
   activeGroup,
   translations,
@@ -125,4 +125,4 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(StorySetTabs)
+export default connect(mapStateToProps)(SetsTabs)

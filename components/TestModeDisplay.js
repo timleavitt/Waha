@@ -6,7 +6,7 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, SystemTypography } from '../styles/typography'
 
 /**
- * This component displays some simple text that says "TEST MODE" whenever any of the modes in modeSwitch.js are set to "test". This is displayed in the corner on the opposite side of the group avatar on the StorySetTabs screen.
+ * This component displays some simple text that says "TEST MODE" whenever any of the modes in modeSwitch.js are set to "test". This is displayed in the corner on the opposite side of the group avatar on the SetsTabs screen.
  */
 function TestModeDisplay ({
   // Props passed from redux.

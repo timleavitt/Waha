@@ -58,7 +58,7 @@ function PianoAppScreen ({
       } else
         reset({
           index: 0,
-          routes: [{ name: 'StorySetTabs' }]
+          routes: [{ name: 'SetsTabs' }]
         })
     }
   }, [pattern])

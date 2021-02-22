@@ -18,7 +18,7 @@ In the descriptions below, navigators are **`bolded`** and any other files/scree
     - **`MainDrawer`**: This is normal navigator that the user will use 90% of the time. It acts as a parent navigator to the **`MainStack`** navigator, basically just adding a drawer around it. Any logic related to things that happen when the app isn't installing a language instance or on the first open is included in this file since it's higher level than **`MainStack`**. It renders the navigation drawer in combination with **`MainStack`**.
       - `WahaDrawer`: This is the component for the navigation drawer. It gets rendered as a prop in the `Drawer.Navigator` component.
       - **`MainStack`**: This is the main stack navigator that contains every other screen in Waha. 
-        - **`StorySetTabs`**: This is the tab navigator that contains the 3 different `SetsScreen`'s. There's one for each category of Story Set: Foundational, Topical, and Mobilization Tools.
+        - **`SetsTabs`**: This is the tab navigator that contains the 3 different `SetsScreen`'s. There's one for each category of Story Set: Foundational, Topical, and Mobilization Tools.
           - `Foundational`: This uses the `SetsScreen` component and shows all the added Story Sets of the Foundational category.
           - `Topical`: This uses the `SetsScreen` component and shows all the added Story Sets of the Topical category.
           - `MobilizationTools`: This uses the `SetsScreen` component and shows all the added Mobilization Tools sets.

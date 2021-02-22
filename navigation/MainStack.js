@@ -7,7 +7,7 @@ import ScreenHeaderImage from '../components/ScreenHeaderImage'
 import BackButton from '../components/standard/BackButton'
 import TestModeDisplay from '../components/TestModeDisplay'
 import { scaleMultiplier } from '../constants'
-import StorySetTabs from '../navigation/StorySetTabs'
+import SetsTabs from '../navigation/SetsTabs'
 import { setIsTimedOut, setTimer } from '../redux/actions/securityActions'
 import AddSetScreen from '../screens/AddSetScreen'
 import GroupsScreen from '../screens/GroupsScreen'
@@ -110,8 +110,8 @@ function MainStack ({
 
   return (
     <Stack.Navigator
-      // Set the initial screen based on whether security is enabled or not. If it is, our initial screen should be the pianp app. Otherwise, it should be the StorySetTabs.
-      initialRouteName={security.securityEnabled ? 'PianoApp' : 'StorySetTabs'}
+      // Set the initial screen based on whether security is enabled or not. If it is, our initial screen should be the pianp app. Otherwise, it should be the SetsTabs.
+      initialRouteName={security.securityEnabled ? 'PianoApp' : 'SetsTabs'}
       screenOptions={{
         // The drawer must open from the opposite side if the active group's language is RTL.
         gestureDirection: isRTL ? 'horizontal-inverted' : 'horizontal',
@@ -124,8 +124,8 @@ function MainStack ({
       mode='card'
     >
       <Stack.Screen
-        name='StorySetTabs'
-        component={StorySetTabs}
+        name='SetsTabs'
+        component={SetsTabs}
         options={{
           headerStyle: {
             backgroundColor: colors.aquaHaze,
