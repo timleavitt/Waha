@@ -18,6 +18,34 @@ import { toggleComplete } from '../redux/actions/groupsActions'
 import { colors } from '../styles/colors'
 import { getLanguageFont } from '../styles/typography'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    downloads: state.downloads,
+    isRTL: state.database[activeGroup.language].isRTL,
+    activeDatabase: state.database[activeGroup.language],
+    activeGroup: activeGroup,
+    translations: state.database[activeGroup.language].translations,
+    font: getLanguageFont(activeGroup.language)
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    downloadMedia: (type, lessonID, source) => {
+      dispatch(downloadMedia(type, lessonID, source))
+    },
+    toggleComplete: (groupName, set, lessonIndex) => {
+      dispatch(toggleComplete(groupName, set, lessonIndex))
+    },
+    removeDownload: lessonID => {
+      dispatch(removeDownload(lessonID))
+    }
+  }
+}
+
 function LessonsScreen ({
   // Props passed from navigation.
   navigation: { goBack, setOptions, navigate },
@@ -448,35 +476,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    downloads: state.downloads,
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeDatabase: state.database[activeGroup.language],
-    activeGroup: activeGroup,
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language)
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    downloadMedia: (type, lessonID, source) => {
-      dispatch(downloadMedia(type, lessonID, source))
-    },
-    toggleComplete: (groupName, set, lessonIndex) => {
-      dispatch(toggleComplete(groupName, set, lessonIndex))
-    },
-    removeDownload: lessonID => {
-      dispatch(removeDownload(lessonID))
-    }
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(LessonsScreen)

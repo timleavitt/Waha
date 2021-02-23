@@ -9,6 +9,20 @@ import { getLanguageFont } from '../styles/typography'
 // Create the top tab navigator.
 const Tab = createMaterialTopTabNavigator()
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    isRTL: state.database[activeGroup.language].isRTL,
+    translations: state.database[activeGroup.language].translations,
+    font: getLanguageFont(activeGroup.language),
+    primaryColor: state.database[activeGroup.language].primaryColor,
+    activeGroup: activeGroup,
+    activeDatabase: state.database[activeGroup.language]
+  }
+}
+
 /**
  * This component renders the tab navigator that is used to display the 3 differnet Story Set tabs.
  */
@@ -109,20 +123,6 @@ function SetsTabs ({
       {isRTL ? FoundationalScreen : MobilizationToolsScreen}
     </Tab.Navigator>
   )
-}
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language),
-    primaryColor: state.database[activeGroup.language].primaryColor,
-    activeGroup: activeGroup,
-    activeDatabase: state.database[activeGroup.language]
-  }
 }
 
 export default connect(mapStateToProps)(SetsTabs)

@@ -4,6 +4,17 @@ import { connect } from 'react-redux'
 import ChapterButton from './ChapterButton'
 import ChapterSeparator from './ChapterSeparator'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    primaryColor: state.database[activeGroup.language].primaryColor,
+    downloads: state.downloads,
+    isConnected: state.network.isConnected
+  }
+}
+
 function ChapterSelector ({
   // Props passed from a parent component.
   activeChapter,
@@ -118,18 +129,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   }
 })
-
-// REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    primaryColor: state.database[activeGroup.language].primaryColor,
-    downloads: state.downloads,
-    isConnected: state.network.isConnected
-  }
-}
 
 export default connect(mapStateToProps)(ChapterSelector)

@@ -1,4 +1,3 @@
-//imports
 import React, { useEffect } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
@@ -7,6 +6,29 @@ import { removeDownload } from '../../redux/actions/downloadActions'
 import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 import DownloadStatusIndicator from '../DownloadStatusIndicator'
+
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    primaryColor: state.database[activeGroup.language].primaryColor,
+    isRTL: state.database[activeGroup.language].isRTL,
+    activeGroup: activeGroup,
+    downloads: state.downloads,
+    translations: state.database[activeGroup.language].translations,
+    isConnected: state.network.isConnected,
+    font: getLanguageFont(activeGroup.language)
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    removeDownload: lessonID => {
+      dispatch(removeDownload(lessonID))
+    }
+  }
+}
 
 function LessonItem ({
   // Props passed from a parent component.
@@ -184,30 +206,5 @@ const styles = StyleSheet.create({
     width: 24 * scaleMultiplier
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    primaryColor: state.database[activeGroup.language].primaryColor,
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup,
-    downloads: state.downloads,
-    translations: state.database[activeGroup.language].translations,
-    isConnected: state.network.isConnected,
-    font: getLanguageFont(activeGroup.language)
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    removeDownload: lessonID => {
-      dispatch(removeDownload(lessonID))
-    }
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(LessonItem)

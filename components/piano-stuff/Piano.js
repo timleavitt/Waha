@@ -6,6 +6,17 @@ import { colors, keyColors } from '../../styles/colors'
 import { getLanguageFont } from '../../styles/typography'
 import KeyLabel from '../piano-stuff/KeyLabel'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    isRTL: state.database[activeGroup.language].isRTL,
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup
+  }
+}
+
 function Piano ({
   // Props passed from a parent component.
   setPattern,
@@ -256,18 +267,5 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
-  }
-}
 
 export default connect(mapStateToProps)(Piano)

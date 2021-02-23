@@ -6,6 +6,21 @@ import { scaleMultiplier } from '../constants'
 import { removeDownload } from '../redux/actions/downloadActions'
 import { colors } from '../styles/colors'
 
+function mapStateToProps (state) {
+  return {
+    isConnected: state.network.isConnected,
+    downloads: state.downloads
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    removeDownload: lessonID => {
+      dispatch(removeDownload(lessonID))
+    }
+  }
+}
+
 // renders the icon on the right side of lesson item that shows the download
 //  status
 function DownloadStatusIndicator ({
@@ -146,23 +161,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  return {
-    isConnected: state.network.isConnected,
-    downloads: state.downloads
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    removeDownload: lessonID => {
-      dispatch(removeDownload(lessonID))
-    }
-  }
-}
 
 export default connect(
   mapStateToProps,

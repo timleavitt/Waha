@@ -6,6 +6,36 @@ import LoadingScreen from '../screens/LoadingScreen'
 import MainDrawer from './MainDrawer'
 import Onboarding from './Onboarding'
 
+function mapStateToProps (state) {
+  if (state.activeGroup)
+    return {
+      hasOnboarded: state.database.hasOnboarded,
+      hasInstalledFirstLanguageInstance:
+        state.database.hasInstalledFirstLanguageInstance,
+      isInstallingLanguageInstance: state.isInstallingLanguageInstance,
+      activeGroup: state.activeGroup,
+      groups: state.groups,
+      database: state.database
+    }
+  else
+    return {
+      hasOnboarded: state.database.hasOnboarded,
+      hasInstalledFirstLanguageInstance:
+        state.database.hasInstalledFirstLanguageInstance,
+      isInstallingLanguageInstance: state.isInstallingLanguageInstance
+    }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    changeActiveGroup: name => {
+      dispatch(changeActiveGroup(name))
+    },
+    createGroup: (groupName, language, emoji) =>
+      dispatch(createGroup(groupName, language, emoji))
+  }
+}
+
 /**
  * This component renders a navigator conditionally based on state. It's the first thing rendered in App.js.
  */
@@ -20,9 +50,6 @@ function Root ({
   changeActiveGroup,
   createGroup
 }) {
-  console.log(
-    `hasOnboarded: ${hasOnboarded}\nhasInstalledFirstLanguageInstance: ${hasInstalledFirstLanguageInstance}\nisInstallingLanguageInstance: ${isInstallingLanguageInstance}\n`
-  )
   // Below are some failsafes to keep the app functioning in case of group errors.
   if (activeGroup) {
     // If somehow, every group got deleted, create a new group in one of the installed languages so that the app can still function.
@@ -60,36 +87,6 @@ function Root ({
     return <Onboarding />
   } else {
     return <LoadingScreen />
-  }
-}
-
-function mapStateToProps (state) {
-  if (state.activeGroup)
-    return {
-      hasOnboarded: state.database.hasOnboarded,
-      hasInstalledFirstLanguageInstance:
-        state.database.hasInstalledFirstLanguageInstance,
-      isInstallingLanguageInstance: state.isInstallingLanguageInstance,
-      activeGroup: state.activeGroup,
-      groups: state.groups,
-      database: state.database
-    }
-  else
-    return {
-      hasOnboarded: state.database.hasOnboarded,
-      hasInstalledFirstLanguageInstance:
-        state.database.hasInstalledFirstLanguageInstance,
-      isInstallingLanguageInstance: state.isInstallingLanguageInstance
-    }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    changeActiveGroup: name => {
-      dispatch(changeActiveGroup(name))
-    },
-    createGroup: (groupName, language, emoji) =>
-      dispatch(createGroup(groupName, language, emoji))
   }
 }
 

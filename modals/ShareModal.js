@@ -8,6 +8,17 @@ import Separator from '../components/standard/Separator'
 import { logShareApp, logShareAudio, logShareText } from '../LogEventFunctions'
 import OptionsModal from './OptionsModal'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    translations: state.database[activeGroup.language].translations,
+    downloads: state.downloads,
+    activeGroup: activeGroup
+  }
+}
+
 function ShareModal ({
   // Props passed from a parent component.s
   isVisible,
@@ -18,7 +29,8 @@ function ShareModal ({
   set,
   // Props passed from redux.
   translations,
-  downloads
+  downloads,
+  activeGroup
 }) {
   // opens the share sheet to share a chapter of a lesson
   function share (type) {
@@ -123,17 +135,6 @@ function ShareModal ({
       ) : null}
     </OptionsModal>
   )
-}
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    translations: state.database[activeGroup.language].translations,
-    downloads: state.downloads,
-    activeGroup: activeGroup
-  }
 }
 
 export default connect(mapStateToProps)(ShareModal)

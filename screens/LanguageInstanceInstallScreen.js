@@ -1,6 +1,5 @@
 import NetInfo from '@react-native-community/netinfo'
 import { Audio } from 'expo-av'
-import * as FileSystem from 'expo-file-system'
 import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
@@ -39,6 +38,32 @@ import en from '../translations/en.json'
 i18n.translations = {
   en,
   ar
+}
+
+function mapStateToProps (state) {
+  return {
+    groups: state.groups,
+    database: state.database
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    downloadLanguageCoreFiles: languageInstanceID =>
+      dispatch(downloadLanguageCoreFiles(languageInstanceID)),
+    storeLanguageData: (data, languageInstanceID) =>
+      dispatch(storeLanguageData(data, languageInstanceID)),
+    setIsInstallingLanguageInstance: toSet =>
+      dispatch(setIsInstallingLanguageInstance(toSet)),
+    storeDownloads: downloads => dispatch(storeDownloads(downloads)),
+    setHasFetchedLanguageData: hasFetchedLanguageData =>
+      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData)),
+    storeLanguageSets: (sets, languageInstanceID) =>
+      dispatch(storeLanguageSets(sets, languageInstanceID)),
+    deleteLanguageData: languageInstanceID =>
+      dispatch(deleteLanguageData(languageInstanceID)),
+    deleteGroup: groupName => dispatch(deleteGroup(groupName))
+  }
 }
 
 function LanguageInstanceInstallScreen ({
@@ -93,21 +118,18 @@ function LanguageInstanceInstallScreen ({
 
     // Clear out the database and downloaded files in case we somehow come back to the Language Select screen after installing anything.
     if (routeName === 'LanguageSelect') {
-      FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-        contents => {
-          console.log('Files:')
-          console.log(contents)
-        }
-      )
-
-      console.log(`Groups: ${groups ? groups : null}`)
-
-      console.log(
-        `Languages in DB: ${Object.keys(database).filter(
-          key => key.length === 2
-        )}`
-      )
-
+      // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+      //   contents => {
+      //     console.log('Files:')
+      //     console.log(contents)
+      //   }
+      // )
+      // console.log(`Groups: ${groups ? groups : null}`)
+      // console.log(
+      //   `Languages in DB: ${Object.keys(database).filter(
+      //     key => key.length === 2
+      //   )}`
+      // )
       // Object.keys(database).forEach(key => {
       //   if (key.length === 2) {
       //     deleteLanguageData(key)
@@ -467,34 +489,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  return {
-    database: state.database,
-    groups: state.groups
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    downloadLanguageCoreFiles: languageInstanceID =>
-      dispatch(downloadLanguageCoreFiles(languageInstanceID)),
-    storeLanguageData: (data, languageInstanceID) =>
-      dispatch(storeLanguageData(data, languageInstanceID)),
-    deleteLanguageData: languageInstanceID =>
-      dispatch(deleteLanguageData(languageInstanceID)),
-    storeLanguageSets: (sets, languageInstanceID) =>
-      dispatch(storeLanguageSets(sets, languageInstanceID)),
-    setIsInstallingLanguageInstance: toSet =>
-      dispatch(setIsInstallingLanguageInstance(toSet)),
-    storeDownloads: downloads => dispatch(storeDownloads(downloads)),
-    setHasFetchedLanguageData: hasFetchedLanguageData =>
-      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData)),
-    deleteGroup: groupName => dispatch(deleteGroup(groupName))
-  }
-}
 
 export default connect(
   mapStateToProps,

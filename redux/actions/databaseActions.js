@@ -297,7 +297,6 @@ export function downloadLanguageCoreFiles (language) {
       .then(() => {
         // Once all the downloads have finished...
         if (totalDownloaded === getState().database[language].files.length) {
-          console.log('beep')
           // Log the language install in firebase for firebase analytics.
           logInstallLanguage(language, i18n.locale)
 
@@ -341,11 +340,7 @@ export function downloadLanguageCoreFiles (language) {
           dispatch(storeDownloads([]))
 
           // Set the setTotalLanguageCoreFilesToDownload to the number of files to download for this language. I think this is only here to avoid divide-by-zero erros but I'm not sure. I'm just too scared to delete it.
-          dispatch(
-            setTotalLanguageCoreFilesToDownload(
-              getState().database[language].files.length
-            )
-          )
+          dispatch(setTotalLanguageCoreFilesToDownload(1))
         }
       })
       .catch(error => {})

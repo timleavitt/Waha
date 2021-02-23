@@ -31,6 +31,52 @@ i18n.translations = {
   ar
 }
 
+function mapStateToProps (state) {
+  var activeGroup = state.activeGroup
+    ? state.groups.filter(item => item.name === state.activeGroup)[0]
+    : null
+  return {
+    languageCoreFilesDownloadProgress:
+      state.database.languageCoreFilesDownloadProgress,
+    totalLanguageCoreFilesToDownload:
+      state.database.totalLanguageCoreFilesToDownload,
+    hasInstalledFirstLanguageInstance:
+      state.database.hasInstalledFirstLanguageInstance,
+    storedDownloads: state.storedDownloads,
+    database: state.database,
+    hasFetchedLanguageData: state.database.hasFetchedLanguageData,
+    actingLanguageID: state.database.actingLanguageID,
+    activeGroup: activeGroup,
+    groups: state.groups
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    setIsInstallingLanguageInstance: status => {
+      dispatch(setIsInstallingLanguageInstance(status))
+    },
+    setHasOnboarded: status => {
+      dispatch(setHasOnboarded(status))
+    },
+    setTotalLanguageCoreFilesToDownload: totalLanguageCoreFilesToDownload => {
+      dispatch(
+        setTotalLanguageCoreFilesToDownload(totalLanguageCoreFilesToDownload)
+      )
+    },
+    setLanguageCoreFilesDownloadProgress: progress => {
+      dispatch(setLanguageCoreFilesDownloadProgress(progress))
+    },
+    setHasFetchedLanguageData: hasFetchedLanguageData => {
+      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
+    },
+    deleteLanguageData: language => {
+      dispatch(deleteLanguageData(language))
+    },
+    deleteGroup: groupName => dispatch(deleteGroup(groupName))
+  }
+}
+
 function LoadingScreen ({
   navigation,
   // Props passed from redux.
@@ -47,7 +93,9 @@ function LoadingScreen ({
   setHasOnboarded,
   setTotalLanguageCoreFilesToDownload,
   setLanguageCoreFilesDownloadProgress,
-  setHasFetchedLanguageData
+  setHasFetchedLanguageData,
+  deleteLanguageData,
+  deleteGroup
 }) {
   const [isConnected, setIsConnected] = useState(true)
 
@@ -63,7 +111,7 @@ function LoadingScreen ({
 
   function cancelDownloads () {
     setLanguageCoreFilesDownloadProgress(0)
-    setTotalLanguageCoreFilesToDownload(0)
+    setTotalLanguageCoreFilesToDownload(1)
     setIsInstallingLanguageInstance(false)
     setHasFetchedLanguageData(false)
 
@@ -76,8 +124,10 @@ function LoadingScreen ({
       })
     }
     storedDownloads.forEach(download => {
-      download.pauseAsync().catch(() => console.log('error pausing download'))
+      download.pauseAsync().catch(() => console.log('Error pausing a download'))
     })
+
+    console.log(actingLanguageID)
 
     if (
       actingLanguageID !== null &&
@@ -257,51 +307,5 @@ const styles = StyleSheet.create({
     borderRadius: 10
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.activeGroup
-    ? state.groups.filter(item => item.name === state.activeGroup)[0]
-    : null
-  return {
-    languageCoreFilesDownloadProgress:
-      state.database.languageCoreFilesDownloadProgress,
-    totalLanguageCoreFilesToDownload:
-      state.database.totalLanguageCoreFilesToDownload,
-    hasInstalledFirstLanguageInstance:
-      state.database.hasInstalledFirstLanguageInstance,
-    storedDownloads: state.storedDownloads,
-    database: state.database,
-    hasFetchedLanguageData: state.database.hasFetchedLanguageData,
-    actingLanguageID: state.database.actingLanguageID,
-    activeGroup: activeGroup,
-    groups: state.groups
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    setIsInstallingLanguageInstance: status => {
-      dispatch(setIsInstallingLanguageInstance(status))
-    },
-    setHasOnboarded: status => {
-      dispatch(setHasOnboarded(status))
-    },
-    setTotalLanguageCoreFilesToDownload: totalLanguageCoreFilesToDownload => {
-      dispatch(
-        setTotalLanguageCoreFilesToDownload(totalLanguageCoreFilesToDownload)
-      )
-    },
-    setLanguageCoreFilesDownloadProgress: progress => {
-      dispatch(setLanguageCoreFilesDownloadProgress(progress))
-    },
-    setHasFetchedLanguageData: hasFetchedLanguageData => {
-      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
-    },
-    deleteLanguageData: language => {
-      dispatch(deleteLanguageData(language))
-    },
-    deleteGroup: groupName => dispatch(deleteGroup(groupName))
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoadingScreen)

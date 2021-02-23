@@ -5,6 +5,16 @@ import { scaleMultiplier } from '../../constants'
 import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    font: getLanguageFont(activeGroup.language),
+    isRTL: state.database[activeGroup.language].isRTL
+  }
+}
+
 function Blurb ({
   // Props passed from a parent component.
   text,
@@ -27,16 +37,6 @@ function Blurb ({
       </Text>
     </View>
   )
-}
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    font: getLanguageFont(activeGroup.language),
-    isRTL: state.database[activeGroup.language].isRTL
-  }
 }
 
 export default connect(mapStateToProps)(Blurb)

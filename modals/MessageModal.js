@@ -6,6 +6,17 @@ import { scaleMultiplier } from '../constants'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup,
+    isRTL: state.database[activeGroup.language].isRTL
+  }
+}
+
 // modal variant that shows some information
 function MessageModal ({
   // Props passed from a parent component.s
@@ -125,16 +136,5 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup,
-    isRTL: state.database[activeGroup.language].isRTL
-  }
-}
 
 export default connect(mapStateToProps)(MessageModal)

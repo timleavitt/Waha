@@ -16,6 +16,21 @@ import AddEditGroupModal from '../modals/AddEditGroupModal'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    database: state.database,
+    isRTL: state.database[activeGroup.language].isRTL,
+    translations: state.database[activeGroup.language].translations,
+    isConnected: state.network.isConnected,
+    font: getLanguageFont(activeGroup.language),
+    groups: state.groups,
+    activeGroup: activeGroup
+  }
+}
+
 function GroupsScreen ({
   // Props passed from navigation.
   navigation: { setOptions, goBack, navigate },
@@ -294,22 +309,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    database: state.database,
-    isRTL: state.database[activeGroup.language].isRTL,
-    translations: state.database[activeGroup.language].translations,
-    isConnected: state.network.isConnected,
-    font: getLanguageFont(activeGroup.language),
-    groups: state.groups,
-    activeGroup: activeGroup
-  }
-}
 
 export default connect(mapStateToProps)(GroupsScreen)

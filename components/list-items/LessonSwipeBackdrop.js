@@ -4,6 +4,15 @@ import { connect } from 'react-redux'
 import { scaleMultiplier } from '../../constants'
 import { colors } from '../../styles/colors'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    isRTL: state.database[activeGroup.language].isRTL
+  }
+}
+
 // component rendered behind a lesson item that shows the swipe options
 
 function LessonSwipeBackdrop ({
@@ -96,14 +105,5 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    isRTL: state.database[activeGroup.language].isRTL
-  }
-}
 
 export default connect(mapStateToProps)(LessonSwipeBackdrop)

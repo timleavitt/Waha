@@ -13,6 +13,34 @@ import {
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    activeDatabase: state.database[activeGroup.language],
+    isRTL: state.database[activeGroup.language].isRTL,
+    translations: state.database[activeGroup.language].translations,
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup,
+    security: state.security,
+    mtUnlockAttempts: state.mtUnlockAttempts
+  }
+}
+function mapDispatchToProps (dispatch) {
+  return {
+    setAreMobilizationToolsUnlocked: toSet => {
+      dispatch(setAreMobilizationToolsUnlocked(toSet))
+    },
+    setMTUnlockTimeout: time => {
+      dispatch(setMTUnlockTimeout(time))
+    },
+    setMTUnlockAttempts: numAttempts => {
+      dispatch(setMTUnlockAttempts(numAttempts))
+    }
+  }
+}
+
 function MobilizationToolsUnlockScreen ({
   // Props passed from navigation.
   navigation: { setOptions, goBack },
@@ -187,36 +215,6 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    activeDatabase: state.database[activeGroup.language],
-    isRTL: state.database[activeGroup.language].isRTL,
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup,
-    security: state.security,
-    mtUnlockAttempts: state.mtUnlockAttempts
-  }
-}
-function mapDispatchToProps (dispatch) {
-  return {
-    setAreMobilizationToolsUnlocked: toSet => {
-      dispatch(setAreMobilizationToolsUnlocked(toSet))
-    },
-    setMTUnlockTimeout: time => {
-      dispatch(setMTUnlockTimeout(time))
-    },
-    setMTUnlockAttempts: numAttempts => {
-      dispatch(setMTUnlockAttempts(numAttempts))
-    }
-  }
-}
 
 export default connect(
   mapStateToProps,

@@ -4,6 +4,15 @@ import { connect } from 'react-redux'
 import { scaleMultiplier } from '../../constants'
 import { colors } from '../../styles/colors'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    isRTL: state.database[activeGroup.language].isRTL
+  }
+}
+
 // simple back button that is shown in almost every screen's header
 function BackButton ({
   // Props passed from a parent component.
@@ -39,16 +48,5 @@ const styles = StyleSheet.create({
     width: 100
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    isRTL: state.database[activeGroup.language].isRTL
-  }
-}
 
 export default connect(mapStateToProps)(BackButton)

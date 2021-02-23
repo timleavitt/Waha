@@ -10,6 +10,28 @@ import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 import SVG from '../SVG.js'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    isRTL: state.database[activeGroup.language].isRTL,
+    activeDatabase: state.database[activeGroup.language],
+    primaryColor: state.database[activeGroup.language].primaryColor,
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup,
+    translations: state.database[activeGroup.language].translations
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
+    }
+  }
+}
+
 function SetItem ({
   // Props passed from a parent component.
   mode,
@@ -388,29 +410,5 @@ const styles = StyleSheet.create({
     height: 30 * scaleMultiplier
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeDatabase: state.database[activeGroup.language],
-    primaryColor: state.database[activeGroup.language].primaryColor,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup,
-    translations: state.database[activeGroup.language].translations
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    addSet: (groupName, groupID, set) => {
-      dispatch(addSet(groupName, groupID, set))
-    }
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(SetItem)

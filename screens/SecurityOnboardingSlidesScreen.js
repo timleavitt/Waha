@@ -6,6 +6,18 @@ import BackButton from '../components/standard/BackButton'
 import { colors } from '../styles/colors'
 import { getLanguageFont } from '../styles/typography'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    translations: state.database[activeGroup.language].translations,
+    font: getLanguageFont(activeGroup.language),
+    isRTL: state.database[activeGroup.language].isRTL,
+    activeGroup: activeGroup
+  }
+}
+
 function SecurityOnboardingSlidesScreen ({
   // Props passed from navigation.
   navigation: { setOptions, navigate, goBack },
@@ -77,19 +89,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 })
-
-//+REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language),
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup
-  }
-}
 
 export default connect(mapStateToProps)(SecurityOnboardingSlidesScreen)

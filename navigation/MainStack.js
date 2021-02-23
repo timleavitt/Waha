@@ -32,6 +32,31 @@ LogBox.ignoreLogs(['Setting a timer'])
 // Create the stack navigator.
 const Stack = createStackNavigator()
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    isRTL: state.database[activeGroup.language].isRTL,
+    translations: state.database[activeGroup.language].translations,
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup,
+    security: state.security,
+    languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    setTimer: ms => {
+      dispatch(setTimer(ms))
+    },
+    setIsTimedOut: toSet => {
+      dispatch(setIsTimedOut(toSet))
+    }
+  }
+}
+
 /**
  * This component renders the main navigation stack used for almost all the screens in Waha. It also contains some logic related to things that happen globally in the background. The reason some logic would be here instead of in MainDrawer.js is because this component has access to the navigation prop.
  */
@@ -463,31 +488,6 @@ function MainStack ({
       /> */}
     </Stack.Navigator>
   )
-}
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup,
-    security: state.security,
-    languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    setTimer: ms => {
-      dispatch(setTimer(ms))
-    },
-    setIsTimedOut: toSet => {
-      dispatch(setIsTimedOut(toSet))
-    }
-  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainStack)

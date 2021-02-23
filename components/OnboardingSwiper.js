@@ -18,6 +18,17 @@ import {
 } from '../styles/typography'
 import WahaButton from './standard/WahaButton'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return activeGroup
+    ? {
+        font: getLanguageFont(activeGroup.language)
+      }
+    : {}
+}
+
 function OnboardingSwiper ({
   // Props passed from a parent component.
   isRTL,
@@ -238,16 +249,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 10
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return activeGroup
-    ? {
-        font: getLanguageFont(activeGroup.language)
-      }
-    : {}
-}
 
 export default connect(mapStateToProps)(OnboardingSwiper)

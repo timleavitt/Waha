@@ -14,6 +14,16 @@ i18n.translations = {
   ar
 }
 
+function mapStateToProps (state) {
+  return {}
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    setHasOnboarded: toSet => dispatch(setHasOnboarded(toSet))
+  }
+}
+
 function WahaOnboardingSlidesScreen ({
   // Props passed from navigation.
   navigation: { navigate },
@@ -76,18 +86,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 })
-
-//+REDUX
-
-function mapStateToProps (state) {
-  return {}
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    setHasOnboarded: toSet => dispatch(setHasOnboarded(toSet))
-  }
-}
 
 export default connect(
   mapStateToProps,

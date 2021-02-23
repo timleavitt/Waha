@@ -25,6 +25,34 @@ import {
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    groups: state.groups,
+    isRTL: state.database[activeGroup.language].isRTL,
+    translations: state.database[activeGroup.language].translations,
+    font: getLanguageFont(activeGroup.language),
+    activeGroup: activeGroup,
+    globalGroupCounter: state.database.globalGroupCounter
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    editGroup: (oldGroupName, newGroupName, emoji) =>
+      dispatch(editGroup(oldGroupName, newGroupName, emoji)),
+    createGroup: (groupName, language, emoji, groupID, groupNumber) =>
+      dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
+    changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName)),
+    resetProgress: name => {
+      dispatch(resetProgress(name))
+    },
+    incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter())
+  }
+}
+
 function AddEditGroupModal ({
   // Props passed from a parent component.
   isVisible,
@@ -38,6 +66,7 @@ function AddEditGroupModal ({
   translations,
   font,
   activeGroup,
+  globalGroupCounter,
   editGroup,
   createGroup,
   changeActiveGroup,
@@ -309,36 +338,6 @@ const styles = StyleSheet.create({
     fontSize: 18 * scaleMultiplier
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    groups: state.groups,
-    isRTL: state.database[activeGroup.language].isRTL,
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup,
-    globalGroupCounter: state.database.globalGroupCounter
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    editGroup: (oldGroupName, newGroupName, emoji) =>
-      dispatch(editGroup(oldGroupName, newGroupName, emoji)),
-    createGroup: (groupName, language, emoji, groupID, groupNumber) =>
-      dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
-    changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName)),
-    resetProgress: name => {
-      dispatch(resetProgress(name))
-    },
-    incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter())
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddEditGroupModal)
 

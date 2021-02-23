@@ -5,6 +5,17 @@ import { scaleMultiplier } from '../../constants'
 import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    font: getLanguageFont(activeGroup.language),
+    isRTL: state.database[activeGroup.language].isRTL,
+    activeGroup: activeGroup
+  }
+}
+
 function WahaItem ({
   // Props passed from a parent component.s
   onPress,
@@ -77,16 +88,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    font: getLanguageFont(activeGroup.language),
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup
-  }
-}
 
 export default connect(mapStateToProps)(WahaItem)

@@ -17,6 +17,26 @@ import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
+function mapStateToProps (state) {
+  var activeGroup = state.groups.filter(
+    item => item.name === state.activeGroup
+  )[0]
+  return {
+    translations: state.database[activeGroup.language].translations,
+    font: getLanguageFont(activeGroup.language),
+    security: state.security,
+    isRTL: state.database[activeGroup.language].isRTL,
+    activeGroup: activeGroup
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    setSecurityEnabled: toSet => dispatch(setSecurityEnabled(toSet)),
+    setCode: code => dispatch(setCode(code))
+  }
+}
+
 function KeyOrderSetScreen ({
   // Props passed from navigation.
   navigation: { setOptions, navigate, goBack },
@@ -216,25 +236,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around'
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language),
-    security: state.security,
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    setSecurityEnabled: toSet => dispatch(setSecurityEnabled(toSet)),
-    setCode: code => dispatch(setCode(code))
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(KeyOrderSetScreen)
