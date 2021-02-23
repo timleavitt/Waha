@@ -3,19 +3,20 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup,
-    primaryColor: state.database[activeGroup.language].primaryColor,
-    translations: state.database[activeGroup.language].translations,
-    isRTL: state.database[activeGroup.language].isRTL
+    font: getLanguageFont(activeGroupSelector(state).language),
+    activeGroup: activeGroupSelector(state),
+    primaryColor: activeDatabaseSelector(state).primaryColor,
+    translations: activeDatabaseSelector(state).translations,
+    isRTL: activeDatabaseSelector(state).isRTL
   }
 }
 

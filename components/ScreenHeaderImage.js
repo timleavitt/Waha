@@ -2,13 +2,11 @@ import * as FileSystem from 'expo-file-system'
 import React from 'react'
 import { Image } from 'react-native'
 import { connect } from 'react-redux'
+import { activeGroupSelector } from '../redux/reducers/activeGroup'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    activeGroup: activeGroup,
+    activeGroup: activeGroupSelector(state),
     database: state.database
   }
 }

@@ -3,20 +3,21 @@ import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../../constants'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../../redux/reducers/activeGroup'
 import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 import Separator from '../standard/Separator'
 import WahaButton from '../standard/WahaButton'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    font: getLanguageFont(activeGroup.language),
-    isRTL: state.database[activeGroup.language].isRTL,
-    translations: state.database[activeGroup.language].translations,
-    activeGroup: activeGroup
+    font: getLanguageFont(activeGroupSelector(state).language),
+    isRTL: activeDatabaseSelector(state).isRTL,
+    translations: activeDatabaseSelector(state).translations,
+    activeGroup: activeGroupSelector(state)
   }
 }
 

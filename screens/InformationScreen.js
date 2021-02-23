@@ -5,17 +5,18 @@ import { connect } from 'react-redux'
 import BackButton from '../components/standard/BackButton'
 import { scaleMultiplier } from '../constants'
 import { appVersion } from '../modeSwitch'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    font: getLanguageFont(activeGroup.language),
-    translations: state.database[activeGroup.language].translations
+    isRTL: activeDatabaseSelector(state).isRTL,
+    font: getLanguageFont(activeGroupSelector(state).language),
+    translations: activeDatabaseSelector(state).translations
   }
 }
 

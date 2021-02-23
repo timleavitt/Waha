@@ -18,13 +18,16 @@ export function activeGroup (state = null, params) {
  * Takes in state and returns an object for the active group.
  */
 export function activeGroupSelector (state) {
-  return state.groups.filter(item => item.name === state.activeGroup)[0]
+  var activeGroup = state.groups.filter(item => item.name === state.activeGroup)
+  return activeGroup.length !== 0 ? activeGroup[0] : null
 }
 
 /**
  * Takes in state and returns the language of the active group.
  */
-export function activeGroupLanguageSelector (state) {
-  return state.groups.filter(item => item.name === state.activeGroup)[0]
-    .language
+export function activeDatabaseSelector (state) {
+  var activeGroup = state.groups.filter(item => item.name === state.activeGroup)
+  return activeGroup.length !== 0
+    ? state.database[activeGroup[0].language]
+    : null
 }

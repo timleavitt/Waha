@@ -6,21 +6,22 @@ import Icon from '../../assets/fonts/icon_font_config'
 import { getSetInfo, itemHeights, scaleMultiplier } from '../../constants'
 import MessageModal from '../../modals/MessageModal'
 import { addSet } from '../../redux/actions/groupsActions'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../../redux/reducers/activeGroup'
 import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 import SVG from '../SVG.js'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeDatabase: state.database[activeGroup.language],
-    primaryColor: state.database[activeGroup.language].primaryColor,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup,
-    translations: state.database[activeGroup.language].translations
+    isRTL: activeDatabaseSelector(state).isRTL,
+    activeDatabase: activeDatabaseSelector(state),
+    primaryColor: activeDatabaseSelector(state).primaryColor,
+    font: getLanguageFont(activeGroupSelector(state).language),
+    activeGroup: activeGroupSelector(state),
+    translations: activeDatabaseSelector(state).translations
   }
 }
 

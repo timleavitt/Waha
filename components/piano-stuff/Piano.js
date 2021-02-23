@@ -2,18 +2,19 @@ import { Audio } from 'expo-av'
 import React from 'react'
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../../redux/reducers/activeGroup'
 import { colors, keyColors } from '../../styles/colors'
 import { getLanguageFont } from '../../styles/typography'
 import KeyLabel from '../piano-stuff/KeyLabel'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
+    isRTL: activeDatabaseSelector(state).isRTL,
+    font: getLanguageFont(activeGroupSelector(state).language),
+    activeGroup: activeGroupSelector(state)
   }
 }
 

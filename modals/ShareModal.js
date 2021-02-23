@@ -6,16 +6,17 @@ import { connect } from 'react-redux'
 import OptionsModalButton from '../components/OptionsModalButton'
 import Separator from '../components/standard/Separator'
 import { logShareApp, logShareAudio, logShareText } from '../LogEventFunctions'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
 import OptionsModal from './OptionsModal'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    translations: state.database[activeGroup.language].translations,
+    translations: activeDatabaseSelector(state).translations,
     downloads: state.downloads,
-    activeGroup: activeGroup
+    activeGroup: activeGroupSelector(state)
   }
 }
 

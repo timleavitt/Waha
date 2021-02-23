@@ -14,19 +14,20 @@ import BackButton from '../components/standard/BackButton'
 import WahaButton from '../components/standard/WahaButton'
 import { logEnableSecurityMode } from '../LogEventFunctions'
 import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language),
+    translations: activeDatabaseSelector(state).translations,
+    font: getLanguageFont(activeGroupSelector(state).language),
     security: state.security,
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup
+    isRTL: activeDatabaseSelector(state).isRTL,
+    activeGroup: activeGroupSelector(state)
   }
 }
 

@@ -10,6 +10,10 @@ import Separator from '../components/standard/Separator'
 import { getSetInfo, scaleMultiplier } from '../constants'
 import SetInfoModal from '../modals/SetInfoModal'
 import { addSet } from '../redux/actions/groupsActions'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
@@ -18,16 +22,13 @@ LogBox.ignoreLogs([
 ])
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    font: getLanguageFont(activeGroup.language),
-    translations: state.database[activeGroup.language].translations,
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeDatabase: state.database[activeGroup.language],
-    activeGroup: activeGroup,
-    primaryColor: state.database[activeGroup.language].primaryColor
+    font: getLanguageFont(activeGroupSelector(state).language),
+    translations: activeDatabaseSelector(state).translations,
+    isRTL: activeDatabaseSelector(state).isRTL,
+    activeDatabase: activeDatabaseSelector(state),
+    activeGroup: activeGroupSelector(state),
+    primaryColor: activeDatabaseSelector(state).primaryColor
   }
 }
 

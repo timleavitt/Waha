@@ -10,19 +10,20 @@ import {
 import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
 import { getSetInfo, scaleMultiplier } from '../constants'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    activeDatabase: state.database[activeGroup.language],
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup,
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language),
+    activeDatabase: activeDatabaseSelector(state),
+    isRTL: activeDatabaseSelector(state).isRTL,
+    activeGroup: activeGroupSelector(state),
+    translations: activeDatabaseSelector(state).translations,
+    font: getLanguageFont(activeGroupSelector(state).language),
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate,
     languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes,
     globalGroupCounter: state.database.globalGroupCounter

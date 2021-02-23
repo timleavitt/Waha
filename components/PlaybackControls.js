@@ -2,14 +2,12 @@ import React from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
+import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    primaryColor: state.database[activeGroup.language].primaryColor
+    primaryColor: activeDatabaseSelector(state).primaryColor
   }
 }
 

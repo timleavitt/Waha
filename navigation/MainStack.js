@@ -9,6 +9,10 @@ import TestModeDisplay from '../components/TestModeDisplay'
 import { scaleMultiplier } from '../constants'
 import SetsTabs from '../navigation/SetsTabs'
 import { setIsTimedOut, setTimer } from '../redux/actions/securityActions'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
 import AddSetScreen from '../screens/AddSetScreen'
 import GroupsScreen from '../screens/GroupsScreen'
 import InformationScreen from '../screens/InformationScreen'
@@ -34,14 +38,11 @@ LogBox.ignoreLogs(['Setting a timer'])
 const Stack = createStackNavigator()
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup,
+    isRTL: activeDatabaseSelector(state).isRTL,
+    translations: activeDatabaseSelector(state).translations,
+    font: getLanguageFont(activeGroupSelector(state).language),
+    activeGroup: activeGroupSelector(state),
     security: state.security,
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
   }

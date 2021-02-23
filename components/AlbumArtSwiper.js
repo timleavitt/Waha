@@ -11,20 +11,21 @@ import {
 import { connect } from 'react-redux'
 import SwipeBar from '../components/SwipeBar'
 import { scaleMultiplier } from '../constants'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 import SVG from './SVG'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    activeGroup: activeGroup,
-    activeDatabase: state.database[activeGroup.language],
-    font: getLanguageFont(activeGroup.language),
-    translations: state.database[activeGroup.language].translations,
-    isRTL: state.database[activeGroup.language].isRTL
+    activeGroup: activeGroupSelector(state),
+    activeDatabase: activeDatabaseSelector(state),
+    font: getLanguageFont(activeGroupSelector(state).language),
+    translations: activeDatabaseSelector(state).translations,
+    isRTL: activeDatabaseSelector(state).isRTL
   }
 }
 

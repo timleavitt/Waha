@@ -3,22 +3,23 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { getLessonInfo, itemHeights, scaleMultiplier } from '../../constants'
 import { removeDownload } from '../../redux/actions/downloadActions'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../../redux/reducers/activeGroup'
 import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 import DownloadStatusIndicator from '../DownloadStatusIndicator'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    primaryColor: state.database[activeGroup.language].primaryColor,
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup,
+    primaryColor: activeDatabaseSelector(state).primaryColor,
+    isRTL: activeDatabaseSelector(state).isRTL,
+    activeGroup: activeGroupSelector(state),
     downloads: state.downloads,
-    translations: state.database[activeGroup.language].translations,
+    translations: activeDatabaseSelector(state).translations,
     isConnected: state.network.isConnected,
-    font: getLanguageFont(activeGroup.language)
+    font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
 

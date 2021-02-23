@@ -7,21 +7,22 @@ import {
   addSet,
   setShouldShowMobilizationToolsTab
 } from '../../redux/actions/groupsActions'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../../redux/reducers/activeGroup'
 import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 import GroupAvatar from '../GroupAvatar'
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
     database: state.database,
-    isRTL: state.database[activeGroup.language].isRTL,
+    isRTL: activeDatabaseSelector(state).isRTL,
     groups: state.groups,
-    font: getLanguageFont(activeGroup.language),
+    font: getLanguageFont(activeGroupSelector(state).language),
     areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
-    activeGroup: activeGroup
+    activeGroup: activeGroupSelector(state)
   }
 }
 
