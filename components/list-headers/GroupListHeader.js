@@ -46,8 +46,14 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
+/**
+ * The header for the groups section list used on the Groups screen. Displays the name of the language and the language instance's logo.
+ * @param {string} languageName - The name of the language.
+ * @param {string} languageID - The ID for the language instance.
+ * @param {boolean} isEditing - Whether the Groups screen is in editing mode or not.
+ */
 function GroupListHeader ({
-  // Props passed from a parent component.s
+  // Props passed from a parent component.
   languageName,
   languageID,
   isEditing,
@@ -63,16 +69,18 @@ function GroupListHeader ({
   deleteLanguageData,
   removeDownload
 }) {
-  // deletes all material for a language
+  /**
+   * Deletes an entire language instance. This involves deleting every group, every downloaded file, and all data stored in redux for a language instance. Triggered by pressing the trash can icon next to the langauge's name in editing mode.
+   */
   function deleteLanguageInstance () {
-    // delete all groups w/ this language
+    // Delete every group for this language instance.
     groups.map(group => {
       if (group.language === languageID) {
         deleteGroup(group.name)
       }
     })
 
-    // delete all downloaded files for this language
+    // Delete all downloaded files for this language instance.
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
         for (const item of contents) {
@@ -84,13 +92,13 @@ function GroupListHeader ({
       }
     )
 
-    // delete section of database for this language
+    // Delete redux data for this language instance.
     deleteLanguageData(languageID)
   }
 
-  // render trash button conditionally because it's only shown when editing mode is active
+  // Determine what to render for the trash button. This button shows up next to the name of the language in editing mode only. Only language instance's that don't contain the currently active group have this button.
   var trashButton
-  // if we're editing and not in the active group, we can delete, so show trash can
+
   if (isEditing && !(activeGroup.language === languageID)) {
     trashButton = (
       <TouchableOpacity
@@ -120,10 +128,9 @@ function GroupListHeader ({
         <Icon name='trash' size={25 * scaleMultiplier} color={colors.red} />
       </TouchableOpacity>
     )
-    // if we're editing and active, show an empty view
+    // For the language instance that contains the active group, render an empty view for this button so the styling lines up.
   } else if (isEditing && activeGroup.language === languageID) {
     trashButton = <View style={{ height: '100%', width: 20 }} />
-    // otherwise, make it nothin
   } else {
     trashButton = null
   }
@@ -131,7 +138,7 @@ function GroupListHeader ({
   return (
     <View
       style={[
-        styles.languageHeaderContainer,
+        styles.groupListHeaderContainer,
         {
           flexDirection: isRTL ? 'row-reverse' : 'row'
         }
@@ -160,7 +167,7 @@ function GroupListHeader ({
         {languageName}
       </Text>
       <Image
-        style={styles.languageLogo}
+        style={styles.languageLogoImage}
         source={{
           uri: FileSystem.documentDirectory + languageID + '-header.png'
         }}
@@ -169,17 +176,14 @@ function GroupListHeader ({
   )
 }
 
-//+ STYLES
-
 const styles = StyleSheet.create({
-  languageHeaderContainer: {
+  groupListHeaderContainer: {
     alignItems: 'center',
     width: '100%',
     height: 40 * scaleMultiplier,
-    // aspectRatio: 8.7,
     backgroundColor: colors.aquaHaze
   },
-  languageLogo: {
+  languageLogoImage: {
     resizeMode: 'contain',
     width: 120 * scaleMultiplier,
     height: 16.8 * scaleMultiplier,

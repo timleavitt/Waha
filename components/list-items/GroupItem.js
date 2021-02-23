@@ -36,7 +36,7 @@ function mapDispatchToProps (dispatch) {
 }
 
 /**
- * A pressable item used on the GroupScreen to display a group. It shows the name of the group, the icon, whether it's active or not, and the current bookmark, and allows for editing and deleting.
+ * A pressable item used on the Group screen to display a group in the groups section list. It shows the name of the group, the icon, whether it's active or not, and the current bookmark, and allows for editing and deleting.
  * @param {Object} thisGroup - The object for the group that we're displaying in this component.
  * @param {boolean} isEditing - Whether we're in "editing" mode or not.
  * @param {Function} openEditModal - A function that opens the modal that allows us to edit the information for a group.
@@ -189,23 +189,23 @@ function GroupItem ({
   return (
     <View
       style={[
-        styles.groupListItemContainer,
+        styles.groupItemContainer,
         {
           flexDirection: isRTL ? 'row-reverse' : 'row'
         }
       ]}
     >
       {deleteButton}
-      {/* main tappable area */}
       <TouchableOpacity
         style={[
-          styles.touchableContainer,
+          styles.touchableAreaContainer,
           {
             flexDirection: isRTL ? 'row-reverse' : 'row',
             paddingLeft: isEditing ? 0 : 20
           }
         ]}
         onPress={
+          // Tapping on a group while not in edit mode switches the active group; in edit mode, it opens the edit group modal.
           isEditing
             ? () => openEditModal()
             : () => {
@@ -219,10 +219,9 @@ function GroupItem ({
           emoji={thisGroup.emoji}
           isActive={activeGroup.name === thisGroup.name}
         />
-        {/* text portion includes group name and bookmark text */}
         <View
           style={[
-            styles.groupNameContainer,
+            styles.groupTextContainer,
             {
               marginLeft: isRTL ? 0 : 20,
               marginRight: isRTL ? 20 : 0
@@ -232,6 +231,7 @@ function GroupItem ({
           <Text
             style={StandardTypography(
               {
+                // Always display the group name in the group's language's font, not the active group's font.
                 font: getLanguageFont(thisGroup.language),
                 isRTL: isRTL
               },
@@ -249,6 +249,7 @@ function GroupItem ({
               style={[
                 StandardTypography(
                   {
+                    // Similarly, display the bookmark text in the group's language's font, not the active group's language's font.
                     font: getLanguageFont(thisGroup.language),
                     isRTL: isRTL
                   },
@@ -270,18 +271,15 @@ function GroupItem ({
   )
 }
 
-// STYLES
-
 const styles = StyleSheet.create({
-  groupListItemContainer: {
+  groupItemContainer: {
     height: 80 * scaleMultiplier,
-    // aspectRatio: 5,
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white
   },
-  touchableContainer: {
+  touchableAreaContainer: {
     flex: 1,
     height: '100%',
     justifyContent: 'flex-start',
@@ -300,7 +298,7 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingHorizontal: 20
   },
-  groupNameContainer: {
+  groupTextContainer: {
     flex: 1,
     height: '100%',
     justifyContent: 'center',

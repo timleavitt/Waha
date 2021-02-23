@@ -1,24 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import {
-  SectionList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native'
+import { SectionList, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
+import AddNewGroupButton from '../components/AddNewGroupButton'
+import AddNewLanguageInstanceButton from '../components/AddNewLanguageInstanceButton'
+import GroupsScreenEditButton from '../components/GroupsScreenEditButton'
 import GroupListHeader from '../components/list-headers/GroupListHeader'
 import GroupItem from '../components/list-items/GroupItem'
 import BackButton from '../components/standard/BackButton'
 import Separator from '../components/standard/Separator'
-import { scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
 import {
   activeDatabaseSelector,
   activeGroupSelector
 } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
-import { getLanguageFont, StandardTypography } from '../styles/typography'
+import { getLanguageFont } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
@@ -32,6 +28,9 @@ function mapStateToProps (state) {
   }
 }
 
+/**
+ * A screen that displays all of the installed language instances and the groups in those language instances. Allows for switching the active group and  editing, deleting, and adding groups & languages.
+ */
 function GroupsScreen ({
   // Props passed from navigation.
   navigation: { setOptions, goBack, navigate },
@@ -44,28 +43,35 @@ function GroupsScreen ({
   groups,
   activeGroup
 }) {
-  //+ STATE
-
+  /** Keeps track of whether the screen is in editing mode or not. Editing mode is enabled via a button in the header and switches a lot of functionality on the screen. */
   const [isEditing, setIsEditing] = useState(false)
-  const [showAddGroupModal, setShowAddGroupModal] = useState(false)
-  const [showEditGroupModal, setShowEditGroupModal] = useState(false)
+
+  /** When adding a new group, this state keeps track of the language instance that the user is adding a group in so it can be passed into the CreateGroup() function. */
   const [languageID, setLanguageID] = useState(activeGroup.languageID)
+
+  /** When editing a specific group, this component stores the object for the group that is being edited. */
   const [editingGroup, setEditingGroup] = useState(activeGroup)
 
-  //+ CONSTRUCTOR
+  /** Keeps track of whether the add group modal is visible. */
+  const [showAddGroupModal, setShowAddGroupModal] = useState(false)
 
+  /** Keeps track of whether the edit gruop modal is visible. */
+  const [showEditGroupModal, setShowEditGroupModal] = useState(false)
+
+  /** useEffect function that sets the navigation options for this screen. Unlock similar functions in other screens, this one is updated more often since the header must update whenever the active group changes and when editingMode changes. */
   useEffect(() => {
     setOptions(getNavOptions())
   }, [isEditing, isRTL, activeGroup])
 
-  //+ NAV OPTIONS
-
+  /** Returns the navigation options for this screen. */
   function getNavOptions () {
     return {
       headerStyle: {
+        // Switch the background color of the header in editing mode to reflect that we're in a non-standard screen view.
         backgroundColor: isEditing ? colors.blue : colors.aquaHaze
       },
       headerTitleStyle: {
+        // Update the header text color to go with the background color changes.
         color: isEditing ? colors.white : colors.shark,
         fontFamily: font + '-Bold'
       },
@@ -77,50 +83,17 @@ function GroupsScreen ({
             />
           )
         : () => (
-            <TouchableOpacity
-              style={styles.editButtonContainer}
+            <GroupsScreenEditButton
               onPress={() => setIsEditing(old => !old)}
-            >
-              <Text
-                style={[
-                  StandardTypography(
-                    { font, isRTL },
-                    'h3',
-                    isEditing ? 'Bold' : 'Regular',
-                    'center',
-                    isEditing ? colors.white : colors.blue
-                  ),
-                  {
-                    textDecorationLine: isEditing ? 'underline' : null
-                  }
-                ]}
-              >
-                {isEditing
-                  ? translations.groups.done_button_label
-                  : translations.groups.edit_button_label}
-              </Text>
-            </TouchableOpacity>
+              isEditing={isEditing}
+            />
           ),
       headerLeft: isRTL
         ? () => (
-            <TouchableOpacity
-              style={styles.editButtonContainer}
+            <GroupsScreenEditButton
               onPress={() => setIsEditing(old => !old)}
-            >
-              <Text
-                style={StandardTypography(
-                  { font, isRTL },
-                  'h3',
-                  isEditing ? 'Bold' : 'Regular',
-                  'center',
-                  isEditing ? colors.white : colors.blue
-                )}
-              >
-                {isEditing
-                  ? translations.groups.done_button_label
-                  : translations.groups.edit_button_label}
-              </Text>
-            </TouchableOpacity>
+              isEditing={isEditing}
+            />
           )
         : () => (
             <BackButton
@@ -131,38 +104,52 @@ function GroupsScreen ({
     }
   }
 
-  //+ FUNCTIONS
-
-  // get the list of installed languages and all the groups with that language
-  //  to populate section list
+  /**
+   * Gets an array of all the installed language instances and their groups. This is used as the data for the section list of all the groups.
+   * @return {Object[]} - A list of the installed language instances and their groups.
+   * @return {Object[].title} - The name of the language.
+   * @return {Object[].languageID} - The ID of the language instance.
+   * @return {Object[].data[]} - An array of the groups that are a part of this language instance.
+   */
   function getLanguageAndGroupData () {
     var installedLanguageInstances = []
     for (key in database) {
+      // Because there are other redux variables stored in the database object, filter for just the language objects (which all have a length of 2).
       if (key.length === 2) {
         var languageObject = {}
-        languageObject['title'] = database[key].displayName
+        languageObject['languageName'] = database[key].displayName
         languageObject['languageID'] = key
 
-        // get groups for that language
+        // Get all the groups that are a part of this language instance.
         languageObject['data'] = groups.filter(group => group.language === key)
+
+        // Add all of this to the installedLanguageInstances array.
         installedLanguageInstances.push(languageObject)
       }
     }
     return installedLanguageInstances
   }
 
-  //+ RENDER
-
-  function renderLanguageInstanceItem (section) {
+  /**
+   * Renders the GroupListHeader component used for the Groups SectionList section header.
+   * @param {Object} languageInstance - The object for the language instance to render.
+   * @return {Component} - The GroupListHeader component.
+   */
+  function renderGroupListHeader (languageInstance) {
     return (
       <GroupListHeader
-        languageName={section.title}
-        languageID={section.languageID}
+        languageName={languageInstance.languageName}
+        languageID={languageInstance.languageID}
         isEditing={isEditing}
       />
     )
   }
 
+  /**
+   * Renders the GroupItem component used for the Groups SectionList item.
+   * @param {Object} group - The object for the group to render.
+   * @return {Component} - The GroupItem component.
+   */
   function renderGroupItem (group) {
     return (
       <GroupItem
@@ -172,11 +159,6 @@ function GroupsScreen ({
           setEditingGroup(group)
           setShowEditGroupModal(true)
         }}
-        // goToEditGroupScreen={groupName => {
-        //   setGroupName(groupName)
-        //   setShowEditGroupModal(true)
-        //   // navigation.navigate('EditGroup', { groupName: groupName })
-        // }}
       />
     )
   }
@@ -186,86 +168,28 @@ function GroupsScreen ({
       <SectionList
         sections={getLanguageAndGroupData()}
         renderItem={({ item }) => renderGroupItem(item)}
-        renderSectionHeader={({ section }) =>
-          renderLanguageInstanceItem(section)
-        }
+        renderSectionHeader={({ section }) => renderGroupListHeader(section)}
         keyExtractor={item => item.name}
         ItemSeparatorComponent={() => <Separator />}
         SectionSeparatorComponent={() => <Separator />}
         renderSectionFooter={({ section }) => (
-          <View>
-            <TouchableOpacity
-              style={[
-                styles.addGroupContainer,
-                { flexDirection: isRTL ? 'row-reverse' : 'row' }
-              ]}
-              onPress={
-                () => {
-                  setLanguageID(section.languageID)
-                  setShowAddGroupModal(true)
-                }
-                // navigate('AddGroup', {
-                //   languageID: section.languageID
-                // })
-              }
-            >
-              <View
-                style={{
-                  width: 55 * scaleMultiplier,
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginHorizontal: 20
-                }}
-              >
-                <Icon
-                  name='group-add'
-                  size={40 * scaleMultiplier}
-                  color={colors.chateau}
-                />
-              </View>
-              <Text
-                style={StandardTypography(
-                  { font, isRTL },
-                  'h3',
-                  'Bold',
-                  'left',
-                  colors.blue
-                )}
-              >
-                {translations.groups.new_group_button_label}
-              </Text>
-            </TouchableOpacity>
-            <Separator />
-            <View style={{ height: 20 * scaleMultiplier, width: '100%' }} />
-          </View>
+          <AddNewGroupButton
+            section={section}
+            setLanguageID={languageID => setLanguageID(languageID)}
+            setShowAddGroupModal={toSet => setShowAddGroupModal(toSet)}
+          />
         )}
         ListHeaderComponent={() => (
           <View style={{ height: 10, width: '100%' }} />
         )}
         ListFooterComponent={
-          <TouchableOpacity
-            style={styles.addNewLanguageContainer}
-            onPress={() =>
-              navigate('SubsequentlLanguageInstanceInstall', {
-                installedLanguageInstances: getLanguageAndGroupData()
-              })
-            }
-          >
-            <Text
-              style={StandardTypography(
-                { font, isRTL },
-                'h3',
-                'Bold',
-                'left',
-                colors.chateau
-              )}
-            >
-              {translations.groups.new_language_button_label}
-            </Text>
-          </TouchableOpacity>
+          <AddNewLanguageInstanceButton
+            navigate={(screen, params) => navigate(screen, params)}
+            languageAndGroupData={getLanguageAndGroupData()}
+          />
         }
       />
+      {/* Modals */}
       <AddEditGroupModal
         isVisible={showAddGroupModal}
         hideModal={() => setShowAddGroupModal(false)}
@@ -276,38 +200,16 @@ function GroupsScreen ({
         isVisible={showEditGroupModal}
         hideModal={() => setShowEditGroupModal(false)}
         type='EditGroup'
-        // groupName={groupName}
         group={editingGroup}
       />
     </View>
   )
 }
 
-//+ STYLES
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.aquaHaze
-  },
-  addNewLanguageContainer: {
-    height: 80 * scaleMultiplier,
-    justifyContent: 'center',
-    paddingHorizontal: 20
-  },
-  editButtonContainer: {
-    width: 80,
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  addGroupContainer: {
-    height: 80 * scaleMultiplier,
-    // aspectRatio: 5,
-    justifyContent: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.white
   }
 })
 
