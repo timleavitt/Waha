@@ -8,7 +8,6 @@ import DrawerItem from '../components/list-items/DrawerItem'
 import WahaButton from '../components/standard/WahaButton'
 import { scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
-import { appVersion } from '../modeSwitch'
 import {
   setHasFetchedLanguageData,
   updateLanguageCoreFiles
@@ -216,7 +215,8 @@ function WahaDrawer ({
               ),
               {
                 marginHorizontal: 20,
-                marginVertical: 15
+                marginTop: 20 * scaleMultiplier,
+                marginBottom: 15 * scaleMultiplier
               }
             ]}
           >
@@ -234,7 +234,7 @@ function WahaDrawer ({
               openBrowser('https://coda.io/form/Waha-Bug-Report_dyWvuvL6WTx')
             }
           />
-          <DrawerItem
+          {/* <DrawerItem
             icon='language'
             onPress={() =>
               openBrowser(
@@ -242,13 +242,18 @@ function WahaDrawer ({
               )
             }
             label={translations.general.donate_to_waha}
-          />
+          /> */}
           <DrawerItem
+            icon='info'
+            onPress={() => navigate('Information')}
+            label={translations.general.information}
+          />
+          {/* <DrawerItem
             icon='info'
             onPress={() => openBrowser('https://waha.app/privacy-policy/')}
             label={translations.general.privacy}
-          />
-          <View style={{ width: '100%', height: 5 }} />
+          /> */}
+          {/* <View style={{ width: '100%', height: 5 }} />
           <Text
             style={StandardTypography(
               { font, isRTL },
@@ -259,7 +264,7 @@ function WahaDrawer ({
             )}
           >
             {'v' + appVersion}
-          </Text>
+          </Text> */}
           {/* <DrawerItem
             iconName='info'
             text={'You are using ' + appVersion}

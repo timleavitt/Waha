@@ -61,7 +61,7 @@ function DrawerItem ({
 
 const styles = StyleSheet.create({
   drawerItemContainer: {
-    height: 55 * scaleMultiplier,
+    height: 50 * scaleMultiplier,
     paddingHorizontal: 10,
     justifyContent: 'flex-start',
     flexDirection: 'row',
