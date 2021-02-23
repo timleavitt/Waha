@@ -8,4 +8,4 @@ export const reduxMode = 'prod'
 export const analyticsMode = 'test'
 
 // The current version of Waha. This is used to compare versions with the database and is also displayed in the navigation drawer.
-export const appVersion = '1.0.5'
+export const appVersion = '1.1.0'

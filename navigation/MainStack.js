@@ -11,6 +11,7 @@ import SetsTabs from '../navigation/SetsTabs'
 import { setIsTimedOut, setTimer } from '../redux/actions/securityActions'
 import AddSetScreen from '../screens/AddSetScreen'
 import GroupsScreen from '../screens/GroupsScreen'
+import InformationScreen from '../screens/InformationScreen'
 import KeyOrderSetScreen from '../screens/KeyOrderSetScreen'
 import LanguageInstanceInstallScreen from '../screens/LanguageInstanceInstallScreen'
 import LessonsScreen from '../screens/LessonsScreen'
@@ -478,14 +479,20 @@ function MainStack ({
           animationEnabled: false
         }}
       />
-      {/* <Stack.Screen
-        name='Video'
-        component={VideoScreen}
+      <Stack.Screen
+        name='Information'
+        component={InformationScreen}
         options={{
-          headerShown: false,
-          cardStyleInterpolator: forFade
+          headerTitle: translations.general.information,
+          headerStyle: {
+            backgroundColor: colors.aquaHaze
+          },
+          headerTitleStyle: {
+            color: colors.shark,
+            fontFamily: font + '-Bold'
+          }
         }}
-      /> */}
+      />
     </Stack.Navigator>
   )
 }
