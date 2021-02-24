@@ -414,19 +414,6 @@ function MainStack ({
         }}
       />
       <Stack.Screen
-        name='KeyOrderChange_Old'
-        component={KeyOrderSetScreen}
-        options={{
-          headerStyle: {
-            backgroundColor: colors.white
-          },
-          headerTitleStyle: {
-            color: colors.shark,
-            fontFamily: font + '-Bold'
-          }
-        }}
-      />
-      <Stack.Screen
         name='KeyOrderChange_Initial'
         component={KeyOrderSetScreen}
         options={{

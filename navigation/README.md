@@ -34,7 +34,6 @@ In the descriptions below, navigators are **`bolded`** and any other files/scree
         - `SecurityOnboardingSlides`: The onboarding slides that the user must go through the first time they enable Security Mode.
         - `KeyOrderSet_Initial`: Uses the `KeyOrderSetScreen` component. Prompts the user to create a key combination on the piano for unlocking Security Mode.
         - `KeyOrderSet_Confirm`: Uses the `KeyOrderSetScreen` component. Prompts the user to confirm the key combination on the piano.
-        - `KeyOrderChange_Old`: Uses the `KeyOrderSetScreen` component. Prompts the user to enter their current combination on the piano when they want to change their combo.
         - `KeyOrderChange_Initial`: Uses the `KeyOrderSetScreen` component. Prompts the user to enter a new key combination on the piano.
         - `KeyOrderChange_Confirm`: Uses the `KeyOrderSetScreen` component. Prompts the user to confirm their new key combination on the piano.
         - `PianoApp`: Screen that acts as a security screen. When the user opens the app with Security Mode on, this inconspicuous piano screen
