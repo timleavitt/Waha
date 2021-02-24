@@ -63,7 +63,10 @@ function GroupsScreen ({
     setOptions(getNavOptions())
   }, [isEditing, isRTL, activeGroup])
 
-  /** Returns the navigation options for this screen. */
+  /**
+   * Returns the navigation options for this screen.
+   * @return {Object} - The navigation options.
+   */
   function getNavOptions () {
     return {
       headerStyle: {
