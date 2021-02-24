@@ -1,3 +1,4 @@
+// import SvgUri from 'expo-svg-uri'
 import React, { useEffect, useRef, useState } from 'react'
 import {
   Animated,
@@ -275,6 +276,17 @@ function AlbumArtSwiper ({
                 height={Dimensions.get('window').width - marginWidth}
                 color='#1D1E20'
               />
+              {/* <SvgUri
+                source={{
+                  uri:
+                    ''
+                }}
+                width={Dimensions.get('window').width - marginWidth}
+                height={Dimensions.get('window').width - marginWidth}
+                // fill={fullyCompleted ? colors.chateau : colors.shark}
+                fill='#1D1E20'
+                fillAll
+              /> */}
             </TouchableHighlight>
           </View>
           <Animated.View
