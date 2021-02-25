@@ -108,7 +108,7 @@ function GroupsScreen ({
   }
 
   /**
-   * Gets an array of all the installed language instances and their groups. This is used as the data for the section list of all the groups.
+   * Gets an array of all the installed language instances and their groups. This is used as the data for the section list of all the groups on this screen and on the MobilizationTools screen.
    * @return {Object[]} - A list of the installed language instances and their groups.
    * @return {Object[].title} - The name of the language.
    * @return {Object[].languageID} - The ID of the language instance.

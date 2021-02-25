@@ -1,4 +1,4 @@
-import { SET_MT_UNLOCK_ATTEMPTS } from '../actions/securityActions'
+import { SET_MT_UNLOCK_ATTEMPTS } from '../actions/mtUnlockAttemptsActions'
 
 /**
  * This reducer stores the number of times that the user has unsuccessfully attempted to unlock the Mobilization Tools. After a few attempts, the app will lock out the user from attempting to unlock them for 30 minutes. This state is NOT persisted across app restarts.

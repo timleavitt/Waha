@@ -3,7 +3,7 @@ export const SET_MT_UNLOCK_ATTEMPTS = 'SET_MT_UNLOCK_ATTEMPTS'
 /**
  * Sets the number of times the user has tried unsucessfully to unlock the Mobilization Tools.
  * @export
- * @param {boolean} toSet - Whether Security Mode should be enabled or not.
+ * @param {number} numAttempts - The number of times the user has tried unsucessfully to unlock the Mobilization Tools.
  * @return {Object} - Object to send to the reducer.
  */
 export function setMTUnlockAttempts (numAttempts) {

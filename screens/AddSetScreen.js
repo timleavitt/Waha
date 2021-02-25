@@ -120,11 +120,14 @@ function AddSetScreen ({
     var requiredQuestionSets = []
 
     set.lessons.forEach(lesson => {
-      if (!requiredQuestionSets.includes(lesson.fellowshipType)) {
-        requiredQuestionSets.push(lesson.fellowshipType)
-      }
-      if (!requiredQuestionSets.includes(lesson.applicationType)) {
-        requiredQuestionSets.push(lesson.applicationType)
+      // Only filter if the lessons have a fellowship/application chapter. For sets like 3.1 which only has video lessons, we don't want to filter.
+      if (lesson.fellowshipType) {
+        if (!requiredQuestionSets.includes(lesson.fellowshipType)) {
+          requiredQuestionSets.push(lesson.fellowshipType)
+        }
+        if (!requiredQuestionSets.includes(lesson.applicationType)) {
+          requiredQuestionSets.push(lesson.applicationType)
+        }
       }
     })
 

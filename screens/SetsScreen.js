@@ -116,11 +116,13 @@ function SetsScreen ({
     var requiredQuestionSets = []
 
     set.lessons.forEach(lesson => {
-      if (!requiredQuestionSets.includes(lesson.fellowshipType)) {
-        requiredQuestionSets.push(lesson.fellowshipType)
-      }
-      if (!requiredQuestionSets.includes(lesson.applicationType)) {
-        requiredQuestionSets.push(lesson.applicationType)
+      if (lesson.fellowshipType) {
+        if (!requiredQuestionSets.includes(lesson.fellowshipType)) {
+          requiredQuestionSets.push(lesson.fellowshipType)
+        }
+        if (!requiredQuestionSets.includes(lesson.applicationType)) {
+          requiredQuestionSets.push(lesson.applicationType)
+        }
       }
     })
 

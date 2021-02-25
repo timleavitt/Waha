@@ -54,7 +54,6 @@ function GroupItemMT ({
   setShouldShowMobilizationToolsTab,
   addSet
 }) {
-  // FUNCTIONS
   return (
     <View
       style={[
@@ -98,13 +97,13 @@ function GroupItemMT ({
           thumbColor={colors.white}
           ios_backgroundColor={colors.chateau}
           onValueChange={() => {
-            // toggle MTs on or off
+            // Toggle the visibility of the Mobilization Tools tab for this group on or off.
             setShouldShowMobilizationToolsTab(
               thisGroup.name,
               !thisGroup.shouldShowMobilizationToolsTab
             )
 
-            // if we're toggling MTs on for the first time, add the first 2 MT sets
+            // If we're toggling the Mobilization Tools on for this group, log the event and add the first 2 Mobilization Tools sets to this group.
             if (!thisGroup.shouldShowMobilizationToolsTab) {
               logEnableMobilizationToolsForAGroup(
                 activeGroup.language,
@@ -130,12 +129,9 @@ function GroupItemMT ({
   )
 }
 
-// STYLES
-
 const styles = StyleSheet.create({
   groupListItemContainer: {
     height: 80 * scaleMultiplier,
-    // aspectRatio: 5,
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',

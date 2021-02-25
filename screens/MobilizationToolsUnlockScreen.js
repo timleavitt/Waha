@@ -6,10 +6,8 @@ import BackButton from '../components/standard/BackButton'
 import { scaleMultiplier } from '../constants'
 import MessageModal from '../modals/MessageModal'
 import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
-import {
-  setMTUnlockAttempts,
-  setMTUnlockTimeout
-} from '../redux/actions/securityActions'
+import { setMTUnlockAttempts } from '../redux/actions/mtUnlockAttemptsActions'
+import { setMTUnlockTimeout } from '../redux/actions/securityActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -19,15 +17,14 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
-    activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     translations: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
-    activeGroup: activeGroupSelector(state),
     security: state.security,
     mtUnlockAttempts: state.mtUnlockAttempts
   }
 }
+
 function mapDispatchToProps (dispatch) {
   return {
     setAreMobilizationToolsUnlocked: toSet => {
@@ -42,34 +39,40 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
+/**
+ * Screen that shows a simple passcode entry and allows the user to unlock the Mobilization Tools.
+ */
 function MobilizationToolsUnlockScreen ({
   // Props passed from navigation.
   navigation: { setOptions, goBack },
   // Props passed from redux.
-  activeDatabase,
   isRTL,
   translations,
   font,
-  activeGroup,
   security,
   mtUnlockAttempts,
   setAreMobilizationToolsUnlocked,
   setMTUnlockTimeout,
   setMTUnlockAttempts
 }) {
+  /** Keeps track of the user input of the passcode entry area. */
   const [passcode, setPasscode] = useState('')
+
+  /** A reference to the passcode entry component. */
   const [pinRef, setPinRef] = useState()
-  // const [passcodeStatusText, setPasscodeStatusText] = useState('')
+
+  /** Keeps track of whether the unlock success modal is visible. */
   const [unlockSuccessModal, setUnlockSuccessModal] = useState(false)
-  // const [numAttempts, setNumAttempts] = useState(0)
 
-  //+ CONSTRUCTOR
-
+  /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
     setOptions(getNavOptions())
   }, [])
 
-  //+ NAV OPTIONS
+  /**
+   * Returns the navigation options for this screen.
+   * @return {Object} - The navigation options.
+   */
   function getNavOptions () {
     return {
       headerRight: isRTL
@@ -81,6 +84,9 @@ function MobilizationToolsUnlockScreen ({
     }
   }
 
+  /**
+   * useEffect function that updates every time the passcode input changes. If the user gets to 5 attempts without unlocking successfully, the app will lock them out from attempting to unlock again for 30 minutes.
+   */
   useEffect(() => {
     if (mtUnlockAttempts === 5) {
       setMTUnlockAttempts(0)
@@ -88,15 +94,17 @@ function MobilizationToolsUnlockScreen ({
     }
   }, [mtUnlockAttempts])
 
-  //+ FUNCTIONS
-
-  function checkPasscode (passcode) {
+  /**
+   * Checks if the passcode the user enters is correct. If it is, show the success modal. If not, add one to the attempts tracker and show an alert that the code is incorrect.
+   */
+  function checkPasscode () {
     if (passcode === '281820') {
       Keyboard.dismiss()
       setUnlockSuccessModal(true)
       setAreMobilizationToolsUnlocked(true)
     } else {
       setMTUnlockAttempts(mtUnlockAttempts + 1)
+      // Make the input component "shake" when they enter in a wrong code.
       pinRef.shake().then(() => setPasscode(''))
       Alert.alert(
         translations.passcode.popups.unlock_unsucessful_title,
@@ -108,11 +116,28 @@ function MobilizationToolsUnlockScreen ({
           }
         ]
       )
-      // setTimeout(() => setPasscodeStatusText(''), 3000)
     }
   }
 
-  //+ RENDER
+  /**
+   * Gets a string of the amount of attempts the user has left OR, if they're already locked out, the time they have left until they can attempt again.
+   * @return {string} - The text to display.
+   */
+  function getTimeoutText () {
+    if (Date.now() - security.mtUnlockTimeout < 0)
+      return (
+        translations.passcode.too_many_attempts_label +
+        ' ' +
+        Math.round((security.mtUnlockTimeout - Date.now()) / 60000) +
+        ' ' +
+        translations.passcode.minutes_label
+      )
+    else if (mtUnlockAttempts === 3)
+      return translations.passcode.two_attempt_remaining_label
+    else if (mtUnlockAttempts === 4)
+      return translations.passcode.one_attempt_remaining_label
+    else return ''
+  }
 
   return (
     <View style={styles.screen}>
@@ -143,6 +168,7 @@ function MobilizationToolsUnlockScreen ({
         onTextChange={passcode => setPasscode(passcode)}
         onFulfill={checkPasscode}
         onBackspace={() => {}}
+        // Disable entry if the user is locked out.
         editable={
           security.mtUnlockTimeout
             ? Date.now() - security.mtUnlockTimeout > 0
@@ -166,19 +192,9 @@ function MobilizationToolsUnlockScreen ({
           }
         ]}
       >
-        {/* conditional text based on how many attempts user has left / if they're currently locked out */}
-        {Date.now() - security.mtUnlockTimeout < 0
-          ? translations.passcode.too_many_attempts_label +
-            ' ' +
-            Math.round((security.mtUnlockTimeout - Date.now()) / 60000) +
-            ' ' +
-            translations.passcode.minutes_label
-          : mtUnlockAttempts === 3
-          ? translations.passcode.two_attempt_remaining_label
-          : mtUnlockAttempts === 4
-          ? translations.passcode.one_attempt_remaining_label
-          : ''}
+        {getTimeoutText()}
       </Text>
+      {/* Modals */}
       <MessageModal
         isVisible={unlockSuccessModal}
         hideModal={() => {
@@ -198,7 +214,6 @@ function MobilizationToolsUnlockScreen ({
           style={{
             height: 200 * scaleMultiplier,
             margin: 20,
-            // padding: 20,
             resizeMode: 'contain'
           }}
         />
@@ -206,8 +221,6 @@ function MobilizationToolsUnlockScreen ({
     </View>
   )
 }
-
-//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {

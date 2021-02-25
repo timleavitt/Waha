@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import OptionsModalButton from '../components/OptionsModalButton'
 import BackButton from '../components/standard/BackButton'
 import Blurb from '../components/standard/Blurb'
 import Hero from '../components/standard/Hero'
 import Separator from '../components/standard/Separator'
 import WahaItem from '../components/standard/WahaItem'
 import { scaleMultiplier } from '../constants'
-import OptionsModal from '../modals/OptionsModal'
+import SecurityTimeoutPickerModal from '../modals/SecurityTimeoutPickerModal'
 import {
   setSecurityEnabled,
   setTimeoutDuration
@@ -143,11 +142,7 @@ function SecurityModeScreen ({
 
   return (
     <View style={styles.screen}>
-      <ScrollView
-        style={{
-          width: '100%'
-        }}
-      >
+      <ScrollView bounces={false}>
         <Hero source={require('../assets/gifs/piano_unlock.gif')} />
         <Blurb text={translations.security.security_mode_description_text} />
         <Separator />
@@ -157,7 +152,7 @@ function SecurityModeScreen ({
             thumbColor={colors.white}
             ios_backgroundColor={colors.chateau}
             onValueChange={() => {
-              // toggle security mode on or off for the active group
+              // If we have never enabled security mode before (meaning we have never set a code), then navigate to the security onboarding slides. Otherwise, toggle security mode on or off.
               if (security.code) {
                 if (security.securityEnabled) {
                   setSecurityEnabled(false)
@@ -171,131 +166,13 @@ function SecurityModeScreen ({
         </WahaItem>
         <Separator />
         <View style={{ height: 20 * scaleMultiplier }} />
-        {/* <WahaItemDescription
-          text={
-            security.code
-              ? translations.security.security_mode_picker_blurb_post_code
-              : translations.security.security_mode_picker_blurb_pre_code
-          }
-        /> */}
         {securityControls}
       </ScrollView>
-      {/* <MessageModal
-        isVisible={showViewKeyOrderModal}
-        hideModal={() => setShowViewKeyOrderModal(false)}
-        title={translations.security.your_key_order_label}
-        body={translations.security.security_mode_description_text}
-        confirmText={translations.general.close}
-        confirmOnPress={() => setShowViewKeyOrderModal(false)}
-      >
-        <Piano setPattern={() => {}} />
-        <KeyLabels keyOrder={security.code} />
-      </MessageModal> */}
-      <OptionsModal
+      {/* Modals */}
+      <SecurityTimeoutPickerModal
         isVisible={showChangeTimeoutModal}
         hideModal={() => setShowChangeTimeoutModal(false)}
-        closeText={translations.general.cancel}
-      >
-        <OptionsModalButton
-          title={translations.security.instant_label}
-          onPress={() => {
-            setTimeoutDuration(0), setShowChangeTimeoutModal(false)
-          }}
-        >
-          {security.timeoutDuration === 0 ? (
-            <Icon
-              name='check'
-              color={colors.apple}
-              size={30 * scaleMultiplier}
-              style={{
-                position: 'absolute',
-                alignSelf: 'flex-end',
-                paddingHorizontal: 20
-              }}
-            />
-          ) : null}
-        </OptionsModalButton>
-        <Separator />
-        <OptionsModalButton
-          title={translations.security.one_minute_label}
-          onPress={() => {
-            setTimeoutDuration(60000), setShowChangeTimeoutModal(false)
-          }}
-        >
-          {security.timeoutDuration === 60000 ? (
-            <Icon
-              name='check'
-              color={colors.apple}
-              size={30 * scaleMultiplier}
-              style={{
-                position: 'absolute',
-                alignSelf: 'flex-end',
-                paddingHorizontal: 20
-              }}
-            />
-          ) : null}
-        </OptionsModalButton>
-        <Separator />
-        <OptionsModalButton
-          title={translations.security.five_minutes_label}
-          onPress={() => {
-            setTimeoutDuration(300000), setShowChangeTimeoutModal(false)
-          }}
-        >
-          {security.timeoutDuration === 300000 ? (
-            <Icon
-              name='check'
-              color={colors.apple}
-              size={30 * scaleMultiplier}
-              style={{
-                position: 'absolute',
-                alignSelf: 'flex-end',
-                paddingHorizontal: 20
-              }}
-            />
-          ) : null}
-        </OptionsModalButton>
-        <Separator />
-        <OptionsModalButton
-          title={translations.security.fifteen_minutes_label}
-          onPress={() => {
-            setTimeoutDuration(900000), setShowChangeTimeoutModal(false)
-          }}
-        >
-          {security.timeoutDuration === 900000 ? (
-            <Icon
-              name='check'
-              color={colors.apple}
-              size={30 * scaleMultiplier}
-              style={{
-                position: 'absolute',
-                alignSelf: 'flex-end',
-                paddingHorizontal: 20
-              }}
-            />
-          ) : null}
-        </OptionsModalButton>
-        <Separator />
-        <OptionsModalButton
-          title={translations.security.one_hour_label}
-          onPress={() => {
-            setTimeoutDuration(3600000), setShowChangeTimeoutModal(false)
-          }}
-        >
-          {security.timeoutDuration === 3600000 ? (
-            <Icon
-              name='check'
-              color={colors.apple}
-              size={30 * scaleMultiplier}
-              style={{
-                position: 'absolute',
-                alignSelf: 'flex-end',
-                paddingHorizontal: 20
-              }}
-            />
-          ) : null}
-        </OptionsModalButton>
-      </OptionsModal>
+      />
     </View>
   )
 }
