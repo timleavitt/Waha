@@ -6,12 +6,12 @@
     "privacy": "public",
     "platforms": ["ios", "android"],
     "orientation": "portrait",
-    "primaryColor": "#e43c44",
+    "primaryColor": "#E63946",
     "version": "1.0.5",
     "splash": {
       "image": "./assets/icons/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#e43c44"
+      "backgroundColor": "#E63946"
     },
     "updates": {
       "enabled": false
@@ -32,7 +32,7 @@
       "versionCode": 16,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/adaptive_icon_foreground.png",
-        "backgroundColor": "#e43c44"
+        "backgroundColor": "#E63946"
       },
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha",
       "permissions": []

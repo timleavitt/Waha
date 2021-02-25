@@ -24,6 +24,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     translations: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
+    // For testing.
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate,
     languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes,
     globalGroupCounter: state.database.globalGroupCounter
@@ -31,17 +32,7 @@ function mapStateToProps (state) {
 }
 
 /**
- * Screen component for the story sets screen. This screen shows the list of currently added story sets in a category. Used three times for the three tabs.
- * @param {Object} props - Props passed to this screen.
- * @param {Object} navigation - Navigation object passed to this screen.
- * @param {Function} navigate - Navigation function used to navigate to another screen.
- * @param {Object} route - Route object passed from navigation to this screen.
- * @param {string} name - Name of the route of the version of this screen. Can be "Foundational", "Topical", or "Mobilization Tools". This screen is used for all 3 tabs and the route name changes which sets are shown.
- * @param {Object} activeDatabase - The database object for the language of the currently active group. Contains translations, sets, etc.
- * @param {boolean} isRTL - Whether the language of the currently selected group is right-to-left aligned or not.
- * @param {Object} activeGroup - The object for the currently active group.
- * @param {Object} translations - The translations for the language of the currently selected group.
- * @param {string} font - The name of the font for the langauge script of the currently selected group. Matches with fonts names in the assets folder.
+ * Screen that shows the list of currently added story sets in a tab. Used three times for the three different set tabs.
  */
 function SetsScreen ({
   // Props passed from navigation.
@@ -57,21 +48,17 @@ function SetsScreen ({
   languageCoreFilesCreatedTimes,
   globalGroupCounter
 }) {
-  //+ STUFF FOR TESTING
-
-  // console.log(scaleMultiplier)
-
-  //+ STATE
-
-  // shows the add new set modal
+  /** Keeps track of the text displayed on the add set button. Changes depending on what tab we're on. */
   const [addNewSetLabel, setAddNewSetLabel] = useState('')
+
+  /** Keeps track of the category (or tab) of sets we're displaying. */
   const [setCategory, setSetCategory] = useState('')
+
+  /** Keeps track of all of the files the user has downloaded to the user's device. This is used to verify that all the required question set mp3s are downloaded for the sets that have been added. */
   const [downloadedFiles, setDownloadedFiles] = useState([])
 
-  //+ CONSTRUCTOR
-
+  /** useEffect function that sets the setCategory state and the addNewSetLabel state based off the route name. Updates whenever the activeGroup changes. */
   useEffect(() => {
-    // console.log(routeName)
     if (routeName === 'Foundational') {
       setAddNewSetLabel(
         translations.sets.add_foundational_story_set_button_label
