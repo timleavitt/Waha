@@ -42,7 +42,7 @@ function PlaybackControls ({
       ) : null} */}
       <TouchableOpacity
         style={styles.playPauseSkipButton}
-        onPress={() => onSkipPress(-10000)}
+        onPress={() => onSkipPress(-5000)}
       >
         <Icon
           name='skip-back'
@@ -75,7 +75,7 @@ function PlaybackControls ({
       {/* )} */}
       <TouchableOpacity
         style={styles.playPauseSkipButton}
-        onPress={() => onSkipPress(10000)}
+        onPress={() => onSkipPress(5000)}
       >
         <Icon
           name='skip-forward'

@@ -163,6 +163,8 @@ function PlayScreen ({
   /** Keeps track of the device rotation in an object (alpha, beta, and gamma). */
   const [deviceRotation, setDeviceRotation] = useState({})
 
+  const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
+
   /**
    * useEffect function that enters fullscreen mode when the video component is present, the video source is loaded, we're on ios (this feature doesn't work on android), and the device rotation matches that of landscape.
    * @function
@@ -426,14 +428,16 @@ function PlayScreen ({
           setMediaLength(playbackStatus.durationMillis)
           media.setStatusAsync({
             progressUpdateIntervalMillis: 1000,
-            shouldPlay: true
+            shouldPlay: shouldAutoPlay ? true : false
           })
           shouldThumbUpdate.current = true
-          setIsMediaPlaying(true)
+          if (shouldAutoPlay) setIsMediaPlaying(true)
+          else setIsMediaPlaying(false)
         })
     } catch (error) {
       console.log(error)
     }
+    if (!shouldAutoPlay) setShouldAutoPlay(true)
   }
 
   /**
@@ -839,7 +843,7 @@ function PlayScreen ({
         )
       ) : null}
 
-      {/* MODALS */}
+      {/* Modals */}
       <ShareModal
         isVisible={showShareLessonModal}
         hideModal={() => setShowShareLessonModal(false)}
