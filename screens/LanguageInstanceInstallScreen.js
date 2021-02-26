@@ -5,6 +5,7 @@ import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
+  Animated,
   Dimensions,
   SafeAreaView,
   SectionList,
@@ -97,6 +98,10 @@ function LanguageInstanceInstallScreen ({
   // keeps track of whether the uesr has an internet connection
   const [isConnected, setIsConnected] = useState(true)
 
+  const [buttonYPos, setButtonYPos] = useState(
+    new Animated.Value(Dimensions.get('window').height)
+  )
+
   i18n.locale = Localization.locale
   i18n.fallbacks = true
 
@@ -115,36 +120,6 @@ function LanguageInstanceInstallScreen ({
 
   useEffect(() => {
     setOptions(getNavOptions())
-
-    // Clear out the database and downloaded files in case we somehow come back to the Language Select screen after installing anything.
-    if (routeName === 'LanguageSelect') {
-      // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-      //   contents => {
-      //     console.log('Files:')
-      //     console.log(contents)
-      //   }
-      // )
-      // console.log(`Groups: ${groups ? groups : null}`)
-      // console.log(
-      //   `Languages in DB: ${Object.keys(database).filter(
-      //     key => key.length === 2
-      //   )}`
-      // )
-      // Object.keys(database).forEach(key => {
-      //   if (key.length === 2) {
-      //     deleteLanguageData(key)
-      //     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-      //       contents => {
-      //         for (const item of contents) {
-      //           if (item.slice(0, 2) === key) {
-      //             FileSystem.deleteAsync(FileSystem.documentDirectory + item)
-      //           }
-      //         }
-      //       }
-      //     )
-      //   }
-      // })
-    }
 
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected)
@@ -250,10 +225,18 @@ function LanguageInstanceInstallScreen ({
     setSelectedLanguage(language)
   }
 
+  function startSlideAnimation () {
+    console.log('slide')
+    Animated.spring(buttonYPos, {
+      toValue: Dimensions.get('window').height - 100
+    }).start()
+  }
+
   //+ RENDER
 
   // render start button conditionally as the user can't start if they don't have internet
-  var startButton = isListEmpty ? (
+
+  var noMoreLanguagesButton = (
     <WahaButton
       type='inactive'
       color={colors.aquaHaze}
@@ -264,40 +247,106 @@ function LanguageInstanceInstallScreen ({
       label={i18n.t('noMoreLanguages')}
       useDefaultFont={true}
     />
-  ) : isConnected ? (
-    <WahaButton
-      type='filled'
-      color={colors.apple}
-      onPress={onStartPress}
-      label={
-        routeName === 'InitialLanguageInstanceInstall'
-          ? i18n.t('letsBegin')
-          : i18n.t('addLanguage') + ' '
-      }
-      style={{
-        width: Dimensions.get('window').width - 40,
-        marginHorizontal: 20,
-        height: 68 * scaleMultiplier
-      }}
-      useDefaultFont={true}
-    />
-  ) : (
-    <WahaButton
-      type='inactive'
-      color={colors.geyser}
-      style={{
-        width: Dimensions.get('window').width - 40,
-        height: 68 * scaleMultiplier
-      }}
-      label={''}
-      useDefaultFont={true}
-      extraComponent={
-        <View>
-          <Icon name='cloud-slash' size={40} color={colors.chateau} />
-        </View>
-      }
-    />
   )
+
+  var letsBeginButton = (
+    // isConnected ? (
+    <Animated.View
+      style={{
+        position: 'absolute',
+        transform: [{ translateY: buttonYPos }]
+      }}
+    >
+      <WahaButton
+        type={isConnected ? 'filled' : 'inactive'}
+        color={isConnected ? colors.apple : colors.geyser}
+        onPress={isConnected ? onStartPress : null}
+        label={
+          isConnected
+            ? routeName === 'InitialLanguageInstanceInstall'
+              ? i18n.t('letsBegin')
+              : i18n.t('addLanguage') + ' '
+            : ''
+        }
+        style={{
+          width: Dimensions.get('window').width - 40,
+          marginHorizontal: 20,
+          height: 68 * scaleMultiplier
+        }}
+        useDefaultFont={true}
+        extraComponent={
+          isConnected ? null : (
+            <View>
+              <Icon name='cloud-slash' size={40} color={colors.chateau} />
+            </View>
+          )
+        }
+      />
+    </Animated.View>
+  )
+  // ) : (
+  //   <WahaButton
+  //     type='inactive'
+  //     color={colors.geyser}
+  //     style={{
+  //       width: Dimensions.get('window').width - 40,
+  //       height: 68 * scaleMultiplier
+  //     }}
+  //     label={''}
+  //     useDefaultFont={true}
+  //     extraComponent={
+  //       <View>
+  //         <Icon name='cloud-slash' size={40} color={colors.chateau} />
+  //       </View>
+  //     }
+  //   />
+  // )
+
+  // var startButton = isListEmpty ? (
+  //   <WahaButton
+  //     type='inactive'
+  //     color={colors.aquaHaze}
+  //     style={{
+  //       marginHorizontal: 20,
+  //       height: 68 * scaleMultiplier
+  //     }}
+  //     label={i18n.t('noMoreLanguages')}
+  //     useDefaultFont={true}
+  //   />
+  // ) : isConnected ? (
+  //   <WahaButton
+  //     type='filled'
+  //     color={colors.apple}
+  //     onPress={onStartPress}
+  //     label={
+  //       routeName === 'InitialLanguageInstanceInstall'
+  //         ? i18n.t('letsBegin')
+  //         : i18n.t('addLanguage') + ' '
+  //     }
+  //     style={{
+  //       width: Dimensions.get('window').width - 40,
+  //       marginHorizontal: 20,
+  //       height: 68 * scaleMultiplier
+  //     }}
+  //     useDefaultFont={true}
+  //   />
+  // ) : (
+  //   <WahaButton
+  //     type='inactive'
+  //     color={colors.geyser}
+  //     style={{
+  //       width: Dimensions.get('window').width - 40,
+  //       height: 68 * scaleMultiplier
+  //     }}
+  //     label={''}
+  //     useDefaultFont={true}
+  //     extraComponent={
+  //       <View>
+  //         <Icon name='cloud-slash' size={40} color={colors.chateau} />
+  //       </View>
+  //     }
+  //   />
+  // )
 
   var headerText =
     routeName === 'InitialLanguageInstanceInstall' ? (
@@ -337,9 +386,12 @@ function LanguageInstanceInstallScreen ({
         localeName={i18n.t(item.section.data[item.index].i18nName)}
         font={item.section.font}
         logoSource={item.section.data[item.index].logoSource}
-        onPress={() =>
+        onPress={() => {
+          if (!selectedLanguage) {
+            startSlideAnimation()
+          }
           setSelectedLanguage(item.section.data[item.index].wahaID)
-        }
+        }}
         isSelected={
           selectedLanguage === item.section.data[item.index].wahaID
             ? true
@@ -463,7 +515,9 @@ function LanguageInstanceInstallScreen ({
           )}
         />
       </View>
-      {startButton}
+      {/* {startButton} */}
+      {isListEmpty ? noMoreLanguagesButton : null}
+      {letsBeginButton}
     </SafeAreaView>
   )
 }

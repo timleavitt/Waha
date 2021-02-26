@@ -71,7 +71,7 @@ function MainStack ({
   font,
   activeGroup,
   security,
-  languageCoreFilesToUpdate,
+  languageCoreFilesToUpdate = [],
   setTimer,
   setIsTimedOut
 }) {
