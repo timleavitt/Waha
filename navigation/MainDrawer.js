@@ -14,6 +14,7 @@ import db from '../firebase/db'
 import { appVersion } from '../modeSwitch'
 import {
   addLanguageCoreFileToUpdate,
+  clearLanguageCoreFilesToUpdate,
   storeLanguageCoreFileCreatedTime,
   storeLanguageData,
   storeLanguageSets
@@ -70,7 +71,9 @@ function mapDispatchToProps (dispatch) {
       dispatch(deleteGroup(name))
     },
     storeLanguageCoreFileCreatedTime: (fileName, timeCreated) =>
-      dispatch(storeLanguageCoreFileCreatedTime(fileName, timeCreated))
+      dispatch(storeLanguageCoreFileCreatedTime(fileName, timeCreated)),
+    clearLanguageCoreFilesToUpdate: () =>
+      dispatch(clearLanguageCoreFilesToUpdate())
   }
 }
 
@@ -87,7 +90,7 @@ function MainDrawer ({
   activeGroup,
   security,
   languageCoreFilesCreatedTimes,
-  languageCoreFilesToUpdate = [],
+  languageCoreFilesToUpdate,
   mtUnlockAttempts,
   downloads,
   groups,
@@ -98,7 +101,8 @@ function MainDrawer ({
   addLanguageCoreFileToUpdate,
   changeActiveGroup,
   deleteGroup,
-  storeLanguageCoreFileCreatedTime
+  storeLanguageCoreFileCreatedTime,
+  clearLanguageCoreFilesToUpdate
 }) {
   /**
    * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the SetsTabs navigator because this is the only spot we should be able to swipe to open the drawer.
@@ -122,6 +126,10 @@ function MainDrawer ({
       netInfoUnsubscribe()
     }
   }, [])
+
+  if (!languageCoreFilesToUpdate) {
+    clearLanguageCoreFilesToUpdate()
+  }
 
   // Temporary check to makes sure that users who update have the language core file created times.
   if (!languageCoreFilesCreatedTimes) {
@@ -203,7 +211,7 @@ function MainDrawer ({
                         `${activeGroup.language}-${fileName.slice(0, -3)}`
                       )
                     ) {
-                      // console.log(`${fileName} needs to be replaced.\n`)
+                      console.log(`${fileName} needs to be replaced.\n`)
                       addLanguageCoreFileToUpdate(
                         `${activeGroup.language}-${fileName.slice(0, -3)}`
                       )

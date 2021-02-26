@@ -26,7 +26,8 @@ function mapStateToProps (state) {
     font: getLanguageFont(activeGroupSelector(state).language),
     // For testing.
     languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes,
-    globalGroupCounter: state.database.globalGroupCounter
+    globalGroupCounter: state.database.globalGroupCounter,
+    languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
   }
 }
 
@@ -45,7 +46,8 @@ function SetsScreen ({
   translations,
   font,
   languageCoreFilesCreatedTimes,
-  globalGroupCounter
+  globalGroupCounter,
+  languageCoreFilesToUpdate
 }) {
   /** Keeps track of the text displayed on the add set button. Changes depending on what category we're in. */
   const [addNewSetLabel, setAddNewSetLabel] = useState('')
@@ -76,8 +78,8 @@ function SetsScreen ({
   useEffect(() => {
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
-        console.log('Files:')
-        console.log(contents)
+        // console.log('Files:')
+        // console.log(contents)
         setDownloadedFiles(contents)
       }
     )
@@ -95,14 +97,14 @@ function SetsScreen ({
     // )
 
     // Log the language core files to update to the console.
-    // console.log(`Language core files to update: ${languageCoreFilesToUpdate}\n`)
+    console.log(`Language core files to update: ${languageCoreFilesToUpdate}\n`)
 
     // Log the language core file created times to the console.
-    console.log(
-      `Language core files created times: ${JSON.stringify(
-        languageCoreFilesCreatedTimes
-      )}\n`
-    )
+    // console.log(
+    //   `Language core files created times: ${JSON.stringify(
+    //     languageCoreFilesCreatedTimes
+    //   )}\n`
+    // )
   }, [])
 
   /**

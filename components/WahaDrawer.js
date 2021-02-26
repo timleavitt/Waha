@@ -55,8 +55,9 @@ function WahaDrawer ({
   translations,
   font,
   isConnected,
-  languageCoreFilesToUpdate = [],
+  languageCoreFilesToUpdate,
   updateLanguageCoreFiles,
+  setIsInstallingLanguageInstance,
   storeDownloads,
   setHasFetchedLanguageData
 }) {
