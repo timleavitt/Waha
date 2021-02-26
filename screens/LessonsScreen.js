@@ -366,7 +366,7 @@ function LessonsScreen ({
           }
         ]}
       >
-        <SetItem thisSet={thisSet} mode='lessons_screen' />
+        <SetItem thisSet={thisSet} screen='Lessons' />
       </View>
       <SwipeListView
         data={thisSet.lessons}

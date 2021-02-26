@@ -32,6 +32,7 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
+/** A modal screen that displays the various lessons in a set and their scripture references. */
 function SetInfoModal ({
   // Props passed from a parent component.
   isVisible,
@@ -122,7 +123,7 @@ function SetInfoModal ({
       isVisible={isVisible}
     >
       <View style={styles.studySetItemContainer}>
-        <SetItem thisSet={thisSet} mode='setinfo_modal' />
+        <SetItem thisSet={thisSet} screen='SetInfo' />
       </View>
       <WahaButton
         type='filled'

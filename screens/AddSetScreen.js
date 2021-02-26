@@ -116,9 +116,16 @@ function AddSetScreen ({
     setOptions(getNavOptions())
   }, [headerTitle])
 
+  /**
+   * Goes through a set and verifies that all of the necessary question set mp3s have been downloaded for that set. This gets passed through the filter function below.
+   * @param {Object} set - The object for the set that we're checking.
+   * @return {boolean} - Whether every necessary file has been downloaded for the set.
+   */
   function filterForDownloadedQuestionSets (set) {
+    // Create an array to store the necessary question set mp3s for this set.
     var requiredQuestionSets = []
 
+    // Go through each set and add all necessary question set mp3s to requiredQuestionSets array.
     set.lessons.forEach(lesson => {
       // Only filter if the lessons have a fellowship/application chapter. For sets like 3.1 which only has video lessons, we don't want to filter.
       if (lesson.fellowshipType) {
@@ -131,6 +138,7 @@ function AddSetScreen ({
       }
     })
 
+    // If every required file is present, return true. Otherwise, return false.
     if (
       requiredQuestionSets.every(questionSet =>
         downloadedFiles.includes(
@@ -202,7 +210,7 @@ function AddSetScreen ({
     return (
       <SetItem
         thisSet={setList.item}
-        mode='addset_screen'
+        screen='AddSet'
         onSetSelect={() => {
           setSetInModal(setList.item)
           setShowSetInfoModal(true)
