@@ -97,8 +97,8 @@ function MobilizationToolsUnlockScreen ({
   /**
    * Checks if the passcode the user enters is correct. If it is, show the success modal. If not, add one to the attempts tracker and show an alert that the code is incorrect.
    */
-  function checkPasscode () {
-    if (passcode === '281820') {
+  function checkPasscode (fullPasscode) {
+    if (fullPasscode === '281820') {
       Keyboard.dismiss()
       setUnlockSuccessModal(true)
       setAreMobilizationToolsUnlocked(true)
@@ -166,7 +166,7 @@ function MobilizationToolsUnlockScreen ({
         restrictToNumbers={true}
         animationFocused=''
         onTextChange={passcode => setPasscode(passcode)}
-        onFulfill={checkPasscode}
+        onFulfill={fullPasscode => checkPasscode(fullPasscode)}
         onBackspace={() => {}}
         // Disable entry if the user is locked out.
         editable={
