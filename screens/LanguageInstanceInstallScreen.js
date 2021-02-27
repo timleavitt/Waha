@@ -1,4 +1,5 @@
 import NetInfo from '@react-native-community/netinfo'
+import { useHeaderHeight } from '@react-navigation/stack'
 import { Audio } from 'expo-av'
 import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
@@ -101,6 +102,8 @@ function LanguageInstanceInstallScreen ({
   const [buttonYPos, setButtonYPos] = useState(
     new Animated.Value(Dimensions.get('window').height)
   )
+
+  const headerHeight = useHeaderHeight()
 
   i18n.locale = Localization.locale
   i18n.fallbacks = true
@@ -226,9 +229,12 @@ function LanguageInstanceInstallScreen ({
   }
 
   function startSlideAnimation () {
-    console.log('slide')
     Animated.spring(buttonYPos, {
-      toValue: Dimensions.get('window').height - 100
+      toValue:
+        Dimensions.get('screen').height - 108 * scaleMultiplier - headerHeight
+      // routeName === 'InitialLanguageInstanceInstall'
+      //   ? Dimensions.get('screen').height - 108 * scaleMultiplier
+      //   : Dimensions.get('screen').height -
     }).start()
   }
 
