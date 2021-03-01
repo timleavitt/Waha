@@ -151,7 +151,8 @@ function MobilizationToolsUnlockScreen ({
             colors.shark
           ),
           {
-            marginVertical: 30 * scaleMultiplier,
+            marginTop: 50 * scaleMultiplier,
+            marginBottom: 30 * scaleMultiplier,
             paddingHorizontal: 20
           }
         ]}
@@ -176,6 +177,19 @@ function MobilizationToolsUnlockScreen ({
               : false
             : true
         }
+        cellSize={50 * scaleMultiplier}
+        cellStyle={{
+          borderRadius: 25,
+          borderColor: colors.chateau,
+          borderWidth: 2,
+          marginLeft: 3,
+          marginRight: 3
+        }}
+        cellStyleFocused={{
+          borderColor: colors.shark,
+          borderRadius: 25,
+          borderWidth: 2
+        }}
       />
       <Text
         style={[
