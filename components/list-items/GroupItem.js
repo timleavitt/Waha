@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import {
+  Alert,
+  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
 import { getLessonInfo, scaleMultiplier } from '../../constants'
 import { changeActiveGroup } from '../../redux/actions/activeGroupActions'
@@ -63,6 +70,22 @@ function GroupItem ({
     setIsLastGroupInLanguageInstance
   ] = useState(false)
 
+  const [leftIconXPos, setLeftIconXPos] = useState(
+    new Animated.Value(
+      isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
+    )
+  )
+
+  useEffect(() => {
+    setLeftIconXPos(
+      new Animated.Value(
+        isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
+      )
+    )
+  }, [isRTL])
+
+  // const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
+
   /**
    * useEffect function that determines whether this group is the last in a language instance.
    * @function
@@ -113,44 +136,63 @@ function GroupItem ({
   var deleteButton
 
   if (
-    isEditing &&
+    // isEditing &&
     activeGroup.name !== thisGroup.name &&
     !isLastGroupInLanguageInstance
   ) {
     deleteButton = (
-      <TouchableOpacity
-        style={styles.minusButtonContainer}
-        onPress={() => {
-          Alert.alert(
-            translations.groups.popups.delete_group_title,
-            translations.groups.popups.delete_group_message,
-            [
-              {
-                text: translations.general.cancel,
-                onPress: () => {}
-              },
-              {
-                text: translations.general.ok,
-                onPress: () => deleteGroup(thisGroup.name)
-              }
-            ]
-          )
+      <Animated.View
+        style={{
+          transform: [{ translateX: leftIconXPos }]
         }}
       >
-        <Icon
-          name='minus-filled'
-          size={24 * scaleMultiplier}
-          color={colors.red}
-        />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.minusButtonContainer}
+          onPress={() => {
+            Alert.alert(
+              translations.groups.popups.delete_group_title,
+              translations.groups.popups.delete_group_message,
+              [
+                {
+                  text: translations.general.cancel,
+                  onPress: () => {}
+                },
+                {
+                  text: translations.general.ok,
+                  onPress: () => deleteGroup(thisGroup.name)
+                }
+              ]
+            )
+          }}
+        >
+          <Icon
+            name='minus-filled'
+            size={24 * scaleMultiplier}
+            color={colors.red}
+          />
+        </TouchableOpacity>
+      </Animated.View>
     )
-  } else if (isEditing && activeGroup.name === thisGroup.name) {
+  } else if (
+    // isEditing &&
+    activeGroup.name === thisGroup.name
+  ) {
     deleteButton = (
-      <View style={styles.minusButtonContainer}>
+      <Animated.View
+        style={[
+          styles.minusButtonContainer,
+          {
+            transform: [{ translateX: leftIconXPos }]
+          }
+        ]}
+      >
         <Icon name='check' size={24 * scaleMultiplier} color={colors.blue} />
-      </View>
+      </Animated.View>
     )
-  } else if (isEditing && isLastGroupInLanguageInstance) {
+  } else if (
+    // isEditing &&
+    isLastGroupInLanguageInstance
+  ) {
     deleteButton = (
       <View
         style={{
@@ -160,6 +202,18 @@ function GroupItem ({
       />
     )
   }
+
+  useEffect(() => {
+    if (isEditing) {
+      Animated.spring(leftIconXPos, {
+        toValue: 0
+      }).start()
+    } else if (!isEditing) {
+      Animated.spring(leftIconXPos, {
+        toValue: isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
+      }).start()
+    }
+  }, [isEditing])
 
   // Determine what to render for the 'right' button. This button highlights the active group with a blue checkmark while in regular mode and switches to a right arrow for all groups while in edit mode.
   var rightButton
@@ -200,8 +254,8 @@ function GroupItem ({
         style={[
           styles.touchableAreaContainer,
           {
-            flexDirection: isRTL ? 'row-reverse' : 'row',
-            paddingLeft: isEditing ? 0 : 20
+            flexDirection: isRTL ? 'row-reverse' : 'row'
+            // paddingLeft: isEditing ? 0 : 20
           }
         ]}
         onPress={
@@ -213,18 +267,33 @@ function GroupItem ({
               }
         }
       >
-        <GroupAvatar
-          style={{ backgroundColor: colors.athens }}
-          size={50 * scaleMultiplier}
-          emoji={thisGroup.emoji}
-          isActive={activeGroup.name === thisGroup.name}
-        />
-        <View
+        <Animated.View
+          style={{
+            transform:
+              isLastGroupInLanguageInstance &&
+              activeGroup.name !== thisGroup.name
+                ? null
+                : [{ translateX: leftIconXPos }]
+          }}
+        >
+          <GroupAvatar
+            style={{ backgroundColor: colors.athens }}
+            size={50 * scaleMultiplier}
+            emoji={thisGroup.emoji}
+            isActive={activeGroup.name === thisGroup.name}
+          />
+        </Animated.View>
+        <Animated.View
           style={[
             styles.groupTextContainer,
             {
               marginLeft: isRTL ? 0 : 20,
-              marginRight: isRTL ? 20 : 0
+              marginRight: isRTL ? 20 : 0,
+              transform:
+                isLastGroupInLanguageInstance &&
+                activeGroup.name !== thisGroup.name
+                  ? null
+                  : [{ translateX: leftIconXPos }]
             }
           ]}
         >
@@ -264,7 +333,7 @@ function GroupItem ({
               {getBookmarkLesson()}
             </Text>
           )}
-        </View>
+        </Animated.View>
         {rightButton}
       </TouchableOpacity>
     </View>
