@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 import {
@@ -33,7 +33,12 @@ function AddNewLanguageInstanceButton ({
 }) {
   return (
     <TouchableOpacity
-      style={styles.addNewLanguageButtonContainer}
+      style={[
+        styles.addNewLanguageButtonContainer,
+        {
+          flexDirection: isRTL ? 'row-reverse' : 'row'
+        }
+      ]}
       onPress={() => {
         // Navigate to the LanguageInstanceInstall screen so that the user can install another language instance.
         navigate('SubsequentlLanguageInstanceInstall', {
@@ -42,6 +47,13 @@ function AddNewLanguageInstanceButton ({
         })
       }}
     >
+      <View style={styles.iconContainer}>
+        <Icon
+          name='language-add'
+          size={40 * scaleMultiplier}
+          color={colors.chateau}
+        />
+      </View>
       <Text
         style={StandardTypography(
           { font, isRTL },
@@ -60,8 +72,16 @@ function AddNewLanguageInstanceButton ({
 const styles = StyleSheet.create({
   addNewLanguageButtonContainer: {
     height: 80 * scaleMultiplier,
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  iconContainer: {
+    width: 55 * scaleMultiplier,
+    height: '100%',
     justifyContent: 'center',
-    paddingHorizontal: 20
+    alignItems: 'center',
+    marginHorizontal: 20
   }
 })
 

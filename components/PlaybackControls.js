@@ -45,7 +45,7 @@ function PlaybackControls ({
         onPress={() => onSkipPress(-5000)}
       >
         <Icon
-          name='skip-back'
+          name='skip-back-5'
           size={69 * scaleMultiplier}
           color={colors.tuna}
         />
@@ -78,7 +78,7 @@ function PlaybackControls ({
         onPress={() => onSkipPress(5000)}
       >
         <Icon
-          name='skip-forward'
+          name='skip-forward-5'
           size={69 * scaleMultiplier}
           color={colors.tuna}
         />

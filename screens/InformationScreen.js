@@ -1,6 +1,12 @@
 import * as WebBrowser from 'expo-web-browser'
-import React, { useEffect } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import {
+  Clipboard,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
 import BackButton from '../components/standard/BackButton'
 import { scaleMultiplier } from '../constants'
@@ -27,6 +33,9 @@ function InformationScreen ({
   font,
   translations
 }) {
+  /** Whether the snackbar that pops up is visible or not.  */
+  const [showSnackbar, setShowSnackbar] = useState(false)
+
   function getNavOptions () {
     return {
       headerRight: isRTL
@@ -101,6 +110,11 @@ function InformationScreen ({
             flexDirection: isRTL ? 'row-reverse' : 'row'
           }
         ]}
+        onPress={() => {
+          setShowSnackbar(true)
+          setTimeout(() => setShowSnackbar(false), 2000)
+          Clipboard.setString(appVersion)
+        }}
       >
         <View>
           <Text
@@ -126,8 +140,40 @@ function InformationScreen ({
             {appVersion}
           </Text>
         </View>
-        <Icon name='bug' color={colors.tuna} size={25 * scaleMultiplier} />
+        <Icon
+          name='clipboard'
+          color={colors.tuna}
+          size={25 * scaleMultiplier}
+        />
       </TouchableOpacity>
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <View
+          style={{
+            flexDirection: isRTL ? 'row-reverse' : 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginVertical: 3
+          }}
+        >
+          <Text
+            style={[
+              StandardTypography(
+                { font, isRTL },
+                'd',
+                'Regular',
+                'center',
+                colors.geyser
+              ),
+              {
+                marginHorizontal: 2
+              }
+            ]}
+          >
+            Made with
+          </Text>
+          <Icon name='heart' size={15} color={colors.geyser} />
+        </View>
+      </View>
     </View>
   )
 }
