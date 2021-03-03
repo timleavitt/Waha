@@ -126,13 +126,12 @@ function GroupsScreen ({
         // Get all the groups that are a part of this language instance.
         languageObject['data'] = groups.filter(group => group.language === key)
 
-        console.log(database[key].installTime)
-
         // Add all of this to the installedLanguageInstances array.
         installedLanguageInstances.push(languageObject)
       }
     }
 
+    // (TEMP) If we have the install times stored, sort the languages by the time installed.
     return installedLanguageInstances.some(
       key => database[key.languageID].installTime === null
     )

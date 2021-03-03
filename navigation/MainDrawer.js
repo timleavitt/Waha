@@ -127,11 +127,12 @@ function MainDrawer ({
     }
   }, [])
 
+  // (TEMP) Create the language core files to update redux variable for users who are updating from a previous version.
   if (!languageCoreFilesToUpdate) {
     clearLanguageCoreFilesToUpdate()
   }
 
-  // Temporary check to makes sure that users who update have the language core file created times.
+  // (TEMP) Check to makes sure that users who update have the language core file created times.
   if (!languageCoreFilesCreatedTimes) {
     installedLanguageInstances.forEach(language => {
       database[language].files.forEach(fileName => {
