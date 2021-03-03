@@ -82,7 +82,10 @@ export function database (
           primaryColor: params.languageData.primaryColor,
           files: params.languageData.files,
           questions: params.languageData.questions,
-          translations: params.languageData.translations
+          translations: params.languageData.translations,
+          installTime: state[params.languageInstanceID].installTime
+            ? state[params.languageInstanceID].installTime
+            : Date.now()
         }
       }
     case STORE_LANGUAGE_SETS:
