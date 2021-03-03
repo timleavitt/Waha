@@ -35,6 +35,10 @@ function OptionsModal ({
       onBackdropPress={hideModal}
       backdropOpacity={0.3}
       style={{ justifyContent: 'flex-end' }}
+      onSwipeComplete={hideModal}
+      swipeDirection={['down']}
+      propagateSwipe={true}
+      useNativeDriver
     >
       <View style={{}}>
         <View style={styles.buttonsContainer}>{children}</View>

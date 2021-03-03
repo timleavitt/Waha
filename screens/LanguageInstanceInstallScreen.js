@@ -100,7 +100,7 @@ function LanguageInstanceInstallScreen ({
   const [isConnected, setIsConnected] = useState(true)
 
   const [buttonYPos, setButtonYPos] = useState(
-    new Animated.Value(Dimensions.get('window').height)
+    new Animated.Value(68 * scaleMultiplier + 20)
   )
 
   const headerHeight = useHeaderHeight()
@@ -230,36 +230,71 @@ function LanguageInstanceInstallScreen ({
 
   function startSlideAnimation () {
     Animated.spring(buttonYPos, {
-      toValue:
-        Dimensions.get('screen').height - 108 * scaleMultiplier - headerHeight
+      toValue: 0
       // routeName === 'InitialLanguageInstanceInstall'
       //   ? Dimensions.get('screen').height - 108 * scaleMultiplier
       //   : Dimensions.get('screen').height -
     }).start()
   }
 
+  function getLanguageData () {
+    var sections
+    if (routeName === 'InitialLanguageInstanceInstall')
+      sections = languages.sort((a, b) => {
+        if (i18n.locale.includes(a.languageCode)) return -1
+        else if (i18n.locale.includes(b.languageCode)) return 1
+        else return 0
+      })
+    else
+      sections = languages
+        // sort based on closeness to phone language
+        .sort((a, b) => {
+          if (i18n.locale.includes(a.languageCode)) return -1
+          else if (i18n.locale.includes(b.languageCode)) return 1
+          else return 0
+        })
+        // filter out languages that are already installed
+        .map(languageFamily => {
+          return {
+            ...languageFamily,
+            // filter out languages that are in
+            //  installedLanguageInstances which came from previous
+            //  screen
+            data: languageFamily.data.filter(language => {
+              if (
+                installedLanguageInstances.some(
+                  installedLanguage =>
+                    installedLanguage.languageID === language.wahaID
+                )
+              ) {
+                return false
+              } else {
+                return true
+              }
+            })
+          }
+        })
+        // if a language family has every language installed, don't
+        //  show it
+        .filter(languageFamily => {
+          if (languageFamily.data.length !== 0) return true
+          else return false
+        })
+    if (sections.length === 0 && !isListEmpty) setIsListEmpty(true)
+    return sections
+  }
+
   //+ RENDER
 
   // render start button conditionally as the user can't start if they don't have internet
 
-  var noMoreLanguagesButton = (
-    <WahaButton
-      type='inactive'
-      color={colors.aquaHaze}
-      style={{
-        marginHorizontal: 20,
-        height: 68 * scaleMultiplier
-      }}
-      label={i18n.t('noMoreLanguages')}
-      useDefaultFont={true}
-    />
-  )
-
   var letsBeginButton = (
-    // isConnected ? (
     <Animated.View
       style={{
         position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
         transform: [{ translateY: buttonYPos }]
       }}
     >
@@ -290,69 +325,6 @@ function LanguageInstanceInstallScreen ({
       />
     </Animated.View>
   )
-  // ) : (
-  //   <WahaButton
-  //     type='inactive'
-  //     color={colors.geyser}
-  //     style={{
-  //       width: Dimensions.get('window').width - 40,
-  //       height: 68 * scaleMultiplier
-  //     }}
-  //     label={''}
-  //     useDefaultFont={true}
-  //     extraComponent={
-  //       <View>
-  //         <Icon name='cloud-slash' size={40} color={colors.chateau} />
-  //       </View>
-  //     }
-  //   />
-  // )
-
-  // var startButton = isListEmpty ? (
-  //   <WahaButton
-  //     type='inactive'
-  //     color={colors.aquaHaze}
-  //     style={{
-  //       marginHorizontal: 20,
-  //       height: 68 * scaleMultiplier
-  //     }}
-  //     label={i18n.t('noMoreLanguages')}
-  //     useDefaultFont={true}
-  //   />
-  // ) : isConnected ? (
-  //   <WahaButton
-  //     type='filled'
-  //     color={colors.apple}
-  //     onPress={onStartPress}
-  //     label={
-  //       routeName === 'InitialLanguageInstanceInstall'
-  //         ? i18n.t('letsBegin')
-  //         : i18n.t('addLanguage') + ' '
-  //     }
-  //     style={{
-  //       width: Dimensions.get('window').width - 40,
-  //       marginHorizontal: 20,
-  //       height: 68 * scaleMultiplier
-  //     }}
-  //     useDefaultFont={true}
-  //   />
-  // ) : (
-  //   <WahaButton
-  //     type='inactive'
-  //     color={colors.geyser}
-  //     style={{
-  //       width: Dimensions.get('window').width - 40,
-  //       height: 68 * scaleMultiplier
-  //     }}
-  //     label={''}
-  //     useDefaultFont={true}
-  //     extraComponent={
-  //       <View>
-  //         <Icon name='cloud-slash' size={40} color={colors.chateau} />
-  //       </View>
-  //     }
-  //   />
-  // )
 
   var headerText =
     routeName === 'InitialLanguageInstanceInstall' ? (
@@ -466,53 +438,70 @@ function LanguageInstanceInstallScreen ({
           //  top
           style={{ height: '100%' }}
           sections={
-            routeName === 'InitialLanguageInstanceInstall'
-              ? languages.sort((a, b) => {
-                  if (i18n.locale.includes(a.languageCode)) return -1
-                  else if (i18n.locale.includes(b.languageCode)) return 1
-                  else return 0
-                })
-              : languages
-                  // sort based on closeness to phone language
-                  .sort((a, b) => {
-                    if (i18n.locale.includes(a.languageCode)) return -1
-                    else if (i18n.locale.includes(b.languageCode)) return 1
-                    else return 0
-                  })
-                  // filter out languages that are already installed
-                  .map(languageFamily => {
-                    return {
-                      ...languageFamily,
-                      // filter out languages that are in
-                      //  installedLanguageInstances which came from previous
-                      //  screen
-                      data: languageFamily.data.filter(language => {
-                        if (
-                          installedLanguageInstances.some(
-                            installedLanguage =>
-                              installedLanguage.languageID === language.wahaID
-                          )
-                        ) {
-                          return false
-                        } else {
-                          return true
-                        }
-                      })
-                    }
-                  })
-                  // if a language family has every language installed, don't
-                  //  show it
-                  .filter(languageFamily => {
-                    if (languageFamily.data.length !== 0) return true
-                    else return false
-                  })
+            getLanguageData()
+            // routeName === 'InitialLanguageInstanceInstall'
+            //   ? languages.sort((a, b) => {
+            //       if (i18n.locale.includes(a.languageCode)) return -1
+            //       else if (i18n.locale.includes(b.languageCode)) return 1
+            //       else return 0
+            //     })
+            //   : languages
+            //       // sort based on closeness to phone language
+            //       .sort((a, b) => {
+            //         if (i18n.locale.includes(a.languageCode)) return -1
+            //         else if (i18n.locale.includes(b.languageCode)) return 1
+            //         else return 0
+            //       })
+            //       // filter out languages that are already installed
+            //       .map(languageFamily => {
+            //         return {
+            //           ...languageFamily,
+            //           // filter out languages that are in
+            //           //  installedLanguageInstances which came from previous
+            //           //  screen
+            //           data: languageFamily.data.filter(language => {
+            //             if (
+            //               installedLanguageInstances.some(
+            //                 installedLanguage =>
+            //                   installedLanguage.languageID === language.wahaID
+            //               )
+            //             ) {
+            //               return false
+            //             } else {
+            //               return true
+            //             }
+            //           })
+            //         }
+            //       })
+            //       // if a language family has every language installed, don't
+            //       //  show it
+            //       .filter(languageFamily => {
+            //         if (languageFamily.data.length !== 0) return true
+            //         else return false
+            //       })
           }
           ItemSeparatorComponent={() => <Separator />}
           SectionSeparatorComponent={() => <Separator />}
-          ListEmptyComponent={() => {
-            setIsListEmpty(true)
-            return null
-          }}
+          ListEmptyComponent={() => (
+            <View>
+              <View
+                style={{ width: '100%', marginBottom: 18 * scaleMultiplier }}
+              >
+                <Text
+                  style={SystemTypography(
+                    false,
+                    'p',
+                    'Regular',
+                    'center',
+                    colors.chateau
+                  )}
+                >
+                  {i18n.t('noMoreLanguages')}
+                </Text>
+              </View>
+              <Separator />
+            </View>
+          )}
           keyExtractor={item => item.wahaID}
           renderItem={renderLanguage}
           renderSectionHeader={({ section }) => renderLanguageHeader(section)}
@@ -521,8 +510,6 @@ function LanguageInstanceInstallScreen ({
           )}
         />
       </View>
-      {/* {startButton} */}
-      {isListEmpty ? noMoreLanguagesButton : null}
       {letsBeginButton}
     </SafeAreaView>
   )

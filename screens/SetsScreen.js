@@ -97,7 +97,7 @@ function SetsScreen ({
     // )
 
     // Log the language core files to update to the console.
-    console.log(`Language core files to update: ${languageCoreFilesToUpdate}\n`)
+    // console.log(`Language core files to update: ${languageCoreFilesToUpdate}\n`)
 
     // Log the language core file created times to the console.
     // console.log(

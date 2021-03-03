@@ -1,5 +1,12 @@
 import React from 'react'
-import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native'
+import {
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
 import WahaButton from '../components/standard/WahaButton'
@@ -59,13 +66,15 @@ function SetInfoModal ({
       })
 
       return (
-        <View
+        // These are touchable because scrolling a FlatList within a modal only works when the items are touchable. Weird, but necessary.
+        <TouchableOpacity
           style={{
             marginVertical: 10 * scaleMultiplier,
             justifyContent: 'center',
             paddingHorizontal: 40,
             width: Dimensions.get('window').width
           }}
+          activeOpacity={1}
         >
           <Text
             style={StandardTypography(
@@ -89,11 +98,11 @@ function SetInfoModal ({
           >
             {scriptureList}
           </Text>
-        </View>
+        </TouchableOpacity>
       )
     } else
       return (
-        <View
+        <TouchableOpacity
           style={{
             marginVertical: 10 * scaleMultiplier,
             justifyContent: 'center',
@@ -112,7 +121,7 @@ function SetInfoModal ({
           >
             {item.title}
           </Text>
-        </View>
+        </TouchableOpacity>
       )
   }
 
@@ -144,12 +153,15 @@ function SetInfoModal ({
           />
         }
       />
-      <FlatList
-        keyExtractor={item => item.id}
-        data={thisSet.lessons}
-        renderItem={({ item }) => renderLessonInfoItem(item)}
-        contentContainerStyle={{ flexGrow: 1 }}
-      />
+      <View style={{ flex: 1 }}>
+        <FlatList
+          keyExtractor={item => item.id}
+          // nestedScrollEnabled
+          data={thisSet.lessons}
+          renderItem={({ item }) => renderLessonInfoItem(item)}
+          contentContainerStyle={{ flexGrow: 1 }}
+        />
+      </View>
     </ModalScreen>
   )
 }

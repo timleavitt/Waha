@@ -52,7 +52,7 @@ function InformationScreen ({
   }, [])
 
   async function openBrowser (url) {
-    await WebBrowser.openBrowserAsync(url, { dismissButtonStyle: 'cancel' })
+    await WebBrowser.openBrowserAsync(url, { dismissButtonStyle: 'close' })
   }
 
   return (

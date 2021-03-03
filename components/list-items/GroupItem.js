@@ -272,7 +272,7 @@ function GroupItem ({
             transform:
               isLastGroupInLanguageInstance &&
               activeGroup.name !== thisGroup.name
-                ? null
+                ? []
                 : [{ translateX: leftIconXPos }]
           }}
         >
@@ -292,7 +292,7 @@ function GroupItem ({
               transform:
                 isLastGroupInLanguageInstance &&
                 activeGroup.name !== thisGroup.name
-                  ? null
+                  ? []
                   : [{ translateX: leftIconXPos }]
             }
           ]}

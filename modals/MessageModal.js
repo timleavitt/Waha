@@ -66,6 +66,9 @@ function MessageModal ({
       onBackdropPress={hideModal}
       backdropOpacity={0.3}
       style={{ justifyContent: 'flex-end', flex: 1, margin: 0 }}
+      onSwipeComplete={hideModal}
+      swipeDirection={['down']}
+      propagateSwipe={true}
     >
       <View style={styles.contentContainer}>
         {children}
