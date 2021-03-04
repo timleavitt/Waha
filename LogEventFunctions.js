@@ -1,7 +1,7 @@
 import * as Analytics from 'expo-firebase-analytics'
 import * as StoreReview from 'expo-store-review'
-import { getLessonInfo, getSetInfo } from '../constants'
-import { analyticsMode } from '../modeSwitch'
+import { getLessonInfo, getSetInfo } from './constants'
+import { analyticsMode } from './modeSwitch'
 
 /**
  * This file contains a bunch of functions that send log events to Firebase analytics. This allows us to keep track of useful information.

@@ -1,60 +1,89 @@
+// import SvgUri from 'expo-svg-uri'
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
-import Icon from '../../assets/fonts/icons'
-import SVG from '../../assets/svg.js'
-import {
-  colors,
-  getLanguageFont,
-  getSetInfo,
-  itemHeights,
-  scaleMultiplier
-} from '../../constants'
+import Icon from '../../assets/fonts/icon_font_config'
+import { getSetInfo, itemHeights, scaleMultiplier } from '../../constants'
 import MessageModal from '../../modals/MessageModal'
 import { addSet } from '../../redux/actions/groupsActions'
-import { StandardTypography } from '../../styles/typography'
-function SetItem (props) {
-  //+ STATE
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../../redux/reducers/activeGroup'
+import { colors } from '../../styles/colors'
+import { getLanguageFont, StandardTypography } from '../../styles/typography'
+import SVG from '../SVG.js'
 
-  // keeps track of the number of completed lessons in this set
-  const [progressPercentage, setProgressPercentage] = useState(0)
+function mapStateToProps (state) {
+  return {
+    isRTL: activeDatabaseSelector(state).isRTL,
+    activeDatabase: activeDatabaseSelector(state),
+    primaryColor: activeDatabaseSelector(state).primaryColor,
+    font: getLanguageFont(activeGroupSelector(state).language),
+    activeGroup: activeGroupSelector(state),
+    translations: activeDatabaseSelector(state).translations
+  }
+}
 
-  // keeps track of the number of total lessons in a set
-  const [numLessons, setNumLessons] = useState(1)
+function mapDispatchToProps (dispatch) {
+  return {
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
+    }
+  }
+}
 
-  // keeps track of whether the set is fully completed or not
+/**
+ * A component that displays a set. Used on a variety of screens and displayed in a variety of ways depending on the mode prop.
+ * @param {Object} thisSet - The object for the set to display.
+ * @param {string} screen - The screen that the SetItem is used on. The set item is rendered slightly different on all the different screens it's used in. The options are: 1) Sets, 2) Lessons, 3) AddSet, and 4) SetInfo. The varieties used on each screen are described below.
+ * @param {Function} onSetSelect - A function to fire when the set item is pressed. Can be null to make the item non-pressable.
+ */
+function SetItem ({
+  // Props passed from a parent component.
+  thisSet,
+  screen,
+  onSetSelect,
+  // Props passed from redux.
+  isRTL,
+  activeDatabase,
+  primaryColor,
+  font,
+  activeGroup,
+  translations,
+  addSet
+}) {
+  /** Stores the dynamic primary icon portion of the SetItem component. This contains a unique SVG that represents the set and changes between modes. */
+  const [primaryIcon, setPrimaryIcon] = useState()
+
+  /** Stores the dynamic secondary icon portion of the SetItem component. This is a smaller icon on the opposite side from the primary icon and changes between modes as well. */
+  const [secondaryIcon, setSecondaryIcon] = useState()
+
+  /** Keeps track of the user's progress through this set. */
+  const [thisSetProgress, setThisSetProgress] = useState(0)
+
+  /** Keeps track of whether this set is fully completed or not. */
   const [fullyCompleted, setFullyCompleted] = useState(false)
 
+  /** Keeps track of whether the unlock modal is visible. */
   const [showUnlockModal, setShowUnlockModal] = useState(false)
 
-  // dynamic set components
-  const [icon, setIcon] = useState()
-  const [action, setAction] = useState()
-
-  //+ CONSTRUCTOR
-
-  //- sets components of the set items based on the type prop
+  /**
+   * useEffect function that sets the dynamic primary and secondary icon components of the set item based on the screen prop. Updated whenever the active group or progress changes.
+   */
   useEffect(() => {
-    // big switch statement that renders the 2 dynamic components (the big icon,
-    // and the action button) of a set item based on props.mode
-    // 1. SHOWN is for sets that have been added to the set screen
-    // 2. LESSONLIST is for the set component on the lesson list screen
-    // 3. ADDSET is for sets that have not been added and live on the add set screen
-    // 4. SETINFO is for the set on the top of the setinfo screen
-
-    switch (props.mode) {
-      case 'shown':
-        setProgress()
-        setIcon(
-          <View style={styles.iconContainer}>
+    switch (screen) {
+      case 'Sets':
+        updateThisSetProgress()
+        // Primary icon for the SetItem on the Sets screen is a circular progress bar with the set's SVG inside.
+        setPrimaryIcon(
+          <View style={styles.primaryIconContainer}>
             <AnimatedCircularProgress
               size={78 * scaleMultiplier}
               width={7 * scaleMultiplier}
-              fill={progressPercentage * 100}
-              tintColor={
-                fullyCompleted ? props.primaryColor + '50' : props.primaryColor
-              }
+              fill={thisSetProgress * 100}
+              tintColor={fullyCompleted ? primaryColor + '50' : primaryColor}
               rotation={0}
               backgroundColor={colors.white}
             >
@@ -67,19 +96,20 @@ function SetItem (props) {
                   }}
                 >
                   <SVG
-                    name={props.thisSet.iconName}
+                    name={thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    fill={fullyCompleted ? colors.chateau : colors.shark}
+                    color={fullyCompleted ? colors.chateau : colors.shark}
                   />
                 </View>
               )}
             </AnimatedCircularProgress>
           </View>
         )
-        setAction(
+        // Secondary icon for the SetItem on the Sets screen is a checkmark if the set is fully completed, a orange marker if this set is the bookmarked set, or nothing.
+        setSecondaryIcon(
           fullyCompleted ? (
-            <View style={styles.actionContainer}>
+            <View style={styles.secondaryIconContainer}>
               <Icon
                 name='check-outline'
                 size={30 * scaleMultiplier}
@@ -87,33 +117,32 @@ function SetItem (props) {
               />
             </View>
           ) : (
-            <View style={styles.actionContainer}>
+            <View style={styles.secondaryIconContainer}>
               <Icon
                 name={
-                  props.thisSet.id === props.activeGroup.setBookmark
-                    ? props.isRTL
+                  thisSet.id === activeGroup.setBookmark
+                    ? isRTL
                       ? 'triangle-left'
                       : 'triangle-right'
                     : null
                 }
                 size={30 * scaleMultiplier}
-                color={props.primaryColor}
+                color={primaryColor}
               />
             </View>
           )
         )
         break
-      case 'lessonlist':
-        setProgress()
-        setIcon(
-          <View style={styles.iconContainer}>
+      case 'Lessons':
+        updateThisSetProgress()
+        // Primary icon for the SetItem on the Lessons screen is the same as on the Sets screen: a circular progress bar with the set's SVG inside.
+        setPrimaryIcon(
+          <View style={styles.primaryIconContainer}>
             <AnimatedCircularProgress
               size={78 * scaleMultiplier}
               width={7 * scaleMultiplier}
-              fill={progressPercentage * 100}
-              tintColor={
-                fullyCompleted ? props.primaryColor + '50' : props.primaryColor
-              }
+              fill={thisSetProgress * 100}
+              tintColor={fullyCompleted ? primaryColor + '50' : primaryColor}
               rotation={0}
               backgroundColor={colors.white}
             >
@@ -126,23 +155,25 @@ function SetItem (props) {
                   }}
                 >
                   <SVG
-                    name={props.thisSet.iconName}
+                    name={thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    fill={fullyCompleted ? colors.chateau : colors.shark}
+                    color={fullyCompleted ? colors.chateau : colors.shark}
                   />
                 </View>
               )}
             </AnimatedCircularProgress>
           </View>
         )
-        setAction(<View style={styles.actionContainer} />)
+        // There is no secondary icon for the SetItem on the Lessons screen.
+        setSecondaryIcon(<View style={styles.secondaryIconContainer} />)
         break
-      case 'addset':
-        setIcon(
+      case 'AddSet':
+        // Primary icon for the SetItem on the AddSet screen is a slightly altered version of the set's SVG without any progress shown.
+        setPrimaryIcon(
           <View
             style={[
-              styles.iconContainer,
+              styles.primaryIconContainer,
               {
                 backgroundColor: colors.white,
                 borderRadius: 14,
@@ -153,28 +184,30 @@ function SetItem (props) {
             ]}
           >
             <SVG
-              name={props.thisSet.iconName}
+              name={thisSet.iconName}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
-              fill={colors.tuna}
+              color={colors.tuna}
             />
           </View>
         )
-        setAction(
-          <View style={styles.actionContainer}>
+        // Secondary icon for the SetItem on the AddSet screen is a small sideways arrow inviting the user to click on the item to open up a new screen in order to add it.
+        setSecondaryIcon(
+          <View style={styles.secondaryIconContainer}>
             <Icon
-              name={props.isRTL ? 'arrow-left' : 'arrow-right'}
+              name={isRTL ? 'arrow-left' : 'arrow-right'}
               size={30 * scaleMultiplier}
-              color={props.primaryColor}
+              color={primaryColor}
             />
           </View>
         )
         break
-      case 'setinfo':
-        setIcon(
+      case 'SetInfo':
+        // Primary icon for the SetItem on the SetInfo modal screen is similar to the one on the AddSet screen, with some slightly style variations.
+        setPrimaryIcon(
           <View
             style={[
-              styles.iconContainer,
+              styles.primaryIconContainer,
               {
                 backgroundColor: colors.white,
                 borderRadius: 14,
@@ -185,117 +218,100 @@ function SetItem (props) {
             ]}
           >
             <SVG
-              name={props.thisSet.iconName}
+              name={thisSet.iconName}
               width={80 * scaleMultiplier}
               height={80 * scaleMultiplier}
-              fill={colors.tuna}
+              color={colors.tuna}
             />
           </View>
         )
-        setAction(<View style={styles.actionContainer} />)
+        // There is no secondary icon for the SetItem on the SetInfo modal screen.
+        setSecondaryIcon(<View style={styles.secondaryIconContainer} />)
         break
     }
-  }, [
-    // need to rerender the sets whenever any progress, bookmarks, or RTL
-    //  changes
-    progressPercentage,
-    fullyCompleted,
-    props.activeGroup.setBookmark,
-    props.activeGroup.addedSets,
-    props.isRTL
-  ])
+  }, [thisSetProgress, fullyCompleted, activeGroup])
 
-  //- sets the progress through this set
-  function setProgress () {
-    var setLength = props.thisSet.lessons.length
-    // set the percentage through a set
-    setProgressPercentage(
-      props.activeGroup.addedSets.filter(set => set.id === props.thisSet.id)[0]
-        .progress.length / setLength
+  /**
+   * Updates the thisSetProgress state.
+   */
+  function updateThisSetProgress () {
+    setThisSetProgress(
+      activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
+        .length / thisSet.lessons.length
     )
   }
 
-  //- whenever progress changes for a set, handle the changes
+  /** useEffect function that updates whenever this set's progress changes and handles the changes appropriately. */
   useEffect(() => {
-    progressCases()
-  }, [progressPercentage])
+    // If this set is fully completed, set the fullyCompleted state to true. This makes the set components grayed out.
+    if (thisSetProgress === 1) setFullyCompleted(true)
+    else setFullyCompleted(false)
 
-  //- handles special cases regarding changes in progress
-  function progressCases () {
-    // if it's fully completed, set fully completed to true, which renders
-    // the shown and lessonlist variants as grayed out
-    if (progressPercentage === 1) {
-      setFullyCompleted(true)
-    } else setFullyCompleted(false)
+    /* 
+    Next, we want to see if we need to automatically add the next set. The criteria for this happening is: 
+      1) The Foundational set after this one exists
+      2) This set is 85% or more complete
+      3) This set is Foundational
+      4) The Foundational set after this one hasn't already been added
+    */
 
-    // get the set AFTER the one that you're setting progress for
-    var nextSet = props.activeDatabase.sets.filter(
+    // Firstly, we need to get the set after this one before we can do anything else.
+    var nextSet = activeDatabase.sets.filter(
       dbSet =>
         getSetInfo('category', dbSet.id) === 'foundational' &&
-        getSetInfo('index', dbSet.id) ===
-          getSetInfo('index', props.thisSet.id) + 1
+        getSetInfo('index', dbSet.id) === getSetInfo('index', thisSet.id) + 1
     )[0]
 
-    // we want to automatically add the next set if the next set exists AND
+    // If all of the above criteria are met, add the next set and show a modal notifying the user.
     if (nextSet) {
       if (
-        // we've completed 85% of a set AND
-        progressPercentage > 0.85 &&
-        // this set is a core set AND
-        getSetInfo('category', props.thisSet.id) === 'foundational' &&
-        // the next set after this one hasn't already been added AND
-        !props.activeGroup.addedSets.some(
-          addedSet => addedSet.id === nextSet.id
-        )
+        thisSetProgress > 0.85 &&
+        getSetInfo('category', thisSet.id) === 'foundational' &&
+        !activeGroup.addedSets.some(addedSet => addedSet.id === nextSet.id)
       ) {
-        props.addSet(
-          props.activeGroup.name,
-          props.activeGroup.id,
-          props.activeDatabase.sets
+        addSet(
+          activeGroup.name,
+          activeGroup.id,
+          activeDatabase.sets
             .filter(set => getSetInfo('category', set.id) === 'foundational')
             .filter(
               set =>
                 getSetInfo('index', set.id) ===
-                getSetInfo('index', props.thisSet.id) + 1
+                getSetInfo('index', thisSet.id) + 1
             )[0]
         )
         setShowUnlockModal(true)
       }
     }
-  }
-
-  //+ RENDER
+  }, [thisSetProgress])
 
   return (
     <TouchableOpacity
       style={[
-        styles.studySetItem,
+        styles.setItemContainer,
         {
-          flexDirection: props.isRTL ? 'row-reverse' : 'row',
-          height: itemHeights[props.font].SetItem
+          flexDirection: isRTL ? 'row-reverse' : 'row',
+          height: itemHeights[font].SetItem
         }
       ]}
-      onPress={props.onSetSelect}
-      // disable feedback if there's no onSetSelect
-      activeOpacity={props.onSetSelect ? 0.2 : 1}
+      onPress={onSetSelect}
+      // Disable the touch feedback if there's no onSetSelect function.
+      activeOpacity={onSetSelect ? 0.2 : 1}
     >
-      {/* large icon rendered earlier */}
-      {icon}
-
-      {/* title and subtitle */}
+      {primaryIcon}
       <View
         style={[
-          styles.titleContainer,
+          styles.textContainer,
           {
-            marginRight: props.isRTL ? 20 : 0,
-            marginLeft: props.isRTL ? 0 : 20
+            marginRight: isRTL ? 20 : 0,
+            marginLeft: isRTL ? 0 : 20
           }
         ]}
       >
         <Text
           style={[
             StandardTypography(
-              props,
+              { font, isRTL },
               'd',
               'Regular',
               'left',
@@ -308,12 +324,12 @@ function SetItem (props) {
           ]}
           numberOfLines={1}
         >
-          {props.thisSet.subtitle}
+          {thisSet.subtitle}
         </Text>
         <Text
           style={[
             StandardTypography(
-              props,
+              { font, isRTL },
               'h3',
               'Black',
               'left',
@@ -326,18 +342,17 @@ function SetItem (props) {
           ]}
           numberOfLines={2}
         >
-          {props.thisSet.title}
+          {thisSet.title}
         </Text>
       </View>
-
-      {/* action button rendered earlier */}
-      {action}
+      {secondaryIcon}
+      {/* Modals */}
       <MessageModal
         isVisible={showUnlockModal}
         hideModal={() => setShowUnlockModal(false)}
-        title={props.translations.general.popups.new_story_set_unlocked_title}
-        body={props.translations.general.popups.new_story_set_unlocked_message}
-        confirmText={props.translations.general.got_it}
+        title={translations.general.popups.new_story_set_unlocked_title}
+        body={translations.general.popups.new_story_set_unlocked_message}
+        confirmText={translations.general.got_it}
         confirmOnPress={() => setShowUnlockModal(false)}
       >
         <Image
@@ -345,7 +360,6 @@ function SetItem (props) {
           style={{
             height: 200 * scaleMultiplier,
             margin: 20,
-            // padding: 20,
             resizeMode: 'contain'
           }}
         />
@@ -354,97 +368,43 @@ function SetItem (props) {
   )
 }
 
-//+ STYLES
-
 const styles = StyleSheet.create({
-  studySetItem: {
+  setItemContainer: {
     flexDirection: 'row',
     width: '100%',
     flex: 1,
-    // height: 100 * scaleMultiplier,
-    // aspectRatio: 4,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20
-    // borderWidth: 1
   },
-  iconContainer: {
+  primaryIconContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     width: 80 * scaleMultiplier,
     height: 80 * scaleMultiplier
   },
-  titleContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'column'
-  },
-  actionContainer: {
+  secondaryIconContainer: {
     justifyContent: 'center',
     width: 30 * scaleMultiplier,
     height: 30 * scaleMultiplier
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    flexDirection: 'column'
   }
 })
 
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeDatabase: state.database[activeGroup.language],
-    primaryColor: state.database[activeGroup.language].primaryColor,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup,
-    translations: state.database[activeGroup.language].translations
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    addSet: (groupName, groupID, set) => {
-      dispatch(addSet(groupName, groupID, set))
-    }
-  }
-}
-
 export default connect(mapStateToProps, mapDispatchToProps)(SetItem)
 
-// case 'folder':
-//   setIcon(
-//     <View style={styles.iconContainer}>
-//       <SVG
-//         name={props.thisSet.icon}
-//         width={80 * scaleMultiplier}
-//         height={80 * scaleMultiplier}
-//         fill='#1D1E20'
-//       />
-//     </View>
-//   )
-//   setAction(
-//     <View style={styles.actionContainer}>
-//       <Icon
-//         name={props.isRTL ? 'arrow-left' : 'arrow-right'}
-//         size={30 * scaleMultiplier}
-//         color={props.primaryColor}
-//       />
-//     </View>
-//   )
-//   setInfo()
-//   // INFO BUTTON (keep for later)
-//   // <TouchableOpacity
-//   //   style={[
-//   //     styles.actionContainer,
-//   //     {
-//   //       marginRight: props.isRTL ? 0 : 10,
-//   //       marginLeft: props.isRTL ? 10 : 0
-//   //     }
-//   //   ]}
-//   //   onPress={() => {}}
-//   // >
-//   //   <Icon name='info' size={30 * scaleMultiplier} color={colors.chateau} />
-//   // </TouchableOpacity>
-//   break
+/* <SvgUri
+source={{
+  uri: ''
+}}
+width={70 * scaleMultiplier}
+height={70 * scaleMultiplier}
+// fill={fullyCompleted ? colors.chateau : colors.shark}
+fill={colors.chateau}
+fillAll
+/>  */

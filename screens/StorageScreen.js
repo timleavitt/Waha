@@ -12,10 +12,42 @@ import { connect } from 'react-redux'
 import LanguageStorageItem from '../components/list-items/LanguageStorageItem'
 import BackButton from '../components/standard/BackButton'
 import WahaButton from '../components/standard/WahaButton'
-import { colors, getLanguageFont } from '../constants'
 import { removeDownload } from '../redux/actions/downloadActions'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont } from '../styles/typography'
 
-function StorageScreen (props) {
+function mapStateToProps (state) {
+  return {
+    isRTL: activeDatabaseSelector(state).isRTL,
+    database: state.database,
+    translations: activeDatabaseSelector(state).translations,
+    font: getLanguageFont(activeGroupSelector(state).language),
+    activeGroup: activeGroupSelector(state)
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    removeDownload: lessonID => {
+      dispatch(removeDownload(lessonID))
+    }
+  }
+}
+
+function StorageScreen ({
+  // Props passed from navigation.
+  navigation: { setOptions, goBack },
+  isRTL,
+  database,
+  translations,
+  font,
+  activeGroup,
+  removeDownload
+}) {
   //+ STATE
 
   // keeps track of storage size of each language's downloaded chapter 2s
@@ -27,7 +59,7 @@ function StorageScreen (props) {
   //+ CONSTRUCTOR
 
   useEffect(() => {
-    props.navigation.setOptions(getNavOptions())
+    setOptions(getNavOptions())
     getAllStorageUsed()
   }, [])
 
@@ -35,12 +67,12 @@ function StorageScreen (props) {
 
   function getNavOptions () {
     return {
-      headerRight: props.isRTL
-        ? () => <BackButton onPress={() => props.navigation.goBack()} />
+      headerRight: isRTL
+        ? () => <BackButton onPress={() => goBack()} />
         : () => <View></View>,
-      headerLeft: props.isRTL
+      headerLeft: isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => props.navigation.goBack()} />
+        : () => <BackButton onPress={() => goBack()} />
     }
   }
 
@@ -98,10 +130,10 @@ function StorageScreen (props) {
           if (hasMatch) {
             if (!language) {
               FileSystem.deleteAsync(FileSystem.documentDirectory + item)
-              props.removeDownload(item.slice(0, 5))
+              removeDownload(item.slice(0, 5))
             } else if (item.slice(0, 2) === language) {
               FileSystem.deleteAsync(FileSystem.documentDirectory + item)
-              props.removeDownload(item.slice(0, 5))
+              removeDownload(item.slice(0, 5))
             }
           }
         }
@@ -114,10 +146,10 @@ function StorageScreen (props) {
   // gets all the installed languages
   function getInstalledLanguageInstances () {
     var installedLanguageInstances = []
-    for (key in props.database) {
+    for (key in database) {
       if (key.length === 2) {
         var languageObject = {}
-        languageObject['languageName'] = props.database[key].displayName
+        languageObject['languageName'] = database[key].displayName
         languageObject['languageID'] = key
         installedLanguageInstances.push(languageObject)
       }
@@ -130,24 +162,22 @@ function StorageScreen (props) {
   function renderLanguageStorageItem (languageList) {
     return (
       <LanguageStorageItem
-        languageName={
-          props.translations.general.brands[languageList.item.languageID]
-        }
+        languageName={translations.general.brands[languageList.item.languageID]}
         languageID={languageList.item.languageID}
         megabytes={storageObject[languageList.item.languageID]}
         clearDownloads={() => {
           Alert.alert(
-            props.translations.storage.popups
+            translations.storage.popups
               .clear_all_downloaded_lessons_for_a_language_title,
-            props.translations.storage.popups
+            translations.storage.popups
               .clear_all_downloaded_lessons_for_a_language_message,
             [
               {
-                text: props.translations.general.cancel,
+                text: translations.general.cancel,
                 onPress: () => {}
               },
               {
-                text: props.translations.general.ok,
+                text: translations.general.ok,
                 onPress: () =>
                   deleteDownloadedLessons(languageList.item.languageID)
               }
@@ -175,27 +205,25 @@ function StorageScreen (props) {
         type='filled'
         color={colors.red}
         label={
-          props.translations.storage.clear_all_downloaded_lessons_button_label +
+          translations.storage.clear_all_downloaded_lessons_button_label +
           ' (' +
           totalStorage +
           ' ' +
-          props.translations.storage.megabyte_label +
+          translations.storage.megabyte_label +
           ')'
         }
         width={Dimensions.get('window').width - 40}
         onPress={() =>
           Alert.alert(
-            props.translations.storage.popups
-              .clear_all_downloaded_lessons_title,
-            props.translations.storage.popups
-              .clear_all_downloaded_lessons_message,
+            translations.storage.popups.clear_all_downloaded_lessons_title,
+            translations.storage.popups.clear_all_downloaded_lessons_message,
             [
               {
-                text: props.translations.general.cancel,
+                text: translations.general.cancel,
                 onPress: () => {}
               },
               {
-                text: props.translations.general.ok,
+                text: translations.general.ok,
                 onPress: () => deleteDownloadedLessons()
               }
             ]
@@ -215,28 +243,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.aquaHaze
   }
 })
-
-//+REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    database: state.database,
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    removeDownload: lessonID => {
-      dispatch(removeDownload(lessonID))
-    }
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(StorageScreen)

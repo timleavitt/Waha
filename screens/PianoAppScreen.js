@@ -14,11 +14,48 @@ import {
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import Piano from '../components/piano-stuff/Piano'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import { setIsMuted, setIsTimedOut } from '../redux/actions/securityActions'
-import { StandardTypography } from '../styles/typography'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
-function PianoAppScreen (props) {
+function mapStateToProps (state) {
+  return {
+    security: state.security,
+    font: getLanguageFont(activeGroupSelector(state).language),
+    activeGroup: activeGroupSelector(state),
+    translations: activeDatabaseSelector(state).translations,
+    isRTL: activeDatabaseSelector(state).isRTL
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    setIsMuted: toSet => {
+      dispatch(setIsMuted(toSet))
+    },
+    setIsTimedOut: toSet => {
+      dispatch(setIsTimedOut(toSet))
+    }
+  }
+}
+
+function PianoAppScreen ({
+  // Props passed from navigation.
+  navigation: { canGoBack, goBack, reset },
+  // Props passed from redux.
+  security,
+  font,
+  activeGroup,
+  translations,
+  isRTL,
+  setIsMuted,
+  setIsTimedOut
+}) {
   //+ STATE
 
   const [pattern, setPattern] = useState('')
@@ -30,21 +67,23 @@ function PianoAppScreen (props) {
   useEffect(() => {
     Keyboard.dismiss()
 
-    if (pattern.includes(props.security.code)) {
-      if (!props.security.isMuted) {
+    if (pattern.includes(security.code)) {
+      if (!security.isMuted) {
         var note = new Audio.Sound()
         note
-          .loadAsync(require('../assets/notes/Success.mp3'))
+          .loadAsync(
+            require('../assets/securityMode/unlock_security_mode_sound.mp3')
+          )
           .then(() => note.playAsync())
       }
-      props.setIsTimedOut(false)
-      if (props.navigation.canGoBack()) {
-        if (Platform.OS === 'ios') props.navigation.goBack()
-        props.navigation.goBack()
+      setIsTimedOut(false)
+      if (canGoBack()) {
+        if (Platform.OS === 'ios') goBack()
+        goBack()
       } else
-        props.navigation.reset({
+        reset({
           index: 0,
-          routes: [{ name: 'SetTabs' }]
+          routes: [{ name: 'SetsTabs' }]
         })
     }
   }, [pattern])
@@ -68,7 +107,7 @@ function PianoAppScreen (props) {
         }}
       >
         <Image
-          source={require('../assets/wahaIcon.png')}
+          source={require('../assets/icons/waha_icon.png')}
           style={{
             resizeMode: 'contain',
             width: 50,
@@ -78,17 +117,23 @@ function PianoAppScreen (props) {
         />
         <Text
           style={[
-            StandardTypography(props, 'h1', 'Bold', 'center', colors.shark),
+            StandardTypography(
+              { font, isRTL },
+              'h1',
+              'Bold',
+              'center',
+              colors.shark
+            ),
             { paddingHorizontal: 10 }
           ]}
         >
-          {props.translations.security.game_screen_title}
+          {translations.security.game_screen_title}
         </Text>
       </View>
       <View>
         <View
           style={{
-            flexDirection: props.isRTL ? 'row-reverse' : 'row',
+            flexDirection: isRTL ? 'row-reverse' : 'row',
             justifyContent: 'center',
             alignItems: 'center'
           }}
@@ -105,9 +150,9 @@ function PianoAppScreen (props) {
                 : () => {
                     setCountdown('')
                   }
-              // props.security.isMuted
-              //   ? () => props.setIsMuted(false)
-              //   : () => props.setIsMuted(true)
+              // security.isMuted
+              //   ? () => setIsMuted(false)
+              //   : () => setIsMuted(true)
             }
             style={{
               margin: 20
@@ -127,7 +172,7 @@ function PianoAppScreen (props) {
             >
               <Text
                 style={StandardTypography(
-                  props,
+                  { font, isRTL },
                   'h2',
                   'Regular',
                   'center',
@@ -161,14 +206,14 @@ function PianoAppScreen (props) {
               height: 60 * scaleMultiplier,
               borderRadius: 10
             }}
-            source={require('../assets/piano.png')}
+            source={require('../assets/securityMode/piano.png')}
           />
-          <Piano setPattern={setPattern} isMuted={props.security.isMuted} />
+          <Piano setPattern={setPattern} isMuted={security.isMuted} />
         </View>
         <View
           style={{
             width: Dimensions.get('window').width,
-            flexDirection: props.isRTL ? 'row-reverse' : 'row',
+            flexDirection: isRTL ? 'row-reverse' : 'row',
             justifyContent: 'space-between',
             alignItems: 'center'
           }}
@@ -183,16 +228,16 @@ function PianoAppScreen (props) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={
-              props.security.isMuted
-                ? () => props.setIsMuted(false)
-                : () => props.setIsMuted(true)
+              security.isMuted
+                ? () => setIsMuted(false)
+                : () => setIsMuted(true)
             }
             style={{
               margin: 20
             }}
           >
             <Icon
-              name={props.security.isMuted ? 'volume-off' : 'volume'}
+              name={security.isMuted ? 'volume-off' : 'volume'}
               size={50}
               color={colors.tuna}
             />
@@ -213,28 +258,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around'
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    security: state.security,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup,
-    translations: state.database[activeGroup.language].translations
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    setIsMuted: toSet => {
-      dispatch(setIsMuted(toSet))
-    },
-    setIsTimedOut: toSet => {
-      dispatch(setIsTimedOut(toSet))
-    }
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(PianoAppScreen)

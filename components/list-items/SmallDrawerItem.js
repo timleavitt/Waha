@@ -1,24 +1,42 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont } from '../../constants'
-import { StandardTypography } from '../../styles/typography'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../../redux/reducers/activeGroup'
+import { colors } from '../../styles/colors'
+import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
-function SmallDrawerItem (props) {
+function SmallDrawerItem ({
+  // Props passed from a parent component.s
+  onPress,
+  label,
+  // Props passed from redux.
+  isRTL,
+  font,
+  activeGroup
+}) {
   //+ RENDER
 
   return (
     <TouchableOpacity
       style={[
         styles.smallDrawerItemContainer,
-        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        { flexDirection: isRTL ? 'row-reverse' : 'row' }
       ]}
-      onPress={props.onPress}
+      onPress={onPress}
     >
       <Text
-        style={StandardTypography(props, 'h3', 'Bold', 'left', colors.chateau)}
+        style={StandardTypography(
+          { font, isRTL },
+          'h3',
+          'Bold',
+          'left',
+          colors.chateau
+        )}
       >
-        {props.label}
+        {label}
       </Text>
     </TouchableOpacity>
   )
@@ -35,13 +53,10 @@ const styles = StyleSheet.create({
 })
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
+    isRTL: activeDatabaseSelector(state).isRTL,
+    font: getLanguageFont(activeGroupSelector(state).language),
+    activeGroup: activeGroupSelector(state)
   }
 }
 

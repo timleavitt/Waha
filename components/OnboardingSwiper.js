@@ -9,16 +9,42 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
-import { StandardTypography, SystemTypography } from '../styles/typography'
+import { scaleMultiplier } from '../constants'
+import { activeGroupSelector } from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import {
+  getLanguageFont,
+  StandardTypography,
+  SystemTypography
+} from '../styles/typography'
 import WahaButton from './standard/WahaButton'
 
-function OnboardingSwiper (props) {
+function mapStateToProps (state) {
+  return activeGroupSelector(state)
+    ? {
+        font: getLanguageFont(activeGroupSelector(state).language)
+      }
+    : {}
+}
+
+function OnboardingSwiper ({
+  // Props passed from a parent component.
+  isRTL,
+  sources,
+  titles,
+  messages,
+  onFinish,
+  nextTranslation,
+  startTranslation,
+  useDefaultFont,
+  // Props passed from redux.
+  font = null
+}) {
   const [onboardingPage, setOnboardingPage] = useState(1)
   const [pagerRef, setPagerRef] = useState()
   var dots = []
 
-  props.titles.forEach((title, index) => {
+  titles.forEach((title, index) => {
     dots.push(
       <View
         style={[
@@ -46,15 +72,15 @@ function OnboardingSwiper (props) {
   })
 
   var pages = []
-  props.titles.forEach((title, index) => {
+  titles.forEach((title, index) => {
     pages.push(
       <View style={{ flexDirection: 'row', flex: 1 }} key={index}>
         <View style={styles.page}>
-          <Image style={styles.image} source={props.sources[index]} />
+          <Image style={styles.image} source={sources[index]} />
           <View>
             <Text
               style={[
-                props.useDefaultFont
+                useDefaultFont
                   ? SystemTypography(
                       false,
                       'h2',
@@ -63,7 +89,7 @@ function OnboardingSwiper (props) {
                       colors.shark
                     )
                   : StandardTypography(
-                      props,
+                      { font, isRTL },
                       'h2',
                       'Bold',
                       'center',
@@ -72,11 +98,11 @@ function OnboardingSwiper (props) {
                 { marginVertical: 10 }
               ]}
             >
-              {props.titles[index]}
+              {titles[index]}
             </Text>
             <Text
               style={
-                props.useDefaultFont
+                useDefaultFont
                   ? SystemTypography(
                       false,
                       'h3',
@@ -85,7 +111,7 @@ function OnboardingSwiper (props) {
                       colors.chateau
                     )
                   : StandardTypography(
-                      props,
+                      { font, isRTL },
                       'h3',
                       'Regular',
                       'center',
@@ -93,14 +119,14 @@ function OnboardingSwiper (props) {
                     )
               }
             >
-              {props.messages[index]}
+              {messages[index]}
             </Text>
           </View>
         </View>
 
         {/* <View style={{}}>
-          {index === props.titles.length - 1 ? (
-            <TouchableOpacity onPress={props.onFinish}>
+          {index === titles.length - 1 ? (
+            <TouchableOpacity onPress={onFinish}>
               <Icon name='check' size={50} color={colors.tuna} />
             </TouchableOpacity>
           ) : null}
@@ -113,7 +139,7 @@ function OnboardingSwiper (props) {
     <SafeAreaView style={{ flex: 1 }}>
       {/* <TouchableOpacity
         style={{ position: 'absolute', marginTop: 20, marginLeft: 10 }}
-        onPress={props.onFinish}
+        onPress={onFinish}
       >
         <Icon name='cancel' color={colors.oslo} size={40 * scaleMultiplier} />
       </TouchableOpacity> */}
@@ -121,10 +147,10 @@ function OnboardingSwiper (props) {
         ref={ref => (ref ? setPagerRef(ref) : null)}
         // showPageIndicator
         style={styles.pager}
-        initialPage={props.isRTL ? pages.length - 1 : 0}
+        initialPage={isRTL ? pages.length - 1 : 0}
         onPageSelected={stuff => setOnboardingPage(stuff.nativeEvent.position)}
       >
-        {props.isRTL ? pages.reverse() : pages}
+        {isRTL ? pages.reverse() : pages}
       </ViewPager>
       <View
         style={{
@@ -141,7 +167,7 @@ function OnboardingSwiper (props) {
         <WahaButton
           type='filled'
           color={
-            props.isRTL
+            isRTL
               ? onboardingPage === 0
                 ? colors.apple
                 : colors.blue
@@ -150,22 +176,22 @@ function OnboardingSwiper (props) {
               : colors.blue
           }
           onPress={
-            props.isRTL
+            isRTL
               ? onboardingPage === 0
-                ? props.onFinish
+                ? onFinish
                 : () => pagerRef.setPage(onboardingPage - 1)
               : onboardingPage === pages.length - 1
-              ? props.onFinish
+              ? onFinish
               : () => pagerRef.setPage(onboardingPage + 1)
           }
           label={
-            props.isRTL
+            isRTL
               ? onboardingPage === 0
-                ? props.startTranslation
-                : props.nextTranslation
+                ? startTranslation
+                : nextTranslation
               : onboardingPage === pages.length - 1
-              ? props.startTranslation
-              : props.nextTranslation
+              ? startTranslation
+              : nextTranslation
           }
           style={{
             width: Dimensions.get('window').width - 40,
@@ -181,12 +207,12 @@ function OnboardingSwiper (props) {
           style={{
             position: 'absolute',
             width: '100%',
-            alignItems: props.isRTL ? 'flex-start' : 'flex-end',
+            alignItems: isRTL ? 'flex-start' : 'flex-end',
             opacity: checkmarkOpacity
           }}
         >
-          {/* <TouchableOpacity onPress={props.onFinish}> */}
-        {/* <TouchableOpacity onPress={props.onFinish}>
+          {/* <TouchableOpacity onPress={onFinish}> */}
+        {/* <TouchableOpacity onPress={onFinish}>
           <Icon name='check' size={50} color={colors.tuna} />
         </TouchableOpacity> */}
         {/* </Animated.View> */}
@@ -221,17 +247,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 10
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return activeGroup
-    ? {
-        font: getLanguageFont(activeGroup.language),
-        activeGroup: activeGroup
-      }
-    : {}
-}
 
 export default connect(mapStateToProps)(OnboardingSwiper)

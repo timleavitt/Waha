@@ -1,61 +1,77 @@
 import React from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
+import { scaleMultiplier } from '../../constants'
 import {
-  colors,
-  getLanguageFont,
-  keyColors,
-  scaleMultiplier
-} from '../../constants'
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../../redux/reducers/activeGroup'
+import { colors, keyColors } from '../../styles/colors'
+import { getLanguageFont } from '../../styles/typography'
 import KeyLabel from './KeyLabel'
 
-function KeyLabelGroup (props) {
-  var keyLabel1 = props.keyOrder[1] ? (
+function mapStateToProps (state) {
+  return {
+    font: getLanguageFont(activeGroupSelector(state).language),
+    security: state.security,
+    isRTL: activeDatabaseSelector(state).isRTL,
+    activeGroup: activeGroupSelector(state)
+  }
+}
+
+function KeyLabelGroup ({
+  // Props passed from a parent component.s
+  keyOrder,
+  // Props passed from redux.
+  font,
+  security,
+  isRTL,
+  activeGroup
+}) {
+  var keyLabel1 = keyOrder[1] ? (
     <KeyLabel
-      backgroundColor={keyColors[props.keyOrder.substr(0, 2).replace(/^0/, '')]}
-      number={props.keyOrder.substr(0, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(0, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(0, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
-  var keyLabel2 = props.keyOrder[3] ? (
+  var keyLabel2 = keyOrder[3] ? (
     <KeyLabel
-      backgroundColor={keyColors[props.keyOrder.substr(2, 2).replace(/^0/, '')]}
-      number={props.keyOrder.substr(2, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(2, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(2, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
-  var keyLabel3 = props.keyOrder[5] ? (
+  var keyLabel3 = keyOrder[5] ? (
     <KeyLabel
-      backgroundColor={keyColors[props.keyOrder.substr(4, 2).replace(/^0/, '')]}
-      number={props.keyOrder.substr(4, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(4, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(4, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
-  var keyLabel4 = props.keyOrder[7] ? (
+  var keyLabel4 = keyOrder[7] ? (
     <KeyLabel
-      backgroundColor={keyColors[props.keyOrder.substr(6, 2).replace(/^0/, '')]}
-      number={props.keyOrder.substr(6, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(6, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(6, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
-  var keyLabel5 = props.keyOrder[9] ? (
+  var keyLabel5 = keyOrder[9] ? (
     <KeyLabel
-      backgroundColor={keyColors[props.keyOrder.substr(8, 2).replace(/^0/, '')]}
-      number={props.keyOrder.substr(8, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(8, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(8, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
 
-  var keyLabel6 = props.keyOrder[11] ? (
+  var keyLabel6 = keyOrder[11] ? (
     <KeyLabel
-      backgroundColor={
-        keyColors[props.keyOrder.substr(10, 2).replace(/^0/, '')]
-      }
-      number={props.keyOrder.substr(10, 2).replace(/^0/, '')}
+      backgroundColor={keyColors[keyOrder.substr(10, 2).replace(/^0/, '')]}
+      number={keyOrder.substr(10, 2).replace(/^0/, '')}
       style={{ alignSelf: null, marginBottom: 0 }}
     />
   ) : null
@@ -67,7 +83,7 @@ function KeyLabelGroup (props) {
         flexDirection: 'row',
         justifyContent: 'center',
         padding: 20,
-        flexDirection: props.isRTL ? 'row-reverse' : 'row'
+        flexDirection: isRTL ? 'row-reverse' : 'row'
       }}
     >
       <View style={styles.keyPlaceholder}>{keyLabel1}</View>
@@ -94,17 +110,5 @@ const styles = StyleSheet.create({
     borderWidth: 2
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    font: getLanguageFont(activeGroup.language),
-    security: state.security,
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup
-  }
-}
 
 export default connect(mapStateToProps)(KeyLabelGroup)

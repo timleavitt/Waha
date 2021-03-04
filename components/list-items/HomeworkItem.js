@@ -8,7 +8,13 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { colors } from '../../styles/colors'
+import { scaleMultiplier } from '../constants'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
+import { getLanguageFont } from '../styles/typography'
 
 // renders a simple touchable item within the main navigation drawer
 function HomeworkItem (props) {
@@ -82,13 +88,10 @@ const styles = StyleSheet.create({})
 //+ REDUX
 
 function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
   return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
+    isRTL: activeDatabaseSelector(state).isRTL,
+    font: getLanguageFont(activeGroupSelector(state).language),
+    activeGroup: activeGroupSelector(state)
   }
 }
 

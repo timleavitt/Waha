@@ -6,12 +6,12 @@
     "privacy": "public",
     "platforms": ["ios", "android"],
     "orientation": "portrait",
-    "primaryColor": "#e43c44",
-    "version": "1.0.5",
+    "primaryColor": "#E63946",
+    "version": "1.0.6",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icons/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#e43c44"
+      "backgroundColor": "#E63946"
     },
     "updates": {
       "enabled": false
@@ -22,23 +22,23 @@
       "bundleIdentifier": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/GoogleService-Info.plist",
       "supportsTablet": true,
-      "buildNumber": "1.0.5",
+      "buildNumber": "1.0.6",
       "appStoreUrl": "https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294"
     },
     "android": {
       "package": "com.kingdomstrategies.waha",
       "googleServicesFile": "./firebase/google-services.json",
-      "versionCode": 16,
-      "icon": "./assets/adaptive-icon-foreground.png",
+      "icon": "./assets/icons/adaptive_icon_foreground.png",
+      "versionCode": 17,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon-foreground.png",
-        "backgroundColor": "#e43c44"
+        "foregroundImage": "./assets/icons/adaptive_icon_foreground.png",
+        "backgroundColor": "#E63946"
       },
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha",
       "permissions": []
     },
     "githubUrl": "https://github.com/trentcowden/Waha",
-    "icon": "./assets/wahaIcon.png",
+    "icon": "./assets/icons/waha_icon.png",
     "web": {
       "config": {
         "firebase": {

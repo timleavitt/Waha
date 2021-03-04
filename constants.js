@@ -1,16 +1,23 @@
 import * as ScreenOrientation from 'expo-screen-orientation'
 import i18n from 'i18n-js'
 import { Dimensions, PixelRatio } from 'react-native'
+import { languages } from './languages'
 
+/**
+ * This file contains a bunch of constants and a few miscellaneous functions that are used globally throughout Waha.
+ */
+
+/** Set the max font scaling allowed. This is based on the system font scaling that the user sets in their phone's accessibility settings. We limit it so that the text in the app isn't allowed scale above 1.2 times normal size, which would not be good for the UI. */
 const fontScale =
   PixelRatio.getFontScale() >= 1.2 ? 1.2 : PixelRatio.getFontScale()
+
+/** If the font scaling is larger than 1, we need to increase the heights of a few components to be able to fit the larger text. This variable acts as a multiplier for the height of those components. */
 const heightScaleModifier = 1 + (fontScale - 1) / 2
 
-export const scaleMultiplier =
-  Dimensions.get('window').width > 400
-    ? 1
-    : Dimensions.get('window').width / 400
-
+/**
+ * This object stores the heights of a few specific components in Waha that react particularly badly to large font scaling. We need to declare the height of these dynamically, otherwise the text would never fit between a variety of fonts and font scaling. We have separate heights for each font in Waha as well as adding the heightScaleModifier we declared earlier.
+ * @export
+ * */
 export const itemHeights = {
   Roboto: {
     LessonItem: 60 * heightScaleModifier,
@@ -22,269 +29,31 @@ export const itemHeights = {
   }
 }
 
-export const languageT2S = {
-  en: require('./assets/languageT2S/en.mp3'),
-  ga: require('./assets/languageT2S/ga.mp3')
-}
+/**
+ * This variable stores a multiplier value that we use to scale the dimensions of components throughout the app. It's based on the size of the phone screen. Basically, it shrinks components on smaller phones so that we're able to fit everything we need to on the screen.
+ * @export
+ * */
+export const scaleMultiplier =
+  Dimensions.get('window').width > 400
+    ? 1
+    : Dimensions.get('window').width / 400
 
+/**
+ * This object stores the default group names for every language instance. Upon installing a language instance, a group is automatically created with the corresponding group name below.
+ * @export
+ * */
 export const groupNames = {
   en: 'Group 1',
-  ga: 'المجموعة الأولى'
+  ga: 'المجموعة الأولى',
+  te: 'Group 1',
+  tt: 'Group 2'
 }
 
-export const groupIcons = [
-  'default',
-  '1st-place-medal',
-  'alarm-clock',
-  'american-football',
-  'artist-palette',
-  'atom-symbol',
-  'avocado',
-  'baby-bottle',
-  'baguette-bread',
-  'balloon',
-  'baseball',
-  'basketball',
-  'beaming-face-with-smiling-eyes',
-  'bell-pepper',
-  'bento-box',
-  'bird',
-  'black-nib',
-  'bomb',
-  'bouquet',
-  'bowl-with-spoon',
-  'brain',
-  'bread',
-  'briefcase',
-  'burrito',
-  'call-me-hand',
-  'camel',
-  'camera',
-  'cat',
-  'cheese-wedge',
-  'chess-pawn',
-  'chopsticks',
-  'circus-tent',
-  'clamp',
-  'clapping-hands',
-  'compass',
-  'computer-mouse',
-  'cooked-rice',
-  'cooking',
-  'cowboy-hat-face',
-  'crayon',
-  'cricket-game',
-  'crown',
-  'desktop-computer',
-  'dna',
-  'door',
-  'dove',
-  'drum',
-  'ear-of-corn',
-  'electric-plug',
-  'face-with-tears-of-joy',
-  'firecracker',
-  'flashlight',
-  'flexed-biceps',
-  'folded-hands',
-  'gear',
-  'glowing-star',
-  'goal-net',
-  'graduation-cap',
-  'guitar',
-  'hamburger',
-  'hammer-and-pick',
-  'handshake',
-  'headphone',
-  'high-heeled-shoe',
-  'ice-skate',
-  'joystick',
-  'kite',
-  'lipstick',
-  'love-you-gesture',
-  'luggage',
-  'magnet',
-  'magnifying-glass-tilted-left',
-  'man-in-manual-wheelchair',
-  'man-lifting-weights',
-  'man-rowing-boat',
-  'martial-arts-uniform',
-  'men-wrestling',
-  'microphone',
-  'monkey-face',
-  'musical-keyboard',
-  'ok-hand',
-  'oncoming-fist',
-  'open-hands',
-  'palms-up-together',
-  'partying-face',
-  'performing-arts',
-  'plunger',
-  'pool-8-ball',
-  'radio',
-  'relieved-face',
-  'ring',
-  'robot',
-  'salt',
-  'skateboard',
-  'snowman-without-snow',
-  'soccer-ball',
-  'sparkles',
-  'star',
-  'stethoscope',
-  'teacup-without-handle',
-  'teapot',
-  'tennis',
-  'test-tube',
-  'trophy',
-  'turtle',
-  'umbrella-with-rain-drops',
-  'video-game'
-]
-
-export const groupIconSources = {
-  default: require('./assets/groupIcons/default.png'),
-  '1st-place-medal': require('./assets/groupIcons/1st-place-medal.png'),
-  'alarm-clock': require('./assets/groupIcons/alarm-clock.png'),
-  'american-football': require('./assets/groupIcons/american-football.png'),
-  'artist-palette': require('./assets/groupIcons/artist-palette.png'),
-  'atom-symbol': require('./assets/groupIcons/atom-symbol.png'),
-  avocado: require('./assets/groupIcons/avocado.png'),
-  'baby-bottle': require('./assets/groupIcons/baby-bottle.png'),
-  'baguette-bread': require('./assets/groupIcons/baguette-bread.png'),
-  balloon: require('./assets/groupIcons/balloon.png'),
-  baseball: require('./assets/groupIcons/baseball.png'),
-  basketball: require('./assets/groupIcons/basketball.png'),
-  'beaming-face-with-smiling-eyes': require('./assets/groupIcons/beaming-face-with-smiling-eyes.png'),
-  'bell-pepper': require('./assets/groupIcons/bell-pepper.png'),
-  'bento-box': require('./assets/groupIcons/bento-box.png'),
-  bird: require('./assets/groupIcons/bird.png'),
-  'black-nib': require('./assets/groupIcons/black-nib.png'),
-  bomb: require('./assets/groupIcons/bomb.png'),
-  bouquet: require('./assets/groupIcons/bouquet.png'),
-  'bowl-with-spoon': require('./assets/groupIcons/bowl-with-spoon.png'),
-  brain: require('./assets/groupIcons/brain.png'),
-  bread: require('./assets/groupIcons/bread.png'),
-  briefcase: require('./assets/groupIcons/briefcase.png'),
-  burrito: require('./assets/groupIcons/burrito.png'),
-  'call-me-hand': require('./assets/groupIcons/call-me-hand.png'),
-  camel: require('./assets/groupIcons/camel.png'),
-  camera: require('./assets/groupIcons/camera.png'),
-  cat: require('./assets/groupIcons/cat.png'),
-  'cheese-wedge': require('./assets/groupIcons/cheese-wedge.png'),
-  'chess-pawn': require('./assets/groupIcons/chess-pawn.png'),
-  chopsticks: require('./assets/groupIcons/chopsticks.png'),
-  'circus-tent': require('./assets/groupIcons/circus-tent.png'),
-  clamp: require('./assets/groupIcons/clamp.png'),
-  'clapping-hands': require('./assets/groupIcons/clapping-hands.png'),
-  compass: require('./assets/groupIcons/compass.png'),
-  'computer-mouse': require('./assets/groupIcons/computer-mouse.png'),
-  'cooked-rice': require('./assets/groupIcons/cooked-rice.png'),
-  cooking: require('./assets/groupIcons/cooking.png'),
-  'cowboy-hat-face': require('./assets/groupIcons/cowboy-hat-face.png'),
-  crayon: require('./assets/groupIcons/crayon.png'),
-  'cricket-game': require('./assets/groupIcons/cricket-game.png'),
-  crown: require('./assets/groupIcons/crown.png'),
-  'desktop-computer': require('./assets/groupIcons/desktop-computer.png'),
-  dna: require('./assets/groupIcons/dna.png'),
-  door: require('./assets/groupIcons/door.png'),
-  dove: require('./assets/groupIcons/dove.png'),
-  drum: require('./assets/groupIcons/drum.png'),
-  'ear-of-corn': require('./assets/groupIcons/ear-of-corn.png'),
-  'electric-plug': require('./assets/groupIcons/electric-plug.png'),
-  'face-with-tears-of-joy': require('./assets/groupIcons/face-with-tears-of-joy.png'),
-  firecracker: require('./assets/groupIcons/firecracker.png'),
-  flashlight: require('./assets/groupIcons/flashlight.png'),
-  'flexed-biceps': require('./assets/groupIcons/flexed-biceps.png'),
-  'folded-hands': require('./assets/groupIcons/folded-hands.png'),
-  gear: require('./assets/groupIcons/gear.png'),
-  'glowing-star': require('./assets/groupIcons/glowing-star.png'),
-  'goal-net': require('./assets/groupIcons/goal-net.png'),
-  'graduation-cap': require('./assets/groupIcons/graduation-cap.png'),
-  guitar: require('./assets/groupIcons/guitar.png'),
-  hamburger: require('./assets/groupIcons/hamburger.png'),
-  'hammer-and-pick': require('./assets/groupIcons/hammer-and-pick.png'),
-  handshake: require('./assets/groupIcons/handshake.png'),
-  headphone: require('./assets/groupIcons/headphone.png'),
-  'high-heeled-shoe': require('./assets/groupIcons/high-heeled-shoe.png'),
-  'ice-skate': require('./assets/groupIcons/ice-skate.png'),
-  joystick: require('./assets/groupIcons/joystick.png'),
-  kite: require('./assets/groupIcons/kite.png'),
-  lipstick: require('./assets/groupIcons/lipstick.png'),
-  'love-you-gesture': require('./assets/groupIcons/love-you-gesture.png'),
-  luggage: require('./assets/groupIcons/luggage.png'),
-  magnet: require('./assets/groupIcons/magnet.png'),
-  'magnifying-glass-tilted-left': require('./assets/groupIcons/magnifying-glass-tilted-left.png'),
-  'man-in-manual-wheelchair': require('./assets/groupIcons/man-in-manual-wheelchair.png'),
-  'man-lifting-weights': require('./assets/groupIcons/man-lifting-weights.png'),
-  'man-rowing-boat': require('./assets/groupIcons/man-rowing-boat.png'),
-  'martial-arts-uniform': require('./assets/groupIcons/martial-arts-uniform.png'),
-  'men-wrestling': require('./assets/groupIcons/men-wrestling.png'),
-  microphone: require('./assets/groupIcons/microphone.png'),
-  'monkey-face': require('./assets/groupIcons/monkey-face.png'),
-  'musical-keyboard': require('./assets/groupIcons/musical-keyboard.png'),
-  'ok-hand': require('./assets/groupIcons/ok-hand.png'),
-  'oncoming-fist': require('./assets/groupIcons/oncoming-fist.png'),
-  'open-hands': require('./assets/groupIcons/open-hands.png'),
-  'palms-up-together': require('./assets/groupIcons/palms-up-together.png'),
-  'partying-face': require('./assets/groupIcons/partying-face.png'),
-  'performing-arts': require('./assets/groupIcons/performing-arts.png'),
-  plunger: require('./assets/groupIcons/plunger.png'),
-  'pool-8-ball': require('./assets/groupIcons/pool-8-ball.png'),
-  radio: require('./assets/groupIcons/radio.png'),
-  'relieved-face': require('./assets/groupIcons/relieved-face.png'),
-  ring: require('./assets/groupIcons/ring.png'),
-  robot: require('./assets/groupIcons/robot.png'),
-  salt: require('./assets/groupIcons/salt.png'),
-  skateboard: require('./assets/groupIcons/skateboard.png'),
-  'snowman-without-snow': require('./assets/groupIcons/snowman-without-snow.png'),
-  'soccer-ball': require('./assets/groupIcons/soccer-ball.png'),
-  sparkles: require('./assets/groupIcons/sparkles.png'),
-  star: require('./assets/groupIcons/star.png'),
-  stethoscope: require('./assets/groupIcons/stethoscope.png'),
-  'teacup-without-handle': require('./assets/groupIcons/teacup-without-handle.png'),
-  teapot: require('./assets/groupIcons/teapot.png'),
-  tennis: require('./assets/groupIcons/tennis.png'),
-  'test-tube': require('./assets/groupIcons/test-tube.png'),
-  trophy: require('./assets/groupIcons/trophy.png'),
-  turtle: require('./assets/groupIcons/turtle.png'),
-  'umbrella-with-rain-drops': require('./assets/groupIcons/umbrella-with-rain-drops.png'),
-  'video-game': require('./assets/groupIcons/video-game.png')
-}
-
-export const languages = [
-  {
-    i18nName: 'english',
-    languageCode: 'en',
-    font: 'Roboto',
-    isRTL: false,
-    data: [
-      {
-        nativeName: 'English',
-        wahaID: 'en',
-        i18nName: 'english',
-        logoSource:
-          'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/en%2Fother%2Fheader-v1.png?alt=media'
-      }
-    ]
-  },
-  {
-    i18nName: 'arabic',
-    languageCode: 'ar',
-    font: 'NotoSansArabic',
-    isRTL: true,
-    data: [
-      {
-        nativeName: 'الخليج العربي',
-        wahaID: 'ga',
-        i18nName: 'gulfArabic',
-        logoSource:
-          'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ga%2Fother%2Fheader-v1.png?alt=media'
-      }
-    ]
-  }
-]
-
+/**
+ * Gets whether the current system language is right-to-left or not.
+ * @export
+ * @return {boolean} - Whether the current system is RTL.
+ */
 export function getSystemIsRTL () {
   systemIsRTL = false
   languages.forEach(languageFamily => {
@@ -295,74 +64,26 @@ export function getSystemIsRTL () {
   return systemIsRTL
 }
 
-export function getSystemFont () {
-  systemFont = 'Roboto'
-  languages.forEach(languageFamily => {
-    if (i18n.locale.slice(0, 2) === languageFamily.languageCode) {
-      systemFont = languageFamily.font
-    }
-  })
-  return systemFont
-}
-
-export function getLanguageFont (languageID) {
-  var languageFont
-  languages.forEach(languageFamily => {
-    if (languageFamily.data.some(language => language.wahaID === languageID))
-      languageFont = languageFamily.font
-  })
-  return languageFont
-}
-
-export const keyColors = {
-  0: '#ffe119',
-  1: '#3cb44b',
-  2: '#4363d8',
-  3: '#911eb4',
-  4: '#aaffc3',
-  5: '#f032e6',
-  6: '#e6194B',
-  7: '#42d4f4',
-  8: '#469990',
-  9: '#bfef45',
-  10: '#dcbeff',
-  11: '#9A6324'
-}
-
-export const colors = {
-  // normal text
-  shark: '#1D1E20',
-
-  // secondary text and icons
-  tuna: '#3A3C3F',
-
-  // grayed out stuff
-  chateau: '#9FA5AD',
-
-  // gray borders
-  oslo: '#828282',
-
-  geyser: '#DEE3E9',
-
-  // backgrounds, list items, borders
-  porcelain: '#EAEEF0',
-  athens: '#EFF2F4',
-  aquaHaze: '#f7f9fa',
-  white: '#FFFFFF',
-
-  // other colors
-  apple: '#60C239',
-  red: '#FF0800',
-  blue: '#2D9CDB'
-}
-
-// get various information about a lesson based off its id
-// this is neat :)
+/**
+ * Gives information about a lesson based off its ID.
+ * @export
+ * @param {string} type - The type of information you want to get. Possible options are:
+ * 1. "language": The ID of the language instance that this lesson is a part of.
+ * 2. "index": The number of this lesson within a set.
+ * 3. "setID": The ID of the set that the lesson is a part of.
+ * 4. "subtitle": The ID of the lesson without the language ID in it, which is displayed below the lesson title on the Lessons screen.
+ * 5. "category": The tab of the set thats this lesson is a part of.
+ * 6. "audioSource": The URL for the lesson's Story chapter mp3 if it has one.
+ * 7. "videoSource": The URL for the lesson's Training chapter mp4 if it has one.
+ * @param {string} lessonID - The ID of the lesson that you want information for.
+ * @return {*} - The information you want about the lesson.
+ */
 export function getLessonInfo (type, lessonID) {
+  // Split the ID up into separate sections.
   var idComponents = lessonID.split('.')
 
+  // An example lessonID is "en.1.1.1".
   switch (type) {
-    // lesson ids are in format en.1.1.1
     case 'language':
       return idComponents[0]
       break
@@ -404,12 +125,23 @@ export function getLessonInfo (type, lessonID) {
   }
 }
 
-// get various information about a set based off its id
+/**
+ * Gives information about a set based off its ID.
+ * @export
+ * @param {string} type - The type of information you want to get. Possible options are:
+ * 1. "language": The ID of the language instance that this set is a part of.
+ * 2. "index": The number of this set within its category.
+ * 3. "setID": The ID of the set that the lesson is a part of.
+ * 4. "category": The category (or tab) that this set is a part of.
+ * @param {string} setID - The ID of the set that you want information for.
+ * @return {*} - The information you want about the set.
+ */
 export function getSetInfo (type, setID) {
+  // Split the ID up into separate sections.
   var idComponents = setID.split('.')
 
+  // An example setID is "en.1.1".
   switch (type) {
-    // set ids are in format en.1.1
     case 'language':
       return idComponents[0]
       break
@@ -432,19 +164,22 @@ export function getSetInfo (type, setID) {
   }
 }
 
+/**
+ * Locks Waha's orientation to portrait. If it's available, it locks to "PORTRAIT", which allows for regular and upside-down portrait. If it's not, it locks to "PORTRAIT_UP", which allows only regular portrait. Upside-down portrait generally isn't supported on phones with notches.
+ * @export
+ * @param {function} thenFunction - A function to call after the orientation lock finishes.
+ */
 export function lockPortrait (thenFunction) {
   ScreenOrientation.supportsOrientationLockAsync(
     ScreenOrientation.OrientationLock.PORTRAIT
   ).then(isSupported => {
     if (isSupported) {
-      console.log('locking portrait')
       ScreenOrientation.lockAsync(
         ScreenOrientation.OrientationLock.PORTRAIT
       ).then(() => {
         thenFunction()
       })
     } else {
-      console.log('locking portrait up')
       ScreenOrientation.lockAsync(
         ScreenOrientation.OrientationLock.PORTRAIT_UP
       ).then(() => {
@@ -454,7 +189,10 @@ export function lockPortrait (thenFunction) {
   })
 }
 
+/**
+ * Locks Waha's orientation to landscape.
+ * @export
+ */
 export function lockLandscape () {
-  console.log('locking landscape')
   ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
 }

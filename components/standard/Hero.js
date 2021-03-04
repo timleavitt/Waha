@@ -1,15 +1,18 @@
 import React from 'react'
 import { Image, StyleSheet, View } from 'react-native'
-import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
+import { scaleMultiplier } from '../../constants'
+import { colors } from '../../styles/colors'
 import Separator from '../standard/Separator'
 
-function Hero (props) {
+function Hero ({
+  // Props passed from a parent component.
+  source
+}) {
   return (
     <View style={{ width: '100%' }}>
       <Separator />
       <View style={styles.topPortion}>
-        <Image style={styles.topImage} source={props.source} />
+        <Image style={styles.topImage} source={source} />
       </View>
       <Separator />
     </View>
@@ -30,15 +33,4 @@ const styles = StyleSheet.create({
   }
 })
 
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    font: getLanguageFont(activeGroup.language),
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup
-  }
-}
-
-export default connect(mapStateToProps)(Hero)
+export default Hero

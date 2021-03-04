@@ -12,4 +12,6 @@ web-report/
 app.json
 # macOS
 .DS_Store
-firebase
+firebase/db.js
+firebase/google-services.json
+firebase/GoogleService-Info.plist

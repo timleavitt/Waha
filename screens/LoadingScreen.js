@@ -1,4 +1,5 @@
 import NetInfo from '@react-native-community/netinfo'
+import * as FileSystem from 'expo-file-system'
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
 import {
@@ -10,14 +11,18 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import {
+  deleteLanguageData,
   setHasFetchedLanguageData,
   setHasOnboarded,
   setLanguageCoreFilesDownloadProgress,
   setTotalLanguageCoreFilesToDownload
 } from '../redux/actions/databaseActions'
+import { deleteGroup } from '../redux/actions/groupsActions'
 import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
+import { activeGroupSelector } from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
 import { SystemTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
@@ -27,7 +32,72 @@ i18n.translations = {
   ar
 }
 
-function LoadingScreen (props) {
+function mapStateToProps (state) {
+  var activeGroup = state.activeGroup
+    ? state.groups.filter(item => item.name === state.activeGroup)[0]
+    : null
+  return {
+    languageCoreFilesDownloadProgress:
+      state.database.languageCoreFilesDownloadProgress,
+    totalLanguageCoreFilesToDownload:
+      state.database.totalLanguageCoreFilesToDownload,
+    hasInstalledFirstLanguageInstance:
+      state.database.hasInstalledFirstLanguageInstance,
+    storedDownloads: state.storedDownloads,
+    database: state.database,
+    hasFetchedLanguageData: state.database.hasFetchedLanguageData,
+    actingLanguageID: state.database.actingLanguageID,
+    activeGroup: activeGroupSelector(state),
+    groups: state.groups
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    setIsInstallingLanguageInstance: status => {
+      dispatch(setIsInstallingLanguageInstance(status))
+    },
+    setHasOnboarded: status => {
+      dispatch(setHasOnboarded(status))
+    },
+    setTotalLanguageCoreFilesToDownload: totalLanguageCoreFilesToDownload => {
+      dispatch(
+        setTotalLanguageCoreFilesToDownload(totalLanguageCoreFilesToDownload)
+      )
+    },
+    setLanguageCoreFilesDownloadProgress: progress => {
+      dispatch(setLanguageCoreFilesDownloadProgress(progress))
+    },
+    setHasFetchedLanguageData: hasFetchedLanguageData => {
+      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
+    },
+    deleteLanguageData: language => {
+      dispatch(deleteLanguageData(language))
+    },
+    deleteGroup: groupName => dispatch(deleteGroup(groupName))
+  }
+}
+
+function LoadingScreen ({
+  navigation,
+  // Props passed from redux.
+  languageCoreFilesDownloadProgress,
+  totalLanguageCoreFilesToDownload,
+  hasInstalledFirstLanguageInstance,
+  storedDownloads,
+  database,
+  actingLanguageID,
+  activeGroup,
+  groups,
+  hasFetchedLanguageData,
+  setIsInstallingLanguageInstance,
+  setHasOnboarded,
+  setTotalLanguageCoreFilesToDownload,
+  setLanguageCoreFilesDownloadProgress,
+  setHasFetchedLanguageData,
+  deleteLanguageData,
+  deleteGroup
+}) {
   const [isConnected, setIsConnected] = useState(true)
 
   useEffect(() => {
@@ -41,22 +111,73 @@ function LoadingScreen (props) {
   }, [])
 
   function cancelDownloads () {
-    props.setLanguageCoreFilesDownloadProgress(0)
-    props.setTotalLanguageCoreFilesToDownload(0)
-    props.setIsInstallingLanguageInstance(false)
-    props.setHasFetchedLanguageData(false)
+    setLanguageCoreFilesDownloadProgress(0)
+    setTotalLanguageCoreFilesToDownload(1)
+    setIsInstallingLanguageInstance(false)
+    setHasFetchedLanguageData(false)
 
     // only if adding language for the first time
-    if (!props.hasInstalledFirstLanguageInstance) {
-      props.setHasOnboarded(false)
-      props.navigation.reset({
+    if (!hasInstalledFirstLanguageInstance) {
+      setHasOnboarded(false)
+      navigation.reset({
         index: 0,
-        routes: [{ name: 'LanguageSelect' }]
+        routes: [{ name: 'InitialLanguageInstanceInstall' }]
       })
     }
-    props.storedDownloads.forEach(download => {
-      download.pauseAsync().catch(() => console.log('error pausing download'))
+    storedDownloads.forEach(download => {
+      download.pauseAsync().catch(() => console.log('Error pausing a download'))
     })
+
+    console.log(actingLanguageID)
+
+    if (
+      actingLanguageID !== null &&
+      (!activeGroup || activeGroup.language !== actingLanguageID)
+    ) {
+      console.log(
+        'Cancelled a language instance installation. Removing language data from redux and deleting any files for that language instance.'
+      )
+      groups.forEach(group => {
+        if (group.language === actingLanguageID) {
+          deleteGroup(group.name)
+        }
+      })
+      deleteLanguageData(actingLanguageID)
+      FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+        contents => {
+          for (const item of contents) {
+            if (item.slice(0, 2) === actingLanguageID) {
+              FileSystem.deleteAsync(FileSystem.documentDirectory + item)
+            }
+          }
+        }
+      )
+    }
+
+    // if (condition that distinguishes updating from downloading is downloading AND language isn't the active group AND language isn't the only language installed)
+    //  delete the language from the db and remove all files
+
+    // // delete all groups w/ this language
+    // groups.map(group => {
+    //   if (group.language === languageID) {
+    //     deleteGroup(group.name)
+    //   }
+    // })
+
+    // // delete all downloaded files for this language
+    // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+    //   contents => {
+    //     for (const item of contents) {
+    //       if (item.slice(0, 2) === languageID) {
+    //         FileSystem.deleteAsync(FileSystem.documentDirectory + item)
+    //         removeDownload(item.slice(0, 5))
+    //       }
+    //     }
+    //   }
+    // )
+
+    // // delete section of database for this language
+    // deleteLanguageData(languageID)
   }
 
   return (
@@ -89,24 +210,24 @@ function LoadingScreen (props) {
             borderColor: colors.porcelain
           }}
         >
-          {props.languageCoreFilesDownloadProgress ? (
+          {languageCoreFilesDownloadProgress ? (
             <View
               style={{
-                backgroundColor: '#e43c44',
+                backgroundColor: '#E63946',
                 height: '100%',
-                flex: props.languageCoreFilesDownloadProgress,
+                flex: languageCoreFilesDownloadProgress,
                 borderRadius: 20
               }}
             />
           ) : null}
-          {props.languageCoreFilesDownloadProgress ? (
+          {languageCoreFilesDownloadProgress ? (
             <View
               style={{
                 backgroundColor: '#F1FAEE',
                 height: '100%',
                 flex:
-                  props.totalLanguageCoreFilesToDownload -
-                  props.languageCoreFilesDownloadProgress
+                  totalLanguageCoreFilesToDownload -
+                  languageCoreFilesDownloadProgress
               }}
             />
           ) : null}
@@ -146,7 +267,7 @@ function LoadingScreen (props) {
             alignItems: 'center'
           }}
         >
-          {props.hasFetchedLanguageData ? (
+          {hasFetchedLanguageData ? (
             <TouchableOpacity
               onPress={cancelDownloads}
               style={{
@@ -187,40 +308,5 @@ const styles = StyleSheet.create({
     borderRadius: 10
   }
 })
-
-function mapStateToProps (state) {
-  return {
-    languageCoreFilesDownloadProgress:
-      state.database.languageCoreFilesDownloadProgress,
-    totalLanguageCoreFilesToDownload:
-      state.database.totalLanguageCoreFilesToDownload,
-    hasInstalledFirstLanguageInstance:
-      state.database.hasInstalledFirstLanguageInstance,
-    storedDownloads: state.storedDownloads,
-    database: state.database,
-    hasFetchedLanguageData: state.database.hasFetchedLanguageData
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    setIsInstallingLanguageInstance: status => {
-      dispatch(setIsInstallingLanguageInstance(status))
-    },
-    setHasOnboarded: status => {
-      dispatch(setHasOnboarded(status))
-    },
-    setTotalLanguageCoreFilesToDownload: totalLanguageCoreFilesToDownload => {
-      dispatch(
-        setTotalLanguageCoreFilesToDownload(totalLanguageCoreFilesToDownload)
-      )
-    },
-    setLanguageCoreFilesDownloadProgress: progress => {
-      dispatch(setLanguageCoreFilesDownloadProgress(progress))
-    },
-    setHasFetchedLanguageData: hasFetchedLanguageData =>
-      dispatch(setHasFetchedLanguageData(hasFetchedLanguageData))
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoadingScreen)

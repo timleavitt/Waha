@@ -1,3 +1,4 @@
+import * as FileSystem from 'expo-file-system'
 import React, { useEffect, useState } from 'react'
 import { FlatList, LogBox, StyleSheet, Text, View } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
@@ -6,42 +7,85 @@ import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
 import BackButton from '../components/standard/BackButton'
 import Separator from '../components/standard/Separator'
-import {
-  colors,
-  getLanguageFont,
-  getSetInfo,
-  scaleMultiplier
-} from '../constants'
+import { getSetInfo, scaleMultiplier } from '../constants'
 import SetInfoModal from '../modals/SetInfoModal'
 import { addSet } from '../redux/actions/groupsActions'
-import { StandardTypography } from '../styles/typography'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
-LogBox.ignoreLogs([
-  'Non-serializable values were found in the navigation state'
-])
+LogBox.ignoreLogs(['Animated: `useNativeDriver`', 'Warning: Cannot update'])
 
-function AddSetScreen (props) {
-  const [setItemMode, setSetItemMode] = useState('')
-  const [onPress, setOnPress] = useState(() => {})
+function mapStateToProps (state) {
+  return {
+    font: getLanguageFont(activeGroupSelector(state).language),
+    translations: activeDatabaseSelector(state).translations,
+    isRTL: activeDatabaseSelector(state).isRTL,
+    activeDatabase: activeDatabaseSelector(state),
+    activeGroup: activeGroupSelector(state),
+    primaryColor: activeDatabaseSelector(state).primaryColor
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    addSet: (groupName, setID) => {
+      dispatch(addSet(groupName, setID))
+    }
+  }
+}
+
+/**
+ * Component for the add set screen, which shows a list of available story sets to add in a specific category.
+ * @param {*} props
+ */
+function AddSetScreen ({
+  // Props passed from navigation.
+  navigation: { setOptions, goBack },
+  route: {
+    // Props passed from previous screen.
+    params: { category }
+  },
+  // Props passed from redux.
+  font,
+  translations,
+  isRTL,
+  activeDatabase,
+  activeGroup,
+  primaryColor,
+  addSet
+}) {
+  /** Whether the snackbar that pops up upon adding a set is visible or not.  */
   const [showSnackbar, setShowSnackbar] = useState(false)
+
+  /** State for header title. Stored in state because it changes depending on which category we're viewing the story sets for. */
   const [headerTitle, setHeaderTitle] = useState('')
+
+  /** Keeps track of the tags we have. Only for adding topical sets. Tags are retrieved from the database. */
   const [tags, setTags] = useState([])
-  const [activeTags, setActiveTags] = useState([])
+
+  /** Keeps tra */
+  const [activeTag, setActiveTag] = useState([])
   const [tagSelectRef, setTagSelectRef] = useState()
   const [refresh, setRefresh] = useState(false)
 
   const [showSetInfoModal, setShowSetInfoModal] = useState(false)
   const [setInModal, setSetInModal] = useState({})
 
+  const [downloadedFiles, setDownloadedFiles] = useState([])
+
   useEffect(() => {
-    switch (props.route.params.category) {
+    switch (category) {
       case 'foundational':
-        setHeaderTitle(props.translations.add_set.header_foundational)
+        setHeaderTitle(translations.add_set.header_foundational)
         break
       case 'topical':
-        setHeaderTitle(props.translations.add_set.header_topical)
-        var tempTags = [props.translations.add_set.all_tag_label]
-        props.activeDatabase.sets
+        setHeaderTitle(translations.add_set.header_topical)
+        var tempTags = [translations.add_set.all_tag_label]
+        activeDatabase.sets
           .filter(set => getSetInfo('category', set.id) === 'topical')
           .forEach(topicalSet => {
             topicalSet.tags.forEach(tag => {
@@ -53,14 +97,60 @@ function AddSetScreen (props) {
         setTags(tempTags)
         break
       case 'mobilization tools':
-        setHeaderTitle(props.translations.add_set.header_mt)
+        setHeaderTitle(translations.add_set.header_mt)
         break
     }
   }, [])
 
   useEffect(() => {
-    props.navigation.setOptions(getNavOptions())
+    FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+      contents => {
+        setDownloadedFiles(contents)
+      }
+    )
+
+    return function cleanup () {
+      setShowSnackbar(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    setOptions(getNavOptions())
   }, [headerTitle])
+
+  /**
+   * Goes through a set and verifies that all of the necessary question set mp3s have been downloaded for that set. This gets passed through the filter function below.
+   * @param {Object} set - The object for the set that we're checking.
+   * @return {boolean} - Whether every necessary file has been downloaded for the set.
+   */
+  function filterForDownloadedQuestionSets (set) {
+    // Create an array to store the necessary question set mp3s for this set.
+    var requiredQuestionSets = []
+
+    // Go through each set and add all necessary question set mp3s to requiredQuestionSets array.
+    set.lessons.forEach(lesson => {
+      // Only filter if the lessons have a fellowship/application chapter. For sets like 3.1 which only has video lessons, we don't want to filter.
+      if (lesson.fellowshipType) {
+        if (!requiredQuestionSets.includes(lesson.fellowshipType)) {
+          requiredQuestionSets.push(lesson.fellowshipType)
+        }
+        if (!requiredQuestionSets.includes(lesson.applicationType)) {
+          requiredQuestionSets.push(lesson.applicationType)
+        }
+      }
+    })
+
+    // If every required file is present, return true. Otherwise, return false.
+    if (
+      requiredQuestionSets.every(questionSet =>
+        downloadedFiles.includes(
+          activeGroup.language + '-' + questionSet + '.mp3'
+        )
+      )
+    )
+      return true
+    else return false
+  }
 
   // useEffect(() => {
   //   if (tagSelectRef) {
@@ -71,11 +161,11 @@ function AddSetScreen (props) {
   function getNavOptions () {
     return {
       title: headerTitle,
-      headerLeft: props.isRTL
+      headerLeft: isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => props.navigation.goBack()} />,
-      headerRight: props.isRTL
-        ? () => <BackButton onPress={() => props.navigation.goBack()} />
+        : () => <BackButton onPress={() => goBack()} />,
+      headerRight: isRTL
+        ? () => <BackButton onPress={() => goBack()} />
         : () => <View></View>
     }
   }
@@ -89,7 +179,7 @@ function AddSetScreen (props) {
     <TagGroup
       source={tags}
       singleChoiceMode
-      onSelectedTagChange={selected => setActiveTags(selected)}
+      onSelectedTagChange={selected => setActiveTag(selected)}
       style={{
         paddingHorizontal: 10,
         paddingTop: 10,
@@ -103,16 +193,16 @@ function AddSetScreen (props) {
         alignItems: 'center',
         paddingHorizontal: 20 * scaleMultiplier
       }}
-      textStyle={{ color: colors.oslo, fontFamily: props.font + '-Regular' }}
+      textStyle={{ color: colors.oslo, fontFamily: font + '-Regular' }}
       activeTagStyle={{
         borderRadius: 20,
         // make primary color
-        backgroundColor: props.primaryColor,
-        borderColor: props.primaryColor
+        backgroundColor: primaryColor,
+        borderColor: primaryColor
       }}
       activeTextStyle={{
         color: colors.white,
-        fontFamily: props.font + '-Regular'
+        fontFamily: font + '-Regular'
       }}
     />
   )
@@ -122,8 +212,7 @@ function AddSetScreen (props) {
     return (
       <SetItem
         thisSet={setList.item}
-        isSmall={false}
-        mode='addset'
+        screen='AddSet'
         onSetSelect={() => {
           setSetInModal(setList.item)
           setShowSetInfoModal(true)
@@ -134,31 +223,26 @@ function AddSetScreen (props) {
 
   return (
     <View style={styles.screen}>
-      {props.route.params.category === 'topical' ? tagSelectComponent : null}
+      {category === 'topical' ? tagSelectComponent : null}
       <FlatList
         style={{ flex: 1 }}
         data={
-          props.route.params.category === 'topical'
-            ? props.activeDatabase.sets
-                .filter(
-                  set =>
-                    getSetInfo('category', set.id) ===
-                    props.route.params.category
-                )
+          category === 'topical'
+            ? activeDatabase.sets
+                .filter(set => getSetInfo('category', set.id) === category)
                 .filter(
                   topicalSet =>
-                    !props.activeGroup.addedSets.some(
+                    !activeGroup.addedSets.some(
                       addedSet => addedSet.id === topicalSet.id
                     )
                 )
                 .filter(topicalAddedSet => {
-                  return activeTags.length === 0 ||
-                    activeTags.includes(
-                      props.translations.add_set.all_tag_label
-                    )
+                  return activeTag.length === 0 ||
+                    activeTag.includes(translations.add_set.all_tag_label)
                     ? true
-                    : topicalAddedSet.tags.some(tag => activeTags.includes(tag))
+                    : topicalAddedSet.tags.some(tag => activeTag.includes(tag))
                 })
+                .filter(filterForDownloadedQuestionSets)
                 .sort((a, b) => {
                   if (
                     parseInt(a.id.match(/[0-9]*$/)[0]) -
@@ -170,18 +254,15 @@ function AddSetScreen (props) {
                     return 1
                   }
                 })
-            : props.activeDatabase.sets
+            : activeDatabase.sets
+                .filter(set => getSetInfo('category', set.id) === category)
                 .filter(
                   set =>
-                    getSetInfo('category', set.id) ===
-                    props.route.params.category
-                )
-                .filter(
-                  set =>
-                    !props.activeGroup.addedSets.some(
+                    !activeGroup.addedSets.some(
                       addedSet => addedSet.id === set.id
                     )
                 )
+                .filter(filterForDownloadedQuestionSets)
                 .sort((a, b) => {
                   if (
                     parseInt(a.id.match(/[0-9]*$/)[0]) -
@@ -193,60 +274,35 @@ function AddSetScreen (props) {
                     return 1
                   }
                 })
-          // NOT USED: for folders
-          // // if we're displaying topical sets:
-          // // 1. filter by all sets that are topical,
-          // // 2. filter by topical sets in the specified folder, and then
-          // // 3. filter to only display sets that haven't already been added
-          // props.route.params.category === 'topical'
-          //   ? props.activeDatabase.sets
-          //       .filter(set => set.category === 'topical')
-          //       .filter(set => set.folder === props.route.params.folder)
-          //       .filter(
-          //         set =>
-          //           !props.activeGroup.addedSets.some(
-          //             addedSet => addedSet.id === set.id
-          //           )
-          //       )
-          //   : // if we're displaying core or folders:
-          //     // 1. filter by cateogry (core or folder)
-          //     // 2. filter to only display sets that haven't already been added
-          //     props.activeDatabase.sets
-          //       .filter(set => set.category === props.route.params.category)
-          //       .filter(
-          //         set =>
-          //           !props.activeGroup.addedSets.some(
-          //             addedSet => addedSet.id === set.id
-          //           )
-          //       )
         }
         ItemSeparatorComponent={() => <Separator />}
         ListFooterComponent={() => <Separator />}
         ListHeaderComponent={() => <Separator />}
         renderItem={renderStudySetItem}
         ListEmptyComponent={
-          <View style={{ width: '100%', margin: 10 }}>
+          <View style={{ width: '100%', marginVertical: 20 }}>
             <Text
               style={StandardTypography(
-                props,
+                { font, isRTL },
                 'p',
                 'Regular',
                 'center',
                 colors.chateau
               )}
             >
-              {props.translations.add_set.no_more_sets_text}
+              {translations.add_set.no_more_sets_text}
             </Text>
           </View>
         }
       />
+      {/* Modals */}
       <SnackBar
         visible={showSnackbar}
-        textMessage={props.translations.add_set.set_added_message}
+        textMessage={translations.add_set.set_added_message}
         messageStyle={{
           color: colors.white,
           fontSize: 24 * scaleMultiplier,
-          fontFamily: props.font + '-Black',
+          fontFamily: font + '-Black',
           textAlign: 'center'
         }}
         backgroundColor={colors.apple}
@@ -254,7 +310,7 @@ function AddSetScreen (props) {
       <SetInfoModal
         isVisible={showSetInfoModal}
         hideModal={() => setShowSetInfoModal(false)}
-        category={props.route.params.category}
+        category={category}
         thisSet={setInModal}
         showSnackbar={() => {
           setShowSnackbar(true)
@@ -271,27 +327,5 @@ const styles = StyleSheet.create({
     flex: 1
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    font: getLanguageFont(activeGroup.language),
-    translations: state.database[activeGroup.language].translations,
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeDatabase: state.database[activeGroup.language],
-    activeGroup: activeGroup,
-    primaryColor: state.database[activeGroup.language].primaryColor
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    addSet: (groupName, setID) => {
-      dispatch(addSet(groupName, setID))
-    }
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddSetScreen)

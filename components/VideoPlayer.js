@@ -8,20 +8,28 @@ import {
   TouchableWithoutFeedback,
   View
 } from 'react-native'
-import { connect } from 'react-redux'
-import {
-  colors,
-  getLanguageFont,
-  lockLandscape,
-  lockPortrait,
-  scaleMultiplier
-} from '../constants'
+import { lockLandscape, lockPortrait, scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
 
-function VideoPlayer (props) {
+function VideoPlayer ({
+  // Props passed from a parent component.
+  videoSource,
+  video,
+  setVideo,
+  setIsMediaLoaded,
+  setIsMediaPlaying,
+  changeChapter,
+  isMediaLoaded,
+  lessonType,
+  isComplete,
+  changeCompleteStatus,
+  setFullScreenStatus,
+  fullscreenStatus
+}) {
   //+ STATE
 
   const [showVideoControls, setShowVideoControls] = useState(false)
-  const [video, setVideo] = useState()
+  // const [video, setVideo] = useState()
 
   return (
     <TouchableWithoutFeedback
@@ -47,7 +55,7 @@ function VideoPlayer (props) {
         <Video
           ref={ref => {
             setVideo(ref)
-            props.setVideo(ref)
+            setVideo(ref)
           }}
           rate={1.0}
           volume={1.0}
@@ -56,7 +64,7 @@ function VideoPlayer (props) {
           shouldPlay
           // onLoad={() => {
           //   console.log('loaded')
-          //   props.setIsMediaLoaded(true)
+          //   setIsMediaLoaded(true)
           // }}
           style={{
             width: Dimensions.get('window').width,
@@ -68,25 +76,24 @@ function VideoPlayer (props) {
             // match up so there's a single source of truth between
             //  waha controls and full screen native video controls
             if (
-              props.fullscreenStatus ===
-              Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
+              fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
             ) {
-              if (status.isPlaying) props.setIsMediaPlaying(true)
-              else if (!status.isPlaying) props.setIsMediaPlaying(false)
+              if (status.isPlaying) setIsMediaPlaying(true)
+              else if (!status.isPlaying) setIsMediaPlaying(false)
             }
 
-            if (status.isLoaded && !props.isMediaLoaded) {
+            if (status.isLoaded && !isMediaLoaded) {
               console.log('loaded')
-              props.setIsMediaLoaded(true)
+              setIsMediaLoaded(true)
             }
 
             // lock portrait and exit full screen once the video finishes
             if (
               status.didJustFinish &&
-              props.fullscreenStatus ===
+              fullscreenStatus ===
                 Video.IOS_FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
             ) {
-              lockPortrait(() => props.video.dismissFullscreenPlayer())
+              lockPortrait(() => video.dismissFullscreenPlayer())
               // ScreenOrientation.supportsOrientationLockAsync(
               //   ScreenOrientation.OrientationLock.PORTRAIT
               // ).then(isSupported => {
@@ -94,30 +101,30 @@ function VideoPlayer (props) {
               //     ScreenOrientation.lockAsync(
               //       ScreenOrientation.OrientationLock.PORTRAIT
               //     ).then(() => {
-              //       props.video.dismissFullscreenPlayer()
+              //       video.dismissFullscreenPlayer()
               //     })
               //   } else {
               //     ScreenOrientation.lockAsync(
               //       ScreenOrientation.OrientationLock.PORTRAIT_UP
               //     ).then(() => {
-              //       props.video.dismissFullscreenPlayer()
+              //       video.dismissFullscreenPlayer()
               //     })
               //   }
               // })
             }
 
-            if (status.didJustFinish && props.lessonType !== 'v')
-              setTimeout(() => props.changeChapter('application'), 500)
+            if (status.didJustFinish && lessonType !== 'v')
+              setTimeout(() => changeChapter('application'), 500)
             else if (
               status.didJustFinish &&
-              props.lessonType === 'v' &&
-              !props.isComplete
+              lessonType === 'v' &&
+              !isComplete
             ) {
-              setTimeout(() => props.changeCompleteStatus(), 1000)
+              setTimeout(() => changeCompleteStatus(), 1000)
             }
           }}
-          onLoadStart={() => props.setIsMediaLoaded(false)}
-          onLoad={() => props.setIsMediaLoaded(true)}
+          onLoadStart={() => setIsMediaLoaded(false)}
+          onLoad={() => setIsMediaLoaded(true)}
           onFullscreenUpdate={({ fullscreenUpdate, status }) => {
             if (Platform.OS === 'android') {
               switch (fullscreenUpdate) {
@@ -161,8 +168,8 @@ function VideoPlayer (props) {
                   //     )
                   //   }
                   // })
-                  props.video.playAsync()
-                  props.setIsMediaPlaying(true)
+                  video.playAsync()
+                  setIsMediaPlaying(true)
                   break
                 // default:
                 //   ScreenOrientation.supportsOrientationLockAsync(
@@ -184,14 +191,14 @@ function VideoPlayer (props) {
               if (
                 fullscreenUpdate === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS
               ) {
-                props.setIsMediaPlaying(false)
+                setIsMediaPlaying(false)
               }
             }
-            props.setFullScreenStatus(fullscreenUpdate)
+            setFullScreenStatus(fullscreenUpdate)
           }}
         />
         {/* display a video icon placeholder when we're loading */}
-        {props.isMediaLoaded ? null : (
+        {isMediaLoaded ? null : (
           <View
             style={{
               alignSelf: 'center',
@@ -223,7 +230,7 @@ function VideoPlayer (props) {
               style={{}}
               onPress={() => {
                 video.presentFullscreenPlayer()
-                // props.navigateToFullscreen()
+                // navigateToFullscreen()
               }}
             >
               <Icon
@@ -254,15 +261,4 @@ const styles = StyleSheet.create({
   }
 })
 
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    font: getLanguageFont(activeGroup.language),
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup
-  }
-}
-
-export default connect(mapStateToProps)(VideoPlayer)
+export default VideoPlayer

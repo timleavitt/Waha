@@ -2,35 +2,61 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
-import { StandardTypography } from '../styles/typography'
-function OptionsModal (props) {
+import { scaleMultiplier } from '../constants'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
+
+function mapStateToProps (state) {
+  return {
+    font: getLanguageFont(activeGroupSelector(state).language),
+    isRTL: activeDatabaseSelector(state).isRTL
+  }
+}
+
+function OptionsModal ({
+  // Props passed from a parent component.
+  isVisible,
+  hideModal,
+  closeText,
+  children = null,
+  // Props passed from redux.
+  font,
+  isRTL
+}) {
   //+ RENDER
   return (
     <Modal
-      isVisible={props.isVisible}
+      isVisible={isVisible}
       hasBackdrop={true}
-      onBackdropPress={props.hideModal}
+      onBackdropPress={hideModal}
       backdropOpacity={0.3}
       style={{ justifyContent: 'flex-end' }}
+      onSwipeComplete={hideModal}
+      swipeDirection={['down']}
+      propagateSwipe={true}
+      useNativeDriver
     >
       <View style={{}}>
-        <View style={styles.buttonsContainer}>{props.children}</View>
+        <View style={styles.buttonsContainer}>{children}</View>
         <View style={styles.closeButtonContainer}>
           <TouchableOpacity
-            onPress={props.hideModal}
+            onPress={hideModal}
             style={styles.closeButtonContainer}
           >
             <Text
               style={StandardTypography(
-                props,
+                { font, isRTL },
                 'h3',
                 'Bold',
                 'center',
                 colors.red
               )}
             >
-              {props.closeText}
+              {closeText}
             </Text>
           </TouchableOpacity>
         </View>
@@ -54,15 +80,5 @@ const styles = StyleSheet.create({
     // marginTop: 5
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
-  }
-}
 
 export default connect(mapStateToProps)(OptionsModal)

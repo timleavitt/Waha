@@ -1,26 +1,27 @@
 import React from 'react'
 import { View } from 'react-native'
 import { connect } from 'react-redux'
+import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
 
-function ChapterSeparator (props) {
+function mapStateToProps (state) {
+  return {
+    primaryColor: activeDatabaseSelector(state).primaryColor
+  }
+}
+
+function ChapterSeparator ({
+  // Props passed from redux.
+  primaryColor
+}) {
   return (
     <View
       style={{
         height: '100%',
         width: 2,
-        backgroundColor: props.primaryColor
+        backgroundColor: primaryColor
       }}
     />
   )
-}
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    primaryColor: state.database[activeGroup.language].primaryColor
-  }
 }
 
 export default connect(mapStateToProps)(ChapterSeparator)

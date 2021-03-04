@@ -1,23 +1,38 @@
 import React from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../../constants'
+import { scaleMultiplier } from '../../constants'
+import { activeDatabaseSelector } from '../../redux/reducers/activeGroup'
+import { colors } from '../../styles/colors'
+
+function mapStateToProps (state) {
+  return {
+    isRTL: activeDatabaseSelector(state).isRTL
+  }
+}
+
 // simple back button that is shown in almost every screen's header
-function BackButton (props) {
+function BackButton ({
+  // Props passed from a parent component.
+  onPress,
+  color,
+  // Props passed from redux.
+  isRTL
+}) {
   //+ RENDER
 
   return (
     <TouchableOpacity
       style={[
         styles.backButtonContainer,
-        { justifyContent: props.isRTL ? 'flex-end' : 'flex-start' }
+        { justifyContent: isRTL ? 'flex-end' : 'flex-start' }
       ]}
-      onPress={props.onPress}
+      onPress={onPress}
     >
       <Icon
-        name={props.isRTL ? 'arrow-right' : 'arrow-left'}
+        name={isRTL ? 'arrow-right' : 'arrow-left'}
         size={45 * scaleMultiplier}
-        color={props.color ? props.color : colors.oslo}
+        color={color ? color : colors.oslo}
       />
     </TouchableOpacity>
   )
@@ -31,16 +46,5 @@ const styles = StyleSheet.create({
     width: 100
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    isRTL: state.database[activeGroup.language].isRTL
-  }
-}
 
 export default connect(mapStateToProps)(BackButton)

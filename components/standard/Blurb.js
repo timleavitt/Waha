@@ -1,35 +1,43 @@
 import React from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
-import { StandardTypography } from '../../styles/typography'
+import { scaleMultiplier } from '../../constants'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../../redux/reducers/activeGroup'
+import { colors } from '../../styles/colors'
+import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
-function Blurb (props) {
+function mapStateToProps (state) {
+  return {
+    font: getLanguageFont(activeGroupSelector(state).language),
+    isRTL: activeDatabaseSelector(state).isRTL
+  }
+}
+
+function Blurb ({
+  // Props passed from a parent component.
+  text,
+  // Props passed from redux.
+  font,
+  isRTL
+}) {
   return (
     <View style={{ width: '100%', padding: 20 * scaleMultiplier }}>
       <Text
         style={StandardTypography(
-          props,
+          { font, isRTL },
           'p',
           'Regular',
           'center',
           colors.shark
         )}
       >
-        {props.text}
+        {text}
       </Text>
     </View>
   )
-}
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
-  }
 }
 
 export default connect(mapStateToProps)(Blurb)

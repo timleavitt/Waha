@@ -1,46 +1,70 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../../constants'
-import { StandardTypography } from '../../styles/typography'
+import { scaleMultiplier } from '../../constants'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../../redux/reducers/activeGroup'
+import { colors } from '../../styles/colors'
+import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
-// renders a simple touchable item within the main navigation drawer
-function DrawerItem (props) {
-  // RENDER
+function mapStateToProps (state) {
+  return {
+    isRTL: activeDatabaseSelector(state).isRTL,
+    font: getLanguageFont(activeGroupSelector(state).language),
+    activeGroup: activeGroupSelector(state)
+  }
+}
 
+/**
+ * A pressable item used in Waha's navigation drawer.
+ * @param {function} props.onPress - The function to call when the user presses the drawer item.
+ * @param {string} props.icon - The name of the icon to display on the drawer item.
+ * @param {string} props.label - The label to display on the drawer item.
+ */
+function DrawerItem ({
+  // Props passed from a parent component.
+  onPress,
+  icon,
+  label,
+  // Props passed from redux.
+  isRTL,
+  font,
+  activeGroup
+}) {
   return (
     <TouchableOpacity
       style={[
-        styles.settingsItem,
-        { flexDirection: props.isRTL ? 'row-reverse' : 'row' }
+        styles.drawerItemContainer,
+        { flexDirection: isRTL ? 'row-reverse' : 'row' }
       ]}
-      onPress={props.onPress}
+      onPress={onPress}
     >
       <View style={styles.iconContainer}>
-        <Icon
-          name={props.iconName}
-          size={45 * scaleMultiplier}
-          color={colors.tuna}
-        />
+        <Icon name={icon} size={30 * scaleMultiplier} color={colors.tuna} />
       </View>
       <Text
         style={[
-          StandardTypography(props, 'h3', 'Bold', 'left', colors.shark),
+          StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Bold',
+            'left',
+            colors.shark
+          ),
           { paddingHorizontal: 10 }
         ]}
       >
-        {props.text}
+        {label}
       </Text>
     </TouchableOpacity>
   )
 }
 
-// STYLES
-
 const styles = StyleSheet.create({
-  settingsItem: {
-    height: 55 * scaleMultiplier,
-    // aspectRatio: 5.5,
+  drawerItemContainer: {
+    height: 50 * scaleMultiplier,
     paddingHorizontal: 10,
     justifyContent: 'flex-start',
     flexDirection: 'row',
@@ -52,18 +76,5 @@ const styles = StyleSheet.create({
     width: 50 * scaleMultiplier
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    font: getLanguageFont(activeGroup.language),
-    activeGroup: activeGroup
-  }
-}
 
 export default connect(mapStateToProps)(DrawerItem)

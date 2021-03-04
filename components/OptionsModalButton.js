@@ -1,23 +1,49 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
-import { StandardTypography } from '../styles/typography'
-// button rendered on the options modal component
-function OptionsModalButton (props) {
-  //+ RETURN
+import { scaleMultiplier } from '../constants'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
+function mapStateToProps (state) {
+  return {
+    font: getLanguageFont(activeGroupSelector(state).language),
+    isRTL: activeDatabaseSelector(state).isRTL,
+    activeGroup: activeGroupSelector(state)
+  }
+}
+
+// button rendered on the options modal component
+function OptionsModalButton ({
+  onPress,
+  style,
+  title,
+  children = null,
+  font,
+  isRTL,
+  activeGroup
+}) {
   return (
-    <TouchableOpacity style={styles.modalButtonStyle} onPress={props.onPress}>
+    <TouchableOpacity style={styles.modalButtonStyle} onPress={onPress}>
       <Text
         style={[
-          props.style,
-          StandardTypography(props, 'h3', 'Regular', 'center', colors.shark)
+          style,
+          StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Regular',
+            'center',
+            colors.shark
+          )
         ]}
       >
-        {props.title}
+        {title}
       </Text>
-      {props.children}
+      {children}
     </TouchableOpacity>
   )
 }
@@ -33,16 +59,5 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   }
 })
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    font: getLanguageFont(activeGroup.language),
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup
-  }
-}
 
 export default connect(mapStateToProps)(OptionsModalButton)

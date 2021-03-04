@@ -1,17 +1,18 @@
 //basic imports
 import React from 'react'
 import { Animated, StyleSheet, View } from 'react-native'
-import { colors, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
 
-function SwipeBar (props) {
+function SwipeBar ({ opacity, side }) {
   return (
     <View
       style={[
         styles.swipeBarContainer,
-        { alignSelf: props.side === 'right' ? 'flex-start' : 'flex-end' }
+        { alignSelf: side === 'right' ? 'flex-start' : 'flex-end' }
       ]}
     >
-      <Animated.View style={[styles.swipeBar, { opacity: props.opacity }]} />
+      <Animated.View style={[styles.swipeBar, { opacity: opacity }]} />
     </View>
   )
 }

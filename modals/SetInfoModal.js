@@ -1,14 +1,61 @@
 import React from 'react'
-import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native'
+import {
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
 import WahaButton from '../components/standard/WahaButton'
-import { colors, getLanguageFont, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
-import { StandardTypography } from '../styles/typography'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 import ModalScreen from './ModalScreen'
 
-function SetInfoModal (props) {
+function mapStateToProps (state) {
+  return {
+    downloads: state.downloads,
+    activeDatabase: activeDatabaseSelector(state),
+    isRTL: activeDatabaseSelector(state).isRTL,
+    activeGroup: activeGroupSelector(state),
+    translations: activeDatabaseSelector(state).translations,
+    font: getLanguageFont(activeGroupSelector(state).language)
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
+    }
+  }
+}
+
+/** A modal screen that displays the various lessons in a set and their scripture references. */
+function SetInfoModal ({
+  // Props passed from a parent component.
+  isVisible,
+  hideModal,
+  category,
+  thisSet,
+  showSnackbar,
+  // Props passed from redux.
+  downloads,
+  activeDatabase,
+  isRTL,
+  activeGroup,
+  translations,
+  font,
+  addSet
+}) {
   //+ FUNCTIONS
 
   function renderLessonInfoItem (item) {
@@ -19,17 +66,19 @@ function SetInfoModal (props) {
       })
 
       return (
-        <View
+        // These are touchable because scrolling a FlatList within a modal only works when the items are touchable. Weird, but necessary.
+        <TouchableOpacity
           style={{
             marginVertical: 10 * scaleMultiplier,
             justifyContent: 'center',
             paddingHorizontal: 40,
             width: Dimensions.get('window').width
           }}
+          activeOpacity={1}
         >
           <Text
             style={StandardTypography(
-              props,
+              { font, isRTL },
               'h4',
               'Bold',
               'left',
@@ -40,7 +89,7 @@ function SetInfoModal (props) {
           </Text>
           <Text
             style={StandardTypography(
-              props,
+              { font, isRTL },
               'p',
               'Regular',
               'left',
@@ -49,11 +98,11 @@ function SetInfoModal (props) {
           >
             {scriptureList}
           </Text>
-        </View>
+        </TouchableOpacity>
       )
     } else
       return (
-        <View
+        <TouchableOpacity
           style={{
             marginVertical: 10 * scaleMultiplier,
             justifyContent: 'center',
@@ -63,7 +112,7 @@ function SetInfoModal (props) {
         >
           <Text
             style={StandardTypography(
-              props,
+              { font, isRTL },
               'h4',
               'Bold',
               'left',
@@ -72,33 +121,29 @@ function SetInfoModal (props) {
           >
             {item.title}
           </Text>
-        </View>
+        </TouchableOpacity>
       )
   }
 
   return (
     <ModalScreen
-      title={props.translations.add_set.header_set_details}
-      hideModal={props.hideModal}
-      isVisible={props.isVisible}
+      title={translations.add_set.header_set_details}
+      hideModal={hideModal}
+      isVisible={isVisible}
     >
       <View style={styles.studySetItemContainer}>
-        <SetItem thisSet={props.thisSet} mode='setinfo' />
+        <SetItem thisSet={thisSet} screen='SetInfo' />
       </View>
       <WahaButton
         type='filled'
         color={colors.apple}
         onPress={() => {
-          props.addSet(
-            props.activeGroup.name,
-            props.activeGroup.id,
-            props.thisSet
-          )
-          props.showSnackbar()
-          props.hideModal()
+          addSet(activeGroup.name, activeGroup.id, thisSet)
+          showSnackbar()
+          hideModal()
         }}
         style={{ marginHorizontal: 20, marginVertical: 10 }}
-        label={props.translations.add_set.add_new_story_set_button_label}
+        label={translations.add_set.add_new_story_set_button_label}
         extraComponent={
           <Icon
             style={{ marginHorizontal: 10 }}
@@ -108,12 +153,15 @@ function SetInfoModal (props) {
           />
         }
       />
-      <FlatList
-        keyExtractor={item => item.id}
-        data={props.thisSet.lessons}
-        renderItem={({ item }) => renderLessonInfoItem(item)}
-        contentContainerStyle={{ flexGrow: 1 }}
-      />
+      <View style={{ flex: 1 }}>
+        <FlatList
+          keyExtractor={item => item.id}
+          // nestedScrollEnabled
+          data={thisSet.lessons}
+          renderItem={({ item }) => renderLessonInfoItem(item)}
+          contentContainerStyle={{ flexGrow: 1 }}
+        />
+      </View>
     </ModalScreen>
   )
 }
@@ -131,29 +179,5 @@ const styles = StyleSheet.create({
     height: 100 * scaleMultiplier
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    downloads: state.downloads,
-    activeDatabase: state.database[activeGroup.language],
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeGroup: activeGroup,
-    translations: state.database[activeGroup.language].translations,
-    font: getLanguageFont(activeGroup.language)
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    addSet: (groupName, groupID, set) => {
-      dispatch(addSet(groupName, groupID, set))
-    }
-  }
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(SetInfoModal)

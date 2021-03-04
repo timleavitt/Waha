@@ -4,177 +4,292 @@ import {
   getFocusedRouteNameFromRoute,
   NavigationContainer
 } from '@react-navigation/native'
+import * as FileSystem from 'expo-file-system'
+import firebase from 'firebase'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import WahaDrawer from '../components/WahaDrawer'
 import { scaleMultiplier } from '../constants'
 import db from '../firebase/db'
+import { appVersion } from '../modeSwitch'
 import {
+  addLanguageCoreFileToUpdate,
+  clearLanguageCoreFilesToUpdate,
+  storeLanguageCoreFileCreatedTime,
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
+import { changeActiveGroup, deleteGroup } from '../redux/actions/groupsActions'
 import { updateConnectionStatus } from '../redux/actions/networkActions'
+import {
+  activeDatabaseSelector,
+  activeGroupSelector
+} from '../redux/reducers/activeGroup'
 import MainStack from './MainStack'
 
+// Create the drawer navigator.
 const Drawer = createDrawerNavigator()
 
-function MainDrawer (props) {
-  //- allows only accessing hamburger swipe from study set screen
-  function getGestureEnabled (route) {
-    const routeName = getFocusedRouteNameFromRoute(route) ?? 'SetTabs'
-    if (routeName === 'SetTabs') return true
-    else return false
+function mapStateToProps (state) {
+  return {
+    isRTL: activeDatabaseSelector(state).isRTL,
+    database: state.database,
+    activeDatabase: activeDatabaseSelector(state),
+    isConnected: state.network.isConnected,
+    translations: activeDatabaseSelector(state).translations,
+    activeGroup: activeGroupSelector(state),
+    security: state.security,
+    languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes,
+    languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate,
+    mtUnlockAttempts: state.mtUnlockAttempts,
+    downloads: state.downloads,
+    groups: state.groups,
+    installedLanguageInstances: Object.keys(state.database).filter(
+      key => key.length === 2
+    )
+  }
+}
 
-    // const routeName = route.state
-    //   ? route.state.routes[route.state.index].name
-    //   : route.params?.screen || props.security.securityEnabled
-    //   ? 'PianoApp'
-    //   : 'SetTabs'
-    // if (routeName === 'SetTabs') return true
-    // else return false
+function mapDispatchToProps (dispatch) {
+  return {
+    updateConnectionStatus: status => {
+      dispatch(updateConnectionStatus(status))
+    },
+    storeLanguageData: (data, language) => {
+      dispatch(storeLanguageData(data, language))
+    },
+    storeLanguageSets: (sets, language) => {
+      dispatch(storeLanguageSets(sets, language))
+    },
+    addLanguageCoreFileToUpdate: fileName => {
+      dispatch(addLanguageCoreFileToUpdate(fileName))
+    },
+    changeActiveGroup: name => {
+      dispatch(changeActiveGroup(name))
+    },
+    deleteGroup: name => {
+      dispatch(deleteGroup(name))
+    },
+    storeLanguageCoreFileCreatedTime: (fileName, timeCreated) =>
+      dispatch(storeLanguageCoreFileCreatedTime(fileName, timeCreated)),
+    clearLanguageCoreFilesToUpdate: () =>
+      dispatch(clearLanguageCoreFilesToUpdate())
+  }
+}
+
+/**
+ * This component renders a drawer navigator that contains Waha's navigation drawer. It's placed around the MainStack navigator. It also contains a ton of logic related to things that happen globally in the background, such as updating the connection status and retrieving updates from Firestore.
+ */
+function MainDrawer ({
+  // Props passed from redux.
+  isRTL,
+  database,
+  activeDatabase,
+  isConnected,
+  translations,
+  activeGroup,
+  security,
+  languageCoreFilesCreatedTimes,
+  languageCoreFilesToUpdate,
+  mtUnlockAttempts,
+  downloads,
+  groups,
+  installedLanguageInstances,
+  updateConnectionStatus,
+  storeLanguageData,
+  storeLanguageSets,
+  addLanguageCoreFileToUpdate,
+  changeActiveGroup,
+  deleteGroup,
+  storeLanguageCoreFileCreatedTime,
+  clearLanguageCoreFilesToUpdate
+}) {
+  /**
+   * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the SetsTabs navigator because this is the only spot we should be able to swipe to open the drawer.
+   * @param {string} route - The route passed from the navigation component.
+   * @return {boolean} - Whether gestures should be enabled or not.
+   */
+  function getGestureEnabled (route) {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'SetsTabs'
+    if (routeName === 'SetsTabs') return true
+    else return false
   }
 
   useEffect(() => {
-    // add listener for connection status and update it accordingly
+    // Add a listener for connection status and update the redux state accordingly.
     const netInfoUnsubscribe = NetInfo.addEventListener(state => {
-      props.updateConnectionStatus(state.isConnected)
+      updateConnectionStatus(state.isConnected)
     })
 
-    //+ FIRESTORE LISTENERS
-
-    var localLanguageInfo = {}
-    var localSets = []
-
-    db.collection('languages')
-      .doc(props.activeGroup.language)
-      .onSnapshot(function (doc) {
-        if (doc.data()) {
-          props.storeLanguageData(doc.data(), props.activeGroup.language)
-          localLanguageInfo = doc.data()
-        }
-      })
-
-    db.collection('sets')
-      .where('languageID', '==', props.activeGroup.language)
-      .onSnapshot(querySnapshot => {
-        if (!querySnapshot.empty) {
-          var sets = []
-          querySnapshot.forEach(doc => {
-            sets.push({
-              id: doc.id,
-              ...doc.data()
-            })
-          })
-          props.storeLanguageSets(sets, props.activeGroup.language)
-        }
-      })
-
-    // if (props.isConnected) {
-    // try {
-    //   // listener for languages collection
-    //   db.collection('languages')
-    //     .doc(props.activeGroup.language)
-    //     .onSnapshot(function (doc) {
-    //       console.log(Object.keys(doc.data()))
-    //       //- download a file
-    //       function downloadSomething (url, fileName) {
-    //         var downloadResumable = FileSystem.createDownloadResumable(
-    //           url,
-    //           FileSystem.documentDirectory +
-    //             props.activeGroup.language +
-    //             '-' +
-    //             fileName,
-    //           {}
-    //         )
-    //         return downloadResumable.downloadAsync().catch(error => {
-    //           throw error
-    //         })
-    //       }
-
-    //       // check for new fellowship or application chapters or header image
-    //       doc.data().files.forEach(fileName => {
-    //         if (!props.activeDatabase.files.includes(fileName)) {
-    //           Alert.alert(
-    //             props.translations.general.popups.new_chapter_downloading_title,
-    //             props.translations.general.popups
-    //               .new_chapter_downloading_message,
-    //             [{ text: props.translations.general.ok, onPress: () => {} }]
-    //           )
-    //           if (fileName.includes('header'))
-    //             return downloadSomething(
-    //               `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.png?alt=media`,
-    //               fileName.slice(0, -3) + '.png'
-    //             )
-    //           else
-    //             return downloadSomething(
-    //               `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${props.activeGroup.language}%2Fother%2F${fileName}.mp3?alt=media`,
-    //               fileName.slice(0, -3) + '.mp3'
-    //             )
-    //         }
-    //       })
-
-    //       // store data from update
-    //       props.storeLanguageData(
-    //         { ...doc.data(), sets: props.activeDatabase.sets },
-    //         props.activeGroup.language
-    //       )
-
-    //       localLanguageInfo = doc.data()
-
-    //       // console.log(props.activeDatabase.translations)
-
-    //       // TODO at some point
-    //       // if
-    //       // 1. all core story sets are completed
-    //       // 2. a new core story set has been addded
-
-    //       // 1. add it automatically to added sets for this group
-    //       // 2. make it display the 'new' icon somehow
-
-    //       // if
-    //       // 1. mobilization tools is unlocked for this group
-    //       // 2. a new mobilization tools set is added
-    //       // if (props.activeGroup.setShouldShowMobilizationToolsTab && )
-
-    //       // 1. add it automatically to added sets for htis group
-    //       // 2. make it dispaly the 'new' icon somehow
-    //     })
-
-    //   // listener for sets collection
-    //   db.collection('sets')
-    //     .where('languageID', '==', props.activeGroup.language)
-    //     .onSnapshot(querySnapshot => {
-    //       // get all sets and put them in one object for redux storage
-    //       var sets = []
-    //       querySnapshot.forEach(doc => {
-    //         sets.push({
-    //           id: doc.id,
-    //           ...doc.data()
-    //         })
-    //       })
-
-    //       // store the new sets object
-    //       props.storeLanguageData(
-    //         { ...localLanguageInfo, sets: sets },
-    //         props.activeGroup.language
-    //       )
-    //     })
-    // } catch (error) {
-    //   console.log(error)
-    // }
-    // }
     return function cleanup () {
+      // Cancel our connection status listener.
       netInfoUnsubscribe()
     }
   }, [])
 
-  // side of navigation drawer
-  var direction = props.isRTL ? 'right' : 'left'
+  // (TEMP) Create the language core files to update redux variable for users who are updating from a previous version.
+  if (!languageCoreFilesToUpdate) {
+    clearLanguageCoreFilesToUpdate()
+  }
+
+  // (TEMP) Check to makes sure that users who update have the language core file created times.
+  if (!languageCoreFilesCreatedTimes) {
+    installedLanguageInstances.forEach(language => {
+      database[language].files.forEach(fileName => {
+        var fileExtension = fileName.includes('header') ? 'png' : 'mp3'
+        var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
+        // Add the time created of this file to our createdTimes redux object so that we know later if a file gets updated.
+        firebase
+          .storage()
+          .refFromURL(url)
+          .getMetadata()
+          .then(metadata =>
+            storeLanguageCoreFileCreatedTime(
+              // For when file name includes "v1".
+              `${language}-${fileName.slice(0, -3)}`,
+              metadata.timeCreated
+              // For when file name DOESN'T includes "v1".
+              // language + '-' + fileName,
+              // metadata.timeCreated
+            )
+          )
+      })
+    })
+  }
+
+  // Check for database updates. This function gets triggered whenever a user downloads a new lesson and whenever the active group changes.
+  useEffect(() => {
+    // Whether the app should write the new Firestore changes to redux or not. The only reason that it wouldn't is if the app version is behind the database version.
+    var shouldWrite = false
+
+    // Fetch data from the languages Firestore collection.
+    db.collection('languages')
+      .doc(activeGroup.language)
+      .get()
+      .then(async doc => {
+        // If we get some legitimate data back...
+        if (doc.exists && doc.data()) {
+          // If the Waha version is greater than or equal to the app version in the database...
+          if (doc.data().appVersion <= appVersion) {
+            // Set shouldWrite to true. This way, when we fetch data for the Story Sets for this language, we know we're safe to write to redux.
+            shouldWrite = true
+
+            // Store our language info in redux.
+            storeLanguageData(doc.data(), activeGroup.language)
+
+            // Check if we need replacements for already downloaded core files by comparing the created times of downloaded core files in redux with the created times of the current Firebase storage core files. If the created times don't match, it means a core file has been updated and we need to queue the new core file to download.
+            doc.data().files.forEach(fileName => {
+              // Set the file extension for the core file we're currently checking.
+              var fileExtension = fileName.includes('header') ? 'png' : 'mp3'
+
+              // PRODUCTION FIREBASE URL
+              // Always have this uncommented when it's time to build a new version.
+              var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${activeGroup.language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
+
+              // TEST FIREBASE URL
+              // Use this for test Firebase storage.
+              // var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-test-db.appspot.com/o/${activeGroup.language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
+
+              // Check the timeCreated of this core file in Firebase storage.
+              firebase
+                .storage()
+                .refFromURL(url)
+                .getMetadata()
+                .then(({ timeCreated }) => {
+                  // If the created time of this core file has already been stored previously AND the created time of the core file in Firebase is different from the created time that's stored in redux...
+                  if (
+                    languageCoreFilesCreatedTimes[
+                      `${activeGroup.language}-${fileName.slice(0, -3)}`
+                    ] &&
+                    timeCreated !==
+                      languageCoreFilesCreatedTimes[
+                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                      ]
+                  ) {
+                    // Add the core file to our redux array of files to update, assuming that it hasn't already been added.
+                    if (
+                      !languageCoreFilesToUpdate.includes(
+                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                      )
+                    ) {
+                      console.log(`${fileName} needs to be replaced.\n`)
+                      addLanguageCoreFileToUpdate(
+                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                      )
+                    }
+                  }
+                })
+            })
+
+            // Read the contents of Waha's file directory to check which core files are downloaded.
+            FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+              contents => {
+                // For each core file listed in Firestore, verify that it's already downloaded.
+                doc.data().files.forEach(fileName => {
+                  var fileExtension = fileName.includes('header')
+                    ? 'png'
+                    : 'mp3'
+                  // If it isn't downloaded...
+                  if (
+                    !contents.includes(
+                      `${activeGroup.language}-${fileName.slice(
+                        0,
+                        -3
+                      )}.${fileExtension}`
+                    )
+                  ) {
+                    // Add the core file to our redux array of files to download, assuming that it hasn't already been added.
+                    if (
+                      !languageCoreFilesToUpdate.includes(
+                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                      )
+                    ) {
+                      console.log(`${fileName} needs to be added.\n`)
+                      addLanguageCoreFileToUpdate(
+                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                      )
+                    }
+                  }
+                })
+              }
+            )
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Error retrieving data from Firestore.')
+      })
+
+    // Fetch data from the Story Sets Firestore collection. Get all Story Sets of the current language.
+    db.collection('sets')
+      .where('languageID', '==', activeGroup.language)
+      .get()
+      .then(querySnapshot => {
+        // If the data is valid and the current Waha version is greater than or equal to the version in Firebase (we set the shouldWrite variable earlier)...
+        if (!querySnapshot.empty) {
+          if (shouldWrite) {
+            // Add each Story Set to a temporary set array...
+            var sets = []
+            querySnapshot.forEach(doc => {
+              sets.push({
+                id: doc.id,
+                ...doc.data()
+              })
+            })
+            /// ...and write all of them to redux.
+            storeLanguageSets(sets, activeGroup.language)
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Error retrieving data from Firestore.')
+      })
+  }, [Object.keys(downloads).length, activeGroup])
 
   return (
     <NavigationContainer>
       <Drawer.Navigator
-        drawerPosition={direction}
+        drawerPosition={isRTL ? 'right' : 'left'}
         drawerType='back'
         drawerContent={props => <WahaDrawer {...props} />}
         drawerStyle={{
@@ -192,34 +307,6 @@ function MainDrawer (props) {
       </Drawer.Navigator>
     </NavigationContainer>
   )
-}
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-
-  return {
-    isRTL: state.database[activeGroup.language].isRTL,
-    activeDatabase: state.database[activeGroup.language],
-    isConnected: state.network.isConnected,
-    translations: state.database[activeGroup.language].translations,
-    activeGroup: activeGroup,
-    security: state.security
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    updateConnectionStatus: status => {
-      dispatch(updateConnectionStatus(status))
-    },
-    storeLanguageData: (data, language) => {
-      dispatch(storeLanguageData(data, language))
-    },
-    storeLanguageSets: (sets, language) => {
-      dispatch(storeLanguageSets(sets, language))
-    }
-  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainDrawer)

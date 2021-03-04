@@ -1,14 +1,30 @@
 import React from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { colors, scaleMultiplier } from '../constants'
+import { scaleMultiplier } from '../constants'
+import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+
+function mapStateToProps (state) {
+  return {
+    primaryColor: activeDatabaseSelector(state).primaryColor
+  }
+}
+
 // play, pause, and skip controls for play screen
-function PlaybackControls (props) {
+function PlaybackControls ({
+  // Props passed from a parent component.
+  isMediaPlaying,
+  onPlayPress,
+  onSkipPress,
+  // Props passed from redux.
+  primaryColor
+}) {
   //+ RENDER
 
   return (
     <View style={styles.playPauseSkipContainer}>
-      {props.hasHomework ? (
+      {/* {hasHomework ? (
         <View
           style={{
             width: '100%',
@@ -18,23 +34,23 @@ function PlaybackControls (props) {
         >
           <TouchableOpacity
             style={{ position: 'absolute', paddingHorizontal: 20 }}
-            onPress={props.showHomeworkModal}
+            onPress={showHomeworkModal}
           >
             <Icon name='list' size={40 * scaleMultiplier} color={colors.tuna} />
           </TouchableOpacity>
         </View>
-      ) : null}
+      ) : null} */}
       <TouchableOpacity
         style={styles.playPauseSkipButton}
-        onPress={() => props.onSkipPress(-10000)}
+        onPress={() => onSkipPress(-5000)}
       >
         <Icon
-          name='skip-back'
+          name='skip-back-5'
           size={69 * scaleMultiplier}
           color={colors.tuna}
         />
       </TouchableOpacity>
-      {/* {props.isVideoBuffering ? (
+      {/* {isVideoBuffering ? (
         <View
           style={{
             width: 101 * scaleMultiplier,
@@ -48,21 +64,21 @@ function PlaybackControls (props) {
       ) : ( */}
       <TouchableOpacity
         style={styles.playPauseSkipButton}
-        onPress={props.onPlayPress}
+        onPress={onPlayPress}
       >
         <Icon
-          name={props.isMediaPlaying ? 'pause' : 'play'}
+          name={isMediaPlaying ? 'pause' : 'play'}
           size={100 * scaleMultiplier}
-          color={props.primaryColor}
+          color={primaryColor}
         />
       </TouchableOpacity>
       {/* )} */}
       <TouchableOpacity
         style={styles.playPauseSkipButton}
-        onPress={() => props.onSkipPress(10000)}
+        onPress={() => onSkipPress(5000)}
       >
         <Icon
-          name='skip-forward'
+          name='skip-forward-5'
           size={69 * scaleMultiplier}
           color={colors.tuna}
         />
@@ -86,16 +102,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 })
-
-//+ REDUX
-
-function mapStateToProps (state) {
-  var activeGroup = state.groups.filter(
-    item => item.name === state.activeGroup
-  )[0]
-  return {
-    primaryColor: state.database[activeGroup.language].primaryColor
-  }
-}
 
 export default connect(mapStateToProps)(PlaybackControls)
