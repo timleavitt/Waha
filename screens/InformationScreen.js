@@ -34,7 +34,7 @@ function InformationScreen ({
   font,
   translations
 }) {
-  /** Whether the snackbar that pops up is visible or not.  */
+  /** Keeps track of whether the snackbar that pops up is visible or not.  */
   const [showSnackbar, setShowSnackbar] = useState(false)
 
   function getNavOptions () {
