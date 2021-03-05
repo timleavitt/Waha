@@ -25,6 +25,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     activeGroup: activeGroupSelector(state),
+    activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
     translations: activeDatabaseSelector(state).translations
@@ -35,12 +36,13 @@ function ContactUsScreen ({
   navigation: { setOptions, goBack },
   // Props passed from redux.
   activeGroup,
+  activeDatabase,
   isRTL,
   font,
   translations
 }) {
   const [emailTextInput, setEmailTextInput] = useState(null)
-  const [messageTextInput, setMessageTextInput] = useState(null)
+  const [messageTextInput, setMessageTextInput] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [emailError, setEmailError] = useState(null)
@@ -72,6 +74,27 @@ function ContactUsScreen ({
     if (emailTextInput.match(/^.+@.+\..+$/)) setEmailError(false)
     else setEmailError(true)
   }
+
+  var asteriskComponent = isRTL ? (
+    <Text
+      style={[
+        StandardTypography({ font, isRTL }, 'h3', 'Bold', 'left', colors.red)
+      ]}
+    >
+      {'* '}
+    </Text>
+  ) : (
+    <Text
+      style={[
+        StandardTypography({ font, isRTL }, 'h3', 'Bold', 'left', colors.red)
+      ]}
+    >
+      {' *'}
+    </Text>
+  )
+
+  var leftAsterisk = isRTL ? asteriskComponent : null
+  var rightAsterisk = isRTL ? null : asteriskComponent
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -125,20 +148,9 @@ function ContactUsScreen ({
               }
             ]}
           >
-            Email
-            <Text
-              style={[
-                StandardTypography(
-                  { font, isRTL },
-                  'h3',
-                  'Bold',
-                  'left',
-                  colors.red
-                )
-              ]}
-            >
-              {' *'}
-            </Text>
+            {leftAsterisk}
+            {translations.contact_us.email_label}
+            {rightAsterisk}
           </Text>
           <View
             style={{
@@ -197,21 +209,13 @@ function ContactUsScreen ({
             justifyContent: 'center'
           }}
         >
-          <Text
-            style={[
-              StandardTypography(
-                { font, isRTL },
-                'h3',
-                'Bold',
-                'left',
-                colors.shark
-              ),
-              {
-                marginVertical: 10 * scaleMultiplier
-              }
-            ]}
+          <View
+            style={{
+              flexDirection: isRTL ? 'row-reverse' : 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
           >
-            Message
             <Text
               style={[
                 StandardTypography(
@@ -219,13 +223,31 @@ function ContactUsScreen ({
                   'h3',
                   'Bold',
                   'left',
-                  colors.red
+                  colors.shark
+                ),
+                {
+                  marginVertical: 10 * scaleMultiplier
+                }
+              ]}
+            >
+              {leftAsterisk}
+              {translations.contact_us.message_label}
+              {rightAsterisk}
+            </Text>
+            <Text
+              style={[
+                StandardTypography(
+                  { font, isRTL },
+                  'h4',
+                  'regular',
+                  'left',
+                  messageTextInput.length > 500 ? colors.red : colors.chateau
                 )
               ]}
             >
-              {' *'}
+              {messageTextInput.length + '/500'}
             </Text>
-          </Text>
+          </View>
           <TextInput
             onChangeText={text => setMessageTextInput(text)}
             style={[
@@ -245,37 +267,46 @@ function ContactUsScreen ({
                 paddingBottom: 20,
                 paddingHorizontal: 20,
                 justifyContent: 'flex-start',
-                alignItems: 'flex-start',
-                marginBottom: 10 * scaleMultiplier
+                alignItems: 'flex-start'
               }
             ]}
             multiline
           />
         </View>
-        {/* <KeyboardAvoidingView
-          behavior='padding'
-          // style={{ width: '100%', position: 'absolute', bottom: 0 }}
-        > */}
         <WahaButton
-          type={emailError ? 'inactive' : 'filled'}
-          color={emailError ? colors.geyser : colors.apple}
+          type={
+            emailError ||
+            emailTextInput === null ||
+            messageTextInput.length > 500
+              ? 'inactive'
+              : 'filled'
+          }
+          color={
+            emailError ||
+            emailTextInput === null ||
+            messageTextInput.length > 500
+              ? colors.geyser
+              : colors.apple
+          }
           useDefaultFont={false}
-          label={isSubmitting ? '' : 'Submit'}
+          label={
+            isSubmitting ? '' : translations.contact_us.submit_button_label
+          }
           width={Dimensions.get('window').width / 3}
           onPress={() => {
             setIsSubmitting(true)
             db.collection('feedback')
               .add({
                 language: activeGroup.language,
-                contactEmail: 'trent@waha.app',
+                contactEmail: activeDatabase.contactEmail,
                 email: emailTextInput,
                 message: messageTextInput
               })
               .then(() => {
                 setIsSubmitting(false)
                 Alert.alert(
-                  'Message sent successfully.',
-                  "Thanks for contacting us! We'll get back to you as soon as we can.",
+                  translations.contact_us.popups.submitted_successfully_title,
+                  translations.contact_us.popups.submitted_successfully_message,
                   [
                     {
                       text: translations.general.ok,
@@ -287,9 +318,10 @@ function ContactUsScreen ({
                 )
               })
               .catch(() => {
+                setIsSubmitting(false)
                 Alert.alert(
-                  'There was an error sending your message.',
-                  'Please check your internet connection and try again.',
+                  translations.contact_us.popups.submit_error_title,
+                  translations.contact_us.popups.submit_error_message,
                   [
                     {
                       text: translations.general.ok,
@@ -301,10 +333,7 @@ function ContactUsScreen ({
           }}
           style={{
             height: 68 * scaleMultiplier,
-            alignSelf: 'flex-end'
-            // marginBottom: 30 * scaleMultiplier
-            // position: 'absolute',
-            // bottom: 0
+            alignSelf: isRTL ? 'flex-start' : 'flex-end'
           }}
           extraComponent={
             isSubmitting ? (
@@ -314,8 +343,6 @@ function ContactUsScreen ({
             ) : null
           }
         />
-        {/* </KeyboardAvoidingView> */}
-        {/* </ScrollView> */}
       </ScrollView>
     </SafeAreaView>
   )
@@ -327,13 +354,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: colors.aquaHaze
-  },
-  formItemContainer: {
-    width: '100%',
-    height: 100 * scaleMultiplier,
-    paddingHorizontal: 20,
-    justifyContent: 'center',
-    backgroundColor: 'green'
   }
 })
 

@@ -76,6 +76,7 @@ export function database (
         [params.languageInstanceID]: {
           ...state[params.languageInstanceID],
           // appVersion: params.languageData[appVersion],
+          contactEmail: params.languageData.contactEmail,
           displayName: params.languageData.displayName,
           bibleID: params.languageData.bibleID,
           isRTL: params.languageData.isRTL,
