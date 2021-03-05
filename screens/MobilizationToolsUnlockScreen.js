@@ -55,6 +55,18 @@ function MobilizationToolsUnlockScreen ({
   setMTUnlockTimeout,
   setMTUnlockAttempts
 }) {
+  /** useEffect function that sets the navigation options for this screen. */
+  useEffect(() => {
+    setOptions({
+      headerRight: isRTL
+        ? () => <BackButton onPress={() => goBack()} />
+        : () => <View></View>,
+      headerLeft: isRTL
+        ? () => <View></View>
+        : () => <BackButton onPress={() => goBack()} />
+    })
+  }, [])
+
   /** Keeps track of the user input of the passcode entry area. */
   const [passcode, setPasscode] = useState('')
 
@@ -63,26 +75,6 @@ function MobilizationToolsUnlockScreen ({
 
   /** Keeps track of whether the unlock success modal is visible. */
   const [unlockSuccessModal, setUnlockSuccessModal] = useState(false)
-
-  /** useEffect function that sets the navigation options for this screen. */
-  useEffect(() => {
-    setOptions(getNavOptions())
-  }, [])
-
-  /**
-   * Returns the navigation options for this screen.
-   * @return {Object} - The navigation options.
-   */
-  function getNavOptions () {
-    return {
-      headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
-        : () => <View></View>,
-      headerLeft: isRTL
-        ? () => <View></View>
-        : () => <BackButton onPress={() => goBack()} />
-    }
-  }
 
   /**
    * useEffect function that updates every time the passcode input changes. If the user gets to 5 attempts without unlocking successfully, the app will lock them out from attempting to unlock again for 30 minutes.
