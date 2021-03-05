@@ -126,10 +126,16 @@ function WahaButton ({
           <Text
             style={[
               useDefaultFont
-                ? SystemTypography(false, 'p', 'Bold', 'center', colors.chateau)
+                ? SystemTypography(
+                    false,
+                    'h3',
+                    'Bold',
+                    'center',
+                    colors.chateau
+                  )
                 : StandardTypography(
                     { font, isRTL },
-                    'p',
+                    'h3',
                     'Bold',
                     'center',
                     colors.chateau

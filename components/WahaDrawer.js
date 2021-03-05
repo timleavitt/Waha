@@ -233,7 +233,8 @@ function WahaDrawer ({
           label={translations.general.feedback}
           onPress={
             () =>
-              openBrowser('https://coda.io/form/Waha-Bug-Report_dyWvuvL6WTx')
+              // openBrowser('https://coda.io/form/Waha-Bug-Report_dyWvuvL6WTx')
+              navigate('ContactUs')
             // New "contact us form" testing
             // openBrowser(
             //   `https://coda.io/form/Contact-Us_dOsPhfw4nDB?Language=${activeGroup.language}`

@@ -14,6 +14,7 @@ import {
   activeGroupSelector
 } from '../redux/reducers/activeGroup'
 import AddSetScreen from '../screens/AddSetScreen'
+import ContactUsScreen from '../screens/ContactUsScreen'
 import GroupsScreen from '../screens/GroupsScreen'
 import InformationScreen from '../screens/InformationScreen'
 import KeyOrderSetScreen from '../screens/KeyOrderSetScreen'
@@ -472,6 +473,20 @@ function MainStack ({
         component={InformationScreen}
         options={{
           headerTitle: translations.general.information,
+          headerStyle: {
+            backgroundColor: colors.aquaHaze
+          },
+          headerTitleStyle: {
+            color: colors.shark,
+            fontFamily: font + '-Bold'
+          }
+        }}
+      />
+      <Stack.Screen
+        name='ContactUs'
+        component={ContactUsScreen}
+        options={{
+          headerTitle: translations.general.feedback,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
