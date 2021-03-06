@@ -157,21 +157,6 @@ function LanguageInstanceInstallScreen ({
     // Set the installingLanguageInstance redux variable to true since we're now installing a language instance.
     setIsInstallingLanguageInstance(true)
 
-    // Fetch the language info for the selected language and store it in redux.
-    await db
-      .collection('languages')
-      .doc(selectedLanguage)
-      .get()
-      .then(async doc => {
-        if (doc.exists) {
-          storeLanguageData(doc.data(), selectedLanguage)
-        }
-      })
-      .catch(error => {
-        console.log(error)
-        throw error
-      })
-
     // Fetch all the Story Sets whith the language ID of the selected language and store them in redux.
     await db
       .collection('sets')
@@ -191,6 +176,22 @@ function LanguageInstanceInstallScreen ({
         console.log(error)
         throw error
       })
+
+    // Fetch the language info for the selected language and store it in redux.
+    await db
+      .collection('languages')
+      .doc(selectedLanguage)
+      .get()
+      .then(async doc => {
+        if (doc.exists) {
+          storeLanguageData(doc.data(), selectedLanguage)
+        }
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
+
     return
   }
 
