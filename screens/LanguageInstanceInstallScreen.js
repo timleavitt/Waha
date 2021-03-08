@@ -96,17 +96,6 @@ function LanguageInstanceInstallScreen ({
   deleteLanguageData,
   deleteGroup
 }) {
-  /** useEffect function that sets the navigation options for this screen. */
-  useEffect(() => {
-    setOptions(
-      routeName === 'SubsequentlLanguageInstanceInstall'
-        ? {
-            headerTitle: i18n.t('newLanguage')
-          }
-        : null
-    )
-  }, [])
-
   // Set the i18n locale to the locale of the user's phone.
   i18n.locale = Localization.locale
 
@@ -129,6 +118,17 @@ function LanguageInstanceInstallScreen ({
 
   /** The sound object for playing the language text-to-speech files. */
   const [audio, setAudio] = useState(new Audio.Sound())
+
+  /** useEffect function that sets the navigation options for this screen. */
+  useEffect(() => {
+    setOptions(
+      routeName === 'SubsequentlLanguageInstanceInstall'
+        ? {
+            headerTitle: i18n.t('newLanguage')
+          }
+        : null
+    )
+  }, [])
 
   /** useEffect function sets the isConnected state with the status of the user's internet connection. */
   useEffect(() => {

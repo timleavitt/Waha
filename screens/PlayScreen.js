@@ -66,10 +66,11 @@ function mapDispatchToProps (dispatch) {
 }
 
 /**
- * Component for the Play Screen, where the user listens to or watches the lesson.
- * @category Screen
- * @param props
- * @module PlayScreen
+ * A screen where the user listens to (or watches) the different parts of a lesson.
+ * @param {Object} thisLesson - The object for the lesson that the user has selected to do.
+ * @param {Object} thisSet - The object for the set that thisLesson is a part of.
+ * @param {boolean} isDownloaded - Whether this lesson has its Story audio file already downloaded or not.
+ * @param {boolean} isDownloading - Whether the
  */
 function PlayScreen ({
   // Props passed from navigation.
@@ -92,12 +93,16 @@ function PlayScreen ({
   downloadMedia,
   removeDownload
 }) {
-  //+ AUDIO / VIDEO STATE
+  /** Keeps the screen from auto-dimming or auto-locking. */
+  useKeepAwake()
 
-  /**
-   * State for audio object.
-   * @exports PlayScreen
-   * */
+  /** Interval that updates the scrubber every second. */
+  useInterval(updateThumb, 1000)
+
+  // Path for the file system directory for convenience.
+  const path = FileSystem.documentDirectory
+
+  /** State for audio object. */
   const [audio, setAudio] = useState(new Audio.Sound())
 
   /** State for video object. */
@@ -135,6 +140,16 @@ function PlayScreen ({
   /** Local source for fellowship chapter audio file. */
   const [applicationSource, setApplicationSource] = useState()
 
+  const [potentialSources, setPotentialSources] = useState({
+    fellowshipLocal: `${path}${activeGroup.language}-${thisLesson.fellowshipType}.mp3`,
+    applicationLocal: `${path}${activeGroup.language}-${thisLesson.applicationType}.mp3`,
+    storyLocal: `${path}${thisLesson.id}.mp3`,
+    storyStream: getLessonInfo('audioSource', thisLesson.id),
+    storyDummy: `${path}${activeGroup.language}-dummy-story.mp3`,
+    trainingLocal: `${path}${thisLesson.id}v.mp4`,
+    trainingStream: getLessonInfo('videoSource', thisLesson.id)
+  })
+
   //+ MISCELLANEOUS STATE
 
   /** An object to store the progress of the set this lesson is a part of. */
@@ -166,50 +181,10 @@ function PlayScreen ({
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
 
   /**
-   * useEffect function that enters fullscreen mode when the video component is present, the video source is loaded, we're on ios (this feature doesn't work on android), and the device rotation matches that of landscape.
-   * @function
+   * useEffect function that sets the navigation options for this screen. Dependent on thisSetProgress because we want to update the complete button whenever the complete status of this lesson changes.
    */
   useEffect(() => {
-    if (deviceRotation && Platform.OS === 'ios') {
-      if (fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS) {
-        if (
-          video &&
-          trainingSource &&
-          deviceRotation &&
-          (deviceRotation.alpha > 1 || deviceRotation.alpha < -1) &&
-          (deviceRotation.gamma > 0.7 || deviceRotation.gamma < -0.7) &&
-          deviceRotation.beta > -0.2 &&
-          deviceRotation.beta < 0.2
-        )
-          video.presentFullscreenPlayer()
-      }
-    }
-  }, [deviceRotation, video, trainingSource])
-
-  /**
-   * useEffect function that updates the thisSetProgress state variable with the most updated version of the progress of the set that this lesson is a part of.
-   * @function
-   */
-  useEffect(() => {
-    setThisSetProgress(
-      activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
-    )
-  }, [activeGroup.addedSets])
-
-  /**
-   * useEffect function that sets the header for this screen. Dependent on thisSetProgress because we want to update the "Set as complete" header button whenever the complete status of this lesson changes.
-   * @function
-   */
-  useEffect(() => {
-    setOptions(getNavOptions())
-  }, [thisSetProgress])
-
-  /** Keeps the screen from auto-dimming or auto-locking. */
-  useKeepAwake()
-
-  /** Sets the navigation options for this screen. */
-  function getNavOptions () {
-    return {
+    setOptions({
       headerTitle: getLessonInfo('subtitle', thisLesson.id),
       headerRight: isRTL
         ? () => (
@@ -247,17 +222,42 @@ function PlayScreen ({
               }}
             />
           )
-    }
-  }
+    })
+  }, [thisSetProgress])
 
   /**
-   * useEffect function that acts as a constructor to set the sources for the various chapters, enable the device rotation listener, and upon exiting the screen, unloading the audio/video files.
+   * useEffect function that enters fullscreen mode when the video component is present, the video source is loaded, we're on ios (this feature doesn't work on android), and the device rotation matches that of landscape.
    * @function
    */
   useEffect(() => {
-    // set sources and download stuff if we need to
-    setSources()
+    if (deviceRotation && Platform.OS === 'ios') {
+      if (fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS) {
+        if (
+          video &&
+          trainingSource &&
+          deviceRotation &&
+          (deviceRotation.alpha > 1 || deviceRotation.alpha < -1) &&
+          (deviceRotation.gamma > 0.7 || deviceRotation.gamma < -0.7) &&
+          deviceRotation.beta > -0.2 &&
+          deviceRotation.beta < 0.2
+        )
+          video.presentFullscreenPlayer()
+      }
+    }
+  }, [deviceRotation, video, trainingSource])
 
+  /**
+   * useEffect function that updates the thisSetProgress state variable with the most updated version of the progress of the set that this lesson is a part of.
+   * @function
+   */
+  useEffect(() => {
+    setThisSetProgress(
+      activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
+    )
+  }, [activeGroup.addedSets])
+
+  /** useEffect function that adds a device motion listener on iOS devices. This is so that the app can automatically enter fullscreen when the user rotates their phone. */
+  useEffect(() => {
     // check if we can get any device motion data and if so, add a listener
     if (Platform.OS === 'ios') {
       DeviceMotion.isAvailableAsync().then(isAvailable => {
@@ -269,6 +269,15 @@ function PlayScreen ({
         }
       })
     }
+  }, [])
+
+  /**
+   * useEffect function that acts as a constructor to set the sources for the various chapters, enable the device rotation listener, and upon exiting the screen, unloading the audio/video files.
+   * @function
+   */
+  useEffect(() => {
+    // set sources and download stuff if we need to
+    setSources()
 
     // when leaving the screen, cancel the interval timer and unload the audio
     //  file
@@ -291,44 +300,13 @@ function PlayScreen ({
    * Sets all the source state files appropriately based on the lesson type and what is downloaded.
    */
   function setSources () {
-    // set all possible sources for ease of use later
-    var fellowshipLocal =
-      FileSystem.documentDirectory +
-      activeGroup.language +
-      '-' +
-      thisLesson.fellowshipType +
-      '.mp3'
-
-    var applicationLocal =
-      FileSystem.documentDirectory +
-      activeGroup.language +
-      '-' +
-      thisLesson.applicationType +
-      '.mp3'
-
-    var storyLocal = FileSystem.documentDirectory + thisLesson.id + '.mp3'
-
-    var storyStream = getLessonInfo('audioSource', thisLesson.id)
-
-    var storyDummy =
-      FileSystem.documentDirectory +
-      activeGroup.language +
-      '-' +
-      'dummy-story.mp3'
-
-    var trainingLocal = FileSystem.documentDirectory + thisLesson.id + 'v.mp4'
-
-    var trainingStream = getLessonInfo('videoSource', thisLesson.id)
-
-    // set sources appropriately based on the lesson type
     switch (lessonType) {
       case 'qa':
-        setFellowshipSource(fellowshipLocal)
-        setStorySource(storyLocal)
+        setFellowshipSource(potentialSources.fellowshipLocal)
+        setStorySource(potentialSources.storyLocal)
         setTrainingSource(null)
-        setApplicationSource(applicationLocal)
+        setApplicationSource(potentialSources.applicationLocal)
 
-        // start downloading stuff if it's not downloaded
         if (!isDownloaded && !isDownloading)
           downloadMedia(
             'audio',
@@ -337,12 +315,11 @@ function PlayScreen ({
           )
         break
       case 'qav':
-        setFellowshipSource(fellowshipLocal)
-        setStorySource(storyLocal)
-        setTrainingSource(trainingLocal)
-        setApplicationSource(applicationLocal)
+        setFellowshipSource(potentialSources.fellowshipLocal)
+        setStorySource(potentialSources.storyLocal)
+        setTrainingSource(potentialSources.trainingLocal)
+        setApplicationSource(potentialSources.applicationLocal)
 
-        // start downloading stuff if it's not downloaded
         if (!isDownloaded && !isDownloading) {
           downloadMedia(
             'audio',
@@ -357,12 +334,11 @@ function PlayScreen ({
         }
         break
       case 'qv':
-        setFellowshipSource(fellowshipLocal)
-        setStorySource(storyDummy)
-        setTrainingSource(trainingLocal)
-        setApplicationSource(applicationLocal)
+        setFellowshipSource(potentialSources.fellowshipLocal)
+        setStorySource(potentialSources.storyDummy)
+        setTrainingSource(potentialSources.trainingLocal)
+        setApplicationSource(potentialSources.applicationLocal)
 
-        // start downloading stuff if it's not downloaded
         if (!isDownloaded && !isDownloading)
           downloadMedia(
             'video',
@@ -374,19 +350,27 @@ function PlayScreen ({
         changeChapter('training')
         setFellowshipSource(null)
         setStorySource(null)
-        setTrainingSource(isDownloaded ? trainingLocal : trainingStream)
+        setTrainingSource(
+          isDownloaded
+            ? potentialSources.trainingLocal
+            : potentialSources.trainingStream
+        )
         setApplicationSource(null)
         break
       case 'q':
-        setFellowshipSource(fellowshipLocal)
-        setStorySource(storyDummy)
+        setFellowshipSource(potentialSources.fellowshipLocal)
+        setStorySource(potentialSources.storyDummy)
         setTrainingSource(null)
-        setApplicationSource(applicationLocal)
+        setApplicationSource(potentialSources.applicationLocal)
         break
       case 'a':
         changeChapter('story')
         setFellowshipSource(null)
-        setStorySource(isDownloaded ? storyLocal : storyStream)
+        setStorySource(
+          isDownloaded
+            ? potentialSources.storyLocal
+            : potentialSources.storyStream
+        )
         setTrainingSource(null)
         setApplicationSource(null)
         break
@@ -411,7 +395,7 @@ function PlayScreen ({
   useEffect(() => {
     if (lessonType === 'v')
       if (isConnected && !isMediaLoaded && trainingSource)
-        loadVideoFile('video', trainingSource)
+        loadMedia('video', trainingSource)
   }, [isConnected])
 
   /**
@@ -518,9 +502,6 @@ function PlayScreen ({
       })
     ]).start(() => setAnimationZIndex(0))
   }
-
-  //- interval for updating seeker
-  useInterval(updateThumb, 1000)
 
   //- gets called every second by our timer and updates the seeker position based on the progress through the media file
   async function updateThumb () {
@@ -702,10 +683,6 @@ function PlayScreen ({
 
     if (checkForFullyComplete()) {
       setShowSetCompleteModal(true)
-      // logCompleteStorySet(
-      //   thisSet,
-      //   activeGroup.language
-      // )
     } else {
       if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id))) {
         Alert.alert(
