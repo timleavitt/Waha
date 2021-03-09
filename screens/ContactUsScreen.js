@@ -91,6 +91,51 @@ function ContactUsScreen ({
     else setEmailError(true)
   }
 
+  /** Sends the form information to Firestore and pops up an appropriate alert. */
+  function submit () {
+    setIsSubmitting(true)
+    db.collection('feedback')
+      .add({
+        language: activeGroup.language,
+        contactEmail: activeDatabase.contactEmail,
+        email: emailTextInput,
+        message: messageTextInput,
+        isABug: isBugChecked,
+        reproductionSteps: reproductionStepsTextInput,
+        appVersion: appVersion,
+        OS: Platform.OS,
+        timeSubmitted: new Date().toString()
+      })
+      .then(() => {
+        setIsSubmitting(false)
+        Alert.alert(
+          translations.contact_us.popups.submitted_successfully_title,
+          translations.contact_us.popups.submitted_successfully_message,
+          [
+            {
+              text: translations.general.ok,
+              onPress: () => {
+                goBack()
+              }
+            }
+          ]
+        )
+      })
+      .catch(() => {
+        setIsSubmitting(false)
+        Alert.alert(
+          translations.contact_us.popups.submit_error_title,
+          translations.contact_us.popups.submit_error_message,
+          [
+            {
+              text: translations.general.ok,
+              onPress: () => {}
+            }
+          ]
+        )
+      })
+  }
+
   // Determine what to render for the asterisk components based on isRTL. They need to be conditional because in LTR, the asterisk goes on the right of the word whereas in RTL, it goes on the left. The asterisk indicates a required field.
   var asteriskComponent = isRTL ? (
     <Text
@@ -116,6 +161,7 @@ function ContactUsScreen ({
     <SafeAreaView style={styles.screen}>
       <ScrollView bounces={false} style={styles.scrollViewContainer}>
         <View style={{ width: '100%', height: 20 * scaleMultiplier }} />
+        {/* Email input area. */}
         <View style={styles.sectionContainer}>
           <Text
             style={[
@@ -173,6 +219,7 @@ function ContactUsScreen ({
             ) : null}
           </View>
         </View>
+        {/* Message input area. */}
         <View style={styles.sectionContainer}>
           <View
             style={{
@@ -229,6 +276,7 @@ function ContactUsScreen ({
             placeholderTextColor={colors.chateau}
           />
         </View>
+        {/* Bug checkmark input area. */}
         <View
           style={[
             styles.bugSectionContainer,
@@ -258,6 +306,7 @@ function ContactUsScreen ({
             {translations.contact_us.bug_checkmark_label}
           </Text>
         </View>
+        {/* Reproduction steps input area. */}
         {isBugChecked ? (
           <View style={styles.sectionContainer}>
             <Text
@@ -291,8 +340,10 @@ function ContactUsScreen ({
             />
           </View>
         ) : null}
+        {/* Submit button. */}
         <WahaButton
           type={
+            // Potential error states are if the email is invalid, the email is blank, or the message length is over 1000 characters.
             emailError ||
             emailTextInput === null ||
             messageTextInput.length > 1000
@@ -311,55 +362,14 @@ function ContactUsScreen ({
             isSubmitting ? '' : translations.contact_us.submit_button_label
           }
           width={Dimensions.get('window').width / 3}
-          onPress={() => {
-            setIsSubmitting(true)
-            db.collection('feedback')
-              .add({
-                language: activeGroup.language,
-                contactEmail: activeDatabase.contactEmail,
-                email: emailTextInput,
-                message: messageTextInput,
-                isABug: isBugChecked,
-                reproductionSteps: reproductionStepsTextInput,
-                appVersion: appVersion,
-                OS: Platform.OS,
-                timeSubmitted: new Date().toString()
-              })
-              .then(() => {
-                setIsSubmitting(false)
-                Alert.alert(
-                  translations.contact_us.popups.submitted_successfully_title,
-                  translations.contact_us.popups.submitted_successfully_message,
-                  [
-                    {
-                      text: translations.general.ok,
-                      onPress: () => {
-                        goBack()
-                      }
-                    }
-                  ]
-                )
-              })
-              .catch(() => {
-                setIsSubmitting(false)
-                Alert.alert(
-                  translations.contact_us.popups.submit_error_title,
-                  translations.contact_us.popups.submit_error_message,
-                  [
-                    {
-                      text: translations.general.ok,
-                      onPress: () => {}
-                    }
-                  ]
-                )
-              })
-          }}
+          onPress={submit}
           style={{
             height: 68 * scaleMultiplier,
             alignSelf: isRTL ? 'flex-start' : 'flex-end',
             marginVertical: 10 * scaleMultiplier
           }}
           extraComponent={
+            // If we're in the middle of submitting, change the submit button to show an activity indicator.
             isSubmitting ? (
               <View>
                 <ActivityIndicator color={colors.white} />
