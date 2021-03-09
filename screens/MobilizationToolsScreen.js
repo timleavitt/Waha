@@ -48,28 +48,20 @@ function MobilizationToolsScreen ({
   areMobilizationToolsUnlocked,
   groups
 }) {
-  /** Keeps track of whether the how MTs work modal is visible. */
-  const [showHowMTsWorkModal, setShowHowMTsWorkModal] = useState(false)
-
   /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
-    setOptions(getNavOptions())
-  }, [])
-
-  /**
-   * Returns the navigation options for this screen.
-   * @return {Object} - The navigation options.
-   */
-  function getNavOptions () {
-    return {
+    setOptions({
       headerRight: isRTL
         ? () => <BackButton onPress={() => goBack()} />
         : () => <View></View>,
       headerLeft: isRTL
         ? () => <View></View>
         : () => <BackButton onPress={() => goBack()} />
-    }
-  }
+    })
+  }, [])
+
+  /** Keeps track of whether the how MTs work modal is visible. */
+  const [showHowMTsWorkModal, setShowHowMTsWorkModal] = useState(false)
 
   /**
    * Gets an array of all the installed language instances and their groups. This is used as the data for the section list of all the groups on this screen and on the MobilizationTools screen.
