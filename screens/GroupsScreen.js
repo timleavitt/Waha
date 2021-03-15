@@ -46,29 +46,9 @@ function GroupsScreen ({
   /** Keeps track of whether the screen is in editing mode or not. Editing mode is enabled via a button in the header and switches a lot of functionality on the screen. */
   const [isEditing, setIsEditing] = useState(false)
 
-  /** When adding a new group, this state keeps track of the language instance that the user is adding a group in so it can be passed into the CreateGroup() function. */
-  const [languageID, setLanguageID] = useState(activeGroup.languageID)
-
-  /** When editing a specific group, this component stores the object for the group that is being edited. */
-  const [editingGroup, setEditingGroup] = useState(activeGroup)
-
-  /** Keeps track of whether the add group modal is visible. */
-  const [showAddGroupModal, setShowAddGroupModal] = useState(false)
-
-  /** Keeps track of whether the edit gruop modal is visible. */
-  const [showEditGroupModal, setShowEditGroupModal] = useState(false)
-
   /** useEffect function that sets the navigation options for this screen. Unlock similar functions in other screens, this one is updated more often since the header must update whenever the active group changes and when editingMode changes. */
   useEffect(() => {
-    setOptions(getNavOptions())
-  }, [isEditing, isRTL, activeGroup])
-
-  /**
-   * Returns the navigation options for this screen.
-   * @return {Object} - The navigation options.
-   */
-  function getNavOptions () {
-    return {
+    setOptions({
       headerStyle: {
         // Switch the background color of the header in editing mode to reflect that we're in a non-standard screen view.
         backgroundColor: isEditing ? colors.blue : colors.aquaHaze
@@ -104,8 +84,20 @@ function GroupsScreen ({
               onPress={() => goBack()}
             />
           )
-    }
-  }
+    })
+  }, [isEditing, isRTL, activeGroup])
+
+  /** When adding a new group, this state keeps track of the language instance that the user is adding a group in so it can be passed into the CreateGroup() function. */
+  const [languageID, setLanguageID] = useState(activeGroup.languageID)
+
+  /** When editing a specific group, this component stores the object for the group that is being edited. */
+  const [editingGroup, setEditingGroup] = useState(activeGroup)
+
+  /** Keeps track of whether the add group modal is visible. */
+  const [showAddGroupModal, setShowAddGroupModal] = useState(false)
+
+  /** Keeps track of whether the edit gruop modal is visible. */
+  const [showEditGroupModal, setShowEditGroupModal] = useState(false)
 
   /**
    * Gets an array of all the installed language instances and their groups. This is used as the data for the section list of all the groups on this screen and on the MobilizationTools screen.

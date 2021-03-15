@@ -5,7 +5,7 @@ import { getSystemIsRTL, scaleMultiplier } from '../../constants'
 import { colors } from '../../styles/colors'
 import { SystemTypography } from '../../styles/typography'
 
-function LanguageSelectItem ({
+function LanguageItem ({
   // Props passed from a parent component.
   nativeName,
   localeName,
@@ -109,4 +109,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default LanguageSelectItem
+export default LanguageItem
