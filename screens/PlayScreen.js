@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   Alert,
   Animated,
-  Dimensions,
   Image,
   Platform,
   SafeAreaView,
@@ -534,6 +533,7 @@ function PlayScreen ({
       } else if (chapter === 'story') {
         lockPortrait(() => {})
         setSeekPosition(0)
+        swipeToScripture()
         if (storySource) {
           loadMedia('audio', storySource)
         }
@@ -625,13 +625,7 @@ function PlayScreen ({
    * Scrolls the album art swiper to the scripture pane.
    */
   function swipeToScripture () {
-    if (albumArtSwiperRef)
-      albumArtSwiperRef.scrollToIndex({
-        animated: true,
-        viewPosition: 0.5,
-        viewOffset: -Dimensions.get('screen').width,
-        index: 0
-      })
+    if (albumArtSwiperRef) albumArtSwiperRef.snapToItem(2)
   }
 
   //- if a download finishes, remove it from download tracker
