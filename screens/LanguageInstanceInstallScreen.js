@@ -1,5 +1,4 @@
 import NetInfo from '@react-native-community/netinfo'
-import { useHeaderHeight } from '@react-navigation/stack'
 import { Audio } from 'expo-av'
 import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
@@ -16,7 +15,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { languageT2S } from '../assets/languageT2S/_languageT2S'
-import LanguageSelectItem from '../components/list-items/LanguageSelectItem'
+import LanguageItem from '../components/list-items/LanguageItem'
 import Separator from '../components/standard/Separator'
 import WahaButton from '../components/standard/WahaButton'
 import { scaleMultiplier } from '../constants'
@@ -68,6 +67,13 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
+/**
+ * A screen that displays a list of language instances to install. This appears as the first screen the user sees when they open the app for the first time, as well as later if they want to install another language instance.
+ * @param {string} routeName - The name of the screen variant. In this case, can either be "InitialLanguageInstanceInstall" or "SubsequentLanguageInstanceInstall" since this screen component is used twice.
+ * @param {Object[]} installedLanguageInstances - (Optional) An array of languages instances that are currently installed. Defaults to null since there aren't any installed language instances when the user opens the app for the first time. This variable is only relevant when the user is installing a subsequent language instance.
+ * @param {string} installedLanguageInstances[].languageID - The ID of the language.
+ * @param {string} installedLanguageInstances[].languageName - The name of the language.
+ */
 function LanguageInstanceInstallScreen ({
   // Props passed from navigation.
   navigation: { setOptions, goBack, reset, navigate },
@@ -90,40 +96,42 @@ function LanguageInstanceInstallScreen ({
   deleteLanguageData,
   deleteGroup
 }) {
-  //+ STATE
+  // Set the i18n locale to the locale of the user's phone.
+  i18n.locale = Localization.locale
 
-  // keeps track of language selected in picker (TODO: change default to user's default language)
+  // Setting fallbacks to true means that if the user's phone language isn't in i18n, it defaults to English.
+  i18n.fallbacks = true
+
+  /** Keeps track of the language that is currently selected. */
   const [selectedLanguage, setSelectedLanguage] = useState('')
+
+  /** Keeps track of whether the list of languages to install is empty. */
   const [isListEmpty, setIsListEmpty] = useState(false)
 
-  // keeps track of whether the uesr has an internet connection
+  /** Keeps track of whether the user is connected to the internet. Note: we don't use the redux isConnected variable because if this is the first time the user has opened the app, that redux variable hasn't been created yet. */
   const [isConnected, setIsConnected] = useState(true)
 
+  /** Keeps track of the Y position of the start button for animating. */
   const [buttonYPos, setButtonYPos] = useState(
     new Animated.Value(68 * scaleMultiplier + 20)
   )
 
-  const headerHeight = useHeaderHeight()
+  /** The sound object for playing the language text-to-speech files. */
+  const [audio, setAudio] = useState(new Audio.Sound())
 
-  i18n.locale = Localization.locale
-  i18n.fallbacks = true
-
-  // sound for the text to speech
-
-  const soundObject = new Audio.Sound()
-
-  async function playAudio (key) {
-    soundObject.unloadAsync()
-    await soundObject.loadAsync(languageT2S[key]).then(() => {
-      soundObject.playAsync()
-    })
-  }
-
-  //+ CONSTRUCTOR
-
+  /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
-    setOptions(getNavOptions())
+    setOptions(
+      routeName === 'SubsequentlLanguageInstanceInstall'
+        ? {
+            headerTitle: i18n.t('newLanguage')
+          }
+        : null
+    )
+  }, [])
 
+  /** useEffect function sets the isConnected state with the status of the user's internet connection. */
+  useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected)
     })
@@ -133,21 +141,23 @@ function LanguageInstanceInstallScreen ({
     }
   }, [])
 
-  function getNavOptions () {
-    return routeName === 'SubsequentlLanguageInstanceInstall'
-      ? {
-          headerTitle: i18n.t('newLanguage')
-        }
-      : null
+  /**
+   * Plays the text-to-speech audio file for a language.
+   * @param {string} languageID - The ID of the language to play.
+   */
+  async function playAudio (languageID) {
+    audio.unloadAsync()
+    await audio.loadAsync(languageT2S[languageID]).then(() => {
+      audio.playAsync()
+    })
   }
 
-  //+ FUNCTIONS
-
+  /** Fetches all the data for a language from Firebase. This includes the various Story Sets from the 'sets' collection and the language info from the 'languages' collection. It's an async function and doesn't resolve until all the information has been fetched and stored. If any fetch fails, it throws an error. */
   async function fetchFirebaseData () {
-    // storeDownloads([])
+    // Set the installingLanguageInstance redux variable to true since we're now installing a language instance.
     setIsInstallingLanguageInstance(true)
-    //- get sets first
 
+    // Fetch all the Story Sets whith the language ID of the selected language and store them in redux.
     await db
       .collection('sets')
       .where('languageID', '==', selectedLanguage)
@@ -167,7 +177,7 @@ function LanguageInstanceInstallScreen ({
         throw error
       })
 
-    //- then get language object from database and throw all of it in redux
+    // Fetch the language info for the selected language and store it in redux.
     await db
       .collection('languages')
       .doc(selectedLanguage)
@@ -181,85 +191,64 @@ function LanguageInstanceInstallScreen ({
         console.log(error)
         throw error
       })
+
     return
   }
 
+  /**
+   * Handles the user pressing the start button after they select a language instance to install. Involves fetching the necessary Firebase data, setting the hasFetchedLanguageData to true, and starting the download of the language core files. If this is the first language instance they've installed, we want to nagivate to the onboarding slides too.
+   */
   function onStartPress () {
-    if (selectedLanguage) {
-      fetchFirebaseData()
-        .then(() => {
-          setHasFetchedLanguageData(true)
-          downloadLanguageCoreFiles(selectedLanguage)
-        })
-        .catch(error => {
-          Alert.alert(i18n.t('fetchErrorTitle'), i18n.t('fetchErrorMessage'), [
-            {
-              text: i18n.t('ok'),
-              onPress: () => {
-                reset({
-                  index: 0,
-                  routes: [{ name: 'InitialLanguageInstanceInstall' }]
-                })
-              }
-            }
-          ])
-        })
-      if (routeName === 'InitialLanguageInstanceInstall') {
-        navigate('WahaOnboardingSlides', {
-          selectedLanguage: selectedLanguage
-        })
-      }
-    } else {
-      Alert.alert(
-        i18n.t('pleaseSelectLanguageTitle'),
-        i18n.t('pleaseSelectLanguageMessage'),
-        [
+    fetchFirebaseData()
+      .then(() => {
+        setHasFetchedLanguageData(true)
+        downloadLanguageCoreFiles(selectedLanguage)
+      })
+      .catch(error => {
+        Alert.alert(i18n.t('fetchErrorTitle'), i18n.t('fetchErrorMessage'), [
           {
             text: i18n.t('ok'),
-            onPress: () => {}
+            onPress: () => {
+              reset({
+                index: 0,
+                routes: [{ name: 'InitialLanguageInstanceInstall' }]
+              })
+            }
           }
-        ]
-      )
+        ])
+      })
+    // Navigate to the onboarding slides if this is the first language instance install.
+    if (routeName === 'InitialLanguageInstanceInstall') {
+      navigate('WahaOnboardingSlides', {
+        selectedLanguage: selectedLanguage
+      })
     }
   }
 
-  // updates language on picker change
-  function onPickerChange (language) {
-    setSelectedLanguage(language)
-  }
-
-  function startSlideAnimation () {
-    Animated.spring(buttonYPos, {
-      toValue: 0
-      // routeName === 'InitialLanguageInstanceInstall'
-      //   ? Dimensions.get('screen').height - 108 * scaleMultiplier
-      //   : Dimensions.get('screen').height -
-    }).start()
-  }
-
+  /**
+   * Gets a list of all the languages and language families available in Waha. These are stored in the languages.js file.
+   * @return {Object[]} - An array of language family objects.
+   */
   function getLanguageData () {
     var sections
     if (routeName === 'InitialLanguageInstanceInstall')
       sections = languages.sort((a, b) => {
+        // Sort so that the language family associated with the phone's language is at the top of the list.
         if (i18n.locale.includes(a.languageCode)) return -1
         else if (i18n.locale.includes(b.languageCode)) return 1
         else return 0
       })
     else
       sections = languages
-        // sort based on closeness to phone language
         .sort((a, b) => {
           if (i18n.locale.includes(a.languageCode)) return -1
           else if (i18n.locale.includes(b.languageCode)) return 1
           else return 0
         })
-        // filter out languages that are already installed
+        // If installing a subsequent language instance, we need to filter out the languages that are already installed.
         .map(languageFamily => {
           return {
             ...languageFamily,
-            // filter out languages that are in
-            //  installedLanguageInstances which came from previous
-            //  screen
             data: languageFamily.data.filter(language => {
               if (
                 installedLanguageInstances.some(
@@ -274,66 +263,22 @@ function LanguageInstanceInstallScreen ({
             })
           }
         })
-        // if a language family has every language installed, don't
-        //  show it
+        // Similarly, if a language family has every language instance installed, filter it out too.
         .filter(languageFamily => {
           if (languageFamily.data.length !== 0) return true
           else return false
         })
+    // If, after all of our filtering, the list is empty, we've installed every language instance and want to set isListEmpty to true.
     if (sections.length === 0 && !isListEmpty) setIsListEmpty(true)
+
+    // Finally, return the sorted and filtered array of languages.
     return sections
   }
 
-  //+ RENDER
-
-  // render start button conditionally as the user can't start if they don't have internet
-
-  var letsBeginButton = (
-    <Animated.View
-      style={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        transform: [{ translateY: buttonYPos }]
-      }}
-    >
-      <WahaButton
-        type={isConnected ? 'filled' : 'inactive'}
-        color={isConnected ? colors.apple : colors.geyser}
-        onPress={isConnected ? onStartPress : null}
-        label={
-          isConnected
-            ? routeName === 'InitialLanguageInstanceInstall'
-              ? i18n.t('letsBegin')
-              : i18n.t('addLanguage') + ' '
-            : ''
-        }
-        style={{
-          width: Dimensions.get('window').width - 40,
-          marginHorizontal: 20,
-          height: 68 * scaleMultiplier
-        }}
-        useDefaultFont={true}
-        extraComponent={
-          isConnected ? null : (
-            <View>
-              <Icon name='cloud-slash' size={40} color={colors.chateau} />
-            </View>
-          )
-        }
-      />
-    </Animated.View>
-  )
-
-  var headerText =
+  // Determine what to render for the header text. If it's our first install, its the first time opening the app, so display a welcome message. Otherwise, display nothing.
+  var welcomeText =
     routeName === 'InitialLanguageInstanceInstall' ? (
-      <View
-        style={{
-          marginVertical: 20 * scaleMultiplier,
-          paddingHorizontal: 20
-        }}
-      >
+      <View style={styles.headerTextContainer}>
         <Text
           style={[
             SystemTypography(false, 'h1', 'Bold', 'center', colors.shark)
@@ -357,44 +302,51 @@ function LanguageInstanceInstallScreen ({
       <View style={{ width: '100%', height: 20 * scaleMultiplier }} />
     )
 
-  function renderLanguage (item) {
+  /**
+   * Renders a LanguageSelectItem component used for the Languages SectionList item.
+   * @param {Object} language - The object for the language to render.
+   * @param {Object} languageFamily - The object for the language family that this language is a part of.
+   * @return {Component} - The LanguageSelectItem component.
+   */
+  function renderLanguageItem (language, languageFamily) {
     return (
-      <LanguageSelectItem
-        nativeName={item.section.data[item.index].nativeName}
-        localeName={i18n.t(item.section.data[item.index].i18nName)}
-        font={item.section.font}
-        logoSource={item.section.data[item.index].logoSource}
+      <LanguageItem
+        nativeName={language.nativeName}
+        localeName={i18n.t(language.i18nName)}
+        font={languageFamily.font}
+        logoSource={language.logoSource}
         onPress={() => {
           if (!selectedLanguage) {
-            startSlideAnimation()
+            Animated.spring(buttonYPos, {
+              toValue: 0
+            }).start()
           }
-          setSelectedLanguage(item.section.data[item.index].wahaID)
+          setSelectedLanguage(language.wahaID)
         }}
-        isSelected={
-          selectedLanguage === item.section.data[item.index].wahaID
-            ? true
-            : false
-        }
-        playAudio={() => playAudio(item.section.data[item.index].wahaID)}
+        isSelected={selectedLanguage === language.wahaID ? true : false}
+        playAudio={() => playAudio(language.wahaID)}
       />
     )
   }
 
-  function renderLanguageHeader (section) {
+  /**
+   * Renders a component used for the Languages SectionList header.
+   * @param {Object} language - The object for the language to render.
+   * @param {Object} languageFamily - The object for the language family that this language is a part of.
+   * @return {Component} - The LanguageSelectItem component.
+   */
+  function renderLanguageHeader (languageFamily) {
     return (
       <View
-        style={{
-          height: 40 * scaleMultiplier,
-          // aspectRatio: 8.7,
-          width: '100%',
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 20,
-          backgroundColor:
-            routeName === 'InitialLanguageInstanceInstall'
-              ? colors.aquaHaze
-              : colors.white
-        }}
+        style={[
+          styles.languageHeaderContainer,
+          {
+            backgroundColor:
+              routeName === 'InitialLanguageInstanceInstall'
+                ? colors.aquaHaze
+                : colors.white
+          }
+        ]}
       >
         <Text
           style={SystemTypography(
@@ -405,7 +357,7 @@ function LanguageInstanceInstallScreen ({
             colors.chateau
           )}
         >
-          {i18n.t(section.i18nName)}
+          {i18n.t(languageFamily.i18nName)}
         </Text>
       </View>
     )
@@ -423,7 +375,7 @@ function LanguageInstanceInstallScreen ({
         }
       ]}
     >
-      {headerText}
+      {welcomeText}
       <View
         style={{
           width: '100%',
@@ -434,52 +386,8 @@ function LanguageInstanceInstallScreen ({
         }}
       >
         <SectionList
-          // sort sections to put brands associated with phone language at the
-          //  top
           style={{ height: '100%' }}
-          sections={
-            getLanguageData()
-            // routeName === 'InitialLanguageInstanceInstall'
-            //   ? languages.sort((a, b) => {
-            //       if (i18n.locale.includes(a.languageCode)) return -1
-            //       else if (i18n.locale.includes(b.languageCode)) return 1
-            //       else return 0
-            //     })
-            //   : languages
-            //       // sort based on closeness to phone language
-            //       .sort((a, b) => {
-            //         if (i18n.locale.includes(a.languageCode)) return -1
-            //         else if (i18n.locale.includes(b.languageCode)) return 1
-            //         else return 0
-            //       })
-            //       // filter out languages that are already installed
-            //       .map(languageFamily => {
-            //         return {
-            //           ...languageFamily,
-            //           // filter out languages that are in
-            //           //  installedLanguageInstances which came from previous
-            //           //  screen
-            //           data: languageFamily.data.filter(language => {
-            //             if (
-            //               installedLanguageInstances.some(
-            //                 installedLanguage =>
-            //                   installedLanguage.languageID === language.wahaID
-            //               )
-            //             ) {
-            //               return false
-            //             } else {
-            //               return true
-            //             }
-            //           })
-            //         }
-            //       })
-            //       // if a language family has every language installed, don't
-            //       //  show it
-            //       .filter(languageFamily => {
-            //         if (languageFamily.data.length !== 0) return true
-            //         else return false
-            //       })
-          }
+          sections={getLanguageData()}
           ItemSeparatorComponent={() => <Separator />}
           SectionSeparatorComponent={() => <Separator />}
           ListEmptyComponent={() => (
@@ -503,26 +411,54 @@ function LanguageInstanceInstallScreen ({
             </View>
           )}
           keyExtractor={item => item.wahaID}
-          renderItem={renderLanguage}
+          renderItem={({ item, section }) => renderLanguageItem(item, section)}
           renderSectionHeader={({ section }) => renderLanguageHeader(section)}
           renderSectionFooter={() => (
             <View style={{ height: 20 * scaleMultiplier, width: '100%' }} />
           )}
         />
       </View>
-      {letsBeginButton}
+      <Animated.View
+        style={[
+          styles.startButtonContainer,
+          {
+            transform: [{ translateY: buttonYPos }]
+          }
+        ]}
+      >
+        <WahaButton
+          type={isConnected ? 'filled' : 'inactive'}
+          color={isConnected ? colors.apple : colors.geyser}
+          onPress={isConnected ? onStartPress : null}
+          label={
+            isConnected
+              ? routeName === 'InitialLanguageInstanceInstall'
+                ? i18n.t('letsBegin')
+                : i18n.t('addLanguage') + ' '
+              : ''
+          }
+          style={{
+            width: Dimensions.get('window').width - 40,
+            marginHorizontal: 20,
+            height: 68 * scaleMultiplier
+          }}
+          useDefaultFont={true}
+          extraComponent={
+            isConnected ? null : (
+              <Icon name='cloud-slash' size={40} color={colors.chateau} />
+            )
+          }
+        />
+      </Animated.View>
     </SafeAreaView>
   )
 }
-
-//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center'
-    // paddingTop: 40 * scaleMultiplier
   },
   buttonContainer: {
     borderRadius: 10,
@@ -534,6 +470,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row'
+  },
+  headerTextContainer: {
+    marginVertical: 20 * scaleMultiplier,
+    paddingHorizontal: 20
+  },
+  startButtonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0
+  },
+  languageHeaderContainer: {
+    height: 40 * scaleMultiplier,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20
   }
 })
 

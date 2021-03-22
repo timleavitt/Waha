@@ -1,5 +1,5 @@
 // import SvgUri from 'expo-svg-uri'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Animated,
   Dimensions,
@@ -9,6 +9,7 @@ import {
   TouchableHighlight,
   View
 } from 'react-native'
+import Carousel from 'react-native-snap-carousel'
 import { connect } from 'react-redux'
 import SwipeBar from '../components/SwipeBar'
 import { scaleMultiplier } from '../constants'
@@ -46,8 +47,6 @@ function AlbumArtSwiper ({
   translations,
   isRTL
 }) {
-  //+ STATE
-
   // keeps track of whether we're in the middle pane or not
   const [isMiddle, setIsMiddle] = useState(true)
 
@@ -56,11 +55,11 @@ function AlbumArtSwiper ({
 
   // refs for determining when we're in the middle
   // todo: is extremely jank and inconsistent but functional
-  const onViewRef = useRef(info => {
-    if (info.viewableItems.some(item => item.index === 0)) setIsMiddle(true)
-    else setIsMiddle(false)
-  })
-  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
+  // const onViewRef = useRef(info => {
+  //   if (info.viewableItems.some(item => item.index === 0)) setIsMiddle(true)
+  //   else setIsMiddle(false)
+  // })
+  // const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
   // data for album art flatlist
   const albumArtData = [
@@ -140,12 +139,12 @@ function AlbumArtSwiper ({
       Animated.sequence([
         Animated.timing(middleScrollBarOpacity, {
           toValue: 0,
-          duration: 100,
+          duration: 250,
           useNativeDriver: true
         }),
         Animated.timing(sideScrollBarOpacity, {
-          toValue: 0.8,
-          duration: 100,
+          toValue: 1,
+          duration: 1000,
           useNativeDriver: true
         })
       ]).start()
@@ -153,12 +152,12 @@ function AlbumArtSwiper ({
       Animated.sequence([
         Animated.timing(sideScrollBarOpacity, {
           toValue: 0,
-          duration: 100,
+          duration: 250,
           useNativeDriver: true
         }),
         Animated.timing(middleScrollBarOpacity, {
-          toValue: 0.8,
-          duration: 100,
+          toValue: 1,
+          duration: 1000,
           useNativeDriver: true
         })
       ]).start()
@@ -351,30 +350,21 @@ function AlbumArtSwiper ({
         alignItems: 'center'
       }}
     >
-      <FlatList
+      <Carousel
         data={albumArtData}
         renderItem={renderAlbumArtItem}
         ref={ref => setAlbumArtSwiperRef(ref)}
-        horizontal={true}
-        pagingEnabled={true}
-        snapToAlignment={'start'}
-        snapToInterval={Dimensions.get('window').width - layoutWidth}
-        decelerationRate={'fast'}
-        showsHorizontalScrollIndicator={false}
-        ItemSeparatorComponent={() => (
-          <View style={{ width: 20, height: '100%' }} />
-        )}
-        ListHeaderComponent={() => <View style={{ width: 40 }} />}
-        ListFooterComponent={() => <View style={{ width: 40 }} />}
-        getItemLayout={(data, index) => ({
-          length: Dimensions.get('window').width - layoutWidth,
-          offset: Dimensions.get('window').width - layoutWidth * index,
-          index
-        })}
-        initialScrollIndex={1}
-        viewabilityConfig={viewConfigRef.current}
-        onViewableItemsChanged={onViewRef.current}
-        disableIntervalMomentum={true}
+        itemWidth={Dimensions.get('window').width - marginWidth}
+        sliderWidth={Dimensions.get('window').width}
+        itemHeight={Dimensions.get('window').width - marginWidth}
+        sliderHeight={Dimensions.get('window').width}
+        firstItem={1}
+        removeClippedSubviews={false}
+        lockScrollWhileSnapping
+        onBeforeSnapToItem={slideIndex => {
+          if (slideIndex === 1) setIsMiddle(true)
+          else setIsMiddle(false)
+        }}
       />
     </View>
   )
@@ -384,7 +374,7 @@ const styles = StyleSheet.create({
   albumArtContainer: {
     borderRadius: 10,
     backgroundColor: colors.porcelain,
-    overflow: 'hidden',
+    // overflow: 'hidden',
     borderWidth: 4,
     borderColor: colors.chateau,
     justifyContent: 'center',
