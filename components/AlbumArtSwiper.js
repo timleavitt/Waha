@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   albumArtContainer: {
     borderRadius: 10,
     backgroundColor: colors.porcelain,
-    // overflow: 'hidden',
+    overflow: 'hidden',
     borderWidth: 4,
     borderColor: colors.chateau,
     justifyContent: 'center',

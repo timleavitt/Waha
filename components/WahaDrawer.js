@@ -126,8 +126,8 @@ function WahaDrawer ({
             color={isConnected ? colors.apple : colors.geyser}
             onPress={() => {
               Alert.alert(
-                'A new update is available to download.',
-                'Would you like to download it now?',
+                translations.general.popups.download_update_title,
+                translations.general.popups.download_update_message,
                 [
                   {
                     text: translations.general.cancel,
@@ -140,7 +140,7 @@ function WahaDrawer ({
                 ]
               )
             }}
-            label='Download Update'
+            label={translations.general.download_update_button_label}
             extraComponent={
               isConnected ? (
                 <View
@@ -230,7 +230,7 @@ function WahaDrawer ({
         />
         <DrawerItem
           icon='email'
-          label={translations.contact_us.header}
+          label={translations.contact_us && translations.contact_us.header}
           onPress={
             () =>
               // openBrowser('https://coda.io/form/Waha-Bug-Report_dyWvuvL6WTx')

@@ -157,6 +157,62 @@ function MainDrawer ({
     })
   }
 
+  // Check for database updates for other installed languages.
+  useEffect(() => {
+    Object.keys(database).forEach(key => {
+      if (key.length === 2 && key !== activeGroup.language) {
+        // Whether the app should write the new Firestore changes to redux or not. The only reason that it wouldn't is if the app version is behind the database version.
+        var shouldWrite = false
+
+        // Fetch data from the languages Firestore collection.
+        db.collection('languages')
+          .doc(activeGroup.language)
+          .get()
+          .then(async doc => {
+            // If we get some legitimate data back...
+            if (doc.exists && doc.data()) {
+              // If the Waha version is greater than or equal to the app version in the database...
+              if (doc.data().appVersion <= appVersion) {
+                // Set shouldWrite to true. This way, when we fetch data for the Story Sets for this language, we know we're safe to write to redux.
+                shouldWrite = true
+
+                // Store our language info in redux.
+                storeLanguageData(doc.data(), activeGroup.language)
+              }
+            }
+          })
+          .catch(error => {
+            console.log('Error retrieving data from Firestore.')
+          })
+
+        // Fetch data from the Story Sets Firestore collection. Get all Story Sets of the current language.
+        db.collection('sets')
+          .where('languageID', '==', activeGroup.language)
+          .get()
+          .then(querySnapshot => {
+            // If the data is valid and the current Waha version is greater than or equal to the version in Firebase (we set the shouldWrite variable earlier)...
+            if (!querySnapshot.empty) {
+              if (shouldWrite) {
+                // Add each Story Set to a temporary set array...
+                var sets = []
+                querySnapshot.forEach(doc => {
+                  sets.push({
+                    id: doc.id,
+                    ...doc.data()
+                  })
+                })
+                /// ...and write all of them to redux.
+                storeLanguageSets(sets, activeGroup.language)
+              }
+            }
+          })
+          .catch(error => {
+            console.log('Error retrieving data from Firestore.')
+          })
+      }
+    })
+  }, [])
+
   // Check for database updates. This function gets triggered whenever a user downloads a new lesson and whenever the active group changes.
   useEffect(() => {
     // Whether the app should write the new Firestore changes to redux or not. The only reason that it wouldn't is if the app version is behind the database version.

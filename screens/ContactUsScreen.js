@@ -109,8 +109,10 @@ function ContactUsScreen ({
       .then(() => {
         setIsSubmitting(false)
         Alert.alert(
-          translations.contact_us.popups.submitted_successfully_title,
-          translations.contact_us.popups.submitted_successfully_message,
+          translations.contact_us &&
+            translations.contact_us.popups.submitted_successfully_title,
+          translations.contact_us &&
+            translations.contact_us.popups.submitted_successfully_message,
           [
             {
               text: translations.general.ok,
@@ -124,8 +126,10 @@ function ContactUsScreen ({
       .catch(() => {
         setIsSubmitting(false)
         Alert.alert(
-          translations.contact_us.popups.submit_error_title,
-          translations.contact_us.popups.submit_error_message,
+          translations.contact_us &&
+            translations.contact_us.popups.submit_error_title,
+          translations.contact_us &&
+            translations.contact_us.popups.submit_error_message,
           [
             {
               text: translations.general.ok,
@@ -176,7 +180,7 @@ function ContactUsScreen ({
             ]}
           >
             {leftAsterisk}
-            {translations.contact_us.email_label}
+            {translations.contact_us && translations.contact_us.email_label}
             {rightAsterisk}
           </Text>
           <View
@@ -241,7 +245,7 @@ function ContactUsScreen ({
               ]}
             >
               {leftAsterisk}
-              {translations.contact_us.message_label}
+              {translations.contact_us && translations.contact_us.message_label}
               {rightAsterisk}
             </Text>
             <Text
@@ -269,10 +273,13 @@ function ContactUsScreen ({
                 colors.shark
               ),
               styles.textInputContainer,
-              { height: 200 * scaleMultiplier }
+              { height: 200 * scaleMultiplier, textAlignVertical: 'top' }
             ]}
             multiline
-            placeholder={translations.contact_us.message_placeholder}
+            placeholder={
+              translations.contact_us &&
+              translations.contact_us.message_placeholder
+            }
             placeholderTextColor={colors.chateau}
           />
         </View>
@@ -303,7 +310,8 @@ function ContactUsScreen ({
               { marginHorizontal: 10 }
             ]}
           >
-            {translations.contact_us.bug_checkmark_label}
+            {translations.contact_us &&
+              translations.contact_us.bug_checkmark_label}
           </Text>
         </View>
         {/* Reproduction steps input area. */}
@@ -321,7 +329,8 @@ function ContactUsScreen ({
                 { marginVertical: 10 * scaleMultiplier }
               ]}
             >
-              {translations.contact_us.reproduce_label}
+              {translations.contact_us &&
+                translations.contact_us.reproduce_label}
             </Text>
             <TextInput
               onChangeText={text => setReproductionStepsTextInput(text)}
@@ -334,7 +343,7 @@ function ContactUsScreen ({
                   colors.shark
                 ),
                 styles.textInputContainer,
-                { height: 200 * scaleMultiplier }
+                { height: 200 * scaleMultiplier, textAlignVertical: 'top' }
               ]}
               multiline
             />
@@ -359,14 +368,18 @@ function ContactUsScreen ({
           }
           useDefaultFont={false}
           label={
-            isSubmitting ? '' : translations.contact_us.submit_button_label
+            isSubmitting
+              ? ''
+              : translations.contact_us &&
+                translations.contact_us.submit_button_label
           }
           width={Dimensions.get('window').width / 3}
           onPress={submit}
           style={{
             height: 68 * scaleMultiplier,
             alignSelf: isRTL ? 'flex-start' : 'flex-end',
-            marginVertical: 10 * scaleMultiplier
+            marginTop: 10 * scaleMultiplier,
+            marginBottom: 20 * scaleMultiplier
           }}
           extraComponent={
             // If we're in the middle of submitting, change the submit button to show an activity indicator.

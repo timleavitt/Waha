@@ -486,7 +486,8 @@ function MainStack ({
         name='ContactUs'
         component={ContactUsScreen}
         options={{
-          headerTitle: translations.contact_us.header,
+          headerTitle:
+            translations.contact_us && translations.contact_us.header,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
