@@ -1,4 +1,3 @@
-import ViewPager from '@react-native-community/viewpager'
 import React, { useState } from 'react'
 import {
   Dimensions,
@@ -8,6 +7,7 @@ import {
   Text,
   View
 } from 'react-native'
+import PagerView from 'react-native-pager-view'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 import { activeGroupSelector } from '../redux/reducers/activeGroup'
@@ -143,7 +143,7 @@ function OnboardingSwiper ({
       >
         <Icon name='cancel' color={colors.oslo} size={40 * scaleMultiplier} />
       </TouchableOpacity> */}
-      <ViewPager
+      <PagerView
         ref={ref => (ref ? setPagerRef(ref) : null)}
         // showPageIndicator
         style={styles.pager}
@@ -151,7 +151,7 @@ function OnboardingSwiper ({
         onPageSelected={stuff => setOnboardingPage(stuff.nativeEvent.position)}
       >
         {isRTL ? pages.reverse() : pages}
-      </ViewPager>
+      </PagerView>
       <View
         style={{
           width: '100%',
