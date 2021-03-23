@@ -159,8 +159,6 @@ function MainDrawer ({
 
   // Check for database updates for other installed languages besides the active one.
   useEffect(() => {
-    console.log(database['en'].translations.general.test)
-
     Object.keys(database).forEach(key => {
       if (key.length === 2 && key !== activeGroup.language) {
         // Whether the app should write the new Firestore changes to redux or not. The only reason that it wouldn't is if the app version is behind the database version.
