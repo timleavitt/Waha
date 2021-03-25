@@ -45,6 +45,7 @@ export const scaleMultiplier =
 export const groupNames = {
   en: 'Group 1',
   ga: 'المجموعة الأولى',
+  ar: 'المجموعة الأولى',
   te: 'Group 1',
   tt: 'Group 2'
 }
