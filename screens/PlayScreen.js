@@ -179,11 +179,8 @@ function PlayScreen ({
 
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
 
-  /**
-   * useEffect function that sets the navigation options for this screen. Dependent on thisSetProgress because we want to update the complete button whenever the complete status of this lesson changes.
-   */
-  useEffect(() => {
-    setOptions({
+  function getNavOptions () {
+    return {
       headerTitle: getLessonInfo('subtitle', thisLesson.id),
       headerRight: isRTL
         ? () => (
@@ -221,7 +218,14 @@ function PlayScreen ({
               }}
             />
           )
-    })
+    }
+  }
+
+  /**
+   * useEffect function that sets the navigation options for this screen. Dependent on thisSetProgress because we want to update the complete button whenever the complete status of this lesson changes.
+   */
+  useEffect(() => {
+    setOptions(getNavOptions())
   }, [thisSetProgress])
 
   /**
