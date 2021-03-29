@@ -5,7 +5,7 @@ export const dbMode = 'prod'
 export const reduxMode = 'prod'
 
 // Determines whether analytics are tracked. 'test' means that they aren't and 'prod' means that they are.
-export const analyticsMode = 'test'
+export const analyticsMode = 'prod'
 
 // The current version of Waha. This is used to compare versions with the database and is also displayed in the navigation drawer.
-export const appVersion = '1.1.1'
+export const appVersion = '1.1.2'
