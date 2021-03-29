@@ -52,14 +52,14 @@ export const languages = [
         i18nName: 'gulfArabic',
         logoSource:
           'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ga%2Fother%2Fheader-v1.png?alt=media'
-      },
-      {
-        nativeName: 'FusHa',
-        wahaID: 'ar',
-        i18nName: 'fusha',
-        logoSource:
-          'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ar%2Fother%2Fheader-v1.png?alt=media'
       }
+      // {
+      //   nativeName: 'FusHa',
+      //   wahaID: 'ar',
+      //   i18nName: 'fusha',
+      //   logoSource:
+      //     'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ar%2Fother%2Fheader-v1.png?alt=media'
+      // }
     ]
   }
 ]
