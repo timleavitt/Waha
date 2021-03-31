@@ -20,7 +20,8 @@ function mapStateToProps (state) {
     font: getLanguageFont(activeGroupSelector(state).language),
     primaryColor: activeDatabaseSelector(state).primaryColor,
     activeGroup: activeGroupSelector(state),
-    activeDatabase: activeDatabaseSelector(state)
+    activeDatabase: activeDatabaseSelector(state),
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked
   }
 }
 
@@ -34,10 +35,11 @@ function SetsTabs ({
   activeDatabase,
   font,
   primaryColor,
-  isRTL
+  isRTL,
+  areMobilizationToolsUnlocked
 }) {
   // Only dispaly the Mobilization Tools screen if the Mobilization Tools tab has been enabled for this group from the Mobilization Tools screen.
-  var MobilizationToolsScreen = activeGroup.shouldShowMobilizationToolsTab ? (
+  var MobilizationToolsScreen = areMobilizationToolsUnlocked ? (
     <Tab.Screen
       name='MobilizationTools'
       component={SetsScreen}

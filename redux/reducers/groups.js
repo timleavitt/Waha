@@ -42,19 +42,42 @@ export function groups (state = [], params) {
           recentCoreOrTool: params.language + '.1.1',
           setBookmark: params.language + '.1.1',
           // Adds the first 2 sets automatically.
-          addedSets: [
-            {
-              id: params.language + '.1.1',
-              progress: [],
-              bookmark: 1
-            },
-            {
-              id: params.language + '.1.2',
-              progress: [],
-              bookmark: 1
-            }
-          ],
-          shouldShowMobilizationToolsTab: false
+          addedSets: params.areMobilizationToolsUnlocked
+            ? [
+                {
+                  id: params.language + '.1.1',
+                  progress: [],
+                  bookmark: 1
+                },
+                {
+                  id: params.language + '.1.2',
+                  progress: [],
+                  bookmark: 1
+                },
+                {
+                  id: params.language + '.3.1',
+                  progress: [],
+                  bookmark: 1
+                },
+                {
+                  id: params.language + '.3.2',
+                  progress: [],
+                  bookmark: 1
+                }
+              ]
+            : [
+                {
+                  id: params.language + '.1.1',
+                  progress: [],
+                  bookmark: 1
+                },
+                {
+                  id: params.language + '.1.2',
+                  progress: [],
+                  bookmark: 1
+                }
+              ]
+          // shouldShowMobilizationToolsTab: false
         }
       ]
     case EDIT_GROUP:

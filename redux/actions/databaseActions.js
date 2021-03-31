@@ -313,7 +313,8 @@ export function downloadLanguageCoreFiles (language) {
                 language,
                 'default',
                 getState().database.globalGroupCounter,
-                getState().groups.length + 1
+                getState().groups.length + 1,
+                false
               )
             )
           }
