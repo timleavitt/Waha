@@ -19,7 +19,11 @@ import {
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
-import { changeActiveGroup, deleteGroup } from '../redux/actions/groupsActions'
+import {
+  addSet,
+  changeActiveGroup,
+  deleteGroup
+} from '../redux/actions/groupsActions'
 import { updateConnectionStatus } from '../redux/actions/networkActions'
 import {
   activeDatabaseSelector,
@@ -46,7 +50,8 @@ function mapStateToProps (state) {
     groups: state.groups,
     installedLanguageInstances: Object.keys(state.database).filter(
       key => key.length === 2
-    )
+    ),
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked
   }
 }
 
@@ -73,7 +78,10 @@ function mapDispatchToProps (dispatch) {
     storeLanguageCoreFileCreatedTime: (fileName, timeCreated) =>
       dispatch(storeLanguageCoreFileCreatedTime(fileName, timeCreated)),
     clearLanguageCoreFilesToUpdate: () =>
-      dispatch(clearLanguageCoreFilesToUpdate())
+      dispatch(clearLanguageCoreFilesToUpdate()),
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
+    }
   }
 }
 
@@ -95,6 +103,7 @@ function MainDrawer ({
   downloads,
   groups,
   installedLanguageInstances,
+  areMobilizationToolsUnlocked,
   updateConnectionStatus,
   storeLanguageData,
   storeLanguageSets,
@@ -156,6 +165,16 @@ function MainDrawer ({
       })
     })
   }
+
+  // (TEMP) Add MT Sets to all groups.
+  useEffect(() => {
+    groups.forEach(group => {
+      if (!group.addedSets.some(set => set.id === group.language + '.3.1')) {
+        addSet(group.name, group.id, { id: group.language + '.3.1' })
+        addSet(group.name, group.id, { id: group.language + '.3.2' })
+      }
+    })
+  }, [])
 
   // Check for database updates for other installed languages besides the active one.
   useEffect(() => {

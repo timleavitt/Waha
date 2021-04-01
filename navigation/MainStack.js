@@ -23,6 +23,7 @@ import LessonsScreen from '../screens/LessonsScreen'
 import LoadingScreen from '../screens/LoadingScreen'
 import MobilizationToolsScreen from '../screens/MobilizationToolsScreen'
 import MobilizationToolsUnlockScreen from '../screens/MobilizationToolsUnlockScreen'
+import MTUnlockSuccessfulScreen from '../screens/MTUnlockSuccessfulScreen'
 import PianoAppScreen from '../screens/PianoAppScreen'
 import PlayScreen from '../screens/PlayScreen'
 import SecurityModeScreen from '../screens/SecurityModeScreen'
@@ -495,6 +496,13 @@ function MainStack ({
             color: colors.shark,
             fontFamily: font + '-Bold'
           }
+        }}
+      />
+      <Stack.Screen
+        name='MTUnlockSuccessful'
+        component={MTUnlockSuccessfulScreen}
+        options={{
+          headerShown: false
         }}
       />
     </Stack.Navigator>

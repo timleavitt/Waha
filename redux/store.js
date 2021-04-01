@@ -17,15 +17,17 @@ const blacklist =
         'groups',
         'database',
         'security',
-        'storedDownloads'
+        'storedDownloads',
+        'popups'
       ]
-    : // In prod mode, we want only a few specific reducers to be persisted.
+    : // In prod mode, we want only a few specific reducers to be NOT persisted.
       [
         'downloads',
         'isInstallingLanguageInstance',
         'mtUnlockAttempts',
         'storedDownloads',
-        'areMobilizationToolsUnlocked'
+        'areMobilizationToolsUnlocked',
+        'popups'
       ]
 
 // Congif object for the persisted reducer.

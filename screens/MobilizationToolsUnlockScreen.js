@@ -8,6 +8,7 @@ import MessageModal from '../modals/MessageModal'
 import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
 import { addSet } from '../redux/actions/groupsActions'
 import { setMTUnlockAttempts } from '../redux/actions/mtUnlockAttemptsActions'
+import { setShowMTTabAddedSnackbar } from '../redux/actions/popupsActions'
 import { setMTUnlockTimeout } from '../redux/actions/securityActions'
 import {
   activeDatabaseSelector,
@@ -41,6 +42,9 @@ function mapDispatchToProps (dispatch) {
     },
     addSet: (groupName, groupID, set) => {
       dispatch(addSet(groupName, groupID, set))
+    },
+    setShowMTTabAddedSnackbar: toSet => {
+      dispatch(setShowMTTabAddedSnackbar(toSet))
     }
   }
 }
@@ -62,7 +66,8 @@ function MobilizationToolsUnlockScreen ({
   setAreMobilizationToolsUnlocked,
   setMTUnlockTimeout,
   setMTUnlockAttempts,
-  addSet
+  addSet,
+  setShowMTTabAddedSnackbar
 }) {
   /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
@@ -108,35 +113,38 @@ function MobilizationToolsUnlockScreen ({
   function checkPasscode (fullPasscode) {
     if (fullPasscode === '281820') {
       Keyboard.dismiss()
-      // setUnlockSuccessModal(true)
-
-      Object.keys(database).forEach(key => {
-        // Go through each language.
-        if (key.length === 2) {
-          // If the language has MT content...
-          if (checkForMTContent(key)) {
-            // Get the first 2 MT Sets.
-            var mobToolsSet1 = database[key].sets.filter(set =>
-              /[a-z]{2}.3.1/.test(set.id)
-            )[0]
-
-            var mobToolsSet2 = database[key].sets.filter(set =>
-              /[a-z]{2}.3.2/.test(set.id)
-            )[0]
-
-            // Add the 2 MT Sets to every group in the language.
-            groups
-              .filter(group => group.language === key)
-              .forEach(group => {
-                addSet(group.name, group.id, mobToolsSet1)
-                addSet(group.name, group.id, mobToolsSet2)
-              })
-          }
-        }
-      })
-
-      navigate('SetsTabs', { screen: 'MobilizationTools' })
       setAreMobilizationToolsUnlocked(true)
+      // setUnlockSuccessModal(true)
+      navigate('MTUnlockSuccessful')
+
+      // Object.keys(database).forEach(key => {
+      //   // Go through each language.
+      //   if (key.length === 2) {
+      //     // If the language has MT content...
+      //     if (checkForMTContent(key)) {
+      //       // Get the first 2 MT Sets.
+      //       var mobToolsSet1 = database[key].sets.filter(set =>
+      //         /[a-z]{2}.3.1/.test(set.id)
+      //       )[0]
+
+      //       var mobToolsSet2 = database[key].sets.filter(set =>
+      //         /[a-z]{2}.3.2/.test(set.id)
+      //       )[0]
+
+      //       // Add the 2 MT Sets to every group in the language.
+      //       groups
+      //         .filter(group => group.language === key)
+      //         .forEach(group => {
+      //           addSet(group.name, group.id, mobToolsSet1)
+      //           addSet(group.name, group.id, mobToolsSet2)
+      //         })
+      //     }
+      //   }
+      // })
+
+      // setShowMTTabAddedSnackbar(true)
+      // setTimeout(() => setShowMTTabAddedSnackbar(false), 3000)
+      // navigate('SetsTabs', { screen: 'MobilizationTools' })
     } else {
       setMTUnlockAttempts(mtUnlockAttempts + 1)
       // Make the input component "shake" when they enter in a wrong code.
@@ -248,14 +256,14 @@ function MobilizationToolsUnlockScreen ({
         isVisible={unlockSuccessModal}
         hideModal={() => {
           setUnlockSuccessModal(false)
-          goBack()
+          navigate('SetsTabs', { screen: 'MobilizationTools' })
         }}
-        title={translations.passcode.popups.unlock_successful_title}
-        body={translations.passcode.popups.unlock_successful_message}
-        confirmText={translations.general.got_it}
+        title='Mobilization Tools unlocked successfully!'
+        body=''
+        confirmText='Check it out'
         confirmOnPress={() => {
           setUnlockSuccessModal(false)
-          goBack()
+          navigate('SetsTabs', { screen: 'MobilizationTools' })
         }}
       >
         <Image
