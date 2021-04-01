@@ -190,7 +190,7 @@ function SetsScreen ({
   }
 
   // A button that goes at the bottom of each list of sets that allows the user to add a new set.
-  var addSetButton = (
+  const addSetButton = (
     <TouchableOpacity
       style={[
         styles.addSetButtonContainer,
@@ -247,19 +247,17 @@ function SetsScreen ({
    * @param {Object} set - The object of the set to render.
    * @return {Component} - The setItem component.
    */
-  function renderSetItem (set) {
-    return (
-      <SetItem
-        thisSet={set}
-        screen='Sets'
-        onSetSelect={() =>
-          navigate('Lessons', {
-            thisSet: set
-          })
-        }
-      />
-    )
-  }
+  const renderSetItem = set => (
+    <SetItem
+      thisSet={set}
+      screen='Sets'
+      onSetSelect={() =>
+        navigate('Lessons', {
+          thisSet: set
+        })
+      }
+    />
+  )
 
   return (
     <View style={styles.screen}>

@@ -45,24 +45,8 @@ function mapDispatchToProps (dispatch) {
   return {
     editGroup: (oldGroupName, newGroupName, emoji) =>
       dispatch(editGroup(oldGroupName, newGroupName, emoji)),
-    createGroup: (
-      groupName,
-      language,
-      emoji,
-      groupID,
-      groupNumber,
-      areMobilizationToolsUnlocked
-    ) =>
-      dispatch(
-        createGroup(
-          groupName,
-          language,
-          emoji,
-          groupID,
-          groupNumber,
-          areMobilizationToolsUnlocked
-        )
-      ),
+    createGroup: (groupName, language, emoji, groupID, groupNumber) =>
+      dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
     changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName)),
     resetProgress: name => {
       dispatch(resetProgress(name))
@@ -160,8 +144,7 @@ function AddEditGroupModal ({
       languageID,
       emojiInput,
       globalGroupCounter + 1,
-      groups.length + 1,
-      areMobilizationToolsUnlocked
+      groups.length + 1
     )
     changeActiveGroup(groupNameInput)
 
