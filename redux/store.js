@@ -26,7 +26,7 @@ const blacklist =
         'isInstallingLanguageInstance',
         'mtUnlockAttempts',
         'storedDownloads',
-        'areMobilizationToolsUnlocked',
+        // 'areMobilizationToolsUnlocked',
         'popups'
       ]
 
