@@ -114,7 +114,6 @@ function MainDrawer ({
   clearLanguageCoreFilesToUpdate,
   addSet
 }) {
-  console.log(activeGroup.addedSets)
   /**
    * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the SetsTabs navigator because this is the only spot we should be able to swipe to open the drawer.
    * @param {string} route - The route passed from the navigation component.
@@ -172,7 +171,6 @@ function MainDrawer ({
   useEffect(() => {
     groups.forEach(group => {
       if (!group.addedSets.some(set => set.id === group.language + '.3.1')) {
-        console.log(group.name)
         addSet(group.name, group.id, { id: group.language + '.3.1' })
         addSet(group.name, group.id, { id: group.language + '.3.2' })
       }
