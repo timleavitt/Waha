@@ -175,6 +175,7 @@ function GroupsScreen ({
         renderItem={({ item }) => renderGroupItem(item)}
         renderSectionHeader={({ section }) => renderGroupListHeader(section)}
         keyExtractor={item => item.name}
+        extraData={isRTL}
         ItemSeparatorComponent={() => <Separator />}
         SectionSeparatorComponent={() => <Separator />}
         renderSectionFooter={({ section }) => (

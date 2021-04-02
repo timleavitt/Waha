@@ -269,6 +269,10 @@ function GroupItem ({
       >
         <Animated.View
           style={{
+            flexDirection: isRTL ? 'row-reverse' : 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            flex: 1,
             transform:
               isLastGroupInLanguageInstance &&
               activeGroup.name !== thisGroup.name
@@ -282,57 +286,57 @@ function GroupItem ({
             emoji={thisGroup.emoji}
             isActive={activeGroup.name === thisGroup.name}
           />
-        </Animated.View>
-        <Animated.View
-          style={[
-            styles.groupTextContainer,
-            {
-              marginLeft: isRTL ? 0 : 20,
-              marginRight: isRTL ? 20 : 0,
-              transform:
-                isLastGroupInLanguageInstance &&
-                activeGroup.name !== thisGroup.name
-                  ? []
-                  : [{ translateX: leftIconXPos }]
-            }
-          ]}
-        >
-          <Text
-            style={StandardTypography(
+          <View
+            style={[
+              styles.groupTextContainer,
               {
-                // Always display the group name in the group's language's font, not the active group's font.
-                font: getLanguageFont(thisGroup.language),
-                isRTL: isRTL
-              },
-              'h3',
-              'Black',
-              'left',
-              colors.shark
-            )}
-            numberOfLines={1}
+                marginLeft: isRTL ? 0 : 20,
+                marginRight: isRTL ? 20 : 0
+                // transform:
+                //   isLastGroupInLanguageInstance &&
+                //   activeGroup.name !== thisGroup.name
+                //     ? []
+                //     : [{ translateX: leftIconXPos }]
+              }
+            ]}
           >
-            {thisGroup.name}
-          </Text>
-          {getBookmarkLesson() === '' ? null : (
             <Text
-              style={[
-                StandardTypography(
-                  {
-                    // Similarly, display the bookmark text in the group's language's font, not the active group's language's font.
-                    font: getLanguageFont(thisGroup.language),
-                    isRTL: isRTL
-                  },
-                  'd',
-                  'Regular',
-                  'left',
-                  colors.chateau
-                )
-              ]}
+              style={StandardTypography(
+                {
+                  // Always display the group name in the group's language's font, not the active group's font.
+                  font: getLanguageFont(thisGroup.language),
+                  isRTL: isRTL
+                },
+                'h3',
+                'Black',
+                'left',
+                colors.shark
+              )}
               numberOfLines={1}
             >
-              {getBookmarkLesson()}
+              {thisGroup.name}
             </Text>
-          )}
+            {getBookmarkLesson() === '' ? null : (
+              <Text
+                style={[
+                  StandardTypography(
+                    {
+                      // Similarly, display the bookmark text in the group's language's font, not the active group's language's font.
+                      font: getLanguageFont(thisGroup.language),
+                      isRTL: isRTL
+                    },
+                    'd',
+                    'Regular',
+                    'left',
+                    colors.chateau
+                  )
+                ]}
+                numberOfLines={1}
+              >
+                {getBookmarkLesson()}
+              </Text>
+            )}
+          </View>
         </Animated.View>
         {rightButton}
       </TouchableOpacity>
@@ -370,7 +374,7 @@ const styles = StyleSheet.create({
   groupTextContainer: {
     flex: 1,
     height: '100%',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     flexWrap: 'nowrap'
   }
 })
