@@ -18,7 +18,7 @@ function mapStateToProps (state) {
   }
 }
 
-function Piano ({
+const Piano = ({
   // Props passed from a parent component.
   setPattern,
   isMuted = false,
@@ -26,7 +26,7 @@ function Piano ({
   isRTL,
   font,
   activeGroup
-}) {
+}) => {
   // RENDER
 
   // require keyboard notes

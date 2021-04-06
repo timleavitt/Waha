@@ -8,7 +8,7 @@ import {
 import { colors } from '../../styles/colors'
 import { getLanguageFont, StandardTypography } from '../../styles/typography'
 
-function SmallDrawerItem ({
+const SmallDrawerItem = ({
   // Props passed from a parent component.s
   onPress,
   label,
@@ -16,7 +16,7 @@ function SmallDrawerItem ({
   isRTL,
   font,
   activeGroup
-}) {
+}) => {
   //+ RENDER
 
   return (

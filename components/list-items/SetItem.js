@@ -40,7 +40,7 @@ function mapDispatchToProps (dispatch) {
  * @param {string} screen - The screen that the SetItem is used on. The set item is rendered slightly different on all the different screens it's used in. The options are: 1) Sets, 2) Lessons, 3) AddSet, and 4) SetInfo. The varieties used on each screen are described below.
  * @param {Function} onSetSelect - A function to fire when the set item is pressed. Can be null to make the item non-pressable.
  */
-function SetItem ({
+const SetItem = ({
   // Props passed from a parent component.
   thisSet,
   screen,
@@ -53,7 +53,7 @@ function SetItem ({
   activeGroup,
   translations,
   addSet
-}) {
+}) => {
   /** Stores the dynamic primary icon portion of the SetItem component. This contains a unique SVG that represents the set and changes between modes. */
   const [primaryIcon, setPrimaryIcon] = useState()
 
