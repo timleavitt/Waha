@@ -113,7 +113,7 @@ const MainDrawer = ({
   storeLanguageCoreFileCreatedTime,
   clearLanguageCoreFilesToUpdate,
   addSet
-}) {
+}) => {
   /**
    * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the SetsTabs navigator because this is the only spot we should be able to swipe to open the drawer.
    * @param {string} route - The route passed from the navigation component.
