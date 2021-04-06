@@ -50,7 +50,7 @@ const InformationScreen = ({
 
   useEffect(() => {
     setOptions(getNavOptions())
-  })
+  }, [])
 
   async function openBrowser (url) {
     await WebBrowser.openBrowserAsync(url, { dismissButtonStyle: 'close' })

@@ -273,7 +273,7 @@ const PlayScreen = ({
         }
       })
     }
-  })
+  }, [])
 
   /**
    * useEffect function that acts as a constructor to set the sources for the various chapters, enable the device rotation listener, and upon exiting the screen, unloading the audio/video files.
@@ -296,7 +296,7 @@ const PlayScreen = ({
         await video.unloadAsync()
       }
     }
-  })
+  }, [])
 
   //+ LOADING FUNCTIONS
 

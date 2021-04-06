@@ -104,7 +104,7 @@ const LessonsScreen = ({
 
   useEffect(() => {
     setOptions(getNavOptions())
-  })
+  }, [])
 
   //+ FUNCTIONS
 

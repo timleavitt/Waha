@@ -105,7 +105,7 @@ const SetsScreen = ({
     //     languageCoreFilesCreatedTimes
     //   )}\n`
     // )
-  })
+  }, [])
 
   /**
    * Goes through a set and verifies that all of the necessary question set mp3s have been downloaded for that set. This gets passed through the filter function below.

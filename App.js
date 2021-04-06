@@ -47,7 +47,7 @@ export default function App () {
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
       playThroughEarpieceAndroid: false
     })
-  })
+  }, [])
 
   /**
    * Loads all of the fonts to be used across all languages in Waha.

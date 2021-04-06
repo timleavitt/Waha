@@ -59,7 +59,7 @@ const SecurityModeScreen = ({
         ? () => <View></View>
         : () => <BackButton onPress={() => goBack()} />
     })
-  })
+  }, [])
 
   /** Keeps track of whether the change timeout modal is visible. */
   const [showChangeTimeoutModal, setShowChangeTimeoutModal] = useState(false)

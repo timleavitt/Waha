@@ -33,7 +33,7 @@ const SecurityOnboardingSlidesScreen = ({
 
   useEffect(() => {
     setOptions(getNavOptions())
-  })
+  }, [])
 
   //+ NAV OPTIONS
   function getNavOptions () {

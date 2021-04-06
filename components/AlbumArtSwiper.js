@@ -83,7 +83,7 @@ const AlbumArtSwiper = ({
       setLayoutWidth(240)
       setMarginWidth(200)
     }
-  })
+  }, [])
 
   function getTextData (key) {
     if (key === '2') {

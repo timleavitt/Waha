@@ -61,7 +61,7 @@ const StorageScreen = ({
   useEffect(() => {
     setOptions(getNavOptions())
     getAllStorageUsed()
-  })
+  }, [])
 
   //+ NAV OPTIONS
 

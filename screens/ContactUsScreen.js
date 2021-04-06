@@ -76,7 +76,7 @@ const ContactUsScreen = ({
         ? () => {}
         : () => <BackButton onPress={() => goBack()} />
     })
-  })
+  }, [])
 
   /** useEffect function that checks the validity of an email address any time the email input changes. */
   useEffect(() => {

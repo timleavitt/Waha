@@ -91,7 +91,7 @@ const MainStack = ({
     return function cleanup () {
       AppState.removeEventListener('change', change => setAppState(change))
     }
-  })
+  }, [])
 
   /**
    * useEffect function that reacts to changes in app state changes. This is used to display the splash screen to hide the app preview in multitasking as well as keeping track of security mode timeouts.

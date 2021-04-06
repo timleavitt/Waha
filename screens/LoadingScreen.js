@@ -108,7 +108,7 @@ const LoadingScreen = ({
     return function cleanup () {
       unsubscribe()
     }
-  })
+  }, [])
 
   function cancelDownloads () {
     setLanguageCoreFilesDownloadProgress(0)

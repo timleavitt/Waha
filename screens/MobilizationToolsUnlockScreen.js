@@ -65,7 +65,7 @@ const MobilizationToolsUnlockScreen = ({
         ? () => <View></View>
         : () => <BackButton onPress={() => goBack()} />
     })
-  })
+  }, [])
 
   /** Keeps track of the user input of the passcode entry area. */
   const [passcode, setPasscode] = useState('')
