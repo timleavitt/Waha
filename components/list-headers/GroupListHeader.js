@@ -53,7 +53,7 @@ function mapDispatchToProps (dispatch) {
  * @param {string} languageID - The ID for the language instance.
  * @param {boolean} isEditing - Whether the Groups screen is in editing mode or not.
  */
-function GroupListHeader ({
+const GroupListHeader = ({
   // Props passed from a parent component.
   languageName,
   languageID,
@@ -69,13 +69,15 @@ function GroupListHeader ({
   deleteGroup,
   deleteLanguageData,
   removeDownload
-}) {
+}) => {
+  /** Keeps track of the animated position of the left icon, in this case the trash can icon. */
   const [leftIconXPos, setLeftIconXPos] = useState(
     new Animated.Value(
       isRTL ? 25 * scaleMultiplier + 20 : -25 * scaleMultiplier - 20
     )
   )
 
+  /** useEffect function used to update the animated value of the left icon position. The default value must update whenever isRTL changes.*/
   useEffect(() => {
     setLeftIconXPos(
       new Animated.Value(
@@ -84,6 +86,7 @@ function GroupListHeader ({
     )
   }, [isRTL])
 
+  /** Animated the position of the trash icon whenever isEditing changes. This pushes the whole component over to the right. */
   useEffect(() => {
     if (isEditing) {
       Animated.spring(leftIconXPos, {
@@ -96,9 +99,7 @@ function GroupListHeader ({
     }
   }, [isEditing])
 
-  /**
-   * Deletes an entire language instance. This involves deleting every group, every downloaded file, and all data stored in redux for a language instance. Triggered by pressing the trash can icon next to the langauge's name in editing mode.
-   */
+  /** Deletes an entire language instance. This involves deleting every group, every downloaded file, and all data stored in redux for a language instance. Triggered by pressing the trash can icon next to the langauge's name in editing mode. */
   function deleteLanguageInstance () {
     // Delete every group for this language instance.
     groups.map(group => {
@@ -123,11 +124,9 @@ function GroupListHeader ({
     deleteLanguageData(languageID)
   }
 
-  // Determine what to render for the trash button. This button shows up next to the name of the language in editing mode only. Only language instance's that don't contain the currently active group have this button.
-  var trashButton
-
-  if (!(activeGroup.language === languageID)) {
-    trashButton = (
+  // The trash button shows up next to the name of the language in editing mode only. Only language instance's that don't contain the currently active group have this button.
+  if (!(activeGroup.language === languageID))
+    var trashButtonComponent = (
       <TouchableOpacity
         style={{
           marginHorizontal: 20,
@@ -155,22 +154,15 @@ function GroupListHeader ({
         <Icon name='trash' size={25 * scaleMultiplier} color={colors.red} />
       </TouchableOpacity>
     )
-    // For the language instance that contains the active group, render an empty view for this button so the styling lines up.
-  } else if (activeGroup.language === languageID) {
-    trashButton = <View style={{ height: '100%', width: 20 }} />
-    // trashButton = null
-  }
-  // else {
-  //   trashButton = null
-  // }
+  // For the language instance that contains the active group, render an empty view for this button so the layout still lines up.
+  else if (activeGroup.language === languageID)
+    var trashButtonComponent = <View style={{ height: '100%', width: 20 }} />
 
   return (
     <View
       style={[
         styles.groupListHeaderContainer,
-        {
-          flexDirection: isRTL ? 'row-reverse' : 'row'
-        }
+        { flexDirection: isRTL ? 'row-reverse' : 'row' }
       ]}
     >
       <Animated.View
@@ -183,7 +175,7 @@ function GroupListHeader ({
           flex: 1
         }}
       >
-        {trashButton}
+        {trashButtonComponent}
         <Text
           style={[
             StandardTypography(
@@ -196,11 +188,7 @@ function GroupListHeader ({
               'left',
               colors.chateau
             ),
-            {
-              flex: 1
-              // marginLeft: isRTL ? 0 : isEditing ? 0 : 20,
-              // marginRight: isRTL ? (isEditing ? 0 : 20) : 0
-            }
+            { flex: 1 }
           ]}
         >
           {languageName}

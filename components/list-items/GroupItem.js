@@ -48,7 +48,7 @@ function mapDispatchToProps (dispatch) {
  * @param {boolean} isEditing - Whether we're in "editing" mode or not.
  * @param {Function} openEditModal - A function that opens the modal that allows us to edit the information for a group.
  */
-function GroupItem ({
+const GroupItem = ({
   // Props passed from a parent component.
   thisGroup,
   isEditing,
@@ -63,19 +63,21 @@ function GroupItem ({
   translations,
   deleteGroup,
   changeActiveGroup
-}) {
+}) => {
   /** Keeps track of whether this group is the last group in a language instance. */
   const [
     isLastGroupInLanguageInstance,
     setIsLastGroupInLanguageInstance
   ] = useState(false)
 
+  /** Keeps track of the animated position of the left icon of the group item component, in this case the delete button. */
   const [leftIconXPos, setLeftIconXPos] = useState(
     new Animated.Value(
       isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
     )
   )
 
+  /** useEffect function used to update the animated value of the left icon position. The default value must update whenever isRTL changes.*/
   useEffect(() => {
     setLeftIconXPos(
       new Animated.Value(
@@ -84,7 +86,18 @@ function GroupItem ({
     )
   }, [isRTL])
 
-  // const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
+  /** Animated the position of the delete icon whenever isEditing changes. This pushes the whole component over to the right. */
+  useEffect(() => {
+    if (isEditing) {
+      Animated.spring(leftIconXPos, {
+        toValue: 0
+      }).start()
+    } else if (!isEditing) {
+      Animated.spring(leftIconXPos, {
+        toValue: isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
+      }).start()
+    }
+  }, [isEditing])
 
   /**
    * useEffect function that determines whether this group is the last in a language instance.
@@ -132,20 +145,10 @@ function GroupItem ({
     } else return ''
   }
 
-  // Determine what to render for the delete button. This button shows up next to groups in editing mode and if that group is able to be deleted. Exceptions are that you can't delete the active group and that you can't delete a group that's the last in a language instance.
-  var deleteButton
-
-  if (
-    // isEditing &&
-    activeGroup.name !== thisGroup.name &&
-    !isLastGroupInLanguageInstance
-  ) {
-    deleteButton = (
-      <Animated.View
-        style={{
-          transform: [{ translateX: leftIconXPos }]
-        }}
-      >
+  // Determine what to render for the delete button. This button shows up next to groups in editing mode if that group is able to be deleted. Exceptions are that you can't delete the active group and that you can't delete a group that's the last in a language instance.
+  if (activeGroup.name !== thisGroup.name && !isLastGroupInLanguageInstance) {
+    var deleteButton = (
+      <Animated.View style={{ transform: [{ translateX: leftIconXPos }] }}>
         <TouchableOpacity
           style={styles.minusButtonContainer}
           onPress={() => {
@@ -173,11 +176,8 @@ function GroupItem ({
         </TouchableOpacity>
       </Animated.View>
     )
-  } else if (
-    // isEditing &&
-    activeGroup.name === thisGroup.name
-  ) {
-    deleteButton = (
+  } else if (activeGroup.name === thisGroup.name) {
+    var deleteButton = (
       <Animated.View
         style={[
           styles.minusButtonContainer,
@@ -189,11 +189,8 @@ function GroupItem ({
         <Icon name='check' size={24 * scaleMultiplier} color={colors.blue} />
       </Animated.View>
     )
-  } else if (
-    // isEditing &&
-    isLastGroupInLanguageInstance
-  ) {
-    deleteButton = (
+  } else if (isLastGroupInLanguageInstance) {
+    var deleteButton = (
       <View
         style={{
           // Make the width such that the group avatar/text doesn't change position in editing mode. This width makes up for the padding that is lost in editing mode.
@@ -203,24 +200,10 @@ function GroupItem ({
     )
   }
 
-  useEffect(() => {
-    if (isEditing) {
-      Animated.spring(leftIconXPos, {
-        toValue: 0
-      }).start()
-    } else if (!isEditing) {
-      Animated.spring(leftIconXPos, {
-        toValue: isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
-      }).start()
-    }
-  }, [isEditing])
-
   // Determine what to render for the 'right' button. This button highlights the active group with a blue checkmark while in regular mode and switches to a right arrow for all groups while in edit mode.
-  var rightButton
-
   if (isEditing) {
-    rightButton = (
-      <View style={styles.iconContainer} onPress={() => {}}>
+    var rightButton = (
+      <View style={styles.iconContainer}>
         <Icon
           name={isRTL ? 'arrow-left' : 'arrow-right'}
           size={36 * scaleMultiplier}
@@ -229,13 +212,13 @@ function GroupItem ({
       </View>
     )
   } else if (activeGroup.name === thisGroup.name) {
-    rightButton = (
+    var rightButton = (
       <View style={styles.iconContainer}>
         <Icon name='check' size={24 * scaleMultiplier} color={colors.blue} />
       </View>
     )
   } else {
-    rightButton = (
+    var rightButton = (
       <View style={[styles.iconContainer, { width: 24 * scaleMultiplier }]} />
     )
   }
@@ -244,27 +227,20 @@ function GroupItem ({
     <View
       style={[
         styles.groupItemContainer,
-        {
-          flexDirection: isRTL ? 'row-reverse' : 'row'
-        }
+        { flexDirection: isRTL ? 'row-reverse' : 'row' }
       ]}
     >
       {deleteButton}
       <TouchableOpacity
         style={[
           styles.touchableAreaContainer,
-          {
-            flexDirection: isRTL ? 'row-reverse' : 'row'
-            // paddingLeft: isEditing ? 0 : 20
-          }
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
         ]}
         onPress={
           // Tapping on a group while not in edit mode switches the active group; in edit mode, it opens the edit group modal.
           isEditing
             ? () => openEditModal()
-            : () => {
-                changeActiveGroup(thisGroup.name)
-              }
+            : () => changeActiveGroup(thisGroup.name)
         }
       >
         <Animated.View
@@ -292,11 +268,6 @@ function GroupItem ({
               {
                 marginLeft: isRTL ? 0 : 20,
                 marginRight: isRTL ? 20 : 0
-                // transform:
-                //   isLastGroupInLanguageInstance &&
-                //   activeGroup.name !== thisGroup.name
-                //     ? []
-                //     : [{ translateX: leftIconXPos }]
               }
             ]}
           >

@@ -11,7 +11,7 @@ import {
 import { lockLandscape, lockPortrait, scaleMultiplier } from '../constants'
 import { colors } from '../styles/colors'
 
-function VideoPlayer ({
+const VideoPlayer = ({
   // Props passed from a parent component.
   videoSource,
   video,
@@ -25,7 +25,7 @@ function VideoPlayer ({
   changeCompleteStatus,
   setFullScreenStatus,
   fullscreenStatus
-}) {
+}) => {
   //+ STATE
 
   const [showVideoControls, setShowVideoControls] = useState(false)

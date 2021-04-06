@@ -41,7 +41,7 @@ function mapDispatchToProps (dispatch) {
  * A pressable item used on the MobilizationTools screen to display a group. Similar to the GroupItem component, but a lot simpler. It still displays the group name, but just allows the user to enable the Mobilization Tools for a specific group.
  * @param {Object} thisGroup - The object for the group that we're displaying in this component.
  */
-function GroupItemMT ({
+const GroupItemMT = ({
   // Props passed from a parent component.
   thisGroup,
   // Props passed from redux.
@@ -53,7 +53,7 @@ function GroupItemMT ({
   activeGroup,
   setShouldShowMobilizationToolsTab,
   addSet
-}) {
+}) => {
   return (
     <View
       style={[

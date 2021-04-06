@@ -23,7 +23,7 @@ function mapStateToProps (state) {
  * The header for the groups section list used on the Mobilization Tools screen. Displays the name of the language in the active group's language and the language instance's logo.
  * @param {string} languageID - The ID for the language instance.
  */
-function GroupListHeaderMT ({
+const GroupListHeaderMT = ({
   // Props passed from a parent component.
   languageID,
   // Props passed from redux.
@@ -31,7 +31,7 @@ function GroupListHeaderMT ({
   translations,
   font,
   database
-}) {
+}) => {
   return (
     <View
       style={[

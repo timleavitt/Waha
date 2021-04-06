@@ -17,7 +17,7 @@ import {
 import { getLanguageFont } from '../styles/typography'
 
 // renders a simple touchable item within the main navigation drawer
-function HomeworkItem (props) {
+const HomeworkItem = props => {
   // RENDER
   const [isChecked, setIsChecked] = useState(false)
   return (
