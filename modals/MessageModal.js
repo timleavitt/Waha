@@ -19,7 +19,7 @@ function mapStateToProps (state) {
 }
 
 // modal variant that shows some information
-function MessageModal ({
+const MessageModal = ({
   // Props passed from a parent component.s
   isVisible,
   hideModal,
@@ -33,7 +33,7 @@ function MessageModal ({
   font,
   activeGroup,
   isRTL
-}) {
+}) => {
   var cancelButton = cancelText ? (
     <TouchableOpacity
       style={{

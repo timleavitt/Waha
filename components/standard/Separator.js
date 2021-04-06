@@ -2,7 +2,7 @@ import React from 'react'
 import { View } from 'react-native'
 import { colors } from '../../styles/colors'
 
-function Separator ({}) {
+const Separator = ({}) => {
   return (
     <View
       style={{

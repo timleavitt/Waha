@@ -17,7 +17,7 @@ function mapStateToProps (state) {
   }
 }
 
-function OptionsModal ({
+const OptionsModal = ({
   // Props passed from a parent component.
   isVisible,
   hideModal,
@@ -26,7 +26,7 @@ function OptionsModal ({
   // Props passed from redux.
   font,
   isRTL
-}) {
+}) => {
   //+ RENDER
   return (
     <Modal
