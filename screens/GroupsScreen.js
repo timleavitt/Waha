@@ -31,7 +31,7 @@ function mapStateToProps (state) {
 /**
  * A screen that displays all of the installed language instances and the groups in those language instances. Allows for switching the active group and  editing, deleting, and adding groups & languages.
  */
-function GroupsScreen ({
+const GroupsScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, goBack, navigate },
   // Props passed from redux.
@@ -42,7 +42,7 @@ function GroupsScreen ({
   font,
   groups,
   activeGroup
-}) {
+}) => {
   /** Keeps track of whether the screen is in editing mode or not. Editing mode is enabled via a button in the header and switches a lot of functionality on the screen. */
   const [isEditing, setIsEditing] = useState(false)
 
@@ -140,33 +140,29 @@ function GroupsScreen ({
    * @param {Object} languageInstance - The object for the language instance to render.
    * @return {Component} - The GroupListHeader component.
    */
-  function renderGroupListHeader (languageInstance) {
-    return (
-      <GroupListHeader
-        languageName={languageInstance.languageName}
-        languageID={languageInstance.languageID}
-        isEditing={isEditing}
-      />
-    )
-  }
+  const renderGroupListHeader = languageInstance => (
+    <GroupListHeader
+      languageName={languageInstance.languageName}
+      languageID={languageInstance.languageID}
+      isEditing={isEditing}
+    />
+  )
 
   /**
    * Renders a GroupItem component used for the Groups SectionList item.
    * @param {Object} group - The object for the group to render.
    * @return {Component} - The GroupItem component.
    */
-  function renderGroupItem (group) {
-    return (
-      <GroupItem
-        thisGroup={group}
-        isEditing={isEditing}
-        openEditModal={() => {
-          setEditingGroup(group)
-          setShowEditGroupModal(true)
-        }}
-      />
-    )
-  }
+  const renderGroupItem = group => (
+    <GroupItem
+      thisGroup={group}
+      isEditing={isEditing}
+      openEditModal={() => {
+        setEditingGroup(group)
+        setShowEditGroupModal(true)
+      }}
+    />
+  )
 
   return (
     <View style={styles.screen}>
@@ -206,7 +202,7 @@ function GroupsScreen ({
         isVisible={showEditGroupModal}
         hideModal={() => setShowEditGroupModal(false)}
         type='EditGroup'
-        group={editingGroup}
+        thisGroup={editingGroup}
       />
     </View>
   )
