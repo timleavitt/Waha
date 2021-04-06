@@ -2,6 +2,7 @@ import useInterval from '@use-it/interval'
 import { Audio, Video } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
 import { useKeepAwake } from 'expo-keep-awake'
+import { LinearGradient } from 'expo-linear-gradient'
 import { DeviceMotion } from 'expo-sensors'
 import React, { useEffect, useRef, useState } from 'react'
 import {
@@ -12,9 +13,9 @@ import {
   Platform,
   SafeAreaView,
   StyleSheet,
-  Text,
   View
 } from 'react-native'
+import TextTicker from 'react-native-text-ticker'
 import { connect } from 'react-redux'
 import AlbumArtSwiper from '../components/AlbumArtSwiper'
 import BookView from '../components/BookView'
@@ -71,7 +72,7 @@ function mapDispatchToProps (dispatch) {
  * @param {boolean} isDownloaded - Whether this lesson has its Story audio file already downloaded or not.
  * @param {boolean} isDownloading - Whether the
  */
-function PlayScreen ({
+const PlayScreen = ({
   // Props passed from navigation.
   navigation: { goBack, setOptions, isFocused },
   route: {
@@ -91,7 +92,7 @@ function PlayScreen ({
   toggleComplete,
   downloadMedia,
   removeDownload
-}) {
+}) => {
   /** Keeps the screen from auto-dimming or auto-locking. */
   useKeepAwake()
 
@@ -272,7 +273,7 @@ function PlayScreen ({
         }
       })
     }
-  }, [])
+  })
 
   /**
    * useEffect function that acts as a constructor to set the sources for the various chapters, enable the device rotation listener, and upon exiting the screen, unloading the audio/video files.
@@ -295,7 +296,7 @@ function PlayScreen ({
         await video.unloadAsync()
       }
     }
-  }, [])
+  })
 
   //+ LOADING FUNCTIONS
 
@@ -714,19 +715,38 @@ function PlayScreen ({
 
   /** The title section at the top of the screen. Only hidden on audio book lessons to make more room for the book viewer. */
   var titleSection = (
-    <View style={styles.titlesContainer}>
-      <Text
-        style={StandardTypography(
-          { font, isRTL },
-          'h3',
-          'Black',
-          'center',
-          colors.shark
-        )}
-        numberOfLines={1}
+    <View style={styles.titleContainer}>
+      <TextTicker
+        style={[
+          StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Black',
+            'center',
+            colors.shark
+          ),
+          { paddingHorizontal: 20 }
+        ]}
+        marqueeDelay={2000}
+        bounceSpeed={300}
       >
         {thisLesson.title}
-      </Text>
+        {/* Suuuuuuuuuuuuuuuper long lesson title is slightly too long */}
+      </TextTicker>
+      <LinearGradient
+        colors={[colors.porcelain, colors.porcelain + '00']}
+        start={[0, 1]}
+        end={[1, 1]}
+        style={styles.leftGradient}
+      />
+      <View style={styles.leftGradientFiller} />
+      <LinearGradient
+        colors={[colors.porcelain, colors.porcelain + '00']}
+        start={[1, 0]}
+        end={[0, 0]}
+        style={styles.rightGradient}
+      />
+      <View style={styles.rightGradientFiller} />
     </View>
   )
 
@@ -865,20 +885,46 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flex: 1
   },
-  titlesContainer: {
-    flexDirection: 'column',
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexWrap: 'nowrap',
-    paddingHorizontal: 20
-  },
   audioControlContainer: {
     justifyContent: 'space-evenly',
     flexDirection: 'column',
     alignItems: 'center',
     width: '100%',
     height: '33%'
+  },
+  titleContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10 * scaleMultiplier
+  },
+  rightGradient: {
+    position: 'absolute',
+    right: 0,
+    width: 15,
+    height: '100%',
+    marginHorizontal: 10
+  },
+  leftGradient: {
+    position: 'absolute',
+    left: 0,
+    width: 15,
+    height: '100%',
+    marginHorizontal: 10
+  },
+  rightGradientFiller: {
+    position: 'absolute',
+    right: 0,
+    width: 10,
+    height: '100%',
+    backgroundColor: colors.porcelain
+  },
+  leftGradientFiller: {
+    position: 'absolute',
+    left: 0,
+    width: 10,
+    height: '100%',
+    backgroundColor: colors.porcelain
   }
 })
 
