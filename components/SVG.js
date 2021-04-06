@@ -9,13 +9,13 @@ import Svg, { Defs, G, Image, Path, Use } from 'react-native-svg'
  * @param {number} props.height - The height of the svg.
  * @param {string} props.color - The hex code for the color of the svg. Note: for the <Svg> component, color is called "fill". In every <Svg> below, the color prop passed from the parent is used for the "fill" prop.
  */
-function SVG ({
+const SVG = ({
   // Passed from a parent component.
   name,
   width,
   height,
   color
-}) {
+}) => {
   // Render an svg based on the name prop.
   switch (name) {
     case 'globe':

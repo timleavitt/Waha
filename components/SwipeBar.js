@@ -4,7 +4,7 @@ import { Animated, StyleSheet, View } from 'react-native'
 import { scaleMultiplier } from '../constants'
 import { colors } from '../styles/colors'
 
-function SwipeBar ({ opacity, side }) {
+const SwipeBar = ({ opacity, side }) => {
   return (
     <View
       style={[
