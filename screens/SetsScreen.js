@@ -78,7 +78,10 @@ const SetsScreen = ({
   /** Whether the snackbar that pops up upon unlocking the mobilization tools is visible or not.  */
   const [showSnackbar, setShowSnackbar] = useState(false)
 
-  const setData = useMemo(() => getSetData(), [activeGroup.addedSets])
+  const setData = useMemo(() => getSetData(), [
+    activeGroup.addedSets,
+    downloadedFiles
+  ])
 
   // /** useEffect function that sets the setCategory state and the addNewSetLabel state based off the category (which is passed via the route name declared in SetTabs.js). Updates whenever the activeGroup changes. */
   // useEffect(() => {
