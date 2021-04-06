@@ -31,7 +31,7 @@ function mapDispatchToProps (dispatch) {
  * @param {boolean} isVisible - Whether the modal should be visible or not.
  * @param {Function} hideModal - Function to hide the modal.
  */
-function SecurityTimeoutPickerModal ({
+const SecurityTimeoutPickerModal = ({
   isVisible,
   hideModal,
   // Props passed from redux.
@@ -39,7 +39,7 @@ function SecurityTimeoutPickerModal ({
   security,
   setSecurityEnabled,
   setTimeoutDuration
-}) {
+}) => {
   return (
     <OptionsModal
       isVisible={isVisible}

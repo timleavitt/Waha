@@ -39,10 +39,10 @@ function mapDispatchToProps (dispatch) {
 }
 
 /**
- * Component for the add set screen, which shows a list of available story sets to add in a specific category.
- * @param {*} props
+ * Screen that shows a list of available Story Sets to add in a specific category.
+ * @param {string} category - The category of Story Sets to display.
  */
-function AddSetScreen ({
+const AddSetScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, goBack },
   route: {
@@ -57,26 +57,29 @@ function AddSetScreen ({
   activeGroup,
   primaryColor,
   addSet
-}) {
+}) => {
   /** Whether the snackbar that pops up upon adding a set is visible or not.  */
   const [showSnackbar, setShowSnackbar] = useState(false)
 
-  /** State for header title. Stored in state because it changes depending on which category we're viewing the story sets for. */
+  /** State for header title. Stored as state because it changes depending on which category we're viewing the story sets for. */
   const [headerTitle, setHeaderTitle] = useState('')
 
-  /** Keeps track of the tags we have. Only for adding topical sets. Tags are retrieved from the database. */
+  /** Keeps track of the Topical Story Set tags. Tags are retrieved from the database. */
   const [tags, setTags] = useState([])
 
-  /** Keeps tra */
-  const [activeTag, setActiveTag] = useState([])
-  const [tagSelectRef, setTagSelectRef] = useState()
-  const [refresh, setRefresh] = useState(false)
+  /** Keeps track of the currently selected tag. */
+  const [selectedTag, setSelectedTag] = useState('')
 
+  /** Keeps track of whether the <SetInfoModal /> is visible. */
   const [showSetInfoModal, setShowSetInfoModal] = useState(false)
+
+  /** Keeps track of the Story Set that the user selects and that populates the <SetInfoModal />. */
   const [setInModal, setSetInModal] = useState({})
 
+  /** Keeps track of all the downloaded question set mp3s. We need this to verify that all the required question set mp3s are installed for the various Story Sets.*/
   const [downloadedFiles, setDownloadedFiles] = useState([])
 
+  /** useEffect function that sets the headerTitle state as well as fetching the tags if we're displaying Topical Story Sets. */
   useEffect(() => {
     switch (category) {
       case 'foundational':
@@ -84,38 +87,54 @@ function AddSetScreen ({
         break
       case 'topical':
         setHeaderTitle(translations.add_set.header_topical)
-        var tempTags = [translations.add_set.all_tag_label]
+
+        // Start off array of tags with the 'All' label since we always display that option.
+        var tags = [translations.add_set.all_tag_label]
+
+        // Go through each Topical Story Set and add all the various tags to our tag array.
         activeDatabase.sets
           .filter(set => getSetInfo('category', set.id) === 'topical')
           .forEach(topicalSet => {
             topicalSet.tags.forEach(tag => {
-              if (!tempTags.some(tempTag => tempTag === tag)) {
-                tempTags = [...tempTags, tag]
-              }
+              // If we find a tag that hasn't been added yet, add it.
+              if (!tags.includes(tag)) tags.push(tag)
             })
           })
-        setTags(tempTags)
+        setTags(tags)
         break
       case 'mobilization tools':
         setHeaderTitle(translations.add_set.header_mt)
         break
     }
-  }, [])
+  })
 
+  /** useEffect function that checks what files are downloaded to local storage. */
   useEffect(() => {
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
         setDownloadedFiles(contents)
       }
     )
+  })
 
+  /** useEffect function that hides the Snackbar if we leave the screen before it auto-dismisses. */
+  useEffect(() => {
     return function cleanup () {
       setShowSnackbar(false)
     }
-  }, [])
+  })
 
+  /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
-    setOptions(getNavOptions())
+    setOptions({
+      title: headerTitle,
+      headerLeft: isRTL
+        ? () => <View></View>
+        : () => <BackButton onPress={() => goBack()} />,
+      headerRight: isRTL
+        ? () => <BackButton onPress={() => goBack()} />
+        : () => <View></View>
+    })
   }, [headerTitle])
 
   /**
@@ -152,34 +171,67 @@ function AddSetScreen ({
     else return false
   }
 
-  // useEffect(() => {
-  //   if (tagSelectRef) {
-  //     tagSelectRef.select(0)
-  //   }
-  // }, [tagSelectRef])
-
-  function getNavOptions () {
-    return {
-      title: headerTitle,
-      headerLeft: isRTL
-        ? () => <View></View>
-        : () => <BackButton onPress={() => goBack()} />,
-      headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
-        : () => <View></View>
-    }
+  function getSetData () {
+    if (category === 'topical')
+      return (
+        activeDatabase.sets
+          // Filter for Topical Story Sets.
+          .filter(set => getSetInfo('category', set.id) === category)
+          // Filter for Topical Story Sets that haven't already been added.
+          .filter(
+            topicalSet =>
+              !activeGroup.addedSets.some(
+                addedSet => addedSet.id === topicalSet.id
+              )
+          )
+          // Filter for Topical Story Sets that match the currently selected tag (if there is one).
+          .filter(topicalAddedSet => {
+            // If the selected tag is blank (meaning nothing has been selected) or 'All' is selected, show all the Topical Story Sets. Otherwise, filter by the selected tag.
+            return selectedTag === '' ||
+              selectedTag === translations.add_set.all_tag_label
+              ? true
+              : topicalAddedSet.tags.some(tag => selectedTag === tag)
+          })
+          // Filter for Topical Sets that have all the necessary question set mp3s downloaded.
+          .filter(filterForDownloadedQuestionSets)
+          // Sort by ID, just in case they aren't added in order in the database.
+          .sort((a, b) =>
+            parseInt(a.id.match(/[0-9]*$/)[0]) -
+              parseInt(b.id.match(/[0-9]*$/)[0]) <
+            0
+              ? -1
+              : 1
+          )
+      )
+    else
+      return (
+        activeDatabase.sets
+          // Filter for Foundational or Mobilization Tools Story Sets.
+          .filter(set => getSetInfo('category', set.id) === category)
+          // Filter for Foundational or Mobilization Tools Story Sets that haven't already been added.
+          .filter(
+            set =>
+              !activeGroup.addedSets.some(addedSet => addedSet.id === set.id)
+          )
+          // Filter for Foundational or Mobilization Tools Story Sets that have all the necessary question set mp3s downloaded.
+          .filter(filterForDownloadedQuestionSets)
+          // Sort by ID, just in case they aren't added in order in the database.
+          .sort((a, b) =>
+            parseInt(a.id.match(/[0-9]*$/)[0]) -
+              parseInt(b.id.match(/[0-9]*$/)[0]) <
+            0
+              ? -1
+              : 1
+          )
+      )
   }
 
-  // var activeTags = []
-  // if (tagSelectRef.itemsSelected !== null) {
-  //   con  sole.log(tagSelectRef.itemsSelected)
-  // }
-
-  var tagSelectComponent = (
+  // The component for the list of tags. Uses the <TagGroup /> component.
+  const tagsComponent = (
     <TagGroup
       source={tags}
       singleChoiceMode
-      onSelectedTagChange={selected => setActiveTag(selected)}
+      onSelectedTagChange={selected => setSelectedTag(selected)}
       style={{
         paddingHorizontal: 10,
         paddingTop: 10,
@@ -196,7 +248,6 @@ function AddSetScreen ({
       textStyle={{ color: colors.oslo, fontFamily: font + '-Regular' }}
       activeTagStyle={{
         borderRadius: 20,
-        // make primary color
         backgroundColor: primaryColor,
         borderColor: primaryColor
       }}
@@ -207,78 +258,28 @@ function AddSetScreen ({
     />
   )
 
-  //+ RENDER
-  function renderStudySetItem (setList) {
-    return (
-      <SetItem
-        thisSet={setList.item}
-        screen='AddSet'
-        onSetSelect={() => {
-          setSetInModal(setList.item)
-          setShowSetInfoModal(true)
-        }}
-      />
-    )
-  }
+  /** Renders a <SetItem /> for the list of sets available to add. */
+  const renderSetItem = setList => (
+    <SetItem
+      thisSet={setList.item}
+      screen='AddSet'
+      onSetSelect={() => {
+        setSetInModal(setList.item)
+        setShowSetInfoModal(true)
+      }}
+    />
+  )
 
   return (
     <View style={styles.screen}>
-      {category === 'topical' ? tagSelectComponent : null}
+      {category === 'topical' ? tagsComponent : null}
       <FlatList
         style={{ flex: 1 }}
-        data={
-          category === 'topical'
-            ? activeDatabase.sets
-                .filter(set => getSetInfo('category', set.id) === category)
-                .filter(
-                  topicalSet =>
-                    !activeGroup.addedSets.some(
-                      addedSet => addedSet.id === topicalSet.id
-                    )
-                )
-                .filter(topicalAddedSet => {
-                  return activeTag.length === 0 ||
-                    activeTag.includes(translations.add_set.all_tag_label)
-                    ? true
-                    : topicalAddedSet.tags.some(tag => activeTag.includes(tag))
-                })
-                .filter(filterForDownloadedQuestionSets)
-                .sort((a, b) => {
-                  if (
-                    parseInt(a.id.match(/[0-9]*$/)[0]) -
-                      parseInt(b.id.match(/[0-9]*$/)[0]) <
-                    0
-                  ) {
-                    return -1
-                  } else {
-                    return 1
-                  }
-                })
-            : activeDatabase.sets
-                .filter(set => getSetInfo('category', set.id) === category)
-                .filter(
-                  set =>
-                    !activeGroup.addedSets.some(
-                      addedSet => addedSet.id === set.id
-                    )
-                )
-                .filter(filterForDownloadedQuestionSets)
-                .sort((a, b) => {
-                  if (
-                    parseInt(a.id.match(/[0-9]*$/)[0]) -
-                      parseInt(b.id.match(/[0-9]*$/)[0]) <
-                    0
-                  ) {
-                    return -1
-                  } else {
-                    return 1
-                  }
-                })
-        }
+        data={getSetData()}
         ItemSeparatorComponent={() => <Separator />}
         ListFooterComponent={() => <Separator />}
         ListHeaderComponent={() => <Separator />}
-        renderItem={renderStudySetItem}
+        renderItem={renderSetItem}
         ListEmptyComponent={
           <View style={{ width: '100%', marginVertical: 20 }}>
             <Text
@@ -310,7 +311,6 @@ function AddSetScreen ({
       <SetInfoModal
         isVisible={showSetInfoModal}
         hideModal={() => setShowSetInfoModal(false)}
-        category={category}
         thisSet={setInModal}
         showSnackbar={() => {
           setShowSnackbar(true)

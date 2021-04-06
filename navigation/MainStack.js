@@ -63,7 +63,7 @@ function mapDispatchToProps (dispatch) {
 /**
  * This component renders the main navigation stack used for almost all the screens in Waha. It also contains some logic related to things that happen globally in the background. The reason some logic would be here instead of in MainDrawer.js is because this component has access to the navigation prop.
  */
-function MainStack ({
+const MainStack = ({
   // Props passed from navigation.
   navigation: { navigate, goBack, toggleDrawer },
   // Props passed from redux.
@@ -75,7 +75,7 @@ function MainStack ({
   languageCoreFilesToUpdate,
   setTimer,
   setIsTimedOut
-}) {
+}) => {
   /** Keeps track of the current app state. Can be "active", "inactive", or "background". Set by the app state listener function. */
   const [appState, setAppState] = useState('')
 
@@ -91,7 +91,7 @@ function MainStack ({
     return function cleanup () {
       AppState.removeEventListener('change', change => setAppState(change))
     }
-  }, [])
+  })
 
   /**
    * useEffect function that reacts to changes in app state changes. This is used to display the splash screen to hide the app preview in multitasking as well as keeping track of security mode timeouts.

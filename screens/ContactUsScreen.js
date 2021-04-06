@@ -36,7 +36,7 @@ function mapStateToProps (state) {
   }
 }
 
-function ContactUsScreen ({
+const ContactUsScreen = ({
   navigation: { setOptions, goBack },
   // Props passed from redux.
   activeGroup,
@@ -45,7 +45,7 @@ function ContactUsScreen ({
   font,
   translations,
   primaryColor
-}) {
+}) => {
   /** The text for the email input component. */
   const [emailTextInput, setEmailTextInput] = useState(null)
 
@@ -76,7 +76,7 @@ function ContactUsScreen ({
         ? () => {}
         : () => <BackButton onPress={() => goBack()} />
     })
-  }, [])
+  })
 
   /** useEffect function that checks the validity of an email address any time the email input changes. */
   useEffect(() => {
