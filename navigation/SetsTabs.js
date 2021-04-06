@@ -77,26 +77,11 @@ const SetsTabs = ({
    */
   function getBookmarkedTab () {
     // Get the category of the bookmarked set.
-    var bookmarkSetCategory = getSetInfo(
+    return getSetInfo(
       'category',
       activeDatabase.sets.filter(set => set.id === activeGroup.setBookmark)[0]
         .id
     )
-
-    // Return the correct name of the tab based on the category of the bookmarked set.
-    switch (bookmarkSetCategory) {
-      case 'foundational':
-        return 'Foundational'
-        break
-      case 'topical':
-        return 'Topical'
-        break
-      case 'mobilization tools':
-        return 'MobilizationTools'
-        break
-      default:
-        return 'Foundational'
-    }
   }
 
   return (

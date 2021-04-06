@@ -121,8 +121,8 @@ export function groups (state = [], params) {
 
       // set the recentcoreortool if this set is a core or toolkit
       if (
-        getSetInfo('category', params.set.id) === 'foundational' ||
-        getSetInfo('category', params.set.id) === 'mobilization tools'
+        getSetInfo('category', params.set.id) === 'Foundational' ||
+        getSetInfo('category', params.set.id) === 'MobilizationTools'
       )
         recentCoreOrTool = params.set.id
 
@@ -168,9 +168,9 @@ export function groups (state = [], params) {
                     // if core or toolkit, set to next in that category
                     if (
                       getSetInfo('category', params.set.id) ===
-                        'foundational' ||
+                        'Foundational' ||
                       getSetInfo('category', params.set.id) ===
-                        'mobilization tools'
+                        'MobilizationTools'
                     ) {
                       setBookmark = params.nextSet
                         ? params.nextSet.id

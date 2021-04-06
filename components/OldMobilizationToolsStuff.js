@@ -368,7 +368,7 @@ const GroupItemMT = ({
               )
               for (const set of database[thisGroup.language].sets) {
                 if (
-                  getSetInfo('category', set.id) === 'mobilization tools' &&
+                  getSetInfo('category', set.id) === 'MobilizationTools' &&
                   (getSetInfo('index', set.id) === 1 ||
                     getSetInfo('index', set.id) === 2)
                 ) {

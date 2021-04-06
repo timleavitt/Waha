@@ -258,7 +258,7 @@ const SetItem = ({
     // Firstly, we need to get the set after this one before we can do anything else.
     var nextSet = activeDatabase.sets.filter(
       dbSet =>
-        getSetInfo('category', dbSet.id) === 'foundational' &&
+        getSetInfo('category', dbSet.id) === 'Foundational' &&
         getSetInfo('index', dbSet.id) === getSetInfo('index', thisSet.id) + 1
     )[0]
 
@@ -266,14 +266,14 @@ const SetItem = ({
     if (nextSet) {
       if (
         thisSetProgress > 0.85 &&
-        getSetInfo('category', thisSet.id) === 'foundational' &&
+        getSetInfo('category', thisSet.id) === 'Foundational' &&
         !activeGroup.addedSets.some(addedSet => addedSet.id === nextSet.id)
       ) {
         addSet(
           activeGroup.name,
           activeGroup.id,
           activeDatabase.sets
-            .filter(set => getSetInfo('category', set.id) === 'foundational')
+            .filter(set => getSetInfo('category', set.id) === 'Foundational')
             .filter(
               set =>
                 getSetInfo('index', set.id) ===
