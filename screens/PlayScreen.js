@@ -729,19 +729,20 @@ const PlayScreen = ({
         ]}
         marqueeDelay={2000}
         bounceSpeed={300}
+        isRTL={isRTL}
       >
         {thisLesson.title}
         {/* Suuuuuuuuuuuuuuuper long lesson title is slightly too long */}
       </TextTicker>
       <LinearGradient
-        colors={[colors.porcelain, colors.porcelain + '00']}
+        colors={[colors.white, colors.white + '00']}
         start={[0, 1]}
         end={[1, 1]}
         style={styles.leftGradient}
       />
       <View style={styles.leftGradientFiller} />
       <LinearGradient
-        colors={[colors.porcelain, colors.porcelain + '00']}
+        colors={[colors.white, colors.white + '00']}
         start={[1, 0]}
         end={[0, 0]}
         style={styles.rightGradient}
@@ -917,14 +918,14 @@ const styles = StyleSheet.create({
     right: 0,
     width: 10,
     height: '100%',
-    backgroundColor: colors.porcelain
+    backgroundColor: colors.white
   },
   leftGradientFiller: {
     position: 'absolute',
     left: 0,
     width: 10,
     height: '100%',
-    backgroundColor: colors.porcelain
+    backgroundColor: colors.white
   }
 })
 
