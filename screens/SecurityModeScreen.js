@@ -38,7 +38,7 @@ function mapDispatchToProps (dispatch) {
 /**
  * A screen that displays the configuration options for security mode. Allows for turning it on/off, changing the timeout, and updating your key code.
  */
-function SecurityModeScreen ({
+const SecurityModeScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, goBack, navigate },
   // Props passed from redux.
@@ -48,7 +48,7 @@ function SecurityModeScreen ({
   security,
   setSecurityEnabled,
   setTimeoutDuration
-}) {
+}) => {
   /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
     setOptions({
@@ -59,7 +59,7 @@ function SecurityModeScreen ({
         ? () => <View></View>
         : () => <BackButton onPress={() => goBack()} />
     })
-  }, [])
+  })
 
   /** Keeps track of whether the change timeout modal is visible. */
   const [showChangeTimeoutModal, setShowChangeTimeoutModal] = useState(false)

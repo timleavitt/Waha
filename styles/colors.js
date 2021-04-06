@@ -36,7 +36,14 @@ export const colors = {
   red: '#FF0800',
 
   // Used for neutral action buttons/highlights.
-  blue: '#2D9CDB'
+  blue: '#2D9CDB',
+
+  // Used for button 'shadows'.
+  appleShadow: '#54A534',
+  chateauShadow: '#868A91',
+  redShadow: '#DB0700',
+  blueShadow: '#2986BB',
+  geyserShadow: '#C0C3C8'
 }
 
 // The colors used for each piano key in the PianoApp component.

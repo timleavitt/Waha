@@ -37,7 +37,7 @@ function mapStateToProps (state) {
 /**
  * Screen that shows information about the Mobilization Tools and, after they've been globally unlocked, a list of groups with the option to enable them for a group.
  */
-function MobilizationToolsScreen ({
+const MobilizationToolsScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, goBack, navigate },
   // Props passed from redux.
@@ -47,7 +47,7 @@ function MobilizationToolsScreen ({
   font,
   areMobilizationToolsUnlocked,
   groups
-}) {
+}) => {
   /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
     setOptions({
@@ -58,7 +58,7 @@ function MobilizationToolsScreen ({
         ? () => <View></View>
         : () => <BackButton onPress={() => goBack()} />
     })
-  }, [])
+  })
 
   /** Keeps track of whether the how MTs work modal is visible. */
   const [showHowMTsWorkModal, setShowHowMTsWorkModal] = useState(false)

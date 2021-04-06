@@ -5,7 +5,7 @@ import { scaleMultiplier } from '../constants'
 /**
  * Screen that gets navigated to whenever the app enters "background" mode on iOS. This is so the app preview is hidden in the iOS multitasking view.
  */
-function SplashScreen ({}) {
+const SplashScreen = ({}) => {
   return (
     <View style={styles.screen}>
       <Image

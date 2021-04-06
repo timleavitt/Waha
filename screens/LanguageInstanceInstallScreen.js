@@ -74,7 +74,7 @@ function mapDispatchToProps (dispatch) {
  * @param {string} installedLanguageInstances[].languageID - The ID of the language.
  * @param {string} installedLanguageInstances[].languageName - The name of the language.
  */
-function LanguageInstanceInstallScreen ({
+const LanguageInstanceInstallScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, goBack, reset, navigate },
   route: {
@@ -95,7 +95,7 @@ function LanguageInstanceInstallScreen ({
   storeLanguageSets,
   deleteLanguageData,
   deleteGroup
-}) {
+}) => {
   // Set the i18n locale to the locale of the user's phone.
   i18n.locale = Localization.locale
 
@@ -128,7 +128,7 @@ function LanguageInstanceInstallScreen ({
           }
         : null
     )
-  }, [])
+  })
 
   /** useEffect function sets the isConnected state with the status of the user's internet connection. */
   useEffect(() => {
@@ -139,7 +139,7 @@ function LanguageInstanceInstallScreen ({
     return function cleanup () {
       unsubscribe()
     }
-  }, [])
+  })
 
   /**
    * Plays the text-to-speech audio file for a language.

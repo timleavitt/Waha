@@ -24,7 +24,7 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-function WahaOnboardingSlidesScreen ({
+const WahaOnboardingSlidesScreen = ({
   // Props passed from navigation.
   navigation: { navigate },
   route: {
@@ -33,7 +33,7 @@ function WahaOnboardingSlidesScreen ({
   },
   // Props passed from redux.
   setHasOnboarded
-}) {
+}) => {
   //+ FUNCTIONS
 
   // tells redux that we're ready to go to loading screen once onboarding is finished

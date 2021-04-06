@@ -34,7 +34,7 @@ function mapStateToProps (state) {
 /**
  * Screen that shows the list of currently added story sets of a specific category. Used three times for the three different set tabs.
  */
-function SetsScreen ({
+const SetsScreen = ({
   // Props passed from navigation.
   navigation: { navigate },
   // Props passed from the navigation route.
@@ -48,7 +48,7 @@ function SetsScreen ({
   languageCoreFilesCreatedTimes,
   globalGroupCounter,
   languageCoreFilesToUpdate
-}) {
+}) => {
   /** Keeps track of the text displayed on the add set button. Changes depending on what category we're in. */
   const [addNewSetLabel, setAddNewSetLabel] = useState('')
 
@@ -105,7 +105,7 @@ function SetsScreen ({
     //     languageCoreFilesCreatedTimes
     //   )}\n`
     // )
-  }, [])
+  })
 
   /**
    * Goes through a set and verifies that all of the necessary question set mp3s have been downloaded for that set. This gets passed through the filter function below.
@@ -196,11 +196,7 @@ function SetsScreen ({
         styles.addSetButtonContainer,
         { flexDirection: isRTL ? 'row-reverse' : 'row' }
       ]}
-      onPress={() =>
-        navigate('AddSet', {
-          category: setCategory
-        })
-      }
+      onPress={() => navigate('AddSet', { category: setCategory })}
     >
       <View
         style={{

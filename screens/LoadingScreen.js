@@ -78,7 +78,7 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-function LoadingScreen ({
+const LoadingScreen = ({
   navigation,
   // Props passed from redux.
   languageCoreFilesDownloadProgress,
@@ -97,7 +97,7 @@ function LoadingScreen ({
   setHasFetchedLanguageData,
   deleteLanguageData,
   deleteGroup
-}) {
+}) => {
   const [isConnected, setIsConnected] = useState(true)
 
   useEffect(() => {
@@ -108,7 +108,7 @@ function LoadingScreen ({
     return function cleanup () {
       unsubscribe()
     }
-  }, [])
+  })
 
   function cancelDownloads () {
     setLanguageCoreFilesDownloadProgress(0)
