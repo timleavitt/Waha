@@ -27,7 +27,7 @@ function mapStateToProps (state) {
 /**
  * This component renders the tab navigator that is used to display the 3 differnet Story Set tabs.
  */
-function SetsTabs ({
+const SetsTabs = ({
   // Props passed from redux.
   activeGroup,
   translations,
@@ -35,7 +35,7 @@ function SetsTabs ({
   font,
   primaryColor,
   isRTL
-}) {
+}) => {
   // Only dispaly the Mobilization Tools screen if the Mobilization Tools tab has been enabled for this group from the Mobilization Tools screen.
   var MobilizationToolsScreen = activeGroup.shouldShowMobilizationToolsTab ? (
     <Tab.Screen
