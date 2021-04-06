@@ -115,7 +115,7 @@ const MobilizationToolsUnlockScreen = ({
       Keyboard.dismiss()
       setAreMobilizationToolsUnlocked(true)
       // setUnlockSuccessModal(true)
-      navigate('MTUnlockSuccessful')
+      // navigate('MTUnlockSuccessful')
 
       // Object.keys(database).forEach(key => {
       //   // Go through each language.
@@ -141,10 +141,9 @@ const MobilizationToolsUnlockScreen = ({
       //     }
       //   }
       // })
-
-      // setShowMTTabAddedSnackbar(true)
+      navigate('SetsTabs', { screen: 'MobilizationTools' })
+      setShowMTTabAddedSnackbar(true)
       // setTimeout(() => setShowMTTabAddedSnackbar(false), 3000)
-      // navigate('SetsTabs', { screen: 'MobilizationTools' })
     } else {
       setMTUnlockAttempts(mtUnlockAttempts + 1)
       // Make the input component "shake" when they enter in a wrong code.
