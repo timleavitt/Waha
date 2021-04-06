@@ -41,7 +41,7 @@ export function groups (state = [], params) {
           // Set the recent Foundational or Mobilization Tool set and the set bookmark to the Set 1.1.
           recentCoreOrTool: params.language + '.1.1',
           setBookmark: params.language + '.1.1',
-          // Adds the first 2 sets automatically.
+          // Adds the first 2 Foundational Story Sets automatically as well as the first 2 Mobilization Tools Sets. Even though the user won't see the MT Sets yet, we add them now, so that when they unlock the MTs later, the sets show up automatically.
           addedSets: [
             {
               id: params.language + '.1.1',
@@ -52,9 +52,18 @@ export function groups (state = [], params) {
               id: params.language + '.1.2',
               progress: [],
               bookmark: 1
+            },
+            {
+              id: params.language + '.3.1',
+              progress: [],
+              bookmark: 1
+            },
+            {
+              id: params.language + '.3.2',
+              progress: [],
+              bookmark: 1
             }
-          ],
-          shouldShowMobilizationToolsTab: false
+          ]
         }
       ]
     case EDIT_GROUP:

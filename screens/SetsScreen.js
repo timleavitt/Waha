@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native'
+import SnackBar from 'react-native-snackbar-component'
 import { connect } from 'react-redux'
 import SetItem from '../components/list-items/SetItem'
 import { getSetInfo, scaleMultiplier } from '../constants'
@@ -27,8 +28,13 @@ function mapStateToProps (state) {
     // For testing.
     languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes,
     globalGroupCounter: state.database.globalGroupCounter,
-    languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
+    languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate,
+    showMTTabAddedSnackbar: state.popups.showMTTabAddedSnackbar
   }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {}
 }
 
 /**
@@ -47,7 +53,8 @@ const SetsScreen = ({
   font,
   languageCoreFilesCreatedTimes,
   globalGroupCounter,
-  languageCoreFilesToUpdate
+  languageCoreFilesToUpdate,
+  showMTTabAddedSnackbar
 }) => {
   /** Keeps track of the text displayed on the add set button. Changes depending on what category we're in. */
   const [addNewSetLabel, setAddNewSetLabel] = useState('')
@@ -57,6 +64,9 @@ const SetsScreen = ({
 
   /** Keeps track of all of the files the user has downloaded to the user's device. This is used to verify that all the required question set mp3s are downloaded for the sets that have been added. */
   const [downloadedFiles, setDownloadedFiles] = useState([])
+
+  /** Whether the snackbar that pops up upon unlocking the mobilization tools is visible or not.  */
+  const [showSnackbar, setShowSnackbar] = useState(false)
 
   /** useEffect function that sets the setCategory state and the addNewSetLabel state based off the category (which is passed via the route name declared in SetTabs.js). Updates whenever the activeGroup changes. */
   useEffect(() => {
@@ -190,7 +200,7 @@ const SetsScreen = ({
   }
 
   // A button that goes at the bottom of each list of sets that allows the user to add a new set.
-  var addSetButton = (
+  const renderAddSetButton = () => (
     <TouchableOpacity
       style={[
         styles.addSetButtonContainer,
@@ -238,24 +248,35 @@ const SetsScreen = ({
     </TouchableOpacity>
   )
 
+  const renderNoMTButton = () => (
+    <View style={{ width: '100%', height: 80 * scaleMultiplier, padding: 20 }}>
+      <Text
+        style={StandardTypography(
+          { font, isRTL },
+          'p',
+          'Regular',
+          'center',
+          colors.chateau
+        )}
+      >
+        {translations.mobilization_tools.no_mobilization_tools_content_text}
+        {/* Content currently not available for this language */}
+      </Text>
+    </View>
+  )
+
   /**
    * Renders a setItem component.
    * @param {Object} set - The object of the set to render.
    * @return {Component} - The setItem component.
    */
-  function renderSetItem (set) {
-    return (
-      <SetItem
-        thisSet={set}
-        screen='Sets'
-        onSetSelect={() =>
-          navigate('Lessons', {
-            thisSet: set
-          })
-        }
-      />
-    )
-  }
+  const renderSetItem = set => (
+    <SetItem
+      thisSet={set}
+      screen='Sets'
+      onSetSelect={() => navigate('Lessons', { thisSet: set })}
+    />
+  )
 
   return (
     <View style={styles.screen}>
@@ -264,7 +285,24 @@ const SetsScreen = ({
         renderItem={({ item }) => renderSetItem(item)}
         // Re-render the FlatList whenever the active group changes.
         extraData={activeGroup}
-        ListFooterComponent={addSetButton}
+        ListFooterComponent={
+          // If we're in the Mobilization Tab AND this language doesn't have any MT content, display a "No MT Content" component. Otherwise, show the add Stor Set button.
+          category === 'MobilizationTools' &&
+          !activeDatabase.sets.some(set => /[a-z]{2}.3.[0-9]+/.test(set.id))
+            ? renderNoMTButton
+            : renderAddSetButton
+        }
+      />
+      <SnackBar
+        visible={showMTTabAddedSnackbar}
+        textMessage='Mobilization tab added!'
+        messageStyle={{
+          color: colors.white,
+          fontSize: 24 * scaleMultiplier,
+          fontFamily: font + '-Black',
+          textAlign: 'center'
+        }}
+        backgroundColor={colors.apple}
       />
     </View>
   )
@@ -285,4 +323,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps)(SetsScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(SetsScreen)

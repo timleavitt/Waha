@@ -36,7 +36,8 @@ function mapStateToProps (state) {
     translations: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     activeGroup: activeGroupSelector(state),
-    globalGroupCounter: state.database.globalGroupCounter
+    globalGroupCounter: state.database.globalGroupCounter,
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked
   }
 }
 
@@ -76,6 +77,7 @@ const AddEditGroupModal = ({
   font,
   activeGroup,
   globalGroupCounter,
+  areMobilizationToolsUnlocked,
   editGroup,
   createGroup,
   changeActiveGroup,

@@ -19,7 +19,11 @@ import {
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
-import { changeActiveGroup, deleteGroup } from '../redux/actions/groupsActions'
+import {
+  addSet,
+  changeActiveGroup,
+  deleteGroup
+} from '../redux/actions/groupsActions'
 import { updateConnectionStatus } from '../redux/actions/networkActions'
 import {
   activeDatabaseSelector,
@@ -46,7 +50,8 @@ function mapStateToProps (state) {
     groups: state.groups,
     installedLanguageInstances: Object.keys(state.database).filter(
       key => key.length === 2
-    )
+    ),
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked
   }
 }
 
@@ -73,7 +78,10 @@ function mapDispatchToProps (dispatch) {
     storeLanguageCoreFileCreatedTime: (fileName, timeCreated) =>
       dispatch(storeLanguageCoreFileCreatedTime(fileName, timeCreated)),
     clearLanguageCoreFilesToUpdate: () =>
-      dispatch(clearLanguageCoreFilesToUpdate())
+      dispatch(clearLanguageCoreFilesToUpdate()),
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
+    }
   }
 }
 
@@ -95,6 +103,7 @@ const MainDrawer = ({
   downloads,
   groups,
   installedLanguageInstances,
+  areMobilizationToolsUnlocked,
   updateConnectionStatus,
   storeLanguageData,
   storeLanguageSets,
@@ -102,8 +111,9 @@ const MainDrawer = ({
   changeActiveGroup,
   deleteGroup,
   storeLanguageCoreFileCreatedTime,
-  clearLanguageCoreFilesToUpdate
-}) => {
+  clearLanguageCoreFilesToUpdate,
+  addSet
+}) {
   /**
    * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the SetsTabs navigator because this is the only spot we should be able to swipe to open the drawer.
    * @param {string} route - The route passed from the navigation component.
@@ -156,6 +166,16 @@ const MainDrawer = ({
       })
     })
   }
+
+  // (TEMP) Add MT Sets to all groups.
+  useEffect(() => {
+    groups.forEach(group => {
+      if (!group.addedSets.some(set => set.id === group.language + '.3.1')) {
+        addSet(group.name, group.id, { id: group.language + '.3.1' })
+        addSet(group.name, group.id, { id: group.language + '.3.2' })
+      }
+    })
+  }, [])
 
   // Check for database updates for other installed languages besides the active one.
   useEffect(() => {

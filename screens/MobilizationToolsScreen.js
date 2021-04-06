@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Alert,
-  Clipboard,
-  SectionList,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native'
+import { Alert, Clipboard, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import GroupListHeaderMT from '../components/list-headers/GroupListHeaderMT'
 import GroupItemMT from '../components/list-items/GroupItemMT'
@@ -213,27 +206,54 @@ const MobilizationToolsScreen = ({
   return (
     <View style={styles.screen}>
       {/* Before the Mobilization Tools are unlocked, we want to show a simple blurb and a button to navigate to the unlocking screen. Once the Mobilization Tools are unlocked, we don't show these. */}
-      {areMobilizationToolsUnlocked ? null : (
-        <View style={{ width: '100%' }}>
-          <Blurb
-            text={translations.mobilization_tools.mobilization_tools_pre_unlock}
-          />
-          <Separator />
-          <WahaItem
-            title={translations.mobilization_tools.unlock_mt_button_label}
-            onPress={() => navigate('MobilizationToolsUnlock')}
-          >
-            <Icon
-              name={isRTL ? 'arrow-left' : 'arrow-right'}
-              color={colors.tuna}
-              size={50 * scaleMultiplier}
-            />
-          </WahaItem>
-          <Separator />
-        </View>
-      )}
+      {/* {areMobilizationToolsUnlocked ? null : ( */}
+      {/* <View style={{ width: '100%' }}> */}
+      <Hero source={require('../assets/gifs/unlock_mob_tools.gif')} />
+      <Blurb
+        text={
+          areMobilizationToolsUnlocked
+            ? translations.mobilization_tools.mobilization_tools_vision
+            : translations.mobilization_tools.mobilization_tools_pre_unlock
+        }
+      />
+      <Separator />
+      <WahaItem
+        title={
+          areMobilizationToolsUnlocked
+            ? translations.mobilization_tools.view_code_button_label
+            : translations.mobilization_tools.unlock_mt_button_label
+        }
+        onPress={
+          areMobilizationToolsUnlocked
+            ? () =>
+                Alert.alert(
+                  translations.mobilization_tools.mt_code_title,
+                  '281820',
+                  [
+                    {
+                      text: translations.general.copy_to_clipboard,
+                      onPress: () => Clipboard.setString('281820')
+                    },
+                    {
+                      text: translations.general.close,
+                      onPress: () => {}
+                    }
+                  ]
+                )
+            : () => navigate('MobilizationToolsUnlock')
+        }
+      >
+        <Icon
+          name={isRTL ? 'arrow-left' : 'arrow-right'}
+          color={colors.tuna}
+          size={50 * scaleMultiplier}
+        />
+      </WahaItem>
+      <Separator />
+      {/* </View> */}
+      {/* )} */}
       {/* Once the Mobilization Tools are unlocked, we want to show a SectionList of all the groups with the option to enable the Mobilization Tools tab for that group. We also want to render a large header section with a hero, blurb, and button to view the unlock code. The reason this is a list header and not separate from the list is so that the entire screen can scroll. Otherwise, small phones would have a tiny window to view the section list.*/}
-      <View style={{ width: '100%', flex: 1 }}>
+      {/* <View style={{ width: '100%', flex: 1 }}>
         {areMobilizationToolsUnlocked ? (
           <SectionList
             bounces={false}
@@ -263,7 +283,7 @@ const MobilizationToolsScreen = ({
             }
           />
         ) : null}
-      </View>
+      </View> */}
     </View>
   )
 }

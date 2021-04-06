@@ -7,9 +7,9 @@ import { groups } from './reducers/groups'
 import { isInstallingLanguageInstance } from './reducers/isInstallingLanguageInstance'
 import { mtUnlockAttempts } from './reducers/mtUnlockAttempts'
 import { network } from './reducers/network'
+import { popups } from './reducers/popups'
 import { security } from './reducers/security'
 import { storedDownloads } from './reducers/storedDownloads'
-
 /**
  * Combines all the different reducers together using the combineReducers redux function.
  */
@@ -23,5 +23,6 @@ export default rootReducer = combineReducers({
   areMobilizationToolsUnlocked,
   security,
   mtUnlockAttempts,
-  storedDownloads
+  storedDownloads,
+  popups
 })
