@@ -31,7 +31,7 @@ function mapStateToProps (state) {
   }
 }
 
-function AlbumArtSwiper ({
+const AlbumArtSwiper = ({
   // Props passed from a parent component.
   setAlbumArtSwiperRef,
   iconName,
@@ -46,7 +46,7 @@ function AlbumArtSwiper ({
   font,
   translations,
   isRTL
-}) {
+}) => {
   // keeps track of whether we're in the middle pane or not
   const [isMiddle, setIsMiddle] = useState(true)
 
@@ -83,7 +83,7 @@ function AlbumArtSwiper ({
       setLayoutWidth(240)
       setMarginWidth(200)
     }
-  }, [])
+  })
 
   function getTextData (key) {
     if (key === '2') {

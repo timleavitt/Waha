@@ -23,7 +23,7 @@ function mapDispatchToProps (dispatch) {
 
 // renders the icon on the right side of lesson item that shows the download
 //  status
-function DownloadStatusIndicator ({
+const DownloadStatusIndicator = ({
   // Props passed from a parent component.s
   isDownloaded,
   isDownloading,
@@ -35,7 +35,7 @@ function DownloadStatusIndicator ({
   isConnected,
   downloads,
   removeDownload
-}) {
+}) => {
   //+ RENDER
 
   // HERE'S WHAT IS GOING ON

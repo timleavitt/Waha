@@ -22,7 +22,7 @@ function mapStateToProps (state) {
  * @param {Function} navigate - Copy of the navigation.navigate() function so we can use it in this component.
  * @param {Object[]} languageAndGroupData - An array of all the installed language instances and their groups.
  */
-function AddNewLanguageInstanceButton ({
+const AddNewLanguageInstanceButton = ({
   // Props passed from a parent component.
   navigate,
   languageAndGroupData,
@@ -30,7 +30,7 @@ function AddNewLanguageInstanceButton ({
   isRTL,
   font,
   translations
-}) {
+}) => {
   return (
     <TouchableOpacity
       style={[
