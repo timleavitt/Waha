@@ -180,6 +180,10 @@ const PlayScreen = ({
 
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
 
+  const [titleBackgroundColor, setTitleBackgroundColor] = useState(
+    lessonType === '' ? colors.porcelain : colors.white
+  )
+
   function getNavOptions () {
     return {
       headerTitle: getLessonInfo('subtitle', thisLesson.id),
@@ -735,19 +739,33 @@ const PlayScreen = ({
         {/* Suuuuuuuuuuuuuuuper long lesson title is slightly too long */}
       </TextTicker>
       <LinearGradient
-        colors={[colors.white, colors.white + '00']}
+        colors={[titleBackgroundColor, titleBackgroundColor + '00']}
         start={[0, 1]}
         end={[1, 1]}
         style={styles.leftGradient}
       />
-      <View style={styles.leftGradientFiller} />
+      <View
+        style={[
+          styles.leftGradientFiller,
+          {
+            backgroundColor: titleBackgroundColor
+          }
+        ]}
+      />
       <LinearGradient
-        colors={[colors.white, colors.white + '00']}
+        colors={[titleBackgroundColor, titleBackgroundColor + '00']}
         start={[1, 0]}
         end={[0, 0]}
         style={styles.rightGradient}
       />
-      <View style={styles.rightGradientFiller} />
+      <View
+        style={[
+          styles.rightGradientFiller,
+          {
+            backgroundColor: titleBackgroundColor
+          }
+        ]}
+      />
     </View>
   )
 
