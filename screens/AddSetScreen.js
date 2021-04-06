@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FlatList, LogBox, StyleSheet, Text, View } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
 import TagGroup from 'react-native-tag-group'
@@ -79,13 +79,19 @@ const AddSetScreen = ({
   /** Keeps track of all the downloaded question set mp3s. We need this to verify that all the required question set mp3s are installed for the various Story Sets.*/
   const [downloadedFiles, setDownloadedFiles] = useState([])
 
+  const setData = useMemo(() => getSetData(), [
+    activeGroup.addedSets,
+    selectedTag,
+    downloadedFiles
+  ])
+
   /** useEffect function that sets the headerTitle state as well as fetching the tags if we're displaying Topical Story Sets. */
   useEffect(() => {
     switch (category) {
-      case 'foundational':
+      case 'Foundational':
         setHeaderTitle(translations.add_set.header_foundational)
         break
-      case 'topical':
+      case 'Topical':
         setHeaderTitle(translations.add_set.header_topical)
 
         // Start off array of tags with the 'All' label since we always display that option.
@@ -93,7 +99,7 @@ const AddSetScreen = ({
 
         // Go through each Topical Story Set and add all the various tags to our tag array.
         activeDatabase.sets
-          .filter(set => getSetInfo('category', set.id) === 'topical')
+          .filter(set => getSetInfo('category', set.id) === 'Topical')
           .forEach(topicalSet => {
             topicalSet.tags.forEach(tag => {
               // If we find a tag that hasn't been added yet, add it.
@@ -102,7 +108,7 @@ const AddSetScreen = ({
           })
         setTags(tags)
         break
-      case 'mobilization tools':
+      case 'MobilizationTools':
         setHeaderTitle(translations.add_set.header_mt)
         break
     }
@@ -259,28 +265,30 @@ const AddSetScreen = ({
   )
 
   /** Renders a <SetItem /> for the list of sets available to add. */
-  const renderSetItem = setList => (
-    <SetItem
-      thisSet={setList.item}
-      screen='AddSet'
-      onSetSelect={() => {
-        setSetInModal(setList.item)
-        setShowSetInfoModal(true)
-      }}
-    />
-  )
+  const renderSetItem = useCallback(({ item }) => {
+    return (
+      <SetItem
+        thisSet={item}
+        screen='AddSet'
+        onSetSelect={() => {
+          setSetInModal(item)
+          setShowSetInfoModal(true)
+        }}
+      />
+    )
+  }, [])
 
   return (
     <View style={styles.screen}>
       {category === 'topical' ? tagsComponent : null}
       <FlatList
         style={{ flex: 1 }}
-        data={getSetData()}
+        data={setData}
         ItemSeparatorComponent={() => <Separator />}
         ListFooterComponent={() => <Separator />}
         ListHeaderComponent={() => <Separator />}
         renderItem={renderSetItem}
-        ListEmptyComponent={
+        ListEmptyComponent={() => (
           <View style={{ width: '100%', marginVertical: 20 }}>
             <Text
               style={StandardTypography(
@@ -294,7 +302,7 @@ const AddSetScreen = ({
               {translations.add_set.no_more_sets_text}
             </Text>
           </View>
-        }
+        )}
       />
       {/* Modals */}
       <SnackBar
