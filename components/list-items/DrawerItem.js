@@ -23,7 +23,7 @@ function mapStateToProps (state) {
  * @param {string} props.icon - The name of the icon to display on the drawer item.
  * @param {string} props.label - The label to display on the drawer item.
  */
-function DrawerItem ({
+const DrawerItem = ({
   // Props passed from a parent component.
   onPress,
   icon,
@@ -32,7 +32,7 @@ function DrawerItem ({
   isRTL,
   font,
   activeGroup
-}) {
+}) => {
   return (
     <TouchableOpacity
       style={[

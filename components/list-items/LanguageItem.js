@@ -5,7 +5,7 @@ import { getSystemIsRTL, scaleMultiplier } from '../../constants'
 import { colors } from '../../styles/colors'
 import { SystemTypography } from '../../styles/typography'
 
-function LanguageItem ({
+const LanguageItem = ({
   // Props passed from a parent component.
   nativeName,
   localeName,
@@ -14,7 +14,7 @@ function LanguageItem ({
   onPress,
   isSelected,
   playAudio
-}) {
+}) => {
   // FUNCTIONS
   var iconComponent = isSelected ? (
     <View style={{ marginHorizontal: 20 }}>

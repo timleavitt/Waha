@@ -11,11 +11,11 @@ function mapStateToProps (state) {
   }
 }
 
-function ScreenHeaderImage ({
+const ScreenHeaderImage = ({
   // Props passed from redux.
   activeGroup,
   database
-}) {
+}) => {
   return (
     <Image
       style={{

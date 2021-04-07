@@ -20,7 +20,7 @@ function mapStateToProps (state) {
   }
 }
 
-function ShareModal ({
+const ShareModal = ({
   // Props passed from a parent component.s
   isVisible,
   hideModal,
@@ -32,7 +32,7 @@ function ShareModal ({
   translations,
   downloads,
   activeGroup
-}) {
+}) => {
   // opens the share sheet to share a chapter of a lesson
   function share (type) {
     switch (type) {

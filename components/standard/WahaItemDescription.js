@@ -17,14 +17,14 @@ function mapStateToProps (state) {
   }
 }
 
-function WahaItemDescription ({
+const WahaItemDescription = ({
   // Props passed from a parent component.
   text,
   // Props passed from redux.
   font,
   isRTL,
   activeGroup
-}) {
+}) => {
   return (
     <View
       style={{

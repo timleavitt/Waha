@@ -19,7 +19,7 @@ import { colors } from '../styles/colors'
 import { getLanguageFont } from '../styles/typography'
 
 // modal variant that shows some information
-function HomeworkModal (props) {
+const HomeworkModal = props => {
   function renderHomeworkItem (homeworkList) {
     return (
       <HomeworkItem

@@ -100,13 +100,13 @@ export function getLessonInfo (type, lessonID) {
     case 'category':
       switch (idComponents[1]) {
         case '1':
-          return 'foundational'
+          return 'Foundational'
           break
         case '2':
-          return 'topical'
+          return 'Topical'
           break
         case '3':
-          return 'mobilization tools'
+          return 'MobilizationTools'
           break
       }
       break
@@ -152,13 +152,13 @@ export function getSetInfo (type, setID) {
     case 'category':
       switch (idComponents[1]) {
         case '1':
-          return 'foundational'
+          return 'Foundational'
           break
         case '2':
-          return 'topical'
+          return 'Topical'
           break
         case '3':
-          return 'mobilization tools'
+          return 'MobilizationTools'
           break
       }
       break

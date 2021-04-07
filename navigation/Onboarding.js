@@ -12,7 +12,7 @@ const Stack = createStackNavigator()
 /**
  * This component renders the stack navigator used for the initial onboarding screens. This navigator is the first thing the user sees when they open the app for the first time. It contains the language instance install screen, the onboarindg slides screen, and the loading screen.
  */
-function Onboarding () {
+const Onboarding = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator

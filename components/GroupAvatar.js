@@ -4,20 +4,23 @@ import { groupIconSources } from '../assets/groupIcons/_groupIcons'
 import { scaleMultiplier } from '../constants'
 import { colors } from '../styles/colors'
 
-// component for a group's avatar
-function GroupAvatar ({
+/**
+ * Component to display a group's avatar (emoji) in a little circle.
+ * @param {Object} style - Extra style props for the component. Generally used to set the background color.
+ * @param {string} emoji - The name of this group's emoji. Full list can be found in `../assets/groupIcons/_groupIcons.js`.
+ * @param {number} size - The size of the component.
+ * @param {Function} onPress - Function to trigger when the user taps on the component. Optional, so defaults to null.
+ * @param {boolean} isActive - Whether the group we're displaying the avatar for is the currently active group or not. We display a blue circle around it if it is.
+ */
+const GroupAvatar = ({
   style,
   emoji,
   size,
   onPress = null,
   isActive = false
-}) {
-  //+ RENDER
-
-  // renders the emoji in a group icon
-  // if it's default, show the standard group icon
-  // otherwise, show the custom icon that's stored in the group redux
-  var emoji =
+}) => {
+  // The component for the emoji itself. We have to have conditional logic here because the default group emoji is an icon but the rest are all images.
+  const emojiComponent =
     emoji === 'default' ? (
       <Icon
         name='group'
@@ -43,44 +46,28 @@ function GroupAvatar ({
       </View>
     )
 
-  // if we have something for onPress, make the avatar image touchable
-  // note: only time it's touchable is when used in the set screen header to
-  //  open the drawer
+  // Style object for the group avatar container. We define it here instead of in a StyleSheet object because most of it requires information from props.
+  const groupAvatarContainerStyle = {
+    borderColor: isActive ? colors.blue : null,
+    borderWidth: isActive ? 2 : null,
+    borderRadius: (size * scaleMultiplier) / 2 + 5,
+    width: size * scaleMultiplier + 5,
+    height: size * scaleMultiplier + 5,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
+
+  // If we have an onPress function, render the component as a <TouchableOpacity/>. Otherwise, render it as a <View/>.
   return onPress ? (
     <TouchableOpacity
-      style={[
-        style,
-        {
-          borderColor: isActive ? colors.blue : null,
-          borderWidth: isActive ? 2 : null,
-          width: size * scaleMultiplier + 5,
-          height: size * scaleMultiplier + 5,
-          borderRadius: (size * scaleMultiplier) / 2 + 5,
-          alignItems: 'center',
-          justifyContent: 'center'
-        }
-      ]}
+      style={[style, groupAvatarContainerStyle]}
       onPress={onPress}
     >
-      {emoji}
+      {emojiComponent}
     </TouchableOpacity>
   ) : (
-    <View
-      style={[
-        style,
-        {
-          borderColor: isActive ? colors.blue : null,
-          borderWidth: isActive ? 2 : null,
-          width: size * scaleMultiplier + 5,
-          height: size * scaleMultiplier + 5,
-          borderRadius: (size * scaleMultiplier) / 2 + 5,
-          alignItems: 'center',
-          justifyContent: 'center'
-        }
-      ]}
-      onPress={onPress}
-    >
-      {emoji}
+    <View style={[style, groupAvatarContainerStyle]} onPress={onPress}>
+      {emojiComponent}
     </View>
   )
 }

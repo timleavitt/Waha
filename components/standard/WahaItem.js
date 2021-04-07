@@ -17,7 +17,7 @@ function mapStateToProps (state) {
   }
 }
 
-function WahaItem ({
+const WahaItem = ({
   // Props passed from a parent component.s
   onPress,
   style = {},
@@ -27,7 +27,7 @@ function WahaItem ({
   font,
   isRTL,
   activeGroup
-}) {
+}) => {
   return onPress ? (
     <TouchableOpacity
       style={[

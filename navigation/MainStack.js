@@ -23,6 +23,7 @@ import LessonsScreen from '../screens/LessonsScreen'
 import LoadingScreen from '../screens/LoadingScreen'
 import MobilizationToolsScreen from '../screens/MobilizationToolsScreen'
 import MobilizationToolsUnlockScreen from '../screens/MobilizationToolsUnlockScreen'
+import MTUnlockSuccessfulScreen from '../screens/MTUnlockSuccessfulScreen'
 import PianoAppScreen from '../screens/PianoAppScreen'
 import PlayScreen from '../screens/PlayScreen'
 import SecurityModeScreen from '../screens/SecurityModeScreen'
@@ -63,7 +64,7 @@ function mapDispatchToProps (dispatch) {
 /**
  * This component renders the main navigation stack used for almost all the screens in Waha. It also contains some logic related to things that happen globally in the background. The reason some logic would be here instead of in MainDrawer.js is because this component has access to the navigation prop.
  */
-function MainStack ({
+const MainStack = ({
   // Props passed from navigation.
   navigation: { navigate, goBack, toggleDrawer },
   // Props passed from redux.
@@ -75,7 +76,7 @@ function MainStack ({
   languageCoreFilesToUpdate,
   setTimer,
   setIsTimedOut
-}) {
+}) => {
   /** Keeps track of the current app state. Can be "active", "inactive", or "background". Set by the app state listener function. */
   const [appState, setAppState] = useState('')
 
@@ -495,6 +496,13 @@ function MainStack ({
             color: colors.shark,
             fontFamily: font + '-Bold'
           }
+        }}
+      />
+      <Stack.Screen
+        name='MTUnlockSuccessful'
+        component={MTUnlockSuccessfulScreen}
+        options={{
+          headerShown: false
         }}
       />
     </Stack.Navigator>

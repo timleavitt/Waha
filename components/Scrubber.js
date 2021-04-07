@@ -3,22 +3,22 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import TimeDisplay from '../components/TimeDisplay'
 import { colors } from '../styles/colors'
+
 // scrubber component rendered on play screen
-function Scrubber ({
+const Scrubber = ({
   // Props passed from a parent component.
-  value,
   onSlidingComplete,
   onValueChange,
   maximumValue,
   seekPosition
-}) {
-  //+ RENDER
+}) => {
+  console.log(`${Date.now()} Scrubber re-rendering.`)
 
   return (
     <View style={styles.scrubberContainer}>
       <View style={styles.scrubber}>
         <Slider
-          value={value}
+          value={seekPosition}
           onSlidingComplete={value => onSlidingComplete(value)}
           onValueChange={onValueChange}
           minimumValue={0}
@@ -56,5 +56,12 @@ const styles = StyleSheet.create({
     width: '100%'
   }
 })
+
+const areEqual = (prevProps, nextProps) => {
+  return (
+    prevProps.seekPosition === nextProps.seekPosition &&
+    prevProps.maximumValue === nextProps.maximumValue
+  )
+}
 
 export default Scrubber

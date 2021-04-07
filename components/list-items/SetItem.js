@@ -40,7 +40,7 @@ function mapDispatchToProps (dispatch) {
  * @param {string} screen - The screen that the SetItem is used on. The set item is rendered slightly different on all the different screens it's used in. The options are: 1) Sets, 2) Lessons, 3) AddSet, and 4) SetInfo. The varieties used on each screen are described below.
  * @param {Function} onSetSelect - A function to fire when the set item is pressed. Can be null to make the item non-pressable.
  */
-function SetItem ({
+const SetItem = ({
   // Props passed from a parent component.
   thisSet,
   screen,
@@ -53,7 +53,7 @@ function SetItem ({
   activeGroup,
   translations,
   addSet
-}) {
+}) => {
   /** Stores the dynamic primary icon portion of the SetItem component. This contains a unique SVG that represents the set and changes between modes. */
   const [primaryIcon, setPrimaryIcon] = useState()
 
@@ -258,7 +258,7 @@ function SetItem ({
     // Firstly, we need to get the set after this one before we can do anything else.
     var nextSet = activeDatabase.sets.filter(
       dbSet =>
-        getSetInfo('category', dbSet.id) === 'foundational' &&
+        getSetInfo('category', dbSet.id) === 'Foundational' &&
         getSetInfo('index', dbSet.id) === getSetInfo('index', thisSet.id) + 1
     )[0]
 
@@ -266,14 +266,14 @@ function SetItem ({
     if (nextSet) {
       if (
         thisSetProgress > 0.85 &&
-        getSetInfo('category', thisSet.id) === 'foundational' &&
+        getSetInfo('category', thisSet.id) === 'Foundational' &&
         !activeGroup.addedSets.some(addedSet => addedSet.id === nextSet.id)
       ) {
         addSet(
           activeGroup.name,
           activeGroup.id,
           activeDatabase.sets
-            .filter(set => getSetInfo('category', set.id) === 'foundational')
+            .filter(set => getSetInfo('category', set.id) === 'Foundational')
             .filter(
               set =>
                 getSetInfo('index', set.id) ===

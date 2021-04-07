@@ -20,24 +20,26 @@ function mapStateToProps (state) {
     font: getLanguageFont(activeGroupSelector(state).language),
     primaryColor: activeDatabaseSelector(state).primaryColor,
     activeGroup: activeGroupSelector(state),
-    activeDatabase: activeDatabaseSelector(state)
+    activeDatabase: activeDatabaseSelector(state),
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked
   }
 }
 
 /**
  * This component renders the tab navigator that is used to display the 3 differnet Story Set tabs.
  */
-function SetsTabs ({
+const SetsTabs = ({
   // Props passed from redux.
   activeGroup,
   translations,
   activeDatabase,
   font,
   primaryColor,
-  isRTL
-}) {
+  isRTL,
+  areMobilizationToolsUnlocked
+}) => {
   // Only dispaly the Mobilization Tools screen if the Mobilization Tools tab has been enabled for this group from the Mobilization Tools screen.
-  var MobilizationToolsScreen = activeGroup.shouldShowMobilizationToolsTab ? (
+  var MobilizationToolsScreen = areMobilizationToolsUnlocked ? (
     <Tab.Screen
       name='MobilizationTools'
       component={SetsScreen}
@@ -75,26 +77,11 @@ function SetsTabs ({
    */
   function getBookmarkedTab () {
     // Get the category of the bookmarked set.
-    var bookmarkSetCategory = getSetInfo(
+    return getSetInfo(
       'category',
       activeDatabase.sets.filter(set => set.id === activeGroup.setBookmark)[0]
         .id
     )
-
-    // Return the correct name of the tab based on the category of the bookmarked set.
-    switch (bookmarkSetCategory) {
-      case 'foundational':
-        return 'Foundational'
-        break
-      case 'topical':
-        return 'Topical'
-        break
-      case 'mobilization tools':
-        return 'MobilizationTools'
-        break
-      default:
-        return 'Foundational'
-    }
   }
 
   return (

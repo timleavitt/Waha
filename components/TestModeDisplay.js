@@ -19,11 +19,11 @@ function mapStateToProps (state) {
 /**
  * This component displays some simple text that says "TEST MODE" whenever any of the modes in modeSwitch.js are set to "test". This is displayed in the corner on the opposite side of the group avatar on the SetsTabs screen.
  */
-function TestModeDisplay ({
+const TestModeDisplay = ({
   // Props passed from redux.
   font,
   isRTL
-}) {
+}) => {
   return (
     <View
       style={{

@@ -19,7 +19,7 @@ function mapStateToProps (state) {
 /**
  * The edit button that is displayed in the header on the Groups screen. Switches editingMode on or off when pressed.
  */
-function GroupsScreenEditButton ({
+const GroupsScreenEditButton = ({
   // Props passed from a parent component.
   onPress,
   isEditing,
@@ -27,7 +27,7 @@ function GroupsScreenEditButton ({
   isRTL,
   font,
   translations
-}) {
+}) => {
   return (
     <TouchableOpacity style={styles.editButtonContainer} onPress={onPress}>
       <Text

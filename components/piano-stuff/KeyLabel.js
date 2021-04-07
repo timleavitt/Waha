@@ -3,7 +3,7 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import { colors } from '../../styles/colors'
 import { StandardTypography } from '../../styles/typography'
 
-function KeyLabel ({ backgroundColor, style, number }) {
+const KeyLabel = ({ backgroundColor, style, number }) => {
   // RENDER
 
   return (

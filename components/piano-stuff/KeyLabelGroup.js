@@ -19,7 +19,7 @@ function mapStateToProps (state) {
   }
 }
 
-function KeyLabelGroup ({
+const KeyLabelGroup = ({
   // Props passed from a parent component.s
   keyOrder,
   // Props passed from redux.
@@ -27,7 +27,7 @@ function KeyLabelGroup ({
   security,
   isRTL,
   activeGroup
-}) {
+}) => {
   var keyLabel1 = keyOrder[1] ? (
     <KeyLabel
       backgroundColor={keyColors[keyOrder.substr(0, 2).replace(/^0/, '')]}

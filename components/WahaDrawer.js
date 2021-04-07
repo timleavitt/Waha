@@ -45,7 +45,7 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-function WahaDrawer ({
+const WahaDrawer = ({
   // Props passed from navigation.
   navigation: { navigate },
   // Props passed from redux.
@@ -60,7 +60,7 @@ function WahaDrawer ({
   setIsInstallingLanguageInstance,
   storeDownloads,
   setHasFetchedLanguageData
-}) {
+}) => {
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
 
   //+ FUNCTIONS
@@ -251,7 +251,7 @@ function WahaDrawer ({
         isVisible={showEditGroupModal}
         hideModal={() => setShowEditGroupModal(false)}
         type='EditGroup'
-        group={activeGroup}
+        thisGroup={activeGroup}
       />
     </SafeAreaView>
   )

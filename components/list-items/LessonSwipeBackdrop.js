@@ -13,14 +13,14 @@ function mapStateToProps (state) {
 
 // component rendered behind a lesson item that shows the swipe options
 
-function LessonSwipeBackdrop ({
+const LessonSwipeBackdrop = ({
   // Props passed from a parent component.s
   isComplete,
   toggleComplete,
   showShareModal,
   // Props passed from redux.
   isRTL
-}) {
+}) => {
   //+ RENDER
 
   // render complete button conditionally since it could be complete or incomplete

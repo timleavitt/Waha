@@ -19,14 +19,14 @@ function mapStateToProps (state) {
   }
 }
 
-function SecurityOnboardingSlidesScreen ({
+const SecurityOnboardingSlidesScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, navigate, goBack },
   translations,
   font,
   isRTL,
   activeGroup
-}) {
+}) => {
   //+ STATE
 
   //+ CONSTRUCTOR

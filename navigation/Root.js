@@ -39,7 +39,7 @@ function mapDispatchToProps (dispatch) {
 /**
  * This component renders a navigator conditionally based on state. It's the first thing rendered in App.js.
  */
-function Root ({
+const Root = ({
   // Props passed from redux.
   hasOnboarded,
   hasInstalledFirstLanguageInstance,
@@ -49,7 +49,7 @@ function Root ({
   database = null,
   changeActiveGroup,
   createGroup
-}) {
+}) => {
   // Below are some failsafes to keep the app functioning in case of group errors.
   if (activeGroup) {
     // If somehow, every group got deleted, create a new group in one of the installed languages so that the app can still function.

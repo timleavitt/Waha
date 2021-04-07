@@ -12,14 +12,14 @@ function mapStateToProps (state) {
 }
 
 // play, pause, and skip controls for play screen
-function PlaybackControls ({
+const PlaybackControls = ({
   // Props passed from a parent component.
   isMediaPlaying,
   onPlayPress,
   onSkipPress,
   // Props passed from redux.
   primaryColor
-}) {
+}) => {
   //+ RENDER
 
   return (

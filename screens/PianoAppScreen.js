@@ -44,7 +44,7 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-function PianoAppScreen ({
+const PianoAppScreen = ({
   // Props passed from navigation.
   navigation: { canGoBack, goBack, reset },
   // Props passed from redux.
@@ -55,7 +55,7 @@ function PianoAppScreen ({
   isRTL,
   setIsMuted,
   setIsTimedOut
-}) {
+}) => {
   //+ STATE
 
   const [pattern, setPattern] = useState('')

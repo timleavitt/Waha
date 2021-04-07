@@ -9,10 +9,10 @@ function mapStateToProps (state) {
   }
 }
 
-function ChapterSeparator ({
+const ChapterSeparator = ({
   // Props passed from redux.
   primaryColor
-}) {
+}) => {
   return (
     <View
       style={{

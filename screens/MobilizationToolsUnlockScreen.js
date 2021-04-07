@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Alert, Image, Keyboard, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
@@ -6,7 +6,9 @@ import BackButton from '../components/standard/BackButton'
 import { scaleMultiplier } from '../constants'
 import MessageModal from '../modals/MessageModal'
 import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
+import { addSet } from '../redux/actions/groupsActions'
 import { setMTUnlockAttempts } from '../redux/actions/mtUnlockAttemptsActions'
+import { setShowMTTabAddedSnackbar } from '../redux/actions/popupsActions'
 import { setMTUnlockTimeout } from '../redux/actions/securityActions'
 import {
   activeDatabaseSelector,
@@ -21,7 +23,9 @@ function mapStateToProps (state) {
     translations: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     security: state.security,
-    mtUnlockAttempts: state.mtUnlockAttempts
+    mtUnlockAttempts: state.mtUnlockAttempts,
+    groups: state.groups,
+    database: state.database
   }
 }
 
@@ -35,6 +39,12 @@ function mapDispatchToProps (dispatch) {
     },
     setMTUnlockAttempts: numAttempts => {
       dispatch(setMTUnlockAttempts(numAttempts))
+    },
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
+    },
+    setShowMTTabAddedSnackbar: toSet => {
+      dispatch(setShowMTTabAddedSnackbar(toSet))
     }
   }
 }
@@ -42,19 +52,23 @@ function mapDispatchToProps (dispatch) {
 /**
  * Screen that shows a simple passcode entry and allows the user to unlock the Mobilization Tools.
  */
-function MobilizationToolsUnlockScreen ({
+const MobilizationToolsUnlockScreen = ({
   // Props passed from navigation.
-  navigation: { setOptions, goBack },
+  navigation: { navigate, setOptions, goBack },
   // Props passed from redux.
   isRTL,
   translations,
   font,
   security,
   mtUnlockAttempts,
+  groups,
+  database,
   setAreMobilizationToolsUnlocked,
   setMTUnlockTimeout,
-  setMTUnlockAttempts
-}) {
+  setMTUnlockAttempts,
+  addSet,
+  setShowMTTabAddedSnackbar
+}) => {
   /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
     setOptions({
@@ -71,7 +85,7 @@ function MobilizationToolsUnlockScreen ({
   const [passcode, setPasscode] = useState('')
 
   /** A reference to the passcode entry component. */
-  const [pinRef, setPinRef] = useState()
+  const pinRef = useRef()
 
   /** Keeps track of whether the unlock success modal is visible. */
   const [unlockSuccessModal, setUnlockSuccessModal] = useState(false)
@@ -86,18 +100,54 @@ function MobilizationToolsUnlockScreen ({
     }
   }, [mtUnlockAttempts])
 
+  function checkForMTContent (languageID) {
+    var hasMTContent = database[languageID].sets.some(set => {
+      return /[a-z]{2}.3.[0-9]+/.test(set.id)
+    })
+    return hasMTContent
+  }
+
   /**
    * Checks if the passcode the user enters is correct. If it is, show the success modal. If not, add one to the attempts tracker and show an alert that the code is incorrect.
    */
   function checkPasscode (fullPasscode) {
     if (fullPasscode === '281820') {
       Keyboard.dismiss()
-      setUnlockSuccessModal(true)
       setAreMobilizationToolsUnlocked(true)
+      // setUnlockSuccessModal(true)
+      // navigate('MTUnlockSuccessful')
+
+      // Object.keys(database).forEach(key => {
+      //   // Go through each language.
+      //   if (key.length === 2) {
+      //     // If the language has MT content...
+      //     if (checkForMTContent(key)) {
+      //       // Get the first 2 MT Sets.
+      //       var mobToolsSet1 = database[key].sets.filter(set =>
+      //         /[a-z]{2}.3.1/.test(set.id)
+      //       )[0]
+
+      //       var mobToolsSet2 = database[key].sets.filter(set =>
+      //         /[a-z]{2}.3.2/.test(set.id)
+      //       )[0]
+
+      //       // Add the 2 MT Sets to every group in the language.
+      //       groups
+      //         .filter(group => group.language === key)
+      //         .forEach(group => {
+      //           addSet(group.name, group.id, mobToolsSet1)
+      //           addSet(group.name, group.id, mobToolsSet2)
+      //         })
+      //     }
+      //   }
+      // })
+      navigate('SetsTabs', { screen: 'MobilizationTools' })
+      setShowMTTabAddedSnackbar(true)
+      // setTimeout(() => setShowMTTabAddedSnackbar(false), 3000)
     } else {
       setMTUnlockAttempts(mtUnlockAttempts + 1)
       // Make the input component "shake" when they enter in a wrong code.
-      pinRef.shake().then(() => setPasscode(''))
+      pinRef.current.shake().then(() => setPasscode(''))
       Alert.alert(
         translations.passcode.popups.unlock_unsucessful_title,
         translations.passcode.popups.unlock_unsucessful_message,
@@ -152,7 +202,7 @@ function MobilizationToolsUnlockScreen ({
         {translations.passcode.enter_passcode_text}
       </Text>
       <SmoothPinCodeInput
-        ref={ref => setPinRef(ref)}
+        ref={pinRef}
         value={passcode}
         codeLength={6}
         autoFocus={true}
@@ -205,14 +255,14 @@ function MobilizationToolsUnlockScreen ({
         isVisible={unlockSuccessModal}
         hideModal={() => {
           setUnlockSuccessModal(false)
-          goBack()
+          navigate('SetsTabs', { screen: 'MobilizationTools' })
         }}
-        title={translations.passcode.popups.unlock_successful_title}
-        body={translations.passcode.popups.unlock_successful_message}
-        confirmText={translations.general.got_it}
+        title='Mobilization Tools unlocked successfully!'
+        body=''
+        confirmText='Check it out'
         confirmOnPress={() => {
           setUnlockSuccessModal(false)
-          goBack()
+          navigate('SetsTabs', { screen: 'MobilizationTools' })
         }}
       >
         <Image

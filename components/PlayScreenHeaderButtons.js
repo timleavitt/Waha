@@ -11,14 +11,14 @@ function mapStateToProps (state) {
   }
 }
 
-function PlayScreenHeaderButtons ({
+const PlayScreenHeaderButtons = ({
   // Props passed from a parent component.
   shareOnPress,
   completeOnPress,
   completeCondition,
   // Props passed from redux.
   isRTL
-}) {
+}) => {
   //+ RENDER
 
   return (

@@ -21,7 +21,7 @@ function mapStateToProps (state) {
   }
 }
 
-function LanguageStorageItem ({
+const LanguageStorageItem = ({
   // Props passed from a parent component.
   languageName,
   languageID,
@@ -32,7 +32,7 @@ function LanguageStorageItem ({
   isRTL,
   translations,
   activeGroup
-}) {
+}) => {
   return (
     <View style={styles.storageContainer}>
       <View
