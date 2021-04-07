@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   FlatList,
   Image,
@@ -240,77 +240,69 @@ const SetsScreen = ({
   }
 
   // A button that goes at the bottom of each list of sets that allows the user to add a new set.
-  const renderAddSetButton = useCallback(
-    () => (
-      <TouchableOpacity
-        style={[
-          styles.addSetButtonContainer,
-          { flexDirection: isRTL ? 'row-reverse' : 'row' }
-        ]}
-        onPress={() => navigate('AddSet', { category: category })}
-      >
-        <View
-          style={{
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: 80 * scaleMultiplier,
-            height: 80 * scaleMultiplier
-          }}
-        >
-          <Icon
-            name='plus'
-            size={60 * scaleMultiplier}
-            color={colors.chateau}
-            style={styles.addNewSetIcon}
-          />
-        </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            flexDirection: 'column',
-            marginRight: isRTL ? 20 : 0,
-            marginLeft: isRTL ? 0 : 20
-          }}
-        >
-          <Text
-            style={StandardTypography(
-              { font, isRTL },
-              'p',
-              'Regular',
-              'left',
-              colors.chateau
-            )}
-          >
-            {addNewSetLabel}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    ),
-    []
-  )
-
-  const renderNoMTButton = useCallback(
-    () => (
+  const renderAddSetButton = () => (
+    <TouchableOpacity
+      style={[
+        styles.addSetButtonContainer,
+        { flexDirection: isRTL ? 'row-reverse' : 'row' }
+      ]}
+      onPress={() => navigate('AddSet', { category: category })}
+    >
       <View
-        style={{ width: '100%', height: 80 * scaleMultiplier, padding: 20 }}
+        style={{
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: 80 * scaleMultiplier,
+          height: 80 * scaleMultiplier
+        }}
+      >
+        <Icon
+          name='plus'
+          size={60 * scaleMultiplier}
+          color={colors.chateau}
+          style={styles.addNewSetIcon}
+        />
+      </View>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          flexDirection: 'column',
+          marginRight: isRTL ? 20 : 0,
+          marginLeft: isRTL ? 0 : 20
+        }}
       >
         <Text
           style={StandardTypography(
             { font, isRTL },
             'p',
             'Regular',
-            'center',
+            'left',
             colors.chateau
           )}
         >
-          {translations.mobilization_tools.no_mobilization_tools_content_text}
-          {/* Content currently not available for this language */}
+          {addNewSetLabel}
         </Text>
       </View>
-    ),
-    []
+    </TouchableOpacity>
+  )
+
+  const renderNoMTButton = () => (
+    <View style={{ width: '100%', height: 80 * scaleMultiplier, padding: 20 }}>
+      <Text
+        style={StandardTypography(
+          { font, isRTL },
+          'p',
+          'Regular',
+          'center',
+          colors.chateau
+        )}
+      >
+        {translations.mobilization_tools.no_mobilization_tools_content_text}
+        {/* Content currently not available for this language */}
+      </Text>
+    </View>
   )
 
   /**
@@ -318,26 +310,21 @@ const SetsScreen = ({
    * @param {Object} set - The object of the set to render.
    * @return {Component} - The setItem component.
    */
-  const renderSetItem = useCallback(({ item }) => {
-    return (
-      <SetItem
-        thisSet={item}
-        screen='Sets'
-        onSetSelect={() => navigate('Lessons', { thisSet: item })}
-      />
-    )
-  }, [])
-
-  const getItemLayout = useCallback(
-    (data, index) => ({
-      length: itemHeights[font].SetItem,
-      offset: itemHeights[font].SetItem * index,
-      index
-    }),
-    []
+  const renderSetItem = ({ item }) => (
+    <SetItem
+      thisSet={item}
+      screen='Sets'
+      onSetSelect={() => navigate('Lessons', { thisSet: item })}
+    />
   )
 
-  const keyExtractor = useCallback(item => item.id, [])
+  const getItemLayout = (data, index) => ({
+    length: itemHeights[font].SetItem,
+    offset: itemHeights[font].SetItem * index,
+    index
+  })
+
+  const keyExtractor = item => item.id
 
   return (
     <View style={styles.screen}>

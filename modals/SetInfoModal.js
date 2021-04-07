@@ -62,12 +62,12 @@ const SetInfoModal = ({
   addSet
 }) => {
   /** Renders a item with the information for a lesson. */
-  const renderLessonInfoItem = lesson => {
+  const renderLessonInfoItem = ({ item }) => {
     // If lesson has scripture, format the list of scripture to be a string with the scripture addresses separated by commas.
-    if (lesson.scripture) {
-      var scriptureList = lesson.scripture[0].header
+    if (item.scripture) {
+      var scriptureList = item.scripture[0].header
 
-      lesson.scripture.forEach((passage, index) => {
+      item.scripture.forEach((passage, index) => {
         if (index !== 0) scriptureList += ', ' + passage.header
       })
     }
@@ -93,11 +93,11 @@ const SetInfoModal = ({
             colors.shark
           )}
         >
-          {lesson.title}
+          {item.title}
         </Text>
 
         {/* Display list of scripture below the title if this lesson has scripture (not all of them do). */}
-        {lesson.scripture && (
+        {item.scripture && (
           <Text
             style={StandardTypography(
               { font, isRTL },
@@ -113,6 +113,8 @@ const SetInfoModal = ({
       </TouchableOpacity>
     )
   }
+
+  const keyExtractor = item => item.id
 
   return (
     <ModalScreen
@@ -144,9 +146,9 @@ const SetInfoModal = ({
       />
       <View style={{ flex: 1 }}>
         <FlatList
-          keyExtractor={item => item.id}
+          keyExtractor={keyExtractor}
           data={thisSet.lessons}
-          renderItem={({ item }) => renderLessonInfoItem(item)}
+          renderItem={renderLessonInfoItem}
           contentContainerStyle={{ flexGrow: 1 }}
         />
       </View>

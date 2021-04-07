@@ -190,7 +190,7 @@ const AddEditGroupModal = ({
   }
 
   /** Renders an emoji for the emoji select <FlatList />. */
-  const renderEmoji = emoji => (
+  const renderEmoji = ({ item }) => (
     <TouchableOpacity
       style={{
         width: 50 * scaleMultiplier,
@@ -198,19 +198,19 @@ const AddEditGroupModal = ({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 2,
-        borderWidth: emoji === emojiInput ? 2 : 0,
-        borderColor: emoji === emojiInput ? colors.blue : null,
+        borderWidth: item === emojiInput ? 2 : 0,
+        borderColor: item === emojiInput ? colors.blue : null,
         borderRadius: 10,
-        backgroundColor: emoji === emojiInput ? colors.blue + '38' : null
+        backgroundColor: item === emojiInput ? colors.blue + '38' : null
       }}
-      onPress={() => setEmojiInput(emoji)}
+      onPress={() => setEmojiInput(item)}
     >
       <Image
         style={{
           width: 40 * scaleMultiplier,
           height: 40 * scaleMultiplier
         }}
-        source={groupIconSources[emoji]}
+        source={groupIconSources[item]}
       />
     </TouchableOpacity>
   )
@@ -331,7 +331,7 @@ const AddEditGroupModal = ({
         <FlatList
           data={groupIcons}
           nestedScrollEnabled
-          renderItem={({ item }) => renderEmoji(item)}
+          renderItem={renderEmoji}
           keyExtractor={item => item}
           numColumns={Math.floor(
             (Dimensions.get('window').width - 50) / (50 * scaleMultiplier)
