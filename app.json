@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Waha",
+    "slug": "Waha",
+    "description": "Mobilize the Believer. Disciple the Lost.",
+    "privacy": "public",
+    "platforms": ["ios", "android"],
+    "orientation": "portrait",
+    "primaryColor": "#E63946",
+    "version": "1.1.2",
+    "splash": {
+      "image": "./assets/icons/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#E63946"
+    },
+    "updates": {
+      "enabled": false
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "requireFullScreen": true,
+      "bundleIdentifier": "com.kingdomstrategies.waha",
+      "googleServicesFile": "./firebase/GoogleService-Info.plist",
+      "supportsTablet": true,
+      "buildNumber": "1.1.2",
+      "appStoreUrl": "https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294"
+    },
+    "android": {
+      "package": "com.kingdomstrategies.waha",
+      "googleServicesFile": "./firebase/google-services.json",
+      "icon": "./assets/icons/adaptive_icon_foreground.png",
+      "versionCode": 20,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/adaptive_icon_foreground.png",
+        "backgroundColor": "#E63946"
+      },
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha",
+      "permissions": []
+    },
+    "githubUrl": "https://github.com/trentcowden/Waha",
+    "icon": "./assets/icons/waha_icon.png"
+  }
+}
