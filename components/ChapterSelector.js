@@ -25,6 +25,7 @@ const ChapterSelector = ({
   downloads,
   isConnected
 }) => {
+  console.log(`${Date.now()} ChapterSelector re-rendering.`)
   // order of chapters is
   //  1. fellowship
   //  2. story
@@ -128,4 +129,12 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps)(ChapterSelector)
+const areEqual = (prevProps, nextProps) => {
+  return (
+    prevProps.activeChapter === nextProps.activeChapter &&
+    prevProps.isDownloaded === nextProps.isDownloaded &&
+    prevProps.downloads === nextProps.downloads
+  )
+}
+
+export default connect(mapStateToProps)(React.memo(ChapterSelector, areEqual))
