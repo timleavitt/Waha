@@ -391,6 +391,7 @@ const LessonsScreen = ({
       <SwipeListView
         data={thisSet.lessons}
         renderItem={renderLessonItem}
+        getItemLayout={getItemLayout}
         ListFooterComponent={() => <View style={{ height: 30 }} />}
         keyExtractor={keyExtractor}
         renderHiddenItem={renderLessonSwipeBackdrop}
