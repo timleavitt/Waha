@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Dimensions, Image, StyleSheet, View } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { connect } from 'react-redux'
@@ -108,7 +108,7 @@ const LessonsScreen = ({
 
   //+ FUNCTIONS
 
-  //- checks which lessons and lesson videos are downloaded and stores in state
+  // - checks which lessons and lesson videos are downloaded and stores in state
   useEffect(() => {
     var whichLessonsDownloaded = {}
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
@@ -274,13 +274,13 @@ const LessonsScreen = ({
 
   //- sets activeLessonInModal to whatever lesson we're swiping so we can
   //-   share/mark it as complete
-  function onLessonSwipeBegin (data) {
+  const onLessonSwipeBegin = useCallback(data => {
     setActiveLessonInModal(
       thisSet.lessons.filter(
         lesson => getLessonInfo('index', lesson.id) === parseInt(data)
       )[0]
     )
-  }
+  }, [])
 
   function checkForFullyComplete () {
     if (
@@ -305,9 +305,52 @@ const LessonsScreen = ({
     }
   }
 
-  //+ RENDER
+  const renderLessonSwipeBackdrop = (data, rowMap) => (
+    <LessonSwipeBackdrop
+      isComplete={thisSetProgress.includes(
+        getLessonInfo('index', data.item.id)
+      )}
+      toggleComplete={() => {
+        toggleComplete(
+          activeGroup.name,
+          thisSet,
+          getLessonInfo('index', data.item.id)
+        )
+        checkForFullyComplete()
+        rowMap[getLessonInfo('index', data.item.id)].closeRow()
+      }}
+      showShareModal={() => {
+        setShowShareModal(true)
+        rowMap[getLessonInfo('index', data.item.id)].closeRow()
+      }}
+    />
+  )
 
-  function renderLessonItem ({ item }) {
+  const keyExtractor = useCallback(
+    item => getLessonInfo('index', item.id).toString(),
+    []
+  )
+
+  const onLeftActionStatusChange = useCallback(data => {
+    if (isRTL) setShowShareModal(true)
+    else markLessonAsCompleteFromSwipe(data)
+  }, [])
+
+  const onRightActionStatusChange = useCallback(data => {
+    if (isRTL) markLessonAsCompleteFromSwipe(data)
+    else setShowShareModal(true)
+  }, [])
+
+  const getItemLayout = useCallback(
+    (data, index) => ({
+      length: itemHeights[font].LessonItem,
+      offset: itemHeights[font].LessonItem * index,
+      index
+    }),
+    []
+  )
+
+  const renderLessonItem = ({ item }) => {
     return (
       <LessonItem
         thisLesson={item}
@@ -333,29 +376,6 @@ const LessonsScreen = ({
     )
   }
 
-  function renderLessonSwipeBackdrop (data, rowMap) {
-    return (
-      <LessonSwipeBackdrop
-        isComplete={thisSetProgress.includes(
-          getLessonInfo('index', data.item.id)
-        )}
-        toggleComplete={() => {
-          toggleComplete(
-            activeGroup.name,
-            thisSet,
-            getLessonInfo('index', data.item.id)
-          )
-          checkForFullyComplete()
-          rowMap[getLessonInfo('index', data.item.id)].closeRow()
-        }}
-        showShareModal={() => {
-          setShowShareModal(true)
-          rowMap[getLessonInfo('index', data.item.id)].closeRow()
-        }}
-      />
-    )
-  }
-
   return (
     <View style={styles.screen}>
       <View
@@ -372,12 +392,12 @@ const LessonsScreen = ({
         data={thisSet.lessons}
         renderItem={renderLessonItem}
         ListFooterComponent={() => <View style={{ height: 30 }} />}
-        keyExtractor={item => getLessonInfo('index', item.id).toString()}
+        keyExtractor={keyExtractor}
         renderHiddenItem={renderLessonSwipeBackdrop}
         leftOpenValue={50}
         rightOpenValue={-50}
-        //! these are different on platform because the activation is causing a
-        //!   crash on android phones
+        // ! these are different on platform because the activation is causing a
+        // !   crash on android phones
         leftActivationValue={
           Platform.OS === 'ios' ? Dimensions.get('screen').width / 2 - 10 : 1000
         }
@@ -388,19 +408,9 @@ const LessonsScreen = ({
         }
         stopLeftSwipe={Dimensions.get('screen').width / 2}
         stopRightSwipe={-Dimensions.get('screen').width / 2}
-        onLeftActionStatusChange={
-          isRTL
-            ? data => setShowShareModal(true)
-            : data => {
-                markLessonAsCompleteFromSwipe(data)
-              }
-        }
-        onRightActionStatusChange={
-          isRTL
-            ? data => markLessonAsCompleteFromSwipe(data)
-            : data => setShowShareModal(true)
-        }
-        swipeGestureBegan={data => onLessonSwipeBegin(data)}
+        onLeftActionStatusChange={onLeftActionStatusChange}
+        onRightActionStatusChange={onRightActionStatusChange}
+        swipeGestureBegan={onLessonSwipeBegin}
       />
 
       {/* MODALS */}

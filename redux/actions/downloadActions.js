@@ -71,7 +71,7 @@ export function downloadMedia (type, lessonID, source) {
           )
         )
         // A simple way to only update the progress every 10 calls to the callback function. This helps with performance, especially when downloading multiple files at the same time.
-      } else if (counter % 20 == 0) {
+      } else if (counter % 10 == 0) {
         dispatch(
           addUpdateDownload(
             progress,

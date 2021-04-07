@@ -208,4 +208,17 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(LessonItem)
+const areEqual = (prevProps, nextProps) => {
+  return (
+    prevProps.isDownloading === nextProps.isDownloading &&
+    prevProps.isDownloaded === nextProps.isDownloaded &&
+    prevProps.downloadPercentage === nextProps.downloadPercentage &&
+    prevProps.isBookmark === nextProps.isBookmark &&
+    prevProps.isComplete === nextProps.isComplete
+  )
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(React.memo(LessonItem, areEqual))
