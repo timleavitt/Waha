@@ -11,6 +11,7 @@ import {
   SectionList,
   StyleSheet,
   Text,
+  TextInput,
   View
 } from 'react-native'
 import { connect } from 'react-redux'
@@ -18,7 +19,7 @@ import { languageT2S } from '../assets/languageT2S/_languageT2S'
 import LanguageItem from '../components/list-items/LanguageItem'
 import Separator from '../components/standard/Separator'
 import WahaButton from '../components/standard/WahaButton'
-import { scaleMultiplier } from '../constants'
+import { getSystemIsRTL, scaleMultiplier } from '../constants'
 import db from '../firebase/db'
 import { languages } from '../languages'
 import {
@@ -74,7 +75,7 @@ function mapDispatchToProps (dispatch) {
  * @param {string} installedLanguageInstances[].languageID - The ID of the language.
  * @param {string} installedLanguageInstances[].languageName - The name of the language.
  */
-const LanguageInstanceInstallScreen = ({
+function LanguageInstanceInstallScreen ({
   // Props passed from navigation.
   navigation: { setOptions, goBack, reset, navigate },
   route: {
@@ -95,7 +96,7 @@ const LanguageInstanceInstallScreen = ({
   storeLanguageSets,
   deleteLanguageData,
   deleteGroup
-}) => {
+}) {
   // Set the i18n locale to the locale of the user's phone.
   i18n.locale = Localization.locale
 
@@ -118,6 +119,8 @@ const LanguageInstanceInstallScreen = ({
 
   /** The sound object for playing the language text-to-speech files. */
   const [audio, setAudio] = useState(new Audio.Sound())
+
+  const [searchTextInput, setSearchTextInput] = useState('')
 
   /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
@@ -202,6 +205,12 @@ const LanguageInstanceInstallScreen = ({
     fetchFirebaseData()
       .then(() => {
         setHasFetchedLanguageData(true)
+        // Navigate to the onboarding slides if this is the first language instance install.
+        if (routeName === 'InitialLanguageInstanceInstall') {
+          navigate('WahaOnboardingSlides', {
+            selectedLanguage: selectedLanguage
+          })
+        }
         downloadLanguageCoreFiles(selectedLanguage)
       })
       .catch(error => {
@@ -217,12 +226,6 @@ const LanguageInstanceInstallScreen = ({
           }
         ])
       })
-    // Navigate to the onboarding slides if this is the first language instance install.
-    if (routeName === 'InitialLanguageInstanceInstall') {
-      navigate('WahaOnboardingSlides', {
-        selectedLanguage: selectedLanguage
-      })
-    }
   }
 
   /**
@@ -232,12 +235,45 @@ const LanguageInstanceInstallScreen = ({
   function getLanguageData () {
     var sections
     if (routeName === 'InitialLanguageInstanceInstall')
-      sections = languages.sort((a, b) => {
-        // Sort so that the language family associated with the phone's language is at the top of the list.
-        if (i18n.locale.includes(a.languageCode)) return -1
-        else if (i18n.locale.includes(b.languageCode)) return 1
-        else return 0
-      })
+      sections = languages
+        .sort((a, b) => {
+          // Sort so that the language family associated with the phone's language is at the top of the list.
+          if (i18n.locale.includes(a.languageCode)) return -1
+          else if (i18n.locale.includes(b.languageCode)) return 1
+          else return 0
+        })
+        // .filter(languageFamily =>
+        //   languageFamily.i18nName
+        //     .toLowerCase()
+        //     .includes(searchTextInput.toLowerCase())
+        // )
+
+        // If it matches with a language family name, show the whole language family. If it doesn't, show the specific languages it matches with.
+        .map(languageFamily => {
+          if (
+            languageFamily.i18nName
+              .toLowerCase()
+              .includes(searchTextInput.toLowerCase())
+          )
+            return languageFamily
+          else
+            return {
+              ...languageFamily,
+              data: languageFamily.data.filter(
+                language =>
+                  language.nativeName
+                    .toLowerCase()
+                    .includes(searchTextInput.toLowerCase()) ||
+                  language.i18nName
+                    .toLowerCase()
+                    .includes(searchTextInput.toLowerCase())
+              )
+            }
+        })
+        .filter(languageFamily => {
+          if (languageFamily.data.length !== 0) return true
+          else return false
+        })
     else
       sections = languages
         .sort((a, b) => {
@@ -278,24 +314,12 @@ const LanguageInstanceInstallScreen = ({
   // Determine what to render for the header text. If it's our first install, its the first time opening the app, so display a welcome message. Otherwise, display nothing.
   var welcomeText =
     routeName === 'InitialLanguageInstanceInstall' ? (
-      <View style={styles.headerTextContainer}>
+      <View style={{ marginVertical: 20 }}>
         <Text
-          style={[
-            SystemTypography(false, 'h1', 'Bold', 'center', colors.shark)
-          ]}
+          style={SystemTypography(false, 'h2', 'Bold', 'center', colors.shark)}
         >
-          {i18n.t('welcome')}
-        </Text>
-        <Text
-          style={SystemTypography(
-            false,
-            'h2',
-            'Regular',
-            'center',
-            colors.shark
-          )}
-        >
-          {i18n.t('selectLanguage')}
+          Choose a language to begin.
+          {/* {i18n.t('selectLanguage')} */}
         </Text>
       </View>
     ) : (
@@ -378,6 +402,51 @@ const LanguageInstanceInstallScreen = ({
       {welcomeText}
       <View
         style={{
+          width: Dimensions.get('window').width - 40,
+          borderRadius: 30,
+          height: 60 * scaleMultiplier,
+          backgroundColor: colors.porcelain,
+          paddingHorizontal: 5,
+          flexDirection: getSystemIsRTL() ? 'row-reverse' : 'row',
+          paddingTop: 5,
+          paddingBottom: 5,
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          marginBottom: 20
+        }}
+      >
+        <View
+          style={{
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginHorizontal: 10
+          }}
+        >
+          <Icon
+            name='search'
+            size={25 * scaleMultiplier}
+            color={colors.chateau}
+          />
+        </View>
+        <TextInput
+          style={[
+            SystemTypography(false, 'h3', 'Regular', 'left', colors.shark),
+            {
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }
+          ]}
+          onChangeText={text => setSearchTextInput(text)}
+          autoCorrect={false}
+          autoCapitalize='none'
+          placeholder='Search'
+          placeholderTextColor={colors.chateau}
+        />
+      </View>
+      <View
+        style={{
           width: '100%',
           flexDirection: 'row',
           justifyContent: 'space-between',
@@ -416,6 +485,9 @@ const LanguageInstanceInstallScreen = ({
           renderSectionFooter={() => (
             <View style={{ height: 20 * scaleMultiplier, width: '100%' }} />
           )}
+          ListFooterComponent={() => (
+            <View style={{ width: '100%', height: 100 * scaleMultiplier }} />
+          )}
         />
       </View>
       <Animated.View
@@ -433,7 +505,7 @@ const LanguageInstanceInstallScreen = ({
           label={
             isConnected
               ? routeName === 'InitialLanguageInstanceInstall'
-                ? i18n.t('letsBegin')
+                ? 'Continue'
                 : i18n.t('addLanguage') + ' '
               : ''
           }
