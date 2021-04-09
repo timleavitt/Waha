@@ -37,7 +37,7 @@
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha",
       "permissions": []
     },
-    "githubUrl": "https://github.com/trentcowden/Waha",
+    "githubUrl": "https://github.com/kingdomstrategies/Waha",
     "icon": "./assets/icons/waha_icon.png"
   }
 }
