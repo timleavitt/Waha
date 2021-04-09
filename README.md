@@ -1,7 +1,7 @@
 <p align=center>
 <img src="assets/icons/waha_icon.png" width=150 style="border-radius:15%">
-<h2 align=center><strong>Waha</strong></h2>
-<h3 align=center>Discover God's Story</h3>
+<h3 align=center><strong>Waha</strong></h3>
+<h4 align=center>Discover God's Story</h4>
 </p>
 
 <!--
