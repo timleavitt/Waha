@@ -142,8 +142,7 @@ const MobilizationToolsUnlockScreen = ({
       //   }
       // })
       navigate('SetsTabs', { screen: 'MobilizationTools' })
-      setShowMTTabAddedSnackbar(true)
-      // setTimeout(() => setShowMTTabAddedSnackbar(false), 3000)
+      setTimeout(() => setShowMTTabAddedSnackbar(true), 1000)
     } else {
       setMTUnlockAttempts(mtUnlockAttempts + 1)
       // Make the input component "shake" when they enter in a wrong code.
