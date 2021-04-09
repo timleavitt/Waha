@@ -14,6 +14,7 @@ export const languages = [
   {
     i18nName: 'english',
     languageCode: 'en',
+    brandName: 'Discovering God',
     font: 'Roboto',
     isRTL: false,
     data: [
@@ -43,6 +44,7 @@ export const languages = [
   {
     i18nName: 'arabic',
     languageCode: 'ar',
+    brandName: 'الخليج العربي',
     font: 'NotoSansArabic',
     isRTL: true,
     data: [
