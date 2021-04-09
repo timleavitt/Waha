@@ -356,9 +356,9 @@ const SetsScreen = ({
       <MessageModal
         isVisible={showMTTabAddedSnackbar}
         hideModal={() => setShowMTTabAddedSnackbar(false)}
-        title='Mobilization Tools unlocked successfully!'
-        body=''
-        confirmText='Check it out'
+        title={translations.passcode.popups.unlock_successful_title}
+        body={translations.passcode.popups.unlock_successful_message}
+        confirmText={translations.general.got_it}
         confirmOnPress={() => setShowMTTabAddedSnackbar(false)}
       >
         <Image
