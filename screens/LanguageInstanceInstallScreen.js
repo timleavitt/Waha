@@ -264,7 +264,11 @@ function LanguageInstanceInstallScreen ({
                   language.nativeName
                     .toLowerCase()
                     .includes(searchTextInput.toLowerCase()) ||
-                  language.i18nName
+                  i18n
+                    .t(language.i18nName)
+                    .toLowerCase()
+                    .includes(searchTextInput.toLowerCase()) ||
+                  language.brandName
                     .toLowerCase()
                     .includes(searchTextInput.toLowerCase())
               )
@@ -314,12 +318,24 @@ function LanguageInstanceInstallScreen ({
   // Determine what to render for the header text. If it's our first install, its the first time opening the app, so display a welcome message. Otherwise, display nothing.
   var welcomeText =
     routeName === 'InitialLanguageInstanceInstall' ? (
-      <View style={{ marginVertical: 20 }}>
+      <View style={styles.headerTextContainer}>
         <Text
-          style={SystemTypography(false, 'h2', 'Bold', 'center', colors.shark)}
+          style={[
+            SystemTypography(false, 'h1', 'Bold', 'center', colors.shark)
+          ]}
         >
-          Choose a language to begin.
-          {/* {i18n.t('selectLanguage')} */}
+          {i18n.t('welcome')}
+        </Text>
+        <Text
+          style={SystemTypography(
+            false,
+            'h2',
+            'Regular',
+            'center',
+            colors.shark
+          )}
+        >
+          {i18n.t('selectLanguage')}
         </Text>
       </View>
     ) : (
@@ -459,26 +475,33 @@ function LanguageInstanceInstallScreen ({
           sections={getLanguageData()}
           ItemSeparatorComponent={() => <Separator />}
           SectionSeparatorComponent={() => <Separator />}
-          ListEmptyComponent={() => (
-            <View>
-              <View
-                style={{ width: '100%', marginBottom: 18 * scaleMultiplier }}
-              >
-                <Text
-                  style={SystemTypography(
-                    false,
-                    'p',
-                    'Regular',
-                    'center',
-                    colors.chateau
-                  )}
-                >
-                  {i18n.t('noMoreLanguages')}
-                </Text>
-              </View>
-              <Separator />
-            </View>
-          )}
+          ListEmptyComponent={
+            searchTextInput
+              ? null
+              : () => (
+                  <View>
+                    <View
+                      style={{
+                        width: '100%',
+                        marginBottom: 18 * scaleMultiplier
+                      }}
+                    >
+                      <Text
+                        style={SystemTypography(
+                          false,
+                          'p',
+                          'Regular',
+                          'center',
+                          colors.chateau
+                        )}
+                      >
+                        {i18n.t('noMoreLanguages')}
+                      </Text>
+                    </View>
+                    <Separator />
+                  </View>
+                )
+          }
           keyExtractor={item => item.wahaID}
           renderItem={({ item, section }) => renderLanguageItem(item, section)}
           renderSectionHeader={({ section }) => renderLanguageHeader(section)}
