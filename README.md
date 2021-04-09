@@ -38,7 +38,7 @@
 
 
 
-# About This Project
+## About This Project
 Waha is a multi-language, audio-based Discovery Bible Study and DMM training app. Small groups gather to listen to curated Discovery Bible Study stories and discuss the questions. Additionally, Waha is a system for pre-existing believers to be envisioned, trained, and mobilized to make disciples that multiply.
 
 Some notable features of Waha are:
@@ -50,21 +50,21 @@ Some notable features of Waha are:
 - **Tweakable**: Tweak your story sets and questions to be culturally appropriate for your target people group.
 
 
-## Built With
+### Built With
 - React Native
 - Expo
   
-# Getting Started
-## Download From the App Store
+## Getting Started
+### Download From the App Store
 Waha is currently available on iOS and Android. You can download it here:
 - [App Store (iOS)](https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294)
 - [Google Play Store (Android)](https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha)
 
-## Prerequisites
+### Prerequisites
 1. Make sure you have `Node.js` and `npm` installed. You can download them [here](https://nodejs.org/en/).
 2. If you want to run the app from your local repository, you'll need the "Expo Go" app downloaded on your mobile device. 
 
-## Installation
+### Installation
 1. Get the necessary Firebase config files and put them the `/firebase` folder.
 2. Clone this repository:
     ```
@@ -81,7 +81,7 @@ Waha is currently available on iOS and Android. You can download it here:
 5. Scan the QR code that appears in the terminal from the Expo app on your mobile device to open the app. If you're using an emulator, you can press "i" to automatically open it on an iOS emulator and "a" to automatically open it on an Android emulator.
 
 
-# Directory Structure
+## Directory Structure
 - `/assets`: Contains all images and sound effects.
 - `/components`: Contains all of the React Native components.
 - `/firebase`: Contains the file `db.js` which exports the Firestore database object to be used throughout the app. This is where you'll put the extra Firebase configuration files as well.
@@ -105,8 +105,8 @@ Waha is currently available on iOS and Android. You can download it here:
 - **Language Instance**: A language in Waha that the user can install. The reason it's not just called a "Language" is because it's possible there will be multiple Language Instances of the same language. For instance, an English for the US and an English for the UK. The term "Language" is generally used in the app code to describe the language that the user's phone is set to.
 -->
 
-# License
+## License
 Distributed under the GNU GENERAL PUBLIC LICENSE License. See COPYING.txt for more information.
 
-# Contact
+## Contact
 Email developer@kingdomstrategies.co with questions or concerns.
