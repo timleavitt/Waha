@@ -1,9 +1,28 @@
-<p align=center>
+<!-- <p align=center>
 <img src="assets/icons/waha_icon.png" width=150 style="border-radius:15%">
 <h3 align=center><strong>Waha</strong></h3>
 <h4 align=center>Discover God's Story</h4>
+</p> -->
+
+<h1 align="center">
+  <a href="https://waha.app/">
+    Waha
+  </a>
+</h1>
+
+<p align="center">
+  <strong>Discover God's Story</strong><br>
+  Mobilize the Believer & Make Disciples of the Lost
 </p>
 
+<h3 align="center">
+  <a href="#download-from-the-app-store">Download</a>
+  <span> · </span>
+  <a href="https://partner.waha.app">Get your language on Waha</a>
+  <span> · </span>
+  <a href="https://github.com/kingdomstrategies/Waha/issues">Report a Bug</a>
+</h3>
+<br>
 <!--
 <p align=center>
 <a href="https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294">
@@ -16,13 +35,6 @@
 </a>
 </p>
 -->
-<p align=center>
-<a href="#download-from-the-app-store">Download</a>
-·
-<a href="https://partner.waha.app">Get your language on Waha</a>
-·
-<a href="https://github.com/kingdomstrategies/Waha/issues">Report a Bug</a>
-</p>
 
 
 
