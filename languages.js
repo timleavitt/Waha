@@ -54,15 +54,15 @@ export const languages = [
         brandName: 'طريق الواحة',
         logoSource:
           'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ga%2Fother%2Fheader-v1.png?alt=media'
-      },
-      {
-        nativeName: 'Test',
-        wahaID: 'aa',
-        i18nName: 'test',
-        brandName: '',
-        logoSource:
-          'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ga%2Fother%2Fheader-v1.png?alt=media'
       }
+      // {
+      //   nativeName: 'Test',
+      //   wahaID: 'aa',
+      //   i18nName: 'test',
+      //   brandName: '',
+      //   logoSource:
+      //     'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ga%2Fother%2Fheader-v1.png?alt=media'
+      // }
       // {
       //   nativeName: 'FusHa',
       //   wahaID: 'ar',

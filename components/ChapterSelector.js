@@ -25,7 +25,6 @@ const ChapterSelector = ({
   downloads,
   isConnected
 }) => {
-  console.log(`${Date.now()} ChapterSelector re-rendering.`)
   // order of chapters is
   //  1. fellowship
   //  2. story
@@ -133,7 +132,8 @@ const areEqual = (prevProps, nextProps) => {
   return (
     prevProps.activeChapter === nextProps.activeChapter &&
     prevProps.isDownloaded === nextProps.isDownloaded &&
-    prevProps.downloads === nextProps.downloads
+    prevProps.downloads === nextProps.downloads &&
+    prevProps.shouldAutoPlay === nextProps.shouldAutoPlay
   )
 }
 

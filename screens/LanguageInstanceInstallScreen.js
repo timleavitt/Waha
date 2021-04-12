@@ -202,15 +202,16 @@ function LanguageInstanceInstallScreen ({
    * Handles the user pressing the start button after they select a language instance to install. Involves fetching the necessary Firebase data, setting the hasFetchedLanguageData to true, and starting the download of the language core files. If this is the first language instance they've installed, we want to nagivate to the onboarding slides too.
    */
   function onStartPress () {
+    // Navigate to the onboarding slides if this is the first language instance install.
+    if (routeName === 'InitialLanguageInstanceInstall') {
+      navigate('WahaOnboardingSlides', {
+        selectedLanguage: selectedLanguage
+      })
+    }
+
     fetchFirebaseData()
       .then(() => {
         setHasFetchedLanguageData(true)
-        // Navigate to the onboarding slides if this is the first language instance install.
-        if (routeName === 'InitialLanguageInstanceInstall') {
-          navigate('WahaOnboardingSlides', {
-            selectedLanguage: selectedLanguage
-          })
-        }
         downloadLanguageCoreFiles(selectedLanguage)
       })
       .catch(error => {
@@ -233,81 +234,79 @@ function LanguageInstanceInstallScreen ({
    * @return {Object[]} - An array of language family objects.
    */
   function getLanguageData () {
+    // Sort the languages to put the language family of the phone's current locale at the top.
+    const sortByLocale = (a, b) => {
+      if (i18n.locale.includes(a.languageCode)) return -1
+      else if (i18n.locale.includes(b.languageCode)) return 1
+      else return 0
+    }
+
+    // If search text matches with a language family name, show the whole language family. If it doesn't, show the specific languages it matches with.
+    const filterBySearch = languageFamily => {
+      if (
+        languageFamily.i18nName
+          .toLowerCase()
+          .includes(searchTextInput.toLowerCase())
+      )
+        return languageFamily
+      else
+        return {
+          ...languageFamily,
+          data: languageFamily.data.filter(
+            language =>
+              language.nativeName
+                .toLowerCase()
+                .includes(searchTextInput.toLowerCase()) ||
+              i18n
+                .t(language.i18nName)
+                .toLowerCase()
+                .includes(searchTextInput.toLowerCase()) ||
+              language.brandName
+                .toLowerCase()
+                .includes(searchTextInput.toLowerCase())
+          )
+        }
+    }
+
+    // Filter out language instances that are already installed. Only on SubsequentLanguageInstanceInstallScreen.
+    const filterInstalledLanguages = languageFamily => ({
+      ...languageFamily,
+      data: languageFamily.data.filter(language => {
+        if (
+          installedLanguageInstances.some(
+            installedLanguage =>
+              installedLanguage.languageID === language.wahaID
+          )
+        ) {
+          return false
+        } else {
+          return true
+        }
+      })
+    })
+
+    // Filter our language families that are empty.
+    const filterEmptyLanguages = languageFamily => {
+      if (languageFamily.data.length !== 0) return true
+      else return false
+    }
+
+    // Create our sections array.
     var sections
+
+    // Only difference between Initial and Subsequent language instance installs is that in subsequent, we want to filter out installed languages.
     if (routeName === 'InitialLanguageInstanceInstall')
       sections = languages
-        .sort((a, b) => {
-          // Sort so that the language family associated with the phone's language is at the top of the list.
-          if (i18n.locale.includes(a.languageCode)) return -1
-          else if (i18n.locale.includes(b.languageCode)) return 1
-          else return 0
-        })
-        // .filter(languageFamily =>
-        //   languageFamily.i18nName
-        //     .toLowerCase()
-        //     .includes(searchTextInput.toLowerCase())
-        // )
-
-        // If it matches with a language family name, show the whole language family. If it doesn't, show the specific languages it matches with.
-        .map(languageFamily => {
-          if (
-            languageFamily.i18nName
-              .toLowerCase()
-              .includes(searchTextInput.toLowerCase())
-          )
-            return languageFamily
-          else
-            return {
-              ...languageFamily,
-              data: languageFamily.data.filter(
-                language =>
-                  language.nativeName
-                    .toLowerCase()
-                    .includes(searchTextInput.toLowerCase()) ||
-                  i18n
-                    .t(language.i18nName)
-                    .toLowerCase()
-                    .includes(searchTextInput.toLowerCase()) ||
-                  language.brandName
-                    .toLowerCase()
-                    .includes(searchTextInput.toLowerCase())
-              )
-            }
-        })
-        .filter(languageFamily => {
-          if (languageFamily.data.length !== 0) return true
-          else return false
-        })
+        .sort(sortByLocale)
+        .map(filterBySearch)
+        .filter(filterEmptyLanguages)
     else
       sections = languages
-        .sort((a, b) => {
-          if (i18n.locale.includes(a.languageCode)) return -1
-          else if (i18n.locale.includes(b.languageCode)) return 1
-          else return 0
-        })
-        // If installing a subsequent language instance, we need to filter out the languages that are already installed.
-        .map(languageFamily => {
-          return {
-            ...languageFamily,
-            data: languageFamily.data.filter(language => {
-              if (
-                installedLanguageInstances.some(
-                  installedLanguage =>
-                    installedLanguage.languageID === language.wahaID
-                )
-              ) {
-                return false
-              } else {
-                return true
-              }
-            })
-          }
-        })
-        // Similarly, if a language family has every language instance installed, filter it out too.
-        .filter(languageFamily => {
-          if (languageFamily.data.length !== 0) return true
-          else return false
-        })
+        .sort(sortByLocale)
+        .map(filterInstalledLanguages)
+        .map(filterBySearch)
+        .filter(filterEmptyLanguages)
+
     // If, after all of our filtering, the list is empty, we've installed every language instance and want to set isListEmpty to true.
     if (sections.length === 0 && !isListEmpty) setIsListEmpty(true)
 

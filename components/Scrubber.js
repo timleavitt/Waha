@@ -11,30 +11,26 @@ const Scrubber = ({
   onValueChange,
   maximumValue,
   seekPosition
-}) => {
-  console.log(`${Date.now()} Scrubber re-rendering.`)
-
-  return (
-    <View style={styles.scrubberContainer}>
-      <View style={styles.scrubber}>
-        <Slider
-          value={seekPosition}
-          onSlidingComplete={value => onSlidingComplete(value)}
-          onValueChange={onValueChange}
-          minimumValue={0}
-          maximumValue={maximumValue}
-          step={100}
-          minimumTrackTintColor={colors.tuna}
-          thumbTintColor={colors.tuna}
-        />
-      </View>
-      <View style={styles.timeInfo}>
-        <TimeDisplay time={seekPosition} max={maximumValue} />
-        <TimeDisplay time={maximumValue} max={maximumValue} />
-      </View>
+}) => (
+  <View style={styles.scrubberContainer}>
+    <View style={styles.scrubber}>
+      <Slider
+        value={seekPosition}
+        onSlidingComplete={value => onSlidingComplete(value)}
+        onValueChange={onValueChange}
+        minimumValue={0}
+        maximumValue={maximumValue}
+        step={100}
+        minimumTrackTintColor={colors.tuna}
+        thumbTintColor={colors.tuna}
+      />
     </View>
-  )
-}
+    <View style={styles.timeInfo}>
+      <TimeDisplay time={seekPosition} max={maximumValue} />
+      <TimeDisplay time={maximumValue} max={maximumValue} />
+    </View>
+  </View>
+)
 
 //+ STYLES
 

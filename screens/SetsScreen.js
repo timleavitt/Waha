@@ -64,13 +64,17 @@ const SetsScreen = ({
   setShowMTTabAddedSnackbar
 }) => {
   /** Keeps track of the text displayed on the add set button. Changes depending on what category we're in. */
-  const [addNewSetLabel, setAddNewSetLabel] = useState(
-    category === 'Foundational'
-      ? translations.sets.add_foundational_story_set_button_label
-      : category === 'Topical'
-      ? translations.sets.add_topical_set_button_label
-      : translations.sets.add_mobilization_tool_button_label
-  )
+  const [addNewSetLabel, setAddNewSetLabel] = useState('')
+
+  useEffect(() => {
+    setAddNewSetLabel(
+      category === 'Foundational'
+        ? translations.sets.add_foundational_story_set_button_label
+        : category === 'Topical'
+        ? translations.sets.add_topical_set_button_label
+        : translations.sets.add_mobilization_tool_button_label
+    )
+  }, [activeGroup])
 
   /** Keeps track of all of the files the user has downloaded to the user's device. This is used to verify that all the required question set mp3s are downloaded for the sets that have been added. */
   const [downloadedFiles, setDownloadedFiles] = useState([])

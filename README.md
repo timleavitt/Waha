@@ -23,20 +23,6 @@
   <a href="https://github.com/kingdomstrategies/Waha/issues">Report a Bug</a>
 </h3>
 <br>
-<!--
-<p align=center>
-<a href="https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294">
-<img align=center src="assets/badges/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.png">
-</a>
-</p>
-<p align=center>
-<a href="https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha">
-<img src="assets/badges/google-play-badge.png" height=60>
-</a>
-</p>
--->
-
-
 
 ## About This Project
 Waha is a multi-language, audio-based Discovery Bible Study and DMM training app. Small groups gather to listen to curated Discovery Bible Study stories and discuss the questions. Additionally, Waha is a system for pre-existing believers to be envisioned, trained, and mobilized to make disciples that multiply.
@@ -47,8 +33,6 @@ Some notable features of Waha are:
 - **Audio First**: Since Waha narrates every question and the story, group members only have to focus on discussion and discovery.
 - **Obedience Based**: The DMM training (Mobilization Tools) encourages application over simply information-intake, so that believers can begin practicing disciple making habits from their very first few meetings.
 - **Space Efficient**: Many users don't have a lot of space on their phones, so we made Waha use as little storage as possible and for all lessons to be downloadable from the cloud. This means people with all types of phones can use Waha.
-- **Tweakable**: Tweak your story sets and questions to be culturally appropriate for your target people group.
-
 
 ### Built With
 - React Native
@@ -62,7 +46,7 @@ Waha is currently available on iOS and Android. You can download it here:
 
 ### Prerequisites
 1. Make sure you have `Node.js` and `npm` installed. You can download them [here](https://nodejs.org/en/).
-2. If you want to run the app from your local repository, you'll need the "Expo Go" app downloaded on your mobile device. 
+2. If you want to run the app on your mobile device from your local repository, you'll need the "Expo Go" app downloaded on that device. 
 
 ### Installation
 1. Get the necessary Firebase config files and put them the `/firebase` folder.
@@ -79,7 +63,6 @@ Waha is currently available on iOS and Android. You can download it here:
     npm start
     ```
 5. Scan the QR code that appears in the terminal from the Expo app on your mobile device to open the app. If you're using an emulator, you can press "i" to automatically open it on an iOS emulator and "a" to automatically open it on an Android emulator.
-
 
 ## Directory Structure
 - `/assets`: Contains all images and sound effects.
@@ -106,7 +89,7 @@ Waha is currently available on iOS and Android. You can download it here:
 -->
 
 ## License
-Distributed under the GNU GENERAL PUBLIC LICENSE License. See COPYING.txt for more information.
+Distributed under the GNU GENERAL PUBLIC LICENSE. See COPYING.txt for more information.
 
 ## Contact
 Email developer@kingdomstrategies.co with questions or concerns.

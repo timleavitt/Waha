@@ -2,12 +2,14 @@ import * as WebBrowser from 'expo-web-browser'
 import React, { useEffect, useState } from 'react'
 import {
   Clipboard,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from 'react-native'
+import SnackBar from 'react-native-snackbar-component'
 import { connect } from 'react-redux'
 import BackButton from '../components/standard/BackButton'
 import { scaleMultiplier } from '../constants'
@@ -76,7 +78,7 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.general.privacy}
+          {translations.information.privacy}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
@@ -100,7 +102,7 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.general.donate_to_waha}
+          {translations.information.donate_to_waha}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
@@ -127,7 +129,7 @@ const InformationScreen = ({
               colors.shark
             )}
           >
-            {translations.general.version}
+            {translations.information.version}
           </Text>
           <Text
             style={StandardTypography(
@@ -146,6 +148,37 @@ const InformationScreen = ({
           color={colors.tuna}
           size={25 * scaleMultiplier}
         />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.informationItem,
+          {
+            flexDirection: isRTL ? 'row-reverse' : 'row'
+          }
+        ]}
+        onPress={
+          Platform.OS === 'ios'
+            ? () =>
+                openBrowser(
+                  'https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294'
+                )
+            : openBrowser(
+                'https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
+              )
+        }
+      >
+        <Text
+          style={StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Bold',
+            'left',
+            colors.shark
+          )}
+        >
+          {translations.information.rate_waha}
+        </Text>
+        <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View
@@ -191,6 +224,17 @@ const InformationScreen = ({
           </Text>
         </View>
       </View>
+      <SnackBar
+        visible={showSnackbar}
+        textMessage={translations.information.copied_to_clipboard}
+        messageStyle={{
+          color: colors.white,
+          fontSize: 24 * scaleMultiplier,
+          fontFamily: font + '-Black',
+          textAlign: 'center'
+        }}
+        backgroundColor={colors.apple}
+      />
     </SafeAreaView>
   )
 }

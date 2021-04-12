@@ -473,7 +473,7 @@ const MainStack = ({
         name='Information'
         component={InformationScreen}
         options={{
-          headerTitle: translations.general.information,
+          headerTitle: translations.information.header,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },

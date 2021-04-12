@@ -829,6 +829,7 @@ const PlayScreen = ({
                 onPress={chapter => changeChapter(chapter)}
                 lessonType={lessonType}
                 isDownloaded={isDownloaded}
+                shouldAutoPlay={shouldAutoPlay}
               />
             ) : null}
             <Scrubber
