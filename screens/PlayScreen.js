@@ -777,7 +777,7 @@ const PlayScreen = ({
         ]}
       >
         {/* don't display title section on audio book lessons */}
-        {lessonType !== 'a' && lessonType !== '' ? titleSection : null}
+        {/* {lessonType !== 'a' && lessonType !== '' ? titleSection : null} */}
 
         {/* 
           MIDDLE SECTION 
