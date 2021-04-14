@@ -113,6 +113,37 @@ const InformationScreen = ({
             flexDirection: isRTL ? 'row-reverse' : 'row'
           }
         ]}
+        onPress={
+          Platform.OS === 'ios'
+            ? () =>
+                openBrowser(
+                  'https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294'
+                )
+            : openBrowser(
+                'https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
+              )
+        }
+      >
+        <Text
+          style={StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Bold',
+            'left',
+            colors.shark
+          )}
+        >
+          {translations.information.rate_waha}
+        </Text>
+        <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.informationItem,
+          {
+            flexDirection: isRTL ? 'row-reverse' : 'row'
+          }
+        ]}
         onPress={() => {
           setShowSnackbar(true)
           setTimeout(() => setShowSnackbar(false), 2000)
@@ -148,37 +179,6 @@ const InformationScreen = ({
           color={colors.tuna}
           size={25 * scaleMultiplier}
         />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[
-          styles.informationItem,
-          {
-            flexDirection: isRTL ? 'row-reverse' : 'row'
-          }
-        ]}
-        onPress={
-          Platform.OS === 'ios'
-            ? () =>
-                openBrowser(
-                  'https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294'
-                )
-            : openBrowser(
-                'https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
-              )
-        }
-      >
-        <Text
-          style={StandardTypography(
-            { font, isRTL },
-            'h3',
-            'Bold',
-            'left',
-            colors.shark
-          )}
-        >
-          {translations.information.rate_waha}
-        </Text>
-        <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View
