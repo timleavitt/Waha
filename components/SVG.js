@@ -3,11 +3,10 @@ import Svg, { Defs, G, Image, Path, Use } from 'react-native-svg'
 
 /**
  * This component renders a custom react native Svg component. Note: all <Svg> components below are converted from standard .svg files using `https://react-svgr.com/playground/`.
- * @param {Object} props - Props passed to this component.
- * @param {string} props.name - The name of the svg to render.
- * @param {number} props.width - The width of the svg.
- * @param {number} props.height - The height of the svg.
- * @param {string} props.color - The hex code for the color of the svg. Note: for the <Svg> component, color is called "fill". In every <Svg> below, the color prop passed from the parent is used for the "fill" prop.
+ * @param {string} name - The name of the svg to render.
+ * @param {number} width - The width of the svg.
+ * @param {number} height - The height of the svg.
+ * @param {string} color - The hex code for the color of the svg. Note: for the <Svg> component, color is called "fill". In every <Svg> below, the color prop passed from the parent is used for the "fill" prop.
  */
 const SVG = ({
   // Passed from a parent component.

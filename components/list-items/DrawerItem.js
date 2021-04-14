@@ -19,9 +19,9 @@ function mapStateToProps (state) {
 
 /**
  * A pressable item used in Waha's navigation drawer.
- * @param {function} props.onPress - The function to call when the user presses the drawer item.
- * @param {string} props.icon - The name of the icon to display on the drawer item.
- * @param {string} props.label - The label to display on the drawer item.
+ * @param {function} onPress - The function to call when the user presses the drawer item.
+ * @param {string} icon - The name of the icon to display on the drawer item.
+ * @param {string} label - The label to display on the drawer item.
  */
 const DrawerItem = ({
   // Props passed from a parent component.
@@ -32,35 +32,27 @@ const DrawerItem = ({
   isRTL,
   font,
   activeGroup
-}) => {
-  return (
-    <TouchableOpacity
+}) => (
+  <TouchableOpacity
+    style={[
+      styles.drawerItemContainer,
+      { flexDirection: isRTL ? 'row-reverse' : 'row' }
+    ]}
+    onPress={onPress}
+  >
+    <View style={styles.iconContainer}>
+      <Icon name={icon} size={30 * scaleMultiplier} color={colors.tuna} />
+    </View>
+    <Text
       style={[
-        styles.drawerItemContainer,
-        { flexDirection: isRTL ? 'row-reverse' : 'row' }
+        StandardTypography({ font, isRTL }, 'h3', 'Bold', 'left', colors.shark),
+        { paddingHorizontal: 10 }
       ]}
-      onPress={onPress}
     >
-      <View style={styles.iconContainer}>
-        <Icon name={icon} size={30 * scaleMultiplier} color={colors.tuna} />
-      </View>
-      <Text
-        style={[
-          StandardTypography(
-            { font, isRTL },
-            'h3',
-            'Bold',
-            'left',
-            colors.shark
-          ),
-          { paddingHorizontal: 10 }
-        ]}
-      >
-        {label}
-      </Text>
-    </TouchableOpacity>
-  )
-}
+      {label}
+    </Text>
+  </TouchableOpacity>
+)
 
 const styles = StyleSheet.create({
   drawerItemContainer: {
