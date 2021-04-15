@@ -369,9 +369,14 @@ const LessonsScreen = ({
         isDownloading={getIsLessonDownloading(item)}
         lessonType={getLessonType(item)}
         isComplete={thisSetProgress.includes(getLessonInfo('index', item.id))}
-        setActiveLessonInModal={() => setActiveLessonInModal(item)}
-        setShowDownloadLessonModal={() => setShowDownloadLessonModal(true)}
-        setShowDeleteLessonModal={() => setShowDeleteLessonModal(true)}
+        showDownloadLessonModal={() => {
+          setActiveLessonInModal(item)
+          setShowDownloadLessonModal(true)
+        }}
+        showDeleteLessonModal={() => {
+          setActiveLessonInModal(item)
+          setShowDeleteLessonModal(true)
+        }}
       />
     )
   }

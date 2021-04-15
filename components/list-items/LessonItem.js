@@ -31,6 +31,18 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
+/**
+ * A list item used to display a single lesson on the LessonsScreen. Shows the title, subtitle, complete status, and download status.
+ * @param {Object} thisLesson - The object for the lesson to display.
+ * @param {Function} onLessonSelect - Function to fire when the user presses a lesson item.
+ * @param {boolean} isBookmark - Whether this lesson is the currently bookmarked lesson for its Story Set or not.
+ * @param {boolean} isDownloaded - Whether this lesson is downloaded.
+ * @param {boolean} isDownloading - Whether this lesson is currently downloading.
+ * @param {string} lessonType - The type of this lesson. See getLessonType() from LessonsScreen.js for more info.
+ * @param {boolean} isComplete - Whether this lesson is complete.
+ * @param {Function} showDownloadLessonModal - Function that shows the download lesson modal.
+ * @param {Function} showDeleteLessonModal - Function that shows the delete lesson modal.
+ */
 const LessonItem = ({
   // Props passed from a parent component.
   thisLesson,
@@ -40,9 +52,8 @@ const LessonItem = ({
   isDownloading,
   lessonType,
   isComplete,
-  setActiveLessonInModal,
-  setShowDownloadLessonModal,
-  setShowDeleteLessonModal,
+  showDownloadLessonModal,
+  showDeleteLessonModal,
   // Props passed from redux.
   primaryColor,
   isRTL,
@@ -53,52 +64,24 @@ const LessonItem = ({
   font,
   removeDownload
 }) => {
-  //+ CONSTRUCTOR
-
+  /** useEffect function that removes an active download from the downloads redux object after it finishes. */
   useEffect(() => {
-    // if we've completed the download for this lesson, remove the audio/video
-    //  download from redux
-    switch (lessonType) {
-      case 'qa':
-      case 'a':
-        if (downloads[thisLesson.id] && downloads[thisLesson.id].progress === 1)
-          removeDownload(thisLesson.id)
-        break
-      case 'qav':
-        if (
-          downloads[thisLesson.id] &&
-          downloads[thisLesson.id] + 'v' &&
-          downloads[thisLesson.id].progress === 1 &&
-          downloads[thisLesson.id + 'v'].progress === 1
-        ) {
-          removeDownload(thisLesson.id)
-          removeDownload(thisLesson.id + 'v')
-        }
-        break
-      case 'qv':
-      case 'v':
-        if (
-          downloads[thisLesson.id + 'v'] &&
-          downloads[thisLesson.id + 'v'].progress === 1
-        )
-          removeDownload(thisLesson.id + 'v')
-        break
-    }
+    // Remove finished audio downloads.
+    if (
+      lessonType.includes('a') &&
+      downloads[thisLesson.id] &&
+      downloads[thisLesson.id].progress === 1
+    )
+      removeDownload(thisLesson.id)
+
+    // Remove finished video downloads.
+    if (
+      lessonType.includes('v') &&
+      downloads[thisLesson.id + 'v'] &&
+      downloads[thisLesson.id + 'v'].progress === 1
+    )
+      removeDownload(thisLesson.id + 'v')
   }, [downloads])
-
-  //+ FUNCTIONS
-
-  // calls the various modal functions on LessonsScreen
-  function showSaveModal () {
-    setActiveLessonInModal.call()
-    setShowDownloadLessonModal.call()
-  }
-  function showDeleteModal () {
-    setActiveLessonInModal.call()
-    setShowDeleteLessonModal.call()
-  }
-
-  //+ RENDER
 
   return (
     <View
@@ -175,8 +158,8 @@ const LessonItem = ({
       <DownloadStatusIndicator
         isDownloaded={isDownloaded}
         isDownloading={isDownloading}
-        showDeleteModal={showDeleteModal}
-        showSaveModal={showSaveModal}
+        showDeleteLessonModal={showDeleteLessonModal}
+        showDownloadLessonModal={showDownloadLessonModal}
         lessonID={thisLesson.id}
         lessonType={lessonType}
       />

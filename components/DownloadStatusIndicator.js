@@ -27,8 +27,8 @@ const DownloadStatusIndicator = ({
   // Props passed from a parent component.s
   isDownloaded,
   isDownloading,
-  showDeleteModal,
-  showSaveModal,
+  showDeleteLessonModal,
+  showDownloadLessonModal,
   lessonID,
   lessonType,
   // Props passed from redux.
@@ -80,7 +80,7 @@ const DownloadStatusIndicator = ({
     isDownloaded ? (
       // if lesson is downloaded, show check
       <TouchableOpacity
-        onPress={showDeleteModal}
+        onPress={showDeleteLessonModal}
         style={styles.downloadButtonContainer}
       >
         <Icon
@@ -128,7 +128,7 @@ const DownloadStatusIndicator = ({
       ) : (
         // if not downloaded, not downloading, and connected, show download icon
         <TouchableOpacity
-          onPress={showSaveModal}
+          onPress={showDownloadLessonModal}
           style={styles.downloadButtonContainer}
         >
           <Icon
