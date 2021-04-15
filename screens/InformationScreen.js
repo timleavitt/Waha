@@ -78,7 +78,7 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.information.privacy}
+          {translations.information && translations.information.privacy}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
@@ -102,52 +102,9 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.information.donate_to_waha}
+          {translations.information && translations.information.donate_to_waha}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[
-          styles.informationItem,
-          {
-            flexDirection: isRTL ? 'row-reverse' : 'row'
-          }
-        ]}
-        onPress={() => {
-          setShowSnackbar(true)
-          setTimeout(() => setShowSnackbar(false), 2000)
-          Clipboard.setString(appVersion)
-        }}
-      >
-        <View>
-          <Text
-            style={StandardTypography(
-              { font, isRTL },
-              'h3',
-              'Bold',
-              'left',
-              colors.shark
-            )}
-          >
-            {translations.information.version}
-          </Text>
-          <Text
-            style={StandardTypography(
-              { font, isRTL },
-              'h4',
-              'Bold',
-              'left',
-              colors.chateau
-            )}
-          >
-            {appVersion}
-          </Text>
-        </View>
-        <Icon
-          name='clipboard'
-          color={colors.tuna}
-          size={25 * scaleMultiplier}
-        />
       </TouchableOpacity>
       <TouchableOpacity
         style={[
@@ -176,9 +133,52 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.information.rate_waha}
+          {translations.information && translations.information.rate_waha}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.informationItem,
+          {
+            flexDirection: isRTL ? 'row-reverse' : 'row'
+          }
+        ]}
+        onPress={() => {
+          setShowSnackbar(true)
+          setTimeout(() => setShowSnackbar(false), 2000)
+          Clipboard.setString(appVersion)
+        }}
+      >
+        <View>
+          <Text
+            style={StandardTypography(
+              { font, isRTL },
+              'h3',
+              'Bold',
+              'left',
+              colors.shark
+            )}
+          >
+            {translations.information && translations.information.version}
+          </Text>
+          <Text
+            style={StandardTypography(
+              { font, isRTL },
+              'h4',
+              'Bold',
+              'left',
+              colors.chateau
+            )}
+          >
+            {appVersion}
+          </Text>
+        </View>
+        <Icon
+          name='clipboard'
+          color={colors.tuna}
+          size={25 * scaleMultiplier}
+        />
       </TouchableOpacity>
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View
@@ -226,7 +226,10 @@ const InformationScreen = ({
       </View>
       <SnackBar
         visible={showSnackbar}
-        textMessage={translations.information.copied_to_clipboard}
+        textMessage={
+          translations.information &&
+          translations.information.copied_to_clipboard
+        }
         messageStyle={{
           color: colors.white,
           fontSize: 24 * scaleMultiplier,

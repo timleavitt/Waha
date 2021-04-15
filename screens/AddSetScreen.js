@@ -178,7 +178,7 @@ const AddSetScreen = ({
   }
 
   function getSetData () {
-    if (category === 'topical')
+    if (category === 'Topical')
       return (
         activeDatabase.sets
           // Filter for Topical Story Sets.
@@ -191,13 +191,13 @@ const AddSetScreen = ({
               )
           )
           // Filter for Topical Story Sets that match the currently selected tag (if there is one).
-          .filter(topicalAddedSet => {
+          .filter(topicalAddedSet =>
             // If the selected tag is blank (meaning nothing has been selected) or 'All' is selected, show all the Topical Story Sets. Otherwise, filter by the selected tag.
-            return selectedTag === '' ||
-              selectedTag === translations.add_set.all_tag_label
+            selectedTag === '' ||
+            selectedTag === translations.add_set.all_tag_label
               ? true
               : topicalAddedSet.tags.some(tag => selectedTag === tag)
-          })
+          )
           // Filter for Topical Sets that have all the necessary question set mp3s downloaded.
           .filter(filterForDownloadedQuestionSets)
           // Sort by ID, just in case they aren't added in order in the database.
@@ -278,10 +278,11 @@ const AddSetScreen = ({
 
   return (
     <View style={styles.screen}>
-      {category === 'topical' ? tagsComponent : null}
+      {category === 'Topical' ? tagsComponent : null}
       <FlatList
         style={{ flex: 1 }}
         data={setData}
+        extraData={selectedTag}
         ItemSeparatorComponent={() => <Separator />}
         ListFooterComponent={() => <Separator />}
         ListHeaderComponent={() => <Separator />}

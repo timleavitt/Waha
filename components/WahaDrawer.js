@@ -244,7 +244,7 @@ const WahaDrawer = ({
         <DrawerItem
           icon='info'
           onPress={() => navigate('Information')}
-          label={translations.information.header}
+          label={translations.information && translations.information.header}
         />
       </ScrollView>
       <AddEditGroupModal
