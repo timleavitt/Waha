@@ -1,16 +1,18 @@
 // import SvgUri from 'expo-svg-uri'
 import { LinearGradient } from 'expo-linear-gradient'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Animated,
   Dimensions,
   PanResponder,
-  SectionList,
   StyleSheet,
   Text,
   View
 } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import {
+  ScrollView,
+  TouchableWithoutFeedback
+} from 'react-native-gesture-handler'
 import PagerView from 'react-native-pager-view'
 import TextTicker from 'react-native-text-ticker'
 import { connect } from 'react-redux'
@@ -24,6 +26,63 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 import Separator from './standard/Separator'
 import SVG from './SVG'
 
+const HeaderBig = ({ text, font, isRTL, onLayout }) => (
+  <View
+    style={{
+      paddingVertical: 10 * scaleMultiplier,
+      marginBottom: 10 * scaleMultiplier,
+      backgroundColor: colors.white
+    }}
+    onLayout={onLayout}
+  >
+    <Text
+      style={[
+        StandardTypography(
+          { font, isRTL },
+          'h2',
+          'Black',
+          'left',
+          colors.shark
+        ),
+        {
+          fontSize: 22 * scaleMultiplier
+        }
+      ]}
+    >
+      {text}
+    </Text>
+    <Separator />
+  </View>
+)
+
+const HeaderSmall = ({ text, font, isRTL }) => (
+  <Text
+    style={StandardTypography(
+      { font, isRTL },
+      'h3',
+      'Bold',
+      'left',
+      colors.shark
+    )}
+  >
+    {text}
+  </Text>
+)
+
+const StandardText = ({ text, font, isRTL }) => (
+  <Text
+    style={StandardTypography(
+      { font, isRTL },
+      'h3',
+      'Regular',
+      'left',
+      colors.shark
+    )}
+  >
+    {text}
+  </Text>
+)
+
 function mapStateToProps (state) {
   return {
     activeGroup: activeGroupSelector(state),
@@ -33,8 +92,6 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
-
-const scrollElementHeightPercent = 45
 
 const AlbumArtSwiper = ({
   // Props passed from a parent component.
@@ -52,24 +109,15 @@ const AlbumArtSwiper = ({
   translations,
   isRTL
 }) => {
-  // keeps track of whether we're in the middle pane or not
-  const [isMiddle, setIsMiddle] = useState(true)
-
   const [layoutWidth, setLayoutWidth] = useState(60)
   const [marginWidth, setMarginWidth] = useState(80)
 
   const [titleBackgroundColor, setTitleBackgroundColor] = useState(colors.white)
 
   const [shouldShowScrollBar, setShouldShowScrollBar] = useState(false)
-  // const [scrollOffset, setScrollOffset] = useState(0)
   const [contentSize, setContentSize] = useState(0)
   const [sectionListHeight, setSectionListHeight] = useState(0)
-
-  // const scrollPercentage = (scrollOffset.y / contentSize) * 100
-
-  // const translateY = useRef(new Animated.Value(0)).current
   const sectionListRef = useRef()
-
   const [shouldUpdateScroll, setShouldUpdateScroll] = useState(true)
 
   const [indexList, setIndexList] = useState([])
@@ -84,6 +132,8 @@ const AlbumArtSwiper = ({
 
   const translateY = useRef(new Animated.Value(0)).current
 
+  const [sectionOffsets, setSectionOffsets] = useState([])
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
@@ -96,9 +146,6 @@ const AlbumArtSwiper = ({
         translateY.extractOffset()
         translateY.setValue(0)
       },
-      // onPanResponderMove: (event, gesture) => {
-      //   console.log(gesture)
-      // },
       onPanResponderRelease: () => {
         setShouldUpdateScroll(true)
         translateY.flattenOffset()
@@ -106,108 +153,40 @@ const AlbumArtSwiper = ({
     })
   ).current
 
-  // useEffect(() => {
-  //   sectionListRef.current.scrollTo({
-  //     x: 0,
-  //     y: translateY,
-  //     animated: false
-  //   })
-  // }, [translateY])
-
-  // useEffect(() => {
-  //   Animated.event(
-  //     [
-  //       {
-  //         nativeEvent: {
-  //           translationY: translateY
-  //         }
-  //       }
-  //     ],
-  //     { useNativeDriver: true }
-  //   )
-  // }, [translateY])
-
-  // refs for determining when we're in the middle
-  // todo: is extremely jank and inconsistent but functional
-  // const onViewRef = useRef(info => {
-  //   if (info.viewableItems.some(item => item.index === 0)) setIsMiddle(true)
-  //   else setIsMiddle(false)
-  // })
-  // const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
-
-  // data for album art flatlist
-  const albumArtData = [
-    {
-      key: '0',
-      type: 'text'
-    },
-    {
-      key: '1',
-      type: 'image',
-      svgName: iconName
-    },
-    {
-      key: '2',
-      type: 'text'
-    }
-  ]
-
+  /** useEffect function that triggers on every scroll bar position change. */
   useEffect(() => {
-    if (Dimensions.get('window').width >= 600) {
-      setLayoutWidth(240)
-      setMarginWidth(200)
+    if (!shouldUpdateScroll) {
+      var scrollOffset =
+        (scroll * (contentSize - sectionListHeight)) / sectionListHeight
+      sectionListRef.current.scrollTo({ y: scrollOffset, animated: false })
     }
-  }, [])
-
-  // useEffect(() => {
-  //   var indexList = []
-  //   indexList.push(activeDatabase.questions[thisLesson.fellowshipType].length)
-  //   thisLesson.scripture.forEach(() => indexList.push(1))
-  //   indexList.push(activeDatabase.questions[thisLesson.applicationType].length)
-  //   setIndexList(indexList)
-  // }, [])
-
-  useEffect(() => {
-    var scrollPosition = ((scroll * contentCount) / sectionListHeight) | 0
-    // var indices = getIndices(scrollPosition)
-    // console.log(getIndices(scrollPosition))
-    // sectionListRef.current.scrollToLocation({
-    //   animated: false,
-    //   itemIndex: indices.itemIndex,
-    //   sectionIndex: indices.sectionIndex
-    // })
   }, [scroll])
-  // useEffect(() => {
-  //   console.log(scrollOffset)
-  // }, [scrollOffset])
 
+  useEffect(() => {
+    console.log(sectionOffsets)
+  }, [sectionOffsets])
+
+  const onScroll = ({ nativeEvent }) => {
+    // console.log(`${Date.now()} Calling onScroll.`)
+    if (shouldUpdateScroll) {
+      translateY.setValue(
+        (nativeEvent.contentOffset.y * nativeEvent.layoutMeasurement.height) /
+          (nativeEvent.contentSize.height -
+            nativeEvent.layoutMeasurement.height)
+      )
+    }
+  }
+
+  /** Start listener for the position of the scroll bar position. */
   useEffect(() => {
     if (sectionListHeight > 0)
       translateY.addListener(({ value }) => {
+        // console.log(value)
         if (value >= 0 && value <= sectionListHeight) setScroll(value | 0)
-        // sectionListRef.current.scrollToLocation({
-        //   animated: false,
-        //   itemIndex: getIndecies((value / contentCount) | 0).itemIndex,
-        //   sectionIndex: getIndecies((value / contentCount) | 0).sectionIndex
-        // })
       })
   }, [sectionListHeight])
 
   const getIndices = scrollPosition => {
-    // var itemIndex = 0
-    // var indexCounter = 0
-    // var jackpot = {}
-    // for (sectionIndex = 0; sectionIndex < indexList.length; sectionIndex++) {
-    //   if (indexList[sectionIndex] + indexCounter < scrollPosition) {
-    //     indexCounter += indexList[sectionIndex]
-    //   } else {
-    //     return {
-    //       sectionIndex: sectionIndex,
-    //       itemIndex: scrollPosition - indexCounter
-    //     }
-    //   }
-    // }
-
     var lowerBound = 0
     var upperBound = indexList[0]
 
@@ -230,7 +209,8 @@ const AlbumArtSwiper = ({
     }
   }
 
-  const getTextData = () => {
+  // Use with SectionList.
+  /*const getTextData = () => {
     var sections = []
     var fellowshipCount = 0
     var storyCount = 0
@@ -294,88 +274,9 @@ const AlbumArtSwiper = ({
     setContentCount(totalContentCount)
     setIndexList(contentCounts)
     return sections
-  }
+  }*/
 
-  const textData = useMemo(() => getTextData(), [])
-
-  // function getTextData (key) {
-  //   if (key === '2') {
-  //     if (thisLesson.scripture) return thisLesson.scripture
-  //     else return null
-  //   } else {
-  //     if (thisLesson.fellowshipType) {
-  //       var combinedQuestionList = activeDatabase.questions[
-  //         thisLesson.fellowshipType
-  //       ]
-  //         // combine fellowship and application questions
-  //         .concat(activeDatabase.questions[thisLesson.applicationType])
-  //       var updatedQuestionArray = []
-  //       combinedQuestionList.forEach((question, index) => {
-  //         var temp = {}
-  //         temp['header'] =
-  //           translations.play.question_header + ' ' + (index + 1).toString()
-  //         temp['text'] = question + '\n'
-  //         updatedQuestionArray.push(temp)
-  //       })
-  //       return updatedQuestionArray
-  //     } else return null
-  //   }
-
-  //   return thisLesson.fellowshipType
-  //     ? // render questions on the first pane and scripture on the last
-  //       item.key === '0'
-  //       ? activeDatabase.questions[thisLesson.fellowshipType]
-  //           // combine fellowship and application questions
-  //           .concat(activeDatabase.questions[thisLesson.applicationType])
-  //           // add newline after each question for spacing
-  //           .map(question => {
-  //             return { ...question, text: question.text + '\n' }
-  //           })
-  //       : thisLesson.scripture
-  //     : []
-  // }
-
-  //+ ANIMATION STUFF
-
-  // opacities for the scroll bar opacities
-  // const [middleScrollBarOpacity, setMiddleScrollBarOpacity] = useState(
-  //   new Animated.Value(0)
-  // )
-  // const [sideScrollBarOpacity, setSideScrollBarOpacity] = useState(
-  //   new Animated.Value(0.8)
-  // )
-
-  //- whenever we switch to and from the middle pane, change which scroll bars
-  //-   are visible
-  // useEffect(() => {
-  //   if (isMiddle)
-  //     Animated.sequence([
-  //       Animated.timing(middleScrollBarOpacity, {
-  //         toValue: 0,
-  //         duration: 250,
-  //         useNativeDriver: true
-  //       }),
-  //       Animated.timing(sideScrollBarOpacity, {
-  //         toValue: 1,
-  //         duration: 1000,
-  //         useNativeDriver: true
-  //       })
-  //     ]).start()
-  //   else {
-  //     Animated.sequence([
-  //       Animated.timing(sideScrollBarOpacity, {
-  //         toValue: 0,
-  //         duration: 250,
-  //         useNativeDriver: true
-  //       }),
-  //       Animated.timing(middleScrollBarOpacity, {
-  //         toValue: 1,
-  //         duration: 1000,
-  //         useNativeDriver: true
-  //       })
-  //     ]).start()
-  //   }
-  // }, [isMiddle])
+  // const textData = useMemo(() => getTextData(), [])
 
   const renderTextContent = item => {
     return (
@@ -454,30 +355,6 @@ const AlbumArtSwiper = ({
   }
 
   return (
-    // <View
-    //   style={{
-    //     width: '100%',
-    //     justifyContent: 'center',
-    //     alignItems: 'center'
-    //   }}
-    // >
-    //   <Carousel
-    //     data={albumArtData}
-    //     renderItem={renderAlbumArtItem}
-    //     ref={ref => setAlbumArtSwiperRef(ref)}
-    //     itemWidth={Dimensions.get('window').width - marginWidth}
-    //     sliderWidth={Dimensions.get('window').width}
-    //     itemHeight={Dimensions.get('window').width - marginWidth}
-    //     sliderHeight={Dimensions.get('window').width}
-    //     firstItem={1}
-    //     removeClippedSubviews={false}
-    //     lockScrollWhileSnapping
-    //     onBeforeSnapToItem={slideIndex => {
-    //       if (slideIndex === 1) setIsMiddle(true)
-    //       else setIsMiddle(false)
-    //     }}
-    //   />
-    // </View>
     <PagerView style={{ flex: 1 }} scrollEnabled={shouldUpdateScroll}>
       <View
         key='1'
@@ -545,84 +422,17 @@ const AlbumArtSwiper = ({
             }
           ]}
         >
-          {/* <View
-              style={{
-                zIndex: 1,
-                width: '100%',
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            > */}
-          {/* <TouchableHighlight
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-                onPress={playHandler}
-                underlayColor={colors.white + '00'}
-                activeOpacity={1}
-              > */}
           <SVG
             name={iconName}
             width={Dimensions.get('window').width - marginWidth}
             height={Dimensions.get('window').width - marginWidth}
             color='#1D1E20'
           />
-          {/* <SvgUri
-                source={{
-                  uri:
-                    ''
-                }}
-                width={Dimensions.get('window').width - marginWidth}
-                height={Dimensions.get('window').width - marginWidth}
-                // fill={fullyCompleted ? colors.chateau : colors.shark}
-                fill='#1D1E20'
-                fillAll
-              /> */}
-          {/* </TouchableHighlight>
-            </View>
-            <Animated.View
-              style={{
-                position: 'absolute',
-                opacity: playOpacity,
-                transform: [
-                  {
-                    scale: playOpacity.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [2, 1]
-                    })
-                  }
-                ],
-                zIndex: animationZIndex
-              }}
-            >
-              <Icon
-                name={isMediaPlaying ? 'play' : 'pause'}
-                size={100 * scaleMultiplier}
-                color={colors.white}
-              />
-            </Animated.View>*/}
-          {/* </View> */}
         </View>
       </View>
-      <View key='2' style={{ flex: 1 }}>
-        {/* <ScrollView
-          ref={scrollViewRef}
-          onScroll={({ nativeEvent }) =>
-            setScrollOffset(nativeEvent.contentOffset)
-          }
-          onContentSizeChange={(width, height) => setContentSize(height)}
-          onLayout={({ nativeEvent }) =>
-            setSectionListHeight(nativeEvent.layout.height)
-          }
-          scrollEventThrottle={16}
-        >
-          {getTextData()}
-        </ScrollView> */}
-        <SectionList
+      <View key='2' style={{ flex: 1, paddingHorizontal: 20 }}>
+        {/* SectionList. */}
+        {/* <SectionList
           sections={textData}
           renderItem={({ item }) => renderTextContent(item)}
           renderSectionHeader={({ section }) => renderSectionHeader(section)}
@@ -630,16 +440,7 @@ const AlbumArtSwiper = ({
           ref={sectionListRef}
           stickySectionHeadersEnabled
           showsVerticalScrollIndicator={false}
-          onScroll={({ nativeEvent }) => {
-            if (shouldUpdateScroll) {
-              // setScrollOffset(nativeEvent.contentOffset)
-              translateY.setValue(
-                (nativeEvent.contentOffset.y *
-                  nativeEvent.layoutMeasurement.height) /
-                  nativeEvent.contentSize.height
-              )
-            }
-          }}
+          onScroll={onScroll}
           onContentSizeChange={(width, height) => setContentSize(height)}
           onLayout={({ nativeEvent }) =>
             setSectionListHeight(nativeEvent.layout.height)
@@ -647,42 +448,136 @@ const AlbumArtSwiper = ({
           onScrollToIndexFailed={info => {
             console.log(info)
           }}
-        />
-        {/* <VirtualizedList
-          data={getTextData()}
-          renderItem={({ item }) => renderTextContent(item)}
-          getItem={data => data}
-          getItemCount={data => 5}
-          // keyExtractor={item => item.key}
+          scrollEventThrottle={5000}
         /> */}
+        {/* ScrollView. */}
+        <ScrollView
+          ref={sectionListRef}
+          showsVerticalScrollIndicator={false}
+          onScroll={onScroll}
+          onContentSizeChange={(width, height) => setContentSize(height)}
+          onLayout={({ nativeEvent }) =>
+            setSectionListHeight(nativeEvent.layout.height)
+          }
+          scrollEventThrottle={64}
+        >
+          <TouchableWithoutFeedback
+            onPress={() => setShouldShowScrollBar(current => !current)}
+          >
+            {/* Fellowship header. */}
+            <HeaderBig
+              text='Fellowship'
+              font={font}
+              isRTL={isRTL}
+              onLayout={({ nativeEvent }) =>
+                setSectionOffsets(current => [
+                  ...current,
+                  { name: 'Fellowship', offset: nativeEvent.layout.y }
+                ])
+              }
+            />
+            {/* Fellowship questions. */}
+            {activeDatabase.questions[thisLesson.fellowshipType].map(
+              (question, index) => (
+                <View key={index}>
+                  <HeaderSmall
+                    text={
+                      translations.play.question_header +
+                      ' ' +
+                      (index + 1).toString()
+                    }
+                    font={font}
+                    isRTL={isRTL}
+                  />
+                  <StandardText
+                    text={question + '\n'}
+                    font={font}
+                    isRTL={isRTL}
+                  />
+                </View>
+              )
+            )}
+            {/* Scripture headers/text. */}
+            {thisLesson.scripture.map((scriptureChunk, index) => (
+              <View
+                key={index}
+                onLayout={({ nativeEvent }) =>
+                  setSectionOffsets(current => [
+                    ...current,
+                    {
+                      name: scriptureChunk.header,
+                      offset: nativeEvent.layout.y
+                    }
+                  ])
+                }
+              >
+                <HeaderBig
+                  text={scriptureChunk.header}
+                  font={font}
+                  isRTL={isRTL}
+                />
+                <StandardText
+                  text={scriptureChunk.text}
+                  font={font}
+                  isRTL={isRTL}
+                />
+              </View>
+            ))}
+            {/* Application header. */}
+            <HeaderBig
+              text='Application'
+              font={font}
+              isRTL={isRTL}
+              onLayout={({ nativeEvent }) =>
+                setSectionOffsets(current => [
+                  ...current,
+                  { name: 'Application', offset: nativeEvent.layout.y }
+                ])
+              }
+            />
+            {/* Application questions. */}
+            {activeDatabase.questions[thisLesson.applicationType].map(
+              (question, index) => (
+                <View key={index}>
+                  <HeaderSmall
+                    text={
+                      translations.play.question_header +
+                      ' ' +
+                      (index + 1).toString()
+                    }
+                    font={font}
+                    isRTL={isRTL}
+                  />
+                  <StandardText
+                    text={question + '\n'}
+                    font={font}
+                    isRTL={isRTL}
+                  />
+                </View>
+              )
+            )}
+          </TouchableWithoutFeedback>
+        </ScrollView>
         {shouldShowScrollBar && (
           <View
             style={{
               position: 'absolute',
               right: 0,
               height: '100%',
-              width: 30
-              // backgroundColor: 'green'
-              // paddingBottom: 30 * scaleMultiplier
+              width: 30 * scaleMultiplier,
+              marginTop: -15 * scaleMultiplier,
+              alignItems: 'center'
             }}
           >
-            {/* <PanGestureHandler
-              onGestureEvent={Animated.event(
-                [{ nativeEvent: { translationY: translateY } }],
-                {
-                  useNativeDriver: true
-                }
-              )}
-              onHandlerStateChange={() => translateY.extractOffset()}
-              a
-            > */}
             <Animated.View
               style={{
                 // top: shouldUpdateScroll
                 //   ? `${Number(scrollPercentage || 0).toFixed(0)}%`
                 //   : null,
                 height: 30 * scaleMultiplier,
-                width: '100%',
+                width: 30 * scaleMultiplier,
+                justifyContent: 'center',
+                alignItems: 'center',
                 backgroundColor: colors.tuna,
                 shadowColor: '#000',
                 borderRadius: 15,
@@ -692,21 +587,74 @@ const AlbumArtSwiper = ({
                 },
                 shadowOpacity: 0.25,
                 shadowRadius: 3.84,
-
                 elevation: 5,
                 transform: [
                   {
-                    translateY: translateY.interpolate({
-                      inputRange: [0, sectionListHeight - 30],
-                      outputRange: [0, sectionListHeight - 30],
-                      extrapolate: 'clamp'
-                    })
+                    translateY: translateY
+                    // .interpolate({
+                    //   inputRange: [0, sectionListHeight],
+                    //   outputRange: [0, sectionListHeight],
+                    //   extrapolate: 'clamp'
+                    // })
                   }
                 ]
               }}
               {...panResponder.panHandlers}
-            />
-            {/* </PanGestureHandler> */}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  position: 'absolute',
+                  top: 1,
+                  transform: [{ rotateZ: '270deg' }]
+                }}
+              >
+                <Icon
+                  size={18 * scaleMultiplier}
+                  name='triangle-right'
+                  color={colors.white}
+                />
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  position: 'absolute',
+                  bottom: 1,
+                  transform: [{ rotateZ: '90deg' }]
+                }}
+              >
+                <Icon
+                  size={18 * scaleMultiplier}
+                  name='triangle-right'
+                  color={colors.white}
+                />
+              </View>
+            </Animated.View>
+          </View>
+        )}
+        {!shouldUpdateScroll && (
+          <View
+            style={{
+              position: 'absolute',
+              right: 30 * scaleMultiplier,
+              height: '100%',
+              alignItems: 'center',
+              backgroundColor: 'green'
+              // marginBottom: 30 * scaleMultiplier
+            }}
+          >
+            {sectionOffsets.map((section, index) => (
+              <View
+                key={index}
+                style={{
+                  position: 'absolute',
+                  backgroundColor: 'green',
+                  top: (section.offset * sectionListHeight) / contentSize
+                }}
+              >
+                <Text>{section.name}</Text>
+              </View>
+            ))}
           </View>
         )}
       </View>
