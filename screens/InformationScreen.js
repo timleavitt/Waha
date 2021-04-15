@@ -78,7 +78,7 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.information.privacy}
+          {translations.information && translations.information.privacy}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
@@ -102,7 +102,7 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.information.donate_to_waha}
+          {translations.information && translations.information.donate_to_waha}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
@@ -133,7 +133,7 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.information.rate_waha}
+          {translations.information && translations.information.rate_waha}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
@@ -160,7 +160,7 @@ const InformationScreen = ({
               colors.shark
             )}
           >
-            {translations.information.version}
+            {translations.information && translations.information.version}
           </Text>
           <Text
             style={StandardTypography(
@@ -226,7 +226,10 @@ const InformationScreen = ({
       </View>
       <SnackBar
         visible={showSnackbar}
-        textMessage={translations.information.copied_to_clipboard}
+        textMessage={
+          translations.information &&
+          translations.information.copied_to_clipboard
+        }
         messageStyle={{
           color: colors.white,
           fontSize: 24 * scaleMultiplier,
