@@ -29,8 +29,8 @@ const Scrubber = ({
         />
       </View>
       <View style={styles.timeInfo}>
-        <TimeDisplay time={seekPosition} max={maximumValue} />
-        <TimeDisplay time={maximumValue} max={maximumValue} />
+        <TimeDisplay side='left' time={seekPosition} max={maximumValue} />
+        <TimeDisplay side='right' time={maximumValue} max={maximumValue} />
       </View>
     </View>
   )

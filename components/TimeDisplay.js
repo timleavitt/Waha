@@ -16,7 +16,7 @@ const TimeDisplay = ({
   // Props passed from a parent component.
   max,
   time,
-  style,
+  side,
   // Props passed from redux.
   font,
   activeGroup
