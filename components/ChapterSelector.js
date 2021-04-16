@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
 import ChapterButton from './ChapterButton'
-import ChapterSeparator from './ChapterSeparator'
 
 function mapStateToProps (state) {
   return {
@@ -25,6 +24,7 @@ const ChapterSelector = ({
   downloads,
   isConnected
 }) => {
+  console.log(`${Date.now()} ChapterSelector re-rendering.`)
   // order of chapters is
   //  1. fellowship
   //  2. story
@@ -60,7 +60,7 @@ const ChapterSelector = ({
         activeNumber={getActiveNumber()}
         onPress={onPress}
       />
-      <ChapterSeparator />
+      <View style={{ width: 10 }} />
       <ChapterButton
         name='story'
         mode={
@@ -82,7 +82,7 @@ const ChapterSelector = ({
         }
       />
       {lessonType === 'qav' || lessonType === 'qv' ? (
-        <ChapterSeparator />
+        <View style={{ width: 10 }} />
       ) : null}
       {lessonType === 'qav' || lessonType === 'qv' ? (
         <ChapterButton
@@ -107,7 +107,7 @@ const ChapterSelector = ({
           }
         />
       ) : null}
-      <ChapterSeparator />
+      <View style={{ width: 10 }} />
       <ChapterButton
         name='application'
         mode={activeChapter === 'application' ? 'active' : 'inactive'}
@@ -124,7 +124,8 @@ const ChapterSelector = ({
 const styles = StyleSheet.create({
   chapterSelectContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    paddingHorizontal: 10
   }
 })
 
@@ -132,8 +133,7 @@ const areEqual = (prevProps, nextProps) => {
   return (
     prevProps.activeChapter === nextProps.activeChapter &&
     prevProps.isDownloaded === nextProps.isDownloaded &&
-    prevProps.downloads === nextProps.downloads &&
-    prevProps.shouldAutoPlay === nextProps.shouldAutoPlay
+    prevProps.downloads === nextProps.downloads
   )
 }
 
