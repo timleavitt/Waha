@@ -1,6 +1,5 @@
 import React from 'react'
 import { Text, View } from 'react-native'
-import { connect } from 'react-redux'
 import { activeGroupSelector } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
@@ -51,14 +50,14 @@ const TimeDisplay = ({
   }
 
   return (
-    <View styles={style}>
+    <View style={{ paddingHorizontal: 2 }}>
       <Text
         style={StandardTypography(
           { font: 'Roboto' },
           'd',
           'Regular',
           'center',
-          colors.shark
+          side === 'left' ? colors.tuna : colors.chateau
         )}
       >
         {msToTime(time)}
