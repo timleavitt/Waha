@@ -316,13 +316,18 @@ const AlbumArtSwiper = ({
           </View>
           {/* Album Art */}
           <View
-            style={[
-              styles.albumArtContainer,
-              {
-                width: Dimensions.get('window').width - marginWidth,
-                height: Dimensions.get('window').width - marginWidth
-              }
-            ]}
+            style={{
+              borderRadius: 20,
+              backgroundColor: colors.aquaHaze,
+              overflow: 'hidden',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flex: 1,
+              aspectRatio: 1,
+              // marginHorizontal: 40,
+              maxWidth: Dimensions.get('window').width - 60,
+              maxHeight: Dimensions.get('window').width - 60
+            }}
           >
             <SVG
               name={iconName}
@@ -594,7 +599,7 @@ const AlbumArtSwiper = ({
           }}
         />
       </View>
-      <View style={{ width: '100%', height: 20, backgroundColor: 'green' }} />
+      <View style={{ width: '100%', height: 100, backgroundColor: 'green' }} />
     </View>
   )
 }
