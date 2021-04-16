@@ -186,6 +186,8 @@ const PlayScreen = ({
 
   const textAreaRef = useRef(null)
 
+  const [sectionOffsets, setSectionOffsets] = useState([])
+
   function getNavOptions () {
     return {
       headerTitle: getLessonInfo('subtitle', thisLesson.id),
@@ -541,6 +543,12 @@ const PlayScreen = ({
         lockPortrait(() => {})
         setSeekPosition(0)
         loadMedia('audio', fellowshipSource)
+        textAreaRef.current.scrollTo({
+          y: sectionOffsets.filter(
+            section => section.name === translations.play.fellowship
+          )[0].offset,
+          animated: true
+        })
       } else if (chapter === 'story') {
         lockPortrait(() => {})
         setSeekPosition(0)
@@ -552,11 +560,23 @@ const PlayScreen = ({
         //  2. we're currently downloading the lesson
         //  3. there's an audio source, it's not downloading, and there's no
         //    internet
-        if (!thisLesson.hasAudio) swipeToScripture()
+        // if (!thisLesson.hasAudio) swipeToScripture()
+        textAreaRef.current.scrollTo({
+          y: sectionOffsets.filter(
+            section => section.name === thisLesson.scripture[0].header
+          )[0].offset,
+          animated: true
+        })
       } else if (chapter === 'application') {
         lockPortrait(() => {})
         setSeekPosition(0)
         loadMedia('audio', applicationSource)
+        textAreaRef.current.scrollTo({
+          y: sectionOffsets.filter(
+            section => section.name === translations.play.application
+          )[0].offset,
+          animated: true
+        })
       } else if (chapter === 'training') {
         setIsMediaLoaded(false)
         setSeekPosition(0)
@@ -816,6 +836,8 @@ const PlayScreen = ({
             playOpacity={playOpacity}
             animationZIndex={animationZIndex}
             isMediaPlaying={isMediaPlaying}
+            setSectionOffsets={setSectionOffsets}
+            sectionOffsets={sectionOffsets}
           />
         )}
       </View>
@@ -907,8 +929,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flexDirection: 'column',
     alignItems: 'center',
-    width: '100%',
-    height: '33%'
+    width: '100%'
+    // height: '33%'
   },
   titleContainer: {
     width: '100%',

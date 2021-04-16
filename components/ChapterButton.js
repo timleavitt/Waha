@@ -150,7 +150,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    height: 62 * scaleMultiplier,
+    // height: 62 * scaleMultiplier,
+    paddingVertical: 10,
     justifyContent: 'center',
     borderRadius: 20,
     borderWidth: 1

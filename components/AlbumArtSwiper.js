@@ -87,6 +87,8 @@ const StandardText = ({ text, font, isRTL }) => (
   </Text>
 )
 
+const scrollBarSize = 35 * scaleMultiplier
+
 function mapStateToProps (state) {
   return {
     activeGroup: activeGroupSelector(state),
@@ -106,6 +108,8 @@ const AlbumArtSwiper = ({
   playOpacity,
   animationZIndex,
   isMediaPlaying,
+  setSectionOffsets,
+  sectionOffsets,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -125,33 +129,65 @@ const AlbumArtSwiper = ({
 
   const [scrollBarPosition, setScrollBarPosition] = useState(0)
 
-  const translateY = useRef(new Animated.Value(0)).current
+  const scrollBarYPosition = useRef(new Animated.Value(0)).current
 
   const [activePage, setActivePage] = useState(0)
 
-  const [sectionOffsets, setSectionOffsets] = useState([])
+  // const [sectionOffsets, setSectionOffsets] = useState([])
 
-  const [scrollBarXPosition, setScrollBarXPosition] = useState(
-    new Animated.Value(0)
-  )
+  const scrollBarXPosition = useRef(new Animated.Value(scrollBarSize)).current
+
+  const [isScrolling, setIsScrolling] = useState(false)
+
+  const lastScrollPosition = useRef(0)
+
+  const timeoutScrollBar = useRef(null)
 
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gesture) => {
-        translateY.setValue(gesture.dy)
+        scrollBarYPosition.setValue(gesture.dy)
       },
       onPanResponderGrant: (event, gesture) => {
+        setIsScrolling(true)
         setShouldUpdateScrollBar(false)
-        translateY.extractOffset()
-        translateY.setValue(0)
+        scrollBarYPosition.extractOffset()
+        scrollBarYPosition.setValue(0)
       },
       onPanResponderRelease: () => {
         setShouldUpdateScrollBar(true)
-        translateY.flattenOffset()
+        setTimeout(() => setIsScrolling(false), 50)
+        scrollBarYPosition.flattenOffset()
       }
     })
   ).current
+
+  useEffect(() => {
+    if (isScrolling) {
+      clearTimeout(timeoutScrollBar.current)
+      Animated.spring(scrollBarXPosition, {
+        toValue: scrollBarSize / 2,
+        duration: 400,
+        useNativeDriver: true
+      }).start()
+    } else if (!isScrolling) {
+      timeoutScrollBar.current = setTimeout(
+        () =>
+          Animated.spring(scrollBarXPosition, {
+            // 1.1 so that the shadow isn't visible when the scroll bar is hidden.
+            toValue: scrollBarSize * 1.1,
+            duration: 400,
+            useNativeDriver: true
+          }).start(),
+        1500
+      )
+    }
+  }, [isScrolling])
+
+  useEffect(() => {
+    console.log(shouldShowScrollBar)
+  }, [shouldShowScrollBar])
 
   /** useEffect function that triggers on every scroll bar position change only if the user is actively draggin the scroll bar. It scrolls the text area to the proportional location. */
   useEffect(() => {
@@ -159,14 +195,15 @@ const AlbumArtSwiper = ({
       // scrollBarPosition is the position of the scroll bar from 0 to the height of the text area - 50. The 50 is to account for the scroll bar not going out-of-bounds. We want to convert that to a number between 0 and the total height of the text content minus the text area height, since we never scroll past the bottom of the content. This is the offset we want to scroll the text area to whenever we drag the scroll bar.
       var offsetToScrollTo =
         (scrollBarPosition * (totalTextContentHeight - textAreaHeight)) /
-        (textAreaHeight - 50 * scaleMultiplier)
+        (textAreaHeight - scrollBarSize)
       textAreaRef.current.scrollTo({ y: offsetToScrollTo, animated: false })
     }
   }, [scrollBarPosition])
 
   /** Gets fired whenever the user scrolls the text area content. */
   const onScroll = ({ nativeEvent }) => {
-    if (!shouldShowScrollBar) setShouldShowScrollBar(true)
+    if (!isScrolling) setIsScrolling(true)
+
     // console.log(`${Date.now()} Calling onScroll.`)
 
     // If we're not currently dragging the scroll bar, we want to update its position as we scroll the text content.
@@ -177,8 +214,8 @@ const AlbumArtSwiper = ({
       const textAreaHeight = nativeEvent.layoutMeasurement.height
       const totalTextContentHeight = nativeEvent.contentSize.height
 
-      translateY.setValue(
-        (currentScrollPosition * (textAreaHeight - 50 * scaleMultiplier)) /
+      scrollBarYPosition.setValue(
+        (currentScrollPosition * (textAreaHeight - scrollBarSize)) /
           (totalTextContentHeight - textAreaHeight)
       )
     }
@@ -189,7 +226,7 @@ const AlbumArtSwiper = ({
     // Since we need the height of the text area for the listener, we don't want to start it until that value has been set.
     if (textAreaHeight > 0)
       // As we update the position of the scroll bar on screen, we want to update its state value as well. The state value is used for  The only change is that we don't want to update it if it goes out-of-bounds. This way, the user can't scroll before beginning of the content or passed the end of the content.
-      translateY.addListener(({ value }) => {
+      scrollBarYPosition.addListener(({ value }) => {
         // console.log(value)
         if (value >= 0 && value <= textAreaHeight)
           setScrollBarPosition(value | 0)
@@ -248,6 +285,8 @@ const AlbumArtSwiper = ({
     )
     return indices
   }
+
+  const sectionIndices = useMemo(() => getIndices(), [])
 
   return (
     <View style={{ flex: 1 }}>
@@ -318,7 +357,7 @@ const AlbumArtSwiper = ({
           <View
             style={{
               borderRadius: 20,
-              backgroundColor: colors.aquaHaze,
+              backgroundColor: colors.geyser,
               overflow: 'hidden',
               justifyContent: 'center',
               alignItems: 'center',
@@ -329,12 +368,7 @@ const AlbumArtSwiper = ({
               maxHeight: Dimensions.get('window').width - 60
             }}
           >
-            <SVG
-              name={iconName}
-              width={Dimensions.get('window').width - marginWidth}
-              height={Dimensions.get('window').width - marginWidth}
-              color='#1D1E20'
-            />
+            <SVG name={iconName} width='100%' height='100%' color='#1D1E20' />
           </View>
         </View>
         <View key='2' style={{ flex: 1, backgroundColor: colors.white }}>
@@ -350,9 +384,9 @@ const AlbumArtSwiper = ({
               if (nativeEvent) setTextAreaHeight(nativeEvent.layout.height)
             }}
             scrollEventThrottle={64}
-            stickyHeaderIndices={getIndices()}
-            // onMomentumScrollEnd={() => setShouldShowScrollBar(false)}
-            // onScrollEndDrag={() => setShouldShowScrollBar(false)}
+            stickyHeaderIndices={sectionIndices}
+            onMomentumScrollEnd={() => setIsScrolling(false)}
+            onScrollEndDrag={() => setIsScrolling(false)}
             // onMomentumScrollBegin={() => setShouldShowScrollBar(true)}
           >
             {/* <TouchableWithoutFeedback
@@ -360,14 +394,17 @@ const AlbumArtSwiper = ({
           > */}
             {/* Fellowship header. */}
             <HeaderBig
-              text='Fellowship'
+              text={translations.play.fellowship}
               font={font}
               isRTL={isRTL}
               onLayout={({ nativeEvent }) => {
                 if (nativeEvent)
                   setSectionOffsets(current => [
                     ...current,
-                    { name: 'Fellowship', offset: nativeEvent.layout.y }
+                    {
+                      name: translations.play.fellowship,
+                      offset: nativeEvent.layout.y
+                    }
                   ])
               }}
             />
@@ -396,14 +433,17 @@ const AlbumArtSwiper = ({
             {scriptureSection}
             {/* Application header. */}
             <HeaderBig
-              text='Application'
+              text={translations.play.application}
               font={font}
               isRTL={isRTL}
               onLayout={({ nativeEvent }) => {
                 if (nativeEvent)
                   setSectionOffsets(current => [
                     ...current,
-                    { name: 'Application', offset: nativeEvent.layout.y }
+                    {
+                      name: translations.play.application,
+                      offset: nativeEvent.layout.y
+                    }
                   ])
               }}
             />
@@ -430,30 +470,36 @@ const AlbumArtSwiper = ({
             )}
             {/* </TouchableWithoutFeedback> */}
           </ScrollView>
-          {shouldShowScrollBar && (
-            <View
+          {/* {shouldShowScrollBar && ( */}
+          <View
+            style={{
+              position: 'absolute',
+              right: 0,
+              height: '100%',
+              width: scrollBarSize / 2,
+              // marginRight: scrollBarSize / -2.5,
+              // marginTop: -15 * scaleMultiplier,
+              alignItems: 'flex-end'
+            }}
+          >
+            <Animated.View
               style={{
-                position: 'absolute',
-                right: 0,
-                height: '100%',
-                width: 50 * scaleMultiplier,
-                marginRight: -20 * scaleMultiplier,
-                // marginTop: -15 * scaleMultiplier,
-                alignItems: 'center'
+                transform: [
+                  { translateY: scrollBarYPosition },
+                  { translateX: scrollBarXPosition }
+                ]
               }}
+              {...panResponder.panHandlers}
             >
-              <Animated.View
+              <View
                 style={{
-                  // top: shouldUpdateScroll
-                  //   ? `${Number(scrollPercentage || 0).toFixed(0)}%`
-                  //   : null,
-                  height: 50 * scaleMultiplier,
-                  width: 50 * scaleMultiplier,
+                  height: scrollBarSize,
+                  width: scrollBarSize,
                   justifyContent: 'center',
                   alignItems: 'center',
                   backgroundColor: colors.tuna,
                   shadowColor: '#000',
-                  borderRadius: 25,
+                  borderRadius: scrollBarSize / 2,
                   shadowOffset: {
                     width: 0,
                     height: 2
@@ -461,30 +507,21 @@ const AlbumArtSwiper = ({
                   shadowOpacity: 0.25,
                   shadowRadius: 3.84,
                   elevation: 5,
-                  transform: [
-                    {
-                      translateY: translateY
-                      // .interpolate({
-                      //   inputRange: [0, sectionListHeight],
-                      //   outputRange: [0, sectionListHeight],
-                      //   extrapolate: 'clamp'
-                      // })
-                    }
-                  ]
+                  marginLeft: 20,
+                  marginBottom: 20
                 }}
-                {...panResponder.panHandlers}
               >
                 <View
                   style={{
                     flex: 1,
                     position: 'absolute',
-                    top: 8,
-                    left: 8,
+                    top: scrollBarSize / 6,
+                    left: scrollBarSize / 6,
                     transform: [{ rotateZ: '270deg' }]
                   }}
                 >
                   <Icon
-                    size={18 * scaleMultiplier}
+                    size={scrollBarSize / 2.5}
                     name='triangle-right'
                     color={colors.white}
                   />
@@ -493,64 +530,97 @@ const AlbumArtSwiper = ({
                   style={{
                     flex: 1,
                     position: 'absolute',
-                    bottom: 8,
-                    left: 8,
+                    bottom: scrollBarSize / 6,
+                    left: scrollBarSize / 6,
                     transform: [{ rotateZ: '90deg' }]
                   }}
                 >
                   <Icon
-                    size={18 * scaleMultiplier}
+                    size={scrollBarSize / 2.5}
                     name='triangle-right'
                     color={colors.white}
                   />
                 </View>
-              </Animated.View>
-            </View>
-          )}
+              </View>
+            </Animated.View>
+          </View>
+          {/* )} */}
           {!shouldUpdateScrollBar && (
-            <View
+            <LinearGradient
               style={{
                 position: 'absolute',
                 flexDirection: 'row-reverse',
-                right: 50 * scaleMultiplier,
+                right: 0,
                 // marginHorizontal: 30 * scaleMultiplier,
                 height: '100%',
-                alignItems: 'center'
+                alignItems: 'center',
+                width: 100,
+                overflow: 'visible'
                 // marginBottom: 30 * scaleMultiplier
               }}
+              colors={[colors.shark + '30', colors.shark + '00']}
+              start={[1, 1]}
+              end={[0, 1]}
             >
               {sectionOffsets.map((section, index) => (
                 <View
                   key={index}
                   style={{
                     position: 'absolute',
-                    marginHorizontal: 10,
-                    backgroundColor: colors.tuna,
-                    paddingHorizontal: 10,
-                    paddingVertical: 3,
-                    borderRadius: 15,
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    marginRight: scrollBarSize / 2,
                     top:
                       totalTextContentHeight !== 0
-                        ? (section.offset *
-                            (textAreaHeight - 50 * scaleMultiplier)) /
+                        ? (section.offset * (textAreaHeight - scrollBarSize)) /
                           (totalTextContentHeight - textAreaHeight)
                         : 0
                   }}
                 >
-                  <Text
-                    style={StandardTypography(
-                      { font, isRTL },
-                      'h4',
-                      'Bold',
-                      'center',
-                      colors.white
-                    )}
+                  <View
+                    style={{
+                      // position: 'absolute',
+                      // marginHorizontal: 10,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: colors.tuna,
+                      paddingHorizontal: 10,
+                      paddingVertical: 3,
+                      borderRadius: 3,
+                      marginRight: -10
+                    }}
                   >
-                    {section.name}
-                  </Text>
+                    <Text
+                      style={StandardTypography(
+                        { font, isRTL },
+                        'h4',
+                        'Bold',
+                        'center',
+                        colors.white
+                      )}
+                    >
+                      {section.name}
+                    </Text>
+                  </View>
+                  <Icon
+                    name='triangle-right'
+                    size={25 * scaleMultiplier}
+                    color={colors.tuna}
+                  />
                 </View>
               ))}
-            </View>
+              {/* <View
+                style={{
+                  position: 'absolute',
+                  height: '100%',
+                  right: 0,
+                  width: 50
+                }}
+                // colors={[titleBackgroundColor, titleBackgroundColor + '00']}
+                // start={[1, 0]}
+                // end={[0, 0]}
+              /> */}
+            </LinearGradient>
           )}
           <LinearGradient
             colors={[titleBackgroundColor, titleBackgroundColor + '00']}
@@ -599,7 +669,6 @@ const AlbumArtSwiper = ({
           }}
         />
       </View>
-      <View style={{ width: '100%', height: 100, backgroundColor: 'green' }} />
     </View>
   )
 }
