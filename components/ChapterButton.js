@@ -43,7 +43,7 @@ const ChapterButton = ({
       borderColor: primaryColor
     },
     inactive: {
-      borderColor: primaryColor,
+      borderColor: colors.porcelain,
       backgroundColor: colors.athens
     },
     downloading: {
@@ -90,10 +90,10 @@ const ChapterButton = ({
   // get the icon name depending on the mode/if this button is active or not
   function getNumberIcon () {
     const iconNamesOutline = {
-      1: 'number-1-outline',
-      2: 'number-2-outline',
-      3: 'number-3-outline',
-      4: 'number-4-outline'
+      1: 'number-1-filled',
+      2: 'number-2-filled',
+      3: 'number-3-filled',
+      4: 'number-4-filled'
     }
     const iconNamesFilled = {
       1: 'number-1-filled',
@@ -152,8 +152,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 62 * scaleMultiplier,
     justifyContent: 'center',
-    borderTopWidth: 2,
-    borderBottomWidth: 2
+    borderRadius: 20,
+    borderWidth: 1
   }
 })
 
