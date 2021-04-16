@@ -265,7 +265,8 @@ const MainStack = ({
         component={PlayScreen}
         options={{
           headerStyle: {
-            backgroundColor: colors.white
+            backgroundColor: colors.white,
+            elevation: 0
           },
           headerTitleStyle: {
             color: colors.chateau,

@@ -27,9 +27,11 @@ const HeaderBig = ({ text, font, isRTL, onLayout }) => (
     style={{
       paddingVertical: 10 * scaleMultiplier,
       marginBottom: 10 * scaleMultiplier,
-      backgroundColor: colors.porcelain,
-      paddingHorizontal: 20,
-      borderRadius: 20
+      // marginTop: 5 * scaleMultiplier,
+      // marginHorizontal: 10,
+      backgroundColor: colors.white,
+      paddingHorizontal: 20
+      // borderRadius: 20
       // borderBottomLeftRadius: 20,
       // borderBottomRightRadius: 20
     }}
@@ -37,25 +39,19 @@ const HeaderBig = ({ text, font, isRTL, onLayout }) => (
   >
     <Text
       style={[
-        StandardTypography(
-          { font, isRTL },
-          'h2',
-          'Black',
-          'left',
-          colors.shark
-        ),
-        { fontSize: 22 * scaleMultiplier }
+        StandardTypography({ font, isRTL }, 'h2', 'Black', 'left', colors.shark)
+        // { fontSize: 22 * scaleMultiplier }
       ]}
     >
       {text}
     </Text>
-    <View
+    {/* <View
       style={{
         width: '100%',
         height: 2,
         backgroundColor: colors.chateau + '50'
       }}
-    />
+    /> */}
   </View>
 )
 
@@ -103,7 +99,7 @@ function mapStateToProps (state) {
 
 const AlbumArtSwiper = ({
   // Props passed from a parent component.
-  setAlbumArtSwiperRef,
+  textAreaRef,
   iconName,
   thisLesson,
   playHandler,
@@ -125,7 +121,6 @@ const AlbumArtSwiper = ({
   const [shouldShowScrollBar, setShouldShowScrollBar] = useState(false)
   const [totalTextContentHeight, setTotalTextContentHeight] = useState(0)
   const [textAreaHeight, setTextAreaHeight] = useState(0)
-  const textAreaRef = useRef(null)
   const [shouldUpdateScrollBar, setShouldUpdateScrollBar] = useState(true)
 
   const [scrollBarPosition, setScrollBarPosition] = useState(0)
@@ -135,6 +130,10 @@ const AlbumArtSwiper = ({
   const [activePage, setActivePage] = useState(0)
 
   const [sectionOffsets, setSectionOffsets] = useState([])
+
+  const [scrollBarXPosition, setScrollBarXPosition] = useState(
+    new Animated.Value(0)
+  )
 
   const panResponder = useRef(
     PanResponder.create({
@@ -333,8 +332,9 @@ const AlbumArtSwiper = ({
             />
           </View>
         </View>
-        <View key='2' style={{ flex: 1 }}>
+        <View key='2' style={{ flex: 1, backgroundColor: colors.white }}>
           <ScrollView
+            style={{ backgroundColor: colors.white }}
             ref={textAreaRef}
             showsVerticalScrollIndicator={false}
             onScroll={onScroll}

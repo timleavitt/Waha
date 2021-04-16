@@ -184,6 +184,8 @@ const PlayScreen = ({
     lessonType === '' ? colors.porcelain : colors.white
   )
 
+  const textAreaRef = useRef(null)
+
   function getNavOptions () {
     return {
       headerTitle: getLessonInfo('subtitle', thisLesson.id),
@@ -807,7 +809,7 @@ const PlayScreen = ({
           />
         ) : (
           <AlbumArtSwiper
-            setAlbumArtSwiperRef={setAlbumArtSwiperRef}
+            textAreaRef={textAreaRef}
             iconName={thisSet.iconName}
             thisLesson={thisLesson}
             playHandler={playHandler}
