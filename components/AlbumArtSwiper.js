@@ -443,23 +443,51 @@ const AlbumArtSwiper = ({
             />
           </View>
           {/* Album Art */}
-          <TouchableWithoutFeedback
-            onPress={playHandler}
+          <View
             style={{
-              borderRadius: 20,
-              backgroundColor: colors.geyser,
-              overflow: 'hidden',
               justifyContent: 'center',
-              alignItems: 'center',
-              flex: 1,
-              aspectRatio: 1,
-              // marginHorizontal: 40,
-              maxWidth: Dimensions.get('window').width - 60,
-              maxHeight: Dimensions.get('window').width - 60
+              alignItems: 'center'
             }}
           >
-            <SVG name={iconName} width='100%' height='100%' color='#1D1E20' />
-          </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback
+              onPress={playHandler}
+              style={{
+                borderRadius: 20,
+                backgroundColor: colors.geyser,
+                overflow: 'hidden',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flex: 1,
+                aspectRatio: 1,
+                // marginHorizontal: 40,
+                maxWidth: Dimensions.get('window').width - 60,
+                maxHeight: Dimensions.get('window').width - 60
+              }}
+            >
+              <SVG name={iconName} width='100%' height='100%' color='#1D1E20' />
+            </TouchableWithoutFeedback>
+            <Animated.View
+              style={{
+                position: 'absolute',
+                opacity: playOpacity,
+                transform: [
+                  {
+                    scale: playOpacity.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [2, 1]
+                    })
+                  }
+                ],
+                zIndex: animationZIndex
+              }}
+            >
+              <Icon
+                name={isMediaPlaying ? 'play' : 'pause'}
+                size={100 * scaleMultiplier}
+                color={colors.white}
+              />
+            </Animated.View>
+          </View>
         </View>
         <View key='2' style={{ flex: 1, backgroundColor: colors.white }}>
           <ScrollView
