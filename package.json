@@ -24,6 +24,7 @@
     "expo-constants": "^9.3.5",
     "expo-file-system": "~9.3.0",
     "expo-firebase-analytics": "~2.6.0",
+    "expo-haptics": "~8.4.0",
     "expo-keep-awake": "~8.4.0",
     "expo-linear-gradient": "~8.4.0",
     "expo-localization": "~9.1.0",

@@ -1,15 +1,16 @@
 // import SvgUri from 'expo-svg-uri'
+import * as Haptics from 'expo-haptics'
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Animated,
   Dimensions,
-  PanResponder,
+  ScrollView,
   StyleSheet,
   Text,
   View
 } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import { PanGestureHandler, State } from 'react-native-gesture-handler'
 import PagerView from 'react-native-pager-view'
 import TextTicker from 'react-native-text-ticker'
 import { connect } from 'react-redux'
@@ -143,26 +144,60 @@ const AlbumArtSwiper = ({
 
   const timeoutScrollBar = useRef(null)
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: (event, gesture) => {
-        scrollBarYPosition.setValue(gesture.dy)
-      },
-      onPanResponderGrant: (event, gesture) => {
+  // const panResponder = useMemo(
+  //   () =>
+  //     PanResponder.create({
+  //       onMoveShouldSetPanResponder: () => true,
+  //       onPanResponderMove: (event, gesture) => {
+  //         // if (gesture.moveY < 50 && gesture.moveY)
+  //         scrollBarYPosition.setValue(gesture.dy)
+  //         // scrollBarYPosition.setValue(event.nativeEvent.locationY)
+  //         // console.log(gesture.moveY)
+  //         // scrollBarYPosition.interpolate({
+  //         //   inputRange: [0, gesture.y0],
+  //         //   outputRange: [0, textAreaHeight]
+  //         // })
+  //       },
+  //       onPanResponderGrant: (event, gesture) => {
+  //         setIsScrolling(true)
+  //         setShouldUpdateScrollBar(false)
+  //         scrollBarYPosition.extractOffset()
+  //         scrollBarYPosition.setValue(0)
+  //       },
+  //       onPanResponderRelease: () => {
+  //         setShouldUpdateScrollBar(true)
+  //         setTimeout(() => setIsScrolling(false), 50)
+  //         scrollBarYPosition.flattenOffset()
+  //       }
+  //     }),
+  //   [sectionOffsets, textAreaHeight, totalTextContentHeight]
+  // )
+
+  const onHandlerStateChange = event => {
+    console.log(event.nativeEvent.state)
+    switch (event.nativeEvent.state) {
+      case State.BEGAN:
+        // scrollBarYPosition.setOffset(0)
         setIsScrolling(true)
         setShouldUpdateScrollBar(false)
-        scrollBarYPosition.extractOffset()
-        scrollBarYPosition.setValue(0)
-      },
-      onPanResponderRelease: () => {
+        // scrollBarYPosition.extractOffset()
+        // scrollBarYPosition.setValue(0)
+        break
+      case State.END:
         setShouldUpdateScrollBar(true)
         setTimeout(() => setIsScrolling(false), 50)
-        scrollBarYPosition.flattenOffset()
-      }
-    })
-  ).current
+        // scrollBarYPosition.flattenOffset()
+        break
+    }
+  }
 
+  const onGestureEvent = event => {
+    console.log(event.nativeEvent.y)
+    // if (event.nativeEvent.y >= 0 && event.nativeEvent.y <= textAreaHeight)
+    scrollBarYPosition.setValue(event.nativeEvent.y)
+  }
+
+  // Used for auto-hiding the scroll bar.
   useEffect(() => {
     if (isScrolling) {
       clearTimeout(timeoutScrollBar.current)
@@ -185,13 +220,42 @@ const AlbumArtSwiper = ({
     }
   }, [isScrolling])
 
-  useEffect(() => {
-    console.log(shouldShowScrollBar)
-  }, [shouldShowScrollBar])
+  // useEffect(() => {
+  //   console.log(shouldShowScrollBar)
+  // }, [shouldShowScrollBar])
 
-  /** useEffect function that triggers on every scroll bar position change only if the user is actively draggin the scroll bar. It scrolls the text area to the proportional location. */
+  /** useEffect function that triggers on every scroll bar position change only if the user is actively dragging the scroll bar. It scrolls the text area to the proportional location. */
   useEffect(() => {
     if (!shouldUpdateScrollBar) {
+      // if (
+      //   sectionOffsets.some(
+      //     section =>
+      //       section.offset - currentScrollPosition > -5 &&
+      //       section.offset - currentScrollPosition < 5
+      //   )
+      // )
+      // console.log(
+      //   `${(scrollBarPosition / (textAreaHeight - scrollBarSize)) * 100}`
+      // )
+
+      if (
+        sectionOffsets.some(
+          section =>
+            section.offset / totalTextContentHeight -
+              scrollBarPosition / textAreaHeight >
+              -0.01 &&
+            section.offset / totalTextContentHeight -
+              scrollBarPosition / textAreaHeight <
+              0.01
+        )
+      )
+        Haptics.impactAsync()
+
+      // if (scrollBarPosition < 20) {
+      //   scrollBarYPosition.setOffset(0)
+      //   scrollBarYPosition.setValue(0)
+      // }
+
       // scrollBarPosition is the position of the scroll bar from 0 to the height of the text area - 50. The 50 is to account for the scroll bar not going out-of-bounds. We want to convert that to a number between 0 and the total height of the text content minus the text area height, since we never scroll past the bottom of the content. This is the offset we want to scroll the text area to whenever we drag the scroll bar.
       var offsetToScrollTo =
         (scrollBarPosition * (totalTextContentHeight - textAreaHeight)) /
@@ -482,67 +546,72 @@ const AlbumArtSwiper = ({
               alignItems: 'flex-end'
             }}
           >
-            <Animated.View
-              style={{
-                transform: [
-                  { translateY: scrollBarYPosition },
-                  { translateX: scrollBarXPosition }
-                ]
-              }}
-              {...panResponder.panHandlers}
+            <PanGestureHandler
+              onHandlerStateChange={onHandlerStateChange}
+              onGestureEvent={onGestureEvent}
             >
-              <View
+              <Animated.View
                 style={{
-                  height: scrollBarSize,
-                  width: scrollBarSize,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: colors.tuna,
-                  shadowColor: '#000',
-                  borderRadius: scrollBarSize / 2,
-                  shadowOffset: {
-                    width: 0,
-                    height: 2
-                  },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 3.84,
-                  elevation: 5,
-                  marginLeft: 20,
-                  marginBottom: 20
+                  transform: [
+                    { translateY: scrollBarYPosition },
+                    { translateX: scrollBarXPosition }
+                  ]
                 }}
+                // {...panResponder.panHandlers}
               >
                 <View
                   style={{
-                    flex: 1,
-                    position: 'absolute',
-                    top: scrollBarSize / 6,
-                    left: scrollBarSize / 6,
-                    transform: [{ rotateZ: '270deg' }]
+                    height: scrollBarSize,
+                    width: scrollBarSize,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: colors.tuna,
+                    shadowColor: '#000',
+                    borderRadius: scrollBarSize / 2,
+                    shadowOffset: {
+                      width: 0,
+                      height: 2
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                    marginLeft: 20,
+                    marginBottom: 20
                   }}
                 >
-                  <Icon
-                    size={scrollBarSize / 2.5}
-                    name='triangle-right'
-                    color={colors.white}
-                  />
+                  <View
+                    style={{
+                      flex: 1,
+                      position: 'absolute',
+                      top: scrollBarSize / 6,
+                      left: scrollBarSize / 6,
+                      transform: [{ rotateZ: '270deg' }]
+                    }}
+                  >
+                    <Icon
+                      size={scrollBarSize / 2.5}
+                      name='triangle-right'
+                      color={colors.white}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      position: 'absolute',
+                      bottom: scrollBarSize / 6,
+                      left: scrollBarSize / 6,
+                      transform: [{ rotateZ: '90deg' }]
+                    }}
+                  >
+                    <Icon
+                      size={scrollBarSize / 2.5}
+                      name='triangle-right'
+                      color={colors.white}
+                    />
+                  </View>
                 </View>
-                <View
-                  style={{
-                    flex: 1,
-                    position: 'absolute',
-                    bottom: scrollBarSize / 6,
-                    left: scrollBarSize / 6,
-                    transform: [{ rotateZ: '90deg' }]
-                  }}
-                >
-                  <Icon
-                    size={scrollBarSize / 2.5}
-                    name='triangle-right'
-                    color={colors.white}
-                  />
-                </View>
-              </View>
-            </Animated.View>
+              </Animated.View>
+            </PanGestureHandler>
           </View>
           {/* )} */}
           {!shouldUpdateScrollBar && (
