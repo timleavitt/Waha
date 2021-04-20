@@ -8,9 +8,14 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View
 } from 'react-native'
-import { PanGestureHandler, State } from 'react-native-gesture-handler'
+import {
+  PanGestureHandler,
+  State,
+  TouchableWithoutFeedback
+} from 'react-native-gesture-handler'
 import PagerView from 'react-native-pager-view'
 import TextTicker from 'react-native-text-ticker'
 import { connect } from 'react-redux'
@@ -88,7 +93,7 @@ const StandardText = ({ text, font, isRTL }) => (
   </Text>
 )
 
-const scrollBarSize = 35 * scaleMultiplier
+const scrollBarSize = 40 * scaleMultiplier
 
 function mapStateToProps (state) {
   return {
@@ -134,6 +139,8 @@ const AlbumArtSwiper = ({
 
   const [activePage, setActivePage] = useState(0)
 
+  const [isSnapped, setIsSnapped] = useState(false)
+
   // const [sectionOffsets, setSectionOffsets] = useState([])
 
   const scrollBarXPosition = useRef(new Animated.Value(scrollBarSize)).current
@@ -143,6 +150,8 @@ const AlbumArtSwiper = ({
   const lastScrollPosition = useRef(0)
 
   const timeoutScrollBar = useRef(null)
+
+  const sectionsOpacity = useRef(new Animated.Value(0)).current
 
   // const panResponder = useMemo(
   //   () =>
@@ -174,27 +183,26 @@ const AlbumArtSwiper = ({
   // )
 
   const onHandlerStateChange = event => {
-    console.log(event.nativeEvent.state)
     switch (event.nativeEvent.state) {
       case State.BEGAN:
+        Haptics.impactAsync()
         // scrollBarYPosition.setOffset(0)
         setIsScrolling(true)
         setShouldUpdateScrollBar(false)
-        // scrollBarYPosition.extractOffset()
+        scrollBarYPosition.extractOffset()
         // scrollBarYPosition.setValue(0)
         break
       case State.END:
+        Haptics.impactAsync()
         setShouldUpdateScrollBar(true)
         setTimeout(() => setIsScrolling(false), 50)
-        // scrollBarYPosition.flattenOffset()
+        scrollBarYPosition.flattenOffset()
         break
     }
   }
 
   const onGestureEvent = event => {
-    console.log(event.nativeEvent.y)
-    // if (event.nativeEvent.y >= 0 && event.nativeEvent.y <= textAreaHeight)
-    scrollBarYPosition.setValue(event.nativeEvent.y)
+    scrollBarYPosition.setValue(event.nativeEvent.translationY)
   }
 
   // Used for auto-hiding the scroll bar.
@@ -220,42 +228,9 @@ const AlbumArtSwiper = ({
     }
   }, [isScrolling])
 
-  // useEffect(() => {
-  //   console.log(shouldShowScrollBar)
-  // }, [shouldShowScrollBar])
-
   /** useEffect function that triggers on every scroll bar position change only if the user is actively dragging the scroll bar. It scrolls the text area to the proportional location. */
   useEffect(() => {
     if (!shouldUpdateScrollBar) {
-      // if (
-      //   sectionOffsets.some(
-      //     section =>
-      //       section.offset - currentScrollPosition > -5 &&
-      //       section.offset - currentScrollPosition < 5
-      //   )
-      // )
-      // console.log(
-      //   `${(scrollBarPosition / (textAreaHeight - scrollBarSize)) * 100}`
-      // )
-
-      if (
-        sectionOffsets.some(
-          section =>
-            section.offset / totalTextContentHeight -
-              scrollBarPosition / textAreaHeight >
-              -0.01 &&
-            section.offset / totalTextContentHeight -
-              scrollBarPosition / textAreaHeight <
-              0.01
-        )
-      )
-        Haptics.impactAsync()
-
-      // if (scrollBarPosition < 20) {
-      //   scrollBarYPosition.setOffset(0)
-      //   scrollBarYPosition.setValue(0)
-      // }
-
       // scrollBarPosition is the position of the scroll bar from 0 to the height of the text area - 50. The 50 is to account for the scroll bar not going out-of-bounds. We want to convert that to a number between 0 and the total height of the text content minus the text area height, since we never scroll past the bottom of the content. This is the offset we want to scroll the text area to whenever we drag the scroll bar.
       var offsetToScrollTo =
         (scrollBarPosition * (totalTextContentHeight - textAreaHeight)) /
@@ -267,8 +242,6 @@ const AlbumArtSwiper = ({
   /** Gets fired whenever the user scrolls the text area content. */
   const onScroll = ({ nativeEvent }) => {
     if (!isScrolling) setIsScrolling(true)
-
-    // console.log(`${Date.now()} Calling onScroll.`)
 
     // If we're not currently dragging the scroll bar, we want to update its position as we scroll the text content.
     if (shouldUpdateScrollBar) {
@@ -288,14 +261,66 @@ const AlbumArtSwiper = ({
   /** Start listener for the position of the scroll bar position. */
   useEffect(() => {
     // Since we need the height of the text area for the listener, we don't want to start it until that value has been set.
-    if (textAreaHeight > 0)
+    if (textAreaHeight > 0 && sectionOffsets && totalTextContentHeight) {
       // As we update the position of the scroll bar on screen, we want to update its state value as well. The state value is used for  The only change is that we don't want to update it if it goes out-of-bounds. This way, the user can't scroll before beginning of the content or passed the end of the content.
+
+      scrollBarYPosition.removeAllListeners()
+
+      var offsets = sectionOffsets.map(
+        section =>
+          (section.offset * (textAreaHeight - scrollBarSize)) /
+          (totalTextContentHeight - textAreaHeight)
+      )
+
       scrollBarYPosition.addListener(({ value }) => {
         // console.log(value)
-        if (value >= 0 && value <= textAreaHeight)
+        var snapped = false
+        offsets.forEach(offset => {
+          if (
+            value < offset + 15 &&
+            value > offset - 15 &&
+            !shouldUpdateScrollBar
+          ) {
+            // if (!isSnapped) {
+            Haptics.impactAsync()
+            //   setIsSnapped(true)
+            // }
+            snapped = true
+
+            setScrollBarPosition(offset)
+          }
+          // else setScrollBarPosition(value | 0)
+        })
+
+        if (!snapped && value >= 0 && value <= textAreaHeight - scrollBarSize) {
           setScrollBarPosition(value | 0)
+          // setIsSnapped(false)
+        }
+        // if (value > 100 && value < 120) setScrollBarPosition(110)
+        // else if (value >= 0 && value <= textAreaHeight - scrollBarSize)
+        //   setScrollBarPosition(value | 0)
       })
-  }, [textAreaHeight])
+    }
+  }, [
+    textAreaHeight,
+    sectionOffsets,
+    totalTextContentHeight,
+    shouldUpdateScrollBar
+  ])
+
+  useEffect(() => {
+    console.log(shouldUpdateScrollBar)
+    if (!shouldUpdateScrollBar)
+      Animated.timing(sectionsOpacity, {
+        toValue: 1,
+        duration: 300
+      }).start()
+    else
+      Animated.timing(sectionsOpacity, {
+        toValue: 0,
+        duration: 300
+      }).start()
+  }, [shouldUpdateScrollBar])
 
   const getScriptureSection = () => {
     var scriptureSection = []
@@ -418,7 +443,8 @@ const AlbumArtSwiper = ({
             />
           </View>
           {/* Album Art */}
-          <View
+          <TouchableWithoutFeedback
+            onPress={playHandler}
             style={{
               borderRadius: 20,
               backgroundColor: colors.geyser,
@@ -433,7 +459,7 @@ const AlbumArtSwiper = ({
             }}
           >
             <SVG name={iconName} width='100%' height='100%' color='#1D1E20' />
-          </View>
+          </TouchableWithoutFeedback>
         </View>
         <View key='2' style={{ flex: 1, backgroundColor: colors.white }}>
           <ScrollView
@@ -535,7 +561,121 @@ const AlbumArtSwiper = ({
             {/* </TouchableWithoutFeedback> */}
           </ScrollView>
           {/* {shouldShowScrollBar && ( */}
-          <View
+          <Animated.View
+            style={{
+              opacity: sectionsOpacity,
+              height: '100%',
+              position: 'absolute',
+              right: 0,
+              flexDirection: 'row-reverse',
+              alignItems: 'center',
+              // width: 100,
+              overflow: 'visible'
+            }}
+          >
+            {/* <LinearGradient
+              style={{
+                flexDirection: 'row-reverse',
+                // marginHorizontal: 30 * scaleMultiplier,
+                height: '100%',
+                alignItems: 'center',
+                width: 100,
+                overflow: 'visible'
+
+                // marginBottom: 30 * scaleMultiplier
+              }}
+              colors={[colors.shark + '30', colors.shark + '00']}
+              start={[1, 1]}
+              end={[0, 1]}
+            > */}
+            {sectionOffsets.map((section, index) => (
+              <View
+                key={index}
+                style={{
+                  position: 'absolute',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  marginRight: scrollBarSize / 2,
+                  shadowColor: '#000',
+                  shadowOffset: {
+                    width: 0,
+                    height: 2
+                  },
+                  shadowOpacity: 0.23,
+                  shadowRadius: 2.62,
+                  elevation: 4,
+                  top:
+                    totalTextContentHeight !== 0
+                      ? (section.offset * (textAreaHeight - scrollBarSize)) /
+                        (totalTextContentHeight - textAreaHeight)
+                      : 0
+                }}
+              >
+                <View
+                  style={{
+                    // position: 'absolute',
+                    // marginHorizontal: 10,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: colors.tuna,
+                    paddingHorizontal: 10,
+                    paddingVertical: 3,
+                    borderRadius: 3,
+                    marginRight: -10
+                  }}
+                >
+                  <Text
+                    style={StandardTypography(
+                      { font, isRTL },
+                      'h4',
+                      'Bold',
+                      'center',
+                      colors.white
+                    )}
+                  >
+                    {section.name}
+                  </Text>
+                </View>
+                <Icon
+                  name='triangle-right'
+                  size={25 * scaleMultiplier}
+                  color={colors.tuna}
+                />
+              </View>
+            ))}
+            {/* <View
+                style={{
+                  position: 'absolute',
+                  height: '100%',
+                  right: 0,
+                  width: 50
+                }}
+                // colors={[titleBackgroundColor, titleBackgroundColor + '00']}
+                // start={[1, 0]}
+                // end={[0, 0]}
+              /> */}
+            {/* </LinearGradient> */}
+          </Animated.View>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              clearTimeout(timeoutScrollBar.current)
+              Animated.spring(scrollBarXPosition, {
+                toValue: scrollBarSize / 2,
+                duration: 400,
+                useNativeDriver: true
+              }).start()
+              timeoutScrollBar.current = setTimeout(
+                () =>
+                  Animated.spring(scrollBarXPosition, {
+                    // 1.1 so that the shadow isn't visible when the scroll bar is hidden.
+                    toValue: scrollBarSize * 1.1,
+                    duration: 400,
+                    useNativeDriver: true
+                  }).start(),
+                1500
+              )
+            }}
             style={{
               position: 'absolute',
               right: 0,
@@ -553,7 +693,7 @@ const AlbumArtSwiper = ({
               <Animated.View
                 style={{
                   transform: [
-                    { translateY: scrollBarYPosition },
+                    { translateY: scrollBarPosition },
                     { translateX: scrollBarXPosition }
                   ]
                 }}
@@ -612,85 +752,9 @@ const AlbumArtSwiper = ({
                 </View>
               </Animated.View>
             </PanGestureHandler>
-          </View>
+          </TouchableOpacity>
           {/* )} */}
-          {!shouldUpdateScrollBar && (
-            <LinearGradient
-              style={{
-                position: 'absolute',
-                flexDirection: 'row-reverse',
-                right: 0,
-                // marginHorizontal: 30 * scaleMultiplier,
-                height: '100%',
-                alignItems: 'center',
-                width: 100,
-                overflow: 'visible'
-                // marginBottom: 30 * scaleMultiplier
-              }}
-              colors={[colors.shark + '30', colors.shark + '00']}
-              start={[1, 1]}
-              end={[0, 1]}
-            >
-              {sectionOffsets.map((section, index) => (
-                <View
-                  key={index}
-                  style={{
-                    position: 'absolute',
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    marginRight: scrollBarSize / 2,
-                    top:
-                      totalTextContentHeight !== 0
-                        ? (section.offset * (textAreaHeight - scrollBarSize)) /
-                          (totalTextContentHeight - textAreaHeight)
-                        : 0
-                  }}
-                >
-                  <View
-                    style={{
-                      // position: 'absolute',
-                      // marginHorizontal: 10,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: colors.tuna,
-                      paddingHorizontal: 10,
-                      paddingVertical: 3,
-                      borderRadius: 3,
-                      marginRight: -10
-                    }}
-                  >
-                    <Text
-                      style={StandardTypography(
-                        { font, isRTL },
-                        'h4',
-                        'Bold',
-                        'center',
-                        colors.white
-                      )}
-                    >
-                      {section.name}
-                    </Text>
-                  </View>
-                  <Icon
-                    name='triangle-right'
-                    size={25 * scaleMultiplier}
-                    color={colors.tuna}
-                  />
-                </View>
-              ))}
-              {/* <View
-                style={{
-                  position: 'absolute',
-                  height: '100%',
-                  right: 0,
-                  width: 50
-                }}
-                // colors={[titleBackgroundColor, titleBackgroundColor + '00']}
-                // start={[1, 0]}
-                // end={[0, 0]}
-              /> */}
-            </LinearGradient>
-          )}
+
           <LinearGradient
             colors={[titleBackgroundColor, titleBackgroundColor + '00']}
             start={[1, 1]}
