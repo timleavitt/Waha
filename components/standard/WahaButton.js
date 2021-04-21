@@ -63,30 +63,46 @@ const WahaButton = ({
     else if (color === colors.geyser) setShadowColor(colors.geyserShadow)
   }, [color])
 
-  const containerStyle = [
+  const outerContainerStyle = [
     {
+      overflow: 'hidden',
       borderRadius: 10,
-      marginVertical: 20 * scaleMultiplier,
       height: 65 * scaleMultiplier,
-      paddingHorizontal: 15,
+      width: width,
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'row',
-      width: width
+      marginVertical: 20 * scaleMultiplier,
+      backgroundColor: 'green'
     },
     style
   ]
 
+  const innerContainerStyle = {
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    height: '100%',
+    width: '100%'
+  }
+
   const outlineButtonStyle = [
-    containerStyle,
+    innerContainerStyle,
     {
+      borderRadius: 10,
+      height: 65 * scaleMultiplier,
+      width: width,
+      flexDirection: 'row',
+      marginVertical: 20 * scaleMultiplier,
       borderWidth: 2,
       borderColor: color
-    }
+    },
+    style
   ]
 
   const filledAndInactiveButtonStyle = [
-    containerStyle,
+    innerContainerStyle,
     {
       backgroundColor: color,
       borderBottomWidth: 4,
@@ -121,20 +137,21 @@ const WahaButton = ({
       break
     case 'filled':
       return (
-        <TouchableOpacity
-          style={filledAndInactiveButtonStyle}
-          onPress={onPress}
-        >
-          <Text style={labelStyle}>{label}</Text>
-          {extraComponent}
+        <TouchableOpacity style={outerContainerStyle} onPress={onPress}>
+          <View style={filledAndInactiveButtonStyle}>
+            <Text style={labelStyle}>{label}</Text>
+            {extraComponent}
+          </View>
         </TouchableOpacity>
       )
       break
     case 'inactive':
       return (
-        <View style={filledAndInactiveButtonStyle}>
-          <Text style={labelStyle}>{label}</Text>
-          {extraComponent}
+        <View style={outerContainerStyle}>
+          <View style={filledAndInactiveButtonStyle}>
+            <Text style={labelStyle}>{label}</Text>
+            {extraComponent}
+          </View>
         </View>
       )
       break

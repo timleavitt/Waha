@@ -1,11 +1,11 @@
 import * as WebBrowser from 'expo-web-browser'
 import React, { useState } from 'react'
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
 import { connect } from 'react-redux'
+import DownloadUpdateButton from '../components/DownloadUpdateButton'
 import GroupAvatar from '../components/GroupAvatar'
 import DrawerItem from '../components/list-items/DrawerItem'
-import WahaButton from '../components/standard/WahaButton'
 import { scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
 import {
@@ -120,72 +120,9 @@ const WahaDrawer = ({
         style={{ backgroundColor: colors.white, flex: 1 }}
       >
         {/* Show an update button if we have any core files to update. */}
-        {languageCoreFilesToUpdate.length !== 0 ? (
-          <WahaButton
-            type={isConnected ? 'filled' : 'inactive'}
-            color={isConnected ? colors.apple : colors.geyser}
-            onPress={() => {
-              Alert.alert(
-                translations.general.popups.download_update_title,
-                translations.general.popups.download_update_message,
-                [
-                  {
-                    text: translations.general.cancel,
-                    onPress: () => {}
-                  },
-                  {
-                    text: translations.general.ok,
-                    onPress: onUpdatePress
-                  }
-                ]
-              )
-            }}
-            label={translations.general.download_update_button_label}
-            extraComponent={
-              isConnected ? (
-                <View
-                  style={{
-                    width: 50 * scaleMultiplier,
-                    alignItems: 'center'
-                  }}
-                >
-                  <Icon
-                    name='error-filled'
-                    size={30 * scaleMultiplier}
-                    color={colors.white}
-                  />
-                </View>
-              ) : (
-                <View style={{ width: 50 * scaleMultiplier }}>
-                  <Icon
-                    name='cloud-slash'
-                    size={30 * scaleMultiplier}
-                    color={colors.chateau}
-                  />
-                </View>
-              )
-            }
-            style={{
-              marginHorizontal: 5,
-              marginTop: 5,
-              marginBottom: 0,
-              height: 50 * scaleMultiplier,
-              flexDirection: isRTL ? 'row' : 'row-reverse',
-              justifyContent: 'flex-end',
-              paddingHorizontal: 5
-            }}
-            textStyle={[
-              { paddingHorizontal: 10 },
-              StandardTypography(
-                { font, isRTL },
-                'h3',
-                'Bold',
-                'center',
-                isConnected ? colors.white : colors.chateau
-              )
-            ]}
-          />
-        ) : null}
+        {languageCoreFilesToUpdate.length !== 0 && (
+          <DownloadUpdateButton onUpdatePress={onUpdatePress} />
+        )}
         <View style={{ width: '100%', height: 5 }} />
         <DrawerItem
           icon='group'
@@ -204,7 +141,6 @@ const WahaDrawer = ({
         />
         <View style={{ width: '100%', height: 5 }} />
         <Separator />
-        {/* <View style={{ width: '100%', height: 5 }} /> */}
         <Text
           style={[
             StandardTypography(
@@ -231,15 +167,7 @@ const WahaDrawer = ({
         <DrawerItem
           icon='email'
           label={translations.contact_us && translations.contact_us.header}
-          onPress={
-            () =>
-              // openBrowser('https://coda.io/form/Waha-Bug-Report_dyWvuvL6WTx')
-              navigate('ContactUs')
-            // New "contact us form" testing
-            // openBrowser(
-            //   `https://coda.io/form/Contact-Us_dOsPhfw4nDB?Language=${activeGroup.language}`
-            // )
-          }
+          onPress={() => navigate('ContactUs')}
         />
         <DrawerItem
           icon='info'

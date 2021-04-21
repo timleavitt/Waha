@@ -85,7 +85,7 @@ const SecurityOnboardingSlidesScreen = ({
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.aquaHaze,
+    backgroundColor: colors.white,
     flexDirection: 'column',
     justifyContent: 'center'
   }
