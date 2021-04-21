@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { getLessonInfo, itemHeights, scaleMultiplier } from '../../constants'
-import { removeDownload } from '../../redux/actions/downloadActions'
+import { getLessonInfo, itemHeights, scaleMultiplier } from '../constants'
+import { removeDownload } from '../redux/actions/downloadActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
-} from '../../redux/reducers/activeGroup'
-import { colors } from '../../styles/colors'
-import { getLanguageFont, StandardTypography } from '../../styles/typography'
-import DownloadStatusIndicator from '../DownloadStatusIndicator'
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
+import DownloadStatusIndicator from './DownloadStatusIndicator'
 
 function mapStateToProps (state) {
   return {

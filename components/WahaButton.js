@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../../constants'
+import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
-} from '../../redux/reducers/activeGroup'
-import { colors } from '../../styles/colors'
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
 import {
   getLanguageFont,
   StandardTypography,
   SystemTypography
-} from '../../styles/typography'
+} from '../styles/typography'
 
 function mapStateToProps (state) {
   return activeGroupSelector(state)

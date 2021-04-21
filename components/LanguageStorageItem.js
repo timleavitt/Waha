@@ -2,15 +2,15 @@ import * as FileSystem from 'expo-file-system'
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../../constants'
+import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
-} from '../../redux/reducers/activeGroup'
-import { colors } from '../../styles/colors'
-import { getLanguageFont, StandardTypography } from '../../styles/typography'
-import Separator from '../standard/Separator'
-import WahaButton from '../standard/WahaButton'
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
+import WahaButton from './WahaButton'
+import WahaSeparator from './WahaSeparator'
 
 function mapStateToProps (state) {
   return {
@@ -64,7 +64,7 @@ const LanguageStorageItem = ({
         }}
       />
     </View>
-    <Separator />
+    <WahaSeparator />
     <View
       style={[
         styles.mainAreaContainer,
@@ -109,7 +109,7 @@ const LanguageStorageItem = ({
         textStyle={{ fontFamily: font + '-Regular' }}
       />
     </View>
-    <Separator />
+    <WahaSeparator />
   </View>
 )
 

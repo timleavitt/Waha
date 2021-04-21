@@ -4,7 +4,7 @@ import React from 'react'
 import { Alert, Share, View } from 'react-native'
 import { connect } from 'react-redux'
 import OptionsModalButton from '../components/OptionsModalButton'
-import Separator from '../components/Separator'
+import WahaSeparator from '../components/WahaSeparator'
 import { logShareApp, logShareAudio, logShareText } from '../LogEventFunctions'
 import {
   activeDatabaseSelector,
@@ -107,7 +107,7 @@ const ShareModal = ({
       />
       {lessonType.includes('q') ? (
         <View>
-          <Separator />
+          <WahaSeparator />
           <OptionsModalButton
             title={translations.general.share_passage_text}
             onPress={() => share('text')}
@@ -116,7 +116,7 @@ const ShareModal = ({
       ) : null}
       {lessonType.includes('a') && !downloads[lesson.id] ? (
         <View>
-          <Separator />
+          <WahaSeparator />
           <OptionsModalButton
             title={translations.general.share_passage_audio}
             onPress={() => share('audio')}
@@ -127,7 +127,7 @@ const ShareModal = ({
       lesson.videoShareLink &&
       !downloads[lesson.id] ? (
         <View>
-          <Separator />
+          <WahaSeparator />
           <OptionsModalButton
             title={translations.general.share_video_link}
             onPress={() => share('video')}

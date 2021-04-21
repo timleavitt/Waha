@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import OptionsModalButton from '../components/OptionsModalButton'
-import Separator from '../components/Separator'
+import WahaSeparator from '../components/WahaSeparator'
 import { scaleMultiplier } from '../constants'
 import OptionsModal from '../modals/OptionsModal'
 import {
@@ -62,7 +62,7 @@ const SecurityTimeoutPickerModal = ({
           />
         ) : null}
       </OptionsModalButton>
-      <Separator />
+      <WahaSeparator />
       {/* Button to set the timeout duration to 1 minute. */}
       <OptionsModalButton
         title={translations.security.one_minute_label}
@@ -79,7 +79,7 @@ const SecurityTimeoutPickerModal = ({
           />
         ) : null}
       </OptionsModalButton>
-      <Separator />
+      <WahaSeparator />
       {/* Button to set the timeout duration to 5 minutes. */}
       <OptionsModalButton
         title={translations.security.five_minutes_label}
@@ -96,7 +96,7 @@ const SecurityTimeoutPickerModal = ({
           />
         ) : null}
       </OptionsModalButton>
-      <Separator />
+      <WahaSeparator />
       {/* Button to set the timeout duration to 15 minutes. */}
       <OptionsModalButton
         title={translations.security.fifteen_minutes_label}
@@ -113,7 +113,7 @@ const SecurityTimeoutPickerModal = ({
           />
         ) : null}
       </OptionsModalButton>
-      <Separator />
+      <WahaSeparator />
       {/* Button to set the timeout duration to 1 hour. */}
       <OptionsModalButton
         title={translations.security.one_hour_label}

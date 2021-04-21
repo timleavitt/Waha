@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
 import { connect } from 'react-redux'
-import DownloadUpdateButton from '../components/DownloadUpdateButton'
 import DrawerItem from '../components/DrawerItem'
 import GroupAvatar from '../components/GroupAvatar'
 import { scaleMultiplier } from '../constants'
@@ -20,7 +19,8 @@ import {
 } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
-import Separator from './standard/Separator'
+import DrawerDownloadUpdateButton from './DrawerDownloadUpdateButton'
+import WahaSeparator from './WahaSeparator'
 
 function mapStateToProps (state) {
   return {
@@ -121,7 +121,7 @@ const WahaDrawer = ({
       >
         {/* Show an update button if we have any core files to update. */}
         {languageCoreFilesToUpdate.length !== 0 && (
-          <DownloadUpdateButton onUpdatePress={onUpdatePress} />
+          <DrawerDownloadUpdateButton onUpdatePress={onUpdatePress} />
         )}
         <View style={{ width: '100%', height: 5 }} />
         <DrawerItem
@@ -140,7 +140,7 @@ const WahaDrawer = ({
           onPress={() => navigate('MobilizationTools')}
         />
         <View style={{ width: '100%', height: 5 }} />
-        <Separator />
+        <WahaSeparator />
         <Text
           style={[
             StandardTypography(

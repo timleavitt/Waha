@@ -11,10 +11,9 @@ import {
 import SnackBar from 'react-native-snackbar-component'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
-import Blurb from '../components/Blurb'
-import Hero from '../components/Hero'
-import Separator from '../components/Separator'
+import WahaBlurb from '../components/WahaBlurb'
 import WahaItem from '../components/WahaItem'
+import WahaSeparator from '../components/WahaSeparator'
 import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
@@ -64,8 +63,8 @@ const MobilizationToolsScreen = ({
 
   return (
     <View style={styles.screen}>
-      <Hero source={require('../assets/gifs/unlock_mob_tools.gif')} />
-      <Blurb
+      <WahaHero source={require('../assets/gifs/unlock_mob_tools.gif')} />
+      <WahaBlurb
         text={
           areMobilizationToolsUnlocked
             ? translations.mobilization_tools.mobilization_tools_vision
@@ -142,7 +141,7 @@ const MobilizationToolsScreen = ({
         </View>
       ) : (
         <View style={{ width: '100%' }}>
-          <Separator />
+          <WahaSeparator />
           <WahaItem
             title={translations.mobilization_tools.unlock_mt_button_label}
             onPress={() => navigate('MobilizationToolsUnlock')}
@@ -153,7 +152,7 @@ const MobilizationToolsScreen = ({
               size={50 * scaleMultiplier}
             />
           </WahaItem>
-          <Separator />
+          <WahaSeparator />
         </View>
       )}
       <SnackBar

@@ -1,13 +1,13 @@
 import React from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../../constants'
+import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
-} from '../../redux/reducers/activeGroup'
-import { colors, keyColors } from '../../styles/colors'
-import { getLanguageFont } from '../../styles/typography'
+} from '../redux/reducers/activeGroup'
+import { colors, keyColors } from '../styles/colors'
+import { getLanguageFont } from '../styles/typography'
 import KeyLabel from './KeyLabel'
 
 function mapStateToProps (state) {

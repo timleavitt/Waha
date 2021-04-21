@@ -9,7 +9,7 @@ import {
 import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
 import HomeworkItem from '../components/HomeworkItem'
-import WahaItemDescription from '../components/standard/WahaItemDescription'
+import WahaItemDescription from '../components/WahaItemDescription'
 import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,

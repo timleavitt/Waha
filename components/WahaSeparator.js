@@ -1,8 +1,8 @@
 import React from 'react'
 import { View } from 'react-native'
-import { colors } from '../../styles/colors'
+import { colors } from '../styles/colors'
 
-const Separator = ({}) => {
+const WahaSeparator = ({}) => {
   return (
     <View
       style={{
@@ -15,4 +15,4 @@ const Separator = ({}) => {
   )
 }
 
-export default Separator
+export default WahaSeparator

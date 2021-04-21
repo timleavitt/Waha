@@ -1,9 +1,9 @@
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import Icon from '../../assets/fonts/icon_font_config'
-import { getSystemIsRTL, scaleMultiplier } from '../../constants'
-import { colors } from '../../styles/colors'
-import { SystemTypography } from '../../styles/typography'
+import Icon from '../assets/fonts/icon_font_config'
+import { getSystemIsRTL, scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
+import { SystemTypography } from '../styles/typography'
 
 /**
  * A pressable item used to display a language instance on the LanguageInstanceInstallScreen.

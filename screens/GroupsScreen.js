@@ -7,7 +7,7 @@ import BackButton from '../components/BackButton'
 import GroupItem from '../components/GroupItem'
 import GroupListHeader from '../components/GroupListHeader'
 import GroupsScreenEditButton from '../components/GroupsScreenEditButton'
-import Separator from '../components/Separator'
+import WahaSeparator from '../components/WahaSeparator'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
 import {
   activeDatabaseSelector,
@@ -172,8 +172,8 @@ const GroupsScreen = ({
         renderSectionHeader={({ section }) => renderGroupListHeader(section)}
         keyExtractor={item => item.name}
         extraData={isRTL}
-        ItemSeparatorComponent={() => <Separator />}
-        SectionSeparatorComponent={() => <Separator />}
+        ItemSeparatorComponent={() => <WahaSeparator />}
+        SectionSeparatorComponent={() => <WahaSeparator />}
         renderSectionFooter={({ section }) => (
           <AddNewGroupButton
             section={section}

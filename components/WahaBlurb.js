@@ -1,13 +1,13 @@
 import React from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../../constants'
+import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
-} from '../../redux/reducers/activeGroup'
-import { colors } from '../../styles/colors'
-import { getLanguageFont, StandardTypography } from '../../styles/typography'
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
@@ -16,7 +16,7 @@ function mapStateToProps (state) {
   }
 }
 
-const Blurb = ({
+const WahaBlurb = ({
   // Props passed from a parent component.
   text,
   // Props passed from redux.
@@ -40,4 +40,4 @@ const Blurb = ({
   )
 }
 
-export default connect(mapStateToProps)(Blurb)
+export default connect(mapStateToProps)(WahaBlurb)

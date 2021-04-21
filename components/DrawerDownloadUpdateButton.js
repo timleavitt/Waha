@@ -28,7 +28,7 @@ function mapDispatchToProps (dispatch) {
 /**
  * Button that prompts the user to download new language core files should they be available/needed.
  */
-function DownloadUpdateButton ({
+function DrawerDownloadUpdateButton ({
   // Props passed from a parent component.
   onUpdatePress,
   // Props passed from redux.
@@ -135,4 +135,4 @@ const styles = StyleSheet.create({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(DownloadUpdateButton)
+)(DrawerDownloadUpdateButton)

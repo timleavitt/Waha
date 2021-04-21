@@ -3,17 +3,17 @@ import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
-import Icon from '../../assets/fonts/icon_font_config'
-import { getSetInfo, itemHeights, scaleMultiplier } from '../../constants'
-import MessageModal from '../../modals/MessageModal'
-import { addSet } from '../../redux/actions/groupsActions'
+import Icon from '../assets/fonts/icon_font_config'
+import { getSetInfo, itemHeights, scaleMultiplier } from '../constants'
+import MessageModal from '../modals/MessageModal'
+import { addSet } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
-} from '../../redux/reducers/activeGroup'
-import { colors } from '../../styles/colors'
-import { getLanguageFont, StandardTypography } from '../../styles/typography'
-import SVG from '../SVG.js'
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
+import SVG from './SVG.js'
 
 function mapStateToProps (state) {
   return {
@@ -356,7 +356,7 @@ const SetItem = ({
         confirmOnPress={() => setShowUnlockModal(false)}
       >
         <Image
-          source={require('../../assets/gifs/new_set.gif')}
+          source={require('../assets/gifs/new_set.gif')}
           style={{
             height: 200 * scaleMultiplier,
             margin: 20,

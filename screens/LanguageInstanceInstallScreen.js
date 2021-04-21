@@ -17,8 +17,8 @@ import {
 import { connect } from 'react-redux'
 import { languageT2S } from '../assets/languageT2S/_languageT2S'
 import LanguageItem from '../components/LanguageItem'
-import Separator from '../components/Separator'
 import WahaButton from '../components/WahaButton'
+import WahaSeparator from '../components/WahaSeparator'
 import { getSystemIsRTL, scaleMultiplier } from '../constants'
 import db from '../firebase/db'
 import { languages } from '../languages'
@@ -472,8 +472,8 @@ function LanguageInstanceInstallScreen ({
         <SectionList
           style={{ height: '100%' }}
           sections={getLanguageData()}
-          ItemSeparatorComponent={() => <Separator />}
-          SectionSeparatorComponent={() => <Separator />}
+          ItemSeparatorComponent={() => <WahaSeparator />}
+          SectionSeparatorComponent={() => <WahaSeparator />}
           ListEmptyComponent={
             searchTextInput
               ? null
@@ -497,7 +497,7 @@ function LanguageInstanceInstallScreen ({
                         {i18n.t('noMoreLanguages')}
                       </Text>
                     </View>
-                    <Separator />
+                    <WahaSeparator />
                   </View>
                 )
           }

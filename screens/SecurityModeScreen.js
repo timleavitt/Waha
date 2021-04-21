@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
-import Blurb from '../components/Blurb'
-import Hero from '../components/Hero'
-import Separator from '../components/Separator'
+import WahaBlurb from '../components/WahaBlurb'
 import WahaItem from '../components/WahaItem'
+import WahaSeparator from '../components/WahaSeparator'
 import { scaleMultiplier } from '../constants'
 import SecurityTimeoutPickerModal from '../modals/SecurityTimeoutPickerModal'
 import {
@@ -87,7 +86,7 @@ const SecurityModeScreen = ({
   var securityControls = security.code ? (
     <View style={{ width: '100%' }}>
       {/* Control item one allows the user to change the security mode timeout. */}
-      <Separator />
+      <WahaSeparator />
       <WahaItem
         title={translations.security.change_timeout_button_label}
         onPress={() => setShowChangeTimeoutModal(true)}
@@ -117,7 +116,7 @@ const SecurityModeScreen = ({
         </View>
       </WahaItem>
       {/* Control item two allows the user to update their passcode. */}
-      <Separator />
+      <WahaSeparator />
       <WahaItem
         title={translations.security.change_key_order_button_label}
         onPress={() => navigate('KeyOrderChange_Initial')}
@@ -128,16 +127,18 @@ const SecurityModeScreen = ({
           size={50 * scaleMultiplier}
         />
       </WahaItem>
-      <Separator />
+      <WahaSeparator />
     </View>
   ) : null
 
   return (
     <View style={styles.screen}>
       <ScrollView bounces={false}>
-        <Hero source={require('../assets/gifs/piano_unlock.gif')} />
-        <Blurb text={translations.security.security_mode_description_text} />
-        <Separator />
+        <WahaHero source={require('../assets/gifs/piano_unlock.gif')} />
+        <WahaBlurb
+          text={translations.security.security_mode_description_text}
+        />
+        <WahaSeparator />
         <WahaItem title={translations.security.security_mode_picker_label}>
           <Switch
             trackColor={{ false: colors.chateau, true: colors.apple }}
@@ -156,7 +157,7 @@ const SecurityModeScreen = ({
             value={security.securityEnabled}
           />
         </WahaItem>
-        <Separator />
+        <WahaSeparator />
         <View style={{ height: 20 * scaleMultiplier }} />
         {securityControls}
       </ScrollView>

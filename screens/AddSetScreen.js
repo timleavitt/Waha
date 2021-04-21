@@ -5,8 +5,8 @@ import SnackBar from 'react-native-snackbar-component'
 import TagGroup from 'react-native-tag-group'
 import { connect } from 'react-redux'
 import BackButton from '../components/BackButton'
-import Separator from '../components/Separator'
 import SetItem from '../components/SetItem'
+import WahaSeparator from '../components/WahaSeparator'
 import { getSetInfo, scaleMultiplier } from '../constants'
 import SetInfoModal from '../modals/SetInfoModal'
 import { addSet } from '../redux/actions/groupsActions'
@@ -283,9 +283,9 @@ const AddSetScreen = ({
         style={{ flex: 1 }}
         data={setData}
         extraData={selectedTag}
-        ItemSeparatorComponent={() => <Separator />}
-        ListFooterComponent={() => <Separator />}
-        ListHeaderComponent={() => <Separator />}
+        ItemSeparatorComponent={() => <WahaSeparator />}
+        ListFooterComponent={() => <WahaSeparator />}
+        ListHeaderComponent={() => <WahaSeparator />}
         renderItem={renderSetItem}
         ListEmptyComponent={() => (
           <View style={{ width: '100%', marginVertical: 20 }}>
