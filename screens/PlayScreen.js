@@ -582,6 +582,20 @@ const PlayScreen = ({
         setSeekPosition(0)
       }
       setActiveChapter(chapter)
+    } else {
+      playFromLocation(0)
+      if (activeChapter === 'story')
+        textAreaRef.current.scrollTo({
+          y: sectionOffsets.filter(
+            section => section.name === thisLesson.scripture[0].header
+          )[0].offset
+        })
+      else
+        textAreaRef.current.scrollTo({
+          y: sectionOffsets.filter(
+            section => section.name.toLowerCase() === activeChapter
+          )[0].offset
+        })
     }
   }
 
@@ -919,7 +933,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: '100%',
     width: '100%',
-    backgroundColor: colors.white
+    backgroundColor: colors.porcelain
   },
   topHalfContainer: {
     justifyContent: 'space-evenly',
@@ -929,7 +943,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flexDirection: 'column',
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
+    backgroundColor: colors.white
     // height: '33%'
   },
   titleContainer: {

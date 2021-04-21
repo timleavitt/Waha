@@ -12,8 +12,6 @@ const Scrubber = ({
   maximumValue,
   seekPosition
 }) => {
-  console.log(`${Date.now()} Scrubber re-rendering.`)
-
   return (
     <View style={styles.scrubberContainer}>
       <View style={styles.scrubber}>

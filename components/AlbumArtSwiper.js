@@ -8,14 +8,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableHighlight,
   TouchableOpacity,
   View
 } from 'react-native'
-import {
-  PanGestureHandler,
-  State,
-  TouchableWithoutFeedback
-} from 'react-native-gesture-handler'
+import { PanGestureHandler, State } from 'react-native-gesture-handler'
 import PagerView from 'react-native-pager-view'
 import TextTicker from 'react-native-text-ticker'
 import { connect } from 'react-redux'
@@ -139,7 +136,7 @@ const AlbumArtSwiper = ({
 
   const [activePage, setActivePage] = useState(0)
 
-  const [isSnapped, setIsSnapped] = useState(false)
+  const isSnapped = useRef(false)
 
   // const [sectionOffsets, setSectionOffsets] = useState([])
 
@@ -153,39 +150,10 @@ const AlbumArtSwiper = ({
 
   const sectionsOpacity = useRef(new Animated.Value(0)).current
 
-  // const panResponder = useMemo(
-  //   () =>
-  //     PanResponder.create({
-  //       onMoveShouldSetPanResponder: () => true,
-  //       onPanResponderMove: (event, gesture) => {
-  //         // if (gesture.moveY < 50 && gesture.moveY)
-  //         scrollBarYPosition.setValue(gesture.dy)
-  //         // scrollBarYPosition.setValue(event.nativeEvent.locationY)
-  //         // console.log(gesture.moveY)
-  //         // scrollBarYPosition.interpolate({
-  //         //   inputRange: [0, gesture.y0],
-  //         //   outputRange: [0, textAreaHeight]
-  //         // })
-  //       },
-  //       onPanResponderGrant: (event, gesture) => {
-  //         setIsScrolling(true)
-  //         setShouldUpdateScrollBar(false)
-  //         scrollBarYPosition.extractOffset()
-  //         scrollBarYPosition.setValue(0)
-  //       },
-  //       onPanResponderRelease: () => {
-  //         setShouldUpdateScrollBar(true)
-  //         setTimeout(() => setIsScrolling(false), 50)
-  //         scrollBarYPosition.flattenOffset()
-  //       }
-  //     }),
-  //   [sectionOffsets, textAreaHeight, totalTextContentHeight]
-  // )
-
   const onHandlerStateChange = event => {
     switch (event.nativeEvent.state) {
       case State.BEGAN:
-        Haptics.impactAsync()
+        Haptics.selectionAsync()
         // scrollBarYPosition.setOffset(0)
         setIsScrolling(true)
         setShouldUpdateScrollBar(false)
@@ -193,7 +161,7 @@ const AlbumArtSwiper = ({
         // scrollBarYPosition.setValue(0)
         break
       case State.END:
-        Haptics.impactAsync()
+        Haptics.selectionAsync()
         setShouldUpdateScrollBar(true)
         setTimeout(() => setIsScrolling(false), 50)
         scrollBarYPosition.flattenOffset()
@@ -273,7 +241,6 @@ const AlbumArtSwiper = ({
       )
 
       scrollBarYPosition.addListener(({ value }) => {
-        // console.log(value)
         var snapped = false
         offsets.forEach(offset => {
           if (
@@ -281,10 +248,10 @@ const AlbumArtSwiper = ({
             value > offset - 15 &&
             !shouldUpdateScrollBar
           ) {
-            // if (!isSnapped) {
-            Haptics.impactAsync()
-            //   setIsSnapped(true)
-            // }
+            if (!isSnapped.current) {
+              Haptics.impactAsync()
+              isSnapped.current = true
+            }
             snapped = true
 
             setScrollBarPosition(offset)
@@ -294,6 +261,7 @@ const AlbumArtSwiper = ({
 
         if (!snapped && value >= 0 && value <= textAreaHeight - scrollBarSize) {
           setScrollBarPosition(value | 0)
+          isSnapped.current = false
           // setIsSnapped(false)
         }
         // if (value > 100 && value < 120) setScrollBarPosition(110)
@@ -309,7 +277,6 @@ const AlbumArtSwiper = ({
   ])
 
   useEffect(() => {
-    console.log(shouldUpdateScrollBar)
     if (!shouldUpdateScrollBar)
       Animated.timing(sectionsOpacity, {
         toValue: 1,
@@ -359,18 +326,18 @@ const AlbumArtSwiper = ({
 
   const getIndices = () => {
     var indices = []
-    indices.push(0)
+    indices.push(1)
     thisLesson.scripture.forEach((scriptureChunk, index) => {
       indices.push(
         activeDatabase.questions[thisLesson.fellowshipType].length +
-          1 +
+          2 +
           2 * index
       )
     })
     indices.push(
       activeDatabase.questions[thisLesson.fellowshipType].length +
         thisLesson.scripture.length * 2 +
-        1
+        2
     )
     return indices
   }
@@ -378,7 +345,7 @@ const AlbumArtSwiper = ({
   const sectionIndices = useMemo(() => getIndices(), [])
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: colors.white }}>
       <PagerView
         style={{ flex: 1 }}
         scrollEnabled={shouldUpdateScrollBar}
@@ -446,26 +413,47 @@ const AlbumArtSwiper = ({
           <View
             style={{
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
+              backgroundColor: colors.geyser,
+              borderRadius: 20
             }}
           >
-            <TouchableWithoutFeedback
-              onPress={playHandler}
+            {/* <View
               style={{
-                borderRadius: 20,
-                backgroundColor: colors.geyser,
-                overflow: 'hidden',
+                zIndex: 1,
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            > */}
+            <TouchableHighlight
+              style={{
                 justifyContent: 'center',
                 alignItems: 'center',
-                flex: 1,
-                aspectRatio: 1,
-                // marginHorizontal: 40,
-                maxWidth: Dimensions.get('window').width - 60,
-                maxHeight: Dimensions.get('window').width - 60
+                zIndex: 1
               }}
+              onPress={playHandler}
+              underlayColor={colors.white + '00'}
+              activeOpacity={1}
             >
-              <SVG name={iconName} width='100%' height='100%' color='#1D1E20' />
-            </TouchableWithoutFeedback>
+              <SVG
+                name={iconName}
+                width={Dimensions.get('window').width - marginWidth}
+                height={Dimensions.get('window').width - marginWidth}
+                color='#1D1E20'
+              />
+              {/* <SvgUri
+                source={{
+                  uri:
+                    ''
+                }}
+                width={Dimensions.get('window').width - marginWidth}
+                height={Dimensions.get('window').width - marginWidth}
+                // fill={fullyCompleted ? colors.chateau : colors.shark}
+                fill='#1D1E20'
+                fillAll
+              /> */}
+            </TouchableHighlight>
+            {/* </View> */}
             <Animated.View
               style={{
                 position: 'absolute',
@@ -511,6 +499,7 @@ const AlbumArtSwiper = ({
             onPress={() => setShouldShowScrollBar(current => !current)}
           > */}
             {/* Fellowship header. */}
+            <View />
             <HeaderBig
               text={translations.play.fellowship}
               font={font}
@@ -714,6 +703,25 @@ const AlbumArtSwiper = ({
               alignItems: 'flex-end'
             }}
           >
+            {sectionOffsets.map((section, index) => (
+              <View
+                key={index}
+                style={{
+                  position: 'absolute',
+                  alignItems: 'center',
+                  width: 5,
+                  height: 5,
+                  right: 2,
+                  borderRadius: 2.5,
+                  backgroundColor: colors.chateau,
+                  top:
+                    totalTextContentHeight !== 0
+                      ? (section.offset * (textAreaHeight - scrollBarSize)) /
+                        (totalTextContentHeight - textAreaHeight)
+                      : 0
+                }}
+              />
+            ))}
             <PanGestureHandler
               onHandlerStateChange={onHandlerStateChange}
               onGestureEvent={onGestureEvent}
@@ -736,13 +744,14 @@ const AlbumArtSwiper = ({
                     backgroundColor: colors.tuna,
                     shadowColor: '#000',
                     borderRadius: scrollBarSize / 2,
+                    shadowColor: '#000',
                     shadowOffset: {
                       width: 0,
                       height: 2
                     },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
-                    elevation: 5,
+                    shadowOpacity: 0.23,
+                    shadowRadius: 2.62,
+                    elevation: 4,
                     marginLeft: 20,
                     marginBottom: 20
                   }}

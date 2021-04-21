@@ -129,12 +129,4 @@ const styles = StyleSheet.create({
   }
 })
 
-const areEqual = (prevProps, nextProps) => {
-  return (
-    prevProps.activeChapter === nextProps.activeChapter &&
-    prevProps.isDownloaded === nextProps.isDownloaded &&
-    prevProps.downloads === nextProps.downloads
-  )
-}
-
-export default connect(mapStateToProps)(React.memo(ChapterSelector, areEqual))
+export default connect(mapStateToProps)(ChapterSelector)
