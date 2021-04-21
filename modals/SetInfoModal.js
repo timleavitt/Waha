@@ -8,8 +8,8 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import SetItem from '../components/list-items/SetItem'
-import WahaButton from '../components/standard/WahaButton'
+import SetItem from '../components/SetItem'
+import WahaButton from '../components/WahaButton'
 import { scaleMultiplier } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
 import {

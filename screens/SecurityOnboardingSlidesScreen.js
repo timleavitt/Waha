@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
+import BackButton from '../components/BackButton'
 import OnboardingSwiper from '../components/OnboardingSwiper'
-import BackButton from '../components/standard/BackButton'
 import {
   activeDatabaseSelector,
   activeGroupSelector

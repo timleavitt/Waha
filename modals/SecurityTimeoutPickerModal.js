@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import OptionsModalButton from '../components/OptionsModalButton'
-import Separator from '../components/standard/Separator'
+import Separator from '../components/Separator'
 import { scaleMultiplier } from '../constants'
 import OptionsModal from '../modals/OptionsModal'
 import {

@@ -8,10 +8,10 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import KeyLabelGroup from '../components/piano-stuff/KeyLabelGroup'
-import Piano from '../components/piano-stuff/Piano'
-import BackButton from '../components/standard/BackButton'
-import WahaButton from '../components/standard/WahaButton'
+import BackButton from '../components/BackButton'
+import KeyLabelGroup from '../components/KeyLabelGroup'
+import Piano from '../components/Piano'
+import WahaButton from '../components/WahaButton'
 import { logEnableSecurityMode } from '../LogEventFunctions'
 import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
 import {

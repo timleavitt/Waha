@@ -9,7 +9,7 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import SetItem from '../components/list-items/SetItem'
+import SetItem from '../components/SetItem'
 import { getSetInfo, itemHeights, scaleMultiplier } from '../constants'
 import MessageModal from '../modals/MessageModal'
 import { setShowMTTabAddedSnackbar } from '../redux/actions/popupsActions'

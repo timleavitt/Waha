@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import Separator from '../components/standard/Separator'
+import Separator from '../components/Separator'
 import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,

@@ -13,7 +13,7 @@ import {
 } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
-import Piano from '../components/piano-stuff/Piano'
+import Piano from '../components/Piano'
 import { scaleMultiplier } from '../constants'
 import { setIsMuted, setIsTimedOut } from '../redux/actions/securityActions'
 import {

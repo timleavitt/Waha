@@ -1,7 +1,7 @@
 import React from 'react'
 import { Dimensions, StyleSheet, Text, View } from 'react-native'
-import { colors } from '../../styles/colors'
-import { StandardTypography } from '../../styles/typography'
+import { colors } from '../styles/colors'
+import { StandardTypography } from '../styles/typography'
 
 const KeyLabel = ({ backgroundColor, style, number }) => {
   // RENDER

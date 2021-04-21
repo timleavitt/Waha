@@ -1,9 +1,9 @@
 import React from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../../constants'
-import { activeDatabaseSelector } from '../../redux/reducers/activeGroup'
-import { colors } from '../../styles/colors'
+import { scaleMultiplier } from '../constants'
+import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
 
 function mapStateToProps (state) {
   return {

@@ -9,9 +9,9 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import LanguageStorageItem from '../components/list-items/LanguageStorageItem'
-import BackButton from '../components/standard/BackButton'
-import WahaButton from '../components/standard/WahaButton'
+import BackButton from '../components/BackButton'
+import LanguageStorageItem from '../components/LanguageStorageItem'
+import WahaButton from '../components/WahaButton'
 import { removeDownload } from '../redux/actions/downloadActions'
 import {
   activeDatabaseSelector,

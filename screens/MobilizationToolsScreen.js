@@ -10,11 +10,11 @@ import {
 } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
 import { connect } from 'react-redux'
-import BackButton from '../components/standard/BackButton'
-import Blurb from '../components/standard/Blurb'
-import Hero from '../components/standard/Hero'
-import Separator from '../components/standard/Separator'
-import WahaItem from '../components/standard/WahaItem'
+import BackButton from '../components/BackButton'
+import Blurb from '../components/Blurb'
+import Hero from '../components/Hero'
+import Separator from '../components/Separator'
+import WahaItem from '../components/WahaItem'
 import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,

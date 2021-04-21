@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
 import { connect } from 'react-redux'
-import BackButton from '../components/standard/BackButton'
+import BackButton from '../components/BackButton'
 import { scaleMultiplier } from '../constants'
 import { appVersion } from '../modeSwitch'
 import {

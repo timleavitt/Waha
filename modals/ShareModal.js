@@ -4,7 +4,7 @@ import React from 'react'
 import { Alert, Share, View } from 'react-native'
 import { connect } from 'react-redux'
 import OptionsModalButton from '../components/OptionsModalButton'
-import Separator from '../components/standard/Separator'
+import Separator from '../components/Separator'
 import { logShareApp, logShareAudio, logShareText } from '../LogEventFunctions'
 import {
   activeDatabaseSelector,
