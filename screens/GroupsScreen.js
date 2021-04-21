@@ -3,10 +3,10 @@ import { SectionList, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import AddNewGroupButton from '../components/AddNewGroupButton'
 import AddNewLanguageInstanceButton from '../components/AddNewLanguageInstanceButton'
-import BackButton from '../components/BackButton'
 import GroupItem from '../components/GroupItem'
 import GroupListHeader from '../components/GroupListHeader'
 import GroupsScreenEditButton from '../components/GroupsScreenEditButton'
+import WahaBackButton from '../components/WahaBackButton'
 import WahaSeparator from '../components/WahaSeparator'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
 import {
@@ -60,7 +60,7 @@ const GroupsScreen = ({
       },
       headerRight: isRTL
         ? () => (
-            <BackButton
+            <WahaBackButton
               color={isEditing ? colors.white : null}
               onPress={() => goBack()}
             />
@@ -79,7 +79,7 @@ const GroupsScreen = ({
             />
           )
         : () => (
-            <BackButton
+            <WahaBackButton
               color={isEditing ? colors.white : null}
               onPress={() => goBack()}
             />

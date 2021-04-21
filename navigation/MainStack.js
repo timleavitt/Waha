@@ -2,10 +2,10 @@ import { createStackNavigator } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { AppState, LogBox, View } from 'react-native'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
 import GroupAvatar from '../components/GroupAvatar'
 import ScreenHeaderImage from '../components/ScreenHeaderImage'
 import TestModeDisplay from '../components/TestModeDisplay'
+import WahaBackButton from '../components/WahaBackButton'
 import { scaleMultiplier } from '../constants'
 import SetsTabs from '../navigation/SetsTabs'
 import { setIsTimedOut, setTimer } from '../redux/actions/securityActions'
@@ -312,11 +312,11 @@ const MainStack = ({
             colors.shark
           ),
           headerRight: isRTL
-            ? () => <BackButton onPress={() => goBack()} />
+            ? () => <WahaBackButton onPress={() => goBack()} />
             : () => {},
           headerLeft: isRTL
             ? () => {}
-            : () => <BackButton onPress={() => goBack()} />
+            : () => <WahaBackButton onPress={() => goBack()} />
         }}
       />
       <Stack.Screen

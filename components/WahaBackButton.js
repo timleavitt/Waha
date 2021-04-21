@@ -12,7 +12,7 @@ function mapStateToProps (state) {
 }
 
 // simple back button that is shown in almost every screen's header
-const BackButton = ({
+const WahaBackButton = ({
   // Props passed from a parent component.
   onPress,
   color,
@@ -47,4 +47,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps)(BackButton)
+export default connect(mapStateToProps)(WahaBackButton)

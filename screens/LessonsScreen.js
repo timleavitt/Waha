@@ -3,12 +3,12 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Dimensions, Image, StyleSheet, View } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
 import LessonItem from '../components/LessonItem'
 import LessonSwipeBackdrop from '../components/LessonSwipeBackdrop'
 import OptionsModalButton from '../components/OptionsModalButton'
 import ScreenHeaderImage from '../components/ScreenHeaderImage'
 import SetItem from '../components/SetItem'
+import WahaBackButton from '../components/WahaBackButton'
 import { getLessonInfo, itemHeights, scaleMultiplier } from '../constants'
 import MessageModal from '../modals/MessageModal'
 import OptionsModal from '../modals/OptionsModal'
@@ -92,11 +92,11 @@ const LessonsScreen = ({
     return {
       headerTitle: () => <ScreenHeaderImage />,
       headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
+        ? () => <WahaBackButton onPress={() => goBack()} />
         : () => {},
       headerLeft: isRTL
         ? () => {}
-        : () => <BackButton onPress={() => goBack()} />
+        : () => <WahaBackButton onPress={() => goBack()} />
     }
   }
 

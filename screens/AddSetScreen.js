@@ -4,8 +4,8 @@ import { FlatList, LogBox, StyleSheet, Text, View } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
 import TagGroup from 'react-native-tag-group'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
 import SetItem from '../components/SetItem'
+import WahaBackButton from '../components/WahaBackButton'
 import WahaSeparator from '../components/WahaSeparator'
 import { getSetInfo, scaleMultiplier } from '../constants'
 import SetInfoModal from '../modals/SetInfoModal'
@@ -136,9 +136,9 @@ const AddSetScreen = ({
       title: headerTitle,
       headerLeft: isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => goBack()} />,
+        : () => <WahaBackButton onPress={() => goBack()} />,
       headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
+        ? () => <WahaBackButton onPress={() => goBack()} />
         : () => <View></View>
     })
   }, [headerTitle])

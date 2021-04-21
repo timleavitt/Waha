@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
+import WahaBackButton from '../components/WahaBackButton'
 import WahaBlurb from '../components/WahaBlurb'
 import WahaItem from '../components/WahaItem'
 import WahaSeparator from '../components/WahaSeparator'
@@ -52,11 +52,11 @@ const SecurityModeScreen = ({
   useEffect(() => {
     setOptions({
       headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
+        ? () => <WahaBackButton onPress={() => goBack()} />
         : () => <View></View>,
       headerLeft: isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => goBack()} />
+        : () => <WahaBackButton onPress={() => goBack()} />
     })
   }, [])
 

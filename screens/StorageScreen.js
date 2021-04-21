@@ -9,8 +9,8 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
 import LanguageStorageItem from '../components/LanguageStorageItem'
+import WahaBackButton from '../components/WahaBackButton'
 import WahaButton from '../components/WahaButton'
 import { removeDownload } from '../redux/actions/downloadActions'
 import {
@@ -68,11 +68,11 @@ const StorageScreen = ({
   function getNavOptions () {
     return {
       headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
+        ? () => <WahaBackButton onPress={() => goBack()} />
         : () => <View></View>,
       headerLeft: isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => goBack()} />
+        : () => <WahaBackButton onPress={() => goBack()} />
     }
   }
 

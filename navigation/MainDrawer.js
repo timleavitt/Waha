@@ -8,7 +8,6 @@ import * as FileSystem from 'expo-file-system'
 import firebase from 'firebase'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import WahaDrawer from '../components/WahaDrawer'
 import { scaleMultiplier } from '../constants'
 import db from '../firebase/db'
 import { appVersion } from '../modeSwitch'
@@ -30,6 +29,7 @@ import {
   activeGroupSelector
 } from '../redux/reducers/activeGroup'
 import MainStack from './MainStack'
+import WahaDrawer from './WahaDrawer'
 
 // Create the drawer navigator.
 const Drawer = createDrawerNavigator()

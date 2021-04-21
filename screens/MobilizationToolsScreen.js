@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
+import WahaBackButton from '../components/WahaBackButton'
 import WahaBlurb from '../components/WahaBlurb'
 import WahaItem from '../components/WahaItem'
 import WahaSeparator from '../components/WahaSeparator'
@@ -53,11 +53,11 @@ const MobilizationToolsScreen = ({
   useEffect(() => {
     setOptions({
       headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
+        ? () => <WahaBackButton onPress={() => goBack()} />
         : () => <View></View>,
       headerLeft: isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => goBack()} />
+        : () => <WahaBackButton onPress={() => goBack()} />
     })
   }, [])
 

@@ -8,9 +8,9 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
 import KeyLabelGroup from '../components/KeyLabelGroup'
 import Piano from '../components/Piano'
+import WahaBackButton from '../components/WahaBackButton'
 import WahaButton from '../components/WahaButton'
 import { logEnableSecurityMode } from '../LogEventFunctions'
 import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
@@ -147,7 +147,7 @@ const KeyOrderSetScreen = ({
         : translations.security.header_change_key_order,
       headerRight: isRTL
         ? () => (
-            <BackButton
+            <WahaBackButton
               onPress={() => {
                 goBack()
 
@@ -159,7 +159,7 @@ const KeyOrderSetScreen = ({
       headerLeft: isRTL
         ? () => <View></View>
         : () => (
-            <BackButton
+            <WahaBackButton
               onPress={() => {
                 goBack()
 

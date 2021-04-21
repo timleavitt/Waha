@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import BackButton from '../components/BackButton'
 import OnboardingSwiper from '../components/OnboardingSwiper'
+import WahaBackButton from '../components/WahaBackButton'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -39,11 +39,11 @@ const SecurityOnboardingSlidesScreen = ({
   function getNavOptions () {
     return {
       headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
+        ? () => <WahaBackButton onPress={() => goBack()} />
         : () => <View></View>,
       headerLeft: isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => goBack()} />
+        : () => <WahaBackButton onPress={() => goBack()} />
     }
   }
 

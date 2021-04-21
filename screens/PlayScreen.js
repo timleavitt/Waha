@@ -18,13 +18,13 @@ import {
 import TextTicker from 'react-native-text-ticker'
 import { connect } from 'react-redux'
 import AlbumArtSwiper from '../components/AlbumArtSwiper'
-import BackButton from '../components/BackButton'
 import BookView from '../components/BookView'
 import ChapterSelector from '../components/ChapterSelector'
 import PlaybackControls from '../components/PlaybackControls'
 import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
 import Scrubber from '../components/Scrubber'
 import VideoPlayer from '../components/VideoPlayer'
+import WahaBackButton from '../components/WahaBackButton'
 import { getLessonInfo, lockPortrait, scaleMultiplier } from '../constants'
 import MessageModal from '../modals/MessageModal'
 import ShareModal from '../modals/ShareModal'
@@ -189,7 +189,7 @@ const PlayScreen = ({
       headerTitle: getLessonInfo('subtitle', thisLesson.id),
       headerRight: isRTL
         ? () => (
-            <BackButton
+            <WahaBackButton
               onPress={() => {
                 lockPortrait(() => {})
                 goBack()
@@ -216,7 +216,7 @@ const PlayScreen = ({
             />
           )
         : () => (
-            <BackButton
+            <WahaBackButton
               onPress={() => {
                 lockPortrait(() => {})
                 goBack()

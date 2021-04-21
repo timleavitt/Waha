@@ -3,8 +3,10 @@ import React, { useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
 import { connect } from 'react-redux'
+import DrawerDownloadUpdateButton from '../components/DrawerDownloadUpdateButton'
 import DrawerItem from '../components/DrawerItem'
 import GroupAvatar from '../components/GroupAvatar'
+import WahaSeparator from '../components/WahaSeparator'
 import { scaleMultiplier } from '../constants'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
 import {
@@ -19,8 +21,6 @@ import {
 } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
-import DrawerDownloadUpdateButton from './DrawerDownloadUpdateButton'
-import WahaSeparator from './WahaSeparator'
 
 function mapStateToProps (state) {
   return {
