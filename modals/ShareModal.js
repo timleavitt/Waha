@@ -105,7 +105,7 @@ const ShareModal = ({
         title={translations.general.share_app}
         onPress={() => share('app')}
       />
-      {lessonType.includes('q') ? (
+      {lessonType.includes('Questions') ? (
         <View>
           <WahaSeparator />
           <OptionsModalButton
@@ -114,7 +114,7 @@ const ShareModal = ({
           />
         </View>
       ) : null}
-      {lessonType.includes('a') && !downloads[lesson.id] ? (
+      {lessonType.includes('Audio') && !downloads[lesson.id] ? (
         <View>
           <WahaSeparator />
           <OptionsModalButton
@@ -123,7 +123,7 @@ const ShareModal = ({
           />
         </View>
       ) : null}
-      {lessonType.includes('v') &&
+      {lessonType.includes('Video') &&
       lesson.videoShareLink &&
       !downloads[lesson.id] ? (
         <View>

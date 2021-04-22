@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import SetItem from '../components/SetItem'
 import WahaBackButton from '../components/WahaBackButton'
 import WahaSeparator from '../components/WahaSeparator'
-import { getSetInfo, scaleMultiplier } from '../constants'
+import { getSetInfo, scaleMultiplier, setItemModes } from '../constants'
 import SetInfoModal from '../modals/SetInfoModal'
 import { addSet } from '../redux/actions/groupsActions'
 import {
@@ -268,7 +268,7 @@ const AddSetScreen = ({
   const renderSetItem = ({ item }) => (
     <SetItem
       thisSet={item}
-      screen='AddSet'
+      mode={setItemModes.ADD_SET_SCREEN}
       onSetSelect={() => {
         setSetInModal(item)
         setShowSetInfoModal(true)

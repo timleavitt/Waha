@@ -10,7 +10,12 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import SetItem from '../components/SetItem'
-import { getSetInfo, itemHeights, scaleMultiplier } from '../constants'
+import {
+  getSetInfo,
+  itemHeights,
+  scaleMultiplier,
+  setItemModes
+} from '../constants'
 import MessageModal from '../modals/MessageModal'
 import { setShowMTTabAddedSnackbar } from '../redux/actions/popupsActions'
 import {
@@ -317,7 +322,7 @@ const SetsScreen = ({
   const renderSetItem = ({ item }) => (
     <SetItem
       thisSet={item}
-      screen='Sets'
+      mode={setItemModes.SETS_SCREEN}
       onSetSelect={() => navigate('Lessons', { thisSet: item })}
     />
   )

@@ -4,7 +4,12 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
 import Icon from '../assets/fonts/icon_font_config'
-import { getSetInfo, itemHeights, scaleMultiplier } from '../constants'
+import {
+  getSetInfo,
+  itemHeights,
+  scaleMultiplier,
+  setItemModes
+} from '../constants'
 import MessageModal from '../modals/MessageModal'
 import { addSet } from '../redux/actions/groupsActions'
 import {
@@ -43,7 +48,7 @@ function mapDispatchToProps (dispatch) {
 const SetItem = ({
   // Props passed from a parent component.
   thisSet,
-  screen,
+  mode,
   onSetSelect,
   // Props passed from redux.
   isRTL,
@@ -73,8 +78,8 @@ const SetItem = ({
    * useEffect function that sets the dynamic primary and secondary icon components of the set item based on the screen prop. Updated whenever the active group or progress changes.
    */
   useEffect(() => {
-    switch (screen) {
-      case 'Sets':
+    switch (mode) {
+      case setItemModes.SETS_SCREEN:
         updateThisSetProgress()
         // Primary icon for the SetItem on the Sets screen is a circular progress bar with the set's SVG inside.
         setPrimaryIcon(
@@ -133,7 +138,7 @@ const SetItem = ({
           )
         )
         break
-      case 'Lessons':
+      case setItemModes.LESSONS_SCREEN:
         updateThisSetProgress()
         // Primary icon for the SetItem on the Lessons screen is the same as on the Sets screen: a circular progress bar with the set's SVG inside.
         setPrimaryIcon(
@@ -168,7 +173,7 @@ const SetItem = ({
         // There is no secondary icon for the SetItem on the Lessons screen.
         setSecondaryIcon(<View style={styles.secondaryIconContainer} />)
         break
-      case 'AddSet':
+      case setItemModes.ADD_SET_SCREEN:
         // Primary icon for the SetItem on the AddSet screen is a slightly altered version of the set's SVG without any progress shown.
         setPrimaryIcon(
           <View
@@ -202,7 +207,7 @@ const SetItem = ({
           </View>
         )
         break
-      case 'SetInfo':
+      case setItemModes.SET_INFO_MODAL:
         // Primary icon for the SetItem on the SetInfo modal screen is similar to the one on the AddSet screen, with some slightly style variations.
         setPrimaryIcon(
           <View

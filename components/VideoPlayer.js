@@ -8,7 +8,13 @@ import {
   TouchableWithoutFeedback,
   View
 } from 'react-native'
-import { lockLandscape, lockPortrait, scaleMultiplier } from '../constants'
+import {
+  chapters,
+  lessonTypes,
+  lockLandscape,
+  lockPortrait,
+  scaleMultiplier
+} from '../constants'
 import { colors } from '../styles/colors'
 
 const VideoPlayer = ({
@@ -113,11 +119,11 @@ const VideoPlayer = ({
               // })
             }
 
-            if (status.didJustFinish && lessonType !== 'v')
-              setTimeout(() => changeChapter('application'), 500)
+            if (status.didJustFinish && lessonType !== lessonTypes.VIDEO_ONLY)
+              setTimeout(() => changeChapter(chapters.APPLICATION), 500)
             else if (
               status.didJustFinish &&
-              lessonType === 'v' &&
+              lessonType === lessonTypes.VIDEO_ONLY &&
               !isComplete
             ) {
               setTimeout(() => changeCompleteStatus(), 1000)

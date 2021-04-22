@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
+import { chapters, lessonTypes } from '../constants'
 import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
 import ChapterButton from './ChapterButton'
 import ChapterSeparator from './ChapterSeparator'
@@ -13,107 +14,60 @@ function mapStateToProps (state) {
   }
 }
 
+/**
+ * Component that displays the various 3 or 4 chapter buttons on the PlayScreen.
+ * @param {string} activeChapter - The name of the currently active chapter. Can be 'fellowship', 'story', 'training', or 'application'.
+ * @param {string} lessonID - The ID of the lesson
+ * @param {Function} onPress -
+ * @param {string} lessonType -
+ * @param {boolean} isDownloaded -
+ */
 const ChapterSelector = ({
   // Props passed from a parent component.
   activeChapter,
-  lessonID,
-  onPress,
+  changeChapter,
+  isFullyDownloaded,
   lessonType,
-  isDownloaded,
+  lessonID,
   // Props passed from redux.
   primaryColor,
   downloads,
   isConnected
 }) => {
-  // order of chapters is
-  //  1. fellowship
-  //  2. story
-  //  3. (if applicable) training, which is always a video
-  //  4. application
-
-  // RENDER
-
-  function getActiveNumber () {
-    switch (activeChapter) {
-      case 'fellowship':
-        return 1
-        break
-      case 'story':
-        return 2
-        break
-      case 'training':
-        return 3
-        break
-      case 'application':
-        if (lessonType === 'qav' || lessonType === 'qv') return 4
-        else return 3
-        break
-    }
-  }
-
   return (
     <View style={styles.chapterSelectContainer}>
       <ChapterButton
-        name='fellowship'
-        mode={activeChapter === 'fellowship' ? 'active' : 'inactive'}
-        number={1}
-        activeNumber={getActiveNumber()}
-        onPress={onPress}
+        chapter={chapters.FELLOWSHIP}
+        activeChapter={activeChapter}
+        lessonType={lessonType}
+        changeChapter={changeChapter}
       />
       <ChapterSeparator />
       <ChapterButton
-        name='story'
-        mode={
-          (lessonType === 'qa' || lessonType === 'qav') &&
-          !isConnected &&
-          !isDownloaded
-            ? 'disabled'
-            : downloads[lessonID] && downloads[lessonID].progress < 1
-            ? 'downloading'
-            : activeChapter === 'story'
-            ? 'active'
-            : 'inactive'
-        }
-        number={2}
-        activeNumber={getActiveNumber()}
-        onPress={onPress}
-        downloadProgress={
-          downloads[lessonID] ? downloads[lessonID].progress : null
-        }
+        chapter={chapters.STORY}
+        activeChapter={activeChapter}
+        changeChapter={changeChapter}
+        lessonType={lessonType}
+        lessonID={lessonID}
+        isFullyDownloaded={isFullyDownloaded}
       />
-      {lessonType === 'qav' || lessonType === 'qv' ? (
-        <ChapterSeparator />
-      ) : null}
-      {lessonType === 'qav' || lessonType === 'qv' ? (
+      {lessonType === lessonTypes.STANDARD_DMC ? <ChapterSeparator /> : null}
+      {lessonType === lessonTypes.STANDARD_DMC ? (
         <ChapterButton
-          name='training'
-          mode={
-            !isConnected && !isDownloaded
-              ? 'disabled'
-              : downloads[lessonID + 'v'] &&
-                downloads[lessonID + 'v'].progress < 1
-              ? 'downloading'
-              : activeChapter === 'training'
-              ? 'active'
-              : 'inactive'
-          }
-          number={3}
-          activeNumber={getActiveNumber()}
-          onPress={onPress}
-          downloadProgress={
-            downloads[lessonID + 'v']
-              ? downloads[lessonID + 'v'].progress
-              : null
-          }
+          chapter={chapters.TRAINING}
+          activeChapter={activeChapter}
+          changeChapter={changeChapter}
+          lessonType={lessonType}
+          lessonID={lessonID}
+          isFullyDownloaded={isFullyDownloaded}
         />
       ) : null}
       <ChapterSeparator />
       <ChapterButton
-        name='application'
-        mode={activeChapter === 'application' ? 'active' : 'inactive'}
-        number={lessonType === 'qav' || lessonType === 'qv' ? 4 : 3}
-        activeNumber={getActiveNumber()}
-        onPress={onPress}
+        chapter={chapters.APPLICATION}
+        activeChapter={activeChapter}
+        changeChapter={changeChapter}
+        lessonType={lessonType}
       />
     </View>
   )
@@ -128,13 +82,4 @@ const styles = StyleSheet.create({
   }
 })
 
-const areEqual = (prevProps, nextProps) => {
-  return (
-    prevProps.activeChapter === nextProps.activeChapter &&
-    prevProps.isDownloaded === nextProps.isDownloaded &&
-    prevProps.downloads === nextProps.downloads &&
-    prevProps.shouldAutoPlay === nextProps.shouldAutoPlay
-  )
-}
-
-export default connect(mapStateToProps)(React.memo(ChapterSelector, areEqual))
+export default connect(mapStateToProps)(ChapterSelector)

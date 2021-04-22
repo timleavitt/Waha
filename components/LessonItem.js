@@ -1,7 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { getLessonInfo, itemHeights, scaleMultiplier } from '../constants'
+import {
+  getLessonInfo,
+  itemHeights,
+  lessonTypes,
+  scaleMultiplier
+} from '../constants'
 import { removeDownload } from '../redux/actions/downloadActions'
 import {
   activeDatabaseSelector,
@@ -46,12 +51,11 @@ function mapDispatchToProps (dispatch) {
 const LessonItem = ({
   // Props passed from a parent component.
   thisLesson,
-  onLessonSelect,
-  isBookmark,
-  isDownloaded,
-  isDownloading,
+  goToPlayScreen,
+  thisSetBookmark,
   lessonType,
-  isComplete,
+  thisSetProgress,
+  downloadsInFileSystem,
   showDownloadLessonModal,
   showDeleteLessonModal,
   // Props passed from redux.
@@ -64,11 +68,25 @@ const LessonItem = ({
   font,
   removeDownload
 }) => {
+  if (thisLesson.id === 'en.1.1.1')
+    console.log(`${Date.now()} Re-rendering lesson items.`)
+  const [isDownloaded, setIsDownloaded] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [isBookmark, setIsBookmark] = useState(false)
+  const [isComplete, setIsComplete] = useState(false)
+
+  useEffect(() => {
+    setIsComplete(
+      thisSetProgress.includes(getLessonInfo('index', thisLesson.id))
+    )
+    setIsBookmark(getLessonInfo('index', thisLesson.id) === thisSetBookmark)
+  }, [thisSetProgress])
+
   /** useEffect function that removes an active download from the downloads redux object after it finishes. */
   useEffect(() => {
     // Remove finished audio downloads.
     if (
-      lessonType.includes('a') &&
+      lessonType.includes('Audio') &&
       downloads[thisLesson.id] &&
       downloads[thisLesson.id].progress === 1
     )
@@ -76,12 +94,42 @@ const LessonItem = ({
 
     // Remove finished video downloads.
     if (
-      lessonType.includes('v') &&
+      lessonType.includes('Video') &&
       downloads[thisLesson.id + 'v'] &&
       downloads[thisLesson.id + 'v'].progress === 1
     )
       removeDownload(thisLesson.id + 'v')
   }, [downloads])
+
+  // Update the downloading and downloaded status of a lesson whenever a download gets added or removed from the downloads redux object.
+  useEffect(() => {
+    switch (lessonType) {
+      case lessonTypes.STANDARD_DBS:
+      case lessonTypes.AUDIOBOOK:
+        if (downloadsInFileSystem[thisLesson.id]) setIsDownloaded(true)
+        else setIsDownloaded(false)
+        if (downloads[thisLesson.id]) setIsDownloading(true)
+        else setIsDownloading(false)
+        break
+      case lessonTypes.STANDARD_DMC:
+        if (
+          downloadsInFileSystem[thisLesson.id] &&
+          downloadsInFileSystem[thisLesson.id + 'v']
+        )
+          setIsDownloaded(true)
+        else setIsDownloaded(false)
+        if (downloads[thisLesson.id] && downloads[thisLesson.id + 'v'])
+          setIsDownloading(true)
+        else setIsDownloading(false)
+        break
+      case lessonTypes.VIDEO_ONLY:
+        if (downloadsInFileSystem[thisLesson.id + 'v']) setIsDownloaded(true)
+        else setIsDownloaded(false)
+        if (downloads[thisLesson.id + 'v']) setIsDownloading(true)
+        else setIsDownloading(false)
+        break
+    }
+  }, [downloadsInFileSystem, Object.keys(downloads).length])
 
   return (
     <View
@@ -99,7 +147,14 @@ const LessonItem = ({
           styles.progressAndTitle,
           { flexDirection: isRTL ? 'row-reverse' : 'row' }
         ]}
-        onPress={onLessonSelect}
+        onPress={() =>
+          goToPlayScreen({
+            thisLesson: thisLesson,
+            isDownloaded: isDownloaded,
+            isDownloading: isDownloading,
+            lessonType: lessonType
+          })
+        }
       >
         {/* complete status indicator */}
         <View style={styles.completeStatusContainer}>
@@ -191,13 +246,19 @@ const styles = StyleSheet.create({
   }
 })
 
+/*
+  Lesson items need to update when:
+  1. Their downloaded status changes
+  2. Their download progress changes
+  3. Their or any other lesson in the set's complete status changes
+  4. 
+*/
 const areEqual = (prevProps, nextProps) => {
   return (
-    prevProps.isDownloading === nextProps.isDownloading &&
-    prevProps.isDownloaded === nextProps.isDownloaded &&
-    prevProps.downloadPercentage === nextProps.downloadPercentage &&
-    prevProps.isBookmark === nextProps.isBookmark &&
-    prevProps.isComplete === nextProps.isComplete
+    prevProps.thisSetProgress === nextProps.thisSetProgress &&
+    prevProps.downloads[prevProps.thisLesson.id] ===
+      nextProps.downloads[nextProps.thisLesson.id] &&
+    prevProps.downloadsInFileSystem === nextProps.downloadsInFileSystem
   )
 }
 

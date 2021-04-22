@@ -9,7 +9,13 @@ import OptionsModalButton from '../components/OptionsModalButton'
 import ScreenHeaderImage from '../components/ScreenHeaderImage'
 import SetItem from '../components/SetItem'
 import WahaBackButton from '../components/WahaBackButton'
-import { getLessonInfo, itemHeights, scaleMultiplier } from '../constants'
+import {
+  getLessonInfo,
+  itemHeights,
+  lessonTypes,
+  scaleMultiplier,
+  setItemModes
+} from '../constants'
 import MessageModal from '../modals/MessageModal'
 import OptionsModal from '../modals/OptionsModal'
 import ShareModal from '../modals/ShareModal'
@@ -142,12 +148,15 @@ const LessonsScreen = ({
   function getLessonType (lesson) {
     // q = has questions, a = has audio, v = has video
     // options not allowed: av, a, or nothing
-    var lessonType = ''
-    lessonType += lesson.fellowshipType ? 'q' : ''
-    lessonType += lesson.hasAudio ? 'a' : ''
-    lessonType += lesson.hasVideo ? 'v' : ''
 
-    return lessonType
+    if (lesson.fellowshipType && lesson.hasAudio && !lesson.hasVideo)
+      return lessonTypes.STANDARD_DBS
+    else if (lesson.fellowshipType && lesson.hasAudio && lesson.hasVideo)
+      return lessonTypes.STANDARD_DMC
+    else if (lesson.hasVideo) return lessonTypes.VIDEO_ONLY
+    else if (lesson.fellowshipType) return lessonTypes.STANDARD_NO_AUDIO
+    else if (lesson.text && lesson.hasAudio) return lessonTypes.AUDIOBOOK
+    else return lessonTypes.BOOK
   }
 
   //- hides all the modals
@@ -161,62 +170,18 @@ const LessonsScreen = ({
   //+ NOTE: for these functions, what is returned depends on the type of the
   //+   lesson. lesson type with a checks for audio, with v checks for video
 
-  //- determines if a lesson is downloaded based on its type
-  function getIsLessonDownloaded (lesson) {
-    switch (getLessonType(lesson)) {
-      case 'qa':
-      case 'a':
-        if (downloadsInFileSystem[lesson.id]) return true
-        else return false
-        break
-      case 'qav':
-        if (
-          downloadsInFileSystem[lesson.id] &&
-          downloadsInFileSystem[lesson.id + 'v']
-        )
-          return true
-        else return false
-        break
-      case 'qv':
-      case 'v':
-        if (downloadsInFileSystem[lesson.id + 'v']) return true
-        else return false
-        break
-    }
-  }
-
-  //- determines if a lesson is downloading based on its type
-  function getIsLessonDownloading (lesson) {
-    switch (getLessonType(lesson)) {
-      case 'qa':
-      case 'a':
-        if (downloads[lesson.id]) return true
-        else return false
-        break
-      case 'qav':
-        if (downloads[lesson.id] && downloads[lesson.id + 'v']) return true
-        else return false
-        break
-      case 'qv':
-      case 'v':
-        if (downloads[lesson.id + 'v']) return true
-        else return false
-        break
-    }
-  }
-
   //- downloads a lesson's scripture mp3 via modal press based on its type
   function downloadLessonFromModal () {
     switch (getLessonType(activeLessonInModal)) {
-      case 'qa':
-      case 'a':
+      case lessonTypes.STANDARD_DBS:
+      case lessonTypes.AUDIOBOOK:
         downloadMedia(
           'audio',
           activeLessonInModal.id,
           getLessonInfo('audioSource', activeLessonInModal.id)
         )
         break
-      case 'qav':
+      case lessonTypes.STANDARD_DMC:
         downloadMedia(
           'audio',
           activeLessonInModal.id,
@@ -228,8 +193,8 @@ const LessonsScreen = ({
           getLessonInfo('videoSource', activeLessonInModal.id)
         )
         break
-      case 'qv':
-      case 'v':
+
+      case lessonTypes.VIDEO_ONLY:
         downloadMedia(
           'video',
           activeLessonInModal.id,
@@ -243,13 +208,13 @@ const LessonsScreen = ({
   //- deletes a lesson's chapter 2 mp3 via modal press based on its type
   function deleteLessonFromModal () {
     switch (getLessonType(activeLessonInModal)) {
-      case 'qa':
-      case 'a':
+      case lessonTypes.STANDARD_DBS:
+      case lessonTypes.AUDIOBOOK:
         FileSystem.deleteAsync(
           FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
         )
         break
-      case 'qav':
+      case lessonTypes.STANDARD_DMC:
         FileSystem.deleteAsync(
           FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
         )
@@ -257,8 +222,8 @@ const LessonsScreen = ({
           FileSystem.documentDirectory + activeLessonInModal.id + 'v.mp4'
         )
         break
-      case 'qv':
-      case 'v':
+
+      case lessonTypes.VIDEO_ONLY:
         FileSystem.deleteAsync(
           FileSystem.documentDirectory + activeLessonInModal.id + 'v.mp4'
         )
@@ -350,25 +315,57 @@ const LessonsScreen = ({
     []
   )
 
+  const goToPlayScreen = params => {
+    navigationParams = {
+      ...params,
+      thisSet: thisSet
+    }
+    navigate('Play', navigationParams)
+    // navigate('Play', {
+    //   thisLesson: item,
+    //   thisSet: thisSet,
+    //   // thisSetProgress: thisSetProgress,
+    //   isDownloaded: getIsLessonDownloaded(item),
+    //   isDownloading: getIsLessonDownloading(item),
+    //   lessonType: getLessonType(item)
+    // })
+  }
+
   const renderLessonItem = ({ item }) => {
     return (
+      // <LessonItem
+      //   thisLesson={item}
+      //   onLessonSelect={() =>
+      //     navigate('Play', {
+      //       thisLesson: item,
+      //       thisSet: thisSet,
+      //       // thisSetProgress: thisSetProgress,
+      //       isDownloaded: getIsLessonDownloaded(item),
+      //       isDownloading: getIsLessonDownloading(item),
+      //       lessonType: getLessonType(item)
+      //     })
+      //   }
+      //   isBookmark={getLessonInfo('index', item.id) === thisSetBookmark}
+      //   isDownloaded={getIsLessonDownloaded(item)}
+      //   isDownloading={getIsLessonDownloading(item)}
+      //   lessonType={getLessonType(item)}
+      //   isComplete={thisSetProgress.includes(getLessonInfo('index', item.id))}
+      //   showDownloadLessonModal={() => {
+      //     setActiveLessonInModal(item)
+      //     setShowDownloadLessonModal(true)
+      //   }}
+      //   showDeleteLessonModal={() => {
+      //     setActiveLessonInModal(item)
+      //     setShowDeleteLessonModal(true)
+      //   }}
+      // />
       <LessonItem
         thisLesson={item}
-        onLessonSelect={() =>
-          navigate('Play', {
-            thisLesson: item,
-            thisSet: thisSet,
-            // thisSetProgress: thisSetProgress,
-            isDownloaded: getIsLessonDownloaded(item),
-            isDownloading: getIsLessonDownloading(item),
-            lessonType: getLessonType(item)
-          })
-        }
-        isBookmark={getLessonInfo('index', item.id) === thisSetBookmark}
-        isDownloaded={getIsLessonDownloaded(item)}
-        isDownloading={getIsLessonDownloading(item)}
+        goToPlayScreen={goToPlayScreen}
+        thisSetBookmark={thisSetBookmark}
         lessonType={getLessonType(item)}
-        isComplete={thisSetProgress.includes(getLessonInfo('index', item.id))}
+        thisSetProgress={thisSetProgress}
+        downloadsInFileSystem={downloadsInFileSystem}
         showDownloadLessonModal={() => {
           setActiveLessonInModal(item)
           setShowDownloadLessonModal(true)
@@ -391,7 +388,7 @@ const LessonsScreen = ({
           }
         ]}
       >
-        <SetItem thisSet={thisSet} screen='Lessons' />
+        <SetItem thisSet={thisSet} mode={setItemModes.LESSONS_SCREEN} />
       </View>
       <SwipeListView
         data={thisSet.lessons}

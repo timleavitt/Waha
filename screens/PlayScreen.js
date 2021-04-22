@@ -25,7 +25,13 @@ import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
 import Scrubber from '../components/Scrubber'
 import VideoPlayer from '../components/VideoPlayer'
 import WahaBackButton from '../components/WahaBackButton'
-import { getLessonInfo, lockPortrait, scaleMultiplier } from '../constants'
+import {
+  chapters,
+  getLessonInfo,
+  lessonTypes,
+  lockPortrait,
+  scaleMultiplier
+} from '../constants'
 import MessageModal from '../modals/MessageModal'
 import ShareModal from '../modals/ShareModal'
 import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
@@ -64,6 +70,8 @@ function mapDispatchToProps (dispatch) {
     }
   }
 }
+
+const path = FileSystem.documentDirectory
 
 /**
  * A screen where the user listens to (or watches) the different parts of a lesson.
@@ -126,7 +134,7 @@ const PlayScreen = ({
   //+ CHAPTER SOURCES STATE
 
   /** Keeps track of the currently playing chapter. Options are 'fellowship', 'story', 'training', or 'application'. */
-  const [activeChapter, setActiveChapter] = useState('fellowship')
+  const [activeChapter, setActiveChapter] = useState(chapters.FELLOWSHIP)
 
   /** Local source for fellowship chapter audio file. */
   const [fellowshipSource, setFellowshipSource] = useState()
@@ -181,7 +189,7 @@ const PlayScreen = ({
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
 
   const [titleBackgroundColor, setTitleBackgroundColor] = useState(
-    lessonType === '' ? colors.porcelain : colors.white
+    lessonType === lessonTypes.BOOK ? colors.porcelain : colors.white
   )
 
   function getNavOptions () {
@@ -309,7 +317,7 @@ const PlayScreen = ({
    */
   function setSources () {
     switch (lessonType) {
-      case 'qa':
+      case lessonTypes.STANDARD_DBS:
         setFellowshipSource(potentialSources.fellowshipLocal)
         setStorySource(potentialSources.storyLocal)
         setTrainingSource(null)
@@ -322,7 +330,7 @@ const PlayScreen = ({
             getLessonInfo('audioSource', thisLesson.id)
           )
         break
-      case 'qav':
+      case lessonTypes.STANDARD_DMC:
         setFellowshipSource(potentialSources.fellowshipLocal)
         setStorySource(potentialSources.storyLocal)
         setTrainingSource(potentialSources.trainingLocal)
@@ -341,21 +349,8 @@ const PlayScreen = ({
           )
         }
         break
-      case 'qv':
-        setFellowshipSource(potentialSources.fellowshipLocal)
-        setStorySource(potentialSources.storyDummy)
-        setTrainingSource(potentialSources.trainingLocal)
-        setApplicationSource(potentialSources.applicationLocal)
-
-        if (!isDownloaded && !isDownloading)
-          downloadMedia(
-            'video',
-            thisLesson.id,
-            getLessonInfo('videoSource', thisLesson.id)
-          )
-        break
-      case 'v':
-        changeChapter('training')
+      case lessonTypes.VIDEO_ONLY:
+        changeChapter(chapters.TRAINING)
         setFellowshipSource(null)
         setStorySource(null)
         setTrainingSource(
@@ -365,14 +360,14 @@ const PlayScreen = ({
         )
         setApplicationSource(null)
         break
-      case 'q':
+      case lessonTypes.STANDARD_NO_AUDIO:
         setFellowshipSource(potentialSources.fellowshipLocal)
         setStorySource(potentialSources.storyDummy)
         setTrainingSource(null)
         setApplicationSource(potentialSources.applicationLocal)
         break
-      case 'a':
-        changeChapter('story')
+      case lessonTypes.AUDIOBOOK:
+        changeChapter(chapters.STORY)
         setFellowshipSource(null)
         setStorySource(
           isDownloaded
@@ -401,7 +396,7 @@ const PlayScreen = ({
    * @function
    */
   useEffect(() => {
-    if (lessonType === 'v')
+    if (lessonType === lessonTypes.VIDEO_ONLY)
       if (isConnected && !isMediaLoaded && trainingSource)
         loadMedia('video', trainingSource)
   }, [isConnected])
@@ -447,7 +442,7 @@ const PlayScreen = ({
    * @function
    */
   useEffect(() => {
-    if (lessonType === 'a' && storySource) {
+    if (lessonType === lessonTypes.AUDIOBOOK && storySource) {
       loadMedia('audio', storySource)
     }
   }, [storySource])
@@ -535,11 +530,11 @@ const PlayScreen = ({
     if (chapter !== activeChapter) {
       audio.unloadAsync()
       shouldThumbUpdate.current = false
-      if (chapter === 'fellowship') {
+      if (chapter === chapters.FELLOWSHIP) {
         lockPortrait(() => {})
         setSeekPosition(0)
         loadMedia('audio', fellowshipSource)
-      } else if (chapter === 'story') {
+      } else if (chapter === chapters.STORY) {
         lockPortrait(() => {})
         setSeekPosition(0)
         if (storySource) {
@@ -551,11 +546,11 @@ const PlayScreen = ({
         //  3. there's an audio source, it's not downloading, and there's no
         //    internet
         if (!thisLesson.hasAudio) swipeToScripture()
-      } else if (chapter === 'application') {
+      } else if (chapter === chapters.APPLICATION) {
         lockPortrait(() => {})
         setSeekPosition(0)
         loadMedia('audio', applicationSource)
-      } else if (chapter === 'training') {
+      } else if (chapter === chapters.TRAINING) {
         setIsMediaLoaded(false)
         setSeekPosition(0)
       }
@@ -575,33 +570,34 @@ const PlayScreen = ({
     // depending on what chapter we're on, either jump to the next
     //  chapter once we finish or toggle the whole lesson as complete
     if (playbackStatus.didJustFinish) {
-      if (activeChapter === 'fellowship') {
+      if (activeChapter === chapters.FELLOWSHIP) {
         if (!thisLesson.hasAudio) {
-          changeChapter('story')
+          changeChapter(chapters.STORY)
           swipeToScripture()
         } else if (
           downloads[thisLesson.id] ||
-          ((lessonType === 'qa' || lessonType === 'qav') &&
+          ((lessonType === lessonTypes.STANDARD_DBS ||
+            lessonType === lessonTypes.STANDARD_DMC) &&
             !isConnected &&
             !isDownloaded)
         ) {
           swipeToScripture()
         } else {
-          changeChapter('story')
+          changeChapter(chapters.STORY)
         }
-      } else if (activeChapter === 'story') {
+      } else if (activeChapter === chapters.STORY) {
         switch (lessonType) {
-          case 'qa':
+          case lessonTypes.STANDARD_DBS:
             if (!isDownloading) {
-              setTimeout(() => changeChapter('application'), 1000)
+              setTimeout(() => changeChapter(chapters.APPLICATION), 1000)
             }
             break
-          case 'qav':
+          case lessonTypes.STANDARD_DMC:
             if (!downloads[thisLesson.id + 'v']) {
-              setTimeout(() => changeChapter('training'), 1000)
+              setTimeout(() => changeChapter(chapters.TRAINING), 1000)
             }
             break
-          case 'a':
+          case lessonTypes.AUDIOBOOK:
             if (
               !thisSetProgress.includes(getLessonInfo('index', thisLesson.id))
             ) {
@@ -609,7 +605,7 @@ const PlayScreen = ({
             }
         }
       } else if (
-        activeChapter === 'application' &&
+        activeChapter === chapters.APPLICATION &&
         !thisSetProgress.includes(getLessonInfo('index', thisLesson.id))
       ) {
         changeCompleteStatus()
@@ -643,11 +639,11 @@ const PlayScreen = ({
    */
   useEffect(() => {
     switch (lessonType) {
-      case 'qa':
+      case lessonTypes.STANDARD_DBS:
         if (downloads[thisLesson.id] && downloads[thisLesson.id].progress === 1)
           removeDownload(thisLesson.id)
         break
-      case 'qav':
+      case lessonTypes.STANDARD_DMC:
         if (
           downloads[thisLesson.id] &&
           downloads[thisLesson.id + 'v'] &&
@@ -658,8 +654,7 @@ const PlayScreen = ({
           removeDownload(thisLesson.id + 'v')
         }
         break
-      case 'qv':
-      case 'v':
+      case lessonTypes.VIDEO_ONLY:
         if (
           downloads[thisLesson.id + 'v'] &&
           downloads[thisLesson.id + 'v'].progress === 1
@@ -772,12 +767,14 @@ const PlayScreen = ({
         style={[
           styles.topHalfContainer,
           {
-            marginBottom: lessonType === '' ? 10 : 0
+            marginBottom: lessonType === lessonTypes.BOOK ? 10 : 0
           }
         ]}
       >
         {/* don't display title section on audio book lessons */}
-        {lessonType !== 'a' && lessonType !== '' ? titleSection : null}
+        {lessonType !== lessonTypes.AUDIOBOOK && lessonType !== lessonTypes.BOOK
+          ? titleSection
+          : null}
 
         {/* 
           MIDDLE SECTION 
@@ -785,9 +782,10 @@ const PlayScreen = ({
           2. video player for lessons with videos
           3. album art swiper to display album art, scripture, and questions
         */}
-        {lessonType === 'a' || lessonType === '' ? (
+        {lessonType === lessonTypes.AUDIOBOOK ||
+        lessonType === lessonTypes.BOOK ? (
           <BookView thisLesson={thisLesson} titleSection={titleSection} />
-        ) : activeChapter === 'training' ? (
+        ) : activeChapter === chapters.TRAINING ? (
           <VideoPlayer
             videoSource={trainingSource}
             setVideo={setVideo}
@@ -819,17 +817,17 @@ const PlayScreen = ({
       </View>
 
       {/* AUDIO CONTROLS */}
-      {lessonType !== '' ? (
+      {lessonType !== lessonTypes.BOOK ? (
         isMediaLoaded ? (
           <SafeAreaView style={styles.audioControlContainer}>
-            {lessonType !== 'v' && lessonType !== 'a' ? (
+            {lessonType !== lessonTypes.VIDEO_ONLY &&
+            lessonType !== lessonTypes.AUDIOBOOK ? (
               <ChapterSelector
                 activeChapter={activeChapter}
-                lessonID={thisLesson.id}
-                onPress={chapter => changeChapter(chapter)}
+                changeChapter={changeChapter}
+                isFullyDownloaded={isDownloaded}
                 lessonType={lessonType}
-                isDownloaded={isDownloaded}
-                shouldAutoPlay={shouldAutoPlay}
+                lessonID={thisLesson.id}
               />
             ) : null}
             <Scrubber

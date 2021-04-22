@@ -10,7 +10,7 @@ import {
 import { connect } from 'react-redux'
 import SetItem from '../components/SetItem'
 import WahaButton from '../components/WahaButton'
-import { scaleMultiplier } from '../constants'
+import { scaleMultiplier, setItemModes } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
@@ -123,7 +123,7 @@ const SetInfoModal = ({
       isVisible={isVisible}
     >
       <View style={styles.setItemContainer}>
-        <SetItem thisSet={thisSet} screen='SetInfo' />
+        <SetItem thisSet={thisSet} mode={setItemModes.SET_INFO_MODAL} />
       </View>
       <WahaButton
         type='filled'

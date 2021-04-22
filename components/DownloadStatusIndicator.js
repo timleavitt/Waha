@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import { lessonTypes, scaleMultiplier } from '../constants'
 import { removeDownload } from '../redux/actions/downloadActions'
 import { colors } from '../styles/colors'
 
@@ -51,31 +51,39 @@ const DownloadStatusIndicator = ({
   //    false: null (nothing)
   //  false: cloud-down (able to download)
 
-  function getDownloadPercentage () {
+  const [downloadPercentage, setDownloadPercentage] = useState(0)
+
+  useEffect(() => {
     switch (lessonType) {
-      case 'qa':
-      case 'a':
-        return downloads[lessonID] ? downloads[lessonID].progress * 100 : null
+      case lessonTypes.STANDARD_DBS:
+      case lessonTypes.AUDIOBOOK:
+        setDownloadPercentage(
+          downloads[lessonID] ? downloads[lessonID].progress * 100 : null
+        )
         break
-      case 'qav':
-        return downloads[lessonID] && downloads[lessonID + 'v']
-          ? ((downloads[lessonID].progress +
-              downloads[lessonID + 'v'].progress) /
-              2) *
-              100
-          : null
+      case lessonTypes.STANDARD_DMC:
+        setDownloadPercentage(
+          downloads[lessonID] && downloads[lessonID + 'v']
+            ? ((downloads[lessonID].progress +
+                downloads[lessonID + 'v'].progress) /
+                2) *
+                100
+            : null
+        )
         break
-      case 'qv':
-      case 'v':
-        return downloads[lessonID + 'v']
-          ? downloads[lessonID + 'v'].progress * 100
-          : null
+      case lessonTypes.VIDEO_ONLY:
+        setDownloadPercentage(
+          downloads[lessonID + 'v']
+            ? downloads[lessonID + 'v'].progress * 100
+            : null
+        )
         break
     }
-  }
+  }, [downloads[lessonID], downloads[lessonID + 'v']])
 
   // if lesson isn't only video
-  return lessonType !== 'q' && lessonType !== '' ? (
+  return lessonType !== lessonTypes.STANDARD_NO_AUDIO &&
+    lessonType !== lessonTypes.BOOK ? (
     // if lesson has audio source
     isDownloaded ? (
       // if lesson is downloaded, show check
@@ -108,7 +116,7 @@ const DownloadStatusIndicator = ({
           <AnimatedCircularProgress
             size={22 * scaleMultiplier}
             width={4 * scaleMultiplier}
-            fill={getDownloadPercentage()}
+            fill={downloadPercentage}
             tintColor={colors.oslo}
             rotation={0}
             backgroundColor={colors.white}
