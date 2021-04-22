@@ -27,12 +27,21 @@ function mapStateToProps (state) {
   }
 }
 
+/**
+ * Pressable component for a single chapter button used in ChapterSeparator. Has a variety of possible styles based on its current mode.
+ * @param {number} chapter - The chapter to display on this button. See chapters in constants.js.
+ * @param {number} activeChapter - The currently active chapter of the current lesson. See chapters in constants.js.
+ * @param {Function} changeChapter - Changes the currently active chapter.
+ * @param {string} lessonType - The type of the current lesson. See lessonTypes in constants.js.
+ * @param {string} lessonID - The ID of the current lesson. Only needed for the Story and Training chapters.
+ * @param {boolean} isFullyDownloaded - Whether a lesson has all of its media downloaded or not. Includes video files for lessons that require them. Only needed for the Story and Training chapters.
+ */
 const ChapterButton = ({
   // Props passed from a parent component.
   chapter,
   activeChapter,
   changeChapter,
-  lessonType = null,
+  lessonType,
   lessonID = null,
   isFullyDownloaded = false,
   // Props passed from redux.
@@ -44,15 +53,16 @@ const ChapterButton = ({
   downloads,
   isConnected
 }) => {
+  /** Keeps track of the mode of this chapter button. */
   const [mode, setMode] = useState(chapterButtonModes.INACTIVE)
 
-  const [isMediaDownloading, setIsMediaDownloading] = useState(false)
-
+  /** Keeps track of the icon name, button style, text style, and icon color for the chapter button. Updates whenever the mode changes. */
   const [iconName, setIconName] = useState('')
-  const [buttonStyle, setButtonStyle] = useState({})
+  const [extraButtonStyle, setExtraButtonStyle] = useState({})
   const [textStyle, setTextStyle] = useState({})
   const [iconColor, setIconColor] = useState(primaryColor)
 
+  // The names of the chapters. 'Filler' is there to line up this array with the chapters enum since the enum starts at 1.
   const chapterNames = [
     'Filler',
     translations.play.fellowship,
@@ -61,27 +71,24 @@ const ChapterButton = ({
     translations.play.application
   ]
 
+  // Whenever the active chapter or the user's internet connection status changes, get the most updated mode.
   useEffect(() => {
-    getMode()
+    setChapterButtonMode()
   }, [activeChapter, isConnected])
 
+  // Also get the most updated mode whenever the download progress changes for this lesson's.
   useEffect(() => {
-    if (chapter === chapters.STORY || chapter === chapters.TRAINING) getMode()
-  }, [downloads])
+    if (chapter === chapters.STORY || chapter === chapters.TRAINING)
+      setChapterButtonMode()
+  }, [downloads[lessonID], downloads[lessonID + 'v']])
 
-  // Every time the mode changes, we need to reset the styles for the button.
+  // Every time the mode changes, reset the styles for the button.
   useEffect(() => {
     setStyles()
   }, [mode])
 
-  // const getIcon = () => {
-  //   else if (chapter < activeChapter)
-  //     setIcon('check-filled')
-  //   else if ()
-  //   else setIcon(`number-${chapter}-filled`)
-  // }
-
-  const getMode = () => {
+  /** Sets the mode for this chapter button. */
+  const setChapterButtonMode = () => {
     // Set the chapter button to the appropriate mode.
     switch (chapter) {
       case chapters.FELLOWSHIP:
@@ -123,10 +130,11 @@ const ChapterButton = ({
     }
   }
 
+  /** Sets the various style states based on the current mode. */
   const setStyles = () => {
     switch (mode) {
       case chapterButtonModes.ACTIVE:
-        setButtonStyle({
+        setExtraButtonStyle({
           backgroundColor: primaryColor,
           borderColor: primaryColor
         })
@@ -151,7 +159,7 @@ const ChapterButton = ({
         else setIconName(`number-${chapter}-filled`)
         break
       case chapterButtonModes.INACTIVE:
-        setButtonStyle({
+        setExtraButtonStyle({
           borderColor: primaryColor,
           backgroundColor: colors.athens
         })
@@ -173,11 +181,12 @@ const ChapterButton = ({
           chapter === chapters.APPLICATION
         )
           setIconName('number-3-filled')
+        // If the active chapter is ahead of this chapter, set the icon to a checkmark.
         else if (chapter < activeChapter) setIconName('check-filled')
         else setIconName(`number-${chapter}-filled`)
         break
       case chapterButtonModes.DOWNLOADING:
-        setButtonStyle({
+        setExtraButtonStyle({
           borderColor: colors.chateau,
           backgroundColor: colors.athens
         })
@@ -194,7 +203,7 @@ const ChapterButton = ({
         setIconColor(null)
         break
       case chapterButtonModes.DISABLED:
-        setButtonStyle({
+        setExtraButtonStyle({
           borderColor: colors.chateau,
           backgroundColor: colors.athens
         })
@@ -215,7 +224,7 @@ const ChapterButton = ({
 
   return (
     <TouchableOpacity
-      style={[buttonStyle, styles.chapterButton]}
+      style={[styles.chapterButton, extraButtonStyle]}
       onPress={
         mode === chapterButtonModes.DISABLED ||
         mode === chapterButtonModes.DOWNLOADING

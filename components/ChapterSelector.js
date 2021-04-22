@@ -16,11 +16,11 @@ function mapStateToProps (state) {
 
 /**
  * Component that displays the various 3 or 4 chapter buttons on the PlayScreen.
- * @param {string} activeChapter - The name of the currently active chapter. Can be 'fellowship', 'story', 'training', or 'application'.
- * @param {string} lessonID - The ID of the lesson
- * @param {Function} onPress -
- * @param {string} lessonType -
- * @param {boolean} isDownloaded -
+ * @param {string} activeChapter - The currently active chapter. See chapters in constants.js.
+ * @param {Function} changeChapter - Changes the active chapter.
+ * @param {boolean} isFullyDownloaded - Whether a lesson has all of its media downloaded or not. Includes video files for lessons that require them.
+ * @param {string} lessonType - The type of the current lesson. See lessonTypes in constants.js.
+ * @param {string} lessonID - The ID for the active lesson.
  */
 const ChapterSelector = ({
   // Props passed from a parent component.
@@ -51,6 +51,7 @@ const ChapterSelector = ({
         lessonID={lessonID}
         isFullyDownloaded={isFullyDownloaded}
       />
+      {/* For DMC lessons, we need an extra 'Training' chapter button. */}
       {lessonType === lessonTypes.STANDARD_DMC ? <ChapterSeparator /> : null}
       {lessonType === lessonTypes.STANDARD_DMC ? (
         <ChapterButton
@@ -72,8 +73,6 @@ const ChapterSelector = ({
     </View>
   )
 }
-
-// STYLES
 
 const styles = StyleSheet.create({
   chapterSelectContainer: {
