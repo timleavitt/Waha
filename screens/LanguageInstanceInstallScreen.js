@@ -4,6 +4,7 @@ import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
 import {
+  ActivityIndicator,
   Alert,
   Animated,
   Dimensions,
@@ -19,17 +20,19 @@ import { languageT2S } from '../assets/languageT2S/_languageT2S'
 import LanguageItem from '../components/LanguageItem'
 import WahaButton from '../components/WahaButton'
 import WahaSeparator from '../components/WahaSeparator'
-import { getSystemIsRTL, scaleMultiplier } from '../constants'
+import { getSystemIsRTL, groupNames, scaleMultiplier } from '../constants'
 import db from '../firebase/db'
 import { languages } from '../languages'
+import { changeActiveGroup } from '../redux/actions/activeGroupActions'
 import {
   deleteLanguageData,
   downloadLanguageCoreFiles,
+  incrementGlobalGroupCounter,
   setHasFetchedLanguageData,
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
-import { deleteGroup } from '../redux/actions/groupsActions'
+import { createGroup, deleteGroup } from '../redux/actions/groupsActions'
 import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
 import { storeDownloads } from '../redux/actions/storedDownloadsActions'
 import { colors } from '../styles/colors'
@@ -64,7 +67,13 @@ function mapDispatchToProps (dispatch) {
       dispatch(storeLanguageSets(sets, languageInstanceID)),
     deleteLanguageData: languageInstanceID =>
       dispatch(deleteLanguageData(languageInstanceID)),
-    deleteGroup: groupName => dispatch(deleteGroup(groupName))
+    deleteGroup: groupName => dispatch(deleteGroup(groupName)),
+    incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter()),
+    createGroup: (groupName, language, emoji, groupID, groupNumber) =>
+      dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
+    changeActiveGroup: name => {
+      dispatch(changeActiveGroup(name))
+    }
   }
 }
 
@@ -95,7 +104,10 @@ function LanguageInstanceInstallScreen ({
   setHasFetchedLanguageData,
   storeLanguageSets,
   deleteLanguageData,
-  deleteGroup
+  deleteGroup,
+  incrementGlobalGroupCounter,
+  createGroup,
+  changeActiveGroup
 }) {
   // Set the i18n locale to the locale of the user's phone.
   i18n.locale = Localization.locale
@@ -121,6 +133,8 @@ function LanguageInstanceInstallScreen ({
   const [audio, setAudio] = useState(new Audio.Sound())
 
   const [searchTextInput, setSearchTextInput] = useState('')
+
+  const [isFetchingFirebaseData, setIsFetchingFirebaseData] = useState(false)
 
   /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
@@ -159,6 +173,8 @@ function LanguageInstanceInstallScreen ({
   async function fetchFirebaseData () {
     // Set the installingLanguageInstance redux variable to true since we're now installing a language instance.
     setIsInstallingLanguageInstance(true)
+
+    setIsFetchingFirebaseData(true)
 
     // Fetch all the Story Sets whith the language ID of the selected language and store them in redux.
     await db
@@ -203,18 +219,39 @@ function LanguageInstanceInstallScreen ({
    */
   function onStartPress () {
     // Navigate to the onboarding slides if this is the first language instance install.
-    if (routeName === 'InitialLanguageInstanceInstall') {
-      navigate('WahaOnboardingSlides', {
-        selectedLanguage: selectedLanguage
-      })
-    }
 
     fetchFirebaseData()
       .then(() => {
         setHasFetchedLanguageData(true)
         downloadLanguageCoreFiles(selectedLanguage)
+        // Create a new group using the default group name stored in constants.js, assuming a group hasn't already been created with the same name. We don't want any duplicates.
+        if (
+          !groups.some(group => group.name === groupNames[selectedLanguage])
+        ) {
+          incrementGlobalGroupCounter()
+
+          createGroup(
+            groupNames[selectedLanguage],
+            selectedLanguage,
+            'default',
+            database.globalGroupCounter,
+            groups.length + 1
+          )
+        }
+
+        // Change the active group to the new group we just created.
+        changeActiveGroup(groupNames[selectedLanguage])
+
+        setIsFetchingFirebaseData(false)
+
+        if (routeName === 'InitialLanguageInstanceInstall') {
+          navigate('WahaOnboardingSlides', {
+            selectedLanguage: selectedLanguage
+          })
+        }
       })
       .catch(error => {
+        console.log(error)
         Alert.alert(i18n.t('fetchErrorTitle'), i18n.t('fetchErrorMessage'), [
           {
             text: i18n.t('ok'),
@@ -526,7 +563,9 @@ function LanguageInstanceInstallScreen ({
           onPress={isConnected ? onStartPress : null}
           label={
             isConnected
-              ? routeName === 'InitialLanguageInstanceInstall'
+              ? isFetchingFirebaseData
+                ? ''
+                : routeName === 'InitialLanguageInstanceInstall'
                 ? 'Continue'
                 : i18n.t('addLanguage') + ' '
               : ''
@@ -538,7 +577,11 @@ function LanguageInstanceInstallScreen ({
           }}
           useDefaultFont={true}
           extraComponent={
-            isConnected ? null : (
+            isConnected ? (
+              isFetchingFirebaseData ? (
+                <ActivityIndicator color={colors.white} />
+              ) : null
+            ) : (
               <Icon name='cloud-slash' size={40} color={colors.chateau} />
             )
           }

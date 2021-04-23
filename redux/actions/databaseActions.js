@@ -22,10 +22,7 @@ export const INCREMENT_GLOBAL_GROUP_COUNTER = 'INCREMENT_GLOBAL_GROUP_COUNTER'
 import * as FileSystem from 'expo-file-system'
 import firebase from 'firebase'
 import i18n from 'i18n-js'
-import { groupNames } from '../../constants'
 import { logInstallLanguage } from '../../LogEventFunctions'
-import { changeActiveGroup } from './activeGroupActions'
-import { createGroup } from './groupsActions'
 import { setIsInstallingLanguageInstance } from './isInstallingLanguageInstanceActions'
 import { storeDownloads } from './storedDownloadsActions'
 
@@ -300,26 +297,26 @@ export function downloadLanguageCoreFiles (language) {
           // Log the language install in firebase for firebase analytics.
           logInstallLanguage(language, i18n.locale)
 
-          // Create a new group using the default group name stored in constants.js, assuming a group hasn't already been created with the same name. We don't want any duplicates.
-          if (
-            !getState().groups.some(
-              group => group.name === groupNames[language]
-            )
-          ) {
-            dispatch(incrementGlobalGroupCounter())
-            dispatch(
-              createGroup(
-                groupNames[language],
-                language,
-                'default',
-                getState().database.globalGroupCounter,
-                getState().groups.length + 1
-              )
-            )
-          }
+          // // Create a new group using the default group name stored in constants.js, assuming a group hasn't already been created with the same name. We don't want any duplicates.
+          // if (
+          //   !getState().groups.some(
+          //     group => group.name === groupNames[language]
+          //   )
+          // ) {
+          //   dispatch(incrementGlobalGroupCounter())
+          //   dispatch(
+          //     createGroup(
+          //       groupNames[language],
+          //       language,
+          //       'default',
+          //       getState().database.globalGroupCounter,
+          //       getState().groups.length + 1
+          //     )
+          //   )
+          // }
 
-          // Change the active group to the new group we just created.
-          dispatch(changeActiveGroup(groupNames[language]))
+          // // Change the active group to the new group we just created.
+          // dispatch(changeActiveGroup(groupNames[language]))
 
           // Set our actingLanguageID variable to null since we're not downloading a language instance anymore.
           dispatch(storeActingLanguageID(null))
