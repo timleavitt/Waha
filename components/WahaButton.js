@@ -39,7 +39,7 @@ const WahaButton = ({
   // Props passed from a parent component.s
   type,
   color,
-  label,
+  label = '',
   style = {},
   textStyle = {},
   width = null,
@@ -61,19 +61,19 @@ const WahaButton = ({
     else if (color === colors.blue) setShadowColor(colors.blueShadow)
     else if (color === colors.chateau) setShadowColor(colors.chateauShadow)
     else if (color === colors.geyser) setShadowColor(colors.geyserShadow)
+    else if (color === colors.waha) setShadowColor(colors.wahaShadow)
   }, [color])
 
   const outerContainerStyle = [
     {
       overflow: 'hidden',
-      borderRadius: 10,
+      borderRadius: 20,
       height: 65 * scaleMultiplier,
       width: width,
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'row',
-      marginVertical: 20 * scaleMultiplier,
-      backgroundColor: 'green'
+      marginVertical: 20 * scaleMultiplier
     },
     style
   ]
@@ -90,7 +90,7 @@ const WahaButton = ({
   const outlineButtonStyle = [
     innerContainerStyle,
     {
-      borderRadius: 10,
+      borderRadius: 20,
       height: 65 * scaleMultiplier,
       width: width,
       flexDirection: 'row',
