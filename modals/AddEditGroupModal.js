@@ -1,18 +1,9 @@
 import React, { useState } from 'react'
-import {
-  Alert,
-  Dimensions,
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from 'react-native'
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { groupIcons, groupIconSources } from '../assets/groupIcons/_groupIcons'
+import EmojiViewer from '../components/EmojiViewer'
 import GroupAvatar from '../components/GroupAvatar'
+import GroupNameTextInput from '../components/GroupNameTextInput'
 import { scaleMultiplier } from '../constants'
 import ModalScreen from '../modals/ModalScreen'
 import { changeActiveGroup } from '../redux/actions/activeGroupActions'
@@ -27,7 +18,7 @@ import {
   activeGroupSelector
 } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
-import { getLanguageFont, StandardTypography } from '../styles/typography'
+import { getLanguageFont } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
@@ -189,32 +180,6 @@ const AddEditGroupModal = ({
     hideModal()
   }
 
-  /** Renders an emoji for the emoji select <FlatList />. */
-  const renderEmoji = ({ item }) => (
-    <TouchableOpacity
-      style={{
-        width: 50 * scaleMultiplier,
-        height: 50 * scaleMultiplier,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 2,
-        borderWidth: item === emojiInput ? 2 : 0,
-        borderColor: item === emojiInput ? colors.blue : null,
-        borderRadius: 10,
-        backgroundColor: item === emojiInput ? colors.blue + '38' : null
-      }}
-      onPress={() => setEmojiInput(item)}
-    >
-      <Image
-        style={{
-          width: 40 * scaleMultiplier,
-          height: 40 * scaleMultiplier
-        }}
-        source={groupIconSources[item]}
-      />
-    </TouchableOpacity>
-  )
-
   return (
     <ModalScreen
       isVisible={isVisible}
@@ -260,84 +225,11 @@ const AddEditGroupModal = ({
           size={120}
         />
       </View>
-      <View style={styles.groupNameAreaContainer}>
-        <Text
-          style={StandardTypography(
-            { font, isRTL },
-            'p',
-            'Regular',
-            'left',
-            colors.chateau
-          )}
-        >
-          {translations.add_edit_group.group_name_form_label}
-        </Text>
-        <TextInput
-          style={[
-            styles.groupNameTextInputContainer,
-            StandardTypography(
-              { font, isRTL },
-              'h3',
-              'Regular',
-              'left',
-              colors.shark
-            )
-          ]}
-          onChangeText={text => setGroupNameInput(text)}
-          value={groupNameInput}
-          autoCapitalize='words'
-          autoCorrect={false}
-          placeholder={translations.add_edit_group.group_name_form_placeholder}
-          placeholderTextColor={colors.chateau}
-          maxLength={50}
-          returnKeyType='done'
-        />
-      </View>
-      <Text
-        style={[
-          StandardTypography(
-            { font, isRTL },
-            'p',
-            'Regular',
-            'left',
-            colors.chateau
-          ),
-          {
-            marginHorizontal: 20,
-            marginTop: 20 * scaleMultiplier,
-            marginBottom: 5
-          }
-        ]}
-      >
-        {translations.add_edit_group.icon_form_label}
-      </Text>
-      <View
-        style={{
-          alignItems: 'center',
-          // If phone screen is large, don't make the emoji select take up the whole rest of the screen.
-          height:
-            Dimensions.get('window').height > 700
-              ? 250 * scaleMultiplier
-              : null,
-          flex: Dimensions.get('window').height > 700 ? null : 1,
-          paddingHorizontal: 5,
-          borderWidth: 2,
-          borderRadius: 10,
-          marginHorizontal: 20,
-          borderColor: colors.athens,
-          marginBottom: 20
-        }}
-      >
-        <FlatList
-          data={groupIcons}
-          nestedScrollEnabled
-          renderItem={renderEmoji}
-          keyExtractor={item => item}
-          numColumns={Math.floor(
-            (Dimensions.get('window').width - 50) / (50 * scaleMultiplier)
-          )}
-        />
-      </View>
+      <GroupNameTextInput
+        groupNameInput={groupNameInput}
+        setGroupNameInput={setGroupNameInput}
+      />
+      <EmojiViewer emojiInput={emojiInput} setEmojiInput={setEmojiInput} />
     </ModalScreen>
   )
 }
@@ -353,13 +245,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 20 * scaleMultiplier
-  },
-  groupNameAreaContainer: { marginHorizontal: 20 },
-  groupNameTextInputContainer: {
-    borderBottomColor: colors.athens,
-    borderBottomWidth: 2,
-    height: 50 * scaleMultiplier,
-    fontSize: 18 * scaleMultiplier
   }
 })
 
