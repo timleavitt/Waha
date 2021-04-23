@@ -213,7 +213,7 @@ const LoadingScreen = ({
           {languageCoreFilesDownloadProgress ? (
             <View
               style={{
-                backgroundColor: '#E63946',
+                backgroundColor: colors.waha,
                 height: '100%',
                 flex: languageCoreFilesDownloadProgress,
                 borderRadius: 20

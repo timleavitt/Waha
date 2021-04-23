@@ -1,6 +1,7 @@
 import React from 'react'
 import { Dimensions, Image, StyleSheet, View } from 'react-native'
 import { scaleMultiplier } from '../constants'
+import { colors } from '../styles/colors'
 
 /**
  * Screen that gets navigated to whenever the app enters "background" mode on iOS. This is so the app preview is hidden in the iOS multitasking view.
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#E63946'
+    backgroundColor: colors.waha
   }
 })
 
