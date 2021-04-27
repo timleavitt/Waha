@@ -8,6 +8,7 @@ import {
 } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
+import PlayScreenTitle from './PlayScreenTitle'
 
 function mapStateToProps (state) {
   return {
@@ -20,7 +21,6 @@ function mapStateToProps (state) {
 const BookView = ({
   // Props passed from a parent component.
   thisLesson,
-  titleSection,
   // Props passed from redux.
   font,
   activeGroup,
@@ -34,7 +34,7 @@ const BookView = ({
         borderWidth: 4,
         borderColor: colors.chateau,
         marginHorizontal: 10,
-        marginTop: 10,
+        marginVertical: 10,
         flex: 1
       }}
     >
@@ -58,7 +58,10 @@ const BookView = ({
         )}
         keyExtractor={item => item}
         ListHeaderComponent={
-          <View style={{ marginVertical: 20 }}>{titleSection}</View>
+          <PlayScreenTitle
+            text={thisLesson.title}
+            backgroundColor={colors.porcelain}
+          />
         }
       />
     </View>

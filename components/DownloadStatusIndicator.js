@@ -25,7 +25,7 @@ function mapDispatchToProps (dispatch) {
 //  status
 const DownloadStatusIndicator = ({
   // Props passed from a parent component.s
-  isDownloaded,
+  isFullyDownloaded,
   isDownloading,
   showDeleteLessonModal,
   showDownloadLessonModal,
@@ -54,38 +54,35 @@ const DownloadStatusIndicator = ({
   const [downloadPercentage, setDownloadPercentage] = useState(0)
 
   useEffect(() => {
-    switch (lessonType) {
-      case lessonTypes.STANDARD_DBS:
-      case lessonTypes.AUDIOBOOK:
-        setDownloadPercentage(
-          downloads[lessonID] ? downloads[lessonID].progress * 100 : null
-        )
-        break
-      case lessonTypes.STANDARD_DMC:
-        setDownloadPercentage(
-          downloads[lessonID] && downloads[lessonID + 'v']
-            ? ((downloads[lessonID].progress +
-                downloads[lessonID + 'v'].progress) /
-                2) *
-                100
-            : null
-        )
-        break
-      case lessonTypes.VIDEO_ONLY:
-        setDownloadPercentage(
-          downloads[lessonID + 'v']
-            ? downloads[lessonID + 'v'].progress * 100
-            : null
-        )
-        break
-    }
+    if (downloads[lessonID] || downloads[lessonID + 'v'])
+      switch (lessonType) {
+        case lessonTypes.STANDARD_DBS:
+        case lessonTypes.AUDIOBOOK:
+          setDownloadPercentage(downloads[lessonID].progress * 100)
+          break
+        // Special case. When we're in a DMC lesson, the download progress should be the audio and video download progress combined. If one has already finished and has been removed from the downloads redux object, use 1 for its progress instead.
+        case lessonTypes.STANDARD_DMC:
+          var audioPercentage = downloads[lessonID]
+            ? downloads[lessonID].progress
+            : 1
+
+          var videoPercentage = downloads[lessonID + 'v']
+            ? downloads[lessonID + 'v'].progress
+            : 1
+
+          setDownloadPercentage(((audioPercentage + videoPercentage) / 2) * 100)
+          break
+        case lessonTypes.VIDEO_ONLY:
+          setDownloadPercentage(downloads[lessonID + 'v'].progress * 100)
+          break
+      }
   }, [downloads[lessonID], downloads[lessonID + 'v']])
 
   // if lesson isn't only video
   return lessonType !== lessonTypes.STANDARD_NO_AUDIO &&
     lessonType !== lessonTypes.BOOK ? (
     // if lesson has audio source
-    isDownloaded ? (
+    isFullyDownloaded ? (
       // if lesson is downloaded, show check
       <TouchableOpacity
         onPress={showDeleteLessonModal}
@@ -141,7 +138,7 @@ const DownloadStatusIndicator = ({
         >
           <Icon
             name='cloud-download'
-            color={isDownloaded ? colors.chateau : colors.tuna}
+            color={isFullyDownloaded ? colors.chateau : colors.tuna}
             size={22 * scaleMultiplier}
           />
         </TouchableOpacity>

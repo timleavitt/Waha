@@ -1,5 +1,10 @@
 import React from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
@@ -15,6 +20,7 @@ function mapStateToProps (state) {
 const PlaybackControls = ({
   // Props passed from a parent component.
   isMediaPlaying,
+  isMediaLoaded,
   onPlayPress,
   onSkipPress,
   // Props passed from redux.
@@ -40,6 +46,7 @@ const PlaybackControls = ({
           </TouchableOpacity>
         </View>
       ) : null} */}
+
       <TouchableOpacity
         style={styles.playPauseSkipButton}
         onPress={() => onSkipPress(-5000)}
@@ -50,6 +57,7 @@ const PlaybackControls = ({
           color={colors.tuna}
         />
       </TouchableOpacity>
+
       {/* {isVideoBuffering ? (
         <View
           style={{
@@ -62,16 +70,29 @@ const PlaybackControls = ({
           <ActivityIndicator size='large' />
         </View>
       ) : ( */}
-      <TouchableOpacity
-        style={styles.playPauseSkipButton}
-        onPress={onPlayPress}
-      >
-        <Icon
-          name={isMediaPlaying ? 'pause' : 'play'}
-          size={100 * scaleMultiplier}
-          color={primaryColor}
-        />
-      </TouchableOpacity>
+      {isMediaLoaded ? (
+        <TouchableOpacity
+          style={styles.playPauseSkipButton}
+          onPress={onPlayPress}
+        >
+          <Icon
+            name={isMediaPlaying ? 'pause' : 'play'}
+            size={100 * scaleMultiplier}
+            color={primaryColor}
+          />
+        </TouchableOpacity>
+      ) : (
+        <View
+          style={{
+            width: 100 * scaleMultiplier,
+            height: 100 * scaleMultiplier,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <ActivityIndicator size='large' color={colors.shark} />
+        </View>
+      )}
       {/* )} */}
       <TouchableOpacity
         style={styles.playPauseSkipButton}

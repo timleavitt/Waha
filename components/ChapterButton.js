@@ -62,6 +62,8 @@ const ChapterButton = ({
   const [textStyle, setTextStyle] = useState({})
   const [iconColor, setIconColor] = useState(primaryColor)
 
+  const [downloadProgress, setDownloadProgress] = useState(0)
+
   // The names of the chapters. 'Filler' is there to line up this array with the chapters enum since the enum starts at 1.
   const chapterNames = [
     'Filler',
@@ -76,7 +78,7 @@ const ChapterButton = ({
     setChapterButtonMode()
   }, [activeChapter, isConnected])
 
-  // Also get the most updated mode whenever the download progress changes for this lesson's.
+  // Also get the most updated mode whenever the download progress changes for this lesson.
   useEffect(() => {
     if (chapter === chapters.STORY || chapter === chapters.TRAINING)
       setChapterButtonMode()
@@ -94,7 +96,8 @@ const ChapterButton = ({
       case chapters.FELLOWSHIP:
         if (activeChapter === chapters.FELLOWSHIP)
           setMode(chapterButtonModes.ACTIVE)
-        else setMode(chapterButtonModes.INACTIVE)
+        else if (activeChapter > chapter) setMode(chapterButtonModes.COMPLETE)
+        else setMode(chapterButtonModes.INCOMPLETE)
         break
       case chapters.STORY:
         if (
@@ -104,11 +107,13 @@ const ChapterButton = ({
           !isFullyDownloaded
         )
           setMode(chapterButtonModes.DISABLED)
-        else if (downloads[lessonID] && downloads[lessonID].progress < 1)
+        else if (downloads[lessonID] && downloads[lessonID].progress < 1) {
+          setDownloadProgress(downloads[lessonID].progress * 100)
           setMode(chapterButtonModes.DOWNLOADING)
-        else if (activeChapter === chapters.STORY)
+        } else if (activeChapter === chapters.STORY)
           setMode(chapterButtonModes.ACTIVE)
-        else setMode(chapterButtonModes.INACTIVE)
+        else if (activeChapter > chapter) setMode(chapterButtonModes.COMPLETE)
+        else setMode(chapterButtonModes.INCOMPLETE)
         break
       case chapters.TRAINING:
         if (!isConnected && !isFullyDownloaded)
@@ -116,16 +121,19 @@ const ChapterButton = ({
         else if (
           downloads[lessonID + 'v'] &&
           downloads[lessonID + 'v'].progress < 1
-        )
+        ) {
+          setDownloadProgress(downloads[lessonID + 'v'].progress * 100)
           setMode(chapterButtonModes.DOWNLOADING)
-        else if (activeChapter === chapters.TRAINING)
+        } else if (activeChapter === chapters.TRAINING)
           setMode(chapterButtonModes.ACTIVE)
-        else setMode(chapterButtonModes.INACTIVE)
+        else if (activeChapter > chapter) setMode(chapterButtonModes.COMPLETE)
+        else setMode(chapterButtonModes.INCOMPLETE)
         break
       case chapters.APPLICATION:
         if (activeChapter === chapters.APPLICATION)
           setMode(chapterButtonModes.ACTIVE)
-        else setMode(chapterButtonModes.INACTIVE)
+        else if (activeChapter > chapter) setMode(chapterButtonModes.COMPLETE)
+        else setMode(chapterButtonModes.INCOMPLETE)
         break
     }
   }
@@ -158,9 +166,9 @@ const ChapterButton = ({
           setIconName('number-3-filled')
         else setIconName(`number-${chapter}-filled`)
         break
-      case chapterButtonModes.INACTIVE:
+      case chapterButtonModes.INCOMPLETE:
         setExtraButtonStyle({
-          borderColor: primaryColor,
+          borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
         setTextStyle(
@@ -181,9 +189,24 @@ const ChapterButton = ({
           chapter === chapters.APPLICATION
         )
           setIconName('number-3-filled')
-        // If the active chapter is ahead of this chapter, set the icon to a checkmark.
-        else if (chapter < activeChapter) setIconName('check-filled')
         else setIconName(`number-${chapter}-filled`)
+        break
+      case chapterButtonModes.COMPLETE:
+        setExtraButtonStyle({
+          borderColor: colors.porcelain,
+          backgroundColor: colors.athens
+        })
+        setTextStyle(
+          StandardTypography(
+            { font, isRTL },
+            'p',
+            'Black',
+            'center',
+            primaryColor
+          )
+        )
+        setIconColor(primaryColor)
+        setIconName('check-filled')
         break
       case chapterButtonModes.DOWNLOADING:
         setExtraButtonStyle({
@@ -242,11 +265,7 @@ const ChapterButton = ({
         <AnimatedCircularProgress
           size={22 * scaleMultiplier}
           width={4}
-          fill={
-            chapter === chapters.TRAINING
-              ? downloads[lessonID + 'v'].progress * 100
-              : downloads[lessonID].progress * 100
-          }
+          fill={downloadProgress}
           tintColor={primaryColor}
           rotation={0}
           backgroundColor={colors.white}
@@ -263,12 +282,14 @@ const ChapterButton = ({
 const styles = StyleSheet.create({
   chapterButton: {
     flex: 1,
+    paddingVertical: 8,
     flexDirection: 'column',
     alignItems: 'center',
-    height: 62 * scaleMultiplier,
     justifyContent: 'center',
-    borderTopWidth: 2,
-    borderBottomWidth: 2
+    borderRadius: 20,
+    borderWidth: 2
+    // borderTopWidth: 2,
+    // borderBottomWidth: 2
   }
 })
 

@@ -53,6 +53,10 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
+/**
+ * Screen that displays a list of lessons for a specific Story Set.
+ * @param {Object} thisSet - The object for the set that we're displaying.
+ */
 const LessonsScreen = ({
   // Props passed from navigation.
   navigation: { goBack, setOptions, navigate },
@@ -71,31 +75,35 @@ const LessonsScreen = ({
   toggleComplete,
   removeDownload
 }) => {
-  //+ STATE
+  /** Keeps track of what lessons are downloaded to the file system. */
+  const [downloadedLessons, setDownloadedLessons] = useState([])
 
-  // keeps track of which lessons are downloaded
-  const [downloadsInFileSystem, setDownloadsInFileSystem] = useState({})
-
-  // keeps track of the lesson to download/delete/toggle complete when modals
-  //  are up
+  /** Whenever we enable a lesson-specific modal, we also set this state to the specific lesson so we can use its information for whatever action we're doing. */
   const [activeLessonInModal, setActiveLessonInModal] = useState({})
 
-  // modal states
+  /** Keeps track of the type of the active lesson in a modal. */
+  const [modalLessonType, setModalLessonType] = useState()
+
+  /** A whole lot of modal states. */
   const [showDownloadLessonModal, setShowDownloadLessonModal] = useState(false)
   const [showDeleteLessonModal, setShowDeleteLessonModal] = useState(false)
-  const [showLessonOptionsModal, setShowLessonOptionsModal] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
-  const [showHomeworkModal, setShowHomeworkModal] = useState(false)
   const [showSetCompleteModal, setShowSetCompleteModal] = useState(false)
 
-  // progress and bookmark for the set we're looking at
+  /** Keeps track of the progress of the set that we're displaying. */
   const [thisSetProgress, setThisSetProgress] = useState([])
+
+  /** Keeps track of the bookmark for the set that we're displaying. */
   const [thisSetBookmark, setThisSetBookmark] = useState(1)
 
-  //+ NAV OPTIONS
+  /** Used to refresh the downloaded lessons. */
+  const [refreshDownloadedLessons, setRefreshDownloadedLessons] = useState(
+    false
+  )
 
-  function getNavOptions () {
-    return {
+  /** useEffect function to set the navigation options. */
+  useEffect(() => {
+    setOptions({
       headerTitle: () => <ScreenHeaderImage />,
       headerRight: isRTL
         ? () => <WahaBackButton onPress={() => goBack()} />
@@ -103,37 +111,29 @@ const LessonsScreen = ({
       headerLeft: isRTL
         ? () => {}
         : () => <WahaBackButton onPress={() => goBack()} />
-    }
-  }
-
-  //+ CONSTRUCTOR
-
-  useEffect(() => {
-    setOptions(getNavOptions())
+    })
   }, [])
 
-  //+ FUNCTIONS
-
-  // - checks which lessons and lesson videos are downloaded and stores in state
+  /** useEffect function that checks which lessons are downloaded to the file system whenever the downloads redux object changes or when we manually refresh. */
   useEffect(() => {
-    var whichLessonsDownloaded = {}
+    var downloadedLessons = []
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
       .then(contents => {
         thisSet.lessons.forEach(lesson => {
           if (contents.includes(lesson.id + '.mp3'))
-            whichLessonsDownloaded[lesson.id] = true
+            downloadedLessons.push(lesson.id)
           if (contents.includes(lesson.id + 'v.mp4')) {
-            whichLessonsDownloaded[lesson.id + 'v'] = true
+            downloadedLessons.push(lesson.id + 'v')
           }
         })
-        return whichLessonsDownloaded
+        return downloadedLessons
       })
       .then(whichLessonsDownloaded => {
-        setDownloadsInFileSystem(whichLessonsDownloaded)
+        setDownloadedLessons(whichLessonsDownloaded)
       })
-  }, [downloads])
+  }, [Object.keys(downloads).length, refreshDownloadedLessons])
 
-  //- whenever progress or bookmarks update, update the progress and bookmarks for this set
+  /** useEffect function that updates the set progress and set bookmark state whenever whenever the progress updates or the set bookmark updates in redux. */
   useEffect(() => {
     setThisSetProgress(
       activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
@@ -143,12 +143,11 @@ const LessonsScreen = ({
     )
   }, [activeGroup.addedSets, activeGroup.setBookmark])
 
-  //- gets the type of a lesson in string form
-  //! note: not stored in db for ssot purposes
+  /**
+   * Gets the type of a specific lesson. See lessonTypes in constants.js. While every lesson's type stays constant, this information isn't stored in the database for single source of truth reasons.
+   * @param {Object} lesson - The object for the lesson to get the type of.
+   */
   function getLessonType (lesson) {
-    // q = has questions, a = has audio, v = has video
-    // options not allowed: av, a, or nothing
-
     if (lesson.fellowshipType && lesson.hasAudio && !lesson.hasVideo)
       return lessonTypes.STANDARD_DBS
     else if (lesson.fellowshipType && lesson.hasAudio && lesson.hasVideo)
@@ -159,86 +158,53 @@ const LessonsScreen = ({
     else return lessonTypes.BOOK
   }
 
-  //- hides all the modals
-  function hideModals () {
-    setShowDownloadLessonModal(false)
-    setShowDeleteLessonModal(false)
-    setShowShareModal(false)
-  }
-
-  //+ LESSON-TYPE-BASED FUNCTIONS
-  //+ NOTE: for these functions, what is returned depends on the type of the
-  //+   lesson. lesson type with a checks for audio, with v checks for video
-
-  //- downloads a lesson's scripture mp3 via modal press based on its type
+  /** Downloads the necessary content for a lesson. */
   function downloadLessonFromModal () {
-    switch (getLessonType(activeLessonInModal)) {
-      case lessonTypes.STANDARD_DBS:
-      case lessonTypes.AUDIOBOOK:
-        downloadMedia(
-          'audio',
-          activeLessonInModal.id,
-          getLessonInfo('audioSource', activeLessonInModal.id)
-        )
-        break
-      case lessonTypes.STANDARD_DMC:
-        downloadMedia(
-          'audio',
-          activeLessonInModal.id,
-          getLessonInfo('audioSource', activeLessonInModal.id)
-        )
-        downloadMedia(
-          'video',
-          activeLessonInModal.id,
-          getLessonInfo('videoSource', activeLessonInModal.id)
-        )
-        break
+    if (
+      modalLessonType.includes('Audio') &&
+      !downloadedLessons.includes(activeLessonInModal.id)
+    )
+      downloadMedia(
+        'audio',
+        activeLessonInModal.id,
+        getLessonInfo('audioSource', activeLessonInModal.id)
+      )
 
-      case lessonTypes.VIDEO_ONLY:
-        downloadMedia(
-          'video',
-          activeLessonInModal.id,
-          getLessonInfo('videoSource', activeLessonInModal.id)
-        )
-        break
-    }
-    hideModals()
+    if (
+      modalLessonType.includes('Video') &&
+      !downloadedLessons.includes(activeLessonInModal.id + 'v')
+    )
+      downloadMedia(
+        'video',
+        activeLessonInModal.id,
+        getLessonInfo('videoSource', activeLessonInModal.id)
+      )
+
+    setShowDownloadLessonModal(false)
   }
 
-  //- deletes a lesson's chapter 2 mp3 via modal press based on its type
+  /** Deletes a lesson. */
   function deleteLessonFromModal () {
-    switch (getLessonType(activeLessonInModal)) {
-      case lessonTypes.STANDARD_DBS:
-      case lessonTypes.AUDIOBOOK:
-        FileSystem.deleteAsync(
-          FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
-        )
-        break
-      case lessonTypes.STANDARD_DMC:
-        FileSystem.deleteAsync(
-          FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
-        )
-        FileSystem.deleteAsync(
-          FileSystem.documentDirectory + activeLessonInModal.id + 'v.mp4'
-        )
-        break
+    if (modalLessonType.includes('Audio'))
+      FileSystem.deleteAsync(
+        FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
+      ).then(() => setRefreshDownloadedLessons(current => !current))
 
-      case lessonTypes.VIDEO_ONLY:
-        FileSystem.deleteAsync(
-          FileSystem.documentDirectory + activeLessonInModal.id + 'v.mp4'
-        )
-        break
-    }
+    if (modalLessonType.includes('Video'))
+      FileSystem.deleteAsync(
+        FileSystem.documentDirectory + activeLessonInModal.id + 'v.mp4'
+      ).then(() => setRefreshDownloadedLessons(current => !current))
 
     removeDownload(activeLessonInModal.id)
     removeDownload(activeLessonInModal.id + 'v')
-    hideModals()
+    setShowDeleteLessonModal(false)
   }
 
-  //+ LESSON SWIPE FUNCTIONS
+  /** Navigates to the Play screen with some parameters. */
+  const goToPlayScreen = params =>
+    navigate('Play', { ...params, thisSet: thisSet })
 
-  //- sets activeLessonInModal to whatever lesson we're swiping so we can
-  //-   share/mark it as complete
+  /** Whenever we start swiping a lesson, set the active lesson in modal. */
   const onLessonSwipeBegin = useCallback(data => {
     setActiveLessonInModal(
       thisSet.lessons.filter(
@@ -247,29 +213,17 @@ const LessonsScreen = ({
     )
   }, [])
 
+  /** Check if a lesson is fully complete or not. */
   function checkForFullyComplete () {
     if (
       thisSetProgress.length === thisSet.lessons.length - 1 &&
       !thisSetProgress.includes(getLessonInfo('index', activeLessonInModal.id))
     ) {
-      // logCompleteStorySet(
-      //   thisSet,
-      //   activeGroup.language
-      // )
       setShowSetCompleteModal(true)
     }
   }
 
-  //- marks a lesson as complete from a swipe and closes the row
-  function markLessonAsCompleteFromSwipe (data) {
-    if (data.isActivated) {
-      toggleComplete(activeGroup.name, thisSet, parseInt(data.key))
-
-      // check if we just fully completed the set
-      checkForFullyComplete()
-    }
-  }
-
+  /** Renders the backdrop for the lesson item. This appears when the user swipes the lesson. */
   const renderLessonSwipeBackdrop = (data, rowMap) => (
     <LessonSwipeBackdrop
       isComplete={thisSetProgress.includes(
@@ -291,21 +245,23 @@ const LessonsScreen = ({
     />
   )
 
-  const keyExtractor = useCallback(
-    item => getLessonInfo('index', item.id).toString(),
-    []
-  )
-
+  /** Triggers an action when the user swipes a certain distance to the left. */
   const onLeftActionStatusChange = useCallback(data => {
-    if (isRTL) setShowShareModal(true)
-    else markLessonAsCompleteFromSwipe(data)
+    if (!isRTL && data.isActivated) {
+      toggleComplete(activeGroup.name, thisSet, parseInt(data.key))
+      checkForFullyComplete()
+    } else if (isRTL && data.isActivated) setShowShareModal(true)
   }, [])
 
+  /** Triggers an action when the user swipes a certain distance to the right. */
   const onRightActionStatusChange = useCallback(data => {
-    if (isRTL) markLessonAsCompleteFromSwipe(data)
-    else setShowShareModal(true)
+    if (isRTL && data.isActivated) {
+      toggleComplete(activeGroup.name, thisSet, parseInt(data.key))
+      checkForFullyComplete()
+    } else if (!isRTL && data.isActivated) setShowShareModal(true)
   }, [])
 
+  // We know the height of these items ahead of time so we can use getItemLayout to make our FlatList perform better.
   const getItemLayout = useCallback(
     (data, index) => ({
       length: itemHeights[font].LessonItem,
@@ -315,79 +271,31 @@ const LessonsScreen = ({
     []
   )
 
-  const goToPlayScreen = params => {
-    navigationParams = {
-      ...params,
-      thisSet: thisSet
-    }
-    navigate('Play', navigationParams)
-    // navigate('Play', {
-    //   thisLesson: item,
-    //   thisSet: thisSet,
-    //   // thisSetProgress: thisSetProgress,
-    //   isDownloaded: getIsLessonDownloaded(item),
-    //   isDownloading: getIsLessonDownloading(item),
-    //   lessonType: getLessonType(item)
-    // })
-  }
-
-  const renderLessonItem = ({ item }) => {
-    return (
-      // <LessonItem
-      //   thisLesson={item}
-      //   onLessonSelect={() =>
-      //     navigate('Play', {
-      //       thisLesson: item,
-      //       thisSet: thisSet,
-      //       // thisSetProgress: thisSetProgress,
-      //       isDownloaded: getIsLessonDownloaded(item),
-      //       isDownloading: getIsLessonDownloading(item),
-      //       lessonType: getLessonType(item)
-      //     })
-      //   }
-      //   isBookmark={getLessonInfo('index', item.id) === thisSetBookmark}
-      //   isDownloaded={getIsLessonDownloaded(item)}
-      //   isDownloading={getIsLessonDownloading(item)}
-      //   lessonType={getLessonType(item)}
-      //   isComplete={thisSetProgress.includes(getLessonInfo('index', item.id))}
-      //   showDownloadLessonModal={() => {
-      //     setActiveLessonInModal(item)
-      //     setShowDownloadLessonModal(true)
-      //   }}
-      //   showDeleteLessonModal={() => {
-      //     setActiveLessonInModal(item)
-      //     setShowDeleteLessonModal(true)
-      //   }}
-      // />
-      <LessonItem
-        thisLesson={item}
-        goToPlayScreen={goToPlayScreen}
-        thisSetBookmark={thisSetBookmark}
-        lessonType={getLessonType(item)}
-        thisSetProgress={thisSetProgress}
-        downloadsInFileSystem={downloadsInFileSystem}
-        showDownloadLessonModal={() => {
-          setActiveLessonInModal(item)
-          setShowDownloadLessonModal(true)
-        }}
-        showDeleteLessonModal={() => {
-          setActiveLessonInModal(item)
-          setShowDeleteLessonModal(true)
-        }}
-      />
-    )
-  }
+  /** Renders a lesson item. */
+  const renderLessonItem = ({ item }) => (
+    <LessonItem
+      thisLesson={item}
+      goToPlayScreen={goToPlayScreen}
+      thisSetBookmark={thisSetBookmark}
+      lessonType={getLessonType(item)}
+      thisSetProgress={thisSetProgress}
+      downloadedLessons={downloadedLessons}
+      showDownloadLessonModal={() => {
+        setActiveLessonInModal(item)
+        setModalLessonType(getLessonType(item))
+        setShowDownloadLessonModal(true)
+      }}
+      showDeleteLessonModal={() => {
+        setActiveLessonInModal(item)
+        setModalLessonType(getLessonType(item))
+        setShowDeleteLessonModal(true)
+      }}
+    />
+  )
 
   return (
     <View style={styles.screen}>
-      <View
-        style={[
-          styles.studySetItemContainer,
-          {
-            height: itemHeights[font].SetItem
-          }
-        ]}
-      >
+      <View style={{ height: itemHeights[font].SetItem, width: '100%' }}>
         <SetItem thisSet={thisSet} mode={setItemModes.LESSONS_SCREEN} />
       </View>
       <SwipeListView
@@ -395,12 +303,11 @@ const LessonsScreen = ({
         renderItem={renderLessonItem}
         getItemLayout={getItemLayout}
         ListFooterComponent={() => <View style={{ height: 30 }} />}
-        keyExtractor={keyExtractor}
+        keyExtractor={item => getLessonInfo('index', item.id).toString()}
         renderHiddenItem={renderLessonSwipeBackdrop}
         leftOpenValue={50}
         rightOpenValue={-50}
-        // ! these are different on platform because the activation is causing a
-        // !   crash on android phones
+        // For whatever reason, the activation value causes a crash on Android, so this is ios-only.
         leftActivationValue={
           Platform.OS === 'ios' ? Dimensions.get('screen').width / 2 - 10 : 1000
         }
@@ -416,10 +323,10 @@ const LessonsScreen = ({
         swipeGestureBegan={onLessonSwipeBegin}
       />
 
-      {/* MODALS */}
+      {/* Modals */}
       <OptionsModal
         isVisible={showDownloadLessonModal}
-        hideModal={hideModals}
+        hideModal={() => setShowDownloadLessonModal(false)}
         closeText={translations.general.cancel}
       >
         <OptionsModalButton
@@ -429,7 +336,7 @@ const LessonsScreen = ({
       </OptionsModal>
       <OptionsModal
         isVisible={showDeleteLessonModal}
-        hideModal={hideModals}
+        hideModal={() => setShowDeleteLessonModal(false)}
         closeText={translations.general.cancel}
       >
         <OptionsModalButton
@@ -439,7 +346,7 @@ const LessonsScreen = ({
       </OptionsModal>
       <ShareModal
         isVisible={showShareModal}
-        hideModal={hideModals}
+        hideModal={() => setShowShareModal(false)}
         closeText={translations.general.close}
         lesson={activeLessonInModal}
         lessonType={getLessonType(activeLessonInModal)}
@@ -469,25 +376,11 @@ const LessonsScreen = ({
   )
 }
 
-//+ STYLES
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     flexDirection: 'column',
     backgroundColor: colors.aquaHaze
-  },
-  studySetItemContainer: {
-    width: '100%',
-    height: 100 * scaleMultiplier
-    // aspectRatio: 4
-  },
-  headerImage: {
-    resizeMode: 'contain',
-    width: 150,
-    flex: 1,
-    alignSelf: 'center',
-    justifyContent: 'center'
   }
 })
 

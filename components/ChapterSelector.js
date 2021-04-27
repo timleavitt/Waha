@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { chapters, lessonTypes } from '../constants'
 import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
 import ChapterButton from './ChapterButton'
-import ChapterSeparator from './ChapterSeparator'
 
 function mapStateToProps (state) {
   return {
@@ -42,7 +41,7 @@ const ChapterSelector = ({
         lessonType={lessonType}
         changeChapter={changeChapter}
       />
-      <ChapterSeparator />
+      <View style={{ width: 5 }} />
       <ChapterButton
         chapter={chapters.STORY}
         activeChapter={activeChapter}
@@ -52,7 +51,9 @@ const ChapterSelector = ({
         isFullyDownloaded={isFullyDownloaded}
       />
       {/* For DMC lessons, we need an extra 'Training' chapter button. */}
-      {lessonType === lessonTypes.STANDARD_DMC ? <ChapterSeparator /> : null}
+      {lessonType === lessonTypes.STANDARD_DMC ? (
+        <View style={{ width: 5 }} />
+      ) : null}
       {lessonType === lessonTypes.STANDARD_DMC ? (
         <ChapterButton
           chapter={chapters.TRAINING}
@@ -63,7 +64,7 @@ const ChapterSelector = ({
           isFullyDownloaded={isFullyDownloaded}
         />
       ) : null}
-      <ChapterSeparator />
+      <View style={{ width: 5 }} />
       <ChapterButton
         chapter={chapters.APPLICATION}
         activeChapter={activeChapter}
@@ -77,7 +78,8 @@ const ChapterSelector = ({
 const styles = StyleSheet.create({
   chapterSelectContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    paddingHorizontal: 10
   }
 })
 

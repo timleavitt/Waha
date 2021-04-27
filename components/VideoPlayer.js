@@ -1,5 +1,6 @@
 import { Video } from 'expo-av'
-import React, { useState } from 'react'
+import { DeviceMotion } from 'expo-sensors'
+import React, { useEffect, useState } from 'react'
 import {
   Dimensions,
   Platform,
@@ -10,7 +11,6 @@ import {
 } from 'react-native'
 import {
   chapters,
-  lessonTypes,
   lockLandscape,
   lockPortrait,
   scaleMultiplier
@@ -20,32 +20,74 @@ import { colors } from '../styles/colors'
 const VideoPlayer = ({
   // Props passed from a parent component.
   videoSource,
-  video,
-  setVideo,
-  setIsMediaLoaded,
+  videoRef,
+  onPlaybackStatusUpdate,
   setIsMediaPlaying,
-  changeChapter,
-  isMediaLoaded,
-  lessonType,
-  isComplete,
-  changeCompleteStatus,
+  fullscreenStatus,
   setFullScreenStatus,
-  fullscreenStatus
+  activeChapter
 }) => {
-  //+ STATE
+  const [shouldShowVideoControls, setShouldShowVideoControls] = useState(false)
 
-  const [showVideoControls, setShowVideoControls] = useState(false)
-  // const [video, setVideo] = useState()
+  /** Keeps track of the device rotation in an object (alpha, beta, and gamma). */
+  const [deviceRotation, setDeviceRotation] = useState({})
+
+  /** useEffect function that adds a device motion listener on iOS devices. This is so that the app can automatically enter fullscreen when the user rotates their phone. */
+  useEffect(() => {
+    // check if we can get any device motion data and if so, add a listener
+    if (Platform.OS === 'ios' && activeChapter === chapters.TRAINING)
+      DeviceMotion.isAvailableAsync().then(isAvailable => {
+        console.log(isAvailable)
+        if (isAvailable) {
+          DeviceMotion.setUpdateInterval(1000)
+          DeviceMotion.addListener(({ rotation }) => {
+            setDeviceRotation(rotation)
+          })
+        }
+      })
+    else DeviceMotion.removeAllListeners()
+
+    // Cleanup function that cancels the device motion listener.
+    return async function cleanup () {
+      DeviceMotion.removeAllListeners()
+    }
+  }, [activeChapter])
+
+  /**
+   * Checks if the current device rotation is within the bounds of being considered landscape.
+   * @returns - Whether the current device rotation satisfies the requirements for landscape.
+   */
+  const isLandscape = () =>
+    deviceRotation
+      ? (deviceRotation.alpha > 1 || deviceRotation.alpha < -1) &&
+        (deviceRotation.gamma > 0.7 || deviceRotation.gamma < -0.7) &&
+        deviceRotation.beta > -0.2 &&
+        deviceRotation.beta < 0.2
+      : false
+
+  /**
+   * useEffect function that enters fullscreen mode when the video component is present, the video source is loaded, we're on ios (this feature doesn't work on android), and the device rotation matches that of landscape.
+   * @function
+   */
+  useEffect(() => {
+    // If the user's phone is in landscape position, the video is on screen, and they're not in full screen mode, activate full screen mode.
+    if (
+      activeChapter === chapters.TRAINING &&
+      fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS &&
+      isLandscape()
+    )
+      videoRef.current.presentFullscreenPlayer()
+  }, [deviceRotation])
 
   return (
     <TouchableWithoutFeedback
       onPress={() => {
-        if (!showVideoControls) {
-          setShowVideoControls(true)
-          setTimeout(() => setShowVideoControls(false), 2000)
+        if (!shouldShowVideoControls) {
+          setShouldShowVideoControls(true)
+          setTimeout(() => setShouldShowVideoControls(false), 2000)
         }
       }}
-      style={{ width: '100%' }}
+      style={{ width: '100%', position: 'absolute' }}
     >
       <View
         style={{
@@ -59,10 +101,7 @@ const VideoPlayer = ({
         }}
       >
         <Video
-          ref={ref => {
-            setVideo(ref)
-            setVideo(ref)
-          }}
+          ref={videoRef}
           rate={1.0}
           volume={1.0}
           isMuted={false}
@@ -78,59 +117,9 @@ const VideoPlayer = ({
             height: (Dimensions.get('window').width * 9) / 16
             // flex: 1
           }}
-          onPlaybackStatusUpdate={status => {
-            // match up so there's a single source of truth between
-            //  waha controls and full screen native video controls
-            if (
-              fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
-            ) {
-              if (status.isPlaying) setIsMediaPlaying(true)
-              else if (!status.isPlaying) setIsMediaPlaying(false)
-            }
-
-            if (status.isLoaded && !isMediaLoaded) {
-              console.log('loaded')
-              setIsMediaLoaded(true)
-            }
-
-            // lock portrait and exit full screen once the video finishes
-            if (
-              status.didJustFinish &&
-              fullscreenStatus ===
-                Video.IOS_FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
-            ) {
-              lockPortrait(() => video.dismissFullscreenPlayer())
-              // ScreenOrientation.supportsOrientationLockAsync(
-              //   ScreenOrientation.OrientationLock.PORTRAIT
-              // ).then(isSupported => {
-              //   if (isSupported) {
-              //     ScreenOrientation.lockAsync(
-              //       ScreenOrientation.OrientationLock.PORTRAIT
-              //     ).then(() => {
-              //       video.dismissFullscreenPlayer()
-              //     })
-              //   } else {
-              //     ScreenOrientation.lockAsync(
-              //       ScreenOrientation.OrientationLock.PORTRAIT_UP
-              //     ).then(() => {
-              //       video.dismissFullscreenPlayer()
-              //     })
-              //   }
-              // })
-            }
-
-            if (status.didJustFinish && lessonType !== lessonTypes.VIDEO_ONLY)
-              setTimeout(() => changeChapter(chapters.APPLICATION), 500)
-            else if (
-              status.didJustFinish &&
-              lessonType === lessonTypes.VIDEO_ONLY &&
-              !isComplete
-            ) {
-              setTimeout(() => changeCompleteStatus(), 1000)
-            }
-          }}
-          onLoadStart={() => setIsMediaLoaded(false)}
-          onLoad={() => setIsMediaLoaded(true)}
+          onPlaybackStatusUpdate={onPlaybackStatusUpdate}
+          // onLoadStart={() => setIsMediaLoaded(false)}
+          // onLoad={() => setIsMediaLoaded(true)}
           onFullscreenUpdate={({ fullscreenUpdate, status }) => {
             if (Platform.OS === 'android') {
               switch (fullscreenUpdate) {
@@ -174,7 +163,7 @@ const VideoPlayer = ({
                   //     )
                   //   }
                   // })
-                  video.playAsync()
+                  videoRef.playAsync()
                   setIsMediaPlaying(true)
                   break
                 // default:
@@ -204,7 +193,7 @@ const VideoPlayer = ({
           }}
         />
         {/* display a video icon placeholder when we're loading */}
-        {isMediaLoaded ? null : (
+        {/* {isMediaLoaded ? null : (
           <View
             style={{
               alignSelf: 'center',
@@ -219,9 +208,9 @@ const VideoPlayer = ({
               color={colors.oslo}
             />
           </View>
-        )}
+        )} */}
         {/* video controls overlay */}
-        {showVideoControls ? (
+        {shouldShowVideoControls ? (
           <View
             style={{
               width: '100%',
@@ -235,7 +224,7 @@ const VideoPlayer = ({
             <TouchableOpacity
               style={{}}
               onPress={() => {
-                video.presentFullscreenPlayer()
+                videoRef.presentFullscreenPlayer()
                 // navigateToFullscreen()
               }}
             >
