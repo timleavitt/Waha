@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
+import { changeActiveGroup } from '../redux/actions/activeGroupActions'
 import {
   deleteLanguageData,
   setHasFetchedLanguageData,
@@ -74,7 +75,8 @@ function mapDispatchToProps (dispatch) {
     deleteLanguageData: language => {
       dispatch(deleteLanguageData(language))
     },
-    deleteGroup: groupName => dispatch(deleteGroup(groupName))
+    deleteGroup: groupName => dispatch(deleteGroup(groupName)),
+    changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName))
   }
 }
 
@@ -96,7 +98,8 @@ const LoadingScreen = ({
   setLanguageCoreFilesDownloadProgress,
   setHasFetchedLanguageData,
   deleteLanguageData,
-  deleteGroup
+  deleteGroup,
+  changeActiveGroup
 }) => {
   const [isConnected, setIsConnected] = useState(true)
 
@@ -128,8 +131,12 @@ const LoadingScreen = ({
       download.pauseAsync().catch(() => console.log('Error pausing a download'))
     })
 
-    console.log(actingLanguageID)
+    // If this is a subsequent language instance install, if we cancel, we need to switch back to a different group since we're going to delete all the groups for the language we cancelled the installation of.
+    deleteGroup(activeGroup.name)
+    if (groups.length !== 0) changeActiveGroup(groups[0].name)
 
+    console.log(actingLanguageID)
+    console.log(activeGroup.language)
     if (
       actingLanguageID !== null &&
       (!activeGroup || activeGroup.language !== actingLanguageID)
@@ -292,20 +299,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F1FAEE'
+    backgroundColor: colors.aquaHaze
   },
   progressBarContainer: {
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  button: {
-    width: 200,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.aquaHaze,
-    borderRadius: 10
   }
 })
 

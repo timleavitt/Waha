@@ -30,6 +30,7 @@ function GroupNameTextInput ({
   // Props passed from a parent component.
   groupNameInput,
   setGroupNameInput,
+  groupNameInputRef,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -51,6 +52,7 @@ function GroupNameTextInput ({
         {translations.add_edit_group.group_name_form_label}
       </Text>
       <TextInput
+        ref={groupNameInputRef}
         style={[
           styles.groupNameTextInputContainer,
           StandardTypography(

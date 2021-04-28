@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react'
 import {
-  Alert,
   Dimensions,
   Image,
   SafeAreaView,
@@ -28,7 +27,6 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
-  console.log(state.activeGroup)
   return {
     translations: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
@@ -63,19 +61,21 @@ const WahaOnboardingSlidesScreen = ({
   changeActiveGroup
 }) => {
   const pagerRef = useRef()
-  const [activePage, setActivePage] = useState(1)
+  const groupNameInputRef = useRef()
+
+  const [activePage, setActivePage] = useState(0)
 
   const [emojiInput, setEmojiInput] = useState('default')
   /** Keeps track of the user input for the group name <TextInput />. */
   const [groupNameInput, setGroupNameInput] = useState('')
 
-  // tells redux that we're ready to go to loading screen once onboarding is finished
-  function finishOnboarding () {}
-
   /** Edits a group and sets it as the active group. */
-  function finishOnboarding () {
+  const finishOnboarding = () => {
     // If the name of the new group is a duplicate or blank, don't continue.
-    if (checkForBlank()) return
+    if (groupNameInput === '') {
+      skipOnboarding()
+      return
+    }
 
     // Change the active group to the newly edited group.
     changeActiveGroup(groupNameInput)
@@ -88,121 +88,110 @@ const WahaOnboardingSlidesScreen = ({
     })
   }
 
-  /**
-   * Checks if a user-inputted group name is blank.
-   * @return {boolean} - Whether the group name is blank or not.
-   */
-  function checkForBlank () {
-    if (groupNameInput === '') {
-      Alert.alert(
-        translations.add_edit_group.popups.blank_group_name_title,
-        translations.add_edit_group.popups.blank_group_name_message,
-        [{ text: translations.general.ok, onPress: () => {} }]
-      )
-      return true
-    }
-    return false
+  const skipOnboarding = () => {
+    setHasOnboarded(true)
+    navigate('Loading', {
+      selectedLanguage: selectedLanguage
+    })
   }
 
-  // const [pages, setPages] = useState([])
-
-  // useEffect(() => {
-  //   setPages(pages => pages.concat(<OnboardingPage></OnboardingPage>))
-  // }, [])
+  const pages = [
+    <OnboardingPage
+      key='1'
+      title={translations.onboarding.onboarding_1_title}
+      message={translations.onboarding.onboarding_1_message}
+    >
+      <View style={styles.imageContainer}>
+        <Image
+          style={styles.image}
+          source={{
+            uri:
+              'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_2.gif?alt=media'
+          }}
+        />
+      </View>
+    </OnboardingPage>,
+    <OnboardingPage
+      key='2'
+      title={translations.onboarding.onboarding_2_title}
+      message={translations.onboarding.onboarding_2_message}
+    >
+      <View style={styles.imageContainer}>
+        <Image
+          style={styles.image}
+          source={{
+            uri:
+              'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_2.gif?alt=media'
+          }}
+        />
+      </View>
+    </OnboardingPage>,
+    <OnboardingPage
+      key='3'
+      title={translations.onboarding.onboarding_3_title}
+      message={translations.onboarding.onboarding_3_message}
+    >
+      <View style={styles.imageContainer}>
+        <Image
+          style={styles.image}
+          source={{
+            uri:
+              'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_2.gif?alt=media'
+          }}
+        />
+      </View>
+    </OnboardingPage>,
+    <OnboardingPage
+      key='4'
+      title={translations.onboarding.onboarding_4_title}
+      message={translations.onboarding.onboarding_4_message}
+    >
+      <GroupNameTextInput
+        groupNameInput={groupNameInput}
+        setGroupNameInput={setGroupNameInput}
+        groupNameInputRef={groupNameInputRef}
+      />
+      <EmojiViewer emojiInput={emojiInput} setEmojiInput={setEmojiInput} />
+    </OnboardingPage>
+  ]
 
   return (
     <SafeAreaView style={styles.screen}>
       <PagerView
         ref={pagerRef}
-        // showPageIndicator
         style={styles.pager}
-        initialPage={isRTL ? pages.length - 1 : 0}
-        onPageSelected={stuff => setActivePage(stuff.nativeEvent.position + 1)}
+        initialPage={isRTL ? numPages - 1 : 0}
+        onPageSelected={event => {
+          if (
+            (!isRTL && event.nativeEvent.position === numPages - 1) ||
+            (isRTL && event.nativeEvent.position === 0)
+          )
+            groupNameInputRef.current.focus()
+          setActivePage(event.nativeEvent.position)
+        }}
       >
-        <OnboardingPage
-          key='1'
-          title={translations.onboarding.onboarding_1_title}
-          message={translations.onboarding.onboarding_1_message}
-        >
-          <View style={styles.imageContainer}>
-            <Image
-              style={styles.image}
-              source={{
-                uri:
-                  'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_2.gif?alt=media'
-              }}
-            />
-          </View>
-        </OnboardingPage>
-        <OnboardingPage
-          key='2'
-          title={translations.onboarding.onboarding_2_title}
-          message={translations.onboarding.onboarding_2_message}
-        >
-          <View style={styles.imageContainer}>
-            <Image
-              style={styles.image}
-              source={{
-                uri:
-                  'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_2.gif?alt=media'
-              }}
-            />
-          </View>
-        </OnboardingPage>
-        <OnboardingPage
-          key='3'
-          title={translations.onboarding.onboarding_3_title}
-          message={translations.onboarding.onboarding_3_message}
-        >
-          <View style={styles.imageContainer}>
-            <Image
-              style={styles.image}
-              source={{
-                uri:
-                  'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_2.gif?alt=media'
-              }}
-            />
-          </View>
-        </OnboardingPage>
-        <OnboardingPage
-          key='4'
-          title={translations.onboarding.onboarding_4_title}
-          message={translations.onboarding.onboarding_4_message}
-        >
-          <GroupNameTextInput
-            groupNameInput={groupNameInput}
-            setGroupNameInput={setGroupNameInput}
-          />
-          <EmojiViewer emojiInput={emojiInput} setEmojiInput={setEmojiInput} />
-        </OnboardingPage>
+        {isRTL ? pages.reverse() : pages}
       </PagerView>
       <View
         style={{
           alignItems: 'center',
-          flexDirection: 'row',
+          flexDirection: isRTL ? 'row-reverse' : 'row',
           justifyContent: 'space-between',
           paddingHorizontal: 20
         }}
       >
-        <PageDots numDots={4} activeDot={activePage} />
+        <PageDots numDots={numPages} activeDot={activePage} />
         <View
           style={{
             height: 65 * scaleMultiplier,
             flex: 1,
             alignItems: 'center',
-            // justifyContent: 'center',
-            flexDirection: 'row',
+            flexDirection: isRTL ? 'row-reverse' : 'row',
             justifyContent: 'flex-end'
-            // paddingRight: 10
           }}
         >
           <TouchableOpacity
-            onPress={() => {
-              setHasOnboarded(true)
-              navigate('Loading', {
-                selectedLanguage: selectedLanguage
-              })
-            }}
+            onPress={skipOnboarding}
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
           >
             <Text
@@ -214,22 +203,21 @@ const WahaOnboardingSlidesScreen = ({
                 colors.shark
               )}
             >
-              Skip
+              {translations.general.skip}
             </Text>
           </TouchableOpacity>
         </View>
         <View style={{ width: 20 }} />
         <WahaButton
-          label='Continue'
+          label={translations.general.continue}
           onPress={
             isRTL
-              ? activePage === 1
+              ? activePage === 0
                 ? finishOnboarding
                 : () => pagerRef.current.setPage(activePage - 1)
-              : activePage === 4
+              : activePage === 3
               ? finishOnboarding
-              : // Confusing, but since the pagerRef pages start at 0 and our page counter starts at 1, we set it to the active page which is actually the next page.
-                () => pagerRef.current.setPage(activePage)
+              : () => pagerRef.current.setPage(activePage + 1)
           }
           type='filled'
           color={colors.apple}
@@ -238,36 +226,9 @@ const WahaOnboardingSlidesScreen = ({
           }}
         />
       </View>
-      {/* <OnboardingSwiper
-        sources={[
-          require('../assets/onboardingImages/onboarding1.png'),
-          require('../assets/onboardingImages/onboarding2.png'),
-          require('../assets/onboardingImages/onboarding3.png'),
-          require('../assets/onboardingImages/onboarding4.png')
-        ]}
-        titles={[
-          i18n.t('title0'),
-          i18n.t('title1'),
-          i18n.t('title2'),
-          i18n.t('title3')
-        ]}
-        messages={[
-          i18n.t('body0'),
-          i18n.t('body1'),
-          i18n.t('body2'),
-          i18n.t('body3')
-        ]}
-        onFinish={finishOnboarding}
-        nextTranslation={i18n.t('next')}
-        startTranslation={i18n.t('start')}
-        useDefaultFont={true}
-        isRTL={getSystemIsRTL()}
-      /> */}
     </SafeAreaView>
   )
 }
-
-//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {

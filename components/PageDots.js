@@ -36,8 +36,11 @@ const Dot = ({ isActive, primaryColor }) => (
 )
 
 /**
- *
+ * Displays a number of dots corresponding to pages in a PagerView.
+ * @param {number} numDots - The number of dots (i.e. number of pages) to display.
+ * @param {number} activeDot - The currently active dot (i.e. page).
  */
+
 const PageDots = ({
   // Props passed from a parent component.
   numDots,
@@ -49,13 +52,20 @@ const PageDots = ({
   font,
   primaryColor
 }) => {
+  // Array that holds the many dot components.
   var dots = []
 
-  console.log(activeDot)
-
+  // Add a dot for each page.
   for (i = 1; i < numDots + 1; i++) {
-    dots.push(<Dot isActive={activeDot === i} key={i} />)
+    dots.push(
+      <Dot
+        // Whether a dot is active depends on whether the pages go from RTL or LTR. For RTL:
+        isActive={isRTL ? numDots - activeDot === i : activeDot + 1 === i}
+        key={i}
+      />
+    )
   }
+
   return (
     <View
       style={{

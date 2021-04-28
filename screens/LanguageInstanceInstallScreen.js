@@ -214,9 +214,7 @@ function LanguageInstanceInstallScreen ({
     return
   }
 
-  /**
-   * Handles the user pressing the start button after they select a language instance to install. Involves fetching the necessary Firebase data, setting the hasFetchedLanguageData to true, and starting the download of the language core files. If this is the first language instance they've installed, we want to nagivate to the onboarding slides too.
-   */
+  /** Handles the user pressing the start button after they select a language instance to install. Involves fetching the necessary Firebase data, setting the hasFetchedLanguageData to true, and starting the download of the language core files. If this is the first language instance they've installed, we want to nagivate to the onboarding slides too. */
   function onStartPress () {
     // Navigate to the onboarding slides if this is the first language instance install.
 
@@ -351,37 +349,6 @@ function LanguageInstanceInstallScreen ({
     return sections
   }
 
-  // Determine what to render for the header text. If it's our first install, its the first time opening the app, so display a welcome message. Otherwise, display nothing.
-  var welcomeText =
-    routeName === 'InitialLanguageInstanceInstall' ? (
-      <View style={styles.headerTextContainer}>
-        <Text
-          style={[
-            SystemTypography(false, 'h2', 'Bold', 'center', colors.shark),
-            {
-              fontSize: 29 * scaleMultiplier
-            }
-          ]}
-        >
-          {i18n.t('welcome')}
-        </Text>
-        <View style={{ height: 5 }} />
-        <Text
-          style={SystemTypography(
-            false,
-            'h3',
-            'Regular',
-            'center',
-            colors.shark
-          )}
-        >
-          {i18n.t('selectLanguage')}
-        </Text>
-      </View>
-    ) : (
-      <View style={{ width: '100%', height: 20 * scaleMultiplier }} />
-    )
-
   /**
    * Renders a LanguageSelectItem component used for the Languages SectionList item.
    * @param {Object} language - The object for the language to render.
@@ -455,22 +422,46 @@ function LanguageInstanceInstallScreen ({
         }
       ]}
     >
-      {welcomeText}
+      {routeName === 'InitialLanguageInstanceInstall' && (
+        <View style={styles.headerTextContainer}>
+          <Text
+            style={[
+              SystemTypography(false, 'h2', 'Bold', 'center', colors.shark),
+              { fontSize: 28 * scaleMultiplier }
+            ]}
+          >
+            {i18n.t('welcome')}
+          </Text>
+          <View style={{ height: 5 }} />
+          <Text
+            style={SystemTypography(
+              false,
+              'h3',
+              'Regular',
+              'center',
+              colors.shark
+            )}
+          >
+            {i18n.t('selectLanguage')}
+          </Text>
+        </View>
+      )}
       <View
         style={{
           width: Dimensions.get('window').width - 40,
           borderRadius: 30,
           borderWidth: 2,
-          borderColor: colors.geyser,
+          borderColor: colors.porcelain,
           height: 50 * scaleMultiplier,
-          backgroundColor: colors.porcelain,
+          backgroundColor: colors.athens,
           paddingHorizontal: 5,
           flexDirection: getSystemIsRTL() ? 'row-reverse' : 'row',
           paddingTop: 5,
           paddingBottom: 5,
           justifyContent: 'flex-start',
           alignItems: 'center',
-          marginBottom: 20
+          marginBottom: 20,
+          marginTop: 20 * scaleMultiplier
         }}
       >
         <View
@@ -558,15 +549,13 @@ function LanguageInstanceInstallScreen ({
       <Animated.View
         style={[
           styles.startButtonContainer,
-          {
-            transform: [{ translateY: buttonYPos }]
-          }
+          { transform: [{ translateY: buttonYPos }] }
         ]}
       >
         <WahaButton
           type={isConnected ? 'filled' : 'inactive'}
           color={isConnected ? colors.apple : colors.geyser}
-          onPress={isConnected ? onStartPress : null}
+          onPress={isConnected && !isFetchingFirebaseData ? onStartPress : null}
           label={
             isConnected
               ? isFetchingFirebaseData

@@ -72,14 +72,7 @@ const EmojiViewer = ({
     </TouchableOpacity>
   )
   return (
-    <View
-      style={{
-        width: '100%',
-        flex: 1,
-        maxHeight: 300 * scaleMultiplier,
-        paddingHorizontal: 20
-      }}
-    >
+    <View style={styles.emojiViewerContainer}>
       <Text
         style={[
           StandardTypography(
@@ -89,28 +82,12 @@ const EmojiViewer = ({
             'left',
             colors.chateau
           ),
-          {
-            // marginHorizontal: 20,
-            marginTop: 20 * scaleMultiplier,
-            marginBottom: 5
-          }
+          { marginTop: 20 * scaleMultiplier }
         ]}
       >
-        Avatar
-        {/* {translations.add_edit_group.icon_form_label} */}
+        {translations.add_edit_group.icon_form_label}
       </Text>
-      <View
-        style={{
-          alignItems: 'center',
-          paddingHorizontal: 5,
-          borderWidth: 2,
-          borderRadius: 10,
-          borderColor: colors.athens,
-          marginBottom: 20,
-          flex: 1,
-          backgroundColor: colors.white
-        }}
-      >
+      <View style={styles.emojiListContainer}>
         <FlatList
           data={groupIcons}
           nestedScrollEnabled
@@ -125,6 +102,24 @@ const EmojiViewer = ({
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  emojiViewerContainer: {
+    width: '100%',
+    flex: 1,
+    maxHeight: 300 * scaleMultiplier,
+    paddingHorizontal: 20
+  },
+  emojiListContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 5,
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: colors.athens,
+    marginBottom: 20,
+    flex: 1,
+    marginTop: 5,
+    backgroundColor: colors.white
+  }
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(EmojiViewer)
