@@ -2,7 +2,7 @@
 export const dbMode = 'test'
 
 // Determines what mode redux persistence is in. 'test' means that no redux data is persisted across app restarts and should be used only for testing. 'prod' means that some data is persisted across restarts. The app should always be build in 'prod' mode.
-export const reduxMode = 'prod'
+export const reduxMode = 'test'
 
 // Determines whether analytics are tracked. 'test' means that they aren't and 'prod' means that they are.
 export const analyticsMode = 'test'

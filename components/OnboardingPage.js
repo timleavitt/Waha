@@ -49,13 +49,18 @@ function OnboardingPage ({
     >
       <View style={styles.textContainer}>
         <Text
-          style={StandardTypography(
-            { font, isRTL },
-            'h2',
-            'Bold',
-            'center',
-            colors.shark
-          )}
+          style={[
+            StandardTypography(
+              { font, isRTL },
+              'h2',
+              'Bold',
+              'center',
+              colors.shark
+            ),
+            {
+              fontSize: 24
+            }
+          ]}
         >
           {title}
         </Text>

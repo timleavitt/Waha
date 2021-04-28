@@ -357,15 +357,19 @@ function LanguageInstanceInstallScreen ({
       <View style={styles.headerTextContainer}>
         <Text
           style={[
-            SystemTypography(false, 'h1', 'Bold', 'center', colors.shark)
+            SystemTypography(false, 'h2', 'Bold', 'center', colors.shark),
+            {
+              fontSize: 29 * scaleMultiplier
+            }
           ]}
         >
           {i18n.t('welcome')}
         </Text>
+        <View style={{ height: 5 }} />
         <Text
           style={SystemTypography(
             false,
-            'h2',
+            'h3',
             'Regular',
             'center',
             colors.shark
@@ -456,7 +460,9 @@ function LanguageInstanceInstallScreen ({
         style={{
           width: Dimensions.get('window').width - 40,
           borderRadius: 30,
-          height: 60 * scaleMultiplier,
+          borderWidth: 2,
+          borderColor: colors.geyser,
+          height: 50 * scaleMultiplier,
           backgroundColor: colors.porcelain,
           paddingHorizontal: 5,
           flexDirection: getSystemIsRTL() ? 'row-reverse' : 'row',
@@ -609,7 +615,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   headerTextContainer: {
-    marginVertical: 20 * scaleMultiplier,
+    marginTop: 20 * scaleMultiplier,
+    marginBottom: 25 * scaleMultiplier,
     paddingHorizontal: 20
   },
   startButtonContainer: {

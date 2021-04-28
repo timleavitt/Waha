@@ -96,7 +96,8 @@ const EmojiViewer = ({
           }
         ]}
       >
-        {translations.add_edit_group.icon_form_label}
+        Avatar
+        {/* {translations.add_edit_group.icon_form_label} */}
       </Text>
       <View
         style={{

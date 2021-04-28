@@ -80,10 +80,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   groupNameTextInputContainer: {
-    borderBottomColor: colors.athens,
-    borderBottomWidth: 2,
+    backgroundColor: colors.white,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    borderColor: colors.athens,
+    borderWidth: 2,
     height: 50 * scaleMultiplier,
-    fontSize: 18 * scaleMultiplier
+    fontSize: 18 * scaleMultiplier,
+    marginTop: 5,
+    alignItems: 'center'
   }
 })
 
