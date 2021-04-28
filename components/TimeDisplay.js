@@ -16,7 +16,7 @@ const TimeDisplay = ({
   // Props passed from a parent component.
   max,
   time,
-  style,
+  side,
   // Props passed from redux.
   font,
   activeGroup
@@ -51,14 +51,14 @@ const TimeDisplay = ({
   }
 
   return (
-    <View styles={style}>
+    <View>
       <Text
         style={StandardTypography(
           { font: 'Roboto' },
           'd',
           'Regular',
           'center',
-          colors.shark
+          side === 'left' ? colors.shark : colors.chateau
         )}
       >
         {msToTime(time)}

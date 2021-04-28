@@ -22,17 +22,16 @@ const Scrubber = ({
         maximumValue={maximumValue}
         step={100}
         minimumTrackTintColor={colors.tuna}
+        maximumTrackTintColor={colors.geyser}
         thumbTintColor={colors.tuna}
       />
     </View>
     <View style={styles.timeInfo}>
-      <TimeDisplay time={seekPosition} max={maximumValue} />
-      <TimeDisplay time={maximumValue} max={maximumValue} />
+      <TimeDisplay time={seekPosition} max={maximumValue} side='left' />
+      <TimeDisplay time={maximumValue} max={maximumValue} side='right' />
     </View>
   </View>
 )
-
-//+ STYLES
 
 const styles = StyleSheet.create({
   scrubberContainer: {
@@ -49,7 +48,8 @@ const styles = StyleSheet.create({
   timeInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%'
+    width: '100%',
+    paddingHorizontal: 3
   }
 })
 

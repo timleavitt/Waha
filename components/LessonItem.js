@@ -67,8 +67,8 @@ const LessonItem = ({
   font,
   removeDownload
 }) => {
-  if (thisLesson.id === 'en.1.1.1')
-    console.log(`${Date.now()} Re-rendering lesson items.`)
+  // if (thisLesson.id === 'en.1.1.1')
+  //   console.log(`${Date.now()} Re-rendering lesson items.`)
 
   /** Keeps track of whether this lesson is downloaded or not. */
   const [isFullyDownloaded, setIsFullyDownloaded] = useState(false)
@@ -178,7 +178,7 @@ const LessonItem = ({
         onPress={() =>
           goToPlayScreen({
             thisLesson: thisLesson,
-            isFullyDownloaded: isFullyDownloaded,
+            isAlreadyFullyDownloaded: isFullyDownloaded,
             isAlreadyDownloading: isDownloading,
             lessonType: lessonType,
             downloadedLessons: downloadedLessons
