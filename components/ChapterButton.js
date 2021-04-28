@@ -62,6 +62,7 @@ const ChapterButton = ({
   const [textStyle, setTextStyle] = useState({})
   const [iconColor, setIconColor] = useState(primaryColor)
 
+  /** Keeps track of the download progress for the piece of media associated with the chapter button's chapter. */
   const [downloadProgress, setDownloadProgress] = useState(0)
 
   // The names of the chapters. 'Filler' is there to line up this array with the chapters enum since the enum starts at 1.
@@ -91,11 +92,11 @@ const ChapterButton = ({
 
   /** Sets the mode for this chapter button. */
   const setChapterButtonMode = () => {
-    // Set the chapter button to the appropriate mode.
     switch (chapter) {
       case chapters.FELLOWSHIP:
         if (activeChapter === chapters.FELLOWSHIP)
           setMode(chapterButtonModes.ACTIVE)
+        // Because the active chapter and chapter are stored as numbers, we can check if the active chapter is bigger than the chapter for this button to see if it's already been completed.
         else if (activeChapter > chapter) setMode(chapterButtonModes.COMPLETE)
         else setMode(chapterButtonModes.INCOMPLETE)
         break
@@ -210,7 +211,7 @@ const ChapterButton = ({
         break
       case chapterButtonModes.DOWNLOADING:
         setExtraButtonStyle({
-          borderColor: colors.chateau,
+          borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
         setTextStyle(
@@ -227,7 +228,7 @@ const ChapterButton = ({
         break
       case chapterButtonModes.DISABLED:
         setExtraButtonStyle({
-          borderColor: colors.chateau,
+          borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
         setTextStyle(
