@@ -6,4 +6,4 @@ This folder contains 3 critical files for using Firebase with Waha:
 4. `google-services.json`: A config file that allows Firebase to be used with Expo on Android devices. Referenced in app.json under the `expo.android.googleServicesFile` key.
 5. `GoogleService-Info.plist`: Another config file that allows Firebase to be used with Expo on iOS devices. Referenced in app.json under the `expo.ios.googleServicesFile` key.
 
-For obvious reasons, the latter 2 files are git-ignored.
+For obvious reasons, all except `db.js` are git-ignored.
