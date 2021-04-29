@@ -21,8 +21,9 @@ const PlaybackControls = ({
   // Props passed from a parent component.
   isMediaPlaying,
   isMediaLoaded,
-  onPlayPress,
-  onSkipPress,
+  playHandler,
+  thumbPosition,
+  playFromLocation,
   // Props passed from redux.
   primaryColor
 }) => {
@@ -30,26 +31,9 @@ const PlaybackControls = ({
 
   return (
     <View style={styles.playPauseSkipContainer}>
-      {/* {hasHomework ? (
-        <View
-          style={{
-            width: '100%',
-            position: 'absolute',
-            justifyContent: 'center'
-          }}
-        >
-          <TouchableOpacity
-            style={{ position: 'absolute', paddingHorizontal: 20 }}
-            onPress={showHomeworkModal}
-          >
-            <Icon name='list' size={40 * scaleMultiplier} color={colors.tuna} />
-          </TouchableOpacity>
-        </View>
-      ) : null} */}
-
       <TouchableOpacity
         style={styles.playPauseSkipButton}
-        onPress={() => onSkipPress(-5000)}
+        onPress={() => playFromLocation(thumbPosition - 5000)}
       >
         <Icon
           name='skip-back-5'
@@ -57,23 +41,10 @@ const PlaybackControls = ({
           color={colors.tuna}
         />
       </TouchableOpacity>
-
-      {/* {isVideoBuffering ? (
-        <View
-          style={{
-            width: 101 * scaleMultiplier,
-            height: 101 * scaleMultiplier,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <ActivityIndicator size='large' />
-        </View>
-      ) : ( */}
       {isMediaLoaded ? (
         <TouchableOpacity
           style={styles.playPauseSkipButton}
-          onPress={onPlayPress}
+          onPress={playHandler}
         >
           <Icon
             name={isMediaPlaying ? 'pause' : 'play'}
@@ -93,10 +64,9 @@ const PlaybackControls = ({
           <ActivityIndicator size='large' color={colors.shark} />
         </View>
       )}
-      {/* )} */}
       <TouchableOpacity
         style={styles.playPauseSkipButton}
-        onPress={() => onSkipPress(5000)}
+        onPress={() => playFromLocation(thumbPosition + 5000)}
       >
         <Icon
           name='skip-forward-5'

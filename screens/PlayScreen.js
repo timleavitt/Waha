@@ -184,7 +184,7 @@ const PlayScreen = ({
   )
 
   /** Ref for the AlbumArtSwiper component. */
-  const [albumArtSwiperRef, setAlbumArtSwiperRef] = useState()
+  const albumArtSwiperRef = useRef()
 
   /** Keeps track of whether the various modals are visible. */
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
@@ -530,10 +530,10 @@ const PlayScreen = ({
     // If the lesson has no story audio, change to the Story chapter and swipe over to the scripture text so the user can still read it.
     if (!thisLesson.hasAudio) {
       changeChapter(chapters.STORY)
-      albumArtSwiperRef.snapToItem(2)
+      albumArtSwiperRef.current.snapToItem(2)
     } // If a Story chapter is still downloading or it isn't downloaded and can't start downloading, swipe to the Scripture text so the user can read the text while they're waiting for it to download.
     else if (downloads[thisLesson.id] || !isAudioDownloaded) {
-      albumArtSwiperRef.snapToItem(2)
+      albumArtSwiperRef.current.snapToItem(2)
     }
     // Otherwise, just change to the Story chapter.
     else changeChapter(chapters.STORY)
@@ -815,6 +815,7 @@ const PlayScreen = ({
               <Animated.View
                 style={{
                   position: 'absolute',
+                  // Hide album art swiper when we're in the Training chapter.
                   zIndex:
                     activeChapter === chapters.TRAINING
                       ? middleAreaVisibility.HIDE
@@ -823,12 +824,12 @@ const PlayScreen = ({
                 }}
               >
                 <AlbumArtSwiper
-                  setAlbumArtSwiperRef={setAlbumArtSwiperRef}
+                  albumArtSwiperRef={albumArtSwiperRef}
                   iconName={thisSet.iconName}
                   thisLesson={thisLesson}
                   playHandler={playHandler}
-                  playOpacity={playFeedbackOpacity}
-                  animationZIndex={playFeedbackZIndex}
+                  playFeedbackOpacity={playFeedbackOpacity}
+                  playFeedbackZIndex={playFeedbackZIndex}
                   isMediaPlaying={isMediaPlaying}
                 />
               </Animated.View>
@@ -838,6 +839,7 @@ const PlayScreen = ({
                 style={{
                   position: 'absolute',
                   zIndex:
+                    // Show video player if we're in the Training chapter.
                     activeChapter === chapters.TRAINING
                       ? middleAreaVisibility.SHOW
                       : middleAreaVisibility.HIDE,
@@ -863,7 +865,7 @@ const PlayScreen = ({
           <BookView thisLesson={thisLesson} />
         )}
       </View>
-
+      {/* Aside from the Book lesson type which has no media to play, we want to show the playback controls for controlling media. */}
       {lessonType !== lessonTypes.BOOK && (
         <SafeAreaView>
           {lessonType.includes('Questions') && (
@@ -876,16 +878,17 @@ const PlayScreen = ({
             />
           )}
           <Scrubber
-            onSlidingComplete={playFromLocation}
-            onValueChange={() => (shouldThumbUpdate.current = false)}
-            maximumValue={mediaLength}
-            seekPosition={thumbPosition}
+            playFromLocation={playFromLocation}
+            shouldThumbUpdate={shouldThumbUpdate}
+            mediaLength={mediaLength}
+            thumbPosition={thumbPosition}
           />
           <PlaybackControls
             isMediaPlaying={isMediaPlaying}
             isMediaLoaded={isMediaLoaded}
-            onPlayPress={playHandler}
-            onSkipPress={value => playFromLocation(thumbPosition + value)}
+            playHandler={playHandler}
+            thumbPosition={thumbPosition}
+            playFromLocation={playFromLocation}
           />
         </SafeAreaView>
       )}

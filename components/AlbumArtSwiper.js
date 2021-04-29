@@ -33,12 +33,12 @@ function mapStateToProps (state) {
 
 const AlbumArtSwiper = ({
   // Props passed from a parent component.
-  setAlbumArtSwiperRef,
+  albumArtSwiperRef,
   iconName,
   thisLesson,
   playHandler,
-  playOpacity,
-  animationZIndex,
+  playFeedbackOpacity,
+  playFeedbackZIndex,
   isMediaPlaying,
   // Props passed from redux.
   activeGroup,
@@ -353,7 +353,7 @@ const AlbumArtSwiper = ({
       <Carousel
         data={albumArtData}
         renderItem={renderAlbumArtItem}
-        ref={ref => setAlbumArtSwiperRef(ref)}
+        ref={albumArtSwiperRef}
         itemWidth={Dimensions.get('window').width - marginWidth}
         sliderWidth={Dimensions.get('window').width}
         itemHeight={Dimensions.get('window').width - marginWidth}
