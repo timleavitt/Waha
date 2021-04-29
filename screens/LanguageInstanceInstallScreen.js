@@ -447,14 +447,7 @@ function LanguageInstanceInstallScreen ({
         </View>
       )}
       <View style={styles.searchBarContainer}>
-        <View
-          style={{
-            height: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginHorizontal: 10
-          }}
-        >
+        <View style={styles.searchIconContainer}>
           <Icon
             name='search'
             size={25 * scaleMultiplier}
@@ -477,15 +470,7 @@ function LanguageInstanceInstallScreen ({
           placeholderTextColor={colors.chateau}
         />
       </View>
-      <View
-        style={{
-          width: '100%',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          flex: 1
-        }}
-      >
+      <View style={styles.languageListContainer}>
         <SectionList
           style={{ height: '100%' }}
           sections={getLanguageData()}
@@ -618,6 +603,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     marginTop: 25 * scaleMultiplier
+  },
+  searchIconContainer: {
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 10
+  },
+  languageListContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    flex: 1
   }
 })
 
