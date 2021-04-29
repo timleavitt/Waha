@@ -12,6 +12,7 @@ import WahaDrawer from '../components/WahaDrawer'
 import { scaleMultiplier } from '../constants'
 import db from '../firebase/db'
 import { appVersion } from '../modeSwitch'
+import { changeActiveGroup } from '../redux/actions/activeGroupActions'
 import {
   addLanguageCoreFileToUpdate,
   clearLanguageCoreFilesToUpdate,
@@ -19,11 +20,7 @@ import {
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
-import {
-  addSet,
-  changeActiveGroup,
-  deleteGroup
-} from '../redux/actions/groupsActions'
+import { addSet, deleteGroup } from '../redux/actions/groupsActions'
 import { updateConnectionStatus } from '../redux/actions/networkActions'
 import {
   activeDatabaseSelector,
