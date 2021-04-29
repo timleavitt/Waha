@@ -446,24 +446,7 @@ function LanguageInstanceInstallScreen ({
           </Text>
         </View>
       )}
-      <View
-        style={{
-          width: Dimensions.get('window').width - 40,
-          borderRadius: 30,
-          borderWidth: 2,
-          borderColor: colors.porcelain,
-          height: 50 * scaleMultiplier,
-          backgroundColor: colors.athens,
-          paddingHorizontal: 5,
-          flexDirection: getSystemIsRTL() ? 'row-reverse' : 'row',
-          paddingTop: 5,
-          paddingBottom: 5,
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          marginBottom: 20,
-          marginTop: 20 * scaleMultiplier
-        }}
-      >
+      <View style={styles.searchBarContainer}>
         <View
           style={{
             height: '100%',
@@ -605,7 +588,6 @@ const styles = StyleSheet.create({
   },
   headerTextContainer: {
     marginTop: 20 * scaleMultiplier,
-    marginBottom: 25 * scaleMultiplier,
     paddingHorizontal: 20
   },
   startButtonContainer: {
@@ -620,6 +602,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20
+  },
+  searchBarContainer: {
+    width: Dimensions.get('window').width - 40,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: colors.porcelain,
+    height: 50 * scaleMultiplier,
+    backgroundColor: colors.athens,
+    paddingHorizontal: 5,
+    flexDirection: getSystemIsRTL() ? 'row-reverse' : 'row',
+    paddingTop: 5,
+    paddingBottom: 5,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 25 * scaleMultiplier
   }
 })
 
