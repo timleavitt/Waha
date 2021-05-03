@@ -200,6 +200,10 @@ const LessonsScreen = ({
     setShowDeleteLessonModal(false)
   }
 
+  useEffect(() => {
+    console.log(downloadedLessons)
+  }, [downloadedLessons])
+
   /** Navigates to the Play screen with some parameters. */
   const goToPlayScreen = params =>
     navigate('Play', { ...params, thisSet: thisSet })

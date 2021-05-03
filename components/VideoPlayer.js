@@ -37,7 +37,6 @@ const VideoPlayer = ({
     // check if we can get any device motion data and if so, add a listener
     if (Platform.OS === 'ios' && activeChapter === chapters.TRAINING)
       DeviceMotion.isAvailableAsync().then(isAvailable => {
-        console.log(isAvailable)
         if (isAvailable) {
           DeviceMotion.setUpdateInterval(1000)
           DeviceMotion.addListener(({ rotation }) => {

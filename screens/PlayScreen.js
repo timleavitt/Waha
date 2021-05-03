@@ -100,7 +100,8 @@ const PlayScreen = ({
     params: {
       thisLesson,
       thisSet,
-      isAlreadyFullyDownloaded,
+      isAudioAlreadyDownloaded,
+      isVideoAlreadyDownloaded,
       isAlreadyDownloading,
       lessonType,
       downloadedLessons
@@ -190,12 +191,11 @@ const PlayScreen = ({
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
   const [showSetCompleteModal, setShowSetCompleteModal] = useState(false)
 
-  const [isFullyDownloaded, setIsFullyDownloaded] = useState(
-    isAlreadyFullyDownloaded
-  )
-
   const [isAudioDownloaded, setIsAudioDownloaded] = useState(
-    downloadedLessons[thisLesson.id] ? true : false
+    isAudioAlreadyDownloaded
+  )
+  const [isVideoDownloaded, setIsVideoDownloaded] = useState(
+    isVideoAlreadyDownloaded
   )
 
   /** Sets the navigation options for this screen. */
@@ -265,7 +265,7 @@ const PlayScreen = ({
       lessonType === lessonTypes.STANDARD_DBS ||
       lessonType === lessonTypes.STANDARD_DMC
     )
-      if (!downloadedLessons.includes(thisLesson.id) && !isAlreadyDownloading)
+      if (!isAudioDownloaded && !isAlreadyDownloading)
         downloadMedia(
           'audio',
           thisLesson.id,
@@ -274,10 +274,7 @@ const PlayScreen = ({
 
     // Download video for the Training chapter if necessary.
     if (lessonType === lessonTypes.STANDARD_DMC)
-      if (
-        !downloadedLessons.includes(thisLesson.id + 'v') &&
-        !isAlreadyDownloading
-      )
+      if (!isVideoDownloaded && !isAlreadyDownloading)
         downloadMedia(
           'video',
           thisLesson.id,
@@ -308,7 +305,7 @@ const PlayScreen = ({
       case lessonTypes.VIDEO_ONLY:
         fellowshipSource = null
         storySource = null
-        trainingSource = isAlreadyFullyDownloaded
+        trainingSource = isVideoAlreadyDownloaded
           ? potentialSources.trainingLocal
           : potentialSources.trainingStream
         applicationSource = null
@@ -321,7 +318,7 @@ const PlayScreen = ({
         break
       case lessonTypes.AUDIOBOOK:
         fellowshipSource = null
-        storySource = isAlreadyFullyDownloaded
+        storySource = isAudioAlreadyDownloaded
           ? potentialSources.storyLocal
           : potentialSources.storyStream
 
@@ -367,11 +364,6 @@ const PlayScreen = ({
     }
   }
 
-  /** useEffect function that calls the onChapterChange function whenever the active chapter changes.  */
-  useEffect(() => {
-    activeChapter && onChapterChange()
-  }, [activeChapter])
-
   /**
    * Updates the active chapter.
    * @param {number} chapter - The chapter to switch to.
@@ -381,7 +373,16 @@ const PlayScreen = ({
     if (chapter !== activeChapter && isMediaLoaded) setActiveChapter(chapter)
     // If we're "changing" to our currently active chapter, start it over at the beginning.
     else playFromLocation(0)
+
+    // If this lesson doesn't have any Story audio, swipe over to the text once we get to the Story chapter so the user can still read it.
+    if (chapter === chapters.STORY && !thisLesson.hasAudio)
+      albumArtSwiperRef.current.snapToItem(2)
   }
+
+  /** useEffect function that calls the onChapterChange function whenever the active chapter changes.  */
+  useEffect(() => {
+    activeChapter && onChapterChange()
+  }, [activeChapter])
 
   /** Handles the changing of the active chapter, including loading the new media. */
   const onChapterChange = async () => {
@@ -411,7 +412,7 @@ const PlayScreen = ({
         })
       ]).start()
     }
-    // If we're switching to the Training chapter, fade out the <AlbumArtSwiper/> and fade in the <VideoPlayer/>.
+    // If we're switching to the Training chapter, fade out the <AlbumArtSwiper /> and fade in the <VideoPlayer />.
     if (activeChapter !== chapters.TRAINING) {
     } else {
       Animated.parallel([
@@ -430,8 +431,6 @@ const PlayScreen = ({
 
     // Finally, if we have a valid source for the media, load it up.
     chapterSources[activeChapter] && loadMedia(chapterSources[activeChapter])
-
-    //   if (!thisLesson.hasAudio) swipeToScripture()
   }
 
   /**
@@ -481,13 +480,9 @@ const PlayScreen = ({
    * @function
    */
   const onPlaybackStatusUpdate = playbackStatus => {
-    console.log(`isFullyDownloaded in playback is ${isFullyDownloaded}`)
     // Set isLoaded state to true once media loads.
-    if (playbackStatus.isLoaded) {
-      setIsMediaLoaded(true)
-    } else {
-      setIsMediaLoaded(false)
-    }
+    if (playbackStatus.isLoaded) setIsMediaLoaded(true)
+    else setIsMediaLoaded(false)
 
     // If we should update the thumb, update it to the newest value.
     if (shouldThumbUpdate.current)
@@ -520,22 +515,25 @@ const PlayScreen = ({
       }
     }
 
-    // Error handling.
+    // If an error happens, try reloading the active chapter.
     if (playbackStatus.error) loadMedia(chapterSources[activeChapter])
   }
 
+  /** useEffect function that refreshes the onPlaybackStatusUpdate function whenever the download status or fullscreen status of the lesson changes since both of those are used throughout the chapter finish handler functions below. */
+  useEffect(() => {
+    audioRef.current.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate)
+  }, [fullscreenStatus, Object.keys(downloads).length])
+
   /** Handles the finishing of the Fellowship chapter. */
   const onFellowshipFinish = () => {
-    console.log(isAudioDownloaded)
     // If the lesson has no story audio, change to the Story chapter and swipe over to the scripture text so the user can still read it.
     if (!thisLesson.hasAudio) {
       changeChapter(chapters.STORY)
       albumArtSwiperRef.current.snapToItem(2)
     } // If a Story chapter is still downloading or it isn't downloaded and can't start downloading, swipe to the Scripture text so the user can read the text while they're waiting for it to download.
-    else if (downloads[thisLesson.id] || !isAudioDownloaded) {
+    else if (downloads[thisLesson.id]) {
       albumArtSwiperRef.current.snapToItem(2)
-    }
-    // Otherwise, just change to the Story chapter.
+    } // Otherwise, just change to the Story chapter.
     else changeChapter(chapters.STORY)
   }
 
@@ -557,6 +555,7 @@ const PlayScreen = ({
         if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id))) {
           updateCompleteStatus()
         }
+        break
     }
   }
 
@@ -683,31 +682,15 @@ const PlayScreen = ({
 
   /** useEffect function that checks if the lesson is fully downloaded whenever a download is added/removed from the redux downloads tracker. */
   useEffect(() => {
-    if (!isFullyDownloaded)
-      FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-        contents => {
-          switch (lessonType) {
-            case lessonTypes.STANDARD_DBS:
-            case lessonTypes.AUDIOBOOK:
-              if (contents.includes(thisLesson.id + '.mp3'))
-                setIsFullyDownloaded(true)
-              setIsAudioDownloaded(true)
-              break
-            case lessonTypes.STANDARD_DMC:
-              if (
-                contents.includes(thisLesson.id + '.mp3') &&
-                contents.includes(thisLesson.id + 'v.mp4')
-              )
-                setIsFullyDownloaded(true)
-              setIsAudioDownloaded(true)
-              break
-            case lessonTypes.VIDEO_ONLY:
-              if (contents.includes(thisLesson.id + 'v.mp4'))
-                setIsFullyDownloaded(true)
-              break
-          }
+    FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+      contents => {
+        if (contents.includes(thisLesson.id + '.mp3'))
+          setIsAudioDownloaded(true)
+        if (contents.includes(thisLesson.id + 'v.mp4')) {
+          setIsVideoDownloaded(true)
         }
-      )
+      }
+    )
   }, [Object.keys(downloads).length])
 
   /*
@@ -784,10 +767,6 @@ const PlayScreen = ({
   useEffect(() => {
     if (isMediaPlaying) playHandler()
   }, [isFocused()])
-
-  useEffect(() => {
-    audioRef.current.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate)
-  }, [isFullyDownloaded, fullscreenStatus, isAudioDownloaded])
 
   /*
     RENDER
@@ -872,7 +851,8 @@ const PlayScreen = ({
             <ChapterSelector
               activeChapter={activeChapter}
               changeChapter={changeChapter}
-              isFullyDownloaded={isFullyDownloaded}
+              isAudioDownloaded={isAudioDownloaded}
+              isVideoDownloaded={isVideoDownloaded}
               lessonType={lessonType}
               lessonID={thisLesson.id}
             />

@@ -43,7 +43,8 @@ const ChapterButton = ({
   changeChapter,
   lessonType,
   lessonID = null,
-  isFullyDownloaded = false,
+  isAudioDownloaded = false,
+  isVideoDownloaded = false,
   // Props passed from redux.
   font,
   activeGroup,
@@ -105,7 +106,7 @@ const ChapterButton = ({
           (lessonType === lessonTypes.STANDARD_DBS ||
             lessonType === lessonTypes.STANDARD_DMC) &&
           !isConnected &&
-          !isFullyDownloaded
+          !isAudioDownloaded
         )
           setMode(chapterButtonModes.DISABLED)
         else if (downloads[lessonID] && downloads[lessonID].progress < 1) {
@@ -117,7 +118,7 @@ const ChapterButton = ({
         else setMode(chapterButtonModes.INCOMPLETE)
         break
       case chapters.TRAINING:
-        if (!isConnected && !isFullyDownloaded)
+        if (!isConnected && !isVideoDownloaded)
           setMode(chapterButtonModes.DISABLED)
         else if (
           downloads[lessonID + 'v'] &&
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
+    // borderRadius: 20,
     borderWidth: 2
     // borderTopWidth: 2,
     // borderBottomWidth: 2

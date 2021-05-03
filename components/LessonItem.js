@@ -178,7 +178,10 @@ const LessonItem = ({
         onPress={() =>
           goToPlayScreen({
             thisLesson: thisLesson,
-            isAlreadyFullyDownloaded: isFullyDownloaded,
+            isAudioAlreadyDownloaded: downloadedLessons.includes(thisLesson.id),
+            isVideoAlreadyDownloaded: downloadedLessons.includes(
+              thisLesson.id + 'v'
+            ),
             isAlreadyDownloading: isDownloading,
             lessonType: lessonType,
             downloadedLessons: downloadedLessons

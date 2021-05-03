@@ -291,16 +291,16 @@ const AlbumArtSwiper = ({
           <Animated.View
             style={{
               position: 'absolute',
-              opacity: playOpacity,
+              opacity: playFeedbackOpacity,
               transform: [
                 {
-                  scale: playOpacity.interpolate({
+                  scale: playFeedbackOpacity.interpolate({
                     inputRange: [0, 1],
                     outputRange: [2, 1]
                   })
                 }
               ],
-              zIndex: animationZIndex
+              zIndex: playFeedbackZIndex
             }}
           >
             <Icon

@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { chapters, lessonTypes } from '../constants'
 import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
 import ChapterButton from './ChapterButton'
+import ChapterSeparator from './ChapterSeparator'
 
 function mapStateToProps (state) {
   return {
@@ -25,7 +26,8 @@ const ChapterSelector = ({
   // Props passed from a parent component.
   activeChapter,
   changeChapter,
-  isFullyDownloaded,
+  isAudioDownloaded,
+  isVideoDownloaded,
   lessonType,
   lessonID,
   // Props passed from redux.
@@ -34,25 +36,34 @@ const ChapterSelector = ({
   isConnected
 }) => {
   return (
-    <View style={styles.chapterSelectContainer}>
+    <View
+      style={[
+        styles.chapterSelectContainer,
+        {
+          borderColor: primaryColor
+        }
+      ]}
+    >
       <ChapterButton
         chapter={chapters.FELLOWSHIP}
         activeChapter={activeChapter}
         lessonType={lessonType}
         changeChapter={changeChapter}
       />
-      <View style={{ width: 5 }} />
+      {/* <View style={{ width: 5 }} /> */}
+      <ChapterSeparator />
       <ChapterButton
         chapter={chapters.STORY}
         activeChapter={activeChapter}
         changeChapter={changeChapter}
         lessonType={lessonType}
         lessonID={lessonID}
-        isFullyDownloaded={isFullyDownloaded}
+        isAudioDownloaded={isAudioDownloaded}
       />
       {/* For DMC lessons, we need an extra 'Training' chapter button. */}
       {lessonType === lessonTypes.STANDARD_DMC ? (
-        <View style={{ width: 5 }} />
+        // <View style={{ width: 5 }} />
+        <ChapterSeparator />
       ) : null}
       {lessonType === lessonTypes.STANDARD_DMC ? (
         <ChapterButton
@@ -61,10 +72,11 @@ const ChapterSelector = ({
           changeChapter={changeChapter}
           lessonType={lessonType}
           lessonID={lessonID}
-          isFullyDownloaded={isFullyDownloaded}
+          isVideoDownloaded={isVideoDownloaded}
         />
       ) : null}
-      <View style={{ width: 5 }} />
+      {/* <View style={{ width: 5 }} /> */}
+      <ChapterSeparator />
       <ChapterButton
         chapter={chapters.APPLICATION}
         activeChapter={activeChapter}
@@ -79,7 +91,10 @@ const styles = StyleSheet.create({
   chapterSelectContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10
+    marginHorizontal: 10,
+    borderRadius: 20,
+    borderWidth: 2,
+    overflow: 'hidden'
   }
 })
 
