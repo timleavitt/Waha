@@ -147,7 +147,7 @@ const LessonsScreen = ({
    * Gets the type of a specific lesson. See lessonTypes in constants.js. While every lesson's type stays constant, this information isn't stored in the database for single source of truth reasons.
    * @param {Object} lesson - The object for the lesson to get the type of.
    */
-  function getLessonType (lesson) {
+  const getLessonType = lesson => {
     if (lesson.fellowshipType && lesson.hasAudio && !lesson.hasVideo)
       return lessonTypes.STANDARD_DBS
     else if (lesson.fellowshipType && lesson.hasAudio && lesson.hasVideo)
@@ -159,7 +159,7 @@ const LessonsScreen = ({
   }
 
   /** Downloads the necessary content for a lesson. */
-  function downloadLessonFromModal () {
+  const downloadLessonFromModal = () => {
     if (
       modalLessonType.includes('Audio') &&
       !downloadedLessons.includes(activeLessonInModal.id)
@@ -184,25 +184,21 @@ const LessonsScreen = ({
   }
 
   /** Deletes a lesson. */
-  function deleteLessonFromModal () {
+  const deleteLessonFromModal = () => {
+    // If a lesson contains audio, delete it and refresh the downloaded lessons.
     if (modalLessonType.includes('Audio'))
       FileSystem.deleteAsync(
         FileSystem.documentDirectory + activeLessonInModal.id + '.mp3'
       ).then(() => setRefreshDownloadedLessons(current => !current))
 
+    // If a lesson contains video, delete it and refresh the downloaded lessons.
     if (modalLessonType.includes('Video'))
       FileSystem.deleteAsync(
         FileSystem.documentDirectory + activeLessonInModal.id + 'v.mp4'
       ).then(() => setRefreshDownloadedLessons(current => !current))
 
-    removeDownload(activeLessonInModal.id)
-    removeDownload(activeLessonInModal.id + 'v')
     setShowDeleteLessonModal(false)
   }
-
-  useEffect(() => {
-    console.log(downloadedLessons)
-  }, [downloadedLessons])
 
   /** Navigates to the Play screen with some parameters. */
   const goToPlayScreen = params =>
@@ -218,13 +214,12 @@ const LessonsScreen = ({
   }, [])
 
   /** Check if a lesson is fully complete or not. */
-  function checkForFullyComplete () {
+  const checkForFullyComplete = () => {
     if (
       thisSetProgress.length === thisSet.lessons.length - 1 &&
       !thisSetProgress.includes(getLessonInfo('index', activeLessonInModal.id))
-    ) {
+    )
       setShowSetCompleteModal(true)
-    }
   }
 
   /** Renders the backdrop for the lesson item. This appears when the user swipes the lesson. */

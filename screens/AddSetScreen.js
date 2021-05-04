@@ -79,12 +79,6 @@ const AddSetScreen = ({
   /** Keeps track of all the downloaded question set mp3s. We need this to verify that all the required question set mp3s are installed for the various Story Sets.*/
   const [downloadedFiles, setDownloadedFiles] = useState([])
 
-  const setData = useMemo(() => getSetData(), [
-    activeGroup.addedSets,
-    selectedTag,
-    downloadedFiles
-  ])
-
   /** useEffect function that sets the headerTitle state as well as fetching the tags if we're displaying Topical Story Sets. */
   useEffect(() => {
     switch (category) {
@@ -176,6 +170,13 @@ const AddSetScreen = ({
       return true
     else return false
   }
+
+  /** Set data stored in a useMemo so we don't have to get it on every re-render. */
+  const setData = useMemo(() => getSetData(), [
+    activeGroup.addedSets,
+    selectedTag,
+    downloadedFiles
+  ])
 
   function getSetData () {
     if (category === 'Topical')

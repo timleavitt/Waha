@@ -11,82 +11,78 @@ function mapStateToProps (state) {
   }
 }
 
-// component rendered behind a lesson item that shows the swipe options
-
+/**
+ * A component that renders behind the <LessonItem /> component that gets revealed when the user swipes the lesson item.
+ * @param {boolean} isComplete - Whether this lesson is complete or not.
+ * @param {Function} toggleComplete - Marks this lesson as complete.
+ * @param {Function} showShareModal - Shows the share modal.
+ */
 const LessonSwipeBackdrop = ({
-  // Props passed from a parent component.s
+  // Props passed from a parent component.
   isComplete,
   toggleComplete,
   showShareModal,
   // Props passed from redux.
   isRTL
-}) => {
-  //+ RENDER
-
-  // render complete button conditionally since it could be complete or incomplete
-  var completeButton = isComplete ? (
-    <TouchableOpacity
-      style={[
-        styles.buttonContainer,
-        {
-          backgroundColor: colors.chateau,
-          alignItems: isRTL ? 'flex-end' : 'flex-start'
-        }
-      ]}
-      onPress={toggleComplete}
-    >
-      <View style={styles.iconContainer}>
-        <Icon name='cancel-filled' size={20} color={colors.white} />
-      </View>
-    </TouchableOpacity>
-  ) : (
-    <TouchableOpacity
-      style={[
-        styles.buttonContainer,
-        {
-          backgroundColor: colors.apple,
-          alignItems: isRTL ? 'flex-end' : 'flex-start'
-        }
-      ]}
-      onPress={toggleComplete}
-    >
-      <View style={styles.iconContainer}>
-        <Icon name='check-filled' size={20} color={colors.white} />
-      </View>
-    </TouchableOpacity>
-  )
-
-  return (
-    <View
-      style={[
-        styles.lessonSwipeBackdropContainer,
-        { flexDirection: isRTL ? 'row-reverse' : 'row' }
-      ]}
-    >
-      {completeButton}
+}) => (
+  <View
+    style={[
+      styles.lessonSwipeBackdropContainer,
+      // Reverse the sides that the complete/share buttons are on for RTL languages.
+      { flexDirection: isRTL ? 'row-reverse' : 'row' }
+    ]}
+  >
+    {isComplete ? (
       <TouchableOpacity
         style={[
           styles.buttonContainer,
           {
-            backgroundColor: colors.blue,
-            alignItems: isRTL ? 'flex-start' : 'flex-end'
+            backgroundColor: colors.chateau,
+            alignItems: isRTL ? 'flex-end' : 'flex-start'
           }
         ]}
-        onPress={showShareModal}
+        onPress={toggleComplete}
       >
         <View style={styles.iconContainer}>
-          <Icon
-            name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
-            size={20}
-            color={colors.white}
-          />
+          <Icon name='cancel-filled' size={20} color={colors.white} />
         </View>
       </TouchableOpacity>
-    </View>
-  )
-}
-
-//+ STYLES
+    ) : (
+      <TouchableOpacity
+        style={[
+          styles.buttonContainer,
+          {
+            backgroundColor: colors.apple,
+            alignItems: isRTL ? 'flex-end' : 'flex-start'
+          }
+        ]}
+        onPress={toggleComplete}
+      >
+        <View style={styles.iconContainer}>
+          <Icon name='check-filled' size={20} color={colors.white} />
+        </View>
+      </TouchableOpacity>
+    )}
+    <TouchableOpacity
+      style={[
+        styles.buttonContainer,
+        {
+          backgroundColor: colors.blue,
+          alignItems: isRTL ? 'flex-start' : 'flex-end'
+        }
+      ]}
+      onPress={showShareModal}
+    >
+      <View style={styles.iconContainer}>
+        <Icon
+          name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
+          size={20}
+          color={colors.white}
+        />
+      </View>
+    </TouchableOpacity>
+  </View>
+)
 
 const styles = StyleSheet.create({
   lessonSwipeBackdropContainer: {

@@ -34,7 +34,8 @@ function mapStateToProps (state) {
  * @param {Function} changeChapter - Changes the currently active chapter.
  * @param {string} lessonType - The type of the current lesson. See lessonTypes in constants.js.
  * @param {string} lessonID - The ID of the current lesson. Only needed for the Story and Training chapters.
- * @param {boolean} isFullyDownloaded - Whether a lesson has all of its media downloaded or not. Includes video files for lessons that require them. Only needed for the Story and Training chapters.
+ * @param {boolean} isAudioDownloaded - Whether this lesson has its audio file downloaded or not. Only needed for the Story chapter button.
+ * @param {boolean} isVideoDownloaded - Whether this lesson has its video file downloaded or not. Only needed for the Training chapter button.
  */
 const ChapterButton = ({
   // Props passed from a parent component.
@@ -250,6 +251,7 @@ const ChapterButton = ({
   return (
     <TouchableOpacity
       style={[styles.chapterButton, extraButtonStyle]}
+      // Disable onPress (by making the onPress function empty and by disabling the touch effect) if the chapter button is DISABLED or DOWNLOADING.
       onPress={
         mode === chapterButtonModes.DISABLED ||
         mode === chapterButtonModes.DOWNLOADING
@@ -263,6 +265,7 @@ const ChapterButton = ({
           : 0.2
       }
     >
+      {/* If we're DOWNLOADING, show the progress indicator. Otherwise, show an icon. */}
       {mode === chapterButtonModes.DOWNLOADING ? (
         <AnimatedCircularProgress
           size={22 * scaleMultiplier}
@@ -276,6 +279,7 @@ const ChapterButton = ({
       ) : (
         <Icon name={iconName} size={25 * scaleMultiplier} color={iconColor} />
       )}
+      {/* The name of the chapter. */}
       <Text style={textStyle}>{chapterNames[chapter]}</Text>
     </TouchableOpacity>
   )

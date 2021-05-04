@@ -2,10 +2,9 @@ import { decode, encode } from 'base-64'
 import { Audio } from 'expo-av'
 import * as Font from 'expo-font'
 import React, { useEffect, useState } from 'react'
-import { StatusBar } from 'react-native'
+import { StatusBar, View } from 'react-native'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
-import LoadingView from './components/LoadingView'
 import { lockPortrait } from './constants'
 import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
@@ -87,7 +86,7 @@ export default function App () {
       // The provider passes the redux store to every component in Waha.
       <Provider store={store}>
         {/* The persist gate allows the redux data to persist across restarts. */}
-        <PersistGate loading={<LoadingView />} persistor={persistor}>
+        <PersistGate loading={<View></View>} persistor={persistor}>
           {/* Set a few settings related to the status bar. */}
           <StatusBar
             backgroundColor={colors.aquaHaze}

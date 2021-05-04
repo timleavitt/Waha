@@ -17,6 +17,16 @@ import {
 } from '../constants'
 import { colors } from '../styles/colors'
 
+/**
+ * A component that shows a video. Used on the Play Screen during Training chapters.
+ * @param {string} videoSource - The URI source (local or remote) of the .mp4 file to play.
+ * @param {ref} videoRef - The ref for the video.
+ * @param {Function} onPlaybackStatusUpdate - Function to call whenever the playback status changes. Used for audio and video.
+ * @param {Function} setIsMediaPlaying - Function to set the isMediaPlaying state on the Play Screen.
+ * @param {number} fullscreenStatus - The current fullscreen status as a number which is a value of an enum used in the Video library.
+ * @param {Function} setFullScreenStatus - Function to set the fullscreenStatus state on the Play Screen.
+ * @param {number} activeChapter - The currently active chapter. See chapters in constants.js.
+ */
 const VideoPlayer = ({
   // Props passed from a parent component.
   videoSource,
@@ -25,8 +35,10 @@ const VideoPlayer = ({
   setIsMediaPlaying,
   fullscreenStatus,
   setFullScreenStatus,
-  activeChapter
+  activeChapter,
+  isMediaLoaded
 }) => {
+  /** Keeps track of whether to show the overlayed video controls or not. */
   const [shouldShowVideoControls, setShouldShowVideoControls] = useState(false)
 
   /** Keeps track of the device rotation in an object (alpha, beta, and gamma). */
@@ -34,7 +46,6 @@ const VideoPlayer = ({
 
   /** useEffect function that adds a device motion listener on iOS devices. This is so that the app can automatically enter fullscreen when the user rotates their phone. */
   useEffect(() => {
-    // check if we can get any device motion data and if so, add a listener
     if (Platform.OS === 'ios' && activeChapter === chapters.TRAINING)
       DeviceMotion.isAvailableAsync().then(isAvailable => {
         if (isAvailable) {
@@ -64,10 +75,7 @@ const VideoPlayer = ({
         deviceRotation.beta < 0.2
       : false
 
-  /**
-   * useEffect function that enters fullscreen mode when the video component is present, the video source is loaded, we're on ios (this feature doesn't work on android), and the device rotation matches that of landscape.
-   * @function
-   */
+  /** useEffect function that enters fullscreen mode when we're on the Training chapter, we're not already in fullscreen, and the user's phone is in landscape orientation. */
   useEffect(() => {
     // If the user's phone is in landscape position, the video is on screen, and they're not in full screen mode, activate full screen mode.
     if (
@@ -81,151 +89,62 @@ const VideoPlayer = ({
   return (
     <TouchableWithoutFeedback
       onPress={() => {
-        if (!shouldShowVideoControls) {
+        // When the user taps on the video component and the video controls are not present, show them for a few seconds.
+        if (!shouldShowVideoControls && isMediaLoaded) {
           setShouldShowVideoControls(true)
           setTimeout(() => setShouldShowVideoControls(false), 2000)
         }
       }}
-      style={{ width: '100%', position: 'absolute' }}
     >
-      <View
-        style={{
-          // flex: 1,
-          height: Dimensions.get('window').width - 80,
-          width: Dimensions.get('window').width,
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: colors.shark
-        }}
-      >
+      <View style={styles.videoContainer}>
         <Video
           ref={videoRef}
           rate={1.0}
           volume={1.0}
           isMuted={false}
           resizeMode={Video.RESIZE_MODE_CONTAIN}
-          shouldPlay
-          // onLoad={() => {
-          //   console.log('loaded')
-          //   setIsMediaLoaded(true)
-          // }}
           style={{
+            // Force a 16:9 aspect ratio.
             width: Dimensions.get('window').width,
-            // height: Dimensions.get('window').width - 80
             height: (Dimensions.get('window').width * 9) / 16
-            // flex: 1
           }}
           onPlaybackStatusUpdate={onPlaybackStatusUpdate}
-          // onLoadStart={() => setIsMediaLoaded(false)}
-          // onLoad={() => setIsMediaLoaded(true)}
           onFullscreenUpdate={({ fullscreenUpdate, status }) => {
             if (Platform.OS === 'android') {
               switch (fullscreenUpdate) {
-                // lock video to landscape whenever you enter full screen
+                // Lock video to landscape whenever we enter fullscreen.
                 case Video.FULLSCREEN_UPDATE_PLAYER_WILL_PRESENT:
                 case Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT:
                   lockLandscape(() => {})
-                  // ScreenOrientation.lockAsync(
-                  //   ScreenOrientation.OrientationLock.LANDSCAPE
-                  // )
                   break
-                // lock video to portrait when we exit full screen
+                // Lock video to portrait when we exit fullscreen.
                 case Video.FULLSCREEN_UPDATE_PLAYER_WILL_DISMISS:
                   lockPortrait(() => {})
-                  // ScreenOrientation.supportsOrientationLockAsync(
-                  //   ScreenOrientation.OrientationLock.PORTRAIT
-                  // ).then(isSupported => {
-                  //   if (isSupported) {
-                  //     ScreenOrientation.lockAsync(
-                  //       ScreenOrientation.OrientationLock.PORTRAIT
-                  //     )
-                  //   } else {
-                  //     ScreenOrientation.lockAsync(
-                  //       ScreenOrientation.OrientationLock.PORTRAIT_UP
-                  //     )
-                  //   }
-                  // })
                   break
+                // After exiting fullscreen, automatically start playing the video. This is because of strange Android behavior where upon exiting fullscreen while paused, the layout of the whole Play Screen gets messed up.
                 case Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS:
                   lockPortrait(() => {})
-                  // ScreenOrientation.supportsOrientationLockAsync(
-                  //   ScreenOrientation.OrientationLock.PORTRAIT
-                  // ).then(isSupported => {
-                  //   if (isSupported) {
-                  //     ScreenOrientation.lockAsync(
-                  //       ScreenOrientation.OrientationLock.PORTRAIT
-                  //     )
-                  //   } else {
-                  //     ScreenOrientation.lockAsync(
-                  //       ScreenOrientation.OrientationLock.PORTRAIT_UP
-                  //     )
-                  //   }
-                  // })
-                  videoRef.playAsync()
+                  if (!isMediaPlaying) videoRef.current.playAsync()
                   setIsMediaPlaying(true)
                   break
-                // default:
-                //   ScreenOrientation.supportsOrientationLockAsync(
-                //     ScreenOrientation.OrientationLock.PORTRAIT
-                //   ).then(isSupported => {
-                //     if (isSupported) {
-                //       ScreenOrientation.lockAsync(
-                //         ScreenOrientation.OrientationLock.PORTRAIT
-                //       )
-                //     } else {
-                //       ScreenOrientation.lockAsync(
-                //         ScreenOrientation.OrientationLock.PORTRAIT_UP
-                //       )
-                //     }
-                //   })
-                //   break
               }
-            } else {
+            } else if (Platform.OS === 'ios') {
+              // The default iOS behavior is to pause a video whenever fullscreen exits. In order to keep the playing status of the video lined up with the isMediaPlaying state, we set the latter to false whenever fullscreen exits.
               if (
                 fullscreenUpdate === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS
-              ) {
+              )
                 setIsMediaPlaying(false)
-              }
             }
+
+            // Update the fullscreenStatus Play Screen state.
             setFullScreenStatus(fullscreenUpdate)
           }}
         />
-        {/* display a video icon placeholder when we're loading */}
-        {/* {isMediaLoaded ? null : (
-          <View
-            style={{
-              alignSelf: 'center',
-              width: '100%',
-              position: 'absolute',
-              alignItems: 'center'
-            }}
-          >
-            <Icon
-              name='video'
-              size={100 * scaleMultiplier}
-              color={colors.oslo}
-            />
-          </View>
-        )} */}
-        {/* video controls overlay */}
-        {shouldShowVideoControls ? (
-          <View
-            style={{
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: colors.shark + '70'
-            }}
-          >
+        {/* Video controls overlay. */}
+        {shouldShowVideoControls && (
+          <View style={styles.videoControlsOverlayContainer}>
             <TouchableOpacity
-              style={{}}
-              onPress={() => {
-                videoRef.presentFullscreenPlayer()
-                // navigateToFullscreen()
-              }}
+              onPress={() => videoRef.current.presentFullscreenPlayer()}
             >
               <Icon
                 name='fullscreen-enter'
@@ -234,24 +153,28 @@ const VideoPlayer = ({
               />
             </TouchableOpacity>
           </View>
-        ) : null}
-        {/* </View> */}
+        )}
       </View>
     </TouchableWithoutFeedback>
   )
 }
 
 const styles = StyleSheet.create({
-  topPortion: {
-    backgroundColor: colors.white,
-    width: '100%',
+  videoContainer: {
+    height: Dimensions.get('window').width - 80,
+    width: Dimensions.get('window').width,
+    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: colors.shark
   },
-  topImage: {
-    resizeMode: 'contain',
-    height: 170 * scaleMultiplier,
-    alignSelf: 'center'
+  videoControlsOverlayContainer: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.shark + '70'
   }
 })
 

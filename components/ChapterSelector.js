@@ -8,9 +8,7 @@ import ChapterSeparator from './ChapterSeparator'
 
 function mapStateToProps (state) {
   return {
-    primaryColor: activeDatabaseSelector(state).primaryColor,
-    downloads: state.downloads,
-    isConnected: state.network.isConnected
+    primaryColor: activeDatabaseSelector(state).primaryColor
   }
 }
 
@@ -18,7 +16,8 @@ function mapStateToProps (state) {
  * Component that displays the various 3 or 4 chapter buttons on the PlayScreen.
  * @param {string} activeChapter - The currently active chapter. See chapters in constants.js.
  * @param {Function} changeChapter - Changes the active chapter.
- * @param {boolean} isFullyDownloaded - Whether a lesson has all of its media downloaded or not. Includes video files for lessons that require them.
+ * @param {boolean} isAudioDownloaded - Whether this lesson has its audio file downloaded or not.
+ * @param {boolean} isVideoDownloaded - Whether this lesson has its video file downloaded or not. Only relevant to STANDARD_DMC or VIDEO_ONLY lesson types.
  * @param {string} lessonType - The type of the current lesson. See lessonTypes in constants.js.
  * @param {string} lessonID - The ID for the active lesson.
  */
@@ -31,64 +30,55 @@ const ChapterSelector = ({
   lessonType,
   lessonID,
   // Props passed from redux.
-  primaryColor,
-  downloads,
-  isConnected
-}) => {
-  return (
-    <View
-      style={[
-        styles.chapterSelectContainer,
-        {
-          borderColor: primaryColor
-        }
-      ]}
-    >
-      <ChapterButton
-        chapter={chapters.FELLOWSHIP}
-        activeChapter={activeChapter}
-        lessonType={lessonType}
-        changeChapter={changeChapter}
-      />
-      {/* <View style={{ width: 5 }} /> */}
+  primaryColor
+}) => (
+  <View
+    style={[styles.chapterSelectorContainer, { borderColor: primaryColor }]}
+  >
+    <ChapterButton
+      chapter={chapters.FELLOWSHIP}
+      activeChapter={activeChapter}
+      lessonType={lessonType}
+      changeChapter={changeChapter}
+    />
+    {/* <View style={{ width: 5 }} /> */}
+    <ChapterSeparator />
+    <ChapterButton
+      chapter={chapters.STORY}
+      activeChapter={activeChapter}
+      changeChapter={changeChapter}
+      lessonType={lessonType}
+      lessonID={lessonID}
+      isAudioDownloaded={isAudioDownloaded}
+    />
+    {/* For DMC lessons, we need an extra 'Training' chapter button. */}
+    {lessonType === lessonTypes.STANDARD_DMC ? (
+      // <View style={{ width: 5 }} />
       <ChapterSeparator />
+    ) : null}
+    {lessonType === lessonTypes.STANDARD_DMC ? (
       <ChapterButton
-        chapter={chapters.STORY}
+        chapter={chapters.TRAINING}
         activeChapter={activeChapter}
         changeChapter={changeChapter}
         lessonType={lessonType}
         lessonID={lessonID}
-        isAudioDownloaded={isAudioDownloaded}
+        isVideoDownloaded={isVideoDownloaded}
       />
-      {/* For DMC lessons, we need an extra 'Training' chapter button. */}
-      {lessonType === lessonTypes.STANDARD_DMC ? (
-        // <View style={{ width: 5 }} />
-        <ChapterSeparator />
-      ) : null}
-      {lessonType === lessonTypes.STANDARD_DMC ? (
-        <ChapterButton
-          chapter={chapters.TRAINING}
-          activeChapter={activeChapter}
-          changeChapter={changeChapter}
-          lessonType={lessonType}
-          lessonID={lessonID}
-          isVideoDownloaded={isVideoDownloaded}
-        />
-      ) : null}
-      {/* <View style={{ width: 5 }} /> */}
-      <ChapterSeparator />
-      <ChapterButton
-        chapter={chapters.APPLICATION}
-        activeChapter={activeChapter}
-        changeChapter={changeChapter}
-        lessonType={lessonType}
-      />
-    </View>
-  )
-}
+    ) : null}
+    {/* <View style={{ width: 5 }} /> */}
+    <ChapterSeparator />
+    <ChapterButton
+      chapter={chapters.APPLICATION}
+      activeChapter={activeChapter}
+      changeChapter={changeChapter}
+      lessonType={lessonType}
+    />
+  </View>
+)
 
 const styles = StyleSheet.create({
-  chapterSelectContainer: {
+  chapterSelectorContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: 10,

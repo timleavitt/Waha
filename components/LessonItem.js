@@ -67,9 +67,6 @@ const LessonItem = ({
   font,
   removeDownload
 }) => {
-  // if (thisLesson.id === 'en.1.1.1')
-  //   console.log(`${Date.now()} Re-rendering lesson items.`)
-
   /** Keeps track of whether this lesson is downloaded or not. */
   const [isFullyDownloaded, setIsFullyDownloaded] = useState(false)
 
@@ -109,27 +106,8 @@ const LessonItem = ({
       removeDownload(thisLesson.id + 'v')
   }, [downloads[thisLesson.id], downloads[thisLesson.id + 'v']])
 
-  // Update the downloading and downloaded status of a lesson whenever a download gets added or removed from the downloads redux object.
+  /** useEffect function that updates the downloading and downloaded status of a lesson whenever a download gets added or removed from the downloads redux object. */
   useEffect(() => {
-    // console.log(downloadedLessons)
-    // var isDownloaded = false
-    // if (lessonType.includes('Audio'))
-    //   if (downloadedLessons.includes(thisLesson.id)) isDownloaded = true
-    //   else isDownloaded = false
-
-    // if (lessonType.includes('Video'))
-    //   if (downloadedLessons.includes(thisLesson.id + 'v')) isDownloaded = true
-    //   else isDownloaded = false
-
-    // setIsDownloaded(isDownloaded)
-
-    // if (
-    //   downloadedLessons.includes(thisLesson.id) ||
-    //   downloadedLessons.includes(thisLesson.id + 'v')
-    // )
-    //   setIsDownloading(true)
-    // else setIsDownloading(false)
-
     switch (lessonType) {
       case lessonTypes.STANDARD_DBS:
       case lessonTypes.AUDIOBOOK:
@@ -250,17 +228,12 @@ const LessonItem = ({
   )
 }
 
-//+ STYLES
-
 const styles = StyleSheet.create({
   lessonItemContainer: {
-    // height: 80 * scaleMultiplier,
-    // aspectRatio: 6.1,
     flexDirection: 'row',
     backgroundColor: colors.aquaHaze,
     flex: 1,
     paddingLeft: 20
-    // paddingVertical: 5
   },
   touchableAreaContainer: {
     justifyContent: 'flex-start',

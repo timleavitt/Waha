@@ -11,24 +11,23 @@ function mapStateToProps (state) {
   }
 }
 
+/** A component that displays the logo for a language instance. Used in the headers for the Sets Screen and the Lessons Screen. */
 const ScreenHeaderImage = ({
   // Props passed from redux.
   activeGroup,
   database
-}) => {
-  return (
-    <Image
-      style={{
-        resizeMode: 'contain',
-        width: 150,
-        flex: 1,
-        alignSelf: 'center'
-      }}
-      source={{
-        uri: FileSystem.documentDirectory + activeGroup.language + '-header.png'
-      }}
-    />
-  )
-}
+}) => (
+  <Image
+    style={{
+      resizeMode: 'contain',
+      width: 150,
+      flex: 1,
+      alignSelf: 'center'
+    }}
+    source={{
+      uri: FileSystem.documentDirectory + activeGroup.language + '-header.png'
+    }}
+  />
+)
 
 export default connect(mapStateToProps)(ScreenHeaderImage)

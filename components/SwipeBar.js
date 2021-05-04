@@ -4,7 +4,16 @@ import { Animated, StyleSheet, View } from 'react-native'
 import { scaleMultiplier } from '../constants'
 import { colors } from '../styles/colors'
 
-const SwipeBar = ({ opacity, side }) => {
+/**
+ * Component that indicates that the AlbumArtSwiper can be swiped to a different page. Basically a copy of the nav bar on the bottom of iPhone 10+'s.
+ * @param {number} opacity - The opacity of this swipe bar.
+ * @param {string} side - The side that the swipe bar is on. Either 'right' or 'left'.
+ */
+const SwipeBar = ({
+  // Props passed from a parent component.
+  opacity,
+  side
+}) => {
   return (
     <View
       style={[

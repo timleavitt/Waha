@@ -25,9 +25,11 @@ function mapDispatchToProps (dispatch) {
 }
 
 /**
- *
+ * A component that shows the title of a lesson on the Play Screen. Ticks across the screen if it's long and fades out at the edges of the screen.
+ * @param {string} text - The text to display.
+ * @param {string} backgroundColor - The color behind the Play Screen title. Important because the "fading out" at the edge of this component has to match the color behind it.
  */
-function PlayScreenTitle ({
+const PlayScreenTitle = ({
   // Props passed from a parent component.
   text,
   backgroundColor,
@@ -36,57 +38,45 @@ function PlayScreenTitle ({
   activeDatabase,
   isRTL,
   font
-}) {
-  return (
-    <View style={styles.titleContainer}>
-      <TextTicker
-        style={[
-          StandardTypography(
-            { font, isRTL },
-            'h3',
-            'Black',
-            'center',
-            colors.shark
-          ),
-          { paddingHorizontal: 20 }
-        ]}
-        marqueeDelay={2000}
-        bounceSpeed={300}
-        isRTL={isRTL}
-      >
-        {text}
-      </TextTicker>
-      <LinearGradient
-        colors={[backgroundColor, backgroundColor + '00']}
-        start={[0, 1]}
-        end={[1, 1]}
-        style={styles.leftGradient}
-      />
-      <View
-        style={[
-          styles.leftGradientFiller,
-          {
-            backgroundColor: backgroundColor
-          }
-        ]}
-      />
-      <LinearGradient
-        colors={[backgroundColor, backgroundColor + '00']}
-        start={[1, 0]}
-        end={[0, 0]}
-        style={styles.rightGradient}
-      />
-      <View
-        style={[
-          styles.rightGradientFiller,
-          {
-            backgroundColor: backgroundColor
-          }
-        ]}
-      />
-    </View>
-  )
-}
+}) => (
+  <View style={styles.titleContainer}>
+    <TextTicker
+      style={[
+        StandardTypography(
+          { font, isRTL },
+          'h3',
+          'Black',
+          'center',
+          colors.shark
+        ),
+        { paddingHorizontal: 20 }
+      ]}
+      marqueeDelay={2000}
+      bounceSpeed={300}
+      isRTL={isRTL}
+    >
+      {text}
+    </TextTicker>
+    <LinearGradient
+      colors={[backgroundColor, backgroundColor + '00']}
+      start={[0, 1]}
+      end={[1, 1]}
+      style={styles.leftGradient}
+    />
+    <View
+      style={[styles.leftGradientFiller, { backgroundColor: backgroundColor }]}
+    />
+    <LinearGradient
+      colors={[backgroundColor, backgroundColor + '00']}
+      start={[1, 0]}
+      end={[0, 0]}
+      style={styles.rightGradient}
+    />
+    <View
+      style={[styles.rightGradientFiller, { backgroundColor: backgroundColor }]}
+    />
+  </View>
+)
 
 const styles = StyleSheet.create({
   titleContainer: {

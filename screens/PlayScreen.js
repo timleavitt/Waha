@@ -89,8 +89,9 @@ const path = FileSystem.documentDirectory
  * 8. MISC - A few small miscellaneous items.
  * @param {Object} thisLesson - The object for the lesson that the user has selected to do.
  * @param {Object} thisSet - The object for the set that thisLesson is a part of.
- * @param {boolean} isAlreadyFullyDownloaded - Whether this lesson has its Story audio file already downloaded or not.
- * @param {boolean} isDownloading - Whether the
+ * @param {boolean} isAudioAlreadyDownloaded - Whether this lesson has its Story audio file already downloaded or not.
+ * @param {boolean} isVideoAlreadyDownloaded - Whether this lesson has its Training video file already downloaded or not.
+ * @param {boolean} isAlreadyDownloading - Whether any content for this lesson is currently downloading.
  */
 const PlayScreen = ({
   // Props passed from navigation.
@@ -153,7 +154,7 @@ const PlayScreen = ({
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
 
   /** Keeps track of the current position of the seeker in ms. */
-  const [thumbPosition, setThumbPosition] = useState(0)
+  const [mediaProgress, setMediaProgress] = useState(0)
 
   /** Keeps track of whether the seeker should update every second. Note: only time it shouldn't is during seeking, skipping, or loading a new chapter. */
   const shouldThumbUpdate = useRef(false)
@@ -212,9 +213,9 @@ const PlayScreen = ({
         )
       : () => (
           <PlayScreenHeaderButtons
-            shareOnPress={() => setShowShareLessonModal(true)}
-            completeOnPress={updateCompleteStatus}
-            completeCondition={thisSetProgress.includes(
+            showShareModal={() => setShowShareLessonModal(true)}
+            updateCompleteStatus={updateCompleteStatus}
+            isComplete={thisSetProgress.includes(
               getLessonInfo('index', thisLesson.id)
             )}
           />
@@ -222,9 +223,9 @@ const PlayScreen = ({
     headerLeft: isRTL
       ? () => (
           <PlayScreenHeaderButtons
-            shareOnPress={() => setShowShareLessonModal(true)}
-            completeOnPress={updateCompleteStatus}
-            completeCondition={thisSetProgress.includes(
+            showShareModal={() => setShowShareLessonModal(true)}
+            updateCompleteStatus={updateCompleteStatus}
+            isComplete={thisSetProgress.includes(
               getLessonInfo('index', thisLesson.id)
             )}
           />
@@ -283,7 +284,7 @@ const PlayScreen = ({
   }
 
   /** Sets all the source state files appropriately based on the lesson type and what is downloaded. */
-  function setSources () {
+  const setSources = () => {
     var fellowshipSource
     var storySource
     var trainingSource
@@ -394,7 +395,7 @@ const PlayScreen = ({
     if (videoRef.current) await videoRef.current.unloadAsync()
 
     // Set our thumb position back to the start.
-    setThumbPosition(0)
+    setMediaProgress(0)
 
     // If we're switching to anything but the Training chapter, fade in the <AlbumArtSwiper/> and fade out the <VideoPlayer/>. If the <AlbumArtSwiper/> is already present, this animation does nothing.
     if (activeChapter !== chapters.TRAINING) {
@@ -413,8 +414,7 @@ const PlayScreen = ({
       ]).start()
     }
     // If we're switching to the Training chapter, fade out the <AlbumArtSwiper /> and fade in the <VideoPlayer />.
-    if (activeChapter !== chapters.TRAINING) {
-    } else {
+    else {
       Animated.parallel([
         Animated.timing(albumArtSwiperOpacity, {
           toValue: 0,
@@ -437,7 +437,7 @@ const PlayScreen = ({
    * Loads audio or video for playing.
    * @param source - The source URI of the media to load.
    */
-  async function loadMedia (source) {
+  const loadMedia = async source => {
     var media =
       activeChapter === chapters.TRAINING ? videoRef.current : audioRef.current
 
@@ -477,7 +477,7 @@ const PlayScreen = ({
 
   /**
    * Updates on every api call to the audio object as well as every second. Covers the automatic switch of one chapter to the next and marking a lesson as complete at the finish of the last chapter.
-   * @function
+   * @param {Object} playbackStatus - The playback status object passed from the media reference. Includes information like load status, progress, play status, and more.
    */
   const onPlaybackStatusUpdate = playbackStatus => {
     // Set isLoaded state to true once media loads.
@@ -486,7 +486,7 @@ const PlayScreen = ({
 
     // If we should update the thumb, update it to the newest value.
     if (shouldThumbUpdate.current)
-      setThumbPosition(playbackStatus.positionMillis)
+      setMediaProgress(playbackStatus.positionMillis)
 
     // Keep the play button status in sync with the play status while in fullscreen mode.
     if (
@@ -522,7 +522,7 @@ const PlayScreen = ({
   /** useEffect function that refreshes the onPlaybackStatusUpdate function whenever the download status or fullscreen status of the lesson changes since both of those are used throughout the chapter finish handler functions below. */
   useEffect(() => {
     audioRef.current.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate)
-  }, [fullscreenStatus, Object.keys(downloads).length])
+  }, [Object.keys(downloads).length])
 
   /** Handles the finishing of the Fellowship chapter. */
   const onFellowshipFinish = () => {
@@ -562,7 +562,7 @@ const PlayScreen = ({
   /** Handles the finishing of the Training chapter. */
   const onTrainingFinish = () => {
     // If we're in fullscreen, lock back to portrait orientation and close fullscreen.
-    if (fullscreenStatus === Video.IOS_FULLSCREEN_UPDATE_PLAYER_DID_PRESENT)
+    if (fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT)
       lockPortrait(() => videoRef.current.dismissFullscreenPlayer())
 
     switch (lessonType) {
@@ -588,10 +588,8 @@ const PlayScreen = ({
     PLAYBACK CONTROL
   */
 
-  /**
-   * Plays the audio if it's currently paused and pauses the audio if it's currently playing.
-   */
-  function playHandler () {
+  /** Plays the audio if it's currently paused and pauses the audio if it's currently playing. Also animates a play status feedback indicator over the album art. */
+  const playHandler = () => {
     // If we're still loading, don't try and do anything with the media.
     if (!isMediaLoaded) return
 
@@ -625,12 +623,12 @@ const PlayScreen = ({
    * Plays media from a specified location.
    * @param value - The location to start playing from.
    */
-  function playFromLocation (value) {
+  const playFromLocation = value => {
     // If we're still loading, don't try and do anything with the media.
     if (!isMediaLoaded) return
 
     shouldThumbUpdate.current = false
-    setThumbPosition(value)
+    setMediaProgress(value)
 
     const media =
       activeChapter === chapters.TRAINING ? videoRef.current : audioRef.current
@@ -649,10 +647,7 @@ const PlayScreen = ({
     DOWNLOADS
   */
 
-  /**
-   * useEffect function that removes a download record from the download tracker redux object once it's finished. Removes audio and video download records when necessary.
-   * @function
-   */
+  /** useEffect function that removes a download record from the download tracker redux object once it's finished. Removes audio and video download records when necessary. */
   useEffect(() => {
     switch (lessonType) {
       case lessonTypes.STANDARD_DBS:
@@ -697,10 +692,8 @@ const PlayScreen = ({
     PROGRESS UPDATING
   */
 
-  /**
-   * Switches the complete status of a lesson to the opposite of its current status and alerts the user of the change. Also shows the set complete modal if this is the last lesson to complete in a story set.
-   */
-  function updateCompleteStatus () {
+  /** Switches the complete status of a lesson to the opposite of its current status and alerts the user of the change. Also shows the set complete modal if this is the last lesson to complete in a story set. */
+  const updateCompleteStatus = () => {
     // Lock back to portrait orientation in case the user does the lesson in upside-down portrait.
     lockPortrait(() => {})
 
@@ -736,19 +729,14 @@ const PlayScreen = ({
       )
   }
 
-  /**
-   * useEffect function that updates the thisSetProgress state variable with the most updated version of the progress of the set that this lesson is a part of.
-   * @function
-   */
+  /** useEffect function that updates the thisSetProgress state variable with the most updated version of the progress of the set that this lesson is a part of. */
   useEffect(() => {
     setThisSetProgress(
       activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
     )
   }, [activeGroup.addedSets])
 
-  /**
-   * useEffect function that sets the navigation options for this screen. Dependent on thisSetProgress because we want to update the complete button whenever the complete status of this lesson changes.
-   */
+  /** useEffect function that sets the navigation options for this screen. Dependent on thisSetProgress because we want to update the complete button whenever the complete status of this lesson changes.*/
   useEffect(() => {
     setOptions(getNavOptions())
   }, [thisSetProgress])
@@ -760,10 +748,7 @@ const PlayScreen = ({
   /** Keeps the screen from auto-dimming or auto-locking. */
   useKeepAwake()
 
-  /**
-   * useEffect function that automatically pauses the media when the play screen becomes unfocused.
-   * @function
-   */
+  /** useEffect function that automatically pauses the media when the play screen becomes unfocused. */
   useEffect(() => {
     if (isMediaPlaying) playHandler()
   }, [isFocused()])
@@ -794,11 +779,6 @@ const PlayScreen = ({
               <Animated.View
                 style={{
                   position: 'absolute',
-                  // Hide album art swiper when we're in the Training chapter.
-                  zIndex:
-                    activeChapter === chapters.TRAINING
-                      ? middleAreaVisibility.HIDE
-                      : middleAreaVisibility.SHOW,
                   opacity: albumArtSwiperOpacity
                 }}
               >
@@ -817,11 +797,6 @@ const PlayScreen = ({
               <Animated.View
                 style={{
                   position: 'absolute',
-                  zIndex:
-                    // Show video player if we're in the Training chapter.
-                    activeChapter === chapters.TRAINING
-                      ? middleAreaVisibility.SHOW
-                      : middleAreaVisibility.HIDE,
                   opacity: videoPlayerOpacity
                 }}
               >
@@ -835,6 +810,7 @@ const PlayScreen = ({
                   fullscreenStatus={fullscreenStatus}
                   setFullScreenStatus={status => setFullscreenStatus(status)}
                   activeChapter={activeChapter}
+                  isMediaLoaded={isMediaLoaded}
                 />
               </Animated.View>
             )}
@@ -861,13 +837,13 @@ const PlayScreen = ({
             playFromLocation={playFromLocation}
             shouldThumbUpdate={shouldThumbUpdate}
             mediaLength={mediaLength}
-            thumbPosition={thumbPosition}
+            mediaProgress={mediaProgress}
           />
           <PlaybackControls
             isMediaPlaying={isMediaPlaying}
             isMediaLoaded={isMediaLoaded}
             playHandler={playHandler}
-            thumbPosition={thumbPosition}
+            mediaProgress={mediaProgress}
             playFromLocation={playFromLocation}
           />
         </SafeAreaView>

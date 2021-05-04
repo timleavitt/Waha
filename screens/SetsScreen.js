@@ -328,7 +328,7 @@ const SetsScreen = ({
         // For performance optimization.
         getItemLayout={getItemLayout}
         ListFooterComponent={
-          // If we're in the Mobilization Tab AND this language doesn't have any MT content, display a "No MT Content" component. Otherwise, show the add Stor Set button.
+          // If we're in the Mobilization Tab AND this language doesn't have any MT content, display a "No MT Content" component. Otherwise, show the add Story Set button.
           category === 'MobilizationTools' &&
           !activeDatabase.sets.some(set => /[a-z]{2}.3.[0-9]+/.test(set.id))
             ? renderNoMTLabel

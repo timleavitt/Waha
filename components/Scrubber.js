@@ -4,18 +4,24 @@ import { StyleSheet, View } from 'react-native'
 import TimeDisplay from '../components/TimeDisplay'
 import { colors } from '../styles/colors'
 
-// scrubber component rendered on play screen
+/**
+ * A component on the Play Screen that shows the current progress through the loaded media and allows the user to "scrub" to a different position.
+ * @param {Function} playFromLocation - Function that plays the media from a specific location in milliseconds.
+ * @param {boolean} shouldThumbUpdate - Whether the "thumb", or draggable circle, of the scrubber should update (i.e. "tick").
+ * @param {number} mediaLength - The length of the loaded media in milliseconds.
+ * @param {number} mediaProgress - The progress in milliseconds through the current media.
+ */
 const Scrubber = ({
   // Props passed from a parent component.
   playFromLocation,
   shouldThumbUpdate,
   mediaLength,
-  thumbPosition
+  mediaProgress
 }) => (
   <View style={styles.scrubberContainer}>
-    <View style={styles.scrubber}>
+    <View style={styles.sliderContainer}>
       <Slider
-        value={thumbPosition}
+        value={mediaProgress}
         onSlidingComplete={playFromLocation}
         onValueChange={() => (shouldThumbUpdate.current = false)}
         minimumValue={0}
@@ -26,8 +32,8 @@ const Scrubber = ({
         thumbTintColor={colors.tuna}
       />
     </View>
-    <View style={styles.timeInfo}>
-      <TimeDisplay time={thumbPosition} max={mediaLength} side='left' />
+    <View style={styles.timeInfoContainer}>
+      <TimeDisplay time={mediaProgress} max={mediaLength} side='left' />
       <TimeDisplay time={mediaLength} max={mediaLength} side='right' />
     </View>
   </View>
@@ -42,22 +48,15 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10
   },
-  scrubber: {
+  sliderContainer: {
     width: '100%'
   },
-  timeInfo: {
+  timeInfoContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
     paddingHorizontal: 3
   }
 })
-
-const areEqual = (prevProps, nextProps) => {
-  return (
-    prevProps.thumbPosition === nextProps.thumbPosition &&
-    prevProps.mediaLength === nextProps.mediaLength
-  )
-}
 
 export default Scrubber
