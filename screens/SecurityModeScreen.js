@@ -36,7 +36,7 @@ function mapDispatchToProps (dispatch) {
 }
 
 /**
- * A screen that displays the configuration options for security mode. Allows for turning it on/off, changing the timeout, and updating your key code.
+ * A screen that displays the configuration options for security mode. Allows for turning it on/off, changing the timeout, and updating your passcode.
  */
 const SecurityModeScreen = ({
   // Props passed from navigation.
@@ -68,7 +68,7 @@ const SecurityModeScreen = ({
    * Converts milliseconds into a label that says how long the security timeout is.
    * @return {string} - The label to display next to the timeout button that says how long the current security timeout is.
    */
-  function getTimeoutText () {
+  const getTimeoutText = () => {
     if (security.timeoutDuration === 60000)
       return translations.security.one_minute_label
     else if (security.timeoutDuration === 300000)
@@ -83,57 +83,9 @@ const SecurityModeScreen = ({
       return translations.security.instant_label
   }
 
-  // Determines what to render for the security controls. If the user has already gone through the security onboarding (i.e. has created a code), then we show the controls. Otherwise, hide them.
-  var securityControls = security.code ? (
-    <View style={{ width: '100%' }}>
-      {/* Control item one allows the user to change the security mode timeout. */}
-      <WahaSeparator />
-      <WahaItem
-        title={translations.security.change_timeout_button_label}
-        onPress={() => setShowChangeTimeoutModal(true)}
-      >
-        <View
-          style={{
-            flexDirection: isRTL ? 'row-reverse' : 'row',
-            alignItems: 'center'
-          }}
-        >
-          <Text
-            style={StandardTypography(
-              { font, isRTL },
-              'h4',
-              'Regular',
-              'left',
-              colors.chateau
-            )}
-          >
-            {getTimeoutText()}
-          </Text>
-          <Icon
-            name={isRTL ? 'arrow-left' : 'arrow-right'}
-            color={colors.tuna}
-            size={50 * scaleMultiplier}
-          />
-        </View>
-      </WahaItem>
-      {/* Control item two allows the user to update their passcode. */}
-      <WahaSeparator />
-      <WahaItem
-        title={translations.security.change_key_order_button_label}
-        onPress={() => navigate('KeyOrderChange_Initial')}
-      >
-        <Icon
-          name={isRTL ? 'arrow-left' : 'arrow-right'}
-          color={colors.tuna}
-          size={50 * scaleMultiplier}
-        />
-      </WahaItem>
-      <WahaSeparator />
-    </View>
-  ) : null
-
   return (
     <View style={styles.screen}>
+      {/* Inside a ScrollView in case a user's phone can't fit all of the controls on their screen. */}
       <ScrollView bounces={false}>
         <WahaHero source={require('../assets/gifs/piano_unlock.gif')} />
         <WahaBlurb
@@ -147,20 +99,64 @@ const SecurityModeScreen = ({
             ios_backgroundColor={colors.chateau}
             onValueChange={() => {
               // If we have never enabled security mode before (meaning we have never set a code), then navigate to the security onboarding slides. Otherwise, toggle security mode on or off.
-              if (security.code) {
-                if (security.securityEnabled) {
-                  setSecurityEnabled(false)
-                } else setSecurityEnabled(true)
-              } else {
-                navigate('SecurityOnboardingSlides')
-              }
+              if (security.code)
+                if (security.securityEnabled) setSecurityEnabled(false)
+                else setSecurityEnabled(true)
+              else navigate('SecurityOnboardingSlides')
             }}
             value={security.securityEnabled}
           />
         </WahaItem>
         <WahaSeparator />
         <View style={{ height: 20 * scaleMultiplier }} />
-        {securityControls}
+        {/* If the user has already gone through the security onboarding (i.e. has created a code), then we show the controls. */}
+        {security.code && (
+          <View style={{ width: '100%' }}>
+            {/* Control item one allows the user to change the security mode timeout. */}
+            <WahaSeparator />
+            <WahaItem
+              title={translations.security.change_timeout_button_label}
+              onPress={() => setShowChangeTimeoutModal(true)}
+            >
+              <View
+                style={{
+                  flexDirection: isRTL ? 'row-reverse' : 'row',
+                  alignItems: 'center'
+                }}
+              >
+                <Text
+                  style={StandardTypography(
+                    { font, isRTL },
+                    'h4',
+                    'Regular',
+                    'left',
+                    colors.chateau
+                  )}
+                >
+                  {getTimeoutText()}
+                </Text>
+                <Icon
+                  name={isRTL ? 'arrow-left' : 'arrow-right'}
+                  color={colors.tuna}
+                  size={50 * scaleMultiplier}
+                />
+              </View>
+            </WahaItem>
+            {/* Control item two allows the user to update their passcode. */}
+            <WahaSeparator />
+            <WahaItem
+              title={translations.security.change_key_order_button_label}
+              onPress={() => navigate('KeyOrderChange_Initial')}
+            >
+              <Icon
+                name={isRTL ? 'arrow-left' : 'arrow-right'}
+                color={colors.tuna}
+                size={50 * scaleMultiplier}
+              />
+            </WahaItem>
+            <WahaSeparator />
+          </View>
+        )}
       </ScrollView>
       {/* Modals */}
       <SecurityTimeoutPickerModal
@@ -170,8 +166,6 @@ const SecurityModeScreen = ({
     </View>
   )
 }
-
-//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {

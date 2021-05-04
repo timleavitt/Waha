@@ -339,7 +339,7 @@ const SetsScreen = ({
         isVisible={showMTTabAddedSnackbar}
         hideModal={() => setShowMTTabAddedSnackbar(false)}
         title={translations.passcode.popups.unlock_successful_title}
-        body={translations.passcode.popups.unlock_successful_message}
+        message={translations.passcode.popups.unlock_successful_message}
         confirmText={translations.general.got_it}
         confirmOnPress={() => setShowMTTabAddedSnackbar(false)}
       >

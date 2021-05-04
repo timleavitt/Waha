@@ -329,7 +329,7 @@ const LessonsScreen = ({
         closeText={translations.general.cancel}
       >
         <OptionsModalButton
-          title={translations.lessons.popups.download_lesson_button_label}
+          label={translations.lessons.popups.download_lesson_button_label}
           onPress={downloadLessonFromModal}
         />
       </OptionsModal>
@@ -339,7 +339,7 @@ const LessonsScreen = ({
         closeText={translations.general.cancel}
       >
         <OptionsModalButton
-          title={translations.lessons.popups.delete_lesson_button_label}
+          label={translations.lessons.popups.delete_lesson_button_label}
           onPress={deleteLessonFromModal}
         />
       </OptionsModal>
@@ -355,7 +355,7 @@ const LessonsScreen = ({
         isVisible={showSetCompleteModal}
         hideModal={() => setShowSetCompleteModal(false)}
         title={translations.general.popups.set_complete_title}
-        body={translations.general.popups.set_complete_message}
+        message={translations.general.popups.set_complete_message}
         confirmText={translations.general.got_it}
         confirmOnPress={() => {
           setShowSetCompleteModal(false)

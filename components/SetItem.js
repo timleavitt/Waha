@@ -356,7 +356,7 @@ const SetItem = ({
         isVisible={showUnlockModal}
         hideModal={() => setShowUnlockModal(false)}
         title={translations.general.popups.new_story_set_unlocked_title}
-        body={translations.general.popups.new_story_set_unlocked_message}
+        message={translations.general.popups.new_story_set_unlocked_message}
         confirmText={translations.general.got_it}
         confirmOnPress={() => setShowUnlockModal(false)}
       >

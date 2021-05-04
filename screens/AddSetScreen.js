@@ -178,6 +178,10 @@ const AddSetScreen = ({
     downloadedFiles
   ])
 
+  /**
+   * Gets a list of sets to display on this screen depending on the category.
+   * @return {Object[]} - An array of set objects to display.
+   */
   function getSetData () {
     if (category === 'Topical')
       return (
@@ -233,38 +237,6 @@ const AddSetScreen = ({
       )
   }
 
-  // The component for the list of tags. Uses the <TagGroup /> component.
-  const tagsComponent = (
-    <TagGroup
-      source={tags}
-      singleChoiceMode
-      onSelectedTagChange={selected => setSelectedTag(selected)}
-      style={{
-        paddingHorizontal: 10,
-        paddingTop: 10,
-        paddingBottom: 2
-      }}
-      tagStyle={{
-        borderRadius: 30,
-        borderColor: colors.oslo,
-        height: 35 * scaleMultiplier,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20 * scaleMultiplier
-      }}
-      textStyle={{ color: colors.oslo, fontFamily: font + '-Regular' }}
-      activeTagStyle={{
-        borderRadius: 20,
-        backgroundColor: primaryColor,
-        borderColor: primaryColor
-      }}
-      activeTextStyle={{
-        color: colors.white,
-        fontFamily: font + '-Regular'
-      }}
-    />
-  )
-
   /** Renders a <SetItem /> for the list of sets available to add. */
   const renderSetItem = ({ item }) => (
     <SetItem
@@ -279,11 +251,36 @@ const AddSetScreen = ({
 
   return (
     <View style={styles.screen}>
-      {category === 'Topical' ? tagsComponent : null}
+      {category === 'Topical' && (
+        <TagGroup
+          source={tags}
+          singleChoiceMode
+          onSelectedTagChange={selected => setSelectedTag(selected)}
+          style={styles.tagGroupContainer}
+          tagStyle={styles.tagContainer}
+          textStyle={StandardTypography(
+            { font, isRTL },
+            'p',
+            'Regular',
+            'center',
+            colors.oslo
+          )}
+          activeTagStyle={{
+            backgroundColor: primaryColor,
+            borderColor: primaryColor
+          }}
+          activeTextStyle={StandardTypography(
+            { font, isRTL },
+            'p',
+            'Regular',
+            'center',
+            colors.white
+          )}
+        />
+      )}
       <FlatList
         style={{ flex: 1 }}
         data={setData}
-        extraData={selectedTag}
         ItemSeparatorComponent={() => <WahaSeparator />}
         ListFooterComponent={() => <WahaSeparator />}
         ListHeaderComponent={() => <WahaSeparator />}
@@ -333,6 +330,19 @@ const styles = StyleSheet.create({
   screen: {
     backgroundColor: colors.white,
     flex: 1
+  },
+  tagGroupContainer: {
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 2
+  },
+  tagContainer: {
+    borderRadius: 30,
+    borderColor: colors.oslo,
+    height: 35 * scaleMultiplier,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20 * scaleMultiplier
   }
 })
 

@@ -102,14 +102,14 @@ const ShareModal = ({
       closeText={closeText}
     >
       <OptionsModalButton
-        title={translations.general.share_app}
+        label={translations.general.share_app}
         onPress={() => share('app')}
       />
       {lessonType.includes('Questions') ? (
         <View>
           <WahaSeparator />
           <OptionsModalButton
-            title={translations.general.share_passage_text}
+            label={translations.general.share_passage_text}
             onPress={() => share('text')}
           />
         </View>
@@ -118,7 +118,7 @@ const ShareModal = ({
         <View>
           <WahaSeparator />
           <OptionsModalButton
-            title={translations.general.share_passage_audio}
+            label={translations.general.share_passage_audio}
             onPress={() => share('audio')}
           />
         </View>
@@ -129,7 +129,7 @@ const ShareModal = ({
         <View>
           <WahaSeparator />
           <OptionsModalButton
-            title={translations.general.share_video_link}
+            label={translations.general.share_video_link}
             onPress={() => share('video')}
           />
         </View>

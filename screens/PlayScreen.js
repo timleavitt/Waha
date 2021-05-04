@@ -862,7 +862,7 @@ const PlayScreen = ({
         isVisible={showSetCompleteModal}
         hideModal={() => setShowSetCompleteModal(false)}
         title={translations.general.popups.set_complete_title}
-        body={translations.general.popups.set_complete_message}
+        message={translations.general.popups.set_complete_message}
         confirmText={translations.general.got_it}
         confirmOnPress={() => {
           setShowSetCompleteModal(false)

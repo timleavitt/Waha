@@ -17,58 +17,57 @@ function mapStateToProps (state) {
   }
 }
 
+/**
+ * A modal component that displays a list of buttons. Very similar to the standard iOS action sheet.
+ * @param {boolean} isVisible - Whether the modal is visible.
+ * @param {Function} hideModal - Function to hide the modal.
+ * @param {string} closeText - The text to display on the button that closes the modal.
+ * @param {Component} children - The list of buttons to display in the modal.
+ */
 const OptionsModal = ({
   // Props passed from a parent component.
   isVisible,
   hideModal,
   closeText,
-  children = null,
+  children,
   // Props passed from redux.
   font,
   isRTL
-}) => {
-  //+ RENDER
-  return (
-    <Modal
-      isVisible={isVisible}
-      hasBackdrop={true}
-      onBackdropPress={hideModal}
-      backdropOpacity={0.3}
-      style={{ justifyContent: 'flex-end' }}
-      onSwipeComplete={hideModal}
-      swipeDirection={['down']}
-      propagateSwipe={true}
-      useNativeDriver
-    >
-      <View style={{}}>
-        <View style={styles.buttonsContainer}>{children}</View>
-        <View style={styles.closeButtonContainer}>
-          <TouchableOpacity
-            onPress={hideModal}
-            style={styles.closeButtonContainer}
-          >
-            <Text
-              style={StandardTypography(
-                { font, isRTL },
-                'h3',
-                'Bold',
-                'center',
-                colors.red
-              )}
-            >
-              {closeText}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  )
-}
+}) => (
+  <Modal
+    isVisible={isVisible}
+    hasBackdrop={true}
+    onBackdropPress={hideModal}
+    backdropOpacity={0.3}
+    style={{ justifyContent: 'flex-end' }}
+    onSwipeComplete={hideModal}
+    swipeDirection={['down']}
+    propagateSwipe={true}
+    useNativeDriver
+  >
+    <View>
+      <View style={styles.childrenContainer}>{children}</View>
+      <TouchableOpacity onPress={hideModal} style={styles.closeButtonContainer}>
+        <Text
+          style={StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Bold',
+            'center',
+            colors.red
+          )}
+        >
+          {closeText}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  </Modal>
+)
 
 const styles = StyleSheet.create({
-  buttonsContainer: {
+  childrenContainer: {
     backgroundColor: colors.white,
-    borderRadius: 10,
+    borderRadius: 20,
     marginVertical: 10
   },
   closeButtonContainer: {
@@ -76,8 +75,7 @@ const styles = StyleSheet.create({
     height: 70 * scaleMultiplier,
     justifyContent: 'center',
     backgroundColor: colors.white,
-    borderRadius: 10
-    // marginTop: 5
+    borderRadius: 20
   }
 })
 
