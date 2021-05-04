@@ -63,6 +63,7 @@ const WahaButton = ({
     else if (color === colors.geyser) setShadowColor(colors.geyserShadow)
   }, [color])
 
+  // Main container styles.
   const outerContainerStyle = [
     {
       overflow: 'hidden',
@@ -78,6 +79,7 @@ const WahaButton = ({
     style
   ]
 
+  // Inner container styles.
   const innerContainerStyle = {
     paddingHorizontal: 15,
     alignItems: 'center',
@@ -87,6 +89,7 @@ const WahaButton = ({
     width: '100%'
   }
 
+  // Specific styles for the outline type button.
   const outlineButtonStyle = [
     innerContainerStyle,
     {
@@ -101,6 +104,7 @@ const WahaButton = ({
     style
   ]
 
+  // Specific styles for the filled and inactive type buttons.
   const filledAndInactiveButtonStyle = [
     innerContainerStyle,
     {
@@ -110,27 +114,25 @@ const WahaButton = ({
     }
   ]
 
+  // Styles for the button text.
   const labelStyle = [
     useDefaultFont
       ? SystemTypography(false, 'h3', 'Bold', 'center', color)
       : StandardTypography({ font, isRTL }, 'h3', 'Bold', 'center', color),
-    {
-      fontWeight: font ? null : 'bold',
-      color:
-        type === 'filled'
-          ? colors.white
-          : type === 'inactive'
-          ? colors.chateau
-          : color
-    },
+    { fontWeight: font ? null : 'bold' },
     textStyle
   ]
+
+  // Specific styles for the labels for the different types of buttons.
+  const outlineLabelStyle = [labelStyle, { color: color }]
+  const filledLabelStyle = [labelStyle, { color: colors.white }]
+  const inactiveLabelStyle = [labelStyle, { color: colors.chateau }]
 
   switch (type) {
     case 'outline':
       return (
         <TouchableOpacity style={outlineButtonStyle} onPress={onPress}>
-          <Text style={labelStyle}>{label}</Text>
+          <Text style={outlineLabelStyle}>{label}</Text>
           {extraComponent}
         </TouchableOpacity>
       )
@@ -139,7 +141,7 @@ const WahaButton = ({
       return (
         <TouchableOpacity style={outerContainerStyle} onPress={onPress}>
           <View style={filledAndInactiveButtonStyle}>
-            <Text style={labelStyle}>{label}</Text>
+            <Text style={filledLabelStyle}>{label}</Text>
             {extraComponent}
           </View>
         </TouchableOpacity>
@@ -149,7 +151,7 @@ const WahaButton = ({
       return (
         <View style={outerContainerStyle}>
           <View style={filledAndInactiveButtonStyle}>
-            <Text style={labelStyle}>{label}</Text>
+            <Text style={inactiveLabelStyle}>{label}</Text>
             {extraComponent}
           </View>
         </View>
