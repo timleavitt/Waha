@@ -80,10 +80,7 @@ const MainStack = ({
   /** Keeps track of the current app state. Can be "active", "inactive", or "background". Set by the app state listener function. */
   const [appState, setAppState] = useState('')
 
-  /**
-   * useEffect function that acts as a constructor. It starts up the app state listener and cleans it up as well.
-   * @function
-   */
+  /** useEffect function that acts as a constructor. It starts up the app state listener and cleans it up as well. */
   useEffect(() => {
     const appStateUnsubscribe = AppState.addEventListener('change', change =>
       setAppState(change)
@@ -94,10 +91,7 @@ const MainStack = ({
     }
   }, [])
 
-  /**
-   * useEffect function that reacts to changes in app state changes. This is used to display the splash screen to hide the app preview in multitasking as well as keeping track of security mode timeouts.
-   * @function
-   */
+  /** useEffect function that reacts to changes in app state changes. This is used to display the splash screen to hide the app preview in multitasking as well as keeping track of security mode timeouts. */
   useEffect(() => {
     if (appState === 'inactive' || appState === 'background') {
       // Hide screen during multitasking or going to the home screen on iOS.
@@ -128,9 +122,7 @@ const MainStack = ({
     }
   }, [appState])
 
-  /**
-   * Function for fading out from the piano screen into the normal navigator.
-   */
+  /** Function for fading out from the piano screen into the normal navigator. */
   const forFade = ({ current }) => ({
     cardStyle: {
       opacity: current.progress
@@ -215,15 +207,7 @@ const MainStack = ({
                     onPress={() => toggleDrawer()}
                     isActive={true}
                   />
-                  {languageCoreFilesToUpdate.length !== 0 ? (
-                    // <View
-                    //   style={{
-                    //     width: '100%',
-                    //     height: 12,
-                    //     position: 'absolute',
-                    //     alignSelf: 'flex-start'
-                    //   }}
-                    // >
+                  {languageCoreFilesToUpdate.length !== 0 && (
                     <View
                       style={{
                         zIndex: 100,
@@ -244,7 +228,7 @@ const MainStack = ({
                       />
                       <View style={{ width: 5 }} />
                     </View>
-                  ) : null}
+                  )}
                 </View>
               )
             : () => <TestModeDisplay />
