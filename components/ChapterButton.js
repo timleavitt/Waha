@@ -76,6 +76,15 @@ const ChapterButton = ({
     translations.play.application
   ]
 
+  // The default text style.
+  const defaultTextStyle = StandardTypography(
+    { font, isRTL },
+    'p',
+    'Bold',
+    'center',
+    primaryColor
+  )
+
   // Whenever the active chapter or the user's internet connection status changes, get the most updated mode.
   useEffect(() => {
     setChapterButtonMode()
@@ -149,15 +158,7 @@ const ChapterButton = ({
           backgroundColor: primaryColor,
           borderColor: primaryColor
         })
-        setTextStyle(
-          StandardTypography(
-            { font, isRTL },
-            'p',
-            'Black',
-            'center',
-            colors.white
-          )
-        )
+        setTextStyle({ color: colors.white })
         setIconColor(colors.white)
         // Slight adjustment if the lesson contains a training chapter since that will make the Application need the '4' label instead of '3'.
         if (lessonType.includes('Video') && chapter === chapters.APPLICATION)
@@ -174,15 +175,7 @@ const ChapterButton = ({
           borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
-        setTextStyle(
-          StandardTypography(
-            { font, isRTL },
-            'p',
-            'Black',
-            'center',
-            primaryColor
-          )
-        )
+        setTextStyle({ color: primaryColor })
         setIconColor(primaryColor)
         // Slight adjustment if the lesson contains a training chapter since that will make the Application need the '4' label instead of '3'. Another adjustment is that if the chapter is behind the active chapter, the icon is a check mark to show that it's been completed.
         if (lessonType.includes('Video') && chapter === chapters.APPLICATION)
@@ -199,15 +192,7 @@ const ChapterButton = ({
           borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
-        setTextStyle(
-          StandardTypography(
-            { font, isRTL },
-            'p',
-            'Black',
-            'center',
-            primaryColor
-          )
-        )
+        setTextStyle({ color: primaryColor })
         setIconColor(primaryColor)
         setIconName('check-filled')
         break
@@ -216,15 +201,7 @@ const ChapterButton = ({
           borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
-        setTextStyle(
-          StandardTypography(
-            { font, isRTL },
-            'p',
-            'Black',
-            'center',
-            colors.chateau
-          )
-        )
+        setTextStyle({ color: chateau })
         setIconName(null)
         setIconColor(null)
         break
@@ -233,15 +210,7 @@ const ChapterButton = ({
           borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
-        setTextStyle(
-          StandardTypography(
-            { font, isRTL },
-            'p',
-            'Black',
-            'center',
-            colors.chateau
-          )
-        )
+        setTextStyle({ color: chateau })
         setIconName('cloud-slash')
         setIconColor(colors.chateau)
         break
@@ -280,7 +249,13 @@ const ChapterButton = ({
         <Icon name={iconName} size={25 * scaleMultiplier} color={iconColor} />
       )}
       {/* The name of the chapter. */}
-      <Text style={textStyle}>{chapterNames[chapter]}</Text>
+      <Text
+        adjustsFontSizeToFit
+        numberOfLines={1}
+        style={[defaultTextStyle, textStyle]}
+      >
+        {chapterNames[chapter]}
+      </Text>
     </TouchableOpacity>
   )
 }
@@ -292,8 +267,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    // borderRadius: 20,
-    borderWidth: 2
+    borderRadius: 20,
+    borderWidth: 2,
+    paddingHorizontal: 3
     // borderTopWidth: 2,
     // borderBottomWidth: 2
   }
