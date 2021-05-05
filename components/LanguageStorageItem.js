@@ -41,7 +41,7 @@ const LanguageStorageItem = ({
   <View style={styles.languageStorageItemContainer}>
     <View
       style={[
-        styles.languageHeaderContainer,
+        styles.languageStorageHeaderContainer,
         { flexDirection: isRTL ? 'row-reverse' : 'row' }
       ]}
     >
@@ -54,8 +54,7 @@ const LanguageStorageItem = ({
           colors.chateau
         )}
       >
-        {/* Display the name of the language with "downloads" after it. */}
-        {languageName + ' ' + translations.storage.downloads_label}
+        {languageName}
       </Text>
       <Image
         style={styles.languageLogo}
@@ -117,7 +116,7 @@ const styles = StyleSheet.create({
   languageStorageItemContainer: {
     width: '100%'
   },
-  languageHeaderContainer: {
+  languageStorageHeaderContainer: {
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
@@ -133,7 +132,6 @@ const styles = StyleSheet.create({
   mainAreaContainer: {
     width: '100%',
     height: 80 * scaleMultiplier,
-    // aspectRatio: 5,
     backgroundColor: colors.white,
     alignItems: 'center',
     paddingHorizontal: 20,

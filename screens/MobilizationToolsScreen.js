@@ -92,7 +92,9 @@ const MobilizationToolsScreen = ({
             onPress={() => {
               setShowSnackbar(true)
               setTimeout(() => setShowSnackbar(false), 1500)
-              Clipboard.setString('281820')
+              Clipboard.setString(
+                `${translations.mobilization_tools.mobilization_tools_share_message_1}\n${translations.mobilization_tools.mobilization_tools_share_message_2}\n${translations.mobilization_tools.mobilization_tools_share_message_3}\n${translations.mobilization_tools.mobilization_tools_share_message_4}\n${translations.mobilization_tools.mobilization_tools_share_message_5}`
+              )
             }}
           >
             <Text
@@ -127,9 +129,7 @@ const MobilizationToolsScreen = ({
             }}
             onPress={() =>
               Share.share({
-                message:
-                  translations.mobilization_tools
-                    .mobilization_tools_share_message
+                message: `${translations.mobilization_tools.mobilization_tools_share_message_1}\n${translations.mobilization_tools.mobilization_tools_share_message_2}\n${translations.mobilization_tools.mobilization_tools_share_message_3}\n${translations.mobilization_tools.mobilization_tools_share_message_4}\n${translations.mobilization_tools.mobilization_tools_share_message_5}`
               })
             }
           >

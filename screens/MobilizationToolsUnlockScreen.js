@@ -257,7 +257,7 @@ const MobilizationToolsUnlockScreen = ({
           navigate('SetsTabs', { screen: 'MobilizationTools' })
         }}
         title='Mobilization Tools unlocked successfully!'
-        body=''
+        message=''
         confirmText='Check it out'
         confirmOnPress={() => {
           setUnlockSuccessModal(false)

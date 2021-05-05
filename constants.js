@@ -8,10 +8,11 @@ import { languages } from './languages'
  */
 
 export const chapterButtonModes = {
-  INACTIVE: 1,
-  ACTIVE: 2,
-  DOWNLOADING: 3,
-  DISABLED: 4
+  INCOMPLETE: 1,
+  COMPLETE: 2,
+  ACTIVE: 3,
+  DOWNLOADING: 4,
+  DISABLED: 5
 }
 
 export const chapters = {

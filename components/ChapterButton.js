@@ -34,7 +34,8 @@ function mapStateToProps (state) {
  * @param {Function} changeChapter - Changes the currently active chapter.
  * @param {string} lessonType - The type of the current lesson. See lessonTypes in constants.js.
  * @param {string} lessonID - The ID of the current lesson. Only needed for the Story and Training chapters.
- * @param {boolean} isFullyDownloaded - Whether a lesson has all of its media downloaded or not. Includes video files for lessons that require them. Only needed for the Story and Training chapters.
+ * @param {boolean} isAudioDownloaded - Whether this lesson has its audio file downloaded or not. Only needed for the Story chapter button.
+ * @param {boolean} isVideoDownloaded - Whether this lesson has its video file downloaded or not. Only needed for the Training chapter button.
  */
 const ChapterButton = ({
   // Props passed from a parent component.
@@ -43,7 +44,8 @@ const ChapterButton = ({
   changeChapter,
   lessonType,
   lessonID = null,
-  isFullyDownloaded = false,
+  isAudioDownloaded = false,
+  isVideoDownloaded = false,
   // Props passed from redux.
   font,
   activeGroup,
@@ -62,6 +64,9 @@ const ChapterButton = ({
   const [textStyle, setTextStyle] = useState({})
   const [iconColor, setIconColor] = useState(primaryColor)
 
+  /** Keeps track of the download progress for the piece of media associated with the chapter button's chapter. */
+  const [downloadProgress, setDownloadProgress] = useState(0)
+
   // The names of the chapters. 'Filler' is there to line up this array with the chapters enum since the enum starts at 1.
   const chapterNames = [
     'Filler',
@@ -71,12 +76,21 @@ const ChapterButton = ({
     translations.play.application
   ]
 
+  // The default text style.
+  const defaultTextStyle = StandardTypography(
+    { font, isRTL },
+    'p',
+    'Bold',
+    'center',
+    primaryColor
+  )
+
   // Whenever the active chapter or the user's internet connection status changes, get the most updated mode.
   useEffect(() => {
     setChapterButtonMode()
   }, [activeChapter, isConnected])
 
-  // Also get the most updated mode whenever the download progress changes for this lesson's.
+  // Also get the most updated mode whenever the download progress changes for this lesson.
   useEffect(() => {
     if (chapter === chapters.STORY || chapter === chapters.TRAINING)
       setChapterButtonMode()
@@ -89,43 +103,49 @@ const ChapterButton = ({
 
   /** Sets the mode for this chapter button. */
   const setChapterButtonMode = () => {
-    // Set the chapter button to the appropriate mode.
     switch (chapter) {
       case chapters.FELLOWSHIP:
         if (activeChapter === chapters.FELLOWSHIP)
           setMode(chapterButtonModes.ACTIVE)
-        else setMode(chapterButtonModes.INACTIVE)
+        // Because the active chapter and chapter are stored as numbers, we can check if the active chapter is bigger than the chapter for this button to see if it's already been completed.
+        else if (activeChapter > chapter) setMode(chapterButtonModes.COMPLETE)
+        else setMode(chapterButtonModes.INCOMPLETE)
         break
       case chapters.STORY:
         if (
           (lessonType === lessonTypes.STANDARD_DBS ||
             lessonType === lessonTypes.STANDARD_DMC) &&
           !isConnected &&
-          !isFullyDownloaded
+          !isAudioDownloaded
         )
           setMode(chapterButtonModes.DISABLED)
-        else if (downloads[lessonID] && downloads[lessonID].progress < 1)
+        else if (downloads[lessonID] && downloads[lessonID].progress < 1) {
+          setDownloadProgress(downloads[lessonID].progress * 100)
           setMode(chapterButtonModes.DOWNLOADING)
-        else if (activeChapter === chapters.STORY)
+        } else if (activeChapter === chapters.STORY)
           setMode(chapterButtonModes.ACTIVE)
-        else setMode(chapterButtonModes.INACTIVE)
+        else if (activeChapter > chapter) setMode(chapterButtonModes.COMPLETE)
+        else setMode(chapterButtonModes.INCOMPLETE)
         break
       case chapters.TRAINING:
-        if (!isConnected && !isFullyDownloaded)
+        if (!isConnected && !isVideoDownloaded)
           setMode(chapterButtonModes.DISABLED)
         else if (
           downloads[lessonID + 'v'] &&
           downloads[lessonID + 'v'].progress < 1
-        )
+        ) {
+          setDownloadProgress(downloads[lessonID + 'v'].progress * 100)
           setMode(chapterButtonModes.DOWNLOADING)
-        else if (activeChapter === chapters.TRAINING)
+        } else if (activeChapter === chapters.TRAINING)
           setMode(chapterButtonModes.ACTIVE)
-        else setMode(chapterButtonModes.INACTIVE)
+        else if (activeChapter > chapter) setMode(chapterButtonModes.COMPLETE)
+        else setMode(chapterButtonModes.INCOMPLETE)
         break
       case chapters.APPLICATION:
         if (activeChapter === chapters.APPLICATION)
           setMode(chapterButtonModes.ACTIVE)
-        else setMode(chapterButtonModes.INACTIVE)
+        else if (activeChapter > chapter) setMode(chapterButtonModes.COMPLETE)
+        else setMode(chapterButtonModes.INCOMPLETE)
         break
     }
   }
@@ -138,15 +158,7 @@ const ChapterButton = ({
           backgroundColor: primaryColor,
           borderColor: primaryColor
         })
-        setTextStyle(
-          StandardTypography(
-            { font, isRTL },
-            'p',
-            'Black',
-            'center',
-            colors.white
-          )
-        )
+        setTextStyle({ color: colors.white })
         setIconColor(colors.white)
         // Slight adjustment if the lesson contains a training chapter since that will make the Application need the '4' label instead of '3'.
         if (lessonType.includes('Video') && chapter === chapters.APPLICATION)
@@ -158,20 +170,12 @@ const ChapterButton = ({
           setIconName('number-3-filled')
         else setIconName(`number-${chapter}-filled`)
         break
-      case chapterButtonModes.INACTIVE:
+      case chapterButtonModes.INCOMPLETE:
         setExtraButtonStyle({
-          borderColor: primaryColor,
+          borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
-        setTextStyle(
-          StandardTypography(
-            { font, isRTL },
-            'p',
-            'Black',
-            'center',
-            primaryColor
-          )
-        )
+        setTextStyle({ color: primaryColor })
         setIconColor(primaryColor)
         // Slight adjustment if the lesson contains a training chapter since that will make the Application need the '4' label instead of '3'. Another adjustment is that if the chapter is behind the active chapter, the icon is a check mark to show that it's been completed.
         if (lessonType.includes('Video') && chapter === chapters.APPLICATION)
@@ -181,41 +185,32 @@ const ChapterButton = ({
           chapter === chapters.APPLICATION
         )
           setIconName('number-3-filled')
-        // If the active chapter is ahead of this chapter, set the icon to a checkmark.
-        else if (chapter < activeChapter) setIconName('check-filled')
         else setIconName(`number-${chapter}-filled`)
+        break
+      case chapterButtonModes.COMPLETE:
+        setExtraButtonStyle({
+          borderColor: colors.porcelain,
+          backgroundColor: colors.athens
+        })
+        setTextStyle({ color: primaryColor })
+        setIconColor(primaryColor)
+        setIconName('check-filled')
         break
       case chapterButtonModes.DOWNLOADING:
         setExtraButtonStyle({
-          borderColor: colors.chateau,
+          borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
-        setTextStyle(
-          StandardTypography(
-            { font, isRTL },
-            'p',
-            'Black',
-            'center',
-            colors.chateau
-          )
-        )
+        setTextStyle({ color: chateau })
         setIconName(null)
         setIconColor(null)
         break
       case chapterButtonModes.DISABLED:
         setExtraButtonStyle({
-          borderColor: colors.chateau,
+          borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
-        setTextStyle(
-          StandardTypography(
-            { font, isRTL },
-            'p',
-            'Black',
-            'center',
-            colors.chateau
-          )
-        )
+        setTextStyle({ color: chateau })
         setIconName('cloud-slash')
         setIconColor(colors.chateau)
         break
@@ -225,6 +220,7 @@ const ChapterButton = ({
   return (
     <TouchableOpacity
       style={[styles.chapterButton, extraButtonStyle]}
+      // Disable onPress (by making the onPress function empty and by disabling the touch effect) if the chapter button is DISABLED or DOWNLOADING.
       onPress={
         mode === chapterButtonModes.DISABLED ||
         mode === chapterButtonModes.DOWNLOADING
@@ -238,15 +234,12 @@ const ChapterButton = ({
           : 0.2
       }
     >
+      {/* If we're DOWNLOADING, show the progress indicator. Otherwise, show an icon. */}
       {mode === chapterButtonModes.DOWNLOADING ? (
         <AnimatedCircularProgress
           size={22 * scaleMultiplier}
           width={4}
-          fill={
-            chapter === chapters.TRAINING
-              ? downloads[lessonID + 'v'].progress * 100
-              : downloads[lessonID].progress * 100
-          }
+          fill={downloadProgress}
           tintColor={primaryColor}
           rotation={0}
           backgroundColor={colors.white}
@@ -255,7 +248,14 @@ const ChapterButton = ({
       ) : (
         <Icon name={iconName} size={25 * scaleMultiplier} color={iconColor} />
       )}
-      <Text style={textStyle}>{chapterNames[chapter]}</Text>
+      {/* The name of the chapter. */}
+      <Text
+        adjustsFontSizeToFit
+        numberOfLines={1}
+        style={[defaultTextStyle, textStyle]}
+      >
+        {chapterNames[chapter]}
+      </Text>
     </TouchableOpacity>
   )
 }
@@ -263,12 +263,15 @@ const ChapterButton = ({
 const styles = StyleSheet.create({
   chapterButton: {
     flex: 1,
+    paddingVertical: 8,
     flexDirection: 'column',
     alignItems: 'center',
-    height: 62 * scaleMultiplier,
     justifyContent: 'center',
-    borderTopWidth: 2,
-    borderBottomWidth: 2
+    borderRadius: 20,
+    borderWidth: 2,
+    paddingHorizontal: 3
+    // borderTopWidth: 2,
+    // borderBottomWidth: 2
   }
 })
 

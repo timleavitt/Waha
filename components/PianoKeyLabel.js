@@ -3,9 +3,13 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import { colors } from '../styles/colors'
 import { StandardTypography } from '../styles/typography'
 
-const KeyLabel = ({ backgroundColor, style, number }) => {
-  // RENDER
-
+/**
+ * Component that displays a simple circle with a number. Used to label the various keys of the piano.
+ * @param {string} backgroundColor - The background color of the label.
+ * @param {string} style - Extra styles to apply to the label.
+ * @param {string} number - The number to display on the label.
+ */
+const PianoKeyLabel = ({ backgroundColor, style, number }) => {
   return (
     <View style={[styles.circle, { backgroundColor: backgroundColor }, style]}>
       <Text
@@ -23,8 +27,6 @@ const KeyLabel = ({ backgroundColor, style, number }) => {
   )
 }
 
-// STYLES
-
 const styles = StyleSheet.create({
   circle: {
     width: Dimensions.get('window').width / 12,
@@ -38,4 +40,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default KeyLabel
+export default PianoKeyLabel

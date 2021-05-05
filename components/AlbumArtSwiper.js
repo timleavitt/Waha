@@ -31,14 +31,23 @@ function mapStateToProps (state) {
   }
 }
 
+/**
+ * A component that shows the album art for a lesson as well as the text on either side of it in a swipable carousel.
+ * @param {ref} albumArtSwiperRef - The ref for the carousel component of the AlbumArtSwiper. Used to manually jump to specific pages.
+ * @param {string} iconName - The name of the icon associated with the set this lesson is a part of.
+ * @param {Function} playHandler - Plays/pauses a lesson. Needed because the user can tap on the album art pane to play/pause the lesson.
+ * @param {number} playFeedbackOpacity - Opacity for the play/pause animation feedback that appears whenever the lesson is played or paused.
+ * @param {number} playFeedbackZIndex - Z-index for the play/pause animation feedback that appears whenever the lesson is played or paused.
+ * @param {boolean} isMediaPlaying - Whether the current media (audio or video) is currently playing.
+ */
 const AlbumArtSwiper = ({
   // Props passed from a parent component.
-  setAlbumArtSwiperRef,
+  albumArtSwiperRef,
   iconName,
   thisLesson,
   playHandler,
-  playOpacity,
-  animationZIndex,
+  playFeedbackOpacity,
+  playFeedbackZIndex,
   isMediaPlaying,
   // Props passed from redux.
   activeGroup,
@@ -47,37 +56,22 @@ const AlbumArtSwiper = ({
   translations,
   isRTL
 }) => {
-  // keeps track of whether we're in the middle pane or not
+  /** Keeps track of whether the current carousel pane is the middle one or not. */
   const [isMiddle, setIsMiddle] = useState(true)
 
+  /** Keeps track of the layout and margin width of the album art swiper. Only changed if we're on a tablet to help with scaling. */
   const [layoutWidth, setLayoutWidth] = useState(60)
   const [marginWidth, setMarginWidth] = useState(80)
 
-  // refs for determining when we're in the middle
-  // todo: is extremely jank and inconsistent but functional
-  // const onViewRef = useRef(info => {
-  //   if (info.viewableItems.some(item => item.index === 0)) setIsMiddle(true)
-  //   else setIsMiddle(false)
-  // })
-  // const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
+  /** Keeps track of the opacities for the middle and side swipe bars. */
+  const [middleSwipeBarOpacity, setMiddleSwipeBarOpacity] = useState(
+    new Animated.Value(0)
+  )
+  const [sideSwipeBarOpacity, setSideSwipeBarOpacity] = useState(
+    new Animated.Value(0.8)
+  )
 
-  // data for album art flatlist
-  const albumArtData = [
-    {
-      key: '0',
-      type: 'text'
-    },
-    {
-      key: '1',
-      type: 'image',
-      svgName: iconName
-    },
-    {
-      key: '2',
-      type: 'text'
-    }
-  ]
-
+  /** useEffect function that sets the layout and margin width if we're on a tablet. */
   useEffect(() => {
     if (Dimensions.get('window').width >= 600) {
       setLayoutWidth(240)
@@ -85,6 +79,11 @@ const AlbumArtSwiper = ({
     }
   }, [])
 
+  /**
+   * Gets the text data for the left or right carousel pane.
+   * @param {number} key - The pane to get the text data for. 0 for the Fellowship/Application questions or 2 for the Scripture.
+   * @return {Object[]} - An array of objects containing the text data.
+   */
   function getTextData (key) {
     if (key === '2') {
       if (thisLesson.scripture) return thisLesson.scripture
@@ -94,7 +93,7 @@ const AlbumArtSwiper = ({
         var combinedQuestionList = activeDatabase.questions[
           thisLesson.fellowshipType
         ]
-          // combine fellowship and application questions
+          // Combine Fellowship and Application questions into one.
           .concat(activeDatabase.questions[thisLesson.applicationType])
         var updatedQuestionArray = []
         combinedQuestionList.forEach((question, index) => {
@@ -107,66 +106,43 @@ const AlbumArtSwiper = ({
         return updatedQuestionArray
       } else return null
     }
-
-    return thisLesson.fellowshipType
-      ? // render questions on the first pane and scripture on the last
-        item.key === '0'
-        ? activeDatabase.questions[thisLesson.fellowshipType]
-            // combine fellowship and application questions
-            .concat(activeDatabase.questions[thisLesson.applicationType])
-            // add newline after each question for spacing
-            .map(question => {
-              return { ...question, text: question.text + '\n' }
-            })
-        : thisLesson.scripture
-      : []
   }
 
-  //+ ANIMATION STUFF
-
-  // opacities for the scroll bar opacities
-  const [middleScrollBarOpacity, setMiddleScrollBarOpacity] = useState(
-    new Animated.Value(0)
-  )
-  const [sideScrollBarOpacity, setSideScrollBarOpacity] = useState(
-    new Animated.Value(0.8)
-  )
-
-  //- whenever we switch to and from the middle pane, change which scroll bars
-  //-   are visible
+  /** useEffect function that updates the swipe bar opacities whenever the active pane of the carousel changes. If we're on the middle pane (which has the album art), we want to see the swipe bars on the side panes indicating that they can be swiped to. Otherwise, we want to chose them on the middle pane. */
   useEffect(() => {
     if (isMiddle)
       Animated.sequence([
-        Animated.timing(middleScrollBarOpacity, {
+        Animated.timing(middleSwipeBarOpacity, {
           toValue: 0,
           duration: 250,
           useNativeDriver: true
         }),
-        Animated.timing(sideScrollBarOpacity, {
+        Animated.timing(sideSwipeBarOpacity, {
           toValue: 1,
           duration: 1000,
           useNativeDriver: true
         })
       ]).start()
-    else {
+    else
       Animated.sequence([
-        Animated.timing(sideScrollBarOpacity, {
+        Animated.timing(sideSwipeBarOpacity, {
           toValue: 0,
           duration: 250,
           useNativeDriver: true
         }),
-        Animated.timing(middleScrollBarOpacity, {
+        Animated.timing(middleSwipeBarOpacity, {
           toValue: 1,
           duration: 1000,
           useNativeDriver: true
         })
       ]).start()
-    }
   }, [isMiddle])
 
-  //- render either text or album art
-  function renderAlbumArtItem ({ item }) {
-    // for text panes
+  /**
+   * Renders one of the panes of the album art.
+   * @param {Object} item - The data for the pane to render.
+   */
+  const renderAlbumArtItem = ({ item }) => {
     if (item.type === 'text') {
       return (
         <View
@@ -181,12 +157,12 @@ const AlbumArtSwiper = ({
           <SwipeBar
             isMiddle={false}
             side='left'
-            opacity={sideScrollBarOpacity}
+            opacity={sideSwipeBarOpacity}
           />
           <SwipeBar
             isMiddle={false}
             side='right'
-            opacity={sideScrollBarOpacity}
+            opacity={sideSwipeBarOpacity}
           />
           <FlatList
             data={getTextData(item.key)}
@@ -242,12 +218,12 @@ const AlbumArtSwiper = ({
           <SwipeBar
             isMiddle={true}
             side='left'
-            opacity={middleScrollBarOpacity}
+            opacity={middleSwipeBarOpacity}
           />
           <SwipeBar
             isMiddle={true}
             side='right'
-            opacity={middleScrollBarOpacity}
+            opacity={middleSwipeBarOpacity}
           />
           <View
             style={{
@@ -291,16 +267,16 @@ const AlbumArtSwiper = ({
           <Animated.View
             style={{
               position: 'absolute',
-              opacity: playOpacity,
+              opacity: playFeedbackOpacity,
               transform: [
                 {
-                  scale: playOpacity.interpolate({
+                  scale: playFeedbackOpacity.interpolate({
                     inputRange: [0, 1],
                     outputRange: [2, 1]
                   })
                 }
               ],
-              zIndex: animationZIndex
+              zIndex: playFeedbackZIndex
             }}
           >
             <Icon
@@ -313,35 +289,38 @@ const AlbumArtSwiper = ({
       )
     }
   }
-  // renders the questions/scripture text content
-  function renderTextContent (textList) {
-    return (
-      <View style={{ paddingHorizontal: 20 }}>
-        <Text
-          style={StandardTypography(
-            { font, isRTL },
-            'h3',
-            'Bold',
-            'left',
-            colors.shark
-          )}
-        >
-          {textList.item.header}
-        </Text>
-        <Text
-          style={StandardTypography(
-            { font, isRTL },
-            'h3',
-            'Regular',
-            'left',
-            colors.shark
-          )}
-        >
-          {textList.item.text}
-        </Text>
-      </View>
-    )
-  }
+
+  /**
+   * Renders a piece of text content for the text panes.
+   * @param {Object[]} item - The piece of text to render.
+   */
+  const renderTextContent = ({ item }) => (
+    <View style={{ paddingHorizontal: 20 }}>
+      <Text
+        style={StandardTypography(
+          { font, isRTL },
+          'h3',
+          'Bold',
+          'left',
+          colors.shark
+        )}
+      >
+        {item.header}
+      </Text>
+      <Text
+        style={StandardTypography(
+          { font, isRTL },
+          'h3',
+          'Regular',
+          'left',
+          colors.shark
+        )}
+      >
+        {item.text}
+      </Text>
+    </View>
+  )
+
   return (
     <View
       style={{
@@ -351,9 +330,23 @@ const AlbumArtSwiper = ({
       }}
     >
       <Carousel
-        data={albumArtData}
+        data={[
+          {
+            key: '0',
+            type: 'text'
+          },
+          {
+            key: '1',
+            type: 'image',
+            svgName: iconName
+          },
+          {
+            key: '2',
+            type: 'text'
+          }
+        ]}
         renderItem={renderAlbumArtItem}
-        ref={ref => setAlbumArtSwiperRef(ref)}
+        ref={albumArtSwiperRef}
         itemWidth={Dimensions.get('window').width - marginWidth}
         sliderWidth={Dimensions.get('window').width}
         itemHeight={Dimensions.get('window').width - marginWidth}
@@ -372,7 +365,7 @@ const AlbumArtSwiper = ({
 
 const styles = StyleSheet.create({
   albumArtContainer: {
-    borderRadius: 10,
+    borderRadius: 20,
     backgroundColor: colors.porcelain,
     overflow: 'hidden',
     borderWidth: 4,

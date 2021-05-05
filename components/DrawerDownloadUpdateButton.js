@@ -112,7 +112,7 @@ function DrawerDownloadUpdateButton ({
 const styles = StyleSheet.create({
   outerContianer: {
     overflow: 'hidden',
-    borderRadius: 10,
+    borderRadius: 20,
     marginHorizontal: 5,
     marginTop: 5,
     marginBottom: 0,

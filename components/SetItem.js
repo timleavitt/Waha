@@ -42,7 +42,7 @@ function mapDispatchToProps (dispatch) {
 /**
  * A component that displays a set. Used on a variety of screens and displayed in a variety of ways depending on the mode prop.
  * @param {Object} thisSet - The object for the set to display.
- * @param {string} screen - The screen that the SetItem is used on. The set item is rendered slightly different on all the different screens it's used in. The options are: 1) Sets, 2) Lessons, 3) AddSet, and 4) SetInfo. The varieties used on each screen are described below.
+ * @param {string} mode - The mode of the set item. The set item is rendered slightly different on all the different screens it's used in. See setItemModes in constants.js.
  * @param {Function} onSetSelect - A function to fire when the set item is pressed. Can be null to make the item non-pressable.
  */
 const SetItem = ({
@@ -356,7 +356,7 @@ const SetItem = ({
         isVisible={showUnlockModal}
         hideModal={() => setShowUnlockModal(false)}
         title={translations.general.popups.new_story_set_unlocked_title}
-        body={translations.general.popups.new_story_set_unlocked_message}
+        message={translations.general.popups.new_story_set_unlocked_message}
         confirmText={translations.general.got_it}
         confirmOnPress={() => setShowUnlockModal(false)}
       >

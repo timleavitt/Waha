@@ -1,5 +1,5 @@
 import { Audio } from 'expo-av'
-import React from 'react'
+import React, { useRef } from 'react'
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import {
@@ -8,7 +8,7 @@ import {
 } from '../redux/reducers/activeGroup'
 import { colors, keyColors } from '../styles/colors'
 import { getLanguageFont } from '../styles/typography'
-import KeyLabel from './KeyLabel'
+import PianoKeyLabel from './PianoKeyLabel'
 
 function mapStateToProps (state) {
   return {
@@ -18,216 +18,178 @@ function mapStateToProps (state) {
   }
 }
 
+// The piano sound effects.
+const pianoNotes = [
+  require('../assets/pianoNotes/C.mp3'),
+  require('../assets/pianoNotes/Db.mp3'),
+  require('../assets/pianoNotes/D.mp3'),
+  require('../assets/pianoNotes/Eb.mp3'),
+  require('../assets/pianoNotes/E.mp3'),
+  require('../assets/pianoNotes/F.mp3'),
+  require('../assets/pianoNotes/Gb.mp3'),
+  require('../assets/pianoNotes/G.mp3'),
+  require('../assets/pianoNotes/Ab.mp3'),
+  require('../assets/pianoNotes/A.mp3'),
+  require('../assets/pianoNotes/Bb.mp3'),
+  require('../assets/pianoNotes/B.mp3')
+]
+
+/**
+ * A component that shows a playable piano. Used on the PianoApp screen for Security mode.
+ * @param {Function} setPlayedNotes - Function that sets the played notes state. This state keeps track of what notes the user has played on the piano.
+ * @param {boolean} isMuted - (Optional) Whether the piano sounds should be muted. Defaults to false.
+ */
 const Piano = ({
   // Props passed from a parent component.
-  setPattern,
+  setPlayedNotes,
   isMuted = false,
   // Props passed from redux.
   isRTL,
   font,
   activeGroup
 }) => {
-  // RENDER
+  /** Ref to store the audio object. */
+  const note = useRef(new Audio.Sound())
 
-  // require keyboard notes
-  var C = require('../assets/pianoNotes/C.mp3')
-  var Db = require('../assets/pianoNotes/Db.mp3')
-  var D = require('../assets/pianoNotes/D.mp3')
-  var Eb = require('../assets/pianoNotes/Eb.mp3')
-  var E = require('../assets/pianoNotes/E.mp3')
-  var F = require('../assets/pianoNotes/F.mp3')
-  var Gb = require('../assets/pianoNotes/Gb.mp3')
-  var G = require('../assets/pianoNotes/G.mp3')
-  var Ab = require('../assets/pianoNotes/Ab.mp3')
-  var A = require('../assets/pianoNotes/A.mp3')
-  var Bb = require('../assets/pianoNotes/Bb.mp3')
-  var B = require('../assets/pianoNotes/B.mp3')
-
-  function playNote (number) {
+  /**
+   * Plays a specific piano note.
+   * @param {number} number - The key number to play the note of. Each piano key is numbered.
+   */
+  const playNote = async number => {
     if (!isMuted) {
-      var note = new Audio.Sound()
-      switch (number) {
-        case 0:
-          note.loadAsync(C).then(() => note.playAsync())
-          break
-        case 1:
-          note.loadAsync(Db).then(() => note.playAsync())
-          break
-        case 2:
-          note.loadAsync(D).then(() => note.playAsync())
-          break
-        case 3:
-          note.loadAsync(Eb).then(() => note.playAsync())
-          break
-        case 4:
-          note.loadAsync(E).then(() => note.playAsync())
-          break
-        case 5:
-          note.loadAsync(F).then(() => note.playAsync())
-          break
-        case 6:
-          note.loadAsync(Gb).then(() => note.playAsync())
-          break
-        case 7:
-          note.loadAsync(G).then(() => note.playAsync())
-          break
-        case 8:
-          note.loadAsync(Ab).then(() => note.playAsync())
-          break
-        case 9:
-          note.loadAsync(A).then(() => note.playAsync())
-          break
-        case 10:
-          note.loadAsync(Bb).then(() => note.playAsync())
-          break
-        case 11:
-          note.loadAsync(B).then(() => note.playAsync())
-          break
-      }
+      await note.current.unloadAsync()
+      await note.current
+        .loadAsync(pianoNotes[number])
+        .then(() => note.current.playAsync())
     }
   }
 
   return (
-    <View
-      style={{
-        width: '100%',
-        justifyContent: 'flex-start'
-      }}
-    >
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '100%',
-          position: 'absolute',
-          zIndex: 2
-        }}
-      >
+    <View style={styles.pianoContainer}>
+      <View style={styles.blackKeysContainer}>
         <View style={{ flex: 0.5 }} />
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            setPattern(pattern => pattern + '01')
+            setPlayedNotes(pattern => pattern + '01')
             playNote(1)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['1']} number='1' />
+          <PianoKeyLabel backgroundColor={keyColors['1']} number='1' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            setPattern(pattern => pattern + '03')
+            setPlayedNotes(pattern => pattern + '03')
             playNote(3)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['3']} number='3' />
+          <PianoKeyLabel backgroundColor={keyColors['3']} number='3' />
         </TouchableOpacity>
         <View style={{ flex: 1 }} />
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            setPattern(pattern => pattern + '06')
+            setPlayedNotes(pattern => pattern + '06')
             playNote(6)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['6']} number='6' />
+          <PianoKeyLabel backgroundColor={keyColors['6']} number='6' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            setPattern(pattern => pattern + '08')
+            setPlayedNotes(pattern => pattern + '08')
             playNote(8)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['8']} number='8' />
+          <PianoKeyLabel backgroundColor={keyColors['8']} number='8' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            setPattern(pattern => pattern + '10')
+            setPlayedNotes(pattern => pattern + '10')
             playNote(10)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['10']} number='10' />
+          <PianoKeyLabel backgroundColor={keyColors['10']} number='10' />
         </TouchableOpacity>
         <View style={{ flex: 0.5 }} />
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '100%'
-        }}
-      >
+      <View style={styles.whiteKeysContainer}>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '00')
+            setPlayedNotes(pattern => pattern + '00')
             playNote(0)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['0']} number='0' />
+          <PianoKeyLabel backgroundColor={keyColors['0']} number='0' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '02')
+            setPlayedNotes(pattern => pattern + '02')
             playNote(2)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['2']} number='2' />
+          <PianoKeyLabel backgroundColor={keyColors['2']} number='2' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '04')
+            setPlayedNotes(pattern => pattern + '04')
             playNote(4)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['4']} number='4' />
+          <PianoKeyLabel backgroundColor={keyColors['4']} number='4' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '05')
+            setPlayedNotes(pattern => pattern + '05')
             playNote(5)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['5']} number='5' />
+          <PianoKeyLabel backgroundColor={keyColors['5']} number='5' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '07')
+            setPlayedNotes(pattern => pattern + '07')
             playNote(7)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['7']} number='7' />
+          <PianoKeyLabel backgroundColor={keyColors['7']} number='7' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '09')
+            setPlayedNotes(pattern => pattern + '09')
             playNote(9)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['9']} number='9' />
+          <PianoKeyLabel backgroundColor={keyColors['9']} number='9' />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '11')
+            setPlayedNotes(pattern => pattern + '11')
             playNote(11)
           }}
         >
-          <KeyLabel backgroundColor={keyColors['11']} number='11' />
+          <PianoKeyLabel backgroundColor={keyColors['11']} number='11' />
         </TouchableOpacity>
       </View>
     </View>
   )
 }
 
-// STYLES
-
 const styles = StyleSheet.create({
+  pianoContainer: {
+    width: '100%',
+    justifyContent: 'flex-start'
+  },
   whiteKey: {
     flex: 1,
     height: Dimensions.get('window').height / 2.5,
@@ -241,6 +203,16 @@ const styles = StyleSheet.create({
     color: colors.white,
     borderBottomWidth: 5
   },
+  blackKeysContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    position: 'absolute',
+    zIndex: 2
+  },
+  whiteKeysContainer: {
+    flexDirection: 'row',
+    width: '100%'
+  },
   blackKey: {
     flex: 1,
     height: Dimensions.get('window').height / 4,
@@ -252,20 +224,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     zIndex: 1,
     backgroundColor: colors.shark
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 1,
-    // shadowRadius: 10
-  },
-  circle: {
-    width: Dimensions.get('window').width / 10,
-    height: Dimensions.get('window').width / 10,
-    borderRadius: Dimensions.get('window').width / 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-end',
-    zIndex: 3,
-    marginBottom: 10
   }
 })
 

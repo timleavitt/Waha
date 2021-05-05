@@ -79,12 +79,6 @@ const AddSetScreen = ({
   /** Keeps track of all the downloaded question set mp3s. We need this to verify that all the required question set mp3s are installed for the various Story Sets.*/
   const [downloadedFiles, setDownloadedFiles] = useState([])
 
-  const setData = useMemo(() => getSetData(), [
-    activeGroup.addedSets,
-    selectedTag,
-    downloadedFiles
-  ])
-
   /** useEffect function that sets the headerTitle state as well as fetching the tags if we're displaying Topical Story Sets. */
   useEffect(() => {
     switch (category) {
@@ -177,6 +171,17 @@ const AddSetScreen = ({
     else return false
   }
 
+  /** Set data stored in a useMemo so we don't have to get it on every re-render. */
+  const setData = useMemo(() => getSetData(), [
+    activeGroup.addedSets,
+    selectedTag,
+    downloadedFiles
+  ])
+
+  /**
+   * Gets a list of sets to display on this screen depending on the category.
+   * @return {Object[]} - An array of set objects to display.
+   */
   function getSetData () {
     if (category === 'Topical')
       return (
@@ -232,38 +237,6 @@ const AddSetScreen = ({
       )
   }
 
-  // The component for the list of tags. Uses the <TagGroup /> component.
-  const tagsComponent = (
-    <TagGroup
-      source={tags}
-      singleChoiceMode
-      onSelectedTagChange={selected => setSelectedTag(selected)}
-      style={{
-        paddingHorizontal: 10,
-        paddingTop: 10,
-        paddingBottom: 2
-      }}
-      tagStyle={{
-        borderRadius: 30,
-        borderColor: colors.oslo,
-        height: 35 * scaleMultiplier,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20 * scaleMultiplier
-      }}
-      textStyle={{ color: colors.oslo, fontFamily: font + '-Regular' }}
-      activeTagStyle={{
-        borderRadius: 20,
-        backgroundColor: primaryColor,
-        borderColor: primaryColor
-      }}
-      activeTextStyle={{
-        color: colors.white,
-        fontFamily: font + '-Regular'
-      }}
-    />
-  )
-
   /** Renders a <SetItem /> for the list of sets available to add. */
   const renderSetItem = ({ item }) => (
     <SetItem
@@ -278,11 +251,36 @@ const AddSetScreen = ({
 
   return (
     <View style={styles.screen}>
-      {category === 'Topical' ? tagsComponent : null}
+      {category === 'Topical' && (
+        <TagGroup
+          source={tags}
+          singleChoiceMode
+          onSelectedTagChange={selected => setSelectedTag(selected)}
+          style={styles.tagGroupContainer}
+          tagStyle={styles.tagContainer}
+          textStyle={StandardTypography(
+            { font, isRTL },
+            'p',
+            'Regular',
+            'center',
+            colors.oslo
+          )}
+          activeTagStyle={{
+            backgroundColor: primaryColor,
+            borderColor: primaryColor
+          }}
+          activeTextStyle={StandardTypography(
+            { font, isRTL },
+            'p',
+            'Regular',
+            'center',
+            colors.white
+          )}
+        />
+      )}
       <FlatList
         style={{ flex: 1 }}
         data={setData}
-        extraData={selectedTag}
         ItemSeparatorComponent={() => <WahaSeparator />}
         ListFooterComponent={() => <WahaSeparator />}
         ListHeaderComponent={() => <WahaSeparator />}
@@ -332,6 +330,19 @@ const styles = StyleSheet.create({
   screen: {
     backgroundColor: colors.white,
     flex: 1
+  },
+  tagGroupContainer: {
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 2
+  },
+  tagContainer: {
+    borderRadius: 30,
+    borderColor: colors.oslo,
+    height: 35 * scaleMultiplier,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20 * scaleMultiplier
   }
 })
 

@@ -122,6 +122,7 @@ const MainDrawer = ({
     else return false
   }
 
+  /** useEffect function that adds a listener for listening to network changes. */
   useEffect(() => {
     // Add a listener for connection status and update the redux state accordingly.
     const netInfoUnsubscribe = NetInfo.addEventListener(state => {
@@ -174,7 +175,7 @@ const MainDrawer = ({
     })
   }, [])
 
-  // Check for database updates for other installed languages besides the active one.
+  /** useEffect function that checks for database updates for other installed languages besides the active one. */
   useEffect(() => {
     Object.keys(database).forEach(key => {
       if (key.length === 2 && key !== activeGroup.language) {
@@ -230,7 +231,7 @@ const MainDrawer = ({
     })
   }, [])
 
-  // Check for database updates for the active language. This function gets triggered whenever a user downloads a new lesson and whenever the active group changes.
+  /** useEffect function that checks for database updates for the active language. This function gets triggered whenever a user downloads a new lesson and whenever the active group changes. */
   useEffect(() => {
     // Whether the app should write the new Firestore changes to redux or not. The only reason that it wouldn't is if the app version is behind the database version.
     var shouldWrite = false

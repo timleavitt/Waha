@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   buttonContainer: {
-    borderRadius: 10,
+    borderRadius: 20,
     width: Dimensions.get('window').width - 40,
     marginVertical: 20 * scaleMultiplier,
     marginHorizontal: 20,
