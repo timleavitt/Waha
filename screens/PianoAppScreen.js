@@ -1,6 +1,6 @@
 import { useBackHandler } from '@react-native-community/hooks'
 import { Audio } from 'expo-av'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Dimensions,
   Image,
@@ -68,9 +68,20 @@ const PianoAppScreen = ({
   /** Keeps track of whether your piano "recording" is "playing" (it doesn't actually play). */
   const [isPlaying, setIsPlaying] = useState(false)
 
-  /** useEffect function that dismisses the keyboard on first render in case the user had the keyboard open before exiting the app and enabling security mode. */
+  /** Ref for the unlock sound. */
+  const unlockSound = useRef(new Audio.Sound())
+
+  /** useEffect function that dismisses the keyboard on first render in case the user had the keyboard open before exiting the app and enabling security mode. It also loads/unloads the unlock sound. */
   useEffect(() => {
     Keyboard.dismiss()
+
+    unlockSound.current.loadAsync(
+      require('../assets/securityMode/unlock_security_mode_sound.mp3')
+    )
+
+    return function cleanup () {
+      unlockSound.current.unloadAsync()
+    }
   }, [])
 
   /** useEffect function that updates whenever the user plays a piano note. */
@@ -78,15 +89,10 @@ const PianoAppScreen = ({
     // If the user has entered in their passcode...
     if (playedNotes.includes(security.code)) {
       // If the user hasn't muted the piano app sounds, play a little sound effect when they enter their passcode correctly.
-      if (!security.isMuted) {
-        var note = new Audio.Sound()
-        note
-          .loadAsync(
-            require('../assets/securityMode/unlock_security_mode_sound.mp3')
-          )
-          .then(() => note.playAsync())
-      }
+      if (!security.isMuted) unlockSound.current.playAsync()
+
       setIsTimedOut(false)
+
       // Because this screen is on top of all other screens in terms of the navigation stack, the way we get back to what was on the screen before security mode was activated is to simply go back. If we can't go back, then just reset to the starting screen.
       if (canGoBack()) {
         if (Platform.OS === 'ios') goBack()

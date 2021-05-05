@@ -71,7 +71,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            setPattern(pattern => pattern + '01')
+            setPlayedNotes(pattern => pattern + '01')
             playNote(1)
           }}
         >
@@ -80,7 +80,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            setPattern(pattern => pattern + '03')
+            setPlayedNotes(pattern => pattern + '03')
             playNote(3)
           }}
         >
@@ -90,7 +90,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            setPattern(pattern => pattern + '06')
+            setPlayedNotes(pattern => pattern + '06')
             playNote(6)
           }}
         >
@@ -99,7 +99,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            setPattern(pattern => pattern + '08')
+            setPlayedNotes(pattern => pattern + '08')
             playNote(8)
           }}
         >
@@ -108,7 +108,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.blackKey}
           onPress={() => {
-            setPattern(pattern => pattern + '10')
+            setPlayedNotes(pattern => pattern + '10')
             playNote(10)
           }}
         >
@@ -120,7 +120,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '00')
+            setPlayedNotes(pattern => pattern + '00')
             playNote(0)
           }}
         >
@@ -129,7 +129,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '02')
+            setPlayedNotes(pattern => pattern + '02')
             playNote(2)
           }}
         >
@@ -138,7 +138,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '04')
+            setPlayedNotes(pattern => pattern + '04')
             playNote(4)
           }}
         >
@@ -147,7 +147,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '05')
+            setPlayedNotes(pattern => pattern + '05')
             playNote(5)
           }}
         >
@@ -156,7 +156,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '07')
+            setPlayedNotes(pattern => pattern + '07')
             playNote(7)
           }}
         >
@@ -165,7 +165,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '09')
+            setPlayedNotes(pattern => pattern + '09')
             playNote(9)
           }}
         >
@@ -174,7 +174,7 @@ const Piano = ({
         <TouchableOpacity
           style={styles.whiteKey}
           onPress={() => {
-            setPattern(pattern => pattern + '11')
+            setPlayedNotes(pattern => pattern + '11')
             playNote(11)
           }}
         >
