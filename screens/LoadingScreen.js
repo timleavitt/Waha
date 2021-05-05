@@ -298,14 +298,6 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  button: {
-    width: 200,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.aquaHaze,
-    borderRadius: 10
   }
 })
 

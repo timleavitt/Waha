@@ -29,20 +29,20 @@ const TestModeDisplay = ({
       style={{
         backgroundColor: colors.red,
         paddingVertical: 5,
-        borderRadius: 10,
+        borderRadius: 20,
         marginHorizontal: 5
       }}
     >
       {dbMode === 'test' || reduxMode === 'test' || analyticsMode === 'test' ? (
         <Text
           style={[
-            SystemTypography(false, 'p', 'Bold', 'center', colors.white),
+            SystemTypography(false, 'd', 'Bold', 'center', colors.white),
             {
               paddingHorizontal: 10
             }
           ]}
         >
-          TEST MODE
+          TEST
         </Text>
       ) : null}
     </View>

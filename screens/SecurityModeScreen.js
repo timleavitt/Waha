@@ -146,7 +146,7 @@ const SecurityModeScreen = ({
             <WahaSeparator />
             <WahaItem
               title={translations.security.change_key_order_button_label}
-              onPress={() => navigate('KeyOrderChange_Initial')}
+              onPress={() => navigate('PianoPasscodeChange')}
             >
               <Icon
                 name={isRTL ? 'arrow-left' : 'arrow-right'}

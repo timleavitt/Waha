@@ -17,7 +17,6 @@ import AddSetScreen from '../screens/AddSetScreen'
 import ContactUsScreen from '../screens/ContactUsScreen'
 import GroupsScreen from '../screens/GroupsScreen'
 import InformationScreen from '../screens/InformationScreen'
-import KeyOrderSetScreen from '../screens/KeyOrderSetScreen'
 import LanguageInstanceInstallScreen from '../screens/LanguageInstanceInstallScreen'
 import LessonsScreen from '../screens/LessonsScreen'
 import LoadingScreen from '../screens/LoadingScreen'
@@ -25,6 +24,7 @@ import MobilizationToolsScreen from '../screens/MobilizationToolsScreen'
 import MobilizationToolsUnlockScreen from '../screens/MobilizationToolsUnlockScreen'
 import MTUnlockSuccessfulScreen from '../screens/MTUnlockSuccessfulScreen'
 import PianoAppScreen from '../screens/PianoAppScreen'
+import PianoPasscodeSetScreen from '../screens/PianoPasscodeSetScreen'
 import PlayScreen from '../screens/PlayScreen'
 import SecurityModeScreen from '../screens/SecurityModeScreen'
 import SecurityOnboardingSlidesScreen from '../screens/SecurityOnboardingSlidesScreen'
@@ -390,8 +390,8 @@ const MainStack = ({
         }}
       />
       <Stack.Screen
-        name='KeyOrderSet_Initial'
-        component={KeyOrderSetScreen}
+        name='PianoPasscodeSet'
+        component={PianoPasscodeSetScreen}
         options={{
           headerStyle: {
             backgroundColor: colors.white
@@ -403,8 +403,8 @@ const MainStack = ({
         }}
       />
       <Stack.Screen
-        name='KeyOrderSet_Confirm'
-        component={KeyOrderSetScreen}
+        name='PianoPasscodeSetConfirm'
+        component={PianoPasscodeSetScreen}
         options={{
           headerStyle: {
             backgroundColor: colors.white
@@ -416,8 +416,8 @@ const MainStack = ({
         }}
       />
       <Stack.Screen
-        name='KeyOrderChange_Initial'
-        component={KeyOrderSetScreen}
+        name='PianoPasscodeChange'
+        component={PianoPasscodeSetScreen}
         options={{
           headerStyle: {
             backgroundColor: colors.white
@@ -429,8 +429,8 @@ const MainStack = ({
         }}
       />
       <Stack.Screen
-        name='KeyOrderChange_Confirm'
-        component={KeyOrderSetScreen}
+        name='PianoPasscodeChangeConfirm'
+        component={PianoPasscodeSetScreen}
         options={{
           headerStyle: {
             backgroundColor: colors.white

@@ -767,19 +767,16 @@ const PlayScreen = ({
           />
         )}
         {!lessonType.includes('BookText') && (
-          <View
-            style={{
-              width: '100%',
-              height: Dimensions.get('window').width - 80,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
+          <View style={styles.middleAreaContainer}>
             {lessonType.includes('Questions') && (
               <Animated.View
                 style={{
                   position: 'absolute',
-                  opacity: albumArtSwiperOpacity
+                  opacity: albumArtSwiperOpacity,
+                  zIndex:
+                    activeChapter === chapters.TRAINING
+                      ? middleAreaVisibility.HIDE
+                      : middleAreaVisibility.SHOW
                 }}
               >
                 <AlbumArtSwiper
@@ -797,7 +794,11 @@ const PlayScreen = ({
               <Animated.View
                 style={{
                   position: 'absolute',
-                  opacity: videoPlayerOpacity
+                  opacity: videoPlayerOpacity,
+                  zIndex:
+                    activeChapter === chapters.TRAINING
+                      ? middleAreaVisibility.SHOW
+                      : middleAreaVisibility.HIDE
                 }}
               >
                 <VideoPlayer
@@ -893,6 +894,12 @@ const styles = StyleSheet.create({
   topHalfContainer: {
     justifyContent: 'space-evenly',
     flex: 1
+  },
+  middleAreaContainer: {
+    width: '100%',
+    height: Dimensions.get('window').width - 80,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
 

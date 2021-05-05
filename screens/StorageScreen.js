@@ -12,7 +12,6 @@ import { connect } from 'react-redux'
 import LanguageStorageItem from '../components/LanguageStorageItem'
 import WahaBackButton from '../components/WahaBackButton'
 import WahaButton from '../components/WahaButton'
-import { removeDownload } from '../redux/actions/downloadActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -25,126 +24,136 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     database: state.database,
     translations: activeDatabaseSelector(state).translations,
-    font: getLanguageFont(activeGroupSelector(state).language),
-    activeGroup: activeGroupSelector(state)
+    font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
 
 function mapDispatchToProps (dispatch) {
-  return {
-    removeDownload: lessonID => {
-      dispatch(removeDownload(lessonID))
-    }
-  }
+  return {}
 }
 
+// Regular expression that checks whether a file name is for a lesson mp3 or mp4.
+const isLessonFile = new RegExp('[a-z]{2}.[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}.*')
+
+/**
+ * A screen that contains storage size information for each language instance and the ability to delete downloaded files.
+ */
 const StorageScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, goBack },
+  // Props passed from redux.
   isRTL,
   database,
   translations,
-  font,
-  activeGroup,
-  removeDownload
+  font
 }) => {
-  //+ STATE
+  /** Keeps track of the amount of storage each language's downloaded Story and Training chapter mp3s and mp4s take up. */
+  const [languageStorageSizes, setLanguageSizes] = useState({})
 
-  // keeps track of storage size of each language's downloaded chapter 2s
-  const [storageObject, setStorageObject] = useState({})
-
-  // keeps track of total storage for all downloaded chapter 2s
+  /** Keeps track of the total storage for all downloaded Story and Training chapter mp3s and mp4s across all languages. */
   const [totalStorage, setTotalStorage] = useState(0)
 
-  //+ CONSTRUCTOR
-
+  /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
-    setOptions(getNavOptions())
-    getAllStorageUsed()
-  }, [])
-
-  //+ NAV OPTIONS
-
-  function getNavOptions () {
-    return {
+    setOptions({
       headerRight: isRTL
         ? () => <WahaBackButton onPress={() => goBack()} />
         : () => <View></View>,
       headerLeft: isRTL
         ? () => <View></View>
         : () => <WahaBackButton onPress={() => goBack()} />
-    }
-  }
+    })
+  }, [])
 
-  //+ FUNCTIONS
+  /** useEffect function that gets all the storage used for all the different languages. */
+  useEffect(() => {
+    getTotalStorageAndLanguageSizes()
+  }, [])
 
-  // gets the storage size in megabytes for all the downloaded chapter 2s for a specific language
-  async function getStorageUsedByLanguage (language) {
-    var storageUsed = 0
-    var regex = new RegExp('[a-z]{2}.[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}.*')
+  /**
+   * Gets the megabytes that the downloaded Story and Training chapter mp3s and mp4s take up for a single language.
+   * @param {string} language - The language to get the storage size of.
+   * @return {number} - The size that the language takes up.
+   */
+  const getLanguageStorageSize = async language => {
+    // Stores the size of this language.
+    var languageStorageSize = 0
+
+    // Read the contents of the FileSystem directory.
     return await FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
       .then(async contents => {
         for (const item of contents) {
-          var hasMatch = regex.exec(item)
-          if (hasMatch) {
+          // If a file is a lesson...
+          if (isLessonFile.exec(item)) {
+            // ...and it's for the language we're currently checking...
             if (item.slice(0, 2) === language) {
+              // ...get its size...
               await FileSystem.getInfoAsync(
                 FileSystem.documentDirectory + item,
                 {}
               ).then(({ size }) => {
-                storageUsed += Math.round(size / 1000000)
+                // ...and add it to our storage size variable. Note: we divide by 1000000 because we want it to be in megabytes.
+                languageStorageSize += Math.round(size / 1000000)
               })
             }
           }
         }
       })
-      .then(() => {
-        return storageUsed
-      })
+      .then(() => languageStorageSize)
   }
 
-  // get the storage size in megabytes of all downloaded chapter 2s
-  function getAllStorageUsed () {
+  /** Gets all of the individual language storage sizes and the total storage size. */
+  const getTotalStorageAndLanguageSizes = () => {
+    // Reset states to empty.
     setTotalStorage(0)
-    setStorageObject({})
+    setLanguageSizes({})
+
+    // Get the currently installed langauges.
     var languages = getInstalledLanguageInstances()
-    for (const language of languages) {
-      getStorageUsedByLanguage(language.languageID).then(storageUsed => {
+
+    // Go through each language and get its storage size.
+    languages.forEach(language =>
+      getLanguageStorageSize(language.languageID).then(storageUsed => {
         setTotalStorage(oldStorage => oldStorage + storageUsed)
-        setStorageObject(oldObject => ({
+        setLanguageSizes(oldObject => ({
           ...oldObject,
           [language.languageID]: storageUsed
         }))
       })
-    }
+    )
   }
 
   // deletes all downloaded chapter 2s for a specific language
   // note: if no language specified, deletes all chapter 2s
-  async function deleteDownloadedLessons (language) {
+
+  /**
+   * Deletes all of the Story and Training mp3s and mp4s for a specific language. If no language is specified, deletes them for all languages.
+   * @param {string} language - (Optional) The language to delete the downloaded content for.
+   */
+  const deleteDownloadedLessons = async language => {
     await FileSystem.readDirectoryAsync(FileSystem.documentDirectory)
       .then(contents => {
-        var regex = new RegExp('[a-z]{2}.[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}.*')
         for (const item of contents) {
-          var hasMatch = regex.exec(item)
-          if (hasMatch) {
-            if (!language) {
+          // If a file is a lesson...
+          if (isLessonFile.exec(item)) {
+            // If a language hasn't been specificied, delete any lesson file.
+            if (!language)
               FileSystem.deleteAsync(FileSystem.documentDirectory + item)
-              removeDownload(item.slice(0, 5))
-            } else if (item.slice(0, 2) === language) {
+            // Otherwise, delete it only if it matches with the specified language.
+            else if (item.slice(0, 2) === language)
               FileSystem.deleteAsync(FileSystem.documentDirectory + item)
-              removeDownload(item.slice(0, 5))
-            }
           }
         }
       })
-      .then(() => {
-        getAllStorageUsed()
-      })
+      // After we finish, get the storage used again.
+      .then(() => getTotalStorageAndLanguageSizes())
   }
 
-  // gets all the installed languages
-  function getInstalledLanguageInstances () {
+  /**
+   * Gets an array of the currently installed language instances.
+   * @return {Object[]} - The currently installed language instances.
+   */
+  const getInstalledLanguageInstances = () => {
     var installedLanguageInstances = []
     for (key in database) {
       if (key.length === 2) {
@@ -157,40 +166,40 @@ const StorageScreen = ({
     return installedLanguageInstances
   }
 
-  //+ RENDER
-
-  function renderLanguageStorageItem (languageList) {
-    return (
-      <LanguageStorageItem
-        languageName={translations.general.brands[languageList.item.languageID]}
-        languageID={languageList.item.languageID}
-        megabytes={storageObject[languageList.item.languageID]}
-        clearDownloads={() => {
-          Alert.alert(
-            translations.storage.popups
-              .clear_all_downloaded_lessons_for_a_language_title,
-            translations.storage.popups
-              .clear_all_downloaded_lessons_for_a_language_message,
-            [
-              {
-                text: translations.general.cancel,
-                onPress: () => {}
-              },
-              {
-                text: translations.general.ok,
-                onPress: () =>
-                  deleteDownloadedLessons(languageList.item.languageID)
-              }
-            ]
-          )
-        }}
-      />
-    )
-  }
+  /**
+   * Renders a <LanguageStorageItem />.
+   * @param {Object} item - The language instance to render.
+   */
+  const renderLanguageStorageItem = ({ item }) => (
+    <LanguageStorageItem
+      languageName={item.languageName}
+      languageID={item.languageID}
+      megabytes={languageStorageSizes[item.languageID]}
+      clearDownloads={() => {
+        Alert.alert(
+          translations.storage.popups
+            .clear_all_downloaded_lessons_for_a_language_title,
+          translations.storage.popups
+            .clear_all_downloaded_lessons_for_a_language_message,
+          [
+            {
+              text: translations.general.cancel,
+              onPress: () => {}
+            },
+            {
+              text: translations.general.ok,
+              onPress: () => deleteDownloadedLessons(item.languageID)
+            }
+          ]
+        )
+      }}
+    />
+  )
 
   return (
     <SafeAreaView style={styles.screen}>
       <FlatList
+        style={{ flex: 1 }}
         data={getInstalledLanguageInstances()}
         renderItem={renderLanguageStorageItem}
         keyExtractor={item => item.languageID}
@@ -204,14 +213,7 @@ const StorageScreen = ({
       <WahaButton
         type='filled'
         color={colors.red}
-        label={
-          translations.storage.clear_all_downloaded_lessons_button_label +
-          ' (' +
-          totalStorage +
-          ' ' +
-          translations.storage.megabyte_label +
-          ')'
-        }
+        label={`${translations.storage.clear_all_downloaded_lessons_button_label} (${totalStorage} ${translations.storage.megabyte_label})`}
         width={Dimensions.get('window').width - 40}
         onPress={() =>
           Alert.alert(
@@ -234,8 +236,6 @@ const StorageScreen = ({
     </SafeAreaView>
   )
 }
-
-//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {

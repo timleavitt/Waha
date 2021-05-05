@@ -44,6 +44,9 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
+/**
+ * A screen that shows a dummy piano app meant to convince non-users who are looking at the app that it's just a harmless piano app and not a Christian disciple making tool >:)
+ */
 const PianoAppScreen = ({
   // Props passed from navigation.
   navigation: { canGoBack, goBack, reset },
@@ -56,18 +59,25 @@ const PianoAppScreen = ({
   setIsMuted,
   setIsTimedOut
 }) => {
-  //+ STATE
+  /** Keeps track of the passcode that the user is entering on the piano. */
+  const [playedNotes, setPlayedNotes] = useState('')
 
-  const [pattern, setPattern] = useState('')
+  /** Keeps track of the countdown that starts "recording" your piano playing (it doesn't actually record). */
   const [countdown, setCountdown] = useState('')
+
+  /** Keeps track of whether your piano "recording" is "playing" (it doesn't actually play). */
   const [isPlaying, setIsPlaying] = useState(false)
 
-  //+ CONSTRUCTOR
-
+  /** useEffect function that dismisses the keyboard on first render in case the user had the keyboard open before exiting the app and enabling security mode. */
   useEffect(() => {
     Keyboard.dismiss()
+  }, [])
 
-    if (pattern.includes(security.code)) {
+  /** useEffect function that updates whenever the user plays a piano note. */
+  useEffect(() => {
+    // If the user has entered in their passcode...
+    if (playedNotes.includes(security.code)) {
+      // If the user hasn't muted the piano app sounds, play a little sound effect when they enter their passcode correctly.
       if (!security.isMuted) {
         var note = new Audio.Sound()
         note
@@ -77,6 +87,7 @@ const PianoAppScreen = ({
           .then(() => note.playAsync())
       }
       setIsTimedOut(false)
+      // Because this screen is on top of all other screens in terms of the navigation stack, the way we get back to what was on the screen before security mode was activated is to simply go back. If we can't go back, then just reset to the starting screen.
       if (canGoBack()) {
         if (Platform.OS === 'ios') goBack()
         goBack()
@@ -86,26 +97,14 @@ const PianoAppScreen = ({
           routes: [{ name: 'SetsTabs' }]
         })
     }
-  }, [pattern])
+  }, [playedNotes])
 
-  // disable back button on this screen
-  useBackHandler(() => {
-    return true
-  })
-
-  //+ RENDER
+  /** Disables the back button in this screen */
+  useBackHandler(() => true)
 
   return (
     <SafeAreaView style={styles.screen}>
-      <View
-        style={{
-          height: '25%',
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'row'
-        }}
-      >
+      <View style={styles.titleContainer}>
         <Image
           source={require('../assets/icons/waha_icon.png')}
           style={{
@@ -132,11 +131,10 @@ const PianoAppScreen = ({
       </View>
       <View>
         <View
-          style={{
-            flexDirection: isRTL ? 'row-reverse' : 'row',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
+          style={[
+            styles.dummyControlsContainer,
+            { flexDirection: isRTL ? 'row-reverse' : 'row' }
+          ]}
         >
           <TouchableOpacity
             onPress={
@@ -150,26 +148,12 @@ const PianoAppScreen = ({
                 : () => {
                     setCountdown('')
                   }
-              // security.isMuted
-              //   ? () => setIsMuted(false)
-              //   : () => setIsMuted(true)
             }
             style={{
               margin: 20
             }}
           >
-            <View
-              style={{
-                backgroundColor: colors.red,
-                width: 50 * scaleMultiplier,
-                height: 50 * scaleMultiplier,
-                borderRadius: (50 * scaleMultiplier) / 2,
-                borderWidth: 2,
-                borderColor: colors.tuna,
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
+            <View style={styles.recordButton}>
               <Text
                 style={StandardTypography(
                   { font, isRTL },
@@ -208,15 +192,13 @@ const PianoAppScreen = ({
             }}
             source={require('../assets/securityMode/piano.png')}
           />
-          <Piano setPattern={setPattern} isMuted={security.isMuted} />
+          <Piano setPlayedNotes={setPlayedNotes} isMuted={security.isMuted} />
         </View>
         <View
-          style={{
-            width: Dimensions.get('window').width,
-            flexDirection: isRTL ? 'row-reverse' : 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}
+          style={[
+            styles.bottomControlsContainer,
+            { flexDirection: isRTL ? 'row-reverse' : 'row' }
+          ]}
         >
           <TouchableOpacity
             onPress={() => {}}
@@ -248,14 +230,38 @@ const PianoAppScreen = ({
   )
 }
 
-//+ STYLES
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.aquaHaze,
     alignItems: 'center',
     justifyContent: 'space-around'
+  },
+  titleContainer: {
+    height: '25%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  dummyControlsContainer: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  recordButton: {
+    backgroundColor: colors.red,
+    width: 50 * scaleMultiplier,
+    height: 50 * scaleMultiplier,
+    borderRadius: (50 * scaleMultiplier) / 2,
+    borderWidth: 2,
+    borderColor: colors.tuna,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  bottomControlsContainer: {
+    width: Dimensions.get('window').width,
+    justifyContent: 'space-between',
+    alignItems: 'center'
   }
 })
 

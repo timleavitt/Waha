@@ -365,7 +365,7 @@ const AlbumArtSwiper = ({
 
 const styles = StyleSheet.create({
   albumArtContainer: {
-    borderRadius: 10,
+    borderRadius: 20,
     backgroundColor: colors.porcelain,
     overflow: 'hidden',
     borderWidth: 4,

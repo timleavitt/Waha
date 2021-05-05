@@ -69,7 +69,7 @@ const BookView = ({
 
 const styles = StyleSheet.create({
   bookViewContainer: {
-    borderRadius: 10,
+    borderRadius: 20,
     backgroundColor: colors.porcelain,
     borderWidth: 4,
     borderColor: colors.chateau,

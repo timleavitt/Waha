@@ -19,6 +19,9 @@ function mapStateToProps (state) {
   }
 }
 
+/**
+ * A screen that guides the user through what security mode is.
+ */
 const SecurityOnboardingSlidesScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, navigate, goBack },
@@ -27,27 +30,17 @@ const SecurityOnboardingSlidesScreen = ({
   isRTL,
   activeGroup
 }) => {
-  //+ STATE
-
-  //+ CONSTRUCTOR
-
+  /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
-    setOptions(getNavOptions())
-  }, [])
-
-  //+ NAV OPTIONS
-  function getNavOptions () {
-    return {
+    setOptions({
       headerRight: isRTL
         ? () => <WahaBackButton onPress={() => goBack()} />
         : () => <View></View>,
       headerLeft: isRTL
         ? () => <View></View>
         : () => <WahaBackButton onPress={() => goBack()} />
-    }
-  }
-
-  //+ RENDER
+    })
+  }, [])
 
   return (
     <View style={styles.screen}>
@@ -71,7 +64,7 @@ const SecurityOnboardingSlidesScreen = ({
           translations.security.popups.onboarding_3_message,
           translations.security.popups.onboarding_4_message
         ]}
-        onFinish={() => navigate('KeyOrderSet_Initial')}
+        onFinish={() => navigate('PianoPasscodeSet')}
         nextTranslation={translations.general.next}
         startTranslation={translations.general.start}
         useDefaultFont={false}
@@ -79,8 +72,6 @@ const SecurityOnboardingSlidesScreen = ({
     </View>
   )
 }
-
-//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {
