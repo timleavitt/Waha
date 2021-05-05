@@ -18,7 +18,7 @@ function mapStateToProps (state) {
   }
 }
 
-// The piano sound affects.
+// The piano sound effects.
 const pianoNotes = [
   require('../assets/pianoNotes/C.mp3'),
   require('../assets/pianoNotes/Db.mp3'),
