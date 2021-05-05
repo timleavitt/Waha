@@ -29,12 +29,14 @@ import {
   downloadLanguageCoreFiles,
   incrementGlobalGroupCounter,
   setHasFetchedLanguageData,
+  setRecentActiveGroup,
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
 import { createGroup, deleteGroup } from '../redux/actions/groupsActions'
 import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
 import { storeDownloads } from '../redux/actions/storedDownloadsActions'
+import { activeGroupSelector } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { SystemTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
@@ -46,9 +48,11 @@ i18n.translations = {
 }
 
 function mapStateToProps (state) {
+  var activeGroup = state.activeGroup ? activeGroupSelector(state) : null
   return {
     groups: state.groups,
-    database: state.database
+    database: state.database,
+    activeGroup: activeGroup
   }
 }
 
@@ -73,6 +77,9 @@ function mapDispatchToProps (dispatch) {
       dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
     changeActiveGroup: name => {
       dispatch(changeActiveGroup(name))
+    },
+    setRecentActiveGroup: groupName => {
+      dispatch(setRecentActiveGroup(groupName))
     }
   }
 }
@@ -97,6 +104,7 @@ function LanguageInstanceInstallScreen ({
   // Props passed from redux.
   groups,
   database,
+  activeGroup,
   downloadLanguageCoreFiles,
   storeLanguageData,
   setIsInstallingLanguageInstance,
@@ -107,7 +115,8 @@ function LanguageInstanceInstallScreen ({
   deleteGroup,
   incrementGlobalGroupCounter,
   createGroup,
-  changeActiveGroup
+  changeActiveGroup,
+  setRecentActiveGroup
 }) {
   // Set the i18n locale to the locale of the user's phone.
   i18n.locale = Localization.locale
@@ -169,17 +178,21 @@ function LanguageInstanceInstallScreen ({
     })
   }
 
-  /** Fetches all the data for a language from Firebase. This includes the various Story Sets from the 'sets' collection and the language info from the 'languages' collection. It's an async function and doesn't resolve until all the information has been fetched and stored. If any fetch fails, it throws an error. */
-  async function fetchFirebaseData () {
+  /**
+   * Fetches all the data for a language from Firebase. This includes the various Story Sets from the 'sets' collection and the language info from the 'languages' collection. It's an async function and doesn't resolve until all the information has been fetched and stored. If any fetch fails, it throws an error.
+   * @param {string} language - The language to fetch the firebase data for.
+   */
+  const fetchFirebaseData = async language => {
     // Set the installingLanguageInstance redux variable to true since we're now installing a language instance.
     setIsInstallingLanguageInstance(true)
 
+    // Set the isFetchingFirebaseData local state to true so that the continue button shows the activity indicator.
     setIsFetchingFirebaseData(true)
 
     // Fetch all the Story Sets whith the language ID of the selected language and store them in redux.
     await db
       .collection('sets')
-      .where('languageID', '==', selectedLanguage)
+      .where('languageID', '==', language)
       .get()
       .then(response => {
         var sets = []
@@ -189,7 +202,7 @@ function LanguageInstanceInstallScreen ({
             ...set.data()
           })
         })
-        storeLanguageSets(sets, selectedLanguage)
+        storeLanguageSets(sets, language)
       })
       .catch(error => {
         console.log(error)
@@ -199,11 +212,11 @@ function LanguageInstanceInstallScreen ({
     // Fetch the language info for the selected language and store it in redux.
     await db
       .collection('languages')
-      .doc(selectedLanguage)
+      .doc(language)
       .get()
       .then(async doc => {
         if (doc.exists) {
-          storeLanguageData(doc.data(), selectedLanguage)
+          storeLanguageData(doc.data(), language)
         }
       })
       .catch(error => {
@@ -216,12 +229,17 @@ function LanguageInstanceInstallScreen ({
 
   /** Handles the user pressing the start button after they select a language instance to install. Involves fetching the necessary Firebase data, setting the hasFetchedLanguageData to true, and starting the download of the language core files. If this is the first language instance they've installed, we want to nagivate to the onboarding slides too. */
   function onStartPress () {
-    // Navigate to the onboarding slides if this is the first language instance install.
-
-    fetchFirebaseData()
+    fetchFirebaseData(selectedLanguage)
       .then(() => {
+        // Set the hasFetchedLanguageData redux variable to true since we're done fetching from Firebase.
         setHasFetchedLanguageData(true)
+
+        // If we're adding a subsequent language instance, then we need to store the active group's language
+        if (activeGroup) setRecentActiveGroup(activeGroup.name)
+
+        // Start downloading the core files for this language.
         downloadLanguageCoreFiles(selectedLanguage)
+
         // Create a new group using the default group name stored in constants.js, assuming a group hasn't already been created with the same name. We don't want any duplicates.
         if (
           !groups.some(group => group.name === groupNames[selectedLanguage])
@@ -240,8 +258,10 @@ function LanguageInstanceInstallScreen ({
         // Change the active group to the new group we just created.
         changeActiveGroup(groupNames[selectedLanguage])
 
+        // Set the local isFetchingFirebaseData state to false.
         setIsFetchingFirebaseData(false)
 
+        // Navigate to the onboarding slides if this is the first language instance install.
         if (routeName === 'InitialLanguageInstanceInstall') {
           navigate('WahaOnboardingSlides', {
             selectedLanguage: selectedLanguage
@@ -250,15 +270,15 @@ function LanguageInstanceInstallScreen ({
       })
       .catch(error => {
         console.log(error)
+
+        // If we get an error, reset the isFetching state, delete any data that might have still come through, and show the user an alert that there was an error.
+        setIsFetchingFirebaseData(false)
+        deleteLanguageData(selectedLanguage)
+
         Alert.alert(i18n.t('fetchErrorTitle'), i18n.t('fetchErrorMessage'), [
           {
             text: i18n.t('ok'),
-            onPress: () => {
-              reset({
-                index: 0,
-                routes: [{ name: 'InitialLanguageInstanceInstall' }]
-              })
-            }
+            onPress: () => {}
           }
         ])
       })
@@ -559,17 +579,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center'
-  },
-  buttonContainer: {
-    borderRadius: 20,
-    width: Dimensions.get('window').width - 40,
-    marginVertical: 20 * scaleMultiplier,
-    marginHorizontal: 20,
-    height: 65 * scaleMultiplier,
-    paddingHorizontal: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row'
   },
   headerTextContainer: {
     marginTop: 20 * scaleMultiplier,

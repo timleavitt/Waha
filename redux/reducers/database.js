@@ -7,6 +7,7 @@ import {
   SET_HAS_INSTALLED_FIRST_LANGUAGE_INSTANCE,
   SET_HAS_ONBOARDED,
   SET_LANGUAGE_CORE_FILES_DOWNLOAD_PROGRESS,
+  SET_RECENT_ACTIVE_GROUP,
   SET_TOTAL_LANGUAGE_CORE_FILES_TO_DOWNLOAD,
   STORE_ACTING_LANGUAGE_ID,
   STORE_LANGUAGE_CORE_FILE_CREATED_TIME,
@@ -60,6 +61,7 @@ export function database (
     languageCoreFilesDownloadProgress: 0,
     languageCoreFilesToUpdate: [],
     actingLanguageID: null,
+    recentLanguageID: null,
     globalGroupCounter: 0
   },
   params
@@ -148,6 +150,11 @@ export function database (
       return {
         ...state,
         actingLanguageID: params.languageID
+      }
+    case SET_RECENT_ACTIVE_GROUP:
+      return {
+        ...state,
+        recentActiveGroup: params.groupName
       }
     default:
       return state

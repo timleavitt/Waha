@@ -201,7 +201,7 @@ const ChapterButton = ({
           borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
-        setTextStyle({ color: chateau })
+        setTextStyle({ color: colors.chateau })
         setIconName(null)
         setIconColor(null)
         break
@@ -210,7 +210,7 @@ const ChapterButton = ({
           borderColor: colors.porcelain,
           backgroundColor: colors.athens
         })
-        setTextStyle({ color: chateau })
+        setTextStyle({ color: colors.chateau })
         setIconName('cloud-slash')
         setIconColor(colors.chateau)
         break

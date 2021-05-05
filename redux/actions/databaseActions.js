@@ -18,6 +18,7 @@ export const CLEAR_LANGUAGE_CORE_FILES_TO_UPDATE =
   'CLEAR_LANGUAGE_CORE_FILES_TO_UPDATE'
 export const STORE_ACTING_LANGUAGE_ID = 'STORE_ACTING_LANGUAGE_ID'
 export const INCREMENT_GLOBAL_GROUP_COUNTER = 'INCREMENT_GLOBAL_GROUP_COUNTER'
+export const SET_RECENT_ACTIVE_GROUP = 'SET_RECENT_ACTIVE_GROUP'
 
 import * as FileSystem from 'expo-file-system'
 import firebase from 'firebase'
@@ -176,6 +177,13 @@ export function storeActingLanguageID (languageID) {
   return {
     type: STORE_ACTING_LANGUAGE_ID,
     languageID: languageID
+  }
+}
+
+export function setRecentActiveGroup (groupName) {
+  return {
+    type: SET_RECENT_ACTIVE_GROUP,
+    groupName: groupName
   }
 }
 
