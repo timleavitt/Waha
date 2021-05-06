@@ -3,12 +3,13 @@ import * as FileSystem from 'expo-file-system'
 import { useKeepAwake } from 'expo-keep-awake'
 import React, { useRef, useState } from 'react'
 import {
-  Alert,
   Animated,
   Dimensions,
   Image,
   SafeAreaView,
   StyleSheet,
+  Text,
+  TouchableOpacity,
   View
 } from 'react-native'
 import { connect } from 'react-redux'
@@ -17,7 +18,6 @@ import AlbumArtSwiper from '../components/AlbumArtSwiper'
 import BookView from '../components/BookView'
 import ChapterSelector from '../components/ChapterSelector'
 import PlaybackControls from '../components/PlaybackControls'
-import PlayScreenHeaderButtons from '../components/PlayScreenHeaderButtons'
 import PlayScreenTitle from '../components/PlayScreenTitle'
 import Scrubber from '../components/Scrubber'
 import VideoPlayer from '../components/VideoPlayer'
@@ -38,7 +38,7 @@ import {
   activeGroupSelector
 } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
-import { getLanguageFont } from '../styles/typography'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
@@ -201,7 +201,32 @@ const PlayScreen = ({
 
   /** Sets the navigation options for this screen. */
   const getNavOptions = () => ({
-    headerTitle: getLessonInfo('subtitle', thisLesson.id),
+    headerTitle: (
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row'
+        }}
+      >
+        <View>
+          {thisSetProgress.includes(getLessonInfo('index', thisLesson.id)) && (
+            <Icon name='check-outline' size={20} color={colors.chateau} />
+          )}
+        </View>
+        <Text
+          style={StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Bold',
+            'center',
+            colors.chateau
+          )}
+        >
+          {getLessonInfo('subtitle', thisLesson.id)}
+        </Text>
+      </View>
+    ),
     headerRight: isRTL
       ? () => (
           <WahaBackButton
@@ -212,23 +237,29 @@ const PlayScreen = ({
           />
         )
       : () => (
-          <PlayScreenHeaderButtons
-            showShareModal={() => setShowShareLessonModal(true)}
-            updateCompleteStatus={updateCompleteStatus}
-            isComplete={thisSetProgress.includes(
-              getLessonInfo('index', thisLesson.id)
-            )}
-          />
+          <TouchableOpacity
+            style={{ marginHorizontal: 5 }}
+            onPress={() => setShowShareLessonModal(true)}
+          >
+            <Icon
+              name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
+              size={32 * scaleMultiplier}
+              color={colors.oslo}
+            />
+          </TouchableOpacity>
         ),
     headerLeft: isRTL
       ? () => (
-          <PlayScreenHeaderButtons
-            showShareModal={() => setShowShareLessonModal(true)}
-            updateCompleteStatus={updateCompleteStatus}
-            isComplete={thisSetProgress.includes(
-              getLessonInfo('index', thisLesson.id)
-            )}
-          />
+          <TouchableOpacity
+            style={{ marginHorizontal: 5 }}
+            onPress={() => setShowShareLessonModal(true)}
+          >
+            <Icon
+              name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
+              size={32 * scaleMultiplier}
+              color={colors.oslo}
+            />
+          </TouchableOpacity>
         )
       : () => (
           <WahaBackButton
@@ -479,26 +510,55 @@ const PlayScreen = ({
    * Updates on every api call to the audio object as well as every second. Covers the automatic switch of one chapter to the next and marking a lesson as complete at the finish of the last chapter.
    * @param {Object} playbackStatus - The playback status object passed from the media reference. Includes information like load status, progress, play status, and more.
    */
-  const onPlaybackStatusUpdate = playbackStatus => {
+  const onPlaybackStatusUpdate = ({
+    isLoaded,
+    isPlaying,
+    positionMillis,
+    durationMillis,
+    didJustFinish,
+    error
+  }) => {
     // Set isLoaded state to true once media loads.
-    if (playbackStatus.isLoaded) setIsMediaLoaded(true)
+    if (isLoaded) setIsMediaLoaded(true)
     else setIsMediaLoaded(false)
 
     // If we should update the thumb, update it to the newest value.
-    if (shouldThumbUpdate.current)
-      setMediaProgress(playbackStatus.positionMillis)
+    if (shouldThumbUpdate.current) setMediaProgress(positionMillis)
+
+    if (
+      positionMillis / durationMillis > 0.5 &&
+      !thisSetProgress.includes(getLessonInfo('index', thisLesson.id))
+    ) {
+      if (
+        (lessonType.includes('Questions') &&
+          activeChapter === chapters.APPLICATION) ||
+        (lessonType === lessonTypes.VIDEO_ONLY &&
+          activeChapter === chapters.TRAINING) ||
+        (lessonType === lessonTypes.AUDIOBOOK &&
+          activeChapter === chapters.STORY)
+      )
+        // Toggle the complete status of the lesson.
+        toggleComplete(
+          activeGroup.name,
+          thisSet,
+          getLessonInfo('index', thisLesson.id)
+        )
+
+      // Update the navigation options since one of the header buttons shows the complete status of the lesson.
+      setOptions(getNavOptions())
+    }
 
     // Keep the play button status in sync with the play status while in fullscreen mode.
     if (
       activeChapter === chapters.TRAINING &&
       fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
     ) {
-      if (playbackStatus.isPlaying) setIsMediaPlaying(true)
-      else if (!playbackStatus.isPlaying) setIsMediaPlaying(false)
+      if (isPlaying) setIsMediaPlaying(true)
+      else if (!isPlaying) setIsMediaPlaying(false)
     }
 
     // On a chapter finish, call the appropriate handler function.
-    if (playbackStatus.didJustFinish) {
+    if (didJustFinish) {
       switch (activeChapter) {
         case chapters.FELLOWSHIP:
           onFellowshipFinish()
@@ -516,13 +576,16 @@ const PlayScreen = ({
     }
 
     // If an error happens, try reloading the active chapter.
-    if (playbackStatus.error) loadMedia(chapterSources[activeChapter])
+    if (error) {
+      console.log('Playback error.')
+      loadMedia(chapterSources[activeChapter])
+    }
   }
 
   /** useEffect function that refreshes the onPlaybackStatusUpdate function whenever the download status or fullscreen status of the lesson changes since both of those are used throughout the chapter finish handler functions below. */
   useEffect(() => {
     audioRef.current.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate)
-  }, [Object.keys(downloads).length])
+  }, [Object.keys(downloads).length, thisSetProgress])
 
   /** Handles the finishing of the Fellowship chapter. */
   const onFellowshipFinish = () => {
@@ -531,9 +594,8 @@ const PlayScreen = ({
       changeChapter(chapters.STORY)
       albumArtSwiperRef.current.snapToItem(2)
     } // If a Story chapter is still downloading or it isn't downloaded and can't start downloading, swipe to the Scripture text so the user can read the text while they're waiting for it to download.
-    else if (downloads[thisLesson.id]) {
-      albumArtSwiperRef.current.snapToItem(2)
-    } // Otherwise, just change to the Story chapter.
+    else if (downloads[thisLesson.id]) albumArtSwiperRef.current.snapToItem(2)
+    // Otherwise, just change to the Story chapter.
     else changeChapter(chapters.STORY)
   }
 
@@ -551,11 +613,11 @@ const PlayScreen = ({
         }
         break
       // If we're in an audiobook lesson, the Story chapter is the only chapter, so once we finish it, we can mark it as complete.
-      case lessonTypes.AUDIOBOOK:
-        if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id))) {
-          updateCompleteStatus()
-        }
-        break
+      // case lessonTypes.AUDIOBOOK:
+      //   if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id))) {
+      //     updateCompleteStatus()
+      //   }
+      //   break
     }
   }
 
@@ -571,17 +633,17 @@ const PlayScreen = ({
         setTimeout(() => changeChapter(chapters.APPLICATION), 500)
         break
       // If we're in a video only lesson, the Training chapter is the only chapter, so we can mark the lesson as complete once it's finished.
-      case lessonTypes.VIDEO_ONLY:
-        if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id)))
-          setTimeout(() => updateCompleteStatus(), 1000)
-        break
+      // case lessonTypes.VIDEO_ONLY:
+      //   if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id)))
+      //     setTimeout(() => updateCompleteStatus(), 1000)
+      //   break
     }
   }
 
   /** Handles the finishing of the Application chapter. */
   const onApplicationFinish = () => {
-    if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id)))
-      updateCompleteStatus()
+    // if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id)))
+    //   updateCompleteStatus()
   }
 
   /*
@@ -693,41 +755,41 @@ const PlayScreen = ({
   */
 
   /** Switches the complete status of a lesson to the opposite of its current status and alerts the user of the change. Also shows the set complete modal if this is the last lesson to complete in a story set. */
-  const updateCompleteStatus = () => {
-    // Lock back to portrait orientation in case the user does the lesson in upside-down portrait.
-    lockPortrait(() => {})
+  // const updateCompleteStatus = () => {
+  //   // Lock back to portrait orientation in case the user does the lesson in upside-down portrait.
+  //   lockPortrait(() => {})
 
-    // Toggle the complete status of the lesson.
-    toggleComplete(
-      activeGroup.name,
-      thisSet,
-      getLessonInfo('index', thisLesson.id)
-    )
+  //   // Toggle the complete status of the lesson.
+  //   toggleComplete(
+  //     activeGroup.name,
+  //     thisSet,
+  //     getLessonInfo('index', thisLesson.id)
+  //   )
 
-    // Update the navigation options since one of the header buttons shows the complete status of the lesson.
-    setOptions(getNavOptions())
+  //   // Update the navigation options since one of the header buttons shows the complete status of the lesson.
+  //   setOptions(getNavOptions())
 
-    // If completing this lesson completes its whole set, show a special set-complete modal.
-    if (
-      activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
-        .length /
-        (thisSet.lessons.length - 1) ===
-      1
-    )
-      setShowSetCompleteModal(true)
-    // Otherwise, show an alert notifying the user that the lesson has been marked as complete.
-    else if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id)))
-      Alert.alert(
-        translations.play.popups.marked_as_complete_title,
-        translations.play.popups.marked_as_complete_message,
-        [
-          {
-            text: translations.general.ok,
-            onPress: () => goBack()
-          }
-        ]
-      )
-  }
+  //   // If completing this lesson completes its whole set, show a special set-complete modal.
+  //   if (
+  //     activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
+  //       .length /
+  //       (thisSet.lessons.length - 1) ===
+  //     1
+  //   )
+  //     setShowSetCompleteModal(true)
+  //   // Otherwise, show an alert notifying the user that the lesson has been marked as complete.
+  //   else if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id)))
+  //     Alert.alert(
+  //       translations.play.popups.marked_as_complete_title,
+  //       translations.play.popups.marked_as_complete_message,
+  //       [
+  //         {
+  //           text: translations.general.ok,
+  //           onPress: () => goBack()
+  //         }
+  //       ]
+  //     )
+  // }
 
   /** useEffect function that updates the thisSetProgress state variable with the most updated version of the progress of the set that this lesson is a part of. */
   useEffect(() => {

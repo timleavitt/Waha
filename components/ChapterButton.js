@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
 import {
@@ -234,20 +234,30 @@ const ChapterButton = ({
           : 0.2
       }
     >
-      {/* If we're DOWNLOADING, show the progress indicator. Otherwise, show an icon. */}
-      {mode === chapterButtonModes.DOWNLOADING ? (
-        <AnimatedCircularProgress
-          size={22 * scaleMultiplier}
-          width={4}
-          fill={downloadProgress}
-          tintColor={primaryColor}
-          rotation={0}
-          backgroundColor={colors.white}
-          padding={4}
-        />
-      ) : (
-        <Icon name={iconName} size={25 * scaleMultiplier} color={iconColor} />
-      )}
+      <View
+        style={{
+          width: 25 * scaleMultiplier,
+          height: 25 * scaleMultiplier,
+          marginBottom: 1,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        {/* If we're DOWNLOADING, show the progress indicator. Otherwise, show an icon. */}
+        {mode === chapterButtonModes.DOWNLOADING ? (
+          <AnimatedCircularProgress
+            size={22 * scaleMultiplier}
+            width={4}
+            fill={downloadProgress}
+            tintColor={primaryColor}
+            rotation={0}
+            backgroundColor={colors.white}
+            padding={4}
+          />
+        ) : (
+          <Icon name={iconName} size={25 * scaleMultiplier} color={iconColor} />
+        )}
+      </View>
       {/* The name of the chapter. */}
       <Text
         adjustsFontSizeToFit
