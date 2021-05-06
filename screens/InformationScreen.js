@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
 import { connect } from 'react-redux'
-import BackButton from '../components/standard/BackButton'
+import WahaBackButton from '../components/WahaBackButton'
 import { scaleMultiplier } from '../constants'
 import { appVersion } from '../modeSwitch'
 import {
@@ -42,11 +42,11 @@ const InformationScreen = ({
   function getNavOptions () {
     return {
       headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
+        ? () => <WahaBackButton onPress={() => goBack()} />
         : () => {},
       headerLeft: isRTL
         ? () => {}
-        : () => <BackButton onPress={() => goBack()} />
+        : () => <WahaBackButton onPress={() => goBack()} />
     }
   }
 

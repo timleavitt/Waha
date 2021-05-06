@@ -4,7 +4,7 @@ import React from 'react'
 import { Alert, Share, View } from 'react-native'
 import { connect } from 'react-redux'
 import OptionsModalButton from '../components/OptionsModalButton'
-import Separator from '../components/standard/Separator'
+import WahaSeparator from '../components/WahaSeparator'
 import { logShareApp, logShareAudio, logShareText } from '../LogEventFunctions'
 import {
   activeDatabaseSelector,
@@ -20,6 +20,22 @@ function mapStateToProps (state) {
   }
 }
 
+const shareTypes = {
+  APP: 1,
+  TEXT: 2,
+  AUDIO: 3,
+  VIDEO: 4
+}
+
+/**
+ * A modal component that gives the user options to share various parts of a lesson.
+ * @param {boolean} isVisible - Whether the modal is visible.
+ * @param {Function} hideModal - Function to hide the modal.
+ * @param {string} closeText - The text to display on the button that closes the modal.
+ * @param {Object} lesson - The object for the lesson that we're sharing.
+ * @param {string[]} lessonType - The type of the lesson that we're sharing. See lessonTypes in constants.js.
+ * @param {Object} set - The object for the set that the lesson that we're sharing is a part of.
+ */
 const ShareModal = ({
   // Props passed from a parent component.s
   isVisible,
@@ -33,11 +49,14 @@ const ShareModal = ({
   downloads,
   activeGroup
 }) => {
-  // opens the share sheet to share a chapter of a lesson
-  function share (type) {
+  /**
+   * Opens the share sheet to share a piece of content from a lesson.
+   * @param {number} type - The type of content to share. See shareTypes at the top of this page.
+   */
+  const shareLessonContent = type => {
     switch (type) {
-      // share the link to Waha itself
-      case 'app':
+      // Share links to Waha's app store pages.
+      case shareTypes.APP:
         Share.share({
           message:
             'iOS: https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294\n\nAndroid: https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
@@ -46,8 +65,8 @@ const ShareModal = ({
           hideModal()
         })
         break
-      // share the passage text for this lesson
-      case 'text':
+      // Share the Scripture text for a lesson if it has it.
+      case shareTypes.TEXT:
         var scriptureString = ''
         lesson.scripture.forEach((scripturePiece, index) => {
           scriptureString += scripturePiece.header + '\n' + scripturePiece.text
@@ -60,8 +79,8 @@ const ShareModal = ({
           hideModal()
         })
         break
-      // share the audio file for this lesson
-      case 'audio':
+      // Share the Scripture audio for a lesson if it exists.
+      case shareTypes.AUDIO:
         FileSystem.getInfoAsync(
           FileSystem.documentDirectory + lesson.id + '.mp3'
         ).then(({ exists }) => {
@@ -84,8 +103,8 @@ const ShareModal = ({
               )
         })
         break
-      // share the video link for this lesson
-      case 'video':
+      // Share a link to the video for this lesson if there is one.
+      case shareTypes.VIDEO:
         Share.share({
           message: lesson.videoShareLink
         }).then(() => {
@@ -94,46 +113,50 @@ const ShareModal = ({
         break
     }
   }
-  //+ RENDER
+
   return (
+    // The share modal uses the <OptionsModal/> component.
     <OptionsModal
       isVisible={isVisible}
       hideModal={hideModal}
       closeText={closeText}
     >
       <OptionsModalButton
-        title={translations.general.share_app}
-        onPress={() => share('app')}
+        label={translations.general.share_app}
+        onPress={() => shareLessonContent(shareTypes.APP)}
       />
-      {lessonType.includes('q') ? (
+      {/* Include a "Share Text" button if a lesson has questions. If it has questions, then it also has Scripture text. */}
+      {lessonType.includes('Questions') ? (
         <View>
-          <Separator />
+          <WahaSeparator />
           <OptionsModalButton
-            title={translations.general.share_passage_text}
-            onPress={() => share('text')}
+            label={translations.general.share_passage_text}
+            onPress={() => shareLessonContent(shareTypes.TEXT)}
           />
         </View>
       ) : null}
-      {lessonType.includes('a') && !downloads[lesson.id] ? (
+      {/* Include a "Share Audio" button if a lesson has audio and it's not currently downloading. */}
+      {lessonType.includes('Audio') && !downloads[lesson.id] && (
         <View>
-          <Separator />
+          <WahaSeparator />
           <OptionsModalButton
-            title={translations.general.share_passage_audio}
-            onPress={() => share('audio')}
+            label={translations.general.share_passage_audio}
+            onPress={() => shareLessonContent(shareTypes.AUDIO)}
           />
         </View>
-      ) : null}
-      {lessonType.includes('v') &&
-      lesson.videoShareLink &&
-      !downloads[lesson.id] ? (
-        <View>
-          <Separator />
-          <OptionsModalButton
-            title={translations.general.share_video_link}
-            onPress={() => share('video')}
-          />
-        </View>
-      ) : null}
+      )}
+      {/* Include a "Share Video" button if a lesson has video, the link to share it exists, and it's not currently downloading. */}
+      {lessonType.includes('Video') &&
+        lesson.videoShareLink &&
+        !downloads[lesson.id] && (
+          <View>
+            <WahaSeparator />
+            <OptionsModalButton
+              label={translations.general.share_video_link}
+              onPress={() => shareLessonContent(shareTypes.VIDEO)}
+            />
+          </View>
+        )}
     </OptionsModal>
   )
 }

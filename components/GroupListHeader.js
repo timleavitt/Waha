@@ -10,16 +10,16 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../../constants'
-import { deleteLanguageData } from '../../redux/actions/databaseActions'
-import { removeDownload } from '../../redux/actions/downloadActions'
-import { deleteGroup } from '../../redux/actions/groupsActions'
+import { scaleMultiplier } from '../constants'
+import { deleteLanguageData } from '../redux/actions/databaseActions'
+import { removeDownload } from '../redux/actions/downloadActions'
+import { deleteGroup } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
-} from '../../redux/reducers/activeGroup'
-import { colors } from '../../styles/colors'
-import { getLanguageFont, StandardTypography } from '../../styles/typography'
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {

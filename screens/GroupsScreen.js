@@ -3,11 +3,11 @@ import { SectionList, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import AddNewGroupButton from '../components/AddNewGroupButton'
 import AddNewLanguageInstanceButton from '../components/AddNewLanguageInstanceButton'
+import GroupItem from '../components/GroupItem'
+import GroupListHeader from '../components/GroupListHeader'
 import GroupsScreenEditButton from '../components/GroupsScreenEditButton'
-import GroupItem from '../components/list-items/GroupItem'
-import GroupListHeader from '../components/list-items/GroupListHeader'
-import BackButton from '../components/standard/BackButton'
-import Separator from '../components/standard/Separator'
+import WahaBackButton from '../components/WahaBackButton'
+import WahaSeparator from '../components/WahaSeparator'
 import AddEditGroupModal from '../modals/AddEditGroupModal'
 import {
   activeDatabaseSelector,
@@ -60,7 +60,7 @@ const GroupsScreen = ({
       },
       headerRight: isRTL
         ? () => (
-            <BackButton
+            <WahaBackButton
               color={isEditing ? colors.white : null}
               onPress={() => goBack()}
             />
@@ -79,7 +79,7 @@ const GroupsScreen = ({
             />
           )
         : () => (
-            <BackButton
+            <WahaBackButton
               color={isEditing ? colors.white : null}
               onPress={() => goBack()}
             />
@@ -172,8 +172,8 @@ const GroupsScreen = ({
         renderSectionHeader={({ section }) => renderGroupListHeader(section)}
         keyExtractor={item => item.name}
         extraData={isRTL}
-        ItemSeparatorComponent={() => <Separator />}
-        SectionSeparatorComponent={() => <Separator />}
+        ItemSeparatorComponent={() => <WahaSeparator />}
+        SectionSeparatorComponent={() => <WahaSeparator />}
         renderSectionFooter={({ section }) => (
           <AddNewGroupButton
             section={section}

@@ -8,8 +8,8 @@ import {
 } from 'react-native'
 import Modal from 'react-native-modal'
 import { connect } from 'react-redux'
-import HomeworkItem from '../components/list-items/HomeworkItem'
-import WahaItemDescription from '../components/standard/standard/WahaItemDescription'
+import HomeworkItem from '../components/DEPRECATED_HomeworkItem'
+import WahaItemDescription from '../components/DEPRECATED_WahaItemDescription'
 import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,

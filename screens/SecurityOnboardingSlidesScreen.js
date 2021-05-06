@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import OnboardingSwiper from '../components/OnboardingSwiper'
-import BackButton from '../components/standard/BackButton'
+import WahaBackButton from '../components/WahaBackButton'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -19,6 +19,9 @@ function mapStateToProps (state) {
   }
 }
 
+/**
+ * A screen that guides the user through what security mode is.
+ */
 const SecurityOnboardingSlidesScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, navigate, goBack },
@@ -27,27 +30,17 @@ const SecurityOnboardingSlidesScreen = ({
   isRTL,
   activeGroup
 }) => {
-  //+ STATE
-
-  //+ CONSTRUCTOR
-
+  /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
-    setOptions(getNavOptions())
-  }, [])
-
-  //+ NAV OPTIONS
-  function getNavOptions () {
-    return {
+    setOptions({
       headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
+        ? () => <WahaBackButton onPress={() => goBack()} />
         : () => <View></View>,
       headerLeft: isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => goBack()} />
-    }
-  }
-
-  //+ RENDER
+        : () => <WahaBackButton onPress={() => goBack()} />
+    })
+  }, [])
 
   return (
     <View style={styles.screen}>
@@ -71,7 +64,7 @@ const SecurityOnboardingSlidesScreen = ({
           translations.security.popups.onboarding_3_message,
           translations.security.popups.onboarding_4_message
         ]}
-        onFinish={() => navigate('KeyOrderSet_Initial')}
+        onFinish={() => navigate('PianoPasscodeSet')}
         nextTranslation={translations.general.next}
         startTranslation={translations.general.start}
         useDefaultFont={false}
@@ -80,12 +73,10 @@ const SecurityOnboardingSlidesScreen = ({
   )
 }
 
-//+ STYLES
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.aquaHaze,
+    backgroundColor: colors.white,
     flexDirection: 'column',
     justifyContent: 'center'
   }

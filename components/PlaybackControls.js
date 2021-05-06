@@ -1,5 +1,10 @@
 import React from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
@@ -11,60 +16,40 @@ function mapStateToProps (state) {
   }
 }
 
-// play, pause, and skip controls for play screen
+/**
+ * A component that shows the play/pause and skip buttons on the Play Screen.
+ * @param {boolean} isMediaPlaying - Whether the current media (audio or video) is currently playing.
+ * @param {boolean} isMediaLoaded - Whether the current media is loaded.
+ * @param {Function} playHandler - Function to call when the user presses the play/pause button.
+ * @param {number} mediaProgress - The progress in milliseconds through the current media.
+ * @param {Function} playFromLocation - Function that plays the media from a specific location in milliseconds. Used for the skip buttons.
+ */
 const PlaybackControls = ({
   // Props passed from a parent component.
   isMediaPlaying,
-  onPlayPress,
-  onSkipPress,
+  isMediaLoaded,
+  playHandler,
+  mediaProgress,
+  playFromLocation,
   // Props passed from redux.
   primaryColor
-}) => {
-  //+ RENDER
-
-  return (
-    <View style={styles.playPauseSkipContainer}>
-      {/* {hasHomework ? (
-        <View
-          style={{
-            width: '100%',
-            position: 'absolute',
-            justifyContent: 'center'
-          }}
-        >
-          <TouchableOpacity
-            style={{ position: 'absolute', paddingHorizontal: 20 }}
-            onPress={showHomeworkModal}
-          >
-            <Icon name='list' size={40 * scaleMultiplier} color={colors.tuna} />
-          </TouchableOpacity>
-        </View>
-      ) : null} */}
+}) => (
+  <View style={styles.playbackControlsContainer}>
+    <TouchableOpacity
+      style={styles.skipButtonContainer}
+      // Skip back five seconds.
+      onPress={() => playFromLocation(mediaProgress - 5000)}
+    >
+      <Icon
+        name='skip-back-5'
+        size={69 * scaleMultiplier}
+        color={colors.tuna}
+      />
+    </TouchableOpacity>
+    {isMediaLoaded ? (
       <TouchableOpacity
-        style={styles.playPauseSkipButton}
-        onPress={() => onSkipPress(-5000)}
-      >
-        <Icon
-          name='skip-back-5'
-          size={69 * scaleMultiplier}
-          color={colors.tuna}
-        />
-      </TouchableOpacity>
-      {/* {isVideoBuffering ? (
-        <View
-          style={{
-            width: 101 * scaleMultiplier,
-            height: 101 * scaleMultiplier,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <ActivityIndicator size='large' />
-        </View>
-      ) : ( */}
-      <TouchableOpacity
-        style={styles.playPauseSkipButton}
-        onPress={onPlayPress}
+        style={styles.playButtonContainer}
+        onPress={playHandler}
       >
         <Icon
           name={isMediaPlaying ? 'pause' : 'play'}
@@ -72,32 +57,41 @@ const PlaybackControls = ({
           color={primaryColor}
         />
       </TouchableOpacity>
-      {/* )} */}
-      <TouchableOpacity
-        style={styles.playPauseSkipButton}
-        onPress={() => onSkipPress(5000)}
-      >
-        <Icon
-          name='skip-forward-5'
-          size={69 * scaleMultiplier}
-          color={colors.tuna}
-        />
-      </TouchableOpacity>
-    </View>
-  )
-}
-
-//+ STYLES
+    ) : (
+      // Show a spinning activity indicator if the media is loading.
+      <View style={styles.playButtonContainer}>
+        <ActivityIndicator size='large' color={colors.shark} />
+      </View>
+    )}
+    <TouchableOpacity
+      style={styles.skipButtonContainer}
+      // Skip forward five seconds.
+      onPress={() => playFromLocation(mediaProgress + 5000)}
+    >
+      <Icon
+        name='skip-forward-5'
+        size={69 * scaleMultiplier}
+        color={colors.tuna}
+      />
+    </TouchableOpacity>
+  </View>
+)
 
 const styles = StyleSheet.create({
-  playPauseSkipContainer: {
+  playbackControlsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     marginTop: -15
   },
-  playPauseSkipButton: {
+  playButtonContainer: {
+    width: 100 * scaleMultiplier,
+    height: 100 * scaleMultiplier,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  skipButtonContainer: {
     alignItems: 'center',
     justifyContent: 'center'
   }

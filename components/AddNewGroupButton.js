@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import Separator from '../components/standard/Separator'
+import WahaSeparator from '../components/WahaSeparator'
 import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
@@ -68,7 +68,7 @@ const AddNewGroupButton = ({
           {translations.groups.new_group_button_label}
         </Text>
       </TouchableOpacity>
-      <Separator />
+      <WahaSeparator />
       <View style={{ height: 20 * scaleMultiplier, width: '100%' }} />
     </View>
   )

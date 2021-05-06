@@ -7,6 +7,37 @@ import { languages } from './languages'
  * This file contains a bunch of constants and a few miscellaneous functions that are used globally throughout Waha.
  */
 
+export const chapterButtonModes = {
+  INCOMPLETE: 1,
+  COMPLETE: 2,
+  ACTIVE: 3,
+  DOWNLOADING: 4,
+  DISABLED: 5
+}
+
+export const chapters = {
+  FELLOWSHIP: 1,
+  STORY: 2,
+  TRAINING: 3,
+  APPLICATION: 4
+}
+
+export const lessonTypes = {
+  STANDARD_DBS: ['Questions', 'Audio'],
+  STANDARD_DMC: ['Questions', 'Audio', 'Video'],
+  VIDEO_ONLY: ['Video'],
+  STANDARD_NO_AUDIO: ['Questions'],
+  BOOK: ['BookText'],
+  AUDIOBOOK: ['BookText', 'Audio']
+}
+
+export const setItemModes = {
+  SETS_SCREEN: 1,
+  LESSONS_SCREEN: 2,
+  ADD_SET_SCREEN: 3,
+  SET_INFO_MODAL: 4
+}
+
 /** Set the max font scaling allowed. This is based on the system font scaling that the user sets in their phone's accessibility settings. We limit it so that the text in the app isn't allowed scale above 1.2 times normal size, which would not be good for the UI. */
 const fontScale =
   PixelRatio.getFontScale() >= 1.2 ? 1.2 : PixelRatio.getFontScale()

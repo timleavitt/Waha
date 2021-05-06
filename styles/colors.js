@@ -19,6 +19,9 @@ export const colors = {
   // Used in miscellaneous places throughout the app.
   geyser: '#DEE3E9',
 
+  // Waha's brand color.
+  waha: '#E63946',
+
   // Used for backgrounds, list items, and borders.
   // Darkest.
   porcelain: '#EAEEF0',
@@ -43,7 +46,8 @@ export const colors = {
   chateauShadow: '#868A91',
   redShadow: '#DB0700',
   blueShadow: '#2986BB',
-  geyserShadow: '#C0C3C8'
+  geyserShadow: '#C0C3C8',
+  wahaShadow: '#CF333F'
 }
 
 // The colors used for each piano key in the PianoApp component.

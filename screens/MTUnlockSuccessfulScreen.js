@@ -1,7 +1,7 @@
 import React from 'react'
 import { Dimensions, SafeAreaView, StyleSheet, Text } from 'react-native'
 import { connect } from 'react-redux'
-import WahaButton from '../components/standard/WahaButton'
+import WahaButton from '../components/WahaButton'
 import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,

@@ -8,9 +8,9 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import SetItem from '../components/list-items/SetItem'
-import WahaButton from '../components/standard/WahaButton'
-import { scaleMultiplier } from '../constants'
+import SetItem from '../components/SetItem'
+import WahaButton from '../components/WahaButton'
+import { scaleMultiplier, setItemModes } from '../constants'
 import { addSet } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
@@ -61,9 +61,12 @@ const SetInfoModal = ({
   font,
   addSet
 }) => {
-  /** Renders a item with the information for a lesson. */
+  /**
+   * Renders a item with the information for a lesson.
+   * @param {Object} item - The lesson to render.
+   * */
   const renderLessonInfoItem = ({ item }) => {
-    // If lesson has scripture, format the list of scripture to be a string with the scripture addresses separated by commas.
+    // If lesson has scripture, format the list of scripture to be a string with the Scripture addresses separated by commas.
     if (item.scripture) {
       var scriptureList = item.scripture[0].header
 
@@ -114,8 +117,6 @@ const SetInfoModal = ({
     )
   }
 
-  const keyExtractor = item => item.id
-
   return (
     <ModalScreen
       title={translations.add_set.header_set_details}
@@ -123,7 +124,7 @@ const SetInfoModal = ({
       isVisible={isVisible}
     >
       <View style={styles.setItemContainer}>
-        <SetItem thisSet={thisSet} screen='SetInfo' />
+        <SetItem thisSet={thisSet} mode={setItemModes.SET_INFO_MODAL} />
       </View>
       <WahaButton
         type='filled'
@@ -144,19 +145,16 @@ const SetInfoModal = ({
           />
         }
       />
-      <View style={{ flex: 1 }}>
-        <FlatList
-          keyExtractor={keyExtractor}
-          data={thisSet.lessons}
-          renderItem={renderLessonInfoItem}
-          contentContainerStyle={{ flexGrow: 1 }}
-        />
-      </View>
+      <FlatList
+        keyExtractor={item => item.id}
+        data={thisSet.lessons}
+        renderItem={renderLessonInfoItem}
+        contentContainerStyle={{ flexGrow: 1 }}
+        style={{ flex: 1 }}
+      />
     </ModalScreen>
   )
 }
-
-//+ STYLES
 
 const styles = StyleSheet.create({
   screen: {

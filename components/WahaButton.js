@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../../constants'
+import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
-} from '../../redux/reducers/activeGroup'
-import { colors } from '../../styles/colors'
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
 import {
   getLanguageFont,
   StandardTypography,
   SystemTypography
-} from '../../styles/typography'
+} from '../styles/typography'
 
 function mapStateToProps (state) {
   return activeGroupSelector(state)
@@ -39,7 +39,7 @@ const WahaButton = ({
   // Props passed from a parent component.s
   type,
   color,
-  label,
+  label = '',
   style = {},
   textStyle = {},
   width = null,
@@ -61,32 +61,52 @@ const WahaButton = ({
     else if (color === colors.blue) setShadowColor(colors.blueShadow)
     else if (color === colors.chateau) setShadowColor(colors.chateauShadow)
     else if (color === colors.geyser) setShadowColor(colors.geyserShadow)
+    else if (color === colors.waha) setShadowColor(colors.wahaShadow)
   }, [color])
 
-  const containerStyle = [
+  // Main container styles.
+  const outerContainerStyle = [
     {
-      borderRadius: 10,
-      marginVertical: 20 * scaleMultiplier,
+      overflow: 'hidden',
+      borderRadius: 20,
       height: 65 * scaleMultiplier,
-      paddingHorizontal: 15,
+      width: width,
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'row',
-      width: width
+      marginVertical: 20 * scaleMultiplier
     },
     style
   ]
 
+  // Inner container styles.
+  const innerContainerStyle = {
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    height: '100%',
+    width: '100%'
+  }
+
+  // Specific styles for the outline type button.
   const outlineButtonStyle = [
-    containerStyle,
+    innerContainerStyle,
     {
+      borderRadius: 20,
+      height: 65 * scaleMultiplier,
+      width: width,
+      flexDirection: 'row',
+      marginVertical: 20 * scaleMultiplier,
       borderWidth: 2,
       borderColor: color
-    }
+    },
+    style
   ]
 
+  // Specific styles for the filled and inactive type buttons.
   const filledAndInactiveButtonStyle = [
-    containerStyle,
+    innerContainerStyle,
     {
       backgroundColor: color,
       borderBottomWidth: 4,
@@ -94,47 +114,46 @@ const WahaButton = ({
     }
   ]
 
+  // Styles for the button text.
   const labelStyle = [
     useDefaultFont
       ? SystemTypography(false, 'h3', 'Bold', 'center', color)
       : StandardTypography({ font, isRTL }, 'h3', 'Bold', 'center', color),
-    {
-      fontWeight: font ? null : 'bold',
-      color:
-        type === 'filled'
-          ? colors.white
-          : type === 'inactive'
-          ? colors.chateau
-          : color
-    },
+    { fontWeight: font ? null : 'bold' },
     textStyle
   ]
+
+  // Specific styles for the labels for the different types of buttons.
+  const outlineLabelStyle = [labelStyle, { color: color }]
+  const filledLabelStyle = [labelStyle, { color: colors.white }]
+  const inactiveLabelStyle = [labelStyle, { color: colors.chateau }]
 
   switch (type) {
     case 'outline':
       return (
         <TouchableOpacity style={outlineButtonStyle} onPress={onPress}>
-          <Text style={labelStyle}>{label}</Text>
+          <Text style={outlineLabelStyle}>{label}</Text>
           {extraComponent}
         </TouchableOpacity>
       )
       break
     case 'filled':
       return (
-        <TouchableOpacity
-          style={filledAndInactiveButtonStyle}
-          onPress={onPress}
-        >
-          <Text style={labelStyle}>{label}</Text>
-          {extraComponent}
+        <TouchableOpacity style={outerContainerStyle} onPress={onPress}>
+          <View style={filledAndInactiveButtonStyle}>
+            <Text style={filledLabelStyle}>{label}</Text>
+            {extraComponent}
+          </View>
         </TouchableOpacity>
       )
       break
     case 'inactive':
       return (
-        <View style={filledAndInactiveButtonStyle}>
-          <Text style={labelStyle}>{label}</Text>
-          {extraComponent}
+        <View style={outerContainerStyle}>
+          <View style={filledAndInactiveButtonStyle}>
+            <Text style={inactiveLabelStyle}>{label}</Text>
+            {extraComponent}
+          </View>
         </View>
       )
       break

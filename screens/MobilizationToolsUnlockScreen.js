@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Alert, Image, Keyboard, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
-import BackButton from '../components/standard/BackButton'
+import WahaBackButton from '../components/WahaBackButton'
 import { scaleMultiplier } from '../constants'
 import MessageModal from '../modals/MessageModal'
 import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
@@ -73,11 +73,11 @@ const MobilizationToolsUnlockScreen = ({
   useEffect(() => {
     setOptions({
       headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
+        ? () => <WahaBackButton onPress={() => goBack()} />
         : () => <View></View>,
       headerLeft: isRTL
         ? () => <View></View>
-        : () => <BackButton onPress={() => goBack()} />
+        : () => <WahaBackButton onPress={() => goBack()} />
     })
   }, [])
 
@@ -257,7 +257,7 @@ const MobilizationToolsUnlockScreen = ({
           navigate('SetsTabs', { screen: 'MobilizationTools' })
         }}
         title='Mobilization Tools unlocked successfully!'
-        body=''
+        message=''
         confirmText='Check it out'
         confirmOnPress={() => {
           setUnlockSuccessModal(false)

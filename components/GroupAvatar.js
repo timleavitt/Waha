@@ -9,8 +9,8 @@ import { colors } from '../styles/colors'
  * @param {Object} style - Extra style props for the component. Generally used to set the background color.
  * @param {string} emoji - The name of this group's emoji. Full list can be found in `../assets/groupIcons/_groupIcons.js`.
  * @param {number} size - The size of the component.
- * @param {Function} onPress - Function to trigger when the user taps on the component. Optional, so defaults to null.
- * @param {boolean} isActive - Whether the group we're displaying the avatar for is the currently active group or not. We display a blue circle around it if it is.
+ * @param {Function} onPress - (optional) Function to trigger when the user taps on the component.
+ * @param {boolean} isActive - (optional) Whether the group we're displaying the avatar for is the currently active group or not. We display a blue circle around it if it is. Defaults to false.
  */
 const GroupAvatar = ({
   style,

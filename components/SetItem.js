@@ -3,17 +3,22 @@ import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
-import Icon from '../../assets/fonts/icon_font_config'
-import { getSetInfo, itemHeights, scaleMultiplier } from '../../constants'
-import MessageModal from '../../modals/MessageModal'
-import { addSet } from '../../redux/actions/groupsActions'
+import Icon from '../assets/fonts/icon_font_config'
+import {
+  getSetInfo,
+  itemHeights,
+  scaleMultiplier,
+  setItemModes
+} from '../constants'
+import MessageModal from '../modals/MessageModal'
+import { addSet } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
-} from '../../redux/reducers/activeGroup'
-import { colors } from '../../styles/colors'
-import { getLanguageFont, StandardTypography } from '../../styles/typography'
-import SVG from '../SVG.js'
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
+import SVG from './SVG.js'
 
 function mapStateToProps (state) {
   return {
@@ -37,13 +42,13 @@ function mapDispatchToProps (dispatch) {
 /**
  * A component that displays a set. Used on a variety of screens and displayed in a variety of ways depending on the mode prop.
  * @param {Object} thisSet - The object for the set to display.
- * @param {string} screen - The screen that the SetItem is used on. The set item is rendered slightly different on all the different screens it's used in. The options are: 1) Sets, 2) Lessons, 3) AddSet, and 4) SetInfo. The varieties used on each screen are described below.
+ * @param {string} mode - The mode of the set item. The set item is rendered slightly different on all the different screens it's used in. See setItemModes in constants.js.
  * @param {Function} onSetSelect - A function to fire when the set item is pressed. Can be null to make the item non-pressable.
  */
 const SetItem = ({
   // Props passed from a parent component.
   thisSet,
-  screen,
+  mode,
   onSetSelect,
   // Props passed from redux.
   isRTL,
@@ -73,8 +78,8 @@ const SetItem = ({
    * useEffect function that sets the dynamic primary and secondary icon components of the set item based on the screen prop. Updated whenever the active group or progress changes.
    */
   useEffect(() => {
-    switch (screen) {
-      case 'Sets':
+    switch (mode) {
+      case setItemModes.SETS_SCREEN:
         updateThisSetProgress()
         // Primary icon for the SetItem on the Sets screen is a circular progress bar with the set's SVG inside.
         setPrimaryIcon(
@@ -133,7 +138,7 @@ const SetItem = ({
           )
         )
         break
-      case 'Lessons':
+      case setItemModes.LESSONS_SCREEN:
         updateThisSetProgress()
         // Primary icon for the SetItem on the Lessons screen is the same as on the Sets screen: a circular progress bar with the set's SVG inside.
         setPrimaryIcon(
@@ -168,7 +173,7 @@ const SetItem = ({
         // There is no secondary icon for the SetItem on the Lessons screen.
         setSecondaryIcon(<View style={styles.secondaryIconContainer} />)
         break
-      case 'AddSet':
+      case setItemModes.ADD_SET_SCREEN:
         // Primary icon for the SetItem on the AddSet screen is a slightly altered version of the set's SVG without any progress shown.
         setPrimaryIcon(
           <View
@@ -202,7 +207,7 @@ const SetItem = ({
           </View>
         )
         break
-      case 'SetInfo':
+      case setItemModes.SET_INFO_MODAL:
         // Primary icon for the SetItem on the SetInfo modal screen is similar to the one on the AddSet screen, with some slightly style variations.
         setPrimaryIcon(
           <View
@@ -351,12 +356,12 @@ const SetItem = ({
         isVisible={showUnlockModal}
         hideModal={() => setShowUnlockModal(false)}
         title={translations.general.popups.new_story_set_unlocked_title}
-        body={translations.general.popups.new_story_set_unlocked_message}
+        message={translations.general.popups.new_story_set_unlocked_message}
         confirmText={translations.general.got_it}
         confirmOnPress={() => setShowUnlockModal(false)}
       >
         <Image
-          source={require('../../assets/gifs/new_set.gif')}
+          source={require('../assets/gifs/new_set.gif')}
           style={{
             height: 200 * scaleMultiplier,
             margin: 20,

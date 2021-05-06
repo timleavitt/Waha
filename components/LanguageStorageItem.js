@@ -2,15 +2,15 @@ import * as FileSystem from 'expo-file-system'
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../../constants'
+import { scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
-} from '../../redux/reducers/activeGroup'
-import { colors } from '../../styles/colors'
-import { getLanguageFont, StandardTypography } from '../../styles/typography'
-import Separator from '../standard/Separator'
-import WahaButton from '../standard/WahaButton'
+} from '../redux/reducers/activeGroup'
+import { colors } from '../styles/colors'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
+import WahaButton from './WahaButton'
+import WahaSeparator from './WahaSeparator'
 
 function mapStateToProps (state) {
   return {
@@ -41,7 +41,7 @@ const LanguageStorageItem = ({
   <View style={styles.languageStorageItemContainer}>
     <View
       style={[
-        styles.languageHeaderContainer,
+        styles.languageStorageHeaderContainer,
         { flexDirection: isRTL ? 'row-reverse' : 'row' }
       ]}
     >
@@ -54,8 +54,7 @@ const LanguageStorageItem = ({
           colors.chateau
         )}
       >
-        {/* Display the name of the language with "downloads" after it. */}
-        {languageName + ' ' + translations.storage.downloads_label}
+        {languageName}
       </Text>
       <Image
         style={styles.languageLogo}
@@ -64,7 +63,7 @@ const LanguageStorageItem = ({
         }}
       />
     </View>
-    <Separator />
+    <WahaSeparator />
     <View
       style={[
         styles.mainAreaContainer,
@@ -109,7 +108,7 @@ const LanguageStorageItem = ({
         textStyle={{ fontFamily: font + '-Regular' }}
       />
     </View>
-    <Separator />
+    <WahaSeparator />
   </View>
 )
 
@@ -117,7 +116,7 @@ const styles = StyleSheet.create({
   languageStorageItemContainer: {
     width: '100%'
   },
-  languageHeaderContainer: {
+  languageStorageHeaderContainer: {
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
@@ -133,7 +132,6 @@ const styles = StyleSheet.create({
   mainAreaContainer: {
     width: '100%',
     height: 80 * scaleMultiplier,
-    // aspectRatio: 5,
     backgroundColor: colors.white,
     alignItems: 'center',
     paddingHorizontal: 20,

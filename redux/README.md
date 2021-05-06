@@ -26,6 +26,7 @@ Here's a brief overview of what each reducer covers. For more detail, see each i
 8. `security.js` stores all information related to Waha's Security Mode.
 9. `mtUnlockAttempts.js` stores the number of times the user has tried to unlock the Mobilization Tools unsuccessfully.
 10. `storedDownloads.js` stores the download resumables of any downloading core files so they can be cancelled if necessary.
+11. `popups.js` stores boolean variables for any modals/snackbars that need to be triggered globally.
 
 ## Accessing Data in Components/Screens
 

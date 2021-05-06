@@ -18,14 +18,12 @@ export const CLEAR_LANGUAGE_CORE_FILES_TO_UPDATE =
   'CLEAR_LANGUAGE_CORE_FILES_TO_UPDATE'
 export const STORE_ACTING_LANGUAGE_ID = 'STORE_ACTING_LANGUAGE_ID'
 export const INCREMENT_GLOBAL_GROUP_COUNTER = 'INCREMENT_GLOBAL_GROUP_COUNTER'
+export const SET_RECENT_ACTIVE_GROUP = 'SET_RECENT_ACTIVE_GROUP'
 
 import * as FileSystem from 'expo-file-system'
 import firebase from 'firebase'
 import i18n from 'i18n-js'
-import { groupNames } from '../../constants'
 import { logInstallLanguage } from '../../LogEventFunctions'
-import { changeActiveGroup } from './activeGroupActions'
-import { createGroup } from './groupsActions'
 import { setIsInstallingLanguageInstance } from './isInstallingLanguageInstanceActions'
 import { storeDownloads } from './storedDownloadsActions'
 
@@ -182,6 +180,13 @@ export function storeActingLanguageID (languageID) {
   }
 }
 
+export function setRecentActiveGroup (groupName) {
+  return {
+    type: SET_RECENT_ACTIVE_GROUP,
+    groupName: groupName
+  }
+}
+
 /**
  * Downloads all the core files for a single language instance and does a whole bunch of stuff once they're done downloading. The core files include the header image, the dummy story mp3, and every question set mp3.
  * @export
@@ -300,26 +305,26 @@ export function downloadLanguageCoreFiles (language) {
           // Log the language install in firebase for firebase analytics.
           logInstallLanguage(language, i18n.locale)
 
-          // Create a new group using the default group name stored in constants.js, assuming a group hasn't already been created with the same name. We don't want any duplicates.
-          if (
-            !getState().groups.some(
-              group => group.name === groupNames[language]
-            )
-          ) {
-            dispatch(incrementGlobalGroupCounter())
-            dispatch(
-              createGroup(
-                groupNames[language],
-                language,
-                'default',
-                getState().database.globalGroupCounter,
-                getState().groups.length + 1
-              )
-            )
-          }
+          // // Create a new group using the default group name stored in constants.js, assuming a group hasn't already been created with the same name. We don't want any duplicates.
+          // if (
+          //   !getState().groups.some(
+          //     group => group.name === groupNames[language]
+          //   )
+          // ) {
+          //   dispatch(incrementGlobalGroupCounter())
+          //   dispatch(
+          //     createGroup(
+          //       groupNames[language],
+          //       language,
+          //       'default',
+          //       getState().database.globalGroupCounter,
+          //       getState().groups.length + 1
+          //     )
+          //   )
+          // }
 
-          // Change the active group to the new group we just created.
-          dispatch(changeActiveGroup(groupNames[language]))
+          // // Change the active group to the new group we just created.
+          // dispatch(changeActiveGroup(groupNames[language]))
 
           // Set our actingLanguageID variable to null since we're not downloading a language instance anymore.
           dispatch(storeActingLanguageID(null))

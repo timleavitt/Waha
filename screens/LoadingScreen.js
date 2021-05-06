@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
+import { changeActiveGroup } from '../redux/actions/activeGroupActions'
 import {
   deleteLanguageData,
   setHasFetchedLanguageData,
@@ -33,9 +34,7 @@ i18n.translations = {
 }
 
 function mapStateToProps (state) {
-  var activeGroup = state.activeGroup
-    ? state.groups.filter(item => item.name === state.activeGroup)[0]
-    : null
+  var activeGroup = state.activeGroup ? activeGroupSelector(state) : null
   return {
     languageCoreFilesDownloadProgress:
       state.database.languageCoreFilesDownloadProgress,
@@ -47,8 +46,9 @@ function mapStateToProps (state) {
     database: state.database,
     hasFetchedLanguageData: state.database.hasFetchedLanguageData,
     actingLanguageID: state.database.actingLanguageID,
-    activeGroup: activeGroupSelector(state),
-    groups: state.groups
+    activeGroup: activeGroup,
+    groups: state.groups,
+    recentActiveGroup: state.database.recentActiveGroup
   }
 }
 
@@ -74,7 +74,8 @@ function mapDispatchToProps (dispatch) {
     deleteLanguageData: language => {
       dispatch(deleteLanguageData(language))
     },
-    deleteGroup: groupName => dispatch(deleteGroup(groupName))
+    deleteGroup: groupName => dispatch(deleteGroup(groupName)),
+    changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName))
   }
 }
 
@@ -89,6 +90,7 @@ const LoadingScreen = ({
   actingLanguageID,
   activeGroup,
   groups,
+  recentActiveGroup,
   hasFetchedLanguageData,
   setIsInstallingLanguageInstance,
   setHasOnboarded,
@@ -96,7 +98,8 @@ const LoadingScreen = ({
   setLanguageCoreFilesDownloadProgress,
   setHasFetchedLanguageData,
   deleteLanguageData,
-  deleteGroup
+  deleteGroup,
+  changeActiveGroup
 }) => {
   const [isConnected, setIsConnected] = useState(true)
 
@@ -111,12 +114,22 @@ const LoadingScreen = ({
   }, [])
 
   function cancelDownloads () {
+    // Set the core files download progress to 0.
     setLanguageCoreFilesDownloadProgress(0)
+
+    // Set this to 1 to avoid strange divide by zero errors.
     setTotalLanguageCoreFilesToDownload(1)
+
+    // Set the isInstalling and hasFetched redux states to false since we're no longer installing.
     setIsInstallingLanguageInstance(false)
     setHasFetchedLanguageData(false)
 
-    // only if adding language for the first time
+    // Cancel all of the downloads.
+    storedDownloads.forEach(download =>
+      download.pauseAsync().catch(() => console.log('Error pausing a download'))
+    )
+
+    // If we're adding a language for the first time, set hasOnboarded to false so that the user must go through onboarding again and reset them back to the language instance install screen.
     if (!hasInstalledFirstLanguageInstance) {
       setHasOnboarded(false)
       navigation.reset({
@@ -124,35 +137,31 @@ const LoadingScreen = ({
         routes: [{ name: 'InitialLanguageInstanceInstall' }]
       })
     }
-    storedDownloads.forEach(download => {
-      download.pauseAsync().catch(() => console.log('Error pausing a download'))
+
+    // If this is a subsequent language instance install, if we cancel, we need to switch back to our most recent active group since we're going to delete all the groups for the language we cancelled the installation of.
+    if (recentActiveGroup) changeActiveGroup(recentActiveGroup)
+    // If this is the initial language instance install, set active group back to null since there should be no active group before you install your first language instance.
+    else changeActiveGroup(null)
+
+    console.log(
+      'Cancelled a language instance installation. Removing language data from redux and deleting any files for that language instance.'
+    )
+    groups.forEach(group => {
+      if (group.language === actingLanguageID) {
+        deleteGroup(group.name)
+      }
     })
-
-    console.log(actingLanguageID)
-
-    if (
-      actingLanguageID !== null &&
-      (!activeGroup || activeGroup.language !== actingLanguageID)
-    ) {
-      console.log(
-        'Cancelled a language instance installation. Removing language data from redux and deleting any files for that language instance.'
-      )
-      groups.forEach(group => {
-        if (group.language === actingLanguageID) {
-          deleteGroup(group.name)
-        }
-      })
-      deleteLanguageData(actingLanguageID)
-      FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-        contents => {
-          for (const item of contents) {
-            if (item.slice(0, 2) === actingLanguageID) {
-              FileSystem.deleteAsync(FileSystem.documentDirectory + item)
-            }
+    deleteLanguageData(actingLanguageID)
+    FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+      contents => {
+        for (const item of contents) {
+          if (item.slice(0, 2) === actingLanguageID) {
+            FileSystem.deleteAsync(FileSystem.documentDirectory + item)
           }
         }
-      )
-    }
+      }
+    )
+    // }
 
     // if (condition that distinguishes updating from downloading is downloading AND language isn't the active group AND language isn't the only language installed)
     //  delete the language from the db and remove all files
@@ -213,7 +222,7 @@ const LoadingScreen = ({
           {languageCoreFilesDownloadProgress ? (
             <View
               style={{
-                backgroundColor: '#E63946',
+                backgroundColor: colors.waha,
                 height: '100%',
                 flex: languageCoreFilesDownloadProgress,
                 borderRadius: 20
@@ -285,27 +294,17 @@ const LoadingScreen = ({
   )
 }
 
-//+ STYLES
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F1FAEE'
+    backgroundColor: colors.aquaHaze
   },
   progressBarContainer: {
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  button: {
-    width: 200,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.aquaHaze,
-    borderRadius: 10
   }
 })
 

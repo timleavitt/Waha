@@ -13,8 +13,8 @@ import {
 } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
-import BackButton from '../components/standard/BackButton'
-import WahaButton from '../components/standard/WahaButton'
+import WahaBackButton from '../components/WahaBackButton'
+import WahaButton from '../components/WahaButton'
 import { scaleMultiplier } from '../constants'
 import db from '../firebase/db'
 import { appVersion } from '../modeSwitch'
@@ -70,11 +70,11 @@ const ContactUsScreen = ({
   useEffect(() => {
     setOptions({
       headerRight: isRTL
-        ? () => <BackButton onPress={() => goBack()} />
+        ? () => <WahaBackButton onPress={() => goBack()} />
         : () => {},
       headerLeft: isRTL
         ? () => {}
-        : () => <BackButton onPress={() => goBack()} />
+        : () => <WahaBackButton onPress={() => goBack()} />
     })
   }, [])
 

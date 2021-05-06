@@ -17,7 +17,7 @@ import {
   StandardTypography,
   SystemTypography
 } from '../styles/typography'
-import WahaButton from './standard/WahaButton'
+import WahaButton from './WahaButton'
 
 function mapStateToProps (state) {
   return activeGroupSelector(state)

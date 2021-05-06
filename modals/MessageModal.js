@@ -18,118 +18,86 @@ function mapStateToProps (state) {
   }
 }
 
-// modal variant that shows some information
+/**
+ * A modal component that shows an image, a title, a message, and a button to dismiss.
+ * @param {boolean} isVisible - Whether the modal is visible.
+ * @param {Function} hideModal - Function to hide the modal.
+ * @param {string} title - Text to display as the title.
+ * @param {string} message - Text to display as the message.
+ * @param {string} confirmText - Text to display on the button to close the modal.
+ * @param {Function} confirmOnPress - Function to fire when the user presses the button to close the modal.
+ * @param {Component} children - Component to show at the top of the modal. Usualy an image/gif.
+ */
 const MessageModal = ({
-  // Props passed from a parent component.s
+  // Props passed from a parent component.
   isVisible,
   hideModal,
   title,
-  body,
+  message,
   confirmText,
   confirmOnPress,
-  cancelText = '',
-  children = null,
+  children,
   // Props passed from redux.
   font,
   activeGroup,
   isRTL
-}) => {
-  var cancelButton = cancelText ? (
-    <TouchableOpacity
-      style={{
-        marginVertical: 15
-        // marginBottom: 40 * scaleMultiplier,
-        // marginTop: 80 * scaleMultiplier
-      }}
-      onPress={cancelOnPress}
-    >
+}) => (
+  <Modal
+    isVisible={isVisible}
+    hasBackdrop={true}
+    onBackdropPress={hideModal}
+    backdropOpacity={0.3}
+    style={styles.modalContainer}
+    onSwipeComplete={hideModal}
+    swipeDirection={['down']}
+    propagateSwipe={true}
+  >
+    <View style={styles.contentContainer}>
+      {children}
+      <Text
+        style={[
+          StandardTypography(
+            { font, isRTL },
+            'h2',
+            'Black',
+            'center',
+            colors.shark
+          ),
+          { marginVertical: 10 }
+        ]}
+      >
+        {title}
+      </Text>
       <Text
         style={StandardTypography(
           { font, isRTL },
-          'h2',
+          'h4',
           'Bold',
-          'left',
-          colors.red
+          'center',
+          colors.shark
         )}
       >
-        {cancelText}
+        {message}
       </Text>
-    </TouchableOpacity>
-  ) : null
-
-  //+ RENDER
-
-  return (
-    <Modal
-      isVisible={isVisible}
-      hasBackdrop={true}
-      onBackdropPress={hideModal}
-      backdropOpacity={0.3}
-      style={{ justifyContent: 'flex-end', flex: 1, margin: 0 }}
-      onSwipeComplete={hideModal}
-      swipeDirection={['down']}
-      propagateSwipe={true}
-    >
-      <View style={styles.contentContainer}>
-        {children}
+      <TouchableOpacity style={styles.buttonContainer} onPress={confirmOnPress}>
         <Text
-          style={[
-            StandardTypography(
-              { font, isRTL },
-              'h2',
-              'Black',
-              'center',
-              colors.shark
-            ),
-            { marginVertical: 10 }
-          ]}
+          style={StandardTypography(
+            { font, isRTL },
+            'h2',
+            'Bold',
+            'center',
+            colors.apple
+          )}
         >
-          {title}
+          {confirmText}
         </Text>
-        <Text
-          style={[
-            StandardTypography(
-              { font, isRTL },
-              'h4',
-              'Bold',
-              'center',
-              colors.shark
-            ),
-            { paddingHorizontal: 20 }
-          ]}
-        >
-          {body}
-        </Text>
-
-        <TouchableOpacity
-          style={{
-            // marginVertical: 10,
-            width: '100%',
-            height: 80 * scaleMultiplier,
-            justifyContent: 'center'
-            // backgroundColor: 'blue'
-          }}
-          onPress={confirmOnPress}
-        >
-          <Text
-            style={StandardTypography(
-              { font, isRTL },
-              'h2',
-              'Bold',
-              'center',
-              colors.apple
-            )}
-          >
-            {confirmText}
-          </Text>
-        </TouchableOpacity>
-        {cancelButton}
-      </View>
-    </Modal>
-  )
-}
+      </TouchableOpacity>
+    </View>
+  </Modal>
+)
 
 const styles = StyleSheet.create({
+  modalContainer: { justifyContent: 'flex-end', flex: 1, margin: 0 },
   contentContainer: {
     backgroundColor: colors.white,
     borderTopLeftRadius: 10,
@@ -138,6 +106,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingBottom: 10
+  },
+  buttonContainer: {
+    width: '100%',
+    height: 80 * scaleMultiplier,
+    justifyContent: 'center'
   }
 })
 

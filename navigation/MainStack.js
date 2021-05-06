@@ -4,8 +4,8 @@ import { AppState, LogBox, View } from 'react-native'
 import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import ScreenHeaderImage from '../components/ScreenHeaderImage'
-import BackButton from '../components/standard/BackButton'
 import TestModeDisplay from '../components/TestModeDisplay'
+import WahaBackButton from '../components/WahaBackButton'
 import { scaleMultiplier } from '../constants'
 import SetsTabs from '../navigation/SetsTabs'
 import { setIsTimedOut, setTimer } from '../redux/actions/securityActions'
@@ -17,7 +17,6 @@ import AddSetScreen from '../screens/AddSetScreen'
 import ContactUsScreen from '../screens/ContactUsScreen'
 import GroupsScreen from '../screens/GroupsScreen'
 import InformationScreen from '../screens/InformationScreen'
-import KeyOrderSetScreen from '../screens/KeyOrderSetScreen'
 import LanguageInstanceInstallScreen from '../screens/LanguageInstanceInstallScreen'
 import LessonsScreen from '../screens/LessonsScreen'
 import LoadingScreen from '../screens/LoadingScreen'
@@ -25,6 +24,7 @@ import MobilizationToolsScreen from '../screens/MobilizationToolsScreen'
 import MobilizationToolsUnlockScreen from '../screens/MobilizationToolsUnlockScreen'
 import MTUnlockSuccessfulScreen from '../screens/MTUnlockSuccessfulScreen'
 import PianoAppScreen from '../screens/PianoAppScreen'
+import PianoPasscodeSetScreen from '../screens/PianoPasscodeSetScreen'
 import PlayScreen from '../screens/PlayScreen'
 import SecurityModeScreen from '../screens/SecurityModeScreen'
 import SecurityOnboardingSlidesScreen from '../screens/SecurityOnboardingSlidesScreen'
@@ -80,10 +80,7 @@ const MainStack = ({
   /** Keeps track of the current app state. Can be "active", "inactive", or "background". Set by the app state listener function. */
   const [appState, setAppState] = useState('')
 
-  /**
-   * useEffect function that acts as a constructor. It starts up the app state listener and cleans it up as well.
-   * @function
-   */
+  /** useEffect function that acts as a constructor. It starts up the app state listener and cleans it up as well. */
   useEffect(() => {
     const appStateUnsubscribe = AppState.addEventListener('change', change =>
       setAppState(change)
@@ -94,10 +91,7 @@ const MainStack = ({
     }
   }, [])
 
-  /**
-   * useEffect function that reacts to changes in app state changes. This is used to display the splash screen to hide the app preview in multitasking as well as keeping track of security mode timeouts.
-   * @function
-   */
+  /** useEffect function that reacts to changes in app state changes. This is used to display the splash screen to hide the app preview in multitasking as well as keeping track of security mode timeouts. */
   useEffect(() => {
     if (appState === 'inactive' || appState === 'background') {
       // Hide screen during multitasking or going to the home screen on iOS.
@@ -128,9 +122,7 @@ const MainStack = ({
     }
   }, [appState])
 
-  /**
-   * Function for fading out from the piano screen into the normal navigator.
-   */
+  /** Function for fading out from the piano screen into the normal navigator. */
   const forFade = ({ current }) => ({
     cardStyle: {
       opacity: current.progress
@@ -215,15 +207,7 @@ const MainStack = ({
                     onPress={() => toggleDrawer()}
                     isActive={true}
                   />
-                  {languageCoreFilesToUpdate.length !== 0 ? (
-                    // <View
-                    //   style={{
-                    //     width: '100%',
-                    //     height: 12,
-                    //     position: 'absolute',
-                    //     alignSelf: 'flex-start'
-                    //   }}
-                    // >
+                  {languageCoreFilesToUpdate.length !== 0 && (
                     <View
                       style={{
                         zIndex: 100,
@@ -244,7 +228,7 @@ const MainStack = ({
                       />
                       <View style={{ width: 5 }} />
                     </View>
-                  ) : null}
+                  )}
                 </View>
               )
             : () => <TestModeDisplay />
@@ -313,11 +297,11 @@ const MainStack = ({
             colors.shark
           ),
           headerRight: isRTL
-            ? () => <BackButton onPress={() => goBack()} />
+            ? () => <WahaBackButton onPress={() => goBack()} />
             : () => {},
           headerLeft: isRTL
             ? () => {}
-            : () => <BackButton onPress={() => goBack()} />
+            : () => <WahaBackButton onPress={() => goBack()} />
         }}
       />
       <Stack.Screen
@@ -391,8 +375,8 @@ const MainStack = ({
         }}
       />
       <Stack.Screen
-        name='KeyOrderSet_Initial'
-        component={KeyOrderSetScreen}
+        name='PianoPasscodeSet'
+        component={PianoPasscodeSetScreen}
         options={{
           headerStyle: {
             backgroundColor: colors.white
@@ -404,8 +388,8 @@ const MainStack = ({
         }}
       />
       <Stack.Screen
-        name='KeyOrderSet_Confirm'
-        component={KeyOrderSetScreen}
+        name='PianoPasscodeSetConfirm'
+        component={PianoPasscodeSetScreen}
         options={{
           headerStyle: {
             backgroundColor: colors.white
@@ -417,8 +401,8 @@ const MainStack = ({
         }}
       />
       <Stack.Screen
-        name='KeyOrderChange_Initial'
-        component={KeyOrderSetScreen}
+        name='PianoPasscodeChange'
+        component={PianoPasscodeSetScreen}
         options={{
           headerStyle: {
             backgroundColor: colors.white
@@ -430,8 +414,8 @@ const MainStack = ({
         }}
       />
       <Stack.Screen
-        name='KeyOrderChange_Confirm'
-        component={KeyOrderSetScreen}
+        name='PianoPasscodeChangeConfirm'
+        component={PianoPasscodeSetScreen}
         options={{
           headerStyle: {
             backgroundColor: colors.white

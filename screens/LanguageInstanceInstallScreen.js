@@ -4,6 +4,7 @@ import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
 import React, { useEffect, useState } from 'react'
 import {
+  ActivityIndicator,
   Alert,
   Animated,
   Dimensions,
@@ -16,22 +17,26 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { languageT2S } from '../assets/languageT2S/_languageT2S'
-import LanguageItem from '../components/list-items/LanguageItem'
-import Separator from '../components/standard/Separator'
-import WahaButton from '../components/standard/WahaButton'
-import { getSystemIsRTL, scaleMultiplier } from '../constants'
+import LanguageItem from '../components/LanguageItem'
+import WahaButton from '../components/WahaButton'
+import WahaSeparator from '../components/WahaSeparator'
+import { getSystemIsRTL, groupNames, scaleMultiplier } from '../constants'
 import db from '../firebase/db'
 import { languages } from '../languages'
+import { changeActiveGroup } from '../redux/actions/activeGroupActions'
 import {
   deleteLanguageData,
   downloadLanguageCoreFiles,
+  incrementGlobalGroupCounter,
   setHasFetchedLanguageData,
+  setRecentActiveGroup,
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
-import { deleteGroup } from '../redux/actions/groupsActions'
+import { createGroup, deleteGroup } from '../redux/actions/groupsActions'
 import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
 import { storeDownloads } from '../redux/actions/storedDownloadsActions'
+import { activeGroupSelector } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { SystemTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
@@ -43,9 +48,11 @@ i18n.translations = {
 }
 
 function mapStateToProps (state) {
+  var activeGroup = state.activeGroup ? activeGroupSelector(state) : null
   return {
     groups: state.groups,
-    database: state.database
+    database: state.database,
+    activeGroup: activeGroup
   }
 }
 
@@ -64,7 +71,16 @@ function mapDispatchToProps (dispatch) {
       dispatch(storeLanguageSets(sets, languageInstanceID)),
     deleteLanguageData: languageInstanceID =>
       dispatch(deleteLanguageData(languageInstanceID)),
-    deleteGroup: groupName => dispatch(deleteGroup(groupName))
+    deleteGroup: groupName => dispatch(deleteGroup(groupName)),
+    incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter()),
+    createGroup: (groupName, language, emoji, groupID, groupNumber) =>
+      dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
+    changeActiveGroup: name => {
+      dispatch(changeActiveGroup(name))
+    },
+    setRecentActiveGroup: groupName => {
+      dispatch(setRecentActiveGroup(groupName))
+    }
   }
 }
 
@@ -88,6 +104,7 @@ function LanguageInstanceInstallScreen ({
   // Props passed from redux.
   groups,
   database,
+  activeGroup,
   downloadLanguageCoreFiles,
   storeLanguageData,
   setIsInstallingLanguageInstance,
@@ -95,7 +112,11 @@ function LanguageInstanceInstallScreen ({
   setHasFetchedLanguageData,
   storeLanguageSets,
   deleteLanguageData,
-  deleteGroup
+  deleteGroup,
+  incrementGlobalGroupCounter,
+  createGroup,
+  changeActiveGroup,
+  setRecentActiveGroup
 }) {
   // Set the i18n locale to the locale of the user's phone.
   i18n.locale = Localization.locale
@@ -121,6 +142,8 @@ function LanguageInstanceInstallScreen ({
   const [audio, setAudio] = useState(new Audio.Sound())
 
   const [searchTextInput, setSearchTextInput] = useState('')
+
+  const [isFetchingFirebaseData, setIsFetchingFirebaseData] = useState(false)
 
   /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
@@ -155,15 +178,21 @@ function LanguageInstanceInstallScreen ({
     })
   }
 
-  /** Fetches all the data for a language from Firebase. This includes the various Story Sets from the 'sets' collection and the language info from the 'languages' collection. It's an async function and doesn't resolve until all the information has been fetched and stored. If any fetch fails, it throws an error. */
-  async function fetchFirebaseData () {
+  /**
+   * Fetches all the data for a language from Firebase. This includes the various Story Sets from the 'sets' collection and the language info from the 'languages' collection. It's an async function and doesn't resolve until all the information has been fetched and stored. If any fetch fails, it throws an error.
+   * @param {string} language - The language to fetch the firebase data for.
+   */
+  const fetchFirebaseData = async language => {
     // Set the installingLanguageInstance redux variable to true since we're now installing a language instance.
     setIsInstallingLanguageInstance(true)
+
+    // Set the isFetchingFirebaseData local state to true so that the continue button shows the activity indicator.
+    setIsFetchingFirebaseData(true)
 
     // Fetch all the Story Sets whith the language ID of the selected language and store them in redux.
     await db
       .collection('sets')
-      .where('languageID', '==', selectedLanguage)
+      .where('languageID', '==', language)
       .get()
       .then(response => {
         var sets = []
@@ -173,7 +202,7 @@ function LanguageInstanceInstallScreen ({
             ...set.data()
           })
         })
-        storeLanguageSets(sets, selectedLanguage)
+        storeLanguageSets(sets, language)
       })
       .catch(error => {
         console.log(error)
@@ -183,11 +212,11 @@ function LanguageInstanceInstallScreen ({
     // Fetch the language info for the selected language and store it in redux.
     await db
       .collection('languages')
-      .doc(selectedLanguage)
+      .doc(language)
       .get()
       .then(async doc => {
         if (doc.exists) {
-          storeLanguageData(doc.data(), selectedLanguage)
+          storeLanguageData(doc.data(), language)
         }
       })
       .catch(error => {
@@ -198,32 +227,58 @@ function LanguageInstanceInstallScreen ({
     return
   }
 
-  /**
-   * Handles the user pressing the start button after they select a language instance to install. Involves fetching the necessary Firebase data, setting the hasFetchedLanguageData to true, and starting the download of the language core files. If this is the first language instance they've installed, we want to nagivate to the onboarding slides too.
-   */
+  /** Handles the user pressing the start button after they select a language instance to install. Involves fetching the necessary Firebase data, setting the hasFetchedLanguageData to true, and starting the download of the language core files. If this is the first language instance they've installed, we want to nagivate to the onboarding slides too. */
   function onStartPress () {
-    // Navigate to the onboarding slides if this is the first language instance install.
-    if (routeName === 'InitialLanguageInstanceInstall') {
-      navigate('WahaOnboardingSlides', {
-        selectedLanguage: selectedLanguage
-      })
-    }
-
-    fetchFirebaseData()
+    fetchFirebaseData(selectedLanguage)
       .then(() => {
+        // Set the hasFetchedLanguageData redux variable to true since we're done fetching from Firebase.
         setHasFetchedLanguageData(true)
+
+        // If we're adding a subsequent language instance, then we need to store the active group's language
+        if (activeGroup) setRecentActiveGroup(activeGroup.name)
+
+        // Start downloading the core files for this language.
         downloadLanguageCoreFiles(selectedLanguage)
+
+        // Create a new group using the default group name stored in constants.js, assuming a group hasn't already been created with the same name. We don't want any duplicates.
+        if (
+          !groups.some(group => group.name === groupNames[selectedLanguage])
+        ) {
+          incrementGlobalGroupCounter()
+
+          createGroup(
+            groupNames[selectedLanguage],
+            selectedLanguage,
+            'default',
+            database.globalGroupCounter,
+            groups.length + 1
+          )
+        }
+
+        // Change the active group to the new group we just created.
+        changeActiveGroup(groupNames[selectedLanguage])
+
+        // Set the local isFetchingFirebaseData state to false.
+        setIsFetchingFirebaseData(false)
+
+        // Navigate to the onboarding slides if this is the first language instance install.
+        if (routeName === 'InitialLanguageInstanceInstall') {
+          navigate('WahaOnboardingSlides', {
+            selectedLanguage: selectedLanguage
+          })
+        }
       })
       .catch(error => {
+        console.log(error)
+
+        // If we get an error, reset the isFetching state, delete any data that might have still come through, and show the user an alert that there was an error.
+        setIsFetchingFirebaseData(false)
+        deleteLanguageData(selectedLanguage)
+
         Alert.alert(i18n.t('fetchErrorTitle'), i18n.t('fetchErrorMessage'), [
           {
             text: i18n.t('ok'),
-            onPress: () => {
-              reset({
-                index: 0,
-                routes: [{ name: 'InitialLanguageInstanceInstall' }]
-              })
-            }
+            onPress: () => {}
           }
         ])
       })
@@ -314,33 +369,6 @@ function LanguageInstanceInstallScreen ({
     return sections
   }
 
-  // Determine what to render for the header text. If it's our first install, its the first time opening the app, so display a welcome message. Otherwise, display nothing.
-  var welcomeText =
-    routeName === 'InitialLanguageInstanceInstall' ? (
-      <View style={styles.headerTextContainer}>
-        <Text
-          style={[
-            SystemTypography(false, 'h1', 'Bold', 'center', colors.shark)
-          ]}
-        >
-          {i18n.t('welcome')}
-        </Text>
-        <Text
-          style={SystemTypography(
-            false,
-            'h2',
-            'Regular',
-            'center',
-            colors.shark
-          )}
-        >
-          {i18n.t('selectLanguage')}
-        </Text>
-      </View>
-    ) : (
-      <View style={{ width: '100%', height: 20 * scaleMultiplier }} />
-    )
-
   /**
    * Renders a LanguageSelectItem component used for the Languages SectionList item.
    * @param {Object} language - The object for the language to render.
@@ -414,30 +442,32 @@ function LanguageInstanceInstallScreen ({
         }
       ]}
     >
-      {welcomeText}
-      <View
-        style={{
-          width: Dimensions.get('window').width - 40,
-          borderRadius: 30,
-          height: 60 * scaleMultiplier,
-          backgroundColor: colors.porcelain,
-          paddingHorizontal: 5,
-          flexDirection: getSystemIsRTL() ? 'row-reverse' : 'row',
-          paddingTop: 5,
-          paddingBottom: 5,
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          marginBottom: 20
-        }}
-      >
-        <View
-          style={{
-            height: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginHorizontal: 10
-          }}
-        >
+      {routeName === 'InitialLanguageInstanceInstall' && (
+        <View style={styles.headerTextContainer}>
+          <Text
+            style={[
+              SystemTypography(false, 'h2', 'Bold', 'center', colors.shark),
+              { fontSize: 28 * scaleMultiplier }
+            ]}
+          >
+            {i18n.t('welcome')}
+          </Text>
+          <View style={{ height: 5 }} />
+          <Text
+            style={SystemTypography(
+              false,
+              'h3',
+              'Regular',
+              'center',
+              colors.shark
+            )}
+          >
+            {i18n.t('selectLanguage')}
+          </Text>
+        </View>
+      )}
+      <View style={styles.searchBarContainer}>
+        <View style={styles.searchIconContainer}>
           <Icon
             name='search'
             size={25 * scaleMultiplier}
@@ -460,20 +490,12 @@ function LanguageInstanceInstallScreen ({
           placeholderTextColor={colors.chateau}
         />
       </View>
-      <View
-        style={{
-          width: '100%',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          flex: 1
-        }}
-      >
+      <View style={styles.languageListContainer}>
         <SectionList
           style={{ height: '100%' }}
           sections={getLanguageData()}
-          ItemSeparatorComponent={() => <Separator />}
-          SectionSeparatorComponent={() => <Separator />}
+          ItemSeparatorComponent={() => <WahaSeparator />}
+          SectionSeparatorComponent={() => <WahaSeparator />}
           ListEmptyComponent={
             searchTextInput
               ? null
@@ -497,7 +519,7 @@ function LanguageInstanceInstallScreen ({
                         {i18n.t('noMoreLanguages')}
                       </Text>
                     </View>
-                    <Separator />
+                    <WahaSeparator />
                   </View>
                 )
           }
@@ -515,18 +537,18 @@ function LanguageInstanceInstallScreen ({
       <Animated.View
         style={[
           styles.startButtonContainer,
-          {
-            transform: [{ translateY: buttonYPos }]
-          }
+          { transform: [{ translateY: buttonYPos }] }
         ]}
       >
         <WahaButton
           type={isConnected ? 'filled' : 'inactive'}
           color={isConnected ? colors.apple : colors.geyser}
-          onPress={isConnected ? onStartPress : null}
+          onPress={isConnected && !isFetchingFirebaseData ? onStartPress : null}
           label={
             isConnected
-              ? routeName === 'InitialLanguageInstanceInstall'
+              ? isFetchingFirebaseData
+                ? ''
+                : routeName === 'InitialLanguageInstanceInstall'
                 ? 'Continue'
                 : i18n.t('addLanguage') + ' '
               : ''
@@ -538,7 +560,11 @@ function LanguageInstanceInstallScreen ({
           }}
           useDefaultFont={true}
           extraComponent={
-            isConnected ? null : (
+            isConnected ? (
+              isFetchingFirebaseData ? (
+                <ActivityIndicator color={colors.white} />
+              ) : null
+            ) : (
               <Icon name='cloud-slash' size={40} color={colors.chateau} />
             )
           }
@@ -554,19 +580,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center'
   },
-  buttonContainer: {
-    borderRadius: 10,
-    width: Dimensions.get('window').width - 40,
-    marginVertical: 20 * scaleMultiplier,
-    marginHorizontal: 20,
-    height: 65 * scaleMultiplier,
-    paddingHorizontal: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row'
-  },
   headerTextContainer: {
-    marginVertical: 20 * scaleMultiplier,
+    marginTop: 20 * scaleMultiplier,
     paddingHorizontal: 20
   },
   startButtonContainer: {
@@ -581,6 +596,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20
+  },
+  searchBarContainer: {
+    width: Dimensions.get('window').width - 40,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: colors.porcelain,
+    height: 50 * scaleMultiplier,
+    backgroundColor: colors.athens,
+    paddingHorizontal: 5,
+    flexDirection: getSystemIsRTL() ? 'row-reverse' : 'row',
+    paddingTop: 5,
+    paddingBottom: 5,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 25 * scaleMultiplier
+  },
+  searchIconContainer: {
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 10
+  },
+  languageListContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    flex: 1
   }
 })
 

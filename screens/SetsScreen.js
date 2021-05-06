@@ -9,8 +9,13 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import SetItem from '../components/list-items/SetItem'
-import { getSetInfo, itemHeights, scaleMultiplier } from '../constants'
+import SetItem from '../components/SetItem'
+import {
+  getSetInfo,
+  itemHeights,
+  scaleMultiplier,
+  setItemModes
+} from '../constants'
 import MessageModal from '../modals/MessageModal'
 import { setShowMTTabAddedSnackbar } from '../redux/actions/popupsActions'
 import {
@@ -65,7 +70,6 @@ const SetsScreen = ({
 }) => {
   /** Keeps track of the text displayed on the add set button. Changes depending on what category we're in. */
   const [addNewSetLabel, setAddNewSetLabel] = useState('')
-
   useEffect(() => {
     setAddNewSetLabel(
       category === 'Foundational'
@@ -82,26 +86,11 @@ const SetsScreen = ({
   /** Whether the snackbar that pops up upon unlocking the mobilization tools is visible or not.  */
   const [showSnackbar, setShowSnackbar] = useState(false)
 
+  /** Memoize the set data so that the expensive function isn't run on every re-render. */
   const setData = useMemo(() => getSetData(), [
     activeGroup.addedSets,
     downloadedFiles
   ])
-
-  // /** useEffect function that sets the setCategory state and the addNewSetLabel state based off the category (which is passed via the route name declared in SetTabs.js). Updates whenever the activeGroup changes. */
-  // useEffect(() => {
-  //   if (category === 'Foundational') {
-  //     setAddNewSetLabel(
-  //       translations.sets.add_foundational_story_set_button_label
-  //     )
-  //     // setSetCategory('foundational')
-  //   } else if (category === 'Topical') {
-  //     setAddNewSetLabel(translations.sets.add_topical_set_button_label)
-  //     // setSetCategory('topical')
-  //   } else {
-  //     setAddNewSetLabel(translations.sets.add_mobilization_tool_button_label)
-  //     // setSetCategory('mobilization tools')
-  //   }
-  // }, [activeGroup, translations])
 
   /** useEffect function that sets the downloaded files state. It's also used to log some various information to the console for testing. */
   useEffect(() => {
@@ -190,7 +179,7 @@ const SetsScreen = ({
     else if (category === 'Topical') {
       return (
         activeDatabase.sets
-          // 1. Filter for either Topical or Mobilization Tools sets from the array of all sets depending on the category we want to display.
+          // 1. Filter for either Topical sets from the array of all sets depending on the category we want to display.
           .filter(set => getSetInfo('category', set.id) === category)
           // 2. Filter for sets that have been added to this group.
           .filter(set =>
@@ -211,6 +200,7 @@ const SetsScreen = ({
               )
             )
           })
+        // Note: we don't need to filter for sets that have necessary files downloaded because all Topical Story Sets use the standard Fellowship/Application question sets that all languages must have at launch.
       )
     }
     // If we're displaying Mobilization Tools Sets...
@@ -292,7 +282,8 @@ const SetsScreen = ({
     </TouchableOpacity>
   )
 
-  const renderNoMTButton = () => (
+  // A label that shows when a language has no Mobilization Tools sets.
+  const renderNoMTLabel = () => (
     <View style={{ width: '100%', height: 80 * scaleMultiplier, padding: 20 }}>
       <Text
         style={StandardTypography(
@@ -304,7 +295,6 @@ const SetsScreen = ({
         )}
       >
         {translations.mobilization_tools.no_mobilization_tools_content_text}
-        {/* Content currently not available for this language */}
       </Text>
     </View>
   )
@@ -317,51 +307,39 @@ const SetsScreen = ({
   const renderSetItem = ({ item }) => (
     <SetItem
       thisSet={item}
-      screen='Sets'
+      mode={setItemModes.SETS_SCREEN}
       onSetSelect={() => navigate('Lessons', { thisSet: item })}
     />
   )
 
+  // We know the height of these items ahead of time so we can use getItemLayout to make our FlatList perform better.
   const getItemLayout = (data, index) => ({
     length: itemHeights[font].SetItem,
     offset: itemHeights[font].SetItem * index,
     index
   })
 
-  const keyExtractor = item => item.id
-
   return (
     <View style={styles.screen}>
       <FlatList
         data={setData}
         renderItem={renderSetItem}
-        keyExtractor={keyExtractor}
+        keyExtractor={item => item.id}
         // For performance optimization.
         getItemLayout={getItemLayout}
         ListFooterComponent={
-          // If we're in the Mobilization Tab AND this language doesn't have any MT content, display a "No MT Content" component. Otherwise, show the add Stor Set button.
+          // If we're in the Mobilization Tab AND this language doesn't have any MT content, display a "No MT Content" component. Otherwise, show the add Story Set button.
           category === 'MobilizationTools' &&
           !activeDatabase.sets.some(set => /[a-z]{2}.3.[0-9]+/.test(set.id))
-            ? renderNoMTButton
+            ? renderNoMTLabel
             : renderAddSetButton
         }
       />
-      {/* <SnackBar
-          visible={showMTTabAddedSnackbar}
-          textMessage='Mobilization tab added!'
-          messageStyle={{
-            color: colors.white,
-            fontSize: 24 * scaleMultiplier,
-            fontFamily: font + '-Black',
-            textAlign: 'center'
-          }}
-          backgroundColor={colors.apple}
-        /> */}
       <MessageModal
         isVisible={showMTTabAddedSnackbar}
         hideModal={() => setShowMTTabAddedSnackbar(false)}
         title={translations.passcode.popups.unlock_successful_title}
-        body={translations.passcode.popups.unlock_successful_message}
+        message={translations.passcode.popups.unlock_successful_message}
         confirmText={translations.general.got_it}
         confirmOnPress={() => setShowMTTabAddedSnackbar(false)}
       >
