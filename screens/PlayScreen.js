@@ -4,7 +4,6 @@ import { useKeepAwake } from 'expo-keep-awake'
 import React, { useRef, useState } from 'react'
 import {
   Animated,
-  Dimensions,
   Image,
   SafeAreaView,
   StyleSheet,
@@ -18,7 +17,6 @@ import AlbumArtSwiper from '../components/AlbumArtSwiper'
 import BookView from '../components/BookView'
 import ChapterSelector from '../components/ChapterSelector'
 import PlaybackControls from '../components/PlaybackControls'
-import PlayScreenTitle from '../components/PlayScreenTitle'
 import Scrubber from '../components/Scrubber'
 import VideoPlayer from '../components/VideoPlayer'
 import WahaBackButton from '../components/WahaBackButton'
@@ -199,7 +197,7 @@ const PlayScreen = ({
     isVideoAlreadyDownloaded
   )
 
-  const textAreaRef = useRef(null)
+  const lessonTextContentRef = useRef(null)
 
   const [sectionOffsets, setSectionOffsets] = useState([])
 
@@ -242,7 +240,7 @@ const PlayScreen = ({
         )
       : () => (
           <TouchableOpacity
-            style={{ marginHorizontal: 5 }}
+            style={{ marginHorizontal: 10 }}
             onPress={() => setShowShareLessonModal(true)}
           >
             <Icon
@@ -255,7 +253,7 @@ const PlayScreen = ({
     headerLeft: isRTL
       ? () => (
           <TouchableOpacity
-            style={{ marginHorizontal: 5 }}
+            style={{ marginHorizontal: 10 }}
             onPress={() => setShowShareLessonModal(true)}
           >
             <Icon
@@ -826,17 +824,19 @@ const PlayScreen = ({
   return (
     <View style={styles.screen}>
       <View style={styles.topHalfContainer}>
-        {!lessonType.includes('BookText') && (
+        {/* {!lessonType.includes('BookText') && (
           <PlayScreenTitle
             text={thisLesson.title}
             backgroundColor={colors.white}
           />
-        )}
+        )} */}
         {!lessonType.includes('BookText') && (
           <View style={styles.middleAreaContainer}>
             {lessonType.includes('Questions') && (
               <Animated.View
                 style={{
+                  width: '100%',
+                  height: '100%',
                   position: 'absolute',
                   opacity: albumArtSwiperOpacity,
                   zIndex:
@@ -846,16 +846,16 @@ const PlayScreen = ({
                 }}
               >
                 <AlbumArtSwiper
-            textAreaRef={textAreaRef}
-            iconName={thisSet.iconName}
-            thisLesson={thisLesson}
-            playHandler={playHandler}
-            playOpacity={playOpacity}
-            animationZIndex={animationZIndex}
-            isMediaPlaying={isMediaPlaying}
-            setSectionOffsets={setSectionOffsets}
-            sectionOffsets={sectionOffsets}
-            />
+                  lessonTextContentRef={lessonTextContentRef}
+                  iconName={thisSet.iconName}
+                  thisLesson={thisLesson}
+                  playHandler={playHandler}
+                  playFeedbackOpacity={playFeedbackOpacity}
+                  playFeedbackZIndex={playFeedbackZIndex}
+                  isMediaPlaying={isMediaPlaying}
+                  setSectionOffsets={setSectionOffsets}
+                  sectionOffsets={sectionOffsets}
+                />
               </Animated.View>
             )}
             {lessonType.includes('Video') && (
@@ -957,7 +957,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: '100%',
     width: '100%',
-    backgroundColor: colors.porcelain
+    backgroundColor: colors.white
   },
   topHalfContainer: {
     justifyContent: 'space-evenly',
@@ -965,7 +965,7 @@ const styles = StyleSheet.create({
   },
   middleAreaContainer: {
     width: '100%',
-    height: Dimensions.get('window').width - 80,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
   }

@@ -1,6 +1,6 @@
 import Slider from '@react-native-community/slider'
 import React from 'react'
-import { View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import TimeDisplay from '../components/TimeDisplay'
 import { colors } from '../styles/colors'
 
@@ -36,12 +36,12 @@ const Scrubber = ({
       <TimeDisplay time={mediaProgress} max={mediaLength} side='left' />
       <TimeDisplay time={mediaLength} max={mediaLength} side='right' />
     </View>
-  )
-}
+  </View>
+)
 
 const styles = StyleSheet.create({
   scrubberContainer: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    paddingHorizontal: 3
+    paddingHorizontal: 5
   }
 })
 
