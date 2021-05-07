@@ -171,7 +171,7 @@ const PlayScreen = ({
   const [chapterSources, setChapterSources] = useState(null)
 
   /** An object to store the progress of the set this lesson is a part of. */
-  const [thisSetProgress, setThisSetProgress] = useState([])
+  // const [thisSetProgress, setThisSetProgress] = useState([])
 
   /** Animation states. */
   const [playFeedbackOpacity, setPlayFeedbackOpacity] = useState(
@@ -192,12 +192,21 @@ const PlayScreen = ({
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
   const [showSetCompleteModal, setShowSetCompleteModal] = useState(false)
 
+  /** Keeps track of whether the audio and video files for this lesson are downloaded. */
   const [isAudioDownloaded, setIsAudioDownloaded] = useState(
     isAudioAlreadyDownloaded
   )
   const [isVideoDownloaded, setIsVideoDownloaded] = useState(
     isVideoAlreadyDownloaded
   )
+
+  const isThisLessonComplete = useRef(
+    activeGroup.addedSets
+      .filter(set => set.id === thisSet.id)[0]
+      .progress.includes(getLessonInfo('index', thisLesson.id))
+  )
+
+  const justCompleted = useRef(false)
 
   /** Sets the navigation options for this screen. */
   const getNavOptions = () => ({
@@ -210,7 +219,7 @@ const PlayScreen = ({
         }}
       >
         <View>
-          {thisSetProgress.includes(getLessonInfo('index', thisLesson.id)) && (
+          {isThisLessonComplete.current && (
             <Icon name='check-outline' size={20} color={colors.chateau} />
           )}
         </View>
@@ -228,14 +237,7 @@ const PlayScreen = ({
       </View>
     ),
     headerRight: isRTL
-      ? () => (
-          <WahaBackButton
-            onPress={() => {
-              lockPortrait(() => {})
-              goBack()
-            }}
-          />
-        )
+      ? () => <WahaBackButton onPress={onBackButtonPress} />
       : () => (
           <TouchableOpacity
             style={{ marginHorizontal: 5 }}
@@ -261,14 +263,7 @@ const PlayScreen = ({
             />
           </TouchableOpacity>
         )
-      : () => (
-          <WahaBackButton
-            onPress={() => {
-              lockPortrait(() => {})
-              goBack()
-            }}
-          />
-        )
+      : () => <WahaBackButton onPress={onBackButtonPress} />
   })
 
   /*
@@ -282,6 +277,9 @@ const PlayScreen = ({
 
     // Set the sources for the various chapters.
     setSources()
+
+    // Update the navigation options.
+    setOptions(getNavOptions())
 
     // Cleanup function that unloads any audio or video upon exiting the screen.
     return async function cleanup () {
@@ -527,7 +525,7 @@ const PlayScreen = ({
 
     if (
       positionMillis / durationMillis > 0.5 &&
-      !thisSetProgress.includes(getLessonInfo('index', thisLesson.id))
+      !isThisLessonComplete.current
     ) {
       if (
         (lessonType.includes('Questions') &&
@@ -536,7 +534,13 @@ const PlayScreen = ({
           activeChapter === chapters.TRAINING) ||
         (lessonType === lessonTypes.AUDIOBOOK &&
           activeChapter === chapters.STORY)
-      )
+      ) {
+        // Set isThisLessonComplete to true so that we know not to mark is as complete again.
+        isThisLessonComplete.current = true
+
+        // Set the justCompleted state to true so we know to show any relevant modals upon exiting the play screen.
+        justCompleted.current = true
+
         // Toggle the complete status of the lesson.
         toggleComplete(
           activeGroup.name,
@@ -544,8 +548,9 @@ const PlayScreen = ({
           getLessonInfo('index', thisLesson.id)
         )
 
-      // Update the navigation options since one of the header buttons shows the complete status of the lesson.
-      setOptions(getNavOptions())
+        // Update the navigation options since one of the header buttons shows the complete status of the lesson.
+        setOptions(getNavOptions())
+      }
     }
 
     // Keep the play button status in sync with the play status while in fullscreen mode.
@@ -585,7 +590,7 @@ const PlayScreen = ({
   /** useEffect function that refreshes the onPlaybackStatusUpdate function whenever the download status or fullscreen status of the lesson changes since both of those are used throughout the chapter finish handler functions below. */
   useEffect(() => {
     audioRef.current.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate)
-  }, [Object.keys(downloads).length, thisSetProgress])
+  }, [Object.keys(downloads).length])
 
   /** Handles the finishing of the Fellowship chapter. */
   const onFellowshipFinish = () => {
@@ -751,61 +756,30 @@ const PlayScreen = ({
   }, [Object.keys(downloads).length])
 
   /*
-    PROGRESS UPDATING
-  */
-
-  /** Switches the complete status of a lesson to the opposite of its current status and alerts the user of the change. Also shows the set complete modal if this is the last lesson to complete in a story set. */
-  // const updateCompleteStatus = () => {
-  //   // Lock back to portrait orientation in case the user does the lesson in upside-down portrait.
-  //   lockPortrait(() => {})
-
-  //   // Toggle the complete status of the lesson.
-  //   toggleComplete(
-  //     activeGroup.name,
-  //     thisSet,
-  //     getLessonInfo('index', thisLesson.id)
-  //   )
-
-  //   // Update the navigation options since one of the header buttons shows the complete status of the lesson.
-  //   setOptions(getNavOptions())
-
-  //   // If completing this lesson completes its whole set, show a special set-complete modal.
-  //   if (
-  //     activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
-  //       .length /
-  //       (thisSet.lessons.length - 1) ===
-  //     1
-  //   )
-  //     setShowSetCompleteModal(true)
-  //   // Otherwise, show an alert notifying the user that the lesson has been marked as complete.
-  //   else if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id)))
-  //     Alert.alert(
-  //       translations.play.popups.marked_as_complete_title,
-  //       translations.play.popups.marked_as_complete_message,
-  //       [
-  //         {
-  //           text: translations.general.ok,
-  //           onPress: () => goBack()
-  //         }
-  //       ]
-  //     )
-  // }
-
-  /** useEffect function that updates the thisSetProgress state variable with the most updated version of the progress of the set that this lesson is a part of. */
-  useEffect(() => {
-    setThisSetProgress(
-      activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
-    )
-  }, [activeGroup.addedSets])
-
-  /** useEffect function that sets the navigation options for this screen. Dependent on thisSetProgress because we want to update the complete button whenever the complete status of this lesson changes.*/
-  useEffect(() => {
-    setOptions(getNavOptions())
-  }, [thisSetProgress])
-
-  /*
     MISC
   */
+
+  /**
+   * Gets called when the user pressed the back button. Shows any necessary modals before going back as well.
+   */
+  const onBackButtonPress = () => {
+    // Lock to portrait orientaiton.
+    lockPortrait(() => {})
+
+    // Here is where any modals that appear after a lesson is completed for the first time should appear. This will be useful when the gamification update is implemented.
+    if (justCompleted.current) {
+      // If completing this lesson completes the whole set, show a celebratory modal.
+      if (
+        activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
+          .length /
+          (thisSet.lessons.length - 1) ===
+        1
+      )
+        setShowSetCompleteModal(true)
+      // Otherwise, just go back.
+      else goBack()
+    } else goBack()
+  }
 
   /** Keeps the screen from auto-dimming or auto-locking. */
   useKeepAwake()
