@@ -1,7 +1,6 @@
 import { getLessonInfo, getSetInfo } from '../../constants'
 import {
   logAddStorySet,
-  logCompleteLesson,
   logCompleteStorySet,
   logCreateGroup
 } from '../../LogEventFunctions'
@@ -127,9 +126,10 @@ export function toggleComplete (groupName, set, lessonIndex) {
     )[0].progress
 
     // Track analytics.
-    if (!thisSetProgress.includes(lessonIndex)) {
-      logCompleteLesson(thisLesson, thisGroup.id)
-    }
+    // if (!thisSetProgress.includes(lessonIndex)) {
+    //   logCompleteLesson(thisLesson, thisGroup.id)
+    // }
+
     if (
       !thisSetProgress.includes(lessonIndex) &&
       thisSetProgress.length === setLength - 1

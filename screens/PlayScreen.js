@@ -29,6 +29,7 @@ import {
   lockPortrait,
   scaleMultiplier
 } from '../constants'
+import { logCompleteLesson } from '../LogEventFunctions'
 import MessageModal from '../modals/MessageModal'
 import ShareModal from '../modals/ShareModal'
 import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
@@ -170,9 +171,6 @@ const PlayScreen = ({
   /** Keeps track of the sources for the various chapters used to load their audio. */
   const [chapterSources, setChapterSources] = useState(null)
 
-  /** An object to store the progress of the set this lesson is a part of. */
-  // const [thisSetProgress, setThisSetProgress] = useState([])
-
   /** Animation states. */
   const [playFeedbackOpacity, setPlayFeedbackOpacity] = useState(
     new Animated.Value(0)
@@ -200,12 +198,14 @@ const PlayScreen = ({
     isVideoAlreadyDownloaded
   )
 
+  /** Keeps track of whether this lesson is complete or not. */
   const isThisLessonComplete = useRef(
     activeGroup.addedSets
       .filter(set => set.id === thisSet.id)[0]
       .progress.includes(getLessonInfo('index', thisLesson.id))
   )
 
+  /** Keeps track of whether this lesson was just completed. */
   const justCompleted = useRef(false)
 
   /** Sets the navigation options for this screen. */
@@ -523,10 +523,7 @@ const PlayScreen = ({
     // If we should update the thumb, update it to the newest value.
     if (shouldThumbUpdate.current) setMediaProgress(positionMillis)
 
-    if (
-      positionMillis / durationMillis > 0.5 &&
-      !isThisLessonComplete.current
-    ) {
+    if (positionMillis / durationMillis > 0.5 && !isThisLessonComplete.current)
       if (
         (lessonType.includes('Questions') &&
           activeChapter === chapters.APPLICATION) ||
@@ -534,24 +531,8 @@ const PlayScreen = ({
           activeChapter === chapters.TRAINING) ||
         (lessonType === lessonTypes.AUDIOBOOK &&
           activeChapter === chapters.STORY)
-      ) {
-        // Set isThisLessonComplete to true so that we know not to mark is as complete again.
-        isThisLessonComplete.current = true
-
-        // Set the justCompleted state to true so we know to show any relevant modals upon exiting the play screen.
-        justCompleted.current = true
-
-        // Toggle the complete status of the lesson.
-        toggleComplete(
-          activeGroup.name,
-          thisSet,
-          getLessonInfo('index', thisLesson.id)
-        )
-
-        // Update the navigation options since one of the header buttons shows the complete status of the lesson.
-        setOptions(getNavOptions())
-      }
-    }
+      )
+        markLessonAsComplete()
 
     // Keep the play button status in sync with the play status while in fullscreen mode.
     if (
@@ -758,6 +739,28 @@ const PlayScreen = ({
   /*
     MISC
   */
+
+  /** Marks a lesson as complete and handles any other logic related to that. */
+  const markLessonAsComplete = () => {
+    // Set isThisLessonComplete to true so that we know not to mark is as complete again.
+    isThisLessonComplete.current = true
+
+    // Set the justCompleted state to true so we know to show any relevant modals upon exiting the play screen.
+    justCompleted.current = true
+
+    // Toggle the complete status of the lesson.
+    toggleComplete(
+      activeGroup.name,
+      thisSet,
+      getLessonInfo('index', thisLesson.id)
+    )
+
+    // Track analytics.
+    logCompleteLesson(thisLesson, activeGroup.id)
+
+    // Update the navigation options since a check appears next to the header when a lesson is complete.
+    setOptions(getNavOptions())
+  }
 
   /**
    * Gets called when the user pressed the back button. Shows any necessary modals before going back as well.
