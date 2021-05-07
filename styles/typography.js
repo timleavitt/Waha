@@ -19,13 +19,13 @@ import { languages } from '../languages'
  * @param {string} color - The color of the font. Can be any color for the colors object in ./colors.js.
  * @return {Object} - The completed style object.
  */
-export function StandardTypography (
+export const StandardTypography = (
   props,
   fontSize,
   fontFamily,
   textAlign,
   color
-) {
+) => {
   // A font size modifier that makes all Arabic script a point smaller.
   const fontSizeModifier = props.font === 'NotoSansArabic' ? -1 : 0
 
@@ -72,14 +72,14 @@ export function StandardTypography (
  * @param {string} overrideFont - If we want to override the system language font with the active group's language's font, we can include this parameter.
  * @return {Object} - The completed style object.
  */
-export function SystemTypography (
+export const SystemTypography = (
   isHeader,
   fontSize,
   fontFamily,
   textAlign,
   color,
   overrideFont
-) {
+) => {
   // The options for font sizes.
   const sizes = {
     d: 12 * scaleMultiplier,
@@ -124,7 +124,7 @@ export function SystemTypography (
  * @export
  * @return {string} - The name of the font to use.
  */
-export function getSystemFont () {
+export const getSystemFont = () => {
   var systemFont = 'Roboto'
   languages.forEach(languageFamily => {
     if (i18n.locale.slice(0, 2) === languageFamily.languageCode) {
@@ -139,7 +139,7 @@ export function getSystemFont () {
  * @export
  * @return {string} - The name of the font to use.
  */
-export function getLanguageFont (languageID) {
+export const getLanguageFont = languageID => {
   var languageFont
   languages.forEach(languageFamily => {
     if (languageFamily.data.some(language => language.wahaID === languageID))

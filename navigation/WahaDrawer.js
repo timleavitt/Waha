@@ -1,4 +1,3 @@
-import * as WebBrowser from 'expo-web-browser'
 import React, { useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
@@ -45,6 +44,9 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
+/**
+ * A component that acts as the navigation drawer for Waha. Accessible via the SetsTabs screens.
+ */
 const WahaDrawer = ({
   // Props passed from navigation.
   navigation: { navigate },
@@ -61,21 +63,11 @@ const WahaDrawer = ({
   storeDownloads,
   setHasFetchedLanguageData
 }) => {
+  /** Keeps track of whether the edit group modal is visible. */
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
 
-  //+ FUNCTIONS
-
-  // opens a local browser
-  async function openBrowser (url) {
-    await WebBrowser.openBrowserAsync(url, {
-      dismissButtonStyle: 'close'
-    })
-  }
-
-  function onUpdatePress () {
-    // Replace our downloads object with an empty array.
-    // storeDownloads([])
-
+  /** Handles the updating of language core files. */
+  const updateHandler = () => {
     // Set setIsInstallingLanguageInstance redux variable to true so that the app knows to switch to the loading screen.
     setIsInstallingLanguageInstance(true)
 
@@ -86,11 +78,9 @@ const WahaDrawer = ({
     updateLanguageCoreFiles()
   }
 
-  //+ RENDER
-
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: primaryColor }]}
+      style={[styles.wahaDrawerContainer, { backgroundColor: primaryColor }]}
       forceInset={{ top: 'always', bottom: 'never', horizontal: 'never' }}
     >
       <View style={styles.drawerHeaderContainer}>
@@ -121,7 +111,7 @@ const WahaDrawer = ({
       >
         {/* Show an update button if we have any core files to update. */}
         {languageCoreFilesToUpdate.length !== 0 && (
-          <DrawerDownloadUpdateButton onUpdatePress={onUpdatePress} />
+          <DrawerDownloadUpdateButton updateHandler={updateHandler} />
         )}
         <View style={{ width: '100%', height: 5 }} />
         <DrawerItem
@@ -185,10 +175,8 @@ const WahaDrawer = ({
   )
 }
 
-//+ REDUX
-
 const styles = StyleSheet.create({
-  container: {
+  wahaDrawerContainer: {
     flex: 1
   },
   drawerHeaderContainer: {
@@ -201,22 +189,7 @@ const styles = StyleSheet.create({
   groupIconContainer: {
     alignItems: 'center',
     marginVertical: 10
-  },
-  pencilIconContainer: {
-    alignSelf: 'flex-end',
-    position: 'absolute',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    padding: 10,
-    height: '100%'
-  },
-  smallDrawerItemsContainer: {
-    width: '100%',
-    justifyContent: 'space-between',
-    alignSelf: 'flex-end'
   }
 })
-
-//+ REDUX
 
 export default connect(mapStateToProps, mapDispatchToProps)(WahaDrawer)

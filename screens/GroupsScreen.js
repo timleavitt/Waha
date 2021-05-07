@@ -106,7 +106,7 @@ const GroupsScreen = ({
    * @return {Object[].languageID} - The ID of the language instance.
    * @return {Object[].data[]} - An array of the groups that are a part of this language instance.
    */
-  function getLanguageAndGroupData () {
+  const getLanguageAndGroupData = () => {
     var installedLanguageInstances = []
     for (key in database) {
       // Because there are other redux variables stored in the database object, filter for just the language objects (which all have a length of 2).

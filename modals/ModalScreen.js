@@ -119,7 +119,7 @@ const ModalScreen = ({
 
 const styles = StyleSheet.create({
   contentContainer: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.aquaHaze,
     flex: 1,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15

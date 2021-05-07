@@ -91,7 +91,7 @@ function mapDispatchToProps (dispatch) {
  * @param {string} installedLanguageInstances[].languageID - The ID of the language.
  * @param {string} installedLanguageInstances[].languageName - The name of the language.
  */
-function LanguageInstanceInstallScreen ({
+const LanguageInstanceInstallScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, goBack, reset, navigate },
   route: {
@@ -117,7 +117,7 @@ function LanguageInstanceInstallScreen ({
   createGroup,
   changeActiveGroup,
   setRecentActiveGroup
-}) {
+}) => {
   // Set the i18n locale to the locale of the user's phone.
   i18n.locale = Localization.locale
 
@@ -141,8 +141,10 @@ function LanguageInstanceInstallScreen ({
   /** The sound object for playing the language text-to-speech files. */
   const [audio, setAudio] = useState(new Audio.Sound())
 
+  /** Keeps track of the text the user enters into the search bar. */
   const [searchTextInput, setSearchTextInput] = useState('')
 
+  /** Keeps track of whether we're actively fetching Firebase data or not. */
   const [isFetchingFirebaseData, setIsFetchingFirebaseData] = useState(false)
 
   /** useEffect function that sets the navigation options for this screen. */
@@ -171,7 +173,7 @@ function LanguageInstanceInstallScreen ({
    * Plays the text-to-speech audio file for a language.
    * @param {string} languageID - The ID of the language to play.
    */
-  async function playAudio (languageID) {
+  const playAudio = async languageID => {
     audio.unloadAsync()
     await audio.loadAsync(languageT2S[languageID]).then(() => {
       audio.playAsync()
@@ -227,8 +229,8 @@ function LanguageInstanceInstallScreen ({
     return
   }
 
-  /** Handles the user pressing the start button after they select a language instance to install. Involves fetching the necessary Firebase data, setting the hasFetchedLanguageData to true, and starting the download of the language core files. If this is the first language instance they've installed, we want to nagivate to the onboarding slides too. */
-  function onStartPress () {
+  /** Handles the user pressing the start button after they select a language instance to install. Involves fetching the necessary Firebase data, setting the hasFetchedLanguageData to true, creating a group for the language, and starting the download of the language core files. If this is the first language instance they've installed, we want to nagivate to the onboarding slides too. */
+  const onStartPress = () => {
     fetchFirebaseData(selectedLanguage)
       .then(() => {
         // Set the hasFetchedLanguageData redux variable to true since we're done fetching from Firebase.
@@ -288,7 +290,7 @@ function LanguageInstanceInstallScreen ({
    * Gets a list of all the languages and language families available in Waha. These are stored in the languages.js file.
    * @return {Object[]} - An array of language family objects.
    */
-  function getLanguageData () {
+  const getLanguageData = () => {
     // Sort the languages to put the language family of the phone's current locale at the top.
     const sortByLocale = (a, b) => {
       if (i18n.locale.includes(a.languageCode)) return -1
@@ -375,26 +377,24 @@ function LanguageInstanceInstallScreen ({
    * @param {Object} languageFamily - The object for the language family that this language is a part of.
    * @return {Component} - The LanguageSelectItem component.
    */
-  function renderLanguageItem (language, languageFamily) {
-    return (
-      <LanguageItem
-        nativeName={language.nativeName}
-        localeName={i18n.t(language.i18nName)}
-        font={languageFamily.font}
-        logoSource={language.logoSource}
-        onPress={() => {
-          if (!selectedLanguage) {
-            Animated.spring(buttonYPos, {
-              toValue: 0
-            }).start()
-          }
-          setSelectedLanguage(language.wahaID)
-        }}
-        isSelected={selectedLanguage === language.wahaID ? true : false}
-        playAudio={() => playAudio(language.wahaID)}
-      />
-    )
-  }
+  const renderLanguageItem = (language, languageFamily) => (
+    <LanguageItem
+      nativeName={language.nativeName}
+      localeName={i18n.t(language.i18nName)}
+      font={languageFamily.font}
+      logoSource={language.logoSource}
+      onPress={() => {
+        if (!selectedLanguage) {
+          Animated.spring(buttonYPos, {
+            toValue: 0
+          }).start()
+        }
+        setSelectedLanguage(language.wahaID)
+      }}
+      isSelected={selectedLanguage === language.wahaID ? true : false}
+      playAudio={() => playAudio(language.wahaID)}
+    />
+  )
 
   /**
    * Renders a component used for the Languages SectionList header.
@@ -402,33 +402,25 @@ function LanguageInstanceInstallScreen ({
    * @param {Object} languageFamily - The object for the language family that this language is a part of.
    * @return {Component} - The LanguageSelectItem component.
    */
-  function renderLanguageHeader (languageFamily) {
-    return (
-      <View
-        style={[
-          styles.languageHeaderContainer,
-          {
-            backgroundColor:
-              routeName === 'InitialLanguageInstanceInstall'
-                ? colors.aquaHaze
-                : colors.white
-          }
-        ]}
+  const renderLanguageHeader = languageFamily => (
+    <View
+      style={[
+        styles.languageHeaderContainer,
+        {
+          backgroundColor:
+            routeName === 'InitialLanguageInstanceInstall'
+              ? colors.aquaHaze
+              : colors.white
+        }
+      ]}
+    >
+      <Text
+        style={SystemTypography(false, 'h3', 'Regular', 'left', colors.chateau)}
       >
-        <Text
-          style={SystemTypography(
-            false,
-            'h3',
-            'Regular',
-            'left',
-            colors.chateau
-          )}
-        >
-          {i18n.t(languageFamily.i18nName)}
-        </Text>
-      </View>
-    )
-  }
+        {i18n.t(languageFamily.i18nName)}
+      </Text>
+    </View>
+  )
 
   return (
     <SafeAreaView
@@ -497,31 +489,29 @@ function LanguageInstanceInstallScreen ({
           ItemSeparatorComponent={() => <WahaSeparator />}
           SectionSeparatorComponent={() => <WahaSeparator />}
           ListEmptyComponent={
-            searchTextInput
-              ? null
-              : () => (
-                  <View>
-                    <View
-                      style={{
-                        width: '100%',
-                        marginBottom: 18 * scaleMultiplier
-                      }}
-                    >
-                      <Text
-                        style={SystemTypography(
-                          false,
-                          'p',
-                          'Regular',
-                          'center',
-                          colors.chateau
-                        )}
-                      >
-                        {i18n.t('noMoreLanguages')}
-                      </Text>
-                    </View>
-                    <WahaSeparator />
-                  </View>
-                )
+            !searchTextInput && (
+              <View>
+                <View
+                  style={{
+                    width: '100%',
+                    marginBottom: 18 * scaleMultiplier
+                  }}
+                >
+                  <Text
+                    style={SystemTypography(
+                      false,
+                      'p',
+                      'Regular',
+                      'center',
+                      colors.chateau
+                    )}
+                  >
+                    {i18n.t('noMoreLanguages')}
+                  </Text>
+                </View>
+                <WahaSeparator />
+              </View>
+            )
           }
           keyExtractor={item => item.wahaID}
           renderItem={({ item, section }) => renderLanguageItem(item, section)}

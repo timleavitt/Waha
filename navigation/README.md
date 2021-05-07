@@ -32,10 +32,12 @@ In the descriptions below, navigators are **`bolded`** and any other files/scree
         - `MobilizationToolsUnlock`: A simple screen that allows the user to input a 6-digit code to unlock the Mobilization Tools.
         - `SecurityMode`: Screen that allows enabling/disabling and customizing Waha's Security Mode.
         - `SecurityOnboardingSlides`: The onboarding slides that the user must go through the first time they enable Security Mode.
-        - `KeyOrderSet_Initial`: Uses the `KeyOrderSetScreen` component. Prompts the user to create a key combination on the piano for unlocking Security Mode.
-        - `KeyOrderSet_Confirm`: Uses the `KeyOrderSetScreen` component. Prompts the user to confirm the key combination on the piano.
-        - `KeyOrderChange_Initial`: Uses the `KeyOrderSetScreen` component. Prompts the user to enter a new key combination on the piano.
-        - `KeyOrderChange_Confirm`: Uses the `KeyOrderSetScreen` component. Prompts the user to confirm their new key combination on the piano.
+        - `PianoPasscodeSet`: Uses the `PianoPasscodeSet` component. Prompts the user to create a key combination on the piano for unlocking Security Mode.
+        - `PianoPasscodeSetConfirm`: Uses the `PianoPasscodeSet` component. Prompts the user to confirm the key combination on the piano.
+        - `PianoPasscodeChange`: Uses the `PianoPasscodeSet` component. Prompts the user to enter a new key combination on the piano.
+        - `PianoPasscodeChangeConfirm`: Uses the `PianoPasscodeSet` component. Prompts the user to confirm their new key combination on the piano.
         - `PianoApp`: Screen that acts as a security screen. When the user opens the app with Security Mode on, this inconspicuous piano screen
         - `Splash`: Screen that just shows the Waha logo. This acts as a pseudo splash screen that comes up whenever the user enters multitasking on an iOS device so that the app preview is hidden.
+        - `Information`: Screen that shows the version and links to the privacy policy, donate page, and rage page.
+        - `Contact Us`: Screen that allows the user to send in feedback on Waha.
 

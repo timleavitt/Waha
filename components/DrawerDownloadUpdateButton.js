@@ -27,10 +27,11 @@ function mapDispatchToProps (dispatch) {
 
 /**
  * Button that prompts the user to download new language core files should they be available/needed.
+ * @param {Function} updateHandler - Handles the updating of language core files.
  */
-function DrawerDownloadUpdateButton ({
+const DrawerDownloadUpdateButton = ({
   // Props passed from a parent component.
-  onUpdatePress,
+  updateHandler,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -39,78 +40,76 @@ function DrawerDownloadUpdateButton ({
   font,
   isConnected,
   languageCoreFilesToUpdate
-}) {
-  return (
-    <TouchableOpacity
-      style={styles.outerContianer}
-      onPress={() => {
-        Alert.alert(
-          translations.general.popups.download_update_title,
-          translations.general.popups.download_update_message,
-          [
-            {
-              text: translations.general.cancel,
-              onPress: () => {}
-            },
-            {
-              text: translations.general.ok,
-              onPress: onUpdatePress
-            }
-          ]
-        )
-      }}
-      activeOpacity={isConnected ? 0.2 : 1}
-    >
-      <View
-        style={[
-          styles.innerContainer,
+}) => (
+  <TouchableOpacity
+    style={styles.drawerDownloadUpdateButtonContainer}
+    onPress={() => {
+      Alert.alert(
+        translations.general.popups.download_update_title,
+        translations.general.popups.download_update_message,
+        [
           {
-            backgroundColor: isConnected ? colors.apple : colors.geyser,
-            flexDirection: isRTL ? 'row' : 'row-reverse',
-            borderBottomColor: isConnected
-              ? colors.appleShadow
-              : colors.geyserShadow
+            text: translations.general.cancel,
+            onPress: () => {}
+          },
+          {
+            text: translations.general.ok,
+            onPress: updateHandler
           }
+        ]
+      )
+    }}
+    activeOpacity={isConnected ? 0.2 : 1}
+  >
+    <View
+      style={[
+        styles.innerContainer,
+        {
+          backgroundColor: isConnected ? colors.apple : colors.geyser,
+          flexDirection: isRTL ? 'row' : 'row-reverse',
+          borderBottomColor: isConnected
+            ? colors.appleShadow
+            : colors.geyserShadow
+        }
+      ]}
+    >
+      <Text
+        style={[
+          { paddingHorizontal: 10 },
+          StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Bold',
+            'center',
+            isConnected ? colors.white : colors.chateau
+          )
         ]}
       >
-        <Text
-          style={[
-            { paddingHorizontal: 10 },
-            StandardTypography(
-              { font, isRTL },
-              'h3',
-              'Bold',
-              'center',
-              isConnected ? colors.white : colors.chateau
-            )
-          ]}
-        >
-          {translations.general.download_update_button_label}
-        </Text>
-        {isConnected ? (
-          <View style={styles.iconContainer}>
-            <Icon
-              name='error-filled'
-              size={30 * scaleMultiplier}
-              color={colors.white}
-            />
-          </View>
-        ) : (
-          <View style={styles.iconContainer}>
-            <Icon
-              name='cloud-slash'
-              size={30 * scaleMultiplier}
-              color={colors.chateau}
-            />
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
-  )
-}
+        {translations.general.download_update_button_label}
+      </Text>
+      {isConnected ? (
+        <View style={styles.iconContainer}>
+          <Icon
+            name='error-filled'
+            size={30 * scaleMultiplier}
+            color={colors.white}
+          />
+        </View>
+      ) : (
+        <View style={styles.iconContainer}>
+          <Icon
+            name='cloud-slash'
+            size={30 * scaleMultiplier}
+            color={colors.chateau}
+          />
+        </View>
+      )}
+    </View>
+  </TouchableOpacity>
+)
 
 const styles = StyleSheet.create({
-  outerContianer: {
+  drawerDownloadUpdateButtonContainer: {
     overflow: 'hidden',
     borderRadius: 20,
     marginHorizontal: 5,

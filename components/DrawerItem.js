@@ -19,7 +19,7 @@ function mapStateToProps (state) {
 
 /**
  * A pressable item used in Waha's navigation drawer.
- * @param {function} onPress - The function to call when the user presses the drawer item.
+ * @param {Function} onPress - The function to call when the user presses the drawer item.
  * @param {string} icon - The name of the icon to display on the drawer item.
  * @param {string} label - The label to display on the drawer item.
  */

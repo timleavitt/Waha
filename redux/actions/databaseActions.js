@@ -151,6 +151,13 @@ export function deleteLanguageData (languageInstanceID) {
   }
 }
 
+/**
+ * Stores the created time of a specific file.
+ * @export
+ * @param {string} fileName - The name of the file to store the time created of.
+ * @param {string} timeCreated - The time the file was created.
+ * @return {Object} - Object to send to the reducer.
+ */
 export function storeLanguageCoreFileCreatedTime (fileName, timeCreated) {
   return {
     type: STORE_LANGUAGE_CORE_FILE_CREATED_TIME,
@@ -159,20 +166,36 @@ export function storeLanguageCoreFileCreatedTime (fileName, timeCreated) {
   }
 }
 
+/**
+ * Adds a file name to be stored in the core files to update array.
+ * @export
+ * @param {string} fileName - The name of the file that needs to be updated.
+ * @return {Object} - Object to send to the reducer.
+ */
 export function addLanguageCoreFileToUpdate (fileName) {
-  // console.log('STORING FILES TO UPDATE ACTION FIRING\n')
   return {
     type: ADD_LANGUAGE_CORE_FILE_TO_UPDATE,
     fileName
   }
 }
 
+/**
+ * Clears the core files to update array.
+ * @export
+ * @return {Object} - Object to send to the reducer.
+ */
 export function clearLanguageCoreFilesToUpdate () {
   return {
     type: CLEAR_LANGUAGE_CORE_FILES_TO_UPDATE
   }
 }
 
+/**
+ * Stores the langauge that is actively installing.
+ * @export
+ * @param {string} languageID - The ID of the language instance to delete.
+ * @return {Object} - Object to send to the reducer.
+ */
 export function storeActingLanguageID (languageID) {
   return {
     type: STORE_ACTING_LANGUAGE_ID,
@@ -180,6 +203,12 @@ export function storeActingLanguageID (languageID) {
   }
 }
 
+/**
+ * Sets the most recent active group so that if we cancel a language install, we know what group to go back to.
+ * @export
+ * @param {string} groupName - The name of the most recent active group.
+ * @return {Object} - Object to send to the reducer.
+ */
 export function setRecentActiveGroup (groupName) {
   return {
     type: SET_RECENT_ACTIVE_GROUP,
@@ -304,27 +333,6 @@ export function downloadLanguageCoreFiles (language) {
         if (totalDownloaded === getState().database[language].files.length) {
           // Log the language install in firebase for firebase analytics.
           logInstallLanguage(language, i18n.locale)
-
-          // // Create a new group using the default group name stored in constants.js, assuming a group hasn't already been created with the same name. We don't want any duplicates.
-          // if (
-          //   !getState().groups.some(
-          //     group => group.name === groupNames[language]
-          //   )
-          // ) {
-          //   dispatch(incrementGlobalGroupCounter())
-          //   dispatch(
-          //     createGroup(
-          //       groupNames[language],
-          //       language,
-          //       'default',
-          //       getState().database.globalGroupCounter,
-          //       getState().groups.length + 1
-          //     )
-          //   )
-          // }
-
-          // // Change the active group to the new group we just created.
-          // dispatch(changeActiveGroup(groupNames[language]))
 
           // Set our actingLanguageID variable to null since we're not downloading a language instance anymore.
           dispatch(storeActingLanguageID(null))

@@ -1,10 +1,10 @@
 import NetInfo from '@react-native-community/netinfo'
 import * as FileSystem from 'expo-file-system'
 import i18n from 'i18n-js'
+import LottieView from 'lottie-react-native'
 import React, { useEffect, useState } from 'react'
 import {
   Dimensions,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -24,7 +24,7 @@ import { deleteGroup } from '../redux/actions/groupsActions'
 import { setIsInstallingLanguageInstance } from '../redux/actions/isInstallingLanguageInstanceActions'
 import { activeGroupSelector } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
-import { SystemTypography } from '../styles/typography'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
 
@@ -35,6 +35,13 @@ i18n.translations = {
 
 function mapStateToProps (state) {
   var activeGroup = state.activeGroup ? activeGroupSelector(state) : null
+  var font = state.activeGroup ? getLanguageFont(activeGroup.language) : null
+  var isRTL = state.activeGroup
+    ? state.database[activeGroup.language].isRTL
+    : null
+  var translations = state.activeGroup
+    ? state.database[activeGroup.language].translations
+    : null
   return {
     languageCoreFilesDownloadProgress:
       state.database.languageCoreFilesDownloadProgress,
@@ -48,7 +55,10 @@ function mapStateToProps (state) {
     actingLanguageID: state.database.actingLanguageID,
     activeGroup: activeGroup,
     groups: state.groups,
-    recentActiveGroup: state.database.recentActiveGroup
+    recentActiveGroup: state.database.recentActiveGroup,
+    font: font,
+    isRTL: isRTL,
+    translations: translations
   }
 }
 
@@ -79,7 +89,11 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
+/**
+ * A screen that shows the download progress of a language's core files. The user sits on this screen if they finish onboarding before the downloads are done.
+ */
 const LoadingScreen = ({
+  // Props passed from navigation.
   navigation,
   // Props passed from redux.
   languageCoreFilesDownloadProgress,
@@ -92,6 +106,9 @@ const LoadingScreen = ({
   groups,
   recentActiveGroup,
   hasFetchedLanguageData,
+  font,
+  isRTL,
+  translations,
   setIsInstallingLanguageInstance,
   setHasOnboarded,
   setTotalLanguageCoreFilesToDownload,
@@ -101,8 +118,10 @@ const LoadingScreen = ({
   deleteGroup,
   changeActiveGroup
 }) => {
+  /** Keeps track of whether or not the user has internet or not. This is separate from the redux isConnected because that listener hasn't started yet (it lives in MainDrawer.js which hasn't been rendered yet). */
   const [isConnected, setIsConnected] = useState(true)
 
+  /** useEffect function that sets up the network listener. */
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected)
@@ -113,7 +132,8 @@ const LoadingScreen = ({
     }
   }, [])
 
-  function cancelDownloads () {
+  /** Cancels the language core files downloads, does a few cleanup actions, and sends the user back to the language instance install screen. */
+  const cancelDownloads = () => {
     // Set the core files download progress to 0.
     setLanguageCoreFilesDownloadProgress(0)
 
@@ -143,15 +163,17 @@ const LoadingScreen = ({
     // If this is the initial language instance install, set active group back to null since there should be no active group before you install your first language instance.
     else changeActiveGroup(null)
 
-    console.log(
-      'Cancelled a language instance installation. Removing language data from redux and deleting any files for that language instance.'
-    )
+    // Delete any groups from the cancelled language.
     groups.forEach(group => {
       if (group.language === actingLanguageID) {
         deleteGroup(group.name)
       }
     })
+
+    // Delete the language data of the cancelled language.
     deleteLanguageData(actingLanguageID)
+
+    // Delete any files that have alreayd finished downloading for the cancelled language.
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
         for (const item of contents) {
@@ -161,32 +183,6 @@ const LoadingScreen = ({
         }
       }
     )
-    // }
-
-    // if (condition that distinguishes updating from downloading is downloading AND language isn't the active group AND language isn't the only language installed)
-    //  delete the language from the db and remove all files
-
-    // // delete all groups w/ this language
-    // groups.map(group => {
-    //   if (group.language === languageID) {
-    //     deleteGroup(group.name)
-    //   }
-    // })
-
-    // // delete all downloaded files for this language
-    // FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-    //   contents => {
-    //     for (const item of contents) {
-    //       if (item.slice(0, 2) === languageID) {
-    //         FileSystem.deleteAsync(FileSystem.documentDirectory + item)
-    //         removeDownload(item.slice(0, 5))
-    //       }
-    //     }
-    //   }
-    // )
-
-    // // delete section of database for this language
-    // deleteLanguageData(languageID)
   }
 
   return (
@@ -199,96 +195,73 @@ const LoadingScreen = ({
           marginTop: 40 * scaleMultiplier
         }}
       >
-        <Image
+        <LottieView
           style={{
             width: Dimensions.get('window').width / 2,
-            height: Dimensions.get('window').width / 2
+            marginBottom: 30
           }}
-          source={require('../assets/gifs/waha_loading.gif')}
-          resizeMode='contain'
+          colorFilters={[
+            {
+              keypath: '*',
+              color: colors.waha
+            }
+          ]}
+          autoPlay
+          loop
+          source={require('../assets/gifs/loading_animation.json')}
         />
-        <View
-          style={{
-            width: Dimensions.get('window').width - 60,
-            height: 40 * scaleMultiplier,
-            borderRadius: 30,
-            flexDirection: 'row',
-            overflow: 'hidden',
-            justifyContent: 'center',
-            borderWidth: 2,
-            borderColor: colors.porcelain
-          }}
-        >
+        <View style={styles.progressBarContainer}>
           {languageCoreFilesDownloadProgress ? (
             <View
-              style={{
-                backgroundColor: colors.waha,
-                height: '100%',
-                flex: languageCoreFilesDownloadProgress,
-                borderRadius: 20
-              }}
+              style={[
+                styles.progress,
+                { flex: languageCoreFilesDownloadProgress }
+              ]}
             />
           ) : null}
           {languageCoreFilesDownloadProgress ? (
             <View
-              style={{
-                backgroundColor: '#F1FAEE',
-                height: '100%',
-                flex:
-                  totalLanguageCoreFilesToDownload -
-                  languageCoreFilesDownloadProgress
-              }}
+              style={[
+                styles.progressToGo,
+                {
+                  flex:
+                    totalLanguageCoreFilesToDownload -
+                    languageCoreFilesDownloadProgress
+                }
+              ]}
             />
           ) : null}
         </View>
-        <View
-          style={{
-            width: Dimensions.get('window').width,
-            height: 60 * scaleMultiplier,
-            paddingHorizontal: 20,
-            justifyContent: 'center',
-            flexDirection: 'row'
-          }}
-        >
-          {isConnected ? null : (
-            <Text
-              style={SystemTypography(false, 'h4', '', 'center', colors.shark)}
-            >
-              {i18n.t('lostConnection')}
-            </Text>
+        <View style={styles.noConnectionContainer}>
+          {!isConnected && (
+            <Icon name='cloud-slash' color={colors.tuna} size={30} />
           )}
         </View>
       </View>
-      <View
-        style={{
-          width: '100%',
-          justifyContent: 'center',
-          flexDirection: 'row',
-          alignItems: 'center'
-        }}
-      >
-        <View
-          style={{
-            width: '100%',
-            height: 100,
-            marginVertical: 20,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          {hasFetchedLanguageData ? (
-            <TouchableOpacity
-              onPress={cancelDownloads}
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
+      <View style={styles.cancelButtonContainer}>
+        {/* Show the cancel button after the Firebase data has been fetched. */}
+        {hasFetchedLanguageData && (
+          <TouchableOpacity
+            onPress={cancelDownloads}
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Icon name='cancel' color={colors.tuna} size={50} />
+            <Text
+              style={StandardTypography(
+                { font, isRTL },
+                'h4',
+                'Bold',
+                'center',
+                colors.tuna
+              )}
             >
-              <Icon name='cancel' color={colors.shark} size={50} />
-              <Text>{i18n.t('cancel')}</Text>
-            </TouchableOpacity>
-          ) : null}
-        </View>
+              {translations.general.cancel}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   )
@@ -302,7 +275,35 @@ const styles = StyleSheet.create({
     backgroundColor: colors.aquaHaze
   },
   progressBarContainer: {
+    width: Dimensions.get('window').width - 60,
+    height: 40 * scaleMultiplier,
+    borderRadius: 30,
+    flexDirection: 'row',
+    overflow: 'hidden',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: colors.porcelain
+  },
+  progress: {
+    backgroundColor: colors.waha,
+    height: '100%',
+    borderRadius: 20
+  },
+  progressToGo: {
+    backgroundColor: colors.athens,
+    height: '100%'
+  },
+  noConnectionContainer: {
+    width: Dimensions.get('window').width,
+    paddingHorizontal: 20,
+    marginVertical: 10,
+    justifyContent: 'center',
+    flexDirection: 'row'
+  },
+  cancelButtonContainer: {
     width: '100%',
+    height: 100,
+    marginVertical: 20,
     justifyContent: 'center',
     alignItems: 'center'
   }

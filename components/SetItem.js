@@ -239,7 +239,7 @@ const SetItem = ({
   /**
    * Updates the thisSetProgress state.
    */
-  function updateThisSetProgress () {
+  const updateThisSetProgress = () => {
     setThisSetProgress(
       activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
         .length / thisSet.lessons.length

@@ -86,13 +86,13 @@ const ContactUsScreen = ({
   }, [emailTextInput])
 
   /** Checks whether an email address is valid using a regular expression. If it's valid, set the email error state to false. Otherwise, set it to true.*/
-  function checkEmail () {
+  const checkEmail = () => {
     if (emailTextInput.match(/^.+@.+\..+$/)) setEmailError(false)
     else setEmailError(true)
   }
 
   /** Sends the form information to Firestore and pops up an appropriate alert. */
-  function submit () {
+  const submit = () => {
     setIsSubmitting(true)
     db.collection('feedback')
       .add({

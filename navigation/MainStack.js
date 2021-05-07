@@ -19,10 +19,8 @@ import GroupsScreen from '../screens/GroupsScreen'
 import InformationScreen from '../screens/InformationScreen'
 import LanguageInstanceInstallScreen from '../screens/LanguageInstanceInstallScreen'
 import LessonsScreen from '../screens/LessonsScreen'
-import LoadingScreen from '../screens/LoadingScreen'
 import MobilizationToolsScreen from '../screens/MobilizationToolsScreen'
 import MobilizationToolsUnlockScreen from '../screens/MobilizationToolsUnlockScreen'
-import MTUnlockSuccessfulScreen from '../screens/MTUnlockSuccessfulScreen'
 import PianoAppScreen from '../screens/PianoAppScreen'
 import PianoPasscodeSetScreen from '../screens/PianoPasscodeSetScreen'
 import PlayScreen from '../screens/PlayScreen'
@@ -365,7 +363,7 @@ const MainStack = ({
         options={{
           headerTitle: translations.security.header,
           headerStyle: {
-            backgroundColor: colors.white
+            backgroundColor: colors.aquaHaze
           },
           headerTitleStyle: {
             color: colors.shark,
@@ -445,15 +443,6 @@ const MainStack = ({
         }}
       />
       <Stack.Screen
-        name='Updating'
-        component={LoadingScreen}
-        options={{
-          gestureEnabled: false,
-          headerShown: false,
-          animationEnabled: false
-        }}
-      />
-      <Stack.Screen
         name='Information'
         component={InformationScreen}
         options={{
@@ -481,13 +470,6 @@ const MainStack = ({
             color: colors.shark,
             fontFamily: font + '-Bold'
           }
-        }}
-      />
-      <Stack.Screen
-        name='MTUnlockSuccessful'
-        component={MTUnlockSuccessfulScreen}
-        options={{
-          headerShown: false
         }}
       />
     </Stack.Navigator>

@@ -117,7 +117,7 @@ const GroupItem = ({
    * Gets the bookmark for this group and returns it in a nicely formatted string.
    * @return {string} - The bookmarked lesson.
    */
-  function getBookmarkLesson () {
+  const getBookmarkLesson = () => {
     // If for some reason no group got passed, return an empty string.
     if (thisGroup) {
       // Get the object for the currently bookmarked set.

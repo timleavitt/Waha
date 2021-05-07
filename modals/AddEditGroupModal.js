@@ -91,7 +91,7 @@ const AddEditGroupModal = ({
    * Checks if a user-inputted group name is a duplicate of another group. The process for checking is different if we're editing vs. adding a group.
    * @return {boolean} - Whether the group name is a duplicate or not.
    */
-  function checkForDuplicate () {
+  const checkForDuplicate = () => {
     var isDuplicate = false
 
     // If we're adding a new group, simply check if the group name already exists in another group.
@@ -129,7 +129,7 @@ const AddEditGroupModal = ({
    * Checks if a user-inputted group name is blank.
    * @return {boolean} - Whether the group name is blank or not.
    */
-  function checkForBlank () {
+  const checkForBlank = () => {
     if (groupNameInput === '') {
       Alert.alert(
         translations.add_edit_group.popups.blank_group_name_title,
@@ -142,7 +142,7 @@ const AddEditGroupModal = ({
   }
 
   /** Creates a new group and sets it as the active group. */
-  function createGroupHandler () {
+  const createGroupHandler = () => {
     // If the name of the new group is a duplicate or blank, don't continue.
     if (checkForDuplicate() || checkForBlank()) return
 
@@ -166,7 +166,7 @@ const AddEditGroupModal = ({
   }
 
   /** Edits a group and sets it as the active group. */
-  function editGroupHandler () {
+  const editGroupHandler = () => {
     // If the name of the new group is a duplicate or blank, don't continue.
     if (checkForDuplicate() || checkForBlank()) return
 
@@ -235,11 +235,6 @@ const AddEditGroupModal = ({
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.white,
-    justifyContent: 'space-between'
-  },
   groupAvatarContainer: {
     width: '100%',
     justifyContent: 'center',

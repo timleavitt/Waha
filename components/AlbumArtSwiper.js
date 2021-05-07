@@ -84,7 +84,7 @@ const AlbumArtSwiper = ({
    * @param {number} key - The pane to get the text data for. 0 for the Fellowship/Application questions or 2 for the Scripture.
    * @return {Object[]} - An array of objects containing the text data.
    */
-  function getTextData (key) {
+  const getTextData = key => {
     if (key === '2') {
       if (thisLesson.scripture) return thisLesson.scripture
       else return null

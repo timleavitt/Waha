@@ -86,7 +86,7 @@ export const groupNames = {
  * @export
  * @return {boolean} - Whether the current system is RTL.
  */
-export function getSystemIsRTL () {
+export const getSystemIsRTL = () => {
   systemIsRTL = false
   languages.forEach(languageFamily => {
     if (i18n.locale.slice(0, 2) === languageFamily.languageCode) {
@@ -110,7 +110,7 @@ export function getSystemIsRTL () {
  * @param {string} lessonID - The ID of the lesson that you want information for.
  * @return {*} - The information you want about the lesson.
  */
-export function getLessonInfo (type, lessonID) {
+export const getLessonInfo = (type, lessonID) => {
   // Split the ID up into separate sections.
   var idComponents = lessonID.split('.')
 
@@ -168,7 +168,7 @@ export function getLessonInfo (type, lessonID) {
  * @param {string} setID - The ID of the set that you want information for.
  * @return {*} - The information you want about the set.
  */
-export function getSetInfo (type, setID) {
+export const getSetInfo = (type, setID) => {
   // Split the ID up into separate sections.
   var idComponents = setID.split('.')
 
@@ -201,7 +201,7 @@ export function getSetInfo (type, setID) {
  * @export
  * @param {function} thenFunction - A function to call after the orientation lock finishes.
  */
-export function lockPortrait (thenFunction) {
+export const lockPortrait = thenFunction => {
   ScreenOrientation.supportsOrientationLockAsync(
     ScreenOrientation.OrientationLock.PORTRAIT
   ).then(isSupported => {
@@ -225,6 +225,6 @@ export function lockPortrait (thenFunction) {
  * Locks Waha's orientation to landscape.
  * @export
  */
-export function lockLandscape () {
+export const lockLandscape = () => {
   ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
 }

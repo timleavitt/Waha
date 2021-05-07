@@ -26,7 +26,7 @@ function mapDispatchToProps (dispatch) {
 /**
  *
  */
-function GroupNameTextInput ({
+const GroupNameTextInput = ({
   // Props passed from a parent component.
   groupNameInput,
   setGroupNameInput,
@@ -37,44 +37,42 @@ function GroupNameTextInput ({
   isRTL,
   font,
   translations
-}) {
-  return (
-    <View style={styles.groupNameAreaContainer}>
-      <Text
-        style={StandardTypography(
+}) => (
+  <View style={styles.groupNameAreaContainer}>
+    <Text
+      style={StandardTypography(
+        { font, isRTL },
+        'p',
+        'Regular',
+        'left',
+        colors.chateau
+      )}
+    >
+      {translations.add_edit_group.group_name_form_label}
+    </Text>
+    <TextInput
+      ref={groupNameInputRef}
+      style={[
+        styles.groupNameTextInputContainer,
+        StandardTypography(
           { font, isRTL },
-          'p',
+          'h3',
           'Regular',
           'left',
-          colors.chateau
-        )}
-      >
-        {translations.add_edit_group.group_name_form_label}
-      </Text>
-      <TextInput
-        ref={groupNameInputRef}
-        style={[
-          styles.groupNameTextInputContainer,
-          StandardTypography(
-            { font, isRTL },
-            'h3',
-            'Regular',
-            'left',
-            colors.shark
-          )
-        ]}
-        onChangeText={text => setGroupNameInput(text)}
-        value={groupNameInput}
-        autoCapitalize='words'
-        autoCorrect={false}
-        placeholder={translations.add_edit_group.group_name_form_placeholder}
-        placeholderTextColor={colors.chateau}
-        maxLength={50}
-        returnKeyType='done'
-      />
-    </View>
-  )
-}
+          colors.shark
+        )
+      ]}
+      onChangeText={text => setGroupNameInput(text)}
+      value={groupNameInput}
+      autoCapitalize='words'
+      autoCorrect={false}
+      placeholder={translations.add_edit_group.group_name_form_placeholder}
+      placeholderTextColor={colors.chateau}
+      maxLength={50}
+      returnKeyType='done'
+    />
+  </View>
+)
 
 const styles = StyleSheet.create({
   groupNameAreaContainer: {
