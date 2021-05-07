@@ -100,17 +100,15 @@ const MobilizationToolsUnlockScreen = ({
     }
   }, [mtUnlockAttempts])
 
-  function checkForMTContent (languageID) {
-    var hasMTContent = database[languageID].sets.some(set => {
+  const checkForMTContent = languageID =>
+    database[languageID].sets.some(set => {
       return /[a-z]{2}.3.[0-9]+/.test(set.id)
     })
-    return hasMTContent
-  }
 
   /**
    * Checks if the passcode the user enters is correct. If it is, show the success modal. If not, add one to the attempts tracker and show an alert that the code is incorrect.
    */
-  function checkPasscode (fullPasscode) {
+  const checkPasscode = fullPasscode => {
     if (fullPasscode === '281820') {
       Keyboard.dismiss()
       setAreMobilizationToolsUnlocked(true)
@@ -164,7 +162,7 @@ const MobilizationToolsUnlockScreen = ({
    * Gets a string of the amount of attempts the user has left OR, if they're already locked out, the time they have left until they can attempt again.
    * @return {string} - The text to display.
    */
-  function getTimeoutText () {
+  const getTimeoutText = () => {
     if (Date.now() - security.mtUnlockTimeout < 0)
       return (
         translations.passcode.too_many_attempts_label +

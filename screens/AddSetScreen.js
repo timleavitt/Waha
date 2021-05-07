@@ -142,7 +142,7 @@ const AddSetScreen = ({
    * @param {Object} set - The object for the set that we're checking.
    * @return {boolean} - Whether every necessary file has been downloaded for the set.
    */
-  function filterForDownloadedQuestionSets (set) {
+  const filterForDownloadedQuestionSets = set => {
     // Create an array to store the necessary question set mp3s for this set.
     var requiredQuestionSets = []
 
@@ -171,18 +171,11 @@ const AddSetScreen = ({
     else return false
   }
 
-  /** Set data stored in a useMemo so we don't have to get it on every re-render. */
-  const setData = useMemo(() => getSetData(), [
-    activeGroup.addedSets,
-    selectedTag,
-    downloadedFiles
-  ])
-
   /**
    * Gets a list of sets to display on this screen depending on the category.
    * @return {Object[]} - An array of set objects to display.
    */
-  function getSetData () {
+  const getSetData = () => {
     if (category === 'Topical')
       return (
         activeDatabase.sets
@@ -236,6 +229,13 @@ const AddSetScreen = ({
           )
       )
   }
+
+  /** Set data stored in a useMemo so we don't have to get it on every re-render. */
+  const setData = useMemo(() => getSetData(), [
+    activeGroup.addedSets,
+    selectedTag,
+    downloadedFiles
+  ])
 
   /** Renders a <SetItem /> for the list of sets available to add. */
   const renderSetItem = ({ item }) => (

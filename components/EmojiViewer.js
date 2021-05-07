@@ -33,7 +33,9 @@ function mapDispatchToProps (dispatch) {
 }
 
 /**
- *
+ * A component that shows a list of emojis available to be set for a group's avatar.
+ * @param {string} emojiInput - The name of the currently selected emoji.
+ * @param {Function} setEmojiInput - Sets the name of the currently selected emoji.
  */
 const EmojiViewer = ({
   // Props passed from a parent component.
@@ -49,17 +51,14 @@ const EmojiViewer = ({
   /** Renders an emoji for the emoji select <FlatList />. */
   const renderEmoji = ({ item }) => (
     <TouchableOpacity
-      style={{
-        width: 50 * scaleMultiplier,
-        height: 50 * scaleMultiplier,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 2,
-        borderWidth: item === emojiInput ? 2 : 0,
-        borderColor: item === emojiInput ? colors.blue : null,
-        borderRadius: 10,
-        backgroundColor: item === emojiInput ? colors.blue + '38' : null
-      }}
+      style={[
+        styles.emojiContainer,
+        {
+          borderWidth: item === emojiInput ? 2 : 0,
+          borderColor: item === emojiInput ? colors.blue : null,
+          backgroundColor: item === emojiInput ? colors.blue + '38' : null
+        }
+      ]}
       onPress={() => setEmojiInput(item)}
     >
       <Image
@@ -103,6 +102,14 @@ const EmojiViewer = ({
 }
 
 const styles = StyleSheet.create({
+  emojiContainer: {
+    width: 50 * scaleMultiplier,
+    height: 50 * scaleMultiplier,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 2,
+    borderRadius: 10
+  },
   emojiViewerContainer: {
     width: '100%',
     flex: 1,

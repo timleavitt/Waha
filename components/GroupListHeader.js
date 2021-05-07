@@ -100,7 +100,7 @@ const GroupListHeader = ({
   }, [isEditing])
 
   /** Deletes an entire language instance. This involves deleting every group, every downloaded file, and all data stored in redux for a language instance. Triggered by pressing the trash can icon next to the langauge's name in editing mode. */
-  function deleteLanguageInstance () {
+  const deleteLanguageInstance = () => {
     // Delete every group for this language instance.
     groups.map(group => {
       if (group.language === languageID) {

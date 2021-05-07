@@ -18,6 +18,7 @@ const Onboarding = () => {
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
+          // Use fade screen transition for this navigator since we won't necessarily know if a language is RTL or LTR on the first screen.
           cardStyleInterpolator: ({ current }) => ({
             cardStyle: {
               opacity: current.progress

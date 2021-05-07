@@ -29,6 +29,9 @@ function mapStateToProps (state) {
   }
 }
 
+/**
+ * A screen that displays some miscellaneous information for Waha, like its version, with links to the privacy policy, donation page, and app store listing page.
+ */
 const InformationScreen = ({
   navigation: { setOptions, goBack },
   // Props passed from redux.
@@ -39,33 +42,31 @@ const InformationScreen = ({
   /** Keeps track of whether the snackbar that pops up is visible or not.  */
   const [showSnackbar, setShowSnackbar] = useState(false)
 
-  function getNavOptions () {
-    return {
+  /** useEffect function that sets the navigation options for this screen. */
+  useEffect(() => {
+    setOptions({
       headerRight: isRTL
         ? () => <WahaBackButton onPress={() => goBack()} />
         : () => {},
       headerLeft: isRTL
         ? () => {}
         : () => <WahaBackButton onPress={() => goBack()} />
-    }
-  }
-
-  useEffect(() => {
-    setOptions(getNavOptions())
+    })
   }, [])
 
-  async function openBrowser (url) {
+  /**
+   * Opens up an in-app browser.
+   * @param {string} url - The URL to open.
+   */
+  const openBrowser = async url =>
     await WebBrowser.openBrowserAsync(url, { dismissButtonStyle: 'close' })
-  }
 
   return (
     <SafeAreaView style={styles.screen}>
       <TouchableOpacity
         style={[
           styles.informationItem,
-          {
-            flexDirection: isRTL ? 'row-reverse' : 'row'
-          }
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
         ]}
         onPress={() => openBrowser('https://waha.app/privacy-policy/')}
       >
@@ -85,9 +86,7 @@ const InformationScreen = ({
       <TouchableOpacity
         style={[
           styles.informationItem,
-          {
-            flexDirection: isRTL ? 'row-reverse' : 'row'
-          }
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
         ]}
         onPress={() =>
           openBrowser('https://kingdomstrategies.givingfuel.com/general-giving')
@@ -109,9 +108,7 @@ const InformationScreen = ({
       <TouchableOpacity
         style={[
           styles.informationItem,
-          {
-            flexDirection: isRTL ? 'row-reverse' : 'row'
-          }
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
         ]}
         onPress={
           Platform.OS === 'ios'
@@ -140,9 +137,7 @@ const InformationScreen = ({
       <TouchableOpacity
         style={[
           styles.informationItem,
-          {
-            flexDirection: isRTL ? 'row-reverse' : 'row'
-          }
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
         ]}
         onPress={() => {
           setShowSnackbar(true)
@@ -180,15 +175,9 @@ const InformationScreen = ({
           size={25 * scaleMultiplier}
         />
       </TouchableOpacity>
+      {/* Cheeky little easter egg :) */}
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-        <View
-          style={{
-            flexDirection: isRTL ? 'row-reverse' : 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginVertical: 3
-          }}
-        >
+        <View style={styles.easterEggContainer}>
           <Text
             style={[
               StandardTypography(
@@ -198,9 +187,7 @@ const InformationScreen = ({
                 'center',
                 colors.geyser
               ),
-              {
-                marginHorizontal: 2
-              }
+              { marginHorizontal: 2 }
             ]}
           >
             Made with
@@ -215,9 +202,7 @@ const InformationScreen = ({
                 'center',
                 colors.geyser
               ),
-              {
-                marginHorizontal: 2
-              }
+              { marginHorizontal: 2 }
             ]}
           >
             by the Waha team
@@ -255,6 +240,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20
+  },
+  easterEggContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 3,
+    flexDirection: 'row'
   }
 })
 

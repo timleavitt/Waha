@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
@@ -11,8 +11,6 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
-    activeGroup: activeGroupSelector(state),
-    activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language)
   }
@@ -23,70 +21,60 @@ function mapDispatchToProps (dispatch) {
 }
 
 /**
- *
+ * A component that's used for a single onboarding page in the various onboarding slides used in Waha.
+ * @param {string} title - The title to display on the page.
+ * @param {string} message - The message to display on the page.
+ * @param {Component} children - Child components to render on the page.
  */
-function OnboardingPage ({
+const OnboardingPage = ({
   // Props passed from a parent component.
   title,
   message,
   children,
   // Props passed from redux.
-  activeGroup,
-  activeDatabase,
   isRTL,
   font
-}) {
-  const [state, setState] = useState()
-  useEffect(() => {}, [])
-  return (
-    <View
-      style={{
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-    >
-      <View style={styles.textContainer}>
-        <Text
-          style={[
-            StandardTypography(
-              { font, isRTL },
-              'h2',
-              'Bold',
-              'center',
-              colors.shark
-            ),
-            {
-              fontSize: 24
-            }
-          ]}
-        >
-          {title}
-        </Text>
-        <View style={{ height: 20 * scaleMultiplier }} />
-        <Text
-          style={StandardTypography(
+}) => (
+  <View style={styles.onboardingPageContainer}>
+    <View style={styles.textContainer}>
+      <Text
+        style={[
+          StandardTypography(
             { font, isRTL },
-            'h3',
-            'Regular',
+            'h2',
+            'Bold',
             'center',
-            colors.chateau
-          )}
-        >
-          {message}
-        </Text>
-      </View>
-      {/* <View style={styles.childrenContainer}>
-        <View style={{ width: '100%', backgroundColor: 'blue' }}> */}
-      {children}
-      {/* </View>
-      </View> */}
+            colors.shark
+          ),
+          { fontSize: 24 * scaleMultiplier }
+        ]}
+      >
+        {title}
+      </Text>
+      <View style={{ height: 15 * scaleMultiplier }} />
+      <Text
+        style={StandardTypography(
+          { font, isRTL },
+          'h3',
+          'Regular',
+          'center',
+          colors.chateau
+        )}
+      >
+        {message}
+      </Text>
     </View>
-  )
-}
+    {children}
+  </View>
+)
 
 const styles = StyleSheet.create({
+  onboardingPageContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   textContainer: {
     justifyContent: 'space-around',
     width: '100%',
@@ -98,7 +86,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
-    // maxHeight: Dimensions.get('window').width - 60,
     backgroundColor: 'green'
   }
 })

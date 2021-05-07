@@ -25,6 +25,9 @@ import {
  * @param {boolean} database.hasInstalledFirstLanguageInstance - Whether the user has installed their first language instance. We use this to decide what to render in Root.js in /navigation/.
  * @param {boolean} database.languageCoreFilesDownloadProgress - The progress of the downloads for the language core files. Gets incremented by 1 whenever a file finishes.
  * @param {boolean} database.totalLanguageCoreFilesToDownload - The total number of language core files to download for tracking progress.
+ * @param {string[]} database.languageCoreFilesToUpdate - An array of file names that need to be updated.
+ * @param {boolean} database.actingLanguageID - The ID of the language that is actively being installed.
+ * @param {boolean} database.recentActiveGroup - The name of the group that was active before starting to install another language instance.
  * @param {string} database[languageID].displayName - The name of the language instance as it will appear in the app.
  * @param {string} database[languageID].bibleID - The Bible.API ID of the bible translations this language instance uses.
  * @param {boolean} database[languageID].isRTL - Whether this language instance is right-to-left or not.
@@ -61,8 +64,7 @@ export function database (
     languageCoreFilesDownloadProgress: 0,
     languageCoreFilesToUpdate: [],
     actingLanguageID: null,
-    recentLanguageID: null,
-    globalGroupCounter: 0
+    recentActiveGroup: null
   },
   params
 ) {

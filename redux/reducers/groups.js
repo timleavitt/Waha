@@ -84,135 +84,97 @@ export function groups (state = [], params) {
      * Toggles a lesson as complete or incomplete, and takes care of all of extra functionality that goes along with that.
      */
     case UPDATE_PROGRESS:
-      // SET BOOKMARK
-      // move set bookmark to the set of the lesson that was just marked as complete
+      // By default, the bookmarked set is the set that has had a lesson completed most recently, i.e. the set of the lesson that was just marked as complete.
+      var idOfBookmarkedSet = params.set.id
 
-      // MOST RECENT
-      // check if the set is core or toolkit
-      //    -> if it is, set the recentCoreOrTool to this set
-      //    -> if it isn't, do nothing
+      // If we complete a Topical set, the set bookmark defaults back to the most recent Foundational or Mobilization Tools set that has had a lesson completed. We start it off as null because we don't want to update it if the lesson that has just been completed is a Topical lesson.
+      var mostRecentlyUpdatedFoundationalOrMTSet = null
 
-      // PROGRESS
-      // check if lesson index is already in progress for this set
-      //    -> if it isn't, add lesson index to progress for the set with this lesson
-      //    -> if it is, remove lesson index from progress for this set
+      // The bookmarked lesson should start at the first lesson by default, since we iterate through the lessons of a set until we find the first one that hasn't been completed. This is what the bookmark will be.
+      var indexOfBookmarkedLesson = 0
 
-      // LESSON BOOKMARK
-      // set bookmark to earliest uncompleted lesson in this set
-
-      // AUTO-UNLOCK SET
-      // check if the set for this lesson is a core story set and is 75% completed
-      //    -> if it is, unlock the next core story set automatically
-
-      // WHAT TO DO ON FULLY COMPLETED
-      // check if the set for this lesson is fully completed
-      //    -> if it is now, check if it's a core/toolkit or topical
-      //       -> if it's topical, move the set bookmark to whatever set is stored in
-      //       -> if it's a core or toolkit, move the set bookmark to the next in the progression
-
-      // store the set bookmark to be the set of the lesson
-      var setBookmark = params.set.id
-
-      // start recent core or tool as null in case we're on a topical set
-      var recentCoreOrTool = null
-
-      // start the lesson bookmark at 0
-      var lessonBookmark = 0
-
-      // set the recentcoreortool if this set is a core or toolkit
+      // If the set that had a lesson completed is a Foundational or Mobilization Tools one, update the recentCoreOrTool variable.
       if (
         getSetInfo('category', params.set.id) === 'Foundational' ||
         getSetInfo('category', params.set.id) === 'MobilizationTools'
       )
-        recentCoreOrTool = params.set.id
+        mostRecentlyUpdatedFoundationalOrMTSet = params.set.id
 
+      // We're going to map the groups array.
       return state.map(group => {
-        // get specified group
-        if (group.name === params.groupName) {
-          // if we didn't set the most recent core/tool set before, leave it as what it was before
-          if (recentCoreOrTool === null)
-            recentCoreOrTool = group.recentCoreOrTool
+        // The active group gets updated and the rest get returned as they are.
+        if (group.name !== params.groupName) return group
 
-          // change some stuff in our specified group
-          return {
-            // return the rest of the group stuff as is
-            ...group,
+        // If recentCoreOrTool wasn't changed earlier, then leave it the same as it was before this lesson was marked as complete.
+        if (mostRecentlyUpdatedFoundationalOrMTSet === null)
+          mostRecentlyUpdatedFoundationalOrMTSet = group.recentCoreOrTool
 
-            //+ ADDED SETS (progress and lesson bookmark setting)
-            addedSets: group.addedSets.map(set => {
-              // get the set we're changing
-              if (set.id === params.set.id) {
-                // if the lesson is already marked as completed, mark it as uncomplete and set the bookmark
-                if (set.progress.includes(params.lessonIndex)) {
-                  // increment the bookmark until we get to 1 that's incomplete
-                  // (including the one we're marking)
-                  do {
-                    lessonBookmark += 1
-                  } while (
-                    set.progress.includes(lessonBookmark) &&
-                    lessonBookmark !== params.lessonIndex
-                  )
+        // Update the object for the active group.
+        return {
+          // Return the rest of the keys for the active group that aren't being changed below.
+          ...group,
 
-                  // return the set with the new bookmark and progress
-                  return {
-                    ...set,
-                    bookmark: lessonBookmark,
-                    progress: set.progress.filter(
-                      index => index !== params.lessonIndex
-                    )
-                  }
-                  // otherwise, mark it as complete and set the bookmark
-                } else {
-                  // if we've completed everything in a set
-                  if (set.progress.length + 1 === params.setLength) {
-                    // if core or toolkit, set to next in that category
-                    if (
-                      getSetInfo('category', params.set.id) ===
-                        'Foundational' ||
-                      getSetInfo('category', params.set.id) ===
-                        'MobilizationTools'
-                    ) {
-                      setBookmark = params.nextSet
-                        ? params.nextSet.id
-                        : group.setBookmark
+          // In addedSets, we'll update the progress and bookmark of the set and lesson.
+          addedSets: group.addedSets.map(set => {
+            // Update only the set that had a lesson completed.
+            if (set.id !== params.set.id) return set
 
-                      recentCoreOrTool = setBookmark
-                      // if topical, set to recentCoreOrTool
-                    } else {
-                      setBookmark = recentCoreOrTool
-                    }
-                  }
+            // If the lesson was marked as incomplete, update the set progress and change the bookmark.
+            if (set.progress.includes(params.lessonIndex)) {
+              // Increment the lesson bookmark until we find one that hasn't been completed. It could be the one that just got marked as complete.
+              do indexOfBookmarkedLesson += 1
+              while (
+                set.progress.includes(indexOfBookmarkedLesson) &&
+                indexOfBookmarkedLesson !== params.lessonIndex
+              )
 
-                  // increment the bookmark until we get to 1 that's incomplete
-                  // (including the one we're marking)
-                  do {
-                    lessonBookmark += 1
-                  } while (
-                    set.progress.includes(lessonBookmark) ||
-                    lessonBookmark === params.lessonIndex
-                  )
-
-                  // return the set with the new bookmark and progress
-                  return {
-                    ...set,
-                    bookmark: lessonBookmark,
-                    progress: [...set.progress, params.lessonIndex]
-                  }
-                }
-                // return the rest of the sets that we don't care about changing
-              } else {
-                return set
+              // Return the set with the new bookmark and progress with this lesson removed.
+              return {
+                ...set,
+                bookmark: indexOfBookmarkedLesson,
+                progress: set.progress.filter(
+                  index => index !== params.lessonIndex
+                )
               }
-            }),
+            } // If we're marking a lesson as complete, check for a fully complete set and update the bookmark and progress.
+            else {
+              // If this lesson will complete a set, we have some special things to do.
+              if (set.progress.length + 1 === params.setLength) {
+                // If the set that is being completed is a Foundational or Mobilization Tools set, we need to change the set bookmark to the set AFTER the one that just got completed.
+                if (
+                  getSetInfo('category', params.set.id) === 'Foundational' ||
+                  getSetInfo('category', params.set.id) === 'MobilizationTools'
+                ) {
+                  idOfBookmarkedSet = params.nextSet
+                    ? params.nextSet.id
+                    : group.setBookmark
 
-            //+ MOST RECENT CORE OR TOOLKIT SET
-            recentCoreOrTool: recentCoreOrTool,
+                  // We also need to update the recent Foundataionl/MT set to the new one.
+                  mostRecentlyUpdatedFoundationalOrMTSet = idOfBookmarkedSet
+                } // If the set that is being completed is a Topical, change the set bookmark to the most recently updated Foundational/MT set.
+                else idOfBookmarkedSet = mostRecentlyUpdatedFoundationalOrMTSet
+              }
 
-            //+ SET BOOKMARK
-            setBookmark: setBookmark
-          }
+              // Increment the lesson bookmark until we find one that hasn't been completed. The one that just got marked as complete is exempt.
+              do indexOfBookmarkedLesson += 1
+              while (
+                set.progress.includes(indexOfBookmarkedLesson) ||
+                indexOfBookmarkedLesson === params.lessonIndex
+              )
+
+              // Return the set with the new bookmark and the completed lesson added to the progress.
+              return {
+                ...set,
+                bookmark: indexOfBookmarkedLesson,
+                progress: [...set.progress, params.lessonIndex]
+              }
+            }
+          }),
+
+          // Set the recent Foundational or MT Set and the bookmarked set for this group.
+          recentCoreOrTool: mostRecentlyUpdatedFoundationalOrMTSet,
+          setBookmark: idOfBookmarkedSet
         }
-        return group
       })
     /**
      * DEPECRATED. Resets the progress for a group.

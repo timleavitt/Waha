@@ -38,7 +38,7 @@ const SetsTabs = ({
   isRTL,
   areMobilizationToolsUnlocked
 }) => {
-  // Only dispaly the Mobilization Tools screen if the Mobilization Tools tab has been enabled for this group from the Mobilization Tools screen.
+  // Only dispaly the Mobilization Tools tab if the Mobilization Tools have been unlocked.
   var MobilizationToolsScreen = areMobilizationToolsUnlocked ? (
     <Tab.Screen
       name='MobilizationTools'
@@ -75,7 +75,7 @@ const SetsTabs = ({
    * Gets the tab that contains the current set bookmark. This is to that we can default to displaying the most relevant tab when the user opens the app.
    * @return {string} - The tab for the bookmarked set.
    */
-  function getBookmarkedTab () {
+  const getBookmarkedTab = () => {
     // Get the category of the bookmarked set.
     return getSetInfo(
       'category',

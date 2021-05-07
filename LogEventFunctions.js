@@ -60,7 +60,7 @@ export async function logCompleteStorySet (set, groupID) {
   console.log(
     `CompleteStorySet logged with setID: ${set.id} and groupID: ${groupID}.`
   )
-  StoreReview.requestReview()
+  // StoreReview.requestReview()
   if (analyticsMode !== 'test')
     await Analytics.logEvent('CompleteStorySet', {
       languageID: getSetInfo('language', set.id),

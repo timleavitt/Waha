@@ -86,12 +86,6 @@ const SetsScreen = ({
   /** Whether the snackbar that pops up upon unlocking the mobilization tools is visible or not.  */
   const [showSnackbar, setShowSnackbar] = useState(false)
 
-  /** Memoize the set data so that the expensive function isn't run on every re-render. */
-  const setData = useMemo(() => getSetData(), [
-    activeGroup.addedSets,
-    downloadedFiles
-  ])
-
   /** useEffect function that sets the downloaded files state. It's also used to log some various information to the console for testing. */
   useEffect(() => {
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
@@ -130,7 +124,7 @@ const SetsScreen = ({
    * @param {Object} set - The object for the set that we're checking.
    * @return {boolean} - Whether every necessary file has been downloaded for the set.
    */
-  function filterForDownloadedQuestionSets (set) {
+  const filterForDownloadedQuestionSets = set => {
     // Create an array to store the necessary question set mp3s for this set.
     var requiredQuestionSets = []
 
@@ -163,7 +157,7 @@ const SetsScreen = ({
    * Gets an array of sets to display to populate the sets FlatList below. The sets to display vary depending on the category.
    * @return {Object[]} - An array of sets.
    */
-  function getSetData () {
+  const getSetData = () => {
     // If we're displaying Foundational Story Sets...
     if (category === 'Foundational')
       return (
@@ -232,6 +226,12 @@ const SetsScreen = ({
           })
       )
   }
+
+  /** Memoize the set data so that the expensive function isn't run on every re-render. */
+  const setData = useMemo(() => getSetData(), [
+    activeGroup.addedSets,
+    downloadedFiles
+  ])
 
   // A button that goes at the bottom of each list of sets that allows the user to add a new set.
   const renderAddSetButton = () => (
