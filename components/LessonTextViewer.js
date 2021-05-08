@@ -35,13 +35,14 @@ const LessonTextViewer = ({
   // Props passed from a parent component.
   lessonTextContentRef,
   thisLesson,
-  setSectionOffsets,
+  // setSectionOffsets,
   sectionOffsets,
   isScrolling,
   isScrollBarDragging,
   setIsScrolling,
   setIsScrollBarDragging,
   sectionTitle,
+  setSectionTitleText,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -153,7 +154,7 @@ const LessonTextViewer = ({
           (lessonTextContentHeight - lessonTextViewerHeight)) /
         (lessonTextViewerHeight - scrollBarSize)
 
-      // Scroll the text to the
+      // Scroll the text to the correct offset.
       lessonTextContentRef.current.scrollTo({
         y: offsetToScrollTo,
         animated: false
@@ -186,32 +187,29 @@ const LessonTextViewer = ({
   useEffect(() => {
     lessonTextContentHeight > 0 &&
       lessonTextViewerHeight > 0 &&
-      sectionOffsets.length === numberOfSections &&
+      sectionOffsets.current.length === numberOfSections &&
       setIsFullyRendered(true)
-  }, [lessonTextContentHeight, sectionOffsets, lessonTextViewerHeight])
+
+    console.log(sectionOffsets.current.length)
+  }, [lessonTextContentHeight, sectionOffsets.current, lessonTextViewerHeight])
 
   /** Start listener for the position of the scroll bar position. */
   useEffect(() => {
     // We need the various layout states for this, so don't start the listener until they're all set.
     if (isFullyRendered) {
-      setSectionOffsets(current =>
-        current.filter((section, index, array) => {
-          return array.indexOf(section) === index
-        })
-      )
-
       // As we update the position of the scroll bar on screen, we want to update its state value as well. The state value is used for  The only change is that we don't want to update it if it goes out-of-bounds. This way, the user can't scroll before beginning of the content or passed the end of the content.
 
       scrollBarYPosition_Gesture.removeAllListeners()
 
-      var offsets = sectionOffsets.map(
-        section =>
+      var localSectionOffsets = sectionOffsets.current.map(section => ({
+        name: section.name,
+        offset:
           (section.offset * (lessonTextViewerHeight - scrollBarSize)) /
           (lessonTextContentHeight - lessonTextViewerHeight)
-      )
+      }))
 
       scrollBarYPosition_Gesture.addListener(({ value }) => {
-        sectionOffsets.forEach((section, index, array) => {
+        sectionOffsets.current.forEach((section, index, array) => {
           if (
             (value > convertGlobalScrollPosToLocal(section.offset) &&
               index !== array.length - 1 &&
@@ -220,26 +218,29 @@ const LessonTextViewer = ({
               index === array.length - 1)
           ) {
             if (sectionTitle.current !== section.name) {
+              setSectionTitleText(section.name)
               sectionTitle.current = section.name
-              console.log(sectionTitle.current)
             }
           }
         })
 
+        // TODO: make section title change upon snapping as well. Store the local offsets in the sectionOffsets array as well as the global. Then move logic to change the section title from the function above to all below.
         var snapped = false
-        offsets.forEach(offset => {
+        localSectionOffsets.forEach(section => {
           if (
-            value < offset + 15 &&
-            value > offset - 15 &&
+            value < section.offset + 15 &&
+            value > section.offset - 15 &&
             isScrollBarDragging
           ) {
             if (!isSnapped.current) {
+              sectionTitle.current = section.name
+              setSectionTitleText(section.name)
               Haptics.impactAsync()
               isSnapped.current = true
             }
             snapped = true
 
-            setScrollBarYPosition_Actual(offset)
+            setScrollBarYPosition_Actual(section.offset)
           }
           // else setScrollBarPosition(value | 0)
         })
@@ -254,7 +255,7 @@ const LessonTextViewer = ({
         }
       })
     }
-  }, [isFullyRendered])
+  }, [isFullyRendered, isScrollBarDragging])
 
   useEffect(() => {
     if (isScrollBarDragging)
@@ -300,7 +301,7 @@ const LessonTextViewer = ({
         setTextAreaHeight={setLessonTextViewerHeight}
         setIsScrolling={setIsScrolling}
         sectionOffsets={sectionOffsets}
-        setSectionOffsets={setSectionOffsets}
+        // setSectionOffsets={setSectionOffsets}
         isFullyRendered={isFullyRendered}
         convertGlobalScrollPosToLocal={convertGlobalScrollPosToLocal}
       />
@@ -310,7 +311,7 @@ const LessonTextViewer = ({
           { opacity: floatingSectionLabelsOpacity }
         ]}
       >
-        {sectionOffsets.map((section, index) => (
+        {sectionOffsets.current.map((section, index) => (
           <FloatingSectionLabel
             key={index}
             section={section}
@@ -342,7 +343,7 @@ const LessonTextViewer = ({
           )
         }}
       >
-        {sectionOffsets.map((section, index) => (
+        {sectionOffsets.current.map((section, index) => (
           <View
             key={index}
             style={[

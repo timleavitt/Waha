@@ -196,9 +196,13 @@ const PlayScreen = ({
     isVideoAlreadyDownloaded
   )
 
+  /** Ref for the lesson text content ScrollView. */
   const lessonTextContentRef = useRef(null)
 
-  const [sectionOffsets, setSectionOffsets] = useState([])
+  /** Keeps track of the scroll positions of the different lesson sections. */
+  // const [sectionOffsets, setSectionOffsets] = useState([])
+  const sectionOffsets = useRef([])
+
   /** Keeps track of whether this lesson is complete or not. */
   const isThisLessonComplete = useRef(
     activeGroup.addedSets
@@ -829,7 +833,7 @@ const PlayScreen = ({
                   playFeedbackOpacity={playFeedbackOpacity}
                   playFeedbackZIndex={playFeedbackZIndex}
                   isMediaPlaying={isMediaPlaying}
-                  setSectionOffsets={setSectionOffsets}
+                  // setSectionOffsets={setSectionOffsets}
                   sectionOffsets={sectionOffsets}
                 />
               </Animated.View>

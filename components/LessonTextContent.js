@@ -97,7 +97,7 @@ const LessonTextContent = ({
   setTextAreaHeight,
   setIsScrolling,
   sectionOffsets,
-  setSectionOffsets,
+  // setSectionOffsets,
   isFullyRendered,
   // Props passed from redux.
   activeGroup,
@@ -129,19 +129,18 @@ const LessonTextContent = ({
           onLayout={({ nativeEvent }) => {
             if (
               nativeEvent &&
-              !sectionOffsets.some(
+              !sectionOffsets.current.some(
                 section => section.name === scriptureChunk.header
               )
-            )
-              setSectionOffsets(current =>
-                [
-                  ...current,
-                  {
-                    name: scriptureChunk.header,
-                    offset: nativeEvent.layout.y
-                  }
-                ].sort((a, b) => a.offset - b.offset)
-              )
+            ) {
+              sectionOffsets.current = [
+                ...sectionOffsets.current,
+                {
+                  name: scriptureChunk.header,
+                  offset: nativeEvent.layout.y
+                }
+              ].sort((a, b) => a.offset - b.offset)
+            }
           }}
         />
       )
@@ -199,19 +198,27 @@ const LessonTextContent = ({
         onLayout={({ nativeEvent }) => {
           if (
             nativeEvent &&
-            !sectionOffsets.some(
+            !sectionOffsets.current.some(
               section => section.name === translations.play.fellowship
             )
-          )
-            setSectionOffsets(current =>
-              [
-                ...current,
-                {
-                  name: translations.play.fellowship,
-                  offset: nativeEvent.layout.y
-                }
-              ].sort((a, b) => a.offset - b.offset)
-            )
+          ) {
+            sectionOffsets.current = [
+              ...sectionOffsets.current,
+              {
+                name: translations.play.fellowship,
+                offset: nativeEvent.layout.y
+              }
+            ].sort((a, b) => a.offset - b.offset)
+          }
+          // setSectionOffsets(current =>
+          //   [
+          //     ...current,
+          //     {
+          //       name: translations.play.fellowship,
+          //       offset: nativeEvent.layout.y
+          //     }
+          //   ].sort((a, b) => a.offset - b.offset)
+          // )
         }}
       />
       {/* Fellowship questions. */}
@@ -236,19 +243,18 @@ const LessonTextContent = ({
         onLayout={({ nativeEvent }) => {
           if (
             nativeEvent &&
-            !sectionOffsets.some(
+            !sectionOffsets.current.some(
               section => section.name === translations.play.application
             )
-          )
-            setSectionOffsets(current =>
-              [
-                ...current,
-                {
-                  name: translations.play.application,
-                  offset: nativeEvent.layout.y
-                }
-              ].sort((a, b) => a.offset - b.offset)
-            )
+          ) {
+            sectionOffsets.current = [
+              ...sectionOffsets.current,
+              {
+                name: translations.play.application,
+                offset: nativeEvent.layout.y
+              }
+            ].sort((a, b) => a.offset - b.offset)
+          }
         }}
       />
       {/* Application questions. */}

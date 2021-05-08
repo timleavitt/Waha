@@ -51,7 +51,7 @@ const AlbumArtSwiper = ({
   playFeedbackOpacity,
   playFeedbackZIndex,
   isMediaPlaying,
-  setSectionOffsets,
+  // setSectionOffsets,
   sectionOffsets,
   // Props passed from redux.
   activeGroup,
@@ -70,6 +70,10 @@ const AlbumArtSwiper = ({
   const [activePage, setActivePage] = useState(0)
 
   const sectionTitle = useRef(translations.play.fellowship)
+
+  const [sectionTitleText, setSectionTitleText] = useState(
+    translations.play.fellowship
+  )
 
   return (
     <View style={{ height: '100%', width: '100%' }}>
@@ -165,20 +169,21 @@ const AlbumArtSwiper = ({
                 colors.shark
               )}
             >
-              {sectionTitle.current}
+              {sectionTitleText}
             </Text>
           </View>
           <LessonTextViewer
             key='2'
             lessonTextContentRef={lessonTextContentRef}
             thisLesson={thisLesson}
-            setSectionOffsets={setSectionOffsets}
+            // setSectionOffsets={setSectionOffsets}
             sectionOffsets={sectionOffsets}
             isScrolling={isScrolling}
             setIsScrolling={setIsScrolling}
             isScrollBarDragging={isScrollBarDragging}
             setIsScrollBarDragging={setIsScrollBarDragging}
             sectionTitle={sectionTitle}
+            setSectionTitleText={setSectionTitleText}
           />
         </View>
       </PagerView>
