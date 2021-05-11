@@ -1,7 +1,7 @@
 // import SvgUri from 'expo-svg-uri'
 import * as Haptics from 'expo-haptics'
 import { LinearGradient } from 'expo-linear-gradient'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { State } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
@@ -38,15 +38,20 @@ const LessonTextViewer = ({
   // Props passed from a parent component.
   lessonTextContentRef,
   thisLesson,
-  // setSectionOffsets,
+  lessonType,
   sectionOffsets,
   isScrolling,
   isScrollBarDragging,
   setIsScrolling,
   setIsScrollBarDragging,
-  sectionTitle,
-  setSectionTitleText,
-  setSectionSubtitleText,
+  sectionTitleText = null,
+  sectionSubtitleText = null,
+  setSectionTitleText = null,
+  setSectionSubtitleText = null,
+  sectionTitleOpacity = null,
+  sectionTitleYTransform = null,
+  markLessonAsComplete,
+  isThisLessonComplete,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -83,6 +88,8 @@ const LessonTextViewer = ({
 
   /** Keeps track of whether the various layout states have been set yet. */
   const [isFullyRendered, setIsFullyRendered] = useState(false)
+
+  const isSectionTextUpdating = useRef(false)
 
   /**
    * Handles the state change of the scroll bar. Relevant states are BEGAN when the user starts dragging the scroll bar and END when the user stops dragging it.
@@ -149,6 +156,47 @@ const LessonTextViewer = ({
 
   /** useEffect function that triggers on every scroll bar position change only if the user is actively dragging the scroll bar. It scrolls the text area to the proportional location. */
   useEffect(() => {
+    /*
+      ADJUST SECTION TITLE
+    */
+    if (
+      scrollBarYPosition_Actual &&
+      !isSectionTextUpdating.current &&
+      !lessonType.includes('BookText')
+    ) {
+      // Find the section that we're currently scrolling in.
+      var sectionIndex = -1
+      do sectionIndex += 1
+      while (
+        scrollBarYPosition_Actual >
+        sectionOffsets.current[sectionIndex].localOffset
+      )
+      var section = sectionOffsets.current[sectionIndex - 1]
+
+      // Auto-complete lesson if text is scrolled 20% through the Application chapter.
+      if (
+        section.name === translations.play.application &&
+        !isThisLessonComplete.current &&
+        (scrollBarYPosition_Actual - section.localOffset) /
+          (textWindowHeight - section.localOffset) >
+          0.2
+      )
+        markLessonAsComplete()
+
+      // If we're in one of the big 3 chapter sections...
+      if (section.name !== sectionTitleText && section.chapter !== null) {
+        isSectionTextUpdating.current = true
+        animateSectionTitle(section.name, '')
+      } // If we're in a scripture passage section...
+      else if (
+        section.chapter === null &&
+        section.name !== sectionSubtitleText
+      ) {
+        isSectionTextUpdating.current = true
+        animateSectionTitle(translations.play.story, section.name)
+      }
+    }
+
     if (isScrollBarDragging) {
       // scrollBarPosition is the position of the scroll bar from 0 to the height of the text area - 50. The 50 is to account for the scroll bar not going out-of-bounds. We want to convert that to a number between 0 and the total height of the text content minus the text area height, since we never scroll past the bottom of the content. This is the offset we want to scroll the text area to whenever we drag the scroll bar.
       var offsetToScrollTo =
@@ -167,6 +215,7 @@ const LessonTextViewer = ({
   const onScroll = ({ nativeEvent }) => {
     // Set the isScrolling variable to true if it isn't already.
     if (!isScrolling) setIsScrolling(true)
+
     // If we're not currently dragging the scroll bar, we want to update its position as we scroll the text content.
     if (!isScrollBarDragging) {
       // We want to adjust the position of the scroll bar based on the current scroll position of the text area. currentScrollPosition goes from 0 to totalTextContentHeight. We want to convert that to a number between 0 and the text area height minus the size of the scroll bar. Again, the size of the scroll bar is to account for the scroll bar not going out-of-bounds.
@@ -181,6 +230,32 @@ const LessonTextViewer = ({
     }
   }
 
+  const animateSectionTitle = (newTitle, newSubtitle) => {
+    Animated.parallel([
+      Animated.timing(sectionTitleOpacity, {
+        toValue: 0,
+        duration: 150
+      }),
+      Animated.timing(sectionTitleYTransform, {
+        toValue: -10,
+        duration: 100
+      })
+    ]).start(() => {
+      setSectionTitleText(newTitle)
+      setSectionSubtitleText(newSubtitle)
+    })
+  }
+
+  useEffect(() => {
+    if ((sectionTitleText !== null) | (sectionSubtitleText !== null)) {
+      sectionTitleYTransform.setValue(0)
+      Animated.timing(sectionTitleOpacity, {
+        toValue: 1,
+        duration: 100
+      }).start(() => (isSectionTextUpdating.current = false))
+    }
+  }, [sectionTitleText, sectionSubtitleText])
+
   /** Converts a global scroll offset (from 0 to the total height of the lesson text content) to a local one (from 0 to the height of the lesson text viewer). */
   const convertGlobalScrollPosToLocal = globalPosition =>
     (globalPosition * (textWindowHeight - scrollBarSize)) /
@@ -188,18 +263,25 @@ const LessonTextViewer = ({
 
   /** useEffect function that sets the isFullyRendered state to true once all of the layout states have been set correctly. */
   useEffect(() => {
-    console.log(sectionOffsets.current)
     if (
       textContentHeight > 0 &&
       textWindowHeight > 0 &&
-      sectionOffsets.current.length === thisLesson.scripture.length + 3
-      // sectionOffsets.current.length === 3
+      (lessonType.includes('BookText') ||
+        sectionOffsets.current.length === thisLesson.scripture.length + 3)
     ) {
       // Set the local section offsets now that we have the layout states avaialable.
       sectionOffsets.current = sectionOffsets.current.map(section => ({
         ...section,
         localOffset: convertGlobalScrollPosToLocal(section.globalOffset)
       }))
+
+      sectionOffsets.current.push({
+        name: 'END',
+        globalOffset: textWindowHeight + 10000,
+        localOffset: textWindowHeight + 10000,
+        chapter: null
+      })
+
       setIsFullyRendered(true)
     }
   }, [textContentHeight, sectionOffsets.current, textWindowHeight])
@@ -213,70 +295,46 @@ const LessonTextViewer = ({
 
       // Add listener for the scroll bar gesture position. This is NOT the actual position of the scroll bar on screen, but of the user's drag gesture on the scroll bar. These are separated because we want to be able to limit the bounds of where the user can drag the scroll bar to.k
       scrollBarYPosition_Gesture.addListener(({ value }) => {
-        var snapped = false
-        sectionOffsets.current.forEach((section, index, array) => {
-          // If we're dragging and are within 15 pixels on either side of a section label, "snap" to the section label.
-          if (
-            section.name === translations.play.fellowship ||
-            section.name === translations.play.story ||
-            section.name === translations.play.application
-          ) {
-            if (
-              value < section.localOffset + 15 &&
-              value > section.localOffset - 15 &&
-              isScrollBarDragging
-            ) {
-              if (!isSnapped.current) {
-                sectionTitle.current = section.name
-                setSectionTitleText(section.name)
-                setSectionSubtitleText('')
-                Haptics.impactAsync()
-                isSnapped.current = true
-              }
-              snapped = true
+        var didSnap = false
 
-              setScrollBarYPosition_Actual(section.localOffset)
-            }
-          }
-        })
-
-        // If we're not within 15 pixels of a section label, just move the scroll bar as we drag/scroll.
-        if (
-          !snapped &&
-          value >= 0 &&
-          // We don't want the scroll bar to go outside of our text viewer so we limit it to between 0 and the height of the text viewer.
-          value <= textWindowHeight - scrollBarSize
-        ) {
-          setScrollBarYPosition_Actual(value | 0)
-          isSnapped.current = false
-        }
-
-        // Update the section title text as we scroll if we're not snapped.
-        if (!isSnapped.current)
+        // If we're currently dragging the scroll bar, check to see if we're within 15 pixels of any of the 3 main chapter section offsets. If we are, "snap" to it and update the section title.
+        if (isScrollBarDragging) {
           sectionOffsets.current.forEach((section, index, array) => {
             if (
-              (value > section.localOffset &&
-                index !== array.length - 1 &&
-                value < array[index + 1].localOffset) ||
-              (value > section.localOffset && index === array.length - 1)
+              section.chapter !== null &&
+              value < section.localOffset + 15 &&
+              value > section.localOffset - 15
             ) {
-              if (sectionTitle.current !== section.name) {
-                if (
-                  section.name !== translations.play.story &&
-                  section.name !== translations.play.fellowship &&
-                  section.name !== translations.play.application
-                ) {
-                  setSectionTitleText(translations.play.story)
-                  sectionTitle.current = translations.play.story
-                  setSectionSubtitleText(section.name)
-                } else {
-                  setSectionTitleText(section.name)
-                  sectionTitle.current = section.name
-                  setSectionSubtitleText('')
-                }
+              if (!isSnapped.current) {
+                console.log(`Snapped to ${section.name}.`)
+                isSnapped.current = true
+                // setSectionSubtitleText('')
+                // if (section.name !== sectionTitleText) {
+                //   console.log(`Section name: ${section.name}`)
+                //   console.log(`Current text: ${sectionTitleText}`)
+                //   isSectionTextUpdating.current = true
+                //   animateSectionTitle(section.name, '')
+                // }
+                Haptics.impactAsync()
               }
+
+              didSnap = true
+
+              setScrollBarYPosition_Actual(section.localOffset + 0.1)
             }
           })
+        }
+
+        // If we're not snapping, then just move the scroll bar as we drag it or scroll the text content.
+        if (
+          !didSnap &&
+          // We don't want the scroll bar to go outside of our text viewer so we limit it to between 0 and the height of the text viewer.
+          value >= 0 &&
+          value <= textWindowHeight - scrollBarSize
+        ) {
+          isSnapped.current = false
+          setScrollBarYPosition_Actual(value)
+        }
       })
     }
   }, [isFullyRendered, isScrollBarDragging])
@@ -294,32 +352,12 @@ const LessonTextViewer = ({
       }).start()
   }, [isScrollBarDragging])
 
-  const getIndices = () => {
-    var indices = []
-    indices.push(1)
-    thisLesson.scripture.forEach((scriptureChunk, index) => {
-      indices.push(
-        activeDatabase.questions[thisLesson.fellowshipType].length +
-          2 +
-          2 * index
-      )
-    })
-    indices.push(
-      activeDatabase.questions[thisLesson.fellowshipType].length +
-        thisLesson.scripture.length * 2 +
-        2
-    )
-    return indices
-  }
-
-  const sectionIndices = useMemo(() => getIndices(), [])
-
   return (
     <View style={{ flex: 1 }}>
       <LessonTextContent
         thisLesson={thisLesson}
+        lessonType={lessonType}
         lessonTextContentRef={lessonTextContentRef}
-        sectionIndices={sectionIndices}
         setLessonTextContentHeight={setTextContentHeight}
         onScroll={onScroll}
         setTextAreaHeight={setTextWindowHeight}
@@ -339,11 +377,7 @@ const LessonTextViewer = ({
         ]}
       >
         {sectionOffsets.current.map((section, index) => {
-          if (
-            section.name === translations.play.fellowship ||
-            section.name === translations.play.story ||
-            section.name === translations.play.application
-          )
+          if (section.chapter !== null)
             return (
               <FloatingSectionLabel
                 key={index}
@@ -422,7 +456,8 @@ const styles = StyleSheet.create({
     right: 0,
     height: '100%',
     alignItems: 'flex-end',
-    width: scrollBarSize / 2
+    width: scrollBarSize / 2,
+    zIndex: 3
   },
   sectionDotIndicator: {
     position: 'absolute',

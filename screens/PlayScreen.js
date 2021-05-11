@@ -1,7 +1,7 @@
 import { Audio, Video } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
 import { useKeepAwake } from 'expo-keep-awake'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Animated,
   Image,
@@ -12,9 +12,7 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { useEffect } from 'react/cjs/react.development'
 import AlbumArtSwiper from '../components/AlbumArtSwiper'
-import BookView from '../components/BookView'
 import ChapterSelector from '../components/ChapterSelector'
 import PlaybackControls from '../components/PlaybackControls'
 import Scrubber from '../components/Scrubber'
@@ -23,6 +21,7 @@ import WahaBackButton from '../components/WahaBackButton'
 import {
   chapters,
   getLessonInfo,
+  gutterSize,
   lessonTypes,
   lockPortrait,
   scaleMultiplier
@@ -199,14 +198,6 @@ const PlayScreen = ({
   /** Ref for the lesson text content ScrollView. */
   const lessonTextContentRef = useRef(null)
 
-  const sectionTitle = useRef(translations.play.fellowship)
-
-  const [sectionTitleText, setSectionTitleText] = useState(
-    translations.play.fellowship
-  )
-
-  const [sectionSubtitleText, setSectionSubtitleText] = useState('')
-
   /** Keeps track of the scroll positions of the different lesson sections. */
   // const [sectionOffsets, setSectionOffsets] = useState([])
   const sectionOffsets = useRef([])
@@ -253,7 +244,7 @@ const PlayScreen = ({
       ? () => <WahaBackButton onPress={onBackButtonPress} />
       : () => (
           <TouchableOpacity
-            style={{ marginHorizontal: 10 }}
+            style={{ marginHorizontal: gutterSize }}
             onPress={() => setShowShareLessonModal(true)}
           >
             <Icon
@@ -266,7 +257,7 @@ const PlayScreen = ({
     headerLeft: isRTL
       ? () => (
           <TouchableOpacity
-            style={{ marginHorizontal: 10 }}
+            style={{ marginHorizontal: gutterSize }}
             onPress={() => setShowShareLessonModal(true)}
           >
             <Icon
@@ -417,6 +408,22 @@ const PlayScreen = ({
     // If we're "changing" to our currently active chapter, start it over at the beginning.
     else playFromLocation(0)
 
+    // Scroll the text to the appropriate position.
+    if (
+      chapter !== chapters.TRAINING &&
+      lessonTextContentRef.current !== null &&
+      sectionOffsets.current.length === thisLesson.scripture.length + 4
+    ) {
+      var section = sectionOffsets.current.filter(
+        section => section.chapter === chapter
+      )[0]
+
+      lessonTextContentRef.current.scrollTo({
+        y: section.globalOffset + 3,
+        animated: true
+      })
+    }
+
     // If this lesson doesn't have any Story audio, swipe over to the text once we get to the Story chapter so the user can still read it.
     if (chapter === chapters.STORY && !thisLesson.hasAudio)
       albumArtSwiperRef.current.snapToItem(2)
@@ -438,21 +445,6 @@ const PlayScreen = ({
 
     // Set our thumb position back to the start.
     setMediaProgress(0)
-
-    // Scroll the text to the appropriate position.
-    if (
-      lessonTextContentRef.current !== null &&
-      sectionOffsets.current.length === thisLesson.scripture.length + 3
-    ) {
-      var section = sectionOffsets.current.filter(
-        section => section.chapter === activeChapter
-      )[0]
-
-      lessonTextContentRef.current.scrollTo({
-        y: section.globalOffset + 1,
-        animated: true
-      })
-    }
 
     // If we're switching to anything but the Training chapter, fade in the <AlbumArtSwiper/> and fade out the <VideoPlayer/>. If the <AlbumArtSwiper/> is already present, this animation does nothing.
     if (activeChapter !== chapters.TRAINING) {
@@ -833,64 +825,68 @@ const PlayScreen = ({
             backgroundColor={colors.white}
           />
         )} */}
-        {!lessonType.includes('BookText') && (
-          <View style={styles.middleAreaContainer}>
-            {lessonType.includes('Questions') && (
-              <Animated.View
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  position: 'absolute',
-                  opacity: albumArtSwiperOpacity,
-                  zIndex:
-                    activeChapter === chapters.TRAINING
-                      ? middleAreaVisibility.HIDE
-                      : middleAreaVisibility.SHOW
-                }}
-              >
-                <AlbumArtSwiper
-                  lessonTextContentRef={lessonTextContentRef}
-                  iconName={thisSet.iconName}
-                  thisLesson={thisLesson}
-                  playHandler={playHandler}
-                  playFeedbackOpacity={playFeedbackOpacity}
-                  playFeedbackZIndex={playFeedbackZIndex}
-                  isMediaPlaying={isMediaPlaying}
-                  // setSectionOffsets={setSectionOffsets}
-                  sectionOffsets={sectionOffsets}
-                />
-              </Animated.View>
-            )}
-            {lessonType.includes('Video') && (
-              <Animated.View
-                style={{
-                  position: 'absolute',
-                  opacity: videoPlayerOpacity,
-                  zIndex:
-                    activeChapter === chapters.TRAINING
-                      ? middleAreaVisibility.SHOW
-                      : middleAreaVisibility.HIDE
-                }}
-              >
-                <VideoPlayer
-                  videoSource={
-                    chapterSources ? chapterSources[chapters.TRAINING] : null
-                  }
-                  videoRef={videoRef}
-                  onPlaybackStatusUpdate={onPlaybackStatusUpdate}
-                  setIsMediaPlaying={setIsMediaPlaying}
-                  fullscreenStatus={fullscreenStatus}
-                  setFullScreenStatus={status => setFullscreenStatus(status)}
-                  activeChapter={activeChapter}
-                  isMediaLoaded={isMediaLoaded}
-                />
-              </Animated.View>
-            )}
-          </View>
-        )}
-        {lessonType.includes('BookText') && (
+        {/* {!lessonType.includes('BookText') && ( */}
+        <View style={styles.middleAreaContainer}>
+          {lessonType !== lessonTypes.VIDEO_ONLY && (
+            <Animated.View
+              style={{
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                opacity:
+                  lessonType === lessonTypes.BOOK ? 1 : albumArtSwiperOpacity,
+                zIndex:
+                  activeChapter === chapters.TRAINING
+                    ? middleAreaVisibility.HIDE
+                    : middleAreaVisibility.SHOW
+              }}
+            >
+              <AlbumArtSwiper
+                lessonTextContentRef={lessonTextContentRef}
+                iconName={thisSet.iconName}
+                thisLesson={thisLesson}
+                lessonType={lessonType}
+                playHandler={playHandler}
+                playFeedbackOpacity={playFeedbackOpacity}
+                playFeedbackZIndex={playFeedbackZIndex}
+                isMediaPlaying={isMediaPlaying}
+                // setSectionOffsets={setSectionOffsets}
+                sectionOffsets={sectionOffsets}
+                markLessonAsComplete={markLessonAsComplete}
+                isThisLessonComplete={isThisLessonComplete}
+              />
+            </Animated.View>
+          )}
+          {lessonType.includes('Video') && (
+            <Animated.View
+              style={{
+                position: 'absolute',
+                opacity: videoPlayerOpacity,
+                zIndex:
+                  activeChapter === chapters.TRAINING
+                    ? middleAreaVisibility.SHOW
+                    : middleAreaVisibility.HIDE
+              }}
+            >
+              <VideoPlayer
+                videoSource={
+                  chapterSources ? chapterSources[chapters.TRAINING] : null
+                }
+                videoRef={videoRef}
+                onPlaybackStatusUpdate={onPlaybackStatusUpdate}
+                setIsMediaPlaying={setIsMediaPlaying}
+                fullscreenStatus={fullscreenStatus}
+                setFullScreenStatus={status => setFullscreenStatus(status)}
+                activeChapter={activeChapter}
+                isMediaLoaded={isMediaLoaded}
+              />
+            </Animated.View>
+          )}
+        </View>
+        {/* )} */}
+        {/* {lessonType.includes('BookText') && (
           <BookView thisLesson={thisLesson} />
-        )}
+        )} */}
       </View>
       {/* Aside from the Book lesson type which has no media to play, we want to show the playback controls for controlling media. */}
       {lessonType !== lessonTypes.BOOK && (

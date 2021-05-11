@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import PagerView from 'react-native-pager-view'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import { gutterSize, scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -46,12 +46,14 @@ const AlbumArtSwiper = ({
   lessonTextContentRef,
   iconName,
   thisLesson,
+  lessonType,
   playHandler,
   playFeedbackOpacity,
   playFeedbackZIndex,
   isMediaPlaying,
-  // setSectionOffsets,
   sectionOffsets,
+  markLessonAsComplete,
+  isThisLessonComplete,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -74,7 +76,12 @@ const AlbumArtSwiper = ({
     translations.play.fellowship
   )
 
+  const sectionSubtitle = useRef('')
+
   const [sectionSubtitleText, setSectionSubtitleText] = useState('')
+
+  const sectionTitleOpacity = useRef(new Animated.Value(1)).current
+  const sectionTitleYTransform = useRef(new Animated.Value(0)).current
 
   return (
     <View style={{ height: '100%', width: '100%' }}>
@@ -109,8 +116,8 @@ const AlbumArtSwiper = ({
               overflow: 'hidden',
               flex: 1,
               aspectRatio: 1,
-              maxWidth: Dimensions.get('window').width - 20,
-              maxHeight: Dimensions.get('window').width - 20
+              maxWidth: Dimensions.get('window').width - gutterSize * 2,
+              maxHeight: Dimensions.get('window').width - gutterSize * 2
             }}
           >
             <TouchableHighlight
@@ -150,66 +157,90 @@ const AlbumArtSwiper = ({
             </Animated.View>
           </View>
         </View>
-        <View key='2'>
-          <View
-            style={{
-              width: '100%',
-              backgroundColor: colors.white,
-              alignItems: 'flex-start',
-              justifyContent: 'flex-start',
-              // height: 50 * scaleMultiplier,
-              paddingHorizontal: 10,
-              paddingVertical: 10,
-              // position: 'absolute',
-              flexDirection: 'row',
-              // top: 0,
-              zIndex: 1
-            }}
-          >
-            <Text
-              style={StandardTypography(
-                { font, isRTL },
-                'h2',
-                'Black',
-                'left',
-                colors.shark
-              )}
+        {!lessonType.includes('BookText') ? (
+          <View key='2'>
+            <Animated.View
+              style={{
+                width: '100%',
+                backgroundColor: colors.white,
+                alignItems: 'flex-start',
+                justifyContent: 'flex-start',
+                // height: 50 * scaleMultiplier,
+                paddingHorizontal: gutterSize,
+                paddingVertical: 10,
+                // position: 'absolute',
+                flexDirection: 'row',
+                // top: 0,
+                zIndex: 1,
+                opacity: sectionTitleOpacity,
+                transform: [{ translateY: sectionTitleYTransform }]
+              }}
             >
-              {sectionTitleText}
-            </Text>
-            {sectionSubtitleText !== '' && (
               <Text
-                style={[
-                  StandardTypography(
-                    { font, isRTL },
-                    'h3',
-                    'Regular',
-                    'left',
-                    colors.oslo
-                  ),
-                  { marginTop: 5 }
-                ]}
+                style={StandardTypography(
+                  { font, isRTL },
+                  'h2',
+                  'Black',
+                  'left',
+                  colors.shark
+                )}
               >
-                {' / ' + sectionSubtitleText}
+                {sectionTitleText}
               </Text>
-            )}
+              {sectionSubtitleText !== '' && (
+                <Text
+                  style={[
+                    StandardTypography(
+                      { font, isRTL },
+                      'h3',
+                      'Regular',
+                      'left',
+                      colors.oslo
+                    ),
+                    { marginTop: 5 }
+                  ]}
+                >
+                  {' / ' + sectionSubtitleText}
+                </Text>
+              )}
+            </Animated.View>
+            <LessonTextViewer
+              key='2'
+              lessonTextContentRef={lessonTextContentRef}
+              thisLesson={thisLesson}
+              lessonType={lessonType}
+              // setSectionOffsets={setSectionOffsets}
+              sectionOffsets={sectionOffsets}
+              isScrolling={isScrolling}
+              setIsScrolling={setIsScrolling}
+              isScrollBarDragging={isScrollBarDragging}
+              setIsScrollBarDragging={setIsScrollBarDragging}
+              sectionTitleText={sectionTitleText}
+              sectionSubtitleText={sectionSubtitleText}
+              setSectionTitleText={setSectionTitleText}
+              setSectionSubtitleText={setSectionSubtitleText}
+              sectionTitleOpacity={sectionTitleOpacity}
+              sectionTitleYTransform={sectionTitleYTransform}
+              markLessonAsComplete={markLessonAsComplete}
+              isThisLessonComplete={isThisLessonComplete}
+            />
           </View>
-          {/* <View style={{ height: 50 * scaleMultiplier }} /> */}
-          <LessonTextViewer
-            key='2'
-            lessonTextContentRef={lessonTextContentRef}
-            thisLesson={thisLesson}
-            // setSectionOffsets={setSectionOffsets}
-            sectionOffsets={sectionOffsets}
-            isScrolling={isScrolling}
-            setIsScrolling={setIsScrolling}
-            isScrollBarDragging={isScrollBarDragging}
-            setIsScrollBarDragging={setIsScrollBarDragging}
-            sectionTitle={sectionTitle}
-            setSectionTitleText={setSectionTitleText}
-            setSectionSubtitleText={setSectionSubtitleText}
-          />
-        </View>
+        ) : (
+          <View key='2'>
+            <LessonTextViewer
+              key='2'
+              lessonTextContentRef={lessonTextContentRef}
+              thisLesson={thisLesson}
+              lessonType={lessonType}
+              // setSectionOffsets={setSectionOffsets}
+              sectionOffsets={sectionOffsets}
+              isScrolling={isScrolling}
+              setIsScrolling={setIsScrolling}
+              isScrollBarDragging={isScrollBarDragging}
+              setIsScrollBarDragging={setIsScrollBarDragging}
+            />
+          </View>
+        )}
       </PagerView>
       <View style={styles.pageDotsContainer}>
         <PageDots numDots={2} activeDot={activePage} />

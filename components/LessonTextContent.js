@@ -2,7 +2,7 @@
 import React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { chapters } from '../constants'
+import { chapters, gutterSize, scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -85,14 +85,13 @@ const StandardText = ({ text, font, isRTL }) => (
   </View>
 )
 
-const gutterSize = 10
-
 /**
  *
  */
 const LessonTextContent = ({
   // Props passed from a parent component.
   thisLesson,
+  lessonType,
   lessonTextContentRef,
   setLessonTextContentHeight,
   onScroll,
@@ -109,7 +108,7 @@ const LessonTextContent = ({
   translations,
   isRTL
 }) => {
-  const setOffsets = (sectionName, chapter, nativeEvent) => {
+  const setOffsets = (sectionName, chapter, nativeEvent, isChapter) => {
     if (
       nativeEvent &&
       !sectionOffsets.current.some(section => section.name === sectionName)
@@ -142,96 +141,129 @@ const LessonTextContent = ({
       onScrollEndDrag={() => setIsScrolling(false)}
       // style={{ marginTop: 50 * scaleMultiplier }}
     >
-      {/* Fellowship header. */}
-      <View
-        onLayout={({ nativeEvent }) =>
-          setOffsets(
-            translations.play.fellowship,
-            chapters.FELLOWSHIP,
-            nativeEvent
-          )
-        }
-      />
-      {/* Fellowship questions. */}
-      {activeDatabase.questions[thisLesson.fellowshipType].map(
-        (question, index) => (
-          <View key={index}>
-            <HeaderSmall
-              text={
-                translations.play.question_header + ' ' + (index + 1).toString()
-              }
-              font={font}
-              isRTL={isRTL}
-            />
-            <StandardText text={question + '\n'} font={font} isRTL={isRTL} />
-          </View>
-        )
-      )}
-      {/* <View style={{ marginVertical: 5 }}>
+      {!lessonType.includes('BookText') ? (
+        <View>
+          {/* Fellowship header. */}
+          <View
+            onLayout={({ nativeEvent }) =>
+              setOffsets(
+                translations.play.fellowship,
+                chapters.FELLOWSHIP,
+                nativeEvent
+              )
+            }
+          />
+          {/* Fellowship questions. */}
+          {activeDatabase.questions[thisLesson.fellowshipType].map(
+            (question, index) => (
+              <View key={index}>
+                <HeaderSmall
+                  text={
+                    translations.play.question_header +
+                    ' ' +
+                    (index + 1).toString()
+                  }
+                  font={font}
+                  isRTL={isRTL}
+                />
+                <StandardText
+                  text={question + '\n'}
+                  font={font}
+                  isRTL={isRTL}
+                />
+              </View>
+            )
+          )}
+          {/* <View style={{ marginVertical: 5 }}>
         <WahaSeparator />
       </View> */}
-      <HeaderBig font={font} isRTL={isRTL} text={translations.play.story} />
-      {/* Scripture passages. */}
-      <View
-        onLayout={({ nativeEvent }) =>
-          setOffsets(translations.play.story, chapters.STORY, nativeEvent)
-        }
-        style={styles.sectionContainer}
-      />
-      <View style={{ height: 5 }} />
-      {thisLesson.scripture.map((scriptureChunk, index) => (
-        <View
-          key={index}
-          onLayout={({ nativeEvent }) =>
-            setOffsets(scriptureChunk.header, 0, nativeEvent)
-          }
-        >
-          <HeaderSmall text={scriptureChunk.header} font={font} isRTL={isRTL} />
-          <StandardText text={scriptureChunk.text} font={font} isRTL={isRTL} />
-        </View>
-      ))}
-      {/* Scripture headers/text. */}
-      {/* <View
+          <HeaderBig font={font} isRTL={isRTL} text={translations.play.story} />
+          {/* Scripture passages. */}
+          <View
+            onLayout={({ nativeEvent }) =>
+              setOffsets(translations.play.story, chapters.STORY, nativeEvent)
+            }
+            style={styles.sectionContainer}
+          />
+          <View style={{ height: 5 }} />
+          {thisLesson.scripture.map((scriptureChunk, index) => (
+            <View
+              key={index}
+              onLayout={({ nativeEvent }) =>
+                setOffsets(scriptureChunk.header, null, nativeEvent)
+              }
+            >
+              <HeaderSmall
+                text={scriptureChunk.header}
+                font={font}
+                isRTL={isRTL}
+              />
+              <StandardText
+                text={scriptureChunk.text}
+                font={font}
+                isRTL={isRTL}
+              />
+            </View>
+          ))}
+          {/* Scripture headers/text. */}
+          {/* <View
         onLayout={({ nativeEvent }) =>
           setOffsets(translations.play.story, nativeEvent)
         }
       >
         {scriptureSection}
       </View> */}
-      {/* Application header. */}
-      <HeaderBig
-        font={font}
-        isRTL={isRTL}
-        text={translations.play.application}
-      />
-      {/* Application questions. */}
-      <View
-        onLayout={({ nativeEvent }) =>
-          setOffsets(
-            translations.play.application,
-            chapters.APPLICATION,
-            nativeEvent
-          )
-        }
-        style={{ paddingTop: 5 }}
-      >
-        {activeDatabase.questions[thisLesson.applicationType].map(
-          (question, index) => (
-            <View key={index}>
-              <HeaderSmall
-                text={
-                  translations.play.question_header +
-                  ' ' +
-                  (index + 1).toString()
-                }
-                font={font}
-                isRTL={isRTL}
-              />
-              <StandardText text={question + '\n'} font={font} isRTL={isRTL} />
-            </View>
-          )
-        )}
-      </View>
+          {/* Application header. */}
+          <HeaderBig
+            font={font}
+            isRTL={isRTL}
+            text={translations.play.application}
+          />
+          {/* Application questions. */}
+          <View
+            onLayout={({ nativeEvent }) =>
+              setOffsets(
+                translations.play.application,
+                chapters.APPLICATION,
+                nativeEvent
+              )
+            }
+            style={{ paddingTop: 5 }}
+          >
+            {activeDatabase.questions[thisLesson.applicationType].map(
+              (question, index) => (
+                <View key={index}>
+                  <HeaderSmall
+                    text={
+                      translations.play.question_header +
+                      ' ' +
+                      (index + 1).toString()
+                    }
+                    font={font}
+                    isRTL={isRTL}
+                  />
+                  <StandardText
+                    text={question + '\n'}
+                    font={font}
+                    isRTL={isRTL}
+                  />
+                </View>
+              )
+            )}
+          </View>
+        </View>
+      ) : (
+        <View style={{ paddingTop: 20 * scaleMultiplier }}>
+          {thisLesson.text.split('\n').map((paragraph, index) => (
+            <StandardText
+              key={index}
+              font={font}
+              isRTL={isRTL}
+              text={paragraph + '\n'}
+            />
+          ))}
+        </View>
+      )}
     </ScrollView>
   )
 }
