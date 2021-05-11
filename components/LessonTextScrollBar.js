@@ -16,7 +16,8 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
     translations: activeDatabaseSelector(state).translations,
-    isRTL: activeDatabaseSelector(state).isRTL
+    isRTL: activeDatabaseSelector(state).isRTL,
+    primaryColor: activeDatabaseSelector(state).primaryColor
   }
 }
 
@@ -35,7 +36,8 @@ const LessonTextScrollBar = ({
   activeDatabase,
   font,
   translations,
-  isRTL
+  isRTL,
+  primaryColor
 }) => (
   <PanGestureHandler
     onHandlerStateChange={onHandlerStateChange}
@@ -53,13 +55,49 @@ const LessonTextScrollBar = ({
         style={[
           styles.scrollBar,
           {
+            // backgroundColor: primaryColor,
             height: scrollBarSize,
             width: scrollBarSize,
-            borderRadius: scrollBarSize / 2
+            borderRadius: scrollBarSize / 2,
+            flexDirection: 'row'
           }
         ]}
       >
         <View
+          style={{
+            flex: 1.5,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <View
+            style={{
+              width: 0,
+              height: 0,
+              borderLeftWidth: 5,
+              borderLeftColor: 'transparent',
+              borderRightWidth: 5,
+              borderRightColor: 'transparent',
+              borderBottomWidth: 6,
+              borderBottomColor: colors.white
+            }}
+          />
+          <View style={{ height: 5 }} />
+          <View
+            style={{
+              width: 0,
+              height: 0,
+              borderLeftWidth: 5,
+              borderLeftColor: 'transparent',
+              borderRightWidth: 5,
+              borderRightColor: 'transparent',
+              borderTopWidth: 6,
+              borderTopColor: colors.white
+            }}
+          />
+        </View>
+        <View style={{ flex: 1 }} />
+        {/* <View
           style={{
             flex: 1,
             position: 'absolute',
@@ -88,7 +126,7 @@ const LessonTextScrollBar = ({
             name='triangle-right'
             color={colors.white}
           />
-        </View>
+        </View> */}
       </View>
     </Animated.View>
   </PanGestureHandler>

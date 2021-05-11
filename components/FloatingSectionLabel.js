@@ -26,7 +26,7 @@ function mapStateToProps (state) {
 const FloatingSectionLabel = ({
   // Props passed from a parent component.
   section,
-  totalTextContentHeight,
+  isFullyRendered,
   textAreaHeight,
   scrollBarSize,
   // Props passed from redux.
@@ -41,15 +41,13 @@ const FloatingSectionLabel = ({
       styles.floatingSectionLabelContainer,
       {
         marginRight: scrollBarSize / 2,
-        top:
-          totalTextContentHeight !== 0
-            ? (section.offset * (textAreaHeight - scrollBarSize)) /
-              (totalTextContentHeight - textAreaHeight)
-            : 0
+        top: section.localOffset >= 0 ? section.localOffset : 0
       }
     ]}
   >
     <View style={styles.sectionTextContainer}>
+      {/* <Icon size={20} color={colors.white} name='number-1-filled' />
+      <View style={{ width: 3 }} /> */}
       <Text
         style={StandardTypography(
           { font, isRTL },
@@ -86,7 +84,8 @@ const styles = StyleSheet.create({
   },
   sectionTextContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
     backgroundColor: colors.tuna,
     paddingHorizontal: 10,
     paddingVertical: 3,

@@ -199,6 +199,14 @@ const PlayScreen = ({
   /** Ref for the lesson text content ScrollView. */
   const lessonTextContentRef = useRef(null)
 
+  const sectionTitle = useRef(translations.play.fellowship)
+
+  const [sectionTitleText, setSectionTitleText] = useState(
+    translations.play.fellowship
+  )
+
+  const [sectionSubtitleText, setSectionSubtitleText] = useState('')
+
   /** Keeps track of the scroll positions of the different lesson sections. */
   // const [sectionOffsets, setSectionOffsets] = useState([])
   const sectionOffsets = useRef([])
@@ -430,6 +438,21 @@ const PlayScreen = ({
 
     // Set our thumb position back to the start.
     setMediaProgress(0)
+
+    // Scroll the text to the appropriate position.
+    if (
+      lessonTextContentRef.current !== null &&
+      sectionOffsets.current.length === thisLesson.scripture.length + 3
+    ) {
+      var section = sectionOffsets.current.filter(
+        section => section.chapter === activeChapter
+      )[0]
+
+      lessonTextContentRef.current.scrollTo({
+        y: section.globalOffset + 1,
+        animated: true
+      })
+    }
 
     // If we're switching to anything but the Training chapter, fade in the <AlbumArtSwiper/> and fade out the <VideoPlayer/>. If the <AlbumArtSwiper/> is already present, this animation does nothing.
     if (activeChapter !== chapters.TRAINING) {

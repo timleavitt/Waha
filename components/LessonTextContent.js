@@ -1,9 +1,8 @@
 // import SvgUri from 'expo-svg-uri'
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { useEffect } from 'react/cjs/react.development'
-import { scaleMultiplier } from '../constants'
+import { chapters } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -21,22 +20,22 @@ function mapStateToProps (state) {
   }
 }
 
-const HeaderBig = ({ text, font, isRTL, onLayout }) => (
+const HeaderBig = ({ text, font, isRTL }) => (
   <View
     style={{
-      paddingVertical: 10 * scaleMultiplier,
-      marginBottom: 10 * scaleMultiplier,
-      backgroundColor: colors.white,
-      paddingHorizontal: gutterSize,
-      height: 50
+      // paddingVertical: 10 * scaleMultiplier,
+      // marginBottom: 10 * scaleMultiplier,
+      // backgroundColor: colors.white,
+      paddingHorizontal: gutterSize
+      // height: 50
       // backgroundColor: 'green',
       // overflow: 'hidden'
     }}
-    onLayout={onLayout}
+    // onLayout={onLayout}
   >
     <Text
       style={[
-        StandardTypography({ font, isRTL }, 'h2', 'Black', 'left', colors.shark)
+        StandardTypography({ font, isRTL }, 'h2', 'Black', 'left', colors.tuna)
         // { fontSize: 22 * scaleMultiplier }
       ]}
     >
@@ -46,13 +45,17 @@ const HeaderBig = ({ text, font, isRTL, onLayout }) => (
 )
 
 const HeaderSmall = ({ text, font, isRTL }) => (
-  <View style={{ zIndex: 0 }}>
+  <View>
     <Text
       style={[
-        StandardTypography({ font, isRTL }, 'h3', 'Bold', 'left', colors.shark),
-        {
-          paddingHorizontal: gutterSize
-        }
+        StandardTypography(
+          { font, isRTL },
+          'h3',
+          'Regular',
+          'left',
+          colors.oslo
+        ),
+        { paddingHorizontal: gutterSize, marginBottom: 5 }
       ]}
     >
       {text}
@@ -61,7 +64,7 @@ const HeaderSmall = ({ text, font, isRTL }) => (
 )
 
 const StandardText = ({ text, font, isRTL }) => (
-  <View style={{ zIndex: 0 }}>
+  <View>
     <Text
       style={[
         StandardTypography(
@@ -91,7 +94,6 @@ const LessonTextContent = ({
   // Props passed from a parent component.
   thisLesson,
   lessonTextContentRef,
-  sectionIndices,
   setLessonTextContentHeight,
   onScroll,
   setTextAreaHeight,
@@ -99,6 +101,7 @@ const LessonTextContent = ({
   sectionOffsets,
   // setSectionOffsets,
   isFullyRendered,
+  convertGlobalScrollPosToLocal,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -106,74 +109,20 @@ const LessonTextContent = ({
   translations,
   isRTL
 }) => {
-  const [numPassages, setNumPassages] = useState(thisLesson.scripture.length)
-  const [numFellowshipQuestions, setNumFellowshipQuestions] = useState(
-    activeDatabase.questions[thisLesson.fellowshipType].length
-  )
-  const [numApplicationQuestions, setNumApplicationQuestions] = useState(
-    activeDatabase.questions[thisLesson.applicationType].length
-  )
-
-  const [stickyIndices, setStickyIndices] = useState()
-
-  useEffect(() => {
-    getIndices()
-  }, [])
-
-  const getScriptureSection = () => {
-    var scriptureSection = []
-    thisLesson.scripture.forEach((scriptureChunk, index) => {
-      scriptureSection.push(
-        <View
-          key={index}
-          onLayout={({ nativeEvent }) => {
-            if (
-              nativeEvent &&
-              !sectionOffsets.current.some(
-                section => section.name === scriptureChunk.header
-              )
-            ) {
-              sectionOffsets.current = [
-                ...sectionOffsets.current,
-                {
-                  name: scriptureChunk.header,
-                  offset: nativeEvent.layout.y
-                }
-              ].sort((a, b) => a.offset - b.offset)
-            }
-          }}
-        />
-      )
-      scriptureSection.push(
-        <StandardText
-          text={scriptureChunk.text}
-          font={font}
-          isRTL={isRTL}
-          key={index + 0.5}
-        />
-      )
-    })
-    return scriptureSection
-  }
-
-  const scriptureSection = useMemo(() => getScriptureSection(), [])
-
-  const getIndices = () => {
-    var indices = []
-    indices.push(0)
-    thisLesson.scripture.forEach((scriptureChunk, index) => {
-      indices.push(
-        activeDatabase.questions[thisLesson.fellowshipType].length +
-          1 +
-          2 * index
-      )
-    })
-    indices.push(
-      activeDatabase.questions[thisLesson.fellowshipType].length +
-        thisLesson.scripture.length * 2 +
-        1
-    )
-    setStickyIndices(indices)
+  const setOffsets = (sectionName, chapter, nativeEvent) => {
+    if (
+      nativeEvent &&
+      !sectionOffsets.current.some(section => section.name === sectionName)
+    ) {
+      sectionOffsets.current = [
+        ...sectionOffsets.current,
+        {
+          name: sectionName,
+          globalOffset: nativeEvent.layout.y,
+          chapter: chapter
+        }
+      ].sort((a, b) => a.globalOffset - b.globalOffset)
+    }
   }
 
   return (
@@ -189,37 +138,19 @@ const LessonTextContent = ({
       }}
       removeClippedSubviews={false}
       scrollEventThrottle={64}
-      stickyHeaderIndices={isFullyRendered ? stickyIndices : [0]}
       onMomentumScrollEnd={() => setIsScrolling(false)}
       onScrollEndDrag={() => setIsScrolling(false)}
+      // style={{ marginTop: 50 * scaleMultiplier }}
     >
       {/* Fellowship header. */}
       <View
-        onLayout={({ nativeEvent }) => {
-          if (
-            nativeEvent &&
-            !sectionOffsets.current.some(
-              section => section.name === translations.play.fellowship
-            )
-          ) {
-            sectionOffsets.current = [
-              ...sectionOffsets.current,
-              {
-                name: translations.play.fellowship,
-                offset: nativeEvent.layout.y
-              }
-            ].sort((a, b) => a.offset - b.offset)
-          }
-          // setSectionOffsets(current =>
-          //   [
-          //     ...current,
-          //     {
-          //       name: translations.play.fellowship,
-          //       offset: nativeEvent.layout.y
-          //     }
-          //   ].sort((a, b) => a.offset - b.offset)
-          // )
-        }}
+        onLayout={({ nativeEvent }) =>
+          setOffsets(
+            translations.play.fellowship,
+            chapters.FELLOWSHIP,
+            nativeEvent
+          )
+        }
       />
       {/* Fellowship questions. */}
       {activeDatabase.questions[thisLesson.fellowshipType].map(
@@ -236,45 +167,78 @@ const LessonTextContent = ({
           </View>
         )
       )}
-      {/* Scripture headers/text. */}
-      {scriptureSection}
-      {/* Application header. */}
+      {/* <View style={{ marginVertical: 5 }}>
+        <WahaSeparator />
+      </View> */}
+      <HeaderBig font={font} isRTL={isRTL} text={translations.play.story} />
+      {/* Scripture passages. */}
       <View
-        onLayout={({ nativeEvent }) => {
-          if (
-            nativeEvent &&
-            !sectionOffsets.current.some(
-              section => section.name === translations.play.application
-            )
-          ) {
-            sectionOffsets.current = [
-              ...sectionOffsets.current,
-              {
-                name: translations.play.application,
-                offset: nativeEvent.layout.y
-              }
-            ].sort((a, b) => a.offset - b.offset)
+        onLayout={({ nativeEvent }) =>
+          setOffsets(translations.play.story, chapters.STORY, nativeEvent)
+        }
+        style={styles.sectionContainer}
+      />
+      <View style={{ height: 5 }} />
+      {thisLesson.scripture.map((scriptureChunk, index) => (
+        <View
+          key={index}
+          onLayout={({ nativeEvent }) =>
+            setOffsets(scriptureChunk.header, 0, nativeEvent)
           }
-        }}
+        >
+          <HeaderSmall text={scriptureChunk.header} font={font} isRTL={isRTL} />
+          <StandardText text={scriptureChunk.text} font={font} isRTL={isRTL} />
+        </View>
+      ))}
+      {/* Scripture headers/text. */}
+      {/* <View
+        onLayout={({ nativeEvent }) =>
+          setOffsets(translations.play.story, nativeEvent)
+        }
+      >
+        {scriptureSection}
+      </View> */}
+      {/* Application header. */}
+      <HeaderBig
+        font={font}
+        isRTL={isRTL}
+        text={translations.play.application}
       />
       {/* Application questions. */}
-      {activeDatabase.questions[thisLesson.applicationType].map(
-        (question, index) => (
-          <View key={index}>
-            <HeaderSmall
-              text={
-                translations.play.question_header + ' ' + (index + 1).toString()
-              }
-              font={font}
-              isRTL={isRTL}
-            />
-            <StandardText text={question + '\n'} font={font} isRTL={isRTL} />
-          </View>
-        )
-      )}
+      <View
+        onLayout={({ nativeEvent }) =>
+          setOffsets(
+            translations.play.application,
+            chapters.APPLICATION,
+            nativeEvent
+          )
+        }
+        style={{ paddingTop: 5 }}
+      >
+        {activeDatabase.questions[thisLesson.applicationType].map(
+          (question, index) => (
+            <View key={index}>
+              <HeaderSmall
+                text={
+                  translations.play.question_header +
+                  ' ' +
+                  (index + 1).toString()
+                }
+                font={font}
+                isRTL={isRTL}
+              />
+              <StandardText text={question + '\n'} font={font} isRTL={isRTL} />
+            </View>
+          )
+        )}
+      </View>
     </ScrollView>
   )
 }
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  sectionContainer: {
+    // paddingTop: 20 * scaleMultiplier
+  }
+})
 
 export default connect(mapStateToProps)(LessonTextContent)

@@ -1,5 +1,4 @@
 // import SvgUri from 'expo-svg-uri'
-import * as Haptics from 'expo-haptics'
 import React, { useRef, useState } from 'react'
 import {
   Animated,
@@ -67,7 +66,7 @@ const AlbumArtSwiper = ({
   const [isScrolling, setIsScrolling] = useState(false)
 
   /** Keeps track of the active page of the album art swiper. */
-  const [activePage, setActivePage] = useState(0)
+  const [activePage, setActivePage] = useState(-1)
 
   const sectionTitle = useRef(translations.play.fellowship)
 
@@ -75,13 +74,15 @@ const AlbumArtSwiper = ({
     translations.play.fellowship
   )
 
+  const [sectionSubtitleText, setSectionSubtitleText] = useState('')
+
   return (
     <View style={{ height: '100%', width: '100%' }}>
       <PagerView
         style={{ flex: 1 }}
         scrollEnabled={!isScrollBarDragging && !isScrolling}
         onPageSelected={({ nativeEvent }) => {
-          Haptics.impactAsync()
+          // if (activePage >= 0) Haptics.impactAsync()
           setActivePage(nativeEvent.position)
         }}
       >
@@ -155,9 +156,14 @@ const AlbumArtSwiper = ({
               width: '100%',
               backgroundColor: colors.white,
               alignItems: 'flex-start',
-              justifyContent: 'center',
-              height: 50 * scaleMultiplier,
-              paddingHorizontal: 10
+              justifyContent: 'flex-start',
+              // height: 50 * scaleMultiplier,
+              paddingHorizontal: 10,
+              paddingVertical: 10,
+              // position: 'absolute',
+              flexDirection: 'row',
+              // top: 0,
+              zIndex: 1
             }}
           >
             <Text
@@ -171,7 +177,24 @@ const AlbumArtSwiper = ({
             >
               {sectionTitleText}
             </Text>
+            {sectionSubtitleText !== '' && (
+              <Text
+                style={[
+                  StandardTypography(
+                    { font, isRTL },
+                    'h3',
+                    'Regular',
+                    'left',
+                    colors.oslo
+                  ),
+                  { marginTop: 5 }
+                ]}
+              >
+                {' / ' + sectionSubtitleText}
+              </Text>
+            )}
           </View>
+          {/* <View style={{ height: 50 * scaleMultiplier }} /> */}
           <LessonTextViewer
             key='2'
             lessonTextContentRef={lessonTextContentRef}
@@ -184,6 +207,7 @@ const AlbumArtSwiper = ({
             setIsScrollBarDragging={setIsScrollBarDragging}
             sectionTitle={sectionTitle}
             setSectionTitleText={setSectionTitleText}
+            setSectionSubtitleText={setSectionSubtitleText}
           />
         </View>
       </PagerView>

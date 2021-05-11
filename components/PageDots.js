@@ -28,7 +28,7 @@ const Dot = ({ isActive, primaryColor }) => (
     style={{
       marginHorizontal: 5,
       backgroundColor: isActive ? colors.tuna : colors.chateau,
-      width: isActive ? 14 * scaleMultiplier : 7 * scaleMultiplier,
+      width: isActive ? 9 * scaleMultiplier : 7 * scaleMultiplier,
       height: isActive ? 9 * scaleMultiplier : 7 * scaleMultiplier,
       borderRadius: isActive ? 4.5 * scaleMultiplier : 3.5 * scaleMultiplier
     }}
