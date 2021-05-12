@@ -68,7 +68,7 @@ const AlbumArtSwiper = ({
   const [isScrolling, setIsScrolling] = useState(false)
 
   /** Keeps track of the active page of the album art swiper. */
-  const [activePage, setActivePage] = useState(0)
+  const [activePage, setActivePage] = useState(-1)
 
   const sectionTitle = useRef(translations.play.fellowship)
 
