@@ -86,8 +86,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 15 * scaleMultiplier,
-    backgroundColor: 'green'
+    marginVertical: 15 * scaleMultiplier
   },
   rightGradient: {
     position: 'absolute',
