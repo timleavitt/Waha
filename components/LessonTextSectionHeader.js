@@ -29,6 +29,7 @@ const LessonTextSectionHeader = ({
   sectionHeaderOpacity,
   sectionTitleText,
   sectionSubtitleText,
+  setSectionHeaderHeight,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -45,6 +46,9 @@ const LessonTextSectionHeader = ({
         transform: [{ translateY: sectionHeaderYTransform }]
       }
     ]}
+    onLayout={({ nativeEvent }) =>
+      setSectionHeaderHeight(nativeEvent.layout.height)
+    }
   >
     <Text>
       <Text
@@ -95,7 +99,7 @@ const LessonTextSectionHeader = ({
 const styles = StyleSheet.create({
   sectionHeaderContainer: {
     width: '100%',
-    backgroundColor: colors.white,
+    // backgroundColor: colors.blue,
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
     paddingHorizontal: gutterSize,

@@ -87,10 +87,11 @@ const LessonTextContent = ({
   thisLesson,
   lessonType,
   lessonTextContentRef,
-  setLessonTextContentHeight,
+  // setLessonTextContentHeight,
+  layouts,
   onScroll,
-  setTextAreaHeight,
-  setIsScrolling,
+  // setTextWindowHeight,
+  isScrolling,
   sectionOffsets,
   // setSectionOffsets,
   isFullyRendered,
@@ -128,22 +129,32 @@ const LessonTextContent = ({
     }
   }
 
+  const onLayout = event => {
+    if (event.nativeEvent)
+      layouts.current = {
+        ...layouts.current,
+        windowHeight: event.nativeEvent.layout.height
+      }
+  }
+
   return (
     <ScrollView
       ref={lessonTextContentRef}
       showsVerticalScrollIndicator={false}
       onScroll={onScroll}
-      onContentSizeChange={(width, height) =>
-        setLessonTextContentHeight(height)
+      onContentSizeChange={
+        (width, height) =>
+          (layouts.current = {
+            ...layouts.current,
+            contentHeight: height
+          })
+        // setLessonTextContentHeight(height)
       }
-      onLayout={({ nativeEvent }) => {
-        if (nativeEvent) setTextAreaHeight(nativeEvent.layout.height)
-      }}
+      onLayout={onLayout}
       removeClippedSubviews={false}
       scrollEventThrottle={32}
-      onMomentumScrollEnd={() => setIsScrolling(false)}
-      onScrollEndDrag={() => setIsScrolling(false)}
-      // style={{ marginTop: 50 * scaleMultiplier }}
+      onMomentumScrollEnd={() => (isScrolling.current = false)}
+      onScrollEndDrag={() => (isScrolling.current = false)}
     >
       {!lessonType.includes('BookText') ? (
         <View>

@@ -201,7 +201,15 @@ const PlayScreen = ({
 
   /** Keeps track of the scroll positions of the different lesson sections. */
   // const [sectionOffsets, setSectionOffsets] = useState([])
-  const sectionOffsets = useRef([])
+  const sectionOffsets = useRef([
+    {
+      title: 'END',
+      subtitle: 'END',
+      isBigSection: false,
+      globalOffset: 1000000,
+      localOffset: 1000000
+    }
+  ])
 
   /** Keeps track of whether this lesson is complete or not. */
   const isThisLessonComplete = useRef(

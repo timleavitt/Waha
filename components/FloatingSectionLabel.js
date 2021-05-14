@@ -46,10 +46,9 @@ const FloatingSectionLabel = ({
         flexDirection: isRTL ? 'row-reverse' : 'row'
       }
     ]}
-    onLayout={({ nativeEvent }) => {
-      console.log(nativeEvent)
+    onLayout={({ nativeEvent }) =>
       setFloatingSectionLabelHeight(nativeEvent.layout.height)
-    }}
+    }
   >
     <View
       style={[
