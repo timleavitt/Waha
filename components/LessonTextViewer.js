@@ -50,8 +50,8 @@ const LessonTextViewer = ({
   setSectionSubtitleText = null,
   sectionTitleOpacity = null,
   sectionTitleYTransform = null,
-  markLessonAsComplete,
-  isThisLessonComplete,
+  markLessonAsComplete = null,
+  isThisLessonComplete = null,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -75,7 +75,11 @@ const LessonTextViewer = ({
   const [scrollBarYPosition_Actual, setScrollBarYPosition_Actual] = useState(0)
 
   /** Keeps track of the horizontal position of the scroll bar. It animates in and out. */
-  const scrollBarXPosition = useRef(new Animated.Value(scrollBarSize)).current
+  const scrollBarXPosition = useRef(
+    isRTL
+      ? new Animated.Value(-scrollBarSize)
+      : new Animated.Value(scrollBarSize)
+  ).current
 
   /** Holds a timeout function that hides the scroll bar after a few seconds. The timeout is reset whenever the user starts scrolling. */
   const hideScrollBarTimeout = useRef(null)
@@ -89,7 +93,13 @@ const LessonTextViewer = ({
   /** Keeps track of whether the various layout states have been set yet. */
   const [isFullyRendered, setIsFullyRendered] = useState(false)
 
-  const isSectionTextUpdating = useRef(false)
+  const isSectionHeaderUpdating = useRef(false)
+
+  const [refreshSectionHeader, setRefreshSectionHeader] = useState(false)
+
+  const [floatingSectionLabelHeight, setFloatingSectionLabelHeight] = useState(
+    0
+  )
 
   /**
    * Handles the state change of the scroll bar. Relevant states are BEGAN when the user starts dragging the scroll bar and END when the user stops dragging it.
@@ -136,7 +146,7 @@ const LessonTextViewer = ({
     if (isScrolling) {
       clearTimeout(hideScrollBarTimeout.current)
       Animated.spring(scrollBarXPosition, {
-        toValue: scrollBarSize / 2,
+        toValue: isRTL ? -scrollBarSize / 2 : scrollBarSize / 2,
         duration: 400,
         useNativeDriver: true
       }).start()
@@ -145,7 +155,7 @@ const LessonTextViewer = ({
         () =>
           Animated.spring(scrollBarXPosition, {
             // 1.1 so that the shadow isn't visible when the scroll bar is hidden.
-            toValue: scrollBarSize * 1.1,
+            toValue: isRTL ? -scrollBarSize * 1.1 : scrollBarSize * 1.1,
             duration: 400,
             useNativeDriver: true
           }).start(),
@@ -161,7 +171,7 @@ const LessonTextViewer = ({
     */
     if (
       scrollBarYPosition_Actual &&
-      !isSectionTextUpdating.current &&
+      !isSectionHeaderUpdating.current &&
       !lessonType.includes('BookText')
     ) {
       // Find the section that we're currently scrolling in.
@@ -175,7 +185,7 @@ const LessonTextViewer = ({
 
       // Auto-complete lesson if text is scrolled 20% through the Application chapter.
       if (
-        section.name === translations.play.application &&
+        section.title === translations.play.application &&
         !isThisLessonComplete.current &&
         (scrollBarYPosition_Actual - section.localOffset) /
           (textWindowHeight - section.localOffset) >
@@ -183,17 +193,12 @@ const LessonTextViewer = ({
       )
         markLessonAsComplete()
 
-      // If we're in one of the big 3 chapter sections...
-      if (section.name !== sectionTitleText && section.chapter !== null) {
-        isSectionTextUpdating.current = true
-        animateSectionTitle(section.name, '')
-      } // If we're in a scripture passage section...
-      else if (
-        section.chapter === null &&
-        section.name !== sectionSubtitleText
+      if (
+        section.title !== sectionTitleText ||
+        section.subtitle !== sectionSubtitleText
       ) {
-        isSectionTextUpdating.current = true
-        animateSectionTitle(translations.play.story, section.name)
+        isSectionHeaderUpdating.current = true
+        animateSectionTitle(section.title, section.subtitle)
       }
     }
 
@@ -216,7 +221,9 @@ const LessonTextViewer = ({
     // Set the isScrolling variable to true if it isn't already.
     if (!isScrolling) setIsScrolling(true)
 
-    // If we're not currently dragging the scroll bar, we want to update its position as we scroll the text content.
+    /*
+      UPDATE SCROLL BAR WHILE SCROLLING
+    */
     if (!isScrollBarDragging) {
       // We want to adjust the position of the scroll bar based on the current scroll position of the text area. currentScrollPosition goes from 0 to totalTextContentHeight. We want to convert that to a number between 0 and the text area height minus the size of the scroll bar. Again, the size of the scroll bar is to account for the scroll bar not going out-of-bounds.
       const currentScrollPosition = nativeEvent.contentOffset.y
@@ -243,18 +250,19 @@ const LessonTextViewer = ({
     ]).start(() => {
       setSectionTitleText(newTitle)
       setSectionSubtitleText(newSubtitle)
+      setRefreshSectionHeader(current => !current)
     })
   }
 
   useEffect(() => {
-    if ((sectionTitleText !== null) | (sectionSubtitleText !== null)) {
+    if (sectionTitleText !== null) {
       sectionTitleYTransform.setValue(0)
       Animated.timing(sectionTitleOpacity, {
         toValue: 1,
         duration: 100
-      }).start(() => (isSectionTextUpdating.current = false))
+      }).start(() => (isSectionHeaderUpdating.current = false))
     }
-  }, [sectionTitleText, sectionSubtitleText])
+  }, [refreshSectionHeader])
 
   /** Converts a global scroll offset (from 0 to the total height of the lesson text content) to a local one (from 0 to the height of the lesson text viewer). */
   const convertGlobalScrollPosToLocal = globalPosition =>
@@ -267,7 +275,7 @@ const LessonTextViewer = ({
       textContentHeight > 0 &&
       textWindowHeight > 0 &&
       (lessonType.includes('BookText') ||
-        sectionOffsets.current.length === thisLesson.scripture.length + 3)
+        sectionOffsets.current.length === thisLesson.scripture.length + 2)
     ) {
       // Set the local section offsets now that we have the layout states avaialable.
       sectionOffsets.current = sectionOffsets.current.map(section => ({
@@ -276,10 +284,11 @@ const LessonTextViewer = ({
       }))
 
       sectionOffsets.current.push({
-        name: 'END',
+        title: 'END',
+        subtitle: 'END',
+        isBigSection: false,
         globalOffset: textWindowHeight + 10000,
-        localOffset: textWindowHeight + 10000,
-        chapter: null
+        localOffset: textWindowHeight + 10000
       })
 
       setIsFullyRendered(true)
@@ -301,26 +310,25 @@ const LessonTextViewer = ({
         if (isScrollBarDragging) {
           sectionOffsets.current.forEach((section, index, array) => {
             if (
-              section.chapter !== null &&
+              section.isBigSection &&
               value < section.localOffset + 15 &&
               value > section.localOffset - 15
             ) {
               if (!isSnapped.current) {
-                console.log(`Snapped to ${section.name}.`)
                 isSnapped.current = true
-                // setSectionSubtitleText('')
-                // if (section.name !== sectionTitleText) {
-                //   console.log(`Section name: ${section.name}`)
-                //   console.log(`Current text: ${sectionTitleText}`)
-                //   isSectionTextUpdating.current = true
-                //   animateSectionTitle(section.name, '')
-                // }
+                if (
+                  section.title !== sectionTitleText ||
+                  section.subtitle !== sectionSubtitleText
+                ) {
+                  isSectionHeaderUpdating.current = true
+                  animateSectionTitle(section.title, section.subtitle)
+                }
                 Haptics.impactAsync()
               }
 
               didSnap = true
 
-              setScrollBarYPosition_Actual(section.localOffset + 0.1)
+              setScrollBarYPosition_Actual(section.localOffset)
             }
           })
         }
@@ -372,12 +380,15 @@ const LessonTextViewer = ({
           styles.floatingSectionLabelsContainer,
           {
             opacity: floatingSectionLabelsOpacity,
-            zIndex: isScrollBarDragging ? 2 : -1
+            zIndex: isScrollBarDragging ? 2 : -1,
+            right: isRTL ? null : 0,
+            left: isRTL ? 0 : null,
+            flexDirection: isRTL ? 'row' : 'row-reverse'
           }
         ]}
       >
         {sectionOffsets.current.map((section, index) => {
-          if (section.chapter !== null)
+          if (section.isBigSection)
             return (
               <FloatingSectionLabel
                 key={index}
@@ -385,30 +396,24 @@ const LessonTextViewer = ({
                 isFullyRendered={isFullyRendered}
                 textAreaHeight={textWindowHeight}
                 scrollBarSize={scrollBarSize}
+                setFloatingSectionLabelHeight={setFloatingSectionLabelHeight}
               />
             )
         })}
       </Animated.View>
       <TouchableOpacity
-        style={styles.scrollBarArea}
+        style={[
+          styles.scrollBarArea,
+          {
+            right: isRTL ? null : 0,
+            left: isRTL ? 0 : null,
+            alignItems: isRTL ? 'flex-start' : 'flex-end'
+          }
+        ]}
         activeOpacity={1}
         onPress={() => {
-          clearTimeout(hideScrollBarTimeout.current)
-          Animated.spring(scrollBarXPosition, {
-            toValue: scrollBarSize / 2,
-            duration: 400,
-            useNativeDriver: true
-          }).start()
-          hideScrollBarTimeout.current = setTimeout(
-            () =>
-              Animated.spring(scrollBarXPosition, {
-                // 1.1 so that the shadow isn't visible when the scroll bar is hidden.
-                toValue: scrollBarSize * 1.1,
-                duration: 400,
-                useNativeDriver: true
-              }).start(),
-            1500
-          )
+          setIsScrolling(true)
+          setTimeout(() => setIsScrolling(false), 50)
         }}
       >
         {sectionOffsets.current.map((section, index) => (
@@ -418,9 +423,11 @@ const LessonTextViewer = ({
               styles.sectionDotIndicator,
               {
                 top:
-                  section.localOffset >= 0
-                    ? section.localOffset + 12.5 * scaleMultiplier
-                    : 0
+                  section.localOffset >= 0 && floatingSectionLabelHeight > 0
+                    ? section.localOffset - 2.5 + floatingSectionLabelHeight / 2
+                    : 0,
+                right: isRTL ? null : 2,
+                left: isRTL ? 2 : null
               }
             ]}
           />
@@ -446,16 +453,12 @@ const styles = StyleSheet.create({
   floatingSectionLabelsContainer: {
     height: '100%',
     position: 'absolute',
-    right: 0,
-    flexDirection: 'row-reverse',
     alignItems: 'center',
     overflow: 'visible'
   },
   scrollBarArea: {
     position: 'absolute',
-    right: 0,
     height: '100%',
-    alignItems: 'flex-end',
     width: scrollBarSize / 2,
     zIndex: 3
   },
@@ -464,7 +467,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 5,
     height: 5,
-    right: 2,
     borderRadius: 2.5,
     backgroundColor: colors.chateau
   },

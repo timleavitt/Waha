@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Dimensions, StyleSheet, View } from 'react-native'
 import TextTicker from 'react-native-text-ticker'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
@@ -49,11 +49,18 @@ const PlayScreenTitle = ({
           'center',
           colors.shark
         ),
-        { paddingHorizontal: 20 }
+        {
+          width: Dimensions.get('window').width - 40,
+          textAlign: 'center',
+          fontSize: 21 * scaleMultiplier,
+          backgroundColor: 'blue'
+          // paddingHorizontal: 20,
+        }
       ]}
       marqueeDelay={2000}
       bounceSpeed={300}
-      isRTL={isRTL}
+      // isRTL={isRTL}
+      shouldAnimateTreshold={0}
     >
       {text}
     </TextTicker>
@@ -80,10 +87,11 @@ const PlayScreenTitle = ({
 
 const styles = StyleSheet.create({
   titleContainer: {
-    width: '100%',
+    width: Dimensions.get('window').width,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 15 * scaleMultiplier
+    marginVertical: 15 * scaleMultiplier,
+    backgroundColor: 'green'
   },
   rightGradient: {
     position: 'absolute',

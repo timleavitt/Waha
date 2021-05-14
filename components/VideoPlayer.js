@@ -21,20 +21,18 @@ import { colors } from '../styles/colors'
  * A component that shows a video. Used on the Play Screen during Training chapters.
  * @param {string} videoSource - The URI source (local or remote) of the .mp4 file to play.
  * @param {ref} videoRef - The ref for the video.
- * @param {Function} onPlaybackStatusUpdate - Function to call whenever the playback status changes. Used for audio and video.
+ * @param {Function} onVideoPlaybackStatusUpdate - Function to call whenever the playback status changes. Used for audio and video.
  * @param {Function} setIsMediaPlaying - Function to set the isMediaPlaying state on the Play Screen.
  * @param {number} fullscreenStatus - The current fullscreen status as a number which is a value of an enum used in the Video library.
- * @param {Function} setFullScreenStatus - Function to set the fullscreenStatus state on the Play Screen.
  * @param {number} activeChapter - The currently active chapter. See chapters in constants.js.
  */
 const VideoPlayer = ({
   // Props passed from a parent component.
   videoSource,
   videoRef,
-  onPlaybackStatusUpdate,
+  onVideoPlaybackStatusUpdate,
   setIsMediaPlaying,
   fullscreenStatus,
-  setFullScreenStatus,
   activeChapter,
   isMediaLoaded
 }) => {
@@ -55,11 +53,12 @@ const VideoPlayer = ({
           })
         }
       })
-    else DeviceMotion.removeAllListeners()
+    else if (Platform.OS === 'ios' && activeChapter !== chapters.TRAINING)
+      DeviceMotion.removeAllListeners()
 
     // Cleanup function that cancels the device motion listener.
     return async function cleanup () {
-      DeviceMotion.removeAllListeners()
+      if (Platform.OS === 'ios') DeviceMotion.removeAllListeners()
     }
   }, [activeChapter])
 
@@ -80,7 +79,7 @@ const VideoPlayer = ({
     // If the user's phone is in landscape position, the video is on screen, and they're not in full screen mode, activate full screen mode.
     if (
       activeChapter === chapters.TRAINING &&
-      fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS &&
+      fullscreenStatus.current === Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS &&
       isLandscape()
     )
       videoRef.current.presentFullscreenPlayer()
@@ -108,7 +107,7 @@ const VideoPlayer = ({
             width: Dimensions.get('window').width,
             height: (Dimensions.get('window').width * 9) / 16
           }}
-          onPlaybackStatusUpdate={onPlaybackStatusUpdate}
+          onPlaybackStatusUpdate={onVideoPlaybackStatusUpdate}
           onFullscreenUpdate={({ fullscreenUpdate, status }) => {
             if (Platform.OS === 'android') {
               switch (fullscreenUpdate) {
@@ -137,7 +136,7 @@ const VideoPlayer = ({
             }
 
             // Update the fullscreenStatus Play Screen state.
-            setFullScreenStatus(fullscreenUpdate)
+            fullscreenStatus.current = fullscreenUpdate
           }}
         />
         {/* Video controls overlay. */}

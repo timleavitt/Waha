@@ -60,8 +60,11 @@ const ChapterButton = ({
 
   /** Keeps track of the icon name, button style, text style, and icon color for the chapter button. Updates whenever the mode changes. */
   const [iconName, setIconName] = useState('')
-  const [extraButtonStyle, setExtraButtonStyle] = useState({})
-  const [textStyle, setTextStyle] = useState({})
+  const [extraButtonStyle, setExtraButtonStyle] = useState({
+    borderColor: colors.porcelain,
+    backgroundColor: colors.athens
+  })
+  const [textStyle, setTextStyle] = useState({ color: primaryColor })
   const [iconColor, setIconColor] = useState(primaryColor)
 
   /** Keeps track of the download progress for the piece of media associated with the chapter button's chapter. */

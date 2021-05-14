@@ -2,7 +2,7 @@
 import React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { chapters, gutterSize, scaleMultiplier } from '../constants'
+import { gutterSize, scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -20,23 +20,17 @@ function mapStateToProps (state) {
   }
 }
 
-const HeaderBig = ({ text, font, isRTL }) => (
+const HeaderBig = ({ text, font, isRTL, onLayout }) => (
   <View
     style={{
-      // paddingVertical: 10 * scaleMultiplier,
-      // marginBottom: 10 * scaleMultiplier,
-      // backgroundColor: colors.white,
+      marginBottom: 10 * scaleMultiplier,
       paddingHorizontal: gutterSize
-      // height: 50
-      // backgroundColor: 'green',
-      // overflow: 'hidden'
     }}
-    // onLayout={onLayout}
+    onLayout={onLayout}
   >
     <Text
       style={[
         StandardTypography({ font, isRTL }, 'h2', 'Black', 'left', colors.tuna)
-        // { fontSize: 22 * scaleMultiplier }
       ]}
     >
       {text}
@@ -55,7 +49,7 @@ const HeaderSmall = ({ text, font, isRTL }) => (
           'left',
           colors.oslo
         ),
-        { paddingHorizontal: gutterSize, marginBottom: 5 }
+        { paddingHorizontal: gutterSize, marginVertical: 5 * scaleMultiplier }
       ]}
     >
       {text}
@@ -108,17 +102,27 @@ const LessonTextContent = ({
   translations,
   isRTL
 }) => {
-  const setOffsets = (sectionName, chapter, nativeEvent, isChapter) => {
+  const setOffsets = (
+    sectionTitle,
+    sectionSubtitle,
+    isBigSection,
+    nativeEvent
+  ) => {
     if (
       nativeEvent &&
-      !sectionOffsets.current.some(section => section.name === sectionName)
+      !sectionOffsets.current.some(
+        section =>
+          section.title === sectionTitle && section.subtitle === sectionSubtitle
+      )
     ) {
       sectionOffsets.current = [
         ...sectionOffsets.current,
         {
-          name: sectionName,
-          globalOffset: nativeEvent.layout.y,
-          chapter: chapter
+          title: sectionTitle,
+          subtitle: sectionSubtitle,
+          isBigSection: isBigSection,
+          globalOffset: nativeEvent.layout.y
+          // localOffset is set later.
         }
       ].sort((a, b) => a.globalOffset - b.globalOffset)
     }
@@ -136,7 +140,7 @@ const LessonTextContent = ({
         if (nativeEvent) setTextAreaHeight(nativeEvent.layout.height)
       }}
       removeClippedSubviews={false}
-      scrollEventThrottle={64}
+      scrollEventThrottle={32}
       onMomentumScrollEnd={() => setIsScrolling(false)}
       onScrollEndDrag={() => setIsScrolling(false)}
       // style={{ marginTop: 50 * scaleMultiplier }}
@@ -146,11 +150,7 @@ const LessonTextContent = ({
           {/* Fellowship header. */}
           <View
             onLayout={({ nativeEvent }) =>
-              setOffsets(
-                translations.play.fellowship,
-                chapters.FELLOWSHIP,
-                nativeEvent
-              )
+              setOffsets(translations.play.fellowship, '', true, nativeEvent)
             }
           />
           {/* Fellowship questions. */}
@@ -174,24 +174,24 @@ const LessonTextContent = ({
               </View>
             )
           )}
-          {/* <View style={{ marginVertical: 5 }}>
-        <WahaSeparator />
-      </View> */}
-          <HeaderBig font={font} isRTL={isRTL} text={translations.play.story} />
-          {/* Scripture passages. */}
-          <View
-            onLayout={({ nativeEvent }) =>
-              setOffsets(translations.play.story, chapters.STORY, nativeEvent)
-            }
-            style={styles.sectionContainer}
+          <HeaderBig
+            onLayout={() => {}}
+            font={font}
+            isRTL={isRTL}
+            text={translations.play.story}
           />
-          <View style={{ height: 5 }} />
           {thisLesson.scripture.map((scriptureChunk, index) => (
             <View
               key={index}
-              onLayout={({ nativeEvent }) =>
-                setOffsets(scriptureChunk.header, null, nativeEvent)
-              }
+              onLayout={({ nativeEvent }) => {
+                var isBig = index === 0 ? true : false
+                setOffsets(
+                  translations.play.story,
+                  scriptureChunk.header,
+                  isBig,
+                  nativeEvent
+                )
+              }}
             >
               <HeaderSmall
                 text={scriptureChunk.header}
@@ -205,15 +205,6 @@ const LessonTextContent = ({
               />
             </View>
           ))}
-          {/* Scripture headers/text. */}
-          {/* <View
-        onLayout={({ nativeEvent }) =>
-          setOffsets(translations.play.story, nativeEvent)
-        }
-      >
-        {scriptureSection}
-      </View> */}
-          {/* Application header. */}
           <HeaderBig
             font={font}
             isRTL={isRTL}
@@ -222,13 +213,8 @@ const LessonTextContent = ({
           {/* Application questions. */}
           <View
             onLayout={({ nativeEvent }) =>
-              setOffsets(
-                translations.play.application,
-                chapters.APPLICATION,
-                nativeEvent
-              )
+              setOffsets(translations.play.application, '', true, nativeEvent)
             }
-            style={{ paddingTop: 5 }}
           >
             {activeDatabase.questions[thisLesson.applicationType].map(
               (question, index) => (

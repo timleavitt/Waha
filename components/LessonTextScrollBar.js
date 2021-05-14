@@ -59,7 +59,9 @@ const LessonTextScrollBar = ({
             height: scrollBarSize,
             width: scrollBarSize,
             borderRadius: scrollBarSize / 2,
-            flexDirection: 'row'
+            flexDirection: isRTL ? 'row-reverse' : 'row',
+            marginLeft: 20
+            // marginRight: isRTL ? 20 : 0
           }
         ]}
       >
@@ -97,36 +99,6 @@ const LessonTextScrollBar = ({
           />
         </View>
         <View style={{ flex: 1 }} />
-        {/* <View
-          style={{
-            flex: 1,
-            position: 'absolute',
-            top: scrollBarSize / 6,
-            left: scrollBarSize / 6,
-            transform: [{ rotateZ: '270deg' }]
-          }}
-        >
-          <Icon
-            size={scrollBarSize / 2.5}
-            name='triangle-right'
-            color={colors.white}
-          />
-        </View>
-        <View
-          style={{
-            flex: 1,
-            position: 'absolute',
-            bottom: scrollBarSize / 6,
-            left: scrollBarSize / 6,
-            transform: [{ rotateZ: '90deg' }]
-          }}
-        >
-          <Icon
-            size={scrollBarSize / 2.5}
-            name='triangle-right'
-            color={colors.white}
-          />
-        </View> */}
       </View>
     </Animated.View>
   </PanGestureHandler>
@@ -146,7 +118,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2.62,
     shadowColor: '#000',
     elevation: 4,
-    marginLeft: 20,
+
     marginBottom: 20
   }
 })

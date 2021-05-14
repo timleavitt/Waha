@@ -42,7 +42,8 @@ const Scrubber = ({
 
 const styles = StyleSheet.create({
   scrubberContainer: {
-    paddingHorizontal: gutterSize,
+    // Padding here and on timeInfoContainer are different per platform because the slider on Android has 10px of padding by default while on iOS it has 0.
+    paddingHorizontal: Platform.OS === 'ios' ? gutterSize : 0,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    paddingHorizontal: 5
+    paddingHorizontal: Platform.OS === 'ios' ? 5 : 15
   }
 })
 

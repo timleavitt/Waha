@@ -29,6 +29,7 @@ const FloatingSectionLabel = ({
   isFullyRendered,
   textAreaHeight,
   scrollBarSize,
+  setFloatingSectionLabelHeight,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -41,13 +42,21 @@ const FloatingSectionLabel = ({
       styles.floatingSectionLabelContainer,
       {
         marginRight: scrollBarSize / 2,
-        top: section.localOffset >= 0 ? section.localOffset : 0
+        top: section.localOffset >= 0 ? section.localOffset : 0,
+        flexDirection: isRTL ? 'row-reverse' : 'row'
       }
     ]}
+    onLayout={({ nativeEvent }) => {
+      console.log(nativeEvent)
+      setFloatingSectionLabelHeight(nativeEvent.layout.height)
+    }}
   >
-    <View style={styles.sectionTextContainer}>
-      {/* <Icon size={20} color={colors.white} name='number-1-filled' />
-      <View style={{ width: 3 }} /> */}
+    <View
+      style={[
+        styles.sectionTextContainer,
+        { marginRight: isRTL ? 0 : -10, marginLeft: isRTL ? -10 : 0 }
+      ]}
+    >
       <Text
         style={StandardTypography(
           { font, isRTL },
@@ -57,11 +66,11 @@ const FloatingSectionLabel = ({
           colors.white
         )}
       >
-        {section.name}
+        {section.title}
       </Text>
     </View>
     <Icon
-      name='triangle-right'
+      name={isRTL ? 'triangle-left' : 'triangle-right'}
       size={25 * scaleMultiplier}
       color={colors.tuna}
     />
@@ -72,7 +81,7 @@ const styles = StyleSheet.create({
   floatingSectionLabelContainer: {
     position: 'absolute',
     alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -83,15 +92,12 @@ const styles = StyleSheet.create({
     elevation: 4
   },
   sectionTextContainer: {
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    flexDirection: 'row',
+    justifyContent: 'center',
     backgroundColor: colors.tuna,
     paddingHorizontal: 10,
     paddingVertical: 3,
-    borderRadius: 3,
-    marginRight: -10,
-    height: 30 * scaleMultiplier
+    borderRadius: 3
+    // height: 30 * scaleMultiplier
   }
 })
 
