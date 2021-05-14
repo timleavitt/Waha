@@ -50,16 +50,12 @@ const PlayScreenTitle = ({
           colors.shark
         ),
         {
-          width: Dimensions.get('window').width - 40,
-          textAlign: 'center',
-          fontSize: 21 * scaleMultiplier,
-          backgroundColor: 'blue'
-          // paddingHorizontal: 20,
+          fontSize: 21 * scaleMultiplier
         }
       ]}
       marqueeDelay={2000}
       bounceSpeed={300}
-      // isRTL={isRTL}
+      isRTL={isRTL}
       shouldAnimateTreshold={0}
     >
       {text}
