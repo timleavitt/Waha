@@ -82,7 +82,8 @@ const PlayScreenSwiper = ({
       style={{
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        flex: 1
+        width: '100%',
+        height: '100%'
       }}
     >
       {/* Title Area */}
@@ -96,7 +97,7 @@ const PlayScreenSwiper = ({
         isMediaPlaying={isMediaPlaying}
       />
     </View>,
-    <View key='2'>
+    <View key='2' style={{ width: '100%', height: '100%' }}>
       {!lessonType.includes('BookText') ? (
         // Standard Page used for most lessons.
         <View style={{ flex: 1 }}>
