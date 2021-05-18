@@ -787,6 +787,26 @@ const PlayScreen = ({
     DOWNLOADS
   */
 
+  /** useEffect function that checks a lesson's downloaded/downloading status. */
+  useEffect(() => {
+    // Checks whether a lesson's audio or video is currently downloading.
+    if (downloads[thisLesson.id]) isAudioDownloading.current = true
+    else isAudioDownloading.current = false
+    if (downloads[thisLesson.id + 'v']) isVideoDownloading.current = true
+    else isVideoDownloading.current = false
+
+    // Checks whether a lesson's audio or video is downloaded.
+    FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
+      contents => {
+        if (contents.includes(thisLesson.id + '.mp3'))
+          setIsAudioDownloaded(true)
+        if (contents.includes(thisLesson.id + 'v.mp4')) {
+          setIsVideoDownloaded(true)
+        }
+      }
+    )
+  }, [Object.keys(downloads).length])
+
   /** useEffect function that removes a download record from the download tracker redux object once it's finished. Removes audio and video download records when necessary. */
   useEffect(() => {
     switch (lessonType) {
@@ -817,26 +837,6 @@ const PlayScreen = ({
         break
     }
   }, [downloads[thisLesson.id], downloads[thisLesson.id + 'v']])
-
-  /** useEffect function that checks a lesson's downloaded/downloading status. */
-  useEffect(() => {
-    // Checks whether a lesson's audio or video is currently downloading.
-    if (downloads[thisLesson.id]) isAudioDownloading.current = true
-    else isAudioDownloading.current = false
-    if (downloads[thisLesson.id + 'v']) isVideoDownloading.current = true
-    else isVideoDownloading.current = false
-
-    // Checks whether a lesson's audio or video is downloaded.
-    FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
-      contents => {
-        if (contents.includes(thisLesson.id + '.mp3'))
-          setIsAudioDownloaded(true)
-        if (contents.includes(thisLesson.id + 'v.mp4')) {
-          setIsVideoDownloaded(true)
-        }
-      }
-    )
-  }, [Object.keys(downloads).length])
 
   /*
     MISC

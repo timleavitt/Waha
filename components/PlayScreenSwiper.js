@@ -56,10 +56,12 @@ const PlayScreenSwiper = ({
   isRTL
 }) => {
   /** Keeps track of whether or not the user is actively dragging the scroll bar or not. */
-  const isScrollBarDragging = useRef(false)
+  // const isScrollBarDragging = useRef(false)
+  const [isScrollBarDragging, setIsScrollBarDragging] = useState(false)
 
   /** Keeps track of whether the lesson text is being scrolled or not. This could be via scrolling normally or by dragging the scroll bar. */
-  const isScrolling = useRef(false)
+  // const isScrolling = useRef(false)
+  const [isScrolling, setIsScrolling] = useState(false)
 
   /** Keeps track of the active page of the album art swiper. */
   const [activePage, setActivePage] = useState(0)
@@ -112,7 +114,9 @@ const PlayScreenSwiper = ({
             lessonType={lessonType}
             sectionOffsets={sectionOffsets}
             isScrolling={isScrolling}
+            setIsScrolling={setIsScrolling}
             isScrollBarDragging={isScrollBarDragging}
+            setIsScrollBarDragging={setIsScrollBarDragging}
             sectionTitleText={sectionTitleText}
             sectionSubtitleText={sectionSubtitleText}
             setSectionTitleText={setSectionTitleText}
@@ -132,7 +136,9 @@ const PlayScreenSwiper = ({
           lessonType={lessonType}
           sectionOffsets={sectionOffsets}
           isScrolling={isScrolling}
+          setIsScrolling={setIsScrolling}
           isScrollBarDragging={isScrollBarDragging}
+          setIsScrollBarDragging={setIsScrollBarDragging}
         />
       )}
     </View>
