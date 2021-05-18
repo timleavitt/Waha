@@ -67,7 +67,8 @@
   "devDependencies": {
     "@babel/core": "~7.9.0",
     "babel-preset-expo": "8.3.0",
-    "better-docs": "^2.3.2"
+    "better-docs": "^2.3.2",
+    "reactotron-react-native": "^5.0.0"
   },
   "private": true
 }

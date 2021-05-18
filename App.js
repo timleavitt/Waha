@@ -10,6 +10,8 @@ import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
 import { colors } from './styles/colors'
 
+import('./ReactotronConfig').then(() => console.log('Reactotron Configured'))
+
 // These are only here because of some wack errors. Please do not delete.
 if (!global.btoa) {
   global.btoa = encode
