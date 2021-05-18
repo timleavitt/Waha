@@ -75,8 +75,6 @@ const SecurityModeScreen = ({
       return translations.security.five_minutes_label
     else if (security.timeoutDuration === 900000)
       return translations.security.fifteen_minutes_label
-    else if (security.timeoutDuration === 1800000)
-      return translations.security.thirty_minutes_label
     else if (security.timeoutDuration === 3600000)
       return translations.security.one_hour_label
     else if (security.timeoutDuration === 0)
