@@ -50,7 +50,6 @@ const LessonTextViewer = ({
   sectionTitleYTransform = null,
   markLessonAsComplete = null,
   isThisLessonComplete = null,
-  sectionHeaderHeight = null,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -92,13 +91,13 @@ const LessonTextViewer = ({
   /** Keeps track of whether the various layout states have been set yet. */
   const [isFullyRendered, setIsFullyRendered] = useState(false)
 
-  const isSectionHeaderUpdating = useRef(false)
-
   const [refreshSectionHeader, setRefreshSectionHeader] = useState(false)
 
   const [floatingSectionLabelHeight, setFloatingSectionLabelHeight] = useState(
     0
   )
+
+  const currentSection = useRef(null)
 
   /** Start listener for the position of the scroll bar. */
   useEffect(() => {
@@ -154,7 +153,7 @@ const LessonTextViewer = ({
         isScrollBarDragging.current = false
 
         // Set a short timeout to set isScrolling to false. This is on a timeout so that the the state change always happens after the user finishes dragging.
-        setTimeout(() => (isScrolling.current = false), 50)
+        // setTimeout(() => (isScrolling.current = false), 50)
 
         // Flatten the offset so that the scrolling position is persisted.
         scrollBarYPosition_Gesture.flattenOffset()
@@ -173,9 +172,10 @@ const LessonTextViewer = ({
     if (!isScrolling.current) isScrolling.current = true
 
     // Check if the section header needs to be updated.
-    checkForSectionHeaderUpdates(
-      nativeEvent.contentOffset.y < 0 ? 0 : nativeEvent.contentOffset.y
-    )
+    if (!isSnapped.current)
+      checkForSectionHeaderUpdates(
+        nativeEvent.contentOffset.y < 0 ? 0 : nativeEvent.contentOffset.y
+      )
 
     if (!isScrollBarDragging.current)
       // Update the gesture y position of the scroll bar. This will trigger the listener and update the actual scroll bar y position.
@@ -194,16 +194,16 @@ const LessonTextViewer = ({
         useNativeDriver: true
       }).start()
     } else if (!isScrolling.current) {
-      hideScrollBarTimeout.current = setTimeout(
-        () =>
-          Animated.spring(scrollBarXPosition, {
-            // 1.1 so that the shadow isn't visible when the scroll bar is hidden.
-            toValue: isRTL ? -scrollBarSize * 1.1 : scrollBarSize * 1.1,
-            duration: 400,
-            useNativeDriver: true
-          }).start(),
-        1500
-      )
+      // hideScrollBarTimeout.current = setTimeout(
+      //   () =>
+      //     Animated.spring(scrollBarXPosition, {
+      //       // 1.1 so that the shadow isn't visible when the scroll bar is hidden.
+      //       toValue: isRTL ? -scrollBarSize * 1.1 : scrollBarSize * 1.1,
+      //       duration: 400,
+      //       useNativeDriver: true
+      //     }).start(),
+      //   1500
+      // )
     }
   }, [isScrolling.current])
 
@@ -222,15 +222,17 @@ const LessonTextViewer = ({
    * Checks if the section header needs to be updated based on the current scroll position.
    */
   const checkForSectionHeaderUpdates = scrollPosition => {
-    // If we're upating the section header already, don't do anything. Also, there's no section headers for book/audiobook lessons, so return if we're in one of those lessons as well.
-    if (isSectionHeaderUpdating.current || lessonType.includes('BookText'))
-      return
+    // There's no section headers for book/audiobook lessons, so return if we're in one of those lessons.
+    if (lessonType.includes('BookText')) return
 
     // Find the section that we're currently scrolling in by itereting through the sections and checking their offsets.
     var sectionIndex = -1
     do sectionIndex += 1
     while (scrollPosition >= sectionOffsets.current[sectionIndex].globalOffset)
     var section = sectionOffsets.current[sectionIndex - 1]
+
+    // If the title or subtitle of the section we're in are different from the current title and subtitle, change them.
+    if (section !== currentSection) currentSection.current = section
 
     // Auto-complete lesson if text is scrolled 20% through the Application chapter.
     if (
@@ -241,24 +243,19 @@ const LessonTextViewer = ({
         0.2
     )
       markLessonAsComplete()
-
-    // If the title or subtitle of the section we're in are different from the current title and subtitle, change them.
-    if (
-      section.title !== sectionTitleText ||
-      section.subtitle !== sectionSubtitleText
-    )
-      setAndAnimateSectionHeaderText(section.title, section.subtitle)
   }
 
   /** useEffect function that sets the isFullyRendered state to true once all of the layout states have been set correctly. */
   useEffect(() => {
     if (layouts.current.contentHeight && layouts.current.windowHeight) {
-      if (!isFullyRendered) setIsFullyRendered(true)
+      !isFullyRendered && setIsFullyRendered(true)
 
       sectionOffsets.current = sectionOffsets.current.map(section => ({
         ...section,
         localOffset: convertGlobalScrollPosToLocal(section.globalOffset)
       }))
+
+      currentSection.current = sectionOffsets.current[0]
     }
   }, [layouts.current, sectionOffsets.current])
 
@@ -280,11 +277,7 @@ const LessonTextViewer = ({
         // If we're not actively snapped to something already...
         if (!isSnapped.current) {
           // If the section we're snapping to is different from the section we were last on, we need to update the section header text as well.
-          if (
-            section.title !== sectionTitleText ||
-            section.subtitle !== sectionSubtitleText
-          )
-            setAndAnimateSectionHeaderText(section.title, section.subtitle)
+          if (section !== currentSection) currentSection.current = section
 
           // Set the isSnapped ref to true since we are actively snapped to a section.
           isSnapped.current = true
@@ -335,7 +328,6 @@ const LessonTextViewer = ({
   }, [isScrollBarDragging.current])
 
   const setAndAnimateSectionHeaderText = (newTitle, newSubtitle) => {
-    isSectionHeaderUpdating.current = true
     Animated.parallel([
       Animated.timing(sectionTitleOpacity, {
         toValue: 0,
@@ -353,12 +345,20 @@ const LessonTextViewer = ({
   }
 
   useEffect(() => {
+    currentSection.current &&
+      setAndAnimateSectionHeaderText(
+        currentSection.current.title,
+        currentSection.current.subtitle
+      )
+  }, [currentSection.current])
+
+  useEffect(() => {
     if (sectionTitleText !== null) {
       sectionTitleYTransform.setValue(0)
       Animated.timing(sectionTitleOpacity, {
         toValue: 1,
         duration: 100
-      }).start(() => (isSectionHeaderUpdating.current = false))
+      }).start()
     }
   }, [refreshSectionHeader])
 
@@ -415,8 +415,8 @@ const LessonTextViewer = ({
         ]}
         activeOpacity={1}
         onPress={() => {
-          isScrolling.current = true
-          setTimeout(() => (isScrolling.current = false), 50)
+          // isScrolling.current = true
+          // setTimeout(() => (isScrolling.current = false), 50)
         }}
       >
         {sectionOffsets.current.map((section, index) => (

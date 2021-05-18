@@ -29,7 +29,6 @@ const LessonTextSectionHeader = ({
   sectionHeaderOpacity,
   sectionTitleText,
   sectionSubtitleText,
-  setSectionHeaderHeight,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -46,9 +45,6 @@ const LessonTextSectionHeader = ({
         transform: [{ translateY: sectionHeaderYTransform }]
       }
     ]}
-    onLayout={({ nativeEvent }) =>
-      setSectionHeaderHeight(nativeEvent.layout.height)
-    }
   >
     <Text>
       <Text

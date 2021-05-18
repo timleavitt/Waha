@@ -424,6 +424,7 @@ const PlayScreen = ({
    * @param {number} chapter - The chapter to switch to.
    */
   const changeChapter = async chapter => {
+    if (!isMediaLoaded) return
     /* Pause audio or video before changing chapters. This is here because of some jank android-only error where the onPlaybackStatusUpdate function was being called continuously when switching from the Training chapter to a different chapter, even when media wasn't loaded, which caused the app to constantly switch between being loaded and not loaded. Pausing the audio or video before switching fixes this issue. */
     if (isMediaPlaying && isMediaLoaded) {
       // if (activeChapter === chapters.TRAINING) videoRef.current.pauseAsync()
@@ -432,7 +433,7 @@ const PlayScreen = ({
     }
 
     // Switch to the new chapter if it's different from the currently active chapter and the current media is loaded.
-    if (chapter !== activeChapter && isMediaLoaded) setActiveChapter(chapter)
+    if (chapter !== activeChapter) setActiveChapter(chapter)
     // If we're "changing" to our currently active chapter, start it over at the beginning.
     else playFromLocation(0)
 
@@ -666,9 +667,7 @@ const PlayScreen = ({
     } // If a Story chapter is still downloading or it isn't downloaded and can't start downloading, swipe to the Scripture text so the user can read the text while they're waiting for it to download.
     else if (isAudioDownloading.current) albumArtSwiperRef.current.snapToItem(2)
     // Otherwise, just change to the Story chapter.
-    else {
-      changeChapter(chapters.STORY)
-    }
+    else changeChapter(chapters.STORY)
   }
 
   /** Handles the finishing of the Story chapter. */

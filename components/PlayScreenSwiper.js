@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react'
 import { Animated, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import { lessonTypes, scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -15,6 +15,7 @@ import LessonTextSectionHeader from './LessonTextSectionHeader'
 import LessonTextViewer from './LessonTextViewer'
 import PageDots from './PageDots'
 import PlayScreenTitle from './PlayScreenTitle'
+
 function mapStateToProps (state) {
   return {
     activeGroup: activeGroupSelector(state),
@@ -74,8 +75,6 @@ const PlayScreenSwiper = ({
   const sectionHeaderOpacity = useRef(new Animated.Value(1)).current
   const sectionHeaderYTransform = useRef(new Animated.Value(0)).current
 
-  const [sectionHeaderHeight, setSectionHeaderHeight] = useState(0)
-
   const pages = [
     <View
       key='1'
@@ -106,7 +105,6 @@ const PlayScreenSwiper = ({
             sectionHeaderYTransform={sectionHeaderYTransform}
             sectionTitleText={sectionTitleText}
             sectionSubtitleText={sectionSubtitleText}
-            setSectionHeaderHeight={setSectionHeaderHeight}
           />
           <LessonTextViewer
             lessonTextContentRef={lessonTextContentRef}
@@ -123,7 +121,6 @@ const PlayScreenSwiper = ({
             sectionTitleYTransform={sectionHeaderYTransform}
             markLessonAsComplete={markLessonAsComplete}
             isThisLessonComplete={isThisLessonComplete}
-            sectionHeaderHeight={sectionHeaderHeight}
           />
         </View>
       ) : (
@@ -147,8 +144,7 @@ const PlayScreenSwiper = ({
         style={{ flex: 1 }}
         initialPage={
           // The page order is reversed for RTL languages, so we need to start on the second page instead of the first page. Also, we want to start on the text page for book lessons since the user's only option is to read the text.
-          // lessonType === lessonTypes.BOOK ? (isRTL ? 0 : 1) : isRTL ? 1 : 0
-          1
+          lessonType === lessonTypes.BOOK ? (isRTL ? 0 : 1) : isRTL ? 1 : 0
         }
         scrollEnabled={!isScrollBarDragging.current && !isScrolling.current}
         onPageSelected={({ nativeEvent }) => {

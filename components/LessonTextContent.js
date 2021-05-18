@@ -95,7 +95,6 @@ const LessonTextContent = ({
   sectionOffsets,
   // setSectionOffsets,
   isFullyRendered,
-  convertGlobalScrollPosToLocal,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
