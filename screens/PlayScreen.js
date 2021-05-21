@@ -306,7 +306,6 @@ const PlayScreen = ({
 
   /** useEffect function that adds video to the media object if this lesson has video. */
   useEffect(() => {
-    console.log(videoRef.current)
     if (videoRef.current) media.addVideo(videoRef.current)
   }, [videoRef.current])
 
@@ -615,8 +614,10 @@ const PlayScreen = ({
       positionMillis / durationMillis > 0.5 &&
       !isThisLessonComplete.current &&
       activeChapter === completionChapter
-    )
+    ) {
+      console.log('beep')
       markLessonAsComplete()
+    }
 
     // Keep the isPlaying state in sync with the playback status while in fullscreen mode.
     if (

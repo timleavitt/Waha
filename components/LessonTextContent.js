@@ -92,6 +92,7 @@ const LessonTextContent = ({
   onScroll,
   // setTextWindowHeight,
   isScrolling,
+  setIsScrolling,
   sectionOffsets,
   // setSectionOffsets,
   isFullyRendered,
@@ -152,8 +153,8 @@ const LessonTextContent = ({
       onLayout={onLayout}
       removeClippedSubviews={false}
       scrollEventThrottle={32}
-      onMomentumScrollEnd={() => (isScrolling.current = false)}
-      onScrollEndDrag={() => (isScrolling.current = false)}
+      onMomentumScrollEnd={() => setIsScrolling(false)}
+      onScrollEndDrag={() => setIsScrolling(false)}
     >
       {!lessonType.includes('BookText') ? (
         <View>

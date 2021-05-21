@@ -124,14 +124,6 @@ const LessonTextViewer = ({
     })
   }
 
-  useEffect(() => {
-    console.log(`isScrolling: ${isScrolling}`)
-  }, [isScrolling])
-
-  useEffect(() => {
-    console.log(`isScrollBarDragging: ${isScrollBarDragging}`)
-  }, [isScrollBarDragging])
-
   /**
    * Handles the state change of the scroll bar. Relevant states are BEGAN when the user starts dragging the scroll bar and END when the user stops dragging it.
    * @param {Object} nativeEvent - The state change event.
@@ -158,8 +150,6 @@ const LessonTextViewer = ({
         // Make the scroll bar position update based on the scroll position of the text now that we're done dragging.
         setIsScrollBarDragging(false)
 
-        console.log('hmm')
-
         // Set a short timeout to set isScrolling to false. This is on a timeout so that the the state change always happens after the user finishes dragging.
         setTimeout(() => setIsScrolling(false), 50)
 
@@ -176,6 +166,7 @@ const LessonTextViewer = ({
 
   /** Gets fired whenever the user scrolls the lesson text content. */
   const onScroll = ({ nativeEvent }) => {
+    // console.log(`${Date.now()} onScroll firing.`)
     // Set the isScrolling variable to true if it isn't already.
     if (!isScrolling) setIsScrolling(true)
 
@@ -230,13 +221,18 @@ const LessonTextViewer = ({
    * Checks if the section header needs to be updated based on the current scroll position.
    */
   const checkForSectionHeaderUpdates = scrollPosition => {
+    // console.log(`${Date.now()} Checking for section header updates.`)
     // There's no section headers for book/audiobook lessons, so return if we're in one of those lessons.
     if (lessonType.includes('BookText')) return
 
     // Find the section that we're currently scrolling in by itereting through the sections and checking their offsets.
     var sectionIndex = -1
-    do sectionIndex += 1
-    while (scrollPosition >= sectionOffsets.current[sectionIndex].globalOffset)
+    do {
+      // console.log(`${Date.now()} In the do-while.`)
+      sectionIndex += 1
+    } while (
+      scrollPosition >= sectionOffsets.current[sectionIndex].globalOffset
+    )
     var section = sectionOffsets.current[sectionIndex - 1]
 
     // If the title or subtitle of the section we're in are different from the current title and subtitle, change them.
@@ -273,6 +269,7 @@ const LessonTextViewer = ({
    */
   const checkForSnaps = dragPosition => {
     if (!isScrollBarDragging) return
+    // console.log(`${Date.now()} Checking for snaps`)
     // This keeps track of whether a section was snapped to in this runthrough of the check function. If we aren't snapped to anything, we should update the scroll bar position as normal.
     var didSnap = false
 
@@ -324,7 +321,6 @@ const LessonTextViewer = ({
       ANIMATION FUNCTIONS
     */
   useEffect(() => {
-    console.log('drag update')
     if (isScrollBarDragging)
       Animated.timing(floatingSectionLabelsOpacity, {
         toValue: 1,
@@ -383,6 +379,7 @@ const LessonTextViewer = ({
         onScroll={onScroll}
         // setTextWindowHeight={setTextWindowHeight}
         isScrolling={isScrolling}
+        setIsScrolling={setIsScrolling}
         sectionOffsets={sectionOffsets}
         // setSectionOffsets={setSectionOffsets}
         isFullyRendered={isFullyRendered}
