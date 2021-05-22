@@ -64,19 +64,16 @@ const PianoPasscodeSetScreen = ({
 
   /** The text to display above the piano telling the user what to do. */
   const instructionText = {
-    PianoPasscodeSet: translations.security.choose_key_order_label,
-    PianoPasscodeSetConfirm: translations.security.confirm_key_order_label,
-    PianoPasscodeChange: translations.security.choose_new_key_order_label,
-    PianoPasscodeChangeConfirm:
-      translations.security.confirm_new_key_order_label
+    PianoPasscodeSet: translations.security.choose_passcode,
+    PianoPasscodeSetConfirm: translations.security.confirm_passcode,
+    PianoPasscodeChange: translations.security.choose_passcode,
+    PianoPasscodeChangeConfirm: translations.security.confirm_passcode
   }
 
   /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
     setOptions({
-      title: routeName.includes('Set')
-        ? translations.security.header_set_key_order
-        : translations.security.header_change_key_order,
+      title: translations.security.security,
       headerRight: isRTL
         ? () => (
             <WahaBackButton
@@ -116,8 +113,8 @@ const PianoPasscodeSetScreen = ({
           // If passcodes match, pop up an alert, log it, set security enabled, set the passcode in redux, and go back.
           if (localPasscode === passcode) {
             Alert.alert(
-              translations.security.popups.key_order_set_confirmation_title,
-              translations.security.popups.key_order_set_confirmation_message,
+              translations.security.passcode_confirmation_title,
+              translations.security.passcode_confirmation_message,
               [{ text: translations.general.ok, onPress: () => {} }]
             )
             // Log the enabling of Security Mode in Firebase analytics.
@@ -131,8 +128,8 @@ const PianoPasscodeSetScreen = ({
           } // Otherwise, show an alert that the passcodes don't match.
           else {
             Alert.alert(
-              translations.security.popups.no_match_title,
-              translations.security.popups.no_match_message,
+              translations.security.no_match_title,
+              translations.security.no_match_message,
               [{ text: translations.general.ok, onPress: () => {} }]
             )
             goBack()
@@ -149,8 +146,8 @@ const PianoPasscodeSetScreen = ({
           // If passcodes match, pop up an alert, set the passcode in redux, and go back.
           if (localPasscode === passcode) {
             Alert.alert(
-              translations.security.popups.key_order_set_confirmation_title,
-              translations.security.popups.key_order_set_confirmation_message,
+              translations.security.passcode_confirmation_title,
+              translations.security.passcode_confirmation_message,
               [{ text: translations.general.ok, onPress: () => {} }]
             )
             setSecurityEnabled(true)
@@ -160,8 +157,8 @@ const PianoPasscodeSetScreen = ({
           } // Otherwise, show an alert that the passcodes don't match.
           else {
             Alert.alert(
-              translations.security.popups.no_match_title,
-              translations.security.popups.no_match_message,
+              translations.security.no_match_title,
+              translations.security.no_match_message,
               [{ text: translations.general.ok, onPress: () => {} }]
             )
             goBack()
@@ -191,7 +188,7 @@ const PianoPasscodeSetScreen = ({
           type='outline'
           onPress={() => setLocalPasscode('')}
           color={colors.red}
-          label={translations.security.clear_button_label}
+          label={translations.general.clear}
           width={Dimensions.get('window').width / 3}
           style={{ marginVertical: 0 }}
         />

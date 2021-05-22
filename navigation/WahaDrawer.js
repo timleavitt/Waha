@@ -116,17 +116,17 @@ const WahaDrawer = ({
         <View style={{ width: '100%', height: 5 }} />
         <DrawerItem
           icon='group'
-          label={translations.groups.header}
+          label={translations.groups.groups_and_languages}
           onPress={() => navigate('Groups')}
         />
         <DrawerItem
           icon='security'
-          label={translations.security.header}
+          label={translations.security.security}
           onPress={() => navigate('SecurityMode')}
         />
         <DrawerItem
           icon='boat'
-          label={translations.mobilization_tools.header}
+          label={translations.mobilization_tools.mobilization_tools}
           onPress={() => navigate('MobilizationTools')}
         />
         <View style={{ width: '100%', height: 5 }} />
@@ -151,18 +151,20 @@ const WahaDrawer = ({
         </Text>
         <DrawerItem
           icon='storage'
-          label={translations.storage.header}
+          label={translations.storage.storage}
           onPress={() => navigate('Storage')}
         />
         <DrawerItem
           icon='email'
-          label={translations.contact_us && translations.contact_us.header}
+          label={translations.contact_us && translations.contact_us.contact_us}
           onPress={() => navigate('ContactUs')}
         />
         <DrawerItem
           icon='info'
           onPress={() => navigate('Information')}
-          label={translations.information && translations.information.header}
+          label={
+            translations.information && translations.information.information
+          }
         />
       </ScrollView>
       <AddEditGroupModal

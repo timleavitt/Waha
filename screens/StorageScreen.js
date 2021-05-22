@@ -177,9 +177,9 @@ const StorageScreen = ({
       megabytes={languageStorageSizes[item.languageID]}
       clearDownloads={() => {
         Alert.alert(
-          translations.storage.popups
+          translations.storage
             .clear_all_downloaded_lessons_for_a_language_title,
-          translations.storage.popups
+          translations.storage
             .clear_all_downloaded_lessons_for_a_language_message,
           [
             {
@@ -213,12 +213,12 @@ const StorageScreen = ({
       <WahaButton
         type='filled'
         color={colors.red}
-        label={`${translations.storage.clear_all_downloaded_lessons_button_label} (${totalStorage} ${translations.storage.megabyte_label})`}
+        label={`${translations.storage.clear_all_downloaded_lessons} (${totalStorage} ${translations.storage.megabyte})`}
         width={Dimensions.get('window').width - 40}
         onPress={() =>
           Alert.alert(
-            translations.storage.popups.clear_all_downloaded_lessons_title,
-            translations.storage.popups.clear_all_downloaded_lessons_message,
+            translations.storage.clear_all_downloaded_lessons_title,
+            translations.storage.clear_all_downloaded_lessons_message,
             [
               {
                 text: translations.general.cancel,

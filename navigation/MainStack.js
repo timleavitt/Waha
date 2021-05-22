@@ -261,7 +261,7 @@ const MainStack = ({
         name='Groups'
         component={GroupsScreen}
         options={{
-          headerTitle: translations.groups.header,
+          headerTitle: translations.groups.groups_and_languages,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           }
@@ -305,7 +305,7 @@ const MainStack = ({
         name='Storage'
         component={StorageScreen}
         options={{
-          headerTitle: translations.storage.header,
+          headerTitle: translations.storage.storage,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -319,7 +319,7 @@ const MainStack = ({
         name='MobilizationTools'
         component={MobilizationToolsScreen}
         options={{
-          headerTitle: translations.mobilization_tools.header,
+          headerTitle: translations.mobilization_tools.mobilization_tools,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -333,7 +333,7 @@ const MainStack = ({
         name='MobilizationToolsUnlock'
         component={MobilizationToolsUnlockScreen}
         options={{
-          headerTitle: translations.mobilization_tools.header,
+          headerTitle: translations.mobilization_tools.mobilization_tools,
           headerStyle: {
             backgroundColor: colors.white
           },
@@ -347,7 +347,7 @@ const MainStack = ({
         name='SecurityMode'
         component={SecurityModeScreen}
         options={{
-          headerTitle: translations.security.header,
+          headerTitle: translations.security.security,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -361,7 +361,7 @@ const MainStack = ({
         name='SecurityOnboardingSlides'
         component={SecurityOnboardingSlidesScreen}
         options={{
-          headerTitle: translations.security.header,
+          headerTitle: translations.security.security,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -447,7 +447,7 @@ const MainStack = ({
         component={InformationScreen}
         options={{
           headerTitle:
-            translations.information && translations.information.header,
+            translations.information && translations.information.information,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -462,7 +462,7 @@ const MainStack = ({
         component={ContactUsScreen}
         options={{
           headerTitle:
-            translations.contact_us && translations.contact_us.header,
+            translations.contact_us && translations.contact_us.contact_us,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },

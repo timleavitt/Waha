@@ -99,7 +99,7 @@ const AlbumArtSwiper = ({
         combinedQuestionList.forEach((question, index) => {
           var temp = {}
           temp['header'] =
-            translations.play.question_header + ' ' + (index + 1).toString()
+            translations.play.question + ' ' + (index + 1).toString()
           temp['text'] = question + '\n'
           updatedQuestionArray.push(temp)
         })
@@ -184,7 +184,7 @@ const AlbumArtSwiper = ({
                           colors.chateau
                         )}
                       >
-                        {translations.play.copyright_for_text + '\n'}
+                        {translations.general.copyright_for_text + '\n'}
                       </Text>
                       <Text
                         style={StandardTypography(
@@ -195,7 +195,7 @@ const AlbumArtSwiper = ({
                           colors.chateau
                         )}
                       >
-                        {translations.play.copyright_for_audio}
+                        {translations.general.copyright_for_audio}
                       </Text>
                     </View>
                   )

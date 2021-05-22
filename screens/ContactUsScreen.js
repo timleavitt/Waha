@@ -110,9 +110,9 @@ const ContactUsScreen = ({
         setIsSubmitting(false)
         Alert.alert(
           translations.contact_us &&
-            translations.contact_us.popups.submitted_successfully_title,
+            translations.contact_us.submitted_successfully_title,
           translations.contact_us &&
-            translations.contact_us.popups.submitted_successfully_message,
+            translations.contact_us.submitted_successfully_message,
           [
             {
               text: translations.general.ok,
@@ -126,10 +126,9 @@ const ContactUsScreen = ({
       .catch(() => {
         setIsSubmitting(false)
         Alert.alert(
+          translations.contact_us && translations.contact_us.submit_error_title,
           translations.contact_us &&
-            translations.contact_us.popups.submit_error_title,
-          translations.contact_us &&
-            translations.contact_us.popups.submit_error_message,
+            translations.contact_us.submit_error_message,
           [
             {
               text: translations.general.ok,
@@ -180,7 +179,7 @@ const ContactUsScreen = ({
             ]}
           >
             {leftAsterisk}
-            {translations.contact_us && translations.contact_us.email_label}
+            {translations.contact_us && translations.contact_us.email}
             {rightAsterisk}
           </Text>
           <View
@@ -245,7 +244,7 @@ const ContactUsScreen = ({
               ]}
             >
               {leftAsterisk}
-              {translations.contact_us && translations.contact_us.message_label}
+              {translations.contact_us && translations.contact_us.message}
               {rightAsterisk}
             </Text>
             <Text
@@ -310,8 +309,7 @@ const ContactUsScreen = ({
               { marginHorizontal: 10 }
             ]}
           >
-            {translations.contact_us &&
-              translations.contact_us.bug_checkmark_label}
+            {translations.contact_us && translations.contact_us.is_a_bug}
           </Text>
         </View>
         {/* Reproduction steps input area. */}
@@ -329,8 +327,7 @@ const ContactUsScreen = ({
                 { marginVertical: 10 * scaleMultiplier }
               ]}
             >
-              {translations.contact_us &&
-                translations.contact_us.reproduce_label}
+              {translations.contact_us && translations.contact_us.reproducable}
             </Text>
             <TextInput
               onChangeText={text => setReproductionStepsTextInput(text)}
@@ -367,12 +364,7 @@ const ContactUsScreen = ({
               : colors.apple
           }
           useDefaultFont={false}
-          label={
-            isSubmitting
-              ? ''
-              : translations.contact_us &&
-                translations.contact_us.submit_button_label
-          }
+          label={isSubmitting ? '' : translations.general.submit}
           width={Dimensions.get('window').width / 3}
           onPress={submit}
           style={{

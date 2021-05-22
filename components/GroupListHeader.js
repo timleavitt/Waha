@@ -136,8 +136,8 @@ const GroupListHeader = ({
         }}
         onPress={() =>
           Alert.alert(
-            translations.groups.popups.delete_language_title,
-            translations.groups.popups.delete_language_message,
+            translations.groups.delete_language_title,
+            translations.groups.delete_language_message,
             [
               {
                 text: translations.general.cancel,

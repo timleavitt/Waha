@@ -119,7 +119,7 @@ const SetInfoModal = ({
 
   return (
     <ModalScreen
-      title={translations.add_set.header_set_details}
+      title={translations.add_set.set_details}
       hideModal={hideModal}
       isVisible={isVisible}
     >
@@ -135,7 +135,7 @@ const SetInfoModal = ({
           hideModal()
         }}
         style={{ marginHorizontal: 20, marginVertical: 10 }}
-        label={translations.add_set.add_new_story_set_button_label}
+        label={translations.add_set.add_new_story_set}
         extraComponent={
           <Icon
             style={{ marginHorizontal: 10 }}

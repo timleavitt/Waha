@@ -83,13 +83,13 @@ const AddSetScreen = ({
   useEffect(() => {
     switch (category) {
       case 'Foundational':
-        setHeaderTitle(translations.add_set.header_foundational)
+        setHeaderTitle(translations.add_set.add_foundational_set)
         break
       case 'Topical':
-        setHeaderTitle(translations.add_set.header_topical)
+        setHeaderTitle(translations.add_set.add_topical_set)
 
         // Start off array of tags with the 'All' label since we always display that option.
-        var tags = [translations.add_set.all_tag_label]
+        var tags = [translations.general.all]
 
         // Go through each Topical Story Set and add all the various tags to our tag array.
         activeDatabase.sets
@@ -103,7 +103,7 @@ const AddSetScreen = ({
         setTags(tags)
         break
       case 'MobilizationTools':
-        setHeaderTitle(translations.add_set.header_mt)
+        setHeaderTitle(translations.add_set.add_mobilization_tool)
         break
     }
   }, [])
@@ -191,8 +191,7 @@ const AddSetScreen = ({
           // Filter for Topical Story Sets that match the currently selected tag (if there is one).
           .filter(topicalAddedSet =>
             // If the selected tag is blank (meaning nothing has been selected) or 'All' is selected, show all the Topical Story Sets. Otherwise, filter by the selected tag.
-            selectedTag === '' ||
-            selectedTag === translations.add_set.all_tag_label
+            selectedTag === '' || selectedTag === translations.general.all
               ? true
               : topicalAddedSet.tags.some(tag => selectedTag === tag)
           )
@@ -296,7 +295,7 @@ const AddSetScreen = ({
                 colors.chateau
               )}
             >
-              {translations.add_set.no_more_sets_text}
+              {translations.add_set.no_more_sets}
             </Text>
           </View>
         )}
@@ -304,7 +303,7 @@ const AddSetScreen = ({
       {/* Modals */}
       <SnackBar
         visible={showSnackbar}
-        textMessage={translations.add_set.set_added_message}
+        textMessage={translations.add_set.set_added}
         messageStyle={{
           color: colors.white,
           fontSize: 24 * scaleMultiplier,

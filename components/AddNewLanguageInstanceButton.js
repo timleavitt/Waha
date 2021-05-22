@@ -63,7 +63,7 @@ const AddNewLanguageInstanceButton = ({
           colors.chateau
         )}
       >
-        {translations.groups.new_language_button_label}
+        {translations.groups.new_language}
       </Text>
     </TouchableOpacity>
   )

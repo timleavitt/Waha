@@ -153,8 +153,8 @@ const GroupItem = ({
           style={styles.minusButtonContainer}
           onPress={() => {
             Alert.alert(
-              translations.groups.popups.delete_group_title,
-              translations.groups.popups.delete_group_message,
+              translations.groups.delete_group_title,
+              translations.groups.delete_group_message,
               [
                 {
                   text: translations.general.cancel,

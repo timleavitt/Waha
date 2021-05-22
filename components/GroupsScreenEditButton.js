@@ -45,9 +45,7 @@ const GroupsScreenEditButton = ({
           }
         ]}
       >
-        {isEditing
-          ? translations.groups.done_button_label
-          : translations.groups.edit_button_label}
+        {isEditing ? translations.general.done : translations.general.edit}
       </Text>
     </TouchableOpacity>
   )

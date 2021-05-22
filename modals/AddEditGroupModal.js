@@ -99,8 +99,8 @@ const AddEditGroupModal = ({
       groups.forEach(group => {
         if (group.name === groupNameInput) {
           Alert.alert(
-            translations.add_edit_group.popups.duplicate_group_name_title,
-            translations.add_edit_group.popups.duplicate_group_name_message,
+            translations.add_edit_group.duplicate_group_name_title,
+            translations.add_edit_group.duplicate_group_name_message,
             [{ text: translations.general.ok, onPress: () => {} }]
           )
           isDuplicate = true
@@ -114,8 +114,8 @@ const AddEditGroupModal = ({
           thisGroup.name !== groupNameInput
         ) {
           Alert.alert(
-            translations.add_edit_group.popups.duplicate_group_name_title,
-            translations.add_edit_group.popups.duplicate_group_name_message,
+            translations.add_edit_group.duplicate_group_name_title,
+            translations.add_edit_group.duplicate_group_name_message,
             [{ text: translations.general.ok, onPress: () => {} }]
           )
           isDuplicate = true
@@ -132,8 +132,8 @@ const AddEditGroupModal = ({
   const checkForBlank = () => {
     if (groupNameInput === '') {
       Alert.alert(
-        translations.add_edit_group.popups.blank_group_name_title,
-        translations.add_edit_group.popups.blank_group_name_message,
+        translations.add_edit_group.blank_group_name_title,
+        translations.add_edit_group.blank_group_name_message,
         [{ text: translations.general.ok, onPress: () => {} }]
       )
       return true
@@ -214,8 +214,8 @@ const AddEditGroupModal = ({
       }
       title={
         type === 'AddGroup'
-          ? translations.add_edit_group.header_add
-          : translations.add_edit_group.header_edit
+          ? translations.add_edit_group.new_group
+          : translations.add_edit_group.edit_group
       }
     >
       <View style={styles.groupAvatarContainer}>

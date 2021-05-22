@@ -59,8 +59,8 @@ const SecurityOnboardingSlidesScreen = ({
   const pages = [
     <OnboardingPage
       key='1'
-      title={translations.security.popups.onboarding_1_title}
-      message={translations.security.popups.onboarding_1_message}
+      title={translations.security.onboarding_1_title}
+      message={translations.security.onboarding_1_message}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -71,8 +71,8 @@ const SecurityOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='2'
-      title={translations.security.popups.onboarding_2_title}
-      message={translations.security.popups.onboarding_2_message}
+      title={translations.security.onboarding_2_title}
+      message={translations.security.onboarding_2_message}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -83,8 +83,8 @@ const SecurityOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='3'
-      title={translations.security.popups.onboarding_3_title}
-      message={translations.security.popups.onboarding_3_message}
+      title={translations.security.onboarding_3_title}
+      message={translations.security.onboarding_3_message}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -95,8 +95,8 @@ const SecurityOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='4'
-      title={translations.security.popups.onboarding_4_title}
-      message={translations.security.popups.onboarding_4_message}
+      title={translations.security.onboarding_4_title}
+      message={translations.security.onboarding_4_message}
     >
       <View style={styles.imageContainer}>
         <Image

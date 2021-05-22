@@ -70,17 +70,17 @@ const SecurityModeScreen = ({
    */
   const getTimeoutText = () => {
     if (security.timeoutDuration === 60000)
-      return translations.security.one_minute_label
+      return translations.security.one_minute
     else if (security.timeoutDuration === 300000)
-      return translations.security.five_minutes_label
+      return translations.security.five_minutes
     else if (security.timeoutDuration === 900000)
-      return translations.security.fifteen_minutes_label
+      return translations.security.fifteen_minutes
     else if (security.timeoutDuration === 1800000)
-      return translations.security.thirty_minutes_label
+      return translations.security.thirty_minutes
     else if (security.timeoutDuration === 3600000)
-      return translations.security.one_hour_label
+      return translations.security.one_hour
     else if (security.timeoutDuration === 0)
-      return translations.security.instant_label
+      return translations.security.instant
   }
 
   return (
@@ -88,11 +88,9 @@ const SecurityModeScreen = ({
       {/* Inside a ScrollView in case a user's phone can't fit all of the controls on their screen. */}
       <ScrollView bounces={false}>
         <WahaHero source={require('../assets/gifs/piano_unlock.gif')} />
-        <WahaBlurb
-          text={translations.security.security_mode_description_text}
-        />
+        <WahaBlurb text={translations.security.security_mode_blurb} />
         <WahaSeparator />
-        <WahaItem title={translations.security.security_mode_picker_label}>
+        <WahaItem title={translations.security.security_mode}>
           <Switch
             trackColor={{ false: colors.chateau, true: colors.apple }}
             thumbColor={colors.white}
@@ -115,7 +113,7 @@ const SecurityModeScreen = ({
             {/* Control item one allows the user to change the security mode timeout. */}
             <WahaSeparator />
             <WahaItem
-              title={translations.security.change_timeout_button_label}
+              title={translations.security.change_timeout}
               onPress={() => setShowChangeTimeoutModal(true)}
             >
               <View
@@ -145,7 +143,7 @@ const SecurityModeScreen = ({
             {/* Control item two allows the user to update their passcode. */}
             <WahaSeparator />
             <WahaItem
-              title={translations.security.change_key_order_button_label}
+              title={translations.security.change_passcode}
               onPress={() => navigate('PianoPasscodeChange')}
             >
               <Icon

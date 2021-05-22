@@ -146,8 +146,8 @@ const MobilizationToolsUnlockScreen = ({
       // Make the input component "shake" when they enter in a wrong code.
       pinRef.current.shake().then(() => setPasscode(''))
       Alert.alert(
-        translations.passcode.popups.unlock_unsucessful_title,
-        translations.passcode.popups.unlock_unsucessful_message,
+        translations.mobilization_tools_unlock.unlock_unsuccessful_title,
+        translations.mobilization_tools_unlock.unlock_unsuccessful_message,
         [
           {
             text: translations.general.ok,
@@ -165,16 +165,16 @@ const MobilizationToolsUnlockScreen = ({
   const getTimeoutText = () => {
     if (Date.now() - security.mtUnlockTimeout < 0)
       return (
-        translations.passcode.too_many_attempts_label +
+        translations.mobilization_tools_unlock.too_many_attempts +
         ' ' +
         Math.round((security.mtUnlockTimeout - Date.now()) / 60000) +
         ' ' +
-        translations.passcode.minutes_label
+        translations.mobilization_tools_unlock.minutes
       )
     else if (mtUnlockAttempts === 3)
-      return translations.passcode.two_attempt_remaining_label
+      return translations.mobilization_tools_unlock.two_attempts_remaining
     else if (mtUnlockAttempts === 4)
-      return translations.passcode.one_attempt_remaining_label
+      return translations.mobilization_tools_unlock.one_attempt_remaining
     else return ''
   }
 
@@ -196,7 +196,7 @@ const MobilizationToolsUnlockScreen = ({
           }
         ]}
       >
-        {translations.passcode.enter_passcode_text}
+        {translations.mobilization_tools_unlock.enter_code}
       </Text>
       <SmoothPinCodeInput
         ref={pinRef}

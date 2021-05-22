@@ -44,7 +44,7 @@ const SetsTabs = ({
       name='MobilizationTools'
       component={SetsScreen}
       options={{
-        title: translations.sets.mobilization_tools_sets_tab_label
+        title: translations.sets.mobilization
       }}
     />
   ) : null
@@ -55,7 +55,7 @@ const SetsTabs = ({
       name='Foundational'
       component={SetsScreen}
       options={{
-        title: translations.sets.foundational_story_sets_tab_label
+        title: translations.sets.foundations
       }}
     />
   )
@@ -66,7 +66,7 @@ const SetsTabs = ({
       name='Topical'
       component={SetsScreen}
       options={{
-        title: translations.sets.topical_sets_tab_label
+        title: translations.sets.topics
       }}
     />
   )

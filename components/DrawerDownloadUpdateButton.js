@@ -45,8 +45,8 @@ const DrawerDownloadUpdateButton = ({
     style={styles.drawerDownloadUpdateButtonContainer}
     onPress={() => {
       Alert.alert(
-        translations.general.popups.download_update_title,
-        translations.general.popups.download_update_message,
+        translations.general.download_update_title,
+        translations.general.download_update_message,
         [
           {
             text: translations.general.cancel,
@@ -85,7 +85,7 @@ const DrawerDownloadUpdateButton = ({
           )
         ]}
       >
-        {translations.general.download_update_button_label}
+        {translations.general.download_update}
       </Text>
       {isConnected ? (
         <View style={styles.iconContainer}>

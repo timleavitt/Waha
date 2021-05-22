@@ -50,7 +50,7 @@ export const languages = [
       {
         nativeName: 'الخليج العربي',
         wahaID: 'ga',
-        i18nName: 'gulfArabic',
+        i18nName: 'gulf_arabic',
         brandName: 'طريق الواحة',
         logoSource:
           'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ga%2Fother%2Fheader-v1.png?alt=media'

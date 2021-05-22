@@ -47,7 +47,7 @@ const SecurityTimeoutPickerModal = ({
   >
     {/* Button to set the timeout duration to instant. */}
     <OptionsModalButton
-      label={translations.security.instant_label}
+      label={translations.security.instant}
       onPress={() => {
         setTimeoutDuration(0), hideModal()
       }}
@@ -64,7 +64,7 @@ const SecurityTimeoutPickerModal = ({
     <WahaSeparator />
     {/* Button to set the timeout duration to 1 minute. */}
     <OptionsModalButton
-      label={translations.security.one_minute_label}
+      label={translations.security.one_minute}
       onPress={() => {
         setTimeoutDuration(60000), hideModal()
       }}
@@ -81,7 +81,7 @@ const SecurityTimeoutPickerModal = ({
     <WahaSeparator />
     {/* Button to set the timeout duration to 5 minutes. */}
     <OptionsModalButton
-      label={translations.security.five_minutes_label}
+      label={translations.security.five_minutes}
       onPress={() => {
         setTimeoutDuration(300000), hideModal()
       }}
@@ -98,7 +98,7 @@ const SecurityTimeoutPickerModal = ({
     <WahaSeparator />
     {/* Button to set the timeout duration to 15 minutes. */}
     <OptionsModalButton
-      label={translations.security.fifteen_minutes_label}
+      label={translations.security.fifteen_minutes}
       onPress={() => {
         setTimeoutDuration(900000), hideModal()
       }}
@@ -115,7 +115,7 @@ const SecurityTimeoutPickerModal = ({
     <WahaSeparator />
     {/* Button to set the timeout duration to 1 hour. */}
     <OptionsModalButton
-      label={translations.security.one_hour_label}
+      label={translations.security.one_hour}
       onPress={() => {
         setTimeoutDuration(3600000), hideModal()
       }}

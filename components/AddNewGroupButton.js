@@ -65,7 +65,7 @@ const AddNewGroupButton = ({
             colors.blue
           )}
         >
-          {translations.groups.new_group_button_label}
+          {translations.add_edit_group.new_group}
         </Text>
       </TouchableOpacity>
       <WahaSeparator />

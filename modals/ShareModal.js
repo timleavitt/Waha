@@ -92,8 +92,8 @@ const ShareModal = ({
                 hideModal()
               })
             : Alert.alert(
-                translations.general.popups.share_undownloaded_lesson_title,
-                translations.general.popups.share_undownloaded_lesson_message,
+                translations.general.share_undownloaded_lesson_title,
+                translations.general.share_undownloaded_lesson_message,
                 [
                   {
                     text: translations.general.ok,

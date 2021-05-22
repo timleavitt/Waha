@@ -68,8 +68,8 @@ const MobilizationToolsScreen = ({
       <WahaBlurb
         text={
           areMobilizationToolsUnlocked
-            ? translations.mobilization_tools.mobilization_tools_vision
-            : translations.mobilization_tools.mobilization_tools_pre_unlock
+            ? translations.mobilization_tools.blurb_post_unlock
+            : translations.mobilization_tools.blurb_pre_unlock
         }
       />
       {areMobilizationToolsUnlocked ? (
@@ -93,7 +93,7 @@ const MobilizationToolsScreen = ({
               setShowSnackbar(true)
               setTimeout(() => setShowSnackbar(false), 1500)
               Clipboard.setString(
-                `${translations.mobilization_tools.mobilization_tools_share_message_1}\n${translations.mobilization_tools.mobilization_tools_share_message_2}\n${translations.mobilization_tools.mobilization_tools_share_message_3}\n${translations.mobilization_tools.mobilization_tools_share_message_4}\n${translations.mobilization_tools.mobilization_tools_share_message_5}`
+                `${translations.mobilization_tools.share_message_1}\n${translations.mobilization_tools.share_message_2}\n${translations.mobilization_tools.share_message_3}\n${translations.mobilization_tools.share_message_4}\n${translations.mobilization_tools.share_message_5}`
               )
             }}
           >
@@ -106,7 +106,7 @@ const MobilizationToolsScreen = ({
                 colors.shark
               )}
             >
-              {translations.mobilization_tools.unlock_code_label}
+              {translations.mobilization_tools.unlock_code}
             </Text>
             <Text
               style={StandardTypography(
@@ -129,7 +129,7 @@ const MobilizationToolsScreen = ({
             }}
             onPress={() =>
               Share.share({
-                message: `${translations.mobilization_tools.mobilization_tools_share_message_1}\n${translations.mobilization_tools.mobilization_tools_share_message_2}\n${translations.mobilization_tools.mobilization_tools_share_message_3}\n${translations.mobilization_tools.mobilization_tools_share_message_4}\n${translations.mobilization_tools.mobilization_tools_share_message_5}`
+                message: `${translations.mobilization_tools.share_message_1}\n${translations.mobilization_tools.share_message_2}\n${translations.mobilization_tools.share_message_3}\n${translations.mobilization_tools.share_message_4}\n${translations.mobilization_tools.share_message_5}`
               })
             }
           >
@@ -144,7 +144,7 @@ const MobilizationToolsScreen = ({
         <View style={{ width: '100%' }}>
           <WahaSeparator />
           <WahaItem
-            title={translations.mobilization_tools.unlock_mt_button_label}
+            title={translations.mobilization_tools.unlock_mobilization_tools}
             onPress={() => navigate('MobilizationToolsUnlock')}
           >
             <Icon
@@ -158,10 +158,7 @@ const MobilizationToolsScreen = ({
       )}
       <SnackBar
         visible={showSnackbar}
-        textMessage={
-          translations.information &&
-          translations.information.copied_to_clipboard
-        }
+        textMessage={translations.general.copied_to_clipboard}
         messageStyle={{
           color: colors.white,
           fontSize: 24 * scaleMultiplier,

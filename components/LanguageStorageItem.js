@@ -79,7 +79,7 @@ const LanguageStorageItem = ({
           colors.tuna
         )}
       >
-        {megabytes + ' ' + translations.storage.megabyte_label}
+        {megabytes + ' ' + translations.storage.megabyte}
       </Text>
       <Text
         style={[
@@ -96,12 +96,12 @@ const LanguageStorageItem = ({
           }
         ]}
       >
-        {translations.storage.storage_used_label}
+        {translations.storage.storage_used}
       </Text>
       <WahaButton
         type='outline'
         color={colors.red}
-        label={translations.storage.clear_button_label}
+        label={translations.general.clear}
         width={92 * scaleMultiplier}
         onPress={clearDownloads}
         style={{ height: 45 * scaleMultiplier }}

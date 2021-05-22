@@ -152,7 +152,7 @@ const LanguageInstanceInstallScreen = ({
     setOptions(
       routeName === 'SubsequentlLanguageInstanceInstall'
         ? {
-            headerTitle: i18n.t('newLanguage')
+            headerTitle: i18n.t('new_language')
           }
         : null
     )
@@ -277,12 +277,16 @@ const LanguageInstanceInstallScreen = ({
         setIsFetchingFirebaseData(false)
         deleteLanguageData(selectedLanguage)
 
-        Alert.alert(i18n.t('fetchErrorTitle'), i18n.t('fetchErrorMessage'), [
-          {
-            text: i18n.t('ok'),
-            onPress: () => {}
-          }
-        ])
+        Alert.alert(
+          i18n.t('fetch_error_title'),
+          i18n.t('fetch_error_message'),
+          [
+            {
+              text: i18n.t('ok'),
+              onPress: () => {}
+            }
+          ]
+        )
       })
   }
 
@@ -454,7 +458,7 @@ const LanguageInstanceInstallScreen = ({
               colors.shark
             )}
           >
-            {i18n.t('selectLanguage')}
+            {i18n.t('select_language')}
           </Text>
         </View>
       )}
@@ -506,7 +510,7 @@ const LanguageInstanceInstallScreen = ({
                       colors.chateau
                     )}
                   >
-                    {i18n.t('noMoreLanguages')}
+                    {i18n.t('no_more_languages')}
                   </Text>
                 </View>
                 <WahaSeparator />
@@ -540,7 +544,7 @@ const LanguageInstanceInstallScreen = ({
                 ? ''
                 : routeName === 'InitialLanguageInstanceInstall'
                 ? 'Continue'
-                : i18n.t('addLanguage') + ' '
+                : i18n.t('add_language') + ' '
               : ''
           }
           style={{

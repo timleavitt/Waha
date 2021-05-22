@@ -48,7 +48,7 @@ const GroupNameTextInput = ({
         colors.chateau
       )}
     >
-      {translations.add_edit_group.group_name_form_label}
+      {translations.add_edit_group.group_name}
     </Text>
     <TextInput
       ref={groupNameInputRef}
@@ -66,7 +66,7 @@ const GroupNameTextInput = ({
       value={groupNameInput}
       autoCapitalize='words'
       autoCorrect={false}
-      placeholder={translations.add_edit_group.group_name_form_placeholder}
+      placeholder={translations.add_edit_group.group_name_here}
       placeholderTextColor={colors.chateau}
       maxLength={50}
       returnKeyType='done'

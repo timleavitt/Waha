@@ -79,7 +79,7 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.information && translations.information.privacy}
+          {translations.general.privacy_policy}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
@@ -155,7 +155,7 @@ const InformationScreen = ({
               colors.shark
             )}
           >
-            {translations.information && translations.information.version}
+            {translations.general.version}
           </Text>
           <Text
             style={StandardTypography(
@@ -211,10 +211,7 @@ const InformationScreen = ({
       </View>
       <SnackBar
         visible={showSnackbar}
-        textMessage={
-          translations.information &&
-          translations.information.copied_to_clipboard
-        }
+        textMessage={translations.general.copied_to_clipboard}
         messageStyle={{
           color: colors.white,
           fontSize: 24 * scaleMultiplier,
