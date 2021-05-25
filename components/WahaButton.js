@@ -68,7 +68,7 @@ const WahaButton = ({
   const outerContainerStyle = [
     {
       overflow: 'hidden',
-      borderRadius: 20,
+      borderRadius: 15,
       height: 65 * scaleMultiplier,
       width: width,
       alignItems: 'center',
