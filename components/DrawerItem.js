@@ -48,6 +48,7 @@ const DrawerItem = ({
         StandardTypography({ font, isRTL }, 'h3', 'Bold', 'left', colors.shark),
         { paddingHorizontal: 10 }
       ]}
+      numberOfLines={1}
     >
       {label}
     </Text>
@@ -56,8 +57,9 @@ const DrawerItem = ({
 
 const styles = StyleSheet.create({
   drawerItemContainer: {
-    height: 50 * scaleMultiplier,
+    // height: 50 * scaleMultiplier,
     paddingHorizontal: 10,
+    paddingVertical: 10 * scaleMultiplier,
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center'
