@@ -28,7 +28,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language)
   }
@@ -57,7 +57,7 @@ const WahaOnboardingSlidesScreen = ({
     params: { selectedLanguage }
   },
   // Props passed from redux.
-  translations,
+  t,
   isRTL,
   font,
   setHasOnboarded,
@@ -110,8 +110,8 @@ const WahaOnboardingSlidesScreen = ({
   const pages = [
     <OnboardingPage
       key='1'
-      title={translations.onboarding.onboarding_1_title}
-      message={translations.onboarding.onboarding_1_message}
+      title={t.onboarding && t.onboarding.onboarding_1_title}
+      message={t.onboarding && t.onboarding.onboarding_1_message}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -125,8 +125,8 @@ const WahaOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='2'
-      title={translations.onboarding.onboarding_2_title}
-      message={translations.onboarding.onboarding_2_message}
+      title={t.onboarding && t.onboarding.onboarding_2_title}
+      message={t.onboarding && t.onboarding.onboarding_2_message}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -140,8 +140,8 @@ const WahaOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='3'
-      title={translations.onboarding.onboarding_3_title}
-      message={translations.onboarding.onboarding_3_message}
+      title={t.onboarding && t.onboarding.onboarding_3_title}
+      message={t.onboarding && t.onboarding.onboarding_3_message}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -155,8 +155,8 @@ const WahaOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='4'
-      title={translations.onboarding.onboarding_4_title}
-      message={translations.onboarding.onboarding_4_message}
+      title={t.onboarding && t.onboarding.onboarding_4_title}
+      message={t.onboarding && t.onboarding.onboarding_4_message}
     >
       <GroupNameTextInput
         groupNameInput={groupNameInput}
@@ -213,13 +213,13 @@ const WahaOnboardingSlidesScreen = ({
                 colors.shark
               )}
             >
-              {translations.general.skip}
+              {t.general && t.general.skip}
             </Text>
           </TouchableOpacity>
         </View>
         <View style={{ width: 20 }} />
         <WahaButton
-          label={translations.general.continue}
+          label={t.general && t.general.continue}
           onPress={
             // This button goes to the next page or finishes onboarding if we're on the last page.
             isRTL

@@ -20,7 +20,7 @@ function mapStateToProps (state) {
     font: getLanguageFont(activeGroupSelector(state).language),
     activeGroup: activeGroupSelector(state),
     primaryColor: activeDatabaseSelector(state).primaryColor,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
     downloads: state.downloads,
     isConnected: state.network.isConnected
@@ -50,7 +50,7 @@ const ChapterButton = ({
   font,
   activeGroup,
   primaryColor,
-  translations,
+  t,
   isRTL,
   downloads,
   isConnected
@@ -70,10 +70,10 @@ const ChapterButton = ({
   // The names of the chapters. 'Filler' is there to line up this array with the chapters enum since the enum starts at 1.
   const chapterNames = [
     'Filler',
-    translations.play.fellowship,
-    translations.play.story,
-    translations.play.training,
-    translations.play.application
+    t.play && t.play.fellowship,
+    t.play && t.play.story,
+    t.play && t.play.training,
+    t.play && t.play.application
   ]
 
   // The default text style.

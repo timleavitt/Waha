@@ -20,7 +20,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     security: state.security,
     mtUnlockAttempts: state.mtUnlockAttempts,
@@ -57,7 +57,7 @@ const MobilizationToolsUnlockScreen = ({
   navigation: { navigate, setOptions, goBack },
   // Props passed from redux.
   isRTL,
-  translations,
+  t,
   font,
   security,
   mtUnlockAttempts,
@@ -146,11 +146,15 @@ const MobilizationToolsUnlockScreen = ({
       // Make the input component "shake" when they enter in a wrong code.
       pinRef.current.shake().then(() => setPasscode(''))
       Alert.alert(
-        translations.mobilization_tools_unlock.unlock_unsuccessful_title,
-        translations.mobilization_tools_unlock.unlock_unsuccessful_message,
+        t.mobilization_tools &&
+          t.mobilization_tools_unlock &&
+          t.mobilization_tools_unlock.unlock_unsuccessful_title,
+        t.mobilization_tools &&
+          t.mobilization_tools_unlock &&
+          t.mobilization_tools_unlock.unlock_unsuccessful_message,
         [
           {
-            text: translations.general.ok,
+            text: t.general && t.general.ok,
             onPress: () => {}
           }
         ]
@@ -165,16 +169,28 @@ const MobilizationToolsUnlockScreen = ({
   const getTimeoutText = () => {
     if (Date.now() - security.mtUnlockTimeout < 0)
       return (
-        translations.mobilization_tools_unlock.too_many_attempts +
-        ' ' +
-        Math.round((security.mtUnlockTimeout - Date.now()) / 60000) +
-        ' ' +
-        translations.mobilization_tools_unlock.minutes
+        t.mobilization_tools &&
+        t.mobilization_tools_unlock &&
+        t.mobilization_tools_unlock.too_many_attempts +
+          ' ' +
+          Math.round((security.mtUnlockTimeout - Date.now()) / 60000) +
+          ' ' +
+          t.mobilization_tools &&
+        t.mobilization_tools_unlock &&
+        t.mobilization_tools_unlock.minutes
       )
     else if (mtUnlockAttempts === 3)
-      return translations.mobilization_tools_unlock.two_attempts_remaining
+      return (
+        t.mobilization_tools &&
+        t.mobilization_tools_unlock &&
+        t.mobilization_tools_unlock.two_attempts_remaining
+      )
     else if (mtUnlockAttempts === 4)
-      return translations.mobilization_tools_unlock.one_attempt_remaining
+      return (
+        t.mobilization_tools &&
+        t.mobilization_tools_unlock &&
+        t.mobilization_tools_unlock.one_attempt_remaining
+      )
     else return ''
   }
 
@@ -196,7 +212,9 @@ const MobilizationToolsUnlockScreen = ({
           }
         ]}
       >
-        {translations.mobilization_tools_unlock.enter_code}
+        {t.mobilization_tools &&
+          t.mobilization_tools_unlock &&
+          t.mobilization_tools_unlock.enter_code}
       </Text>
       <SmoothPinCodeInput
         ref={pinRef}

@@ -39,7 +39,7 @@ export function incrementGlobalGroupCounter () {
 }
 
 /**
- * Stores the langauge data for a language instance in redux. This includes the display name, the bible ID, whether this language is RTL, the primary color of this language instance, the list of core files to download, the questions for every question set, and all the app translations.
+ * Stores the langauge data for a language instance in redux. This includes the display name, the bible ID, whether this language is RTL, the primary color of this language instance, the list of core files to download, the questions for every question set, and all the app t.
  * @export
  * @param {Object} languageData - All the data for a language.
  * @param {string} languageaInstanceID - The ID of the language instance that we're storing data for.

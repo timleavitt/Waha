@@ -17,7 +17,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
@@ -46,7 +46,7 @@ const ModalScreen = ({
   activeDatabase,
   isRTL,
   activeGroup,
-  translations,
+  t,
   font
 }) => (
   // Outer view is here because of some weird scrolling issues that occur when there's nested scrollable content inside the modal.

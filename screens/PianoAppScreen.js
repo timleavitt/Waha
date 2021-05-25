@@ -28,7 +28,7 @@ function mapStateToProps (state) {
     security: state.security,
     font: getLanguageFont(activeGroupSelector(state).language),
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -54,7 +54,7 @@ const PianoAppScreen = ({
   security,
   font,
   activeGroup,
-  translations,
+  t,
   isRTL,
   setIsMuted,
   setIsTimedOut
@@ -89,7 +89,7 @@ const PianoAppScreen = ({
     // If the user has entered in their passcode...
     if (playedNotes.includes(security.code)) {
       // If the user hasn't muted the piano app sounds, play a little sound effect when they enter their passcode correctly.
-      if (!security.isMuted) unlockSound.current.playAsync()
+      if (!security.isMuted) unlockSound.current.play && t.playAsync()
 
       setIsTimedOut(false)
 
@@ -132,7 +132,7 @@ const PianoAppScreen = ({
             { paddingHorizontal: 10 }
           ]}
         >
-          {translations.security.game_screen_title}
+          {t.security && t.security.game_screen_title}
         </Text>
       </View>
       <View>

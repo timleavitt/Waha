@@ -25,7 +25,7 @@ function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -37,7 +37,7 @@ const InformationScreen = ({
   // Props passed from redux.
   isRTL,
   font,
-  translations
+  t
 }) => {
   /** Keeps track of whether the snackbar that pops up is visible or not.  */
   const [showSnackbar, setShowSnackbar] = useState(false)
@@ -79,7 +79,7 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.general.privacy_policy}
+          {t.information && t.information.privacy_policy}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
@@ -101,7 +101,7 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.information && translations.information.donate_to_waha}
+          {t.information && t.information.donate_to_waha}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
@@ -130,7 +130,7 @@ const InformationScreen = ({
             colors.shark
           )}
         >
-          {translations.information && translations.information.rate_waha}
+          {t.information && t.information.rate_waha}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
       </TouchableOpacity>
@@ -155,7 +155,7 @@ const InformationScreen = ({
               colors.shark
             )}
           >
-            {translations.general.version}
+            {t.general && t.general.version}
           </Text>
           <Text
             style={StandardTypography(
@@ -211,7 +211,7 @@ const InformationScreen = ({
       </View>
       <SnackBar
         visible={showSnackbar}
-        textMessage={translations.general.copied_to_clipboard}
+        textMessage={t.general && t.general.copied_to_clipboard}
         messageStyle={{
           color: colors.white,
           fontSize: 24 * scaleMultiplier,

@@ -31,7 +31,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     primaryColor: activeDatabaseSelector(state).primaryColor
   }
 }
@@ -43,7 +43,7 @@ const ContactUsScreen = ({
   activeDatabase,
   isRTL,
   font,
-  translations,
+  t,
   primaryColor
 }) => {
   /** The text for the email input component. */
@@ -109,13 +109,11 @@ const ContactUsScreen = ({
       .then(() => {
         setIsSubmitting(false)
         Alert.alert(
-          translations.contact_us &&
-            translations.contact_us.submitted_successfully_title,
-          translations.contact_us &&
-            translations.contact_us.submitted_successfully_message,
+          t.contact_us && t.contact_us.submitted_successfully_title,
+          t.contact_us && t.contact_us.submitted_successfully_message,
           [
             {
-              text: translations.general.ok,
+              text: t.general && t.general.ok,
               onPress: () => {
                 goBack()
               }
@@ -126,12 +124,11 @@ const ContactUsScreen = ({
       .catch(() => {
         setIsSubmitting(false)
         Alert.alert(
-          translations.contact_us && translations.contact_us.submit_error_title,
-          translations.contact_us &&
-            translations.contact_us.submit_error_message,
+          t.contact_us && t.contact_us.submit_error_title,
+          t.contact_us && t.contact_us.submit_error_message,
           [
             {
-              text: translations.general.ok,
+              text: t.general && t.general.ok,
               onPress: () => {}
             }
           ]
@@ -179,7 +176,7 @@ const ContactUsScreen = ({
             ]}
           >
             {leftAsterisk}
-            {translations.contact_us && translations.contact_us.email}
+            {t.contact_us && t.contact_us.email}
             {rightAsterisk}
           </Text>
           <View
@@ -244,7 +241,7 @@ const ContactUsScreen = ({
               ]}
             >
               {leftAsterisk}
-              {translations.contact_us && translations.contact_us.message}
+              {t.contact_us && t.contact_us.message}
               {rightAsterisk}
             </Text>
             <Text
@@ -275,10 +272,7 @@ const ContactUsScreen = ({
               { height: 200 * scaleMultiplier, textAlignVertical: 'top' }
             ]}
             multiline
-            placeholder={
-              translations.contact_us &&
-              translations.contact_us.message_placeholder
-            }
+            placeholder={t.contact_us && t.contact_us.message_placeholder}
             placeholderTextColor={colors.chateau}
           />
         </View>
@@ -309,7 +303,7 @@ const ContactUsScreen = ({
               { marginHorizontal: 10 }
             ]}
           >
-            {translations.contact_us && translations.contact_us.is_a_bug}
+            {t.contact_us && t.contact_us.is_a_bug}
           </Text>
         </View>
         {/* Reproduction steps input area. */}
@@ -327,7 +321,7 @@ const ContactUsScreen = ({
                 { marginVertical: 10 * scaleMultiplier }
               ]}
             >
-              {translations.contact_us && translations.contact_us.reproducable}
+              {t.contact_us && t.contact_us.reproducable}
             </Text>
             <TextInput
               onChangeText={text => setReproductionStepsTextInput(text)}
@@ -364,7 +358,7 @@ const ContactUsScreen = ({
               : colors.apple
           }
           useDefaultFont={false}
-          label={isSubmitting ? '' : translations.general.submit}
+          label={isSubmitting ? '' : t.general && t.general.submit}
           width={Dimensions.get('window').width / 3}
           onPress={submit}
           style={{

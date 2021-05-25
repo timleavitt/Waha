@@ -82,7 +82,7 @@ const HomeworkModal = props => {
               textAlign: 'center'
             }}
           >
-            {props.translations.general.close}
+            {props.t.general && t.general.close}
           </Text>
         </TouchableOpacity>
       </View>
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     activeGroup: activeGroupSelector(state)
   }
 }

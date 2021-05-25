@@ -26,7 +26,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -53,7 +53,7 @@ const AlbumArtSwiper = ({
   activeGroup,
   activeDatabase,
   font,
-  translations,
+  t,
   isRTL
 }) => {
   /** Keeps track of whether the current carousel pane is the middle one or not. */
@@ -99,7 +99,7 @@ const AlbumArtSwiper = ({
         combinedQuestionList.forEach((question, index) => {
           var temp = {}
           temp['header'] =
-            translations.play.question + ' ' + (index + 1).toString()
+            t.play && t.play.question + ' ' + (index + 1).toString()
           temp['text'] = question + '\n'
           updatedQuestionArray.push(temp)
         })
@@ -184,7 +184,7 @@ const AlbumArtSwiper = ({
                           colors.chateau
                         )}
                       >
-                        {translations.general.copyright_for_text + '\n'}
+                        {t.general && t.general.copyright_for_text + '\n'}
                       </Text>
                       <Text
                         style={StandardTypography(
@@ -195,7 +195,7 @@ const AlbumArtSwiper = ({
                           colors.chateau
                         )}
                       >
-                        {translations.general.copyright_for_audio}
+                        {t.general && t.general.copyright_for_audio}
                       </Text>
                     </View>
                   )

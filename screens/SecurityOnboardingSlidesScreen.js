@@ -17,7 +17,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state)
@@ -32,7 +32,7 @@ const numPages = 4
 const SecurityOnboardingSlidesScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, navigate, goBack },
-  translations,
+  t,
   font,
   isRTL,
   activeGroup
@@ -59,8 +59,8 @@ const SecurityOnboardingSlidesScreen = ({
   const pages = [
     <OnboardingPage
       key='1'
-      title={translations.security.onboarding_1_title}
-      message={translations.security.onboarding_1_message}
+      title={t.security && t.security.onboarding_1_title}
+      message={t.security && t.security.onboarding_1_message}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -71,8 +71,8 @@ const SecurityOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='2'
-      title={translations.security.onboarding_2_title}
-      message={translations.security.onboarding_2_message}
+      title={t.security && t.security.onboarding_2_title}
+      message={t.security && t.security.onboarding_2_message}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -83,8 +83,8 @@ const SecurityOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='3'
-      title={translations.security.onboarding_3_title}
-      message={translations.security.onboarding_3_message}
+      title={t.security && t.security.onboarding_3_title}
+      message={t.security && t.security.onboarding_3_message}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -95,8 +95,8 @@ const SecurityOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='4'
-      title={translations.security.onboarding_4_title}
-      message={translations.security.onboarding_4_message}
+      title={t.security && t.security.onboarding_4_title}
+      message={t.security && t.security.onboarding_4_message}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -146,13 +146,13 @@ const SecurityOnboardingSlidesScreen = ({
                 colors.shark
               )}
             >
-              {translations.general.skip}
+              {t.general && t.general.skip}
             </Text>
           </TouchableOpacity>
         </View>
         <View style={{ width: 20 }} />
         <WahaButton
-          label={translations.general.continue}
+          label={t.general && t.general.continue}
           onPress={
             // This button goes to the next page or finishes onboarding if we're on the last page.
             isRTL

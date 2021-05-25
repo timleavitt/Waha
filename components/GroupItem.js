@@ -27,7 +27,7 @@ function mapStateToProps (state) {
     groups: state.groups,
     activeGroup: activeGroupSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -60,7 +60,7 @@ const GroupItem = ({
   groups,
   activeGroup,
   font,
-  translations,
+  t,
   deleteGroup,
   changeActiveGroup
 }) => {
@@ -153,15 +153,15 @@ const GroupItem = ({
           style={styles.minusButtonContainer}
           onPress={() => {
             Alert.alert(
-              translations.groups.delete_group_title,
-              translations.groups.delete_group_message,
+              t.groups && t.groups.delete_group_title,
+              t.groups && t.groups.delete_group_message,
               [
                 {
-                  text: translations.general.cancel,
+                  text: t.general && t.general.cancel,
                   onPress: () => {}
                 },
                 {
-                  text: translations.general.ok,
+                  text: t.general && t.general.ok,
                   onPress: () => deleteGroup(thisGroup.name)
                 }
               ]

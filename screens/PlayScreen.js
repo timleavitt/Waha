@@ -46,7 +46,7 @@ function mapStateToProps (state) {
     database: state.database,
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     downloads: state.downloads,
     primaryColor: activeDatabaseSelector(state).primaryColor,
     isRTL: activeDatabaseSelector(state).isRTL,
@@ -113,7 +113,7 @@ const PlayScreen = ({
   database,
   activeGroup,
   activeDatabase,
-  translations,
+  t,
   downloads,
   primaryColor,
   isRTL,
@@ -893,7 +893,7 @@ const PlayScreen = ({
       <ShareModal
         isVisible={showShareLessonModal}
         hideModal={() => setShowShareLessonModal(false)}
-        closeText={translations.general.close}
+        closeText={t.general && t.general.close}
         lesson={thisLesson}
         lessonType={lessonType}
         set={thisSet}
@@ -901,9 +901,9 @@ const PlayScreen = ({
       <MessageModal
         isVisible={showSetCompleteModal}
         hideModal={() => setShowSetCompleteModal(false)}
-        title={translations.general.set_complete_title}
-        message={translations.general.set_complete_message}
-        confirmText={translations.general.got_it}
+        title={t.general && t.general.set_complete_title}
+        message={t.general && t.general.set_complete_message}
+        confirmText={t.general && t.general.got_it}
         confirmOnPress={() => {
           setShowSetCompleteModal(false)
           goBack()

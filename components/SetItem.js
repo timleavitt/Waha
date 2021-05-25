@@ -27,7 +27,7 @@ function mapStateToProps (state) {
     primaryColor: activeDatabaseSelector(state).primaryColor,
     font: getLanguageFont(activeGroupSelector(state).language),
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -56,7 +56,7 @@ const SetItem = ({
   primaryColor,
   font,
   activeGroup,
-  translations,
+  t,
   addSet
 }) => {
   /** Stores the dynamic primary icon portion of the SetItem component. This contains a unique SVG that represents the set and changes between modes. */
@@ -355,9 +355,9 @@ const SetItem = ({
       <MessageModal
         isVisible={showUnlockModal}
         hideModal={() => setShowUnlockModal(false)}
-        title={translations.general.new_story_set_unlocked_title}
-        message={translations.general.new_story_set_unlocked_message}
-        confirmText={translations.general.got_it}
+        title={t.general && t.general.new_story_set_unlocked_title}
+        message={t.general && t.general.new_story_set_unlocked_message}
+        confirmText={t.general && t.general.got_it}
         confirmOnPress={() => setShowUnlockModal(false)}
       >
         <Image

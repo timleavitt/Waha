@@ -16,7 +16,7 @@ const Tab = createMaterialTopTabNavigator()
 function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     primaryColor: activeDatabaseSelector(state).primaryColor,
     activeGroup: activeGroupSelector(state),
@@ -31,7 +31,7 @@ function mapStateToProps (state) {
 const SetsTabs = ({
   // Props passed from redux.
   activeGroup,
-  translations,
+  t,
   activeDatabase,
   font,
   primaryColor,
@@ -44,7 +44,7 @@ const SetsTabs = ({
       name='MobilizationTools'
       component={SetsScreen}
       options={{
-        title: translations.sets.mobilization
+        title: t.sets && t.sets.mobilization
       }}
     />
   ) : null
@@ -55,7 +55,7 @@ const SetsTabs = ({
       name='Foundational'
       component={SetsScreen}
       options={{
-        title: translations.sets.foundations
+        title: t.sets && t.sets.foundations
       }}
     />
   )
@@ -66,7 +66,7 @@ const SetsTabs = ({
       name='Topical'
       component={SetsScreen}
       options={{
-        title: translations.sets.topics
+        title: t.sets && t.sets.topics
       }}
     />
   )

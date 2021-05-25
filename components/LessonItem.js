@@ -22,7 +22,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state),
     downloads: state.downloads,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isConnected: state.network.isConnected,
     font: getLanguageFont(activeGroupSelector(state).language)
   }
@@ -62,7 +62,7 @@ const LessonItem = ({
   isRTL,
   activeGroup,
   downloads,
-  translations,
+  t,
   isConnected,
   font,
   removeDownload

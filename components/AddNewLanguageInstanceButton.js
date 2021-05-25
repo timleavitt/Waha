@@ -13,7 +13,7 @@ function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -29,7 +29,7 @@ const AddNewLanguageInstanceButton = ({
   // Props passed from redux.
   isRTL,
   font,
-  translations
+  t
 }) => {
   return (
     <TouchableOpacity
@@ -63,7 +63,7 @@ const AddNewLanguageInstanceButton = ({
           colors.chateau
         )}
       >
-        {translations.groups.new_language}
+        {t.groups && t.groups.new_language}
       </Text>
     </TouchableOpacity>
   )
