@@ -119,7 +119,7 @@ const SetInfoModal = ({
 
   return (
     <ModalScreen
-      title={t.add_set && t.add_set.set_details}
+      title={t.sets && t.sets.set_details}
       hideModal={hideModal}
       isVisible={isVisible}
     >
@@ -135,7 +135,7 @@ const SetInfoModal = ({
           hideModal()
         }}
         style={{ marginHorizontal: 20, marginVertical: 10 }}
-        label={t.add_set && t.add_set.add_new_story_set}
+        label={t.sets && t.sets.add_new_story_set}
         extraComponent={
           <Icon
             style={{ marginHorizontal: 10 }}

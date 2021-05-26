@@ -83,10 +83,10 @@ const AddSetScreen = ({
   useEffect(() => {
     switch (category) {
       case 'Foundational':
-        setHeaderTitle(t.add_set && t.add_set.add_foundational_set)
+        setHeaderTitle(t.sets && t.sets.add_foundational_set)
         break
       case 'Topical':
-        setHeaderTitle(t.add_set && t.add_set.add_topical_set)
+        setHeaderTitle(t.sets && t.sets.add_topical_set)
 
         // Start off array of tags with the 'All' label since we always display that option.
         var tags = [t.general && t.general.all]
@@ -103,7 +103,7 @@ const AddSetScreen = ({
         setTags(tags)
         break
       case 'MobilizationTools':
-        setHeaderTitle(t.add_set && t.add_set.add_mobilization_tool)
+        setHeaderTitle(t.sets && t.sets.add_mobilization_tool)
         break
     }
   }, [])
@@ -295,7 +295,7 @@ const AddSetScreen = ({
                 colors.chateau
               )}
             >
-              {t.add_set && t.add_set.no_more_sets}
+              {t.sets && t.sets.no_more_sets}
             </Text>
           </View>
         )}
@@ -303,7 +303,7 @@ const AddSetScreen = ({
       {/* Modals */}
       <SnackBar
         visible={showSnackbar}
-        textMessage={t.add_set && t.add_set.set_added}
+        textMessage={t.sets && t.sets.set_added}
         messageStyle={{
           color: colors.white,
           fontSize: 24 * scaleMultiplier,

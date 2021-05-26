@@ -99,8 +99,8 @@ const AddEditGroupModal = ({
       groups.forEach(group => {
         if (group.name === groupNameInput) {
           Alert.alert(
-            t.add_edit_group && t.add_edit_group.duplicate_group_name_title,
-            t.add_edit_group && t.add_edit_group.duplicate_group_name_message,
+            t.groups && t.groups.duplicate_group_name_title,
+            t.groups && t.groups.duplicate_group_name_message,
             [{ text: t.general && t.general.ok, onPress: () => {} }]
           )
           isDuplicate = true
@@ -114,8 +114,8 @@ const AddEditGroupModal = ({
           thisGroup.name !== groupNameInput
         ) {
           Alert.alert(
-            t.add_edit_group && t.add_edit_group.duplicate_group_name_title,
-            t.add_edit_group && t.add_edit_group.duplicate_group_name_message,
+            t.groups && t.groups.duplicate_group_name_title,
+            t.groups && t.groups.duplicate_group_name_message,
             [{ text: t.general && t.general.ok, onPress: () => {} }]
           )
           isDuplicate = true
@@ -132,8 +132,8 @@ const AddEditGroupModal = ({
   const checkForBlank = () => {
     if (groupNameInput === '') {
       Alert.alert(
-        t.add_edit_group && t.add_edit_group.blank_group_name_title,
-        t.add_edit_group && t.add_edit_group.blank_group_name_message,
+        t.groups && t.groups.blank_group_name_title,
+        t.groups && t.groups.blank_group_name_message,
         [{ text: t.general && t.general.ok, onPress: () => {} }]
       )
       return true
@@ -214,8 +214,8 @@ const AddEditGroupModal = ({
       }
       title={
         type === 'AddGroup'
-          ? t.add_edit_group && t.add_edit_group.new_group
-          : t.add_edit_group && t.add_edit_group.edit_group
+          ? t.groups && t.groups.new_group
+          : t.groups && t.groups.edit_group
       }
     >
       <View style={styles.groupAvatarContainer}>

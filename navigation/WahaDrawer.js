@@ -110,9 +110,9 @@ const WahaDrawer = ({
         style={{ backgroundColor: colors.white, flex: 1 }}
       >
         {/* Show an update button if we have any core files to update. */}
-        {/* {languageCoreFilesToUpdate.length !== 0 && ( */}
-        <DrawerDownloadUpdateButton updateHandler={updateHandler} />
-        {/* )} */}
+        {languageCoreFilesToUpdate.length !== 0 && (
+          <DrawerDownloadUpdateButton updateHandler={updateHandler} />
+        )}
         <View style={{ width: '100%', height: 5 }} />
         <DrawerItem
           icon='group'
