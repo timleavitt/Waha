@@ -15,7 +15,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -34,7 +34,7 @@ const FloatingSectionLabel = ({
   activeGroup,
   activeDatabase,
   font,
-  translations,
+  t,
   isRTL
 }) => (
   <View

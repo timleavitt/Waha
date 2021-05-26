@@ -15,7 +15,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
     primaryColor: activeDatabaseSelector(state).primaryColor
   }
@@ -35,7 +35,7 @@ const LessonTextScrollBar = ({
   activeGroup,
   activeDatabase,
   font,
-  translations,
+  t,
   isRTL,
   primaryColor
 }) => (

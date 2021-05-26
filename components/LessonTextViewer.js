@@ -21,7 +21,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -56,7 +56,7 @@ const LessonTextViewer = ({
   activeGroup,
   activeDatabase,
   font,
-  translations,
+  t,
   isRTL
 }) => {
   /** Keeps track of whether or not the scroll bar should be visible. */
@@ -240,7 +240,8 @@ const LessonTextViewer = ({
 
     // Auto-complete lesson if text is scrolled 20% through the Application chapter.
     if (
-      section.title === translations.play.application &&
+      section.title === t.play &&
+      t.play.application &&
       !isThisLessonComplete.current &&
       (scrollPosition - section.globalOffset) /
         (layouts.current.contentHeight - section.globalOffset) >

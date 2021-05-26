@@ -15,7 +15,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -100,7 +100,7 @@ const LessonTextContent = ({
   activeGroup,
   activeDatabase,
   font,
-  translations,
+  t,
   isRTL
 }) => {
   const setOffsets = (
@@ -161,7 +161,7 @@ const LessonTextContent = ({
           {/* Fellowship header. */}
           <View
             onLayout={({ nativeEvent }) =>
-              setOffsets(translations.play.fellowship, '', true, nativeEvent)
+              setOffsets(t.play && t.play.fellowship, '', true, nativeEvent)
             }
           />
           {/* Fellowship questions. */}
@@ -170,9 +170,7 @@ const LessonTextContent = ({
               <View key={index}>
                 <HeaderSmall
                   text={
-                    translations.play.question_header +
-                    ' ' +
-                    (index + 1).toString()
+                    t.play && t.play.question + ' ' + (index + 1).toString()
                   }
                   font={font}
                   isRTL={isRTL}
@@ -189,7 +187,7 @@ const LessonTextContent = ({
             onLayout={() => {}}
             font={font}
             isRTL={isRTL}
-            text={translations.play.story}
+            text={t.play && t.play.story}
           />
           {thisLesson.scripture.map((scriptureChunk, index) => (
             <View
@@ -197,7 +195,7 @@ const LessonTextContent = ({
               onLayout={({ nativeEvent }) => {
                 var isBig = index === 0 ? true : false
                 setOffsets(
-                  translations.play.story,
+                  t.play && t.play.story,
                   scriptureChunk.header,
                   isBig,
                   nativeEvent
@@ -219,12 +217,12 @@ const LessonTextContent = ({
           <HeaderBig
             font={font}
             isRTL={isRTL}
-            text={translations.play.application}
+            text={t.play && t.play.application}
           />
           {/* Application questions. */}
           <View
             onLayout={({ nativeEvent }) =>
-              setOffsets(translations.play.application, '', true, nativeEvent)
+              setOffsets(t.play && t.play.application, '', true, nativeEvent)
             }
           >
             {activeDatabase.questions[thisLesson.applicationType].map(
@@ -232,9 +230,7 @@ const LessonTextContent = ({
                 <View key={index}>
                   <HeaderSmall
                     text={
-                      translations.play.question_header +
-                      ' ' +
-                      (index + 1).toString()
+                      t.play && t.play.question + ' ' + (index + 1).toString()
                     }
                     font={font}
                     isRTL={isRTL}

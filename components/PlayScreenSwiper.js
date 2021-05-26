@@ -21,7 +21,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -52,7 +52,7 @@ const PlayScreenSwiper = ({
   activeGroup,
   activeDatabase,
   font,
-  translations,
+  t,
   isRTL
 }) => {
   /** Keeps track of whether or not the user is actively dragging the scroll bar or not. */
@@ -69,7 +69,7 @@ const PlayScreenSwiper = ({
   const sectionTitle = useRef('')
 
   const [sectionTitleText, setSectionTitleText] = useState(
-    translations.play.fellowship
+    t.play && t.play.fellowship
   )
 
   const [sectionSubtitleText, setSectionSubtitleText] = useState('')
