@@ -89,7 +89,7 @@ const PianoAppScreen = ({
     // If the user has entered in their passcode...
     if (playedNotes.includes(security.code)) {
       // If the user hasn't muted the piano app sounds, play a little sound effect when they enter their passcode correctly.
-      if (!security.isMuted) unlockSound.current.play && t.playAsync()
+      if (!security.isMuted) unlockSound.current.playAsync()
 
       setIsTimedOut(false)
 

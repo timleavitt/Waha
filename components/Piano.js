@@ -60,7 +60,7 @@ const Piano = ({
       await note.current.unloadAsync()
       await note.current
         .loadAsync(pianoNotes[number])
-        .then(() => note.current.play && t.playAsync())
+        .then(() => note.current.playAsync())
     }
   }
 
