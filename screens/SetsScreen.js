@@ -73,10 +73,10 @@ const SetsScreen = ({
   useEffect(() => {
     setAddNewSetLabel(
       category === 'Foundational'
-        ? t.add_set && t.add_set.add_foundational_story_set
+        ? t.sets && t.sets.add_foundational_story_set
         : category === 'Topical'
-        ? t.add_set && t.add_set.add_topical_story_set
-        : t.add_set && t.add_set.add_mobilization_tool
+        ? t.sets && t.sets.add_topical_story_set
+        : t.sets && t.sets.add_mobilization_tool
     )
   }, [activeGroup])
 
@@ -294,7 +294,7 @@ const SetsScreen = ({
           colors.chateau
         )}
       >
-        {t.add_set && t.add_set.add_mobilization_tool}
+        {t.sets && t.sets.add_mobilization_tool}
       </Text>
     </View>
   )

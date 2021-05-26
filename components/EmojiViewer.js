@@ -84,7 +84,7 @@ const EmojiViewer = ({
           { marginTop: 20 * scaleMultiplier }
         ]}
       >
-        {t.add_edit_group && t.add_edit_group.avatar}
+        {t.groups && t.groups.avatar}
       </Text>
       <View style={styles.emojiListContainer}>
         <FlatList

@@ -146,12 +146,9 @@ const MobilizationToolsUnlockScreen = ({
       // Make the input component "shake" when they enter in a wrong code.
       pinRef.current.shake().then(() => setPasscode(''))
       Alert.alert(
+        t.mobilization_tools && t.mobilization_tools.unlock_unsuccessful_title,
         t.mobilization_tools &&
-          t.mobilization_tools_unlock &&
-          t.mobilization_tools_unlock.unlock_unsuccessful_title,
-        t.mobilization_tools &&
-          t.mobilization_tools_unlock &&
-          t.mobilization_tools_unlock.unlock_unsuccessful_message,
+          t.mobilization_tools.unlock_unsuccessful_message,
         [
           {
             text: t.general && t.general.ok,
@@ -170,27 +167,17 @@ const MobilizationToolsUnlockScreen = ({
     if (Date.now() - security.mtUnlockTimeout < 0)
       return (
         t.mobilization_tools &&
-        t.mobilization_tools_unlock &&
-        t.mobilization_tools_unlock.too_many_attempts +
+        t.mobilization_tools.too_many_attempts +
           ' ' +
           Math.round((security.mtUnlockTimeout - Date.now()) / 60000) +
           ' ' +
           t.mobilization_tools &&
-        t.mobilization_tools_unlock &&
-        t.mobilization_tools_unlock.minutes
+        t.mobilization_tools.minutes
       )
     else if (mtUnlockAttempts === 3)
-      return (
-        t.mobilization_tools &&
-        t.mobilization_tools_unlock &&
-        t.mobilization_tools_unlock.two_attempts_remaining
-      )
+      return t.mobilization_tools && t.mobilization_tools.two_attempts_remaining
     else if (mtUnlockAttempts === 4)
-      return (
-        t.mobilization_tools &&
-        t.mobilization_tools_unlock &&
-        t.mobilization_tools_unlock.one_attempt_remaining
-      )
+      return t.mobilization_tools && t.mobilization_tools.one_attempt_remaining
     else return ''
   }
 
@@ -212,9 +199,7 @@ const MobilizationToolsUnlockScreen = ({
           }
         ]}
       >
-        {t.mobilization_tools &&
-          t.mobilization_tools_unlock &&
-          t.mobilization_tools_unlock.enter_code}
+        {t.mobilization_tools && t.mobilization_tools.enter_code}
       </Text>
       <SmoothPinCodeInput
         ref={pinRef}

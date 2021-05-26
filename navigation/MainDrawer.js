@@ -248,6 +248,7 @@ const MainDrawer = ({
             // Set shouldWrite to true. This way, when we fetch data for the Story Sets for this language, we know we're safe to write to redux.
             shouldWrite = true
 
+            // console.log(t.groups)
             // Store our language info in redux.
             storeLanguageData(doc.data(), activeGroup.language)
 

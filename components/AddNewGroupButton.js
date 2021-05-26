@@ -65,7 +65,7 @@ const AddNewGroupButton = ({
             colors.blue
           )}
         >
-          {t.add_edit_group && t.add_edit_group.new_group}
+          {t.groups && t.groups.new_group}
         </Text>
       </TouchableOpacity>
       <WahaSeparator />

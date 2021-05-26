@@ -48,7 +48,7 @@ const GroupNameTextInput = ({
         colors.chateau
       )}
     >
-      {t.add_edit_group && t.add_edit_group.group_name}
+      {t.groups && t.groups.group_name}
     </Text>
     <TextInput
       ref={groupNameInputRef}
@@ -66,7 +66,7 @@ const GroupNameTextInput = ({
       value={groupNameInput}
       autoCapitalize='words'
       autoCorrect={false}
-      placeholder={t.add_edit_group && t.add_edit_group.group_name_here}
+      placeholder={t.groups && t.groups.group_name_here}
       placeholderTextColor={colors.chateau}
       maxLength={50}
       returnKeyType='done'
