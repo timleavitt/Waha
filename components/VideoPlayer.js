@@ -124,7 +124,7 @@ const VideoPlayer = ({
                 // After exiting fullscreen, automatically start playing the video. This is because of strange Android behavior where upon exiting fullscreen while paused, the layout of the whole Play Screen gets messed up.
                 case Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS:
                   lockPortrait(() => {})
-                  if (!isMediaPlaying) videoRef.current.play && t.playAsync()
+                  if (!isMediaPlaying) videoRef.current.playAsync()
                   setIsMediaPlaying(true)
                   break
               }
