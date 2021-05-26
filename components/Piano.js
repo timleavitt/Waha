@@ -50,17 +50,26 @@ const Piano = ({
 }) => {
   /** Ref to store the audio object. */
   const note = useRef(new Audio.Sound())
+  const shouldPlayNote = useRef(true)
 
   /**
    * Plays a specific piano note.
    * @param {number} number - The key number to play the note of. Each piano key is numbered.
    */
   const playNote = async number => {
-    if (!isMuted) {
-      await note.current.unloadAsync()
+    if (!isMuted && shouldPlayNote.current) {
+      shouldPlayNote.current = false
       await note.current
-        .loadAsync(pianoNotes[number])
-        .then(() => note.current.playAsync())
+        .unloadAsync()
+        .then(() =>
+          note.current
+            .loadAsync(pianoNotes[number])
+            .then(() =>
+              note.current
+                .playAsync()
+                .then(() => (shouldPlayNote.current = true))
+            )
+        )
     }
   }
 
