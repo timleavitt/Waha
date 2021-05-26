@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     flex: 1,
     maxWidth: Dimensions.get('window').width - 40,
     maxHeight: Dimensions.get('window').width - 40,
-    borderRadius: 20,
+    borderRadius: 15,
     borderWidth: 2,
     borderColor: colors.athens,
     aspectRatio: 1,

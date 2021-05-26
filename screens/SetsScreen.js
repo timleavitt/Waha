@@ -73,9 +73,9 @@ const SetsScreen = ({
   useEffect(() => {
     setAddNewSetLabel(
       category === 'Foundational'
-        ? t.sets && t.sets.add_foundational_story_set
+        ? t.sets && t.sets.add_foundational_set
         : category === 'Topical'
-        ? t.sets && t.sets.add_topical_story_set
+        ? t.sets && t.sets.add_topical_set
         : t.sets && t.sets.add_mobilization_tool
     )
   }, [activeGroup])

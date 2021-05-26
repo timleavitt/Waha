@@ -29,7 +29,7 @@ const TestModeDisplay = ({
       style={{
         backgroundColor: colors.red,
         paddingVertical: 5,
-        borderRadius: 20,
+        borderRadius: 15,
         marginHorizontal: 10
       }}
     >
