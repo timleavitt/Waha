@@ -93,7 +93,7 @@ const WahaButton = ({
   const outlineButtonStyle = [
     innerContainerStyle,
     {
-      borderRadius: 20,
+      borderRadius: 15,
       height: 65 * scaleMultiplier,
       width: width,
       flexDirection: 'row',

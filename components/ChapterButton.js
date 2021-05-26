@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
+    borderRadius: 15,
     borderWidth: 2,
     paddingHorizontal: 3
     // borderTopWidth: 2,

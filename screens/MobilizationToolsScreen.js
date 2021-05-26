@@ -83,7 +83,7 @@ const MobilizationToolsScreen = ({
             style={{
               paddingVertical: 10,
               paddingHorizontal: 30,
-              borderRadius: 20,
+              borderRadius: 15,
               // borderWidth: 1.5,
               backgroundColor: colors.porcelain,
               borderColor: colors.geyser,
