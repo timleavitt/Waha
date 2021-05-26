@@ -60,27 +60,27 @@
 //     {areMobilizationToolsUnlocked ? (
 //       <Hero source={require('../assets/gifs/unlock_mob_tools.gif')} />
 //     ) : null}
-//     <Blurb text={translations.mobilization_tools.mobilization_tools_vision} />
+//     <Blurb text={t.mobilization_tools && t.mobilization_tools.mobilization_tools_vision} />
 //     <Separator />
 //     <WahaItem
 //       title={
 //         areMobilizationToolsUnlocked
-//           ? translations.mobilization_tools.view_code_button_label
-//           : translations.mobilization_tools.unlock_mt_button_label
+//           ? t.mobilization_tools && t.mobilization_tools.view_code_button_label
+//           : t.mobilization_tools && t.mobilization_tools.unlock_mt_button_label
 //       }
 //       onPress={
 //         areMobilizationToolsUnlocked
 //           ? () =>
 //               Alert.alert(
-//                 translations.mobilization_tools.mt_code_title,
+//                 t.mobilization_tools && t.mobilization_tools.mt_code_title,
 //                 '281820',
 //                 [
 //                   {
-//                     text: translations.general.copy_to_clipboard,
+//                     text: t.general && t.general.copy_to_clipboard,
 //                     onPress: () => Clipboard.setString('281820')
 //                   },
 //                   {
-//                     text: translations.general.close,
+//                     text: t.general && t.general.close,
 //                     onPress: () => {}
 //                   }
 //                 ]
@@ -106,7 +106,7 @@
 //           colors.shark
 //         )}
 //       >
-//         {translations.mobilization_tools.mobilization_tools_status_label}
+//         {t.mobilization_tools && t.mobilization_tools.mobilization_tools_status_label}
 //       </Text>
 //     </View>
 //   </View>
@@ -169,7 +169,7 @@
 //           colors.chateau
 //         )}
 //       >
-//         {translations.mobilization_tools.no_mobilization_tools_content_text}
+//         {t.mobilization_tools && t.mobilization_tools.no_mobilization_tools_content_text}
 //       </Text>
 //     </View>
 //     <Separator />
@@ -202,7 +202,7 @@ import GroupAvatar from '../GroupAvatar'
 function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     database: state.database
   }
@@ -217,7 +217,7 @@ const GroupListHeaderMT = ({
   languageID,
   // Props passed from redux.
   isRTL,
-  translations,
+  t,
   font,
   database
 }) => {

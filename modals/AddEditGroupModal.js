@@ -24,7 +24,7 @@ function mapStateToProps (state) {
   return {
     groups: state.groups,
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     activeGroup: activeGroupSelector(state),
     globalGroupCounter: state.database.globalGroupCounter,
@@ -64,7 +64,7 @@ const AddEditGroupModal = ({
   // Props passed from redux.
   groups,
   isRTL,
-  translations,
+  t,
   font,
   activeGroup,
   globalGroupCounter,
@@ -99,9 +99,9 @@ const AddEditGroupModal = ({
       groups.forEach(group => {
         if (group.name === groupNameInput) {
           Alert.alert(
-            translations.add_edit_group.popups.duplicate_group_name_title,
-            translations.add_edit_group.popups.duplicate_group_name_message,
-            [{ text: translations.general.ok, onPress: () => {} }]
+            t.add_edit_group && t.add_edit_group.duplicate_group_name_title,
+            t.add_edit_group && t.add_edit_group.duplicate_group_name_message,
+            [{ text: t.general && t.general.ok, onPress: () => {} }]
           )
           isDuplicate = true
         }
@@ -114,9 +114,9 @@ const AddEditGroupModal = ({
           thisGroup.name !== groupNameInput
         ) {
           Alert.alert(
-            translations.add_edit_group.popups.duplicate_group_name_title,
-            translations.add_edit_group.popups.duplicate_group_name_message,
-            [{ text: translations.general.ok, onPress: () => {} }]
+            t.add_edit_group && t.add_edit_group.duplicate_group_name_title,
+            t.add_edit_group && t.add_edit_group.duplicate_group_name_message,
+            [{ text: t.general && t.general.ok, onPress: () => {} }]
           )
           isDuplicate = true
         }
@@ -132,9 +132,9 @@ const AddEditGroupModal = ({
   const checkForBlank = () => {
     if (groupNameInput === '') {
       Alert.alert(
-        translations.add_edit_group.popups.blank_group_name_title,
-        translations.add_edit_group.popups.blank_group_name_message,
-        [{ text: translations.general.ok, onPress: () => {} }]
+        t.add_edit_group && t.add_edit_group.blank_group_name_title,
+        t.add_edit_group && t.add_edit_group.blank_group_name_message,
+        [{ text: t.general && t.general.ok, onPress: () => {} }]
       )
       return true
     }
@@ -214,8 +214,8 @@ const AddEditGroupModal = ({
       }
       title={
         type === 'AddGroup'
-          ? translations.add_edit_group.header_add
-          : translations.add_edit_group.header_edit
+          ? t.add_edit_group && t.add_edit_group.new_group
+          : t.add_edit_group && t.add_edit_group.edit_group
       }
     >
       <View style={styles.groupAvatarContainer}>

@@ -15,7 +15,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -36,7 +36,7 @@ const GroupNameTextInput = ({
   activeDatabase,
   isRTL,
   font,
-  translations
+  t
 }) => (
   <View style={styles.groupNameAreaContainer}>
     <Text
@@ -48,7 +48,7 @@ const GroupNameTextInput = ({
         colors.chateau
       )}
     >
-      {translations.add_edit_group.group_name_form_label}
+      {t.add_edit_group && t.add_edit_group.group_name}
     </Text>
     <TextInput
       ref={groupNameInputRef}
@@ -66,7 +66,7 @@ const GroupNameTextInput = ({
       value={groupNameInput}
       autoCapitalize='words'
       autoCorrect={false}
-      placeholder={translations.add_edit_group.group_name_form_placeholder}
+      placeholder={t.add_edit_group && t.add_edit_group.group_name_here}
       placeholderTextColor={colors.chateau}
       maxLength={50}
       returnKeyType='done'

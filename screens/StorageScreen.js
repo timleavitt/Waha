@@ -23,7 +23,7 @@ function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     database: state.database,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
@@ -44,7 +44,7 @@ const StorageScreen = ({
   // Props passed from redux.
   isRTL,
   database,
-  translations,
+  t,
   font
 }) => {
   /** Keeps track of the amount of storage each language's downloaded Story and Training chapter mp3s and mp4s take up. */
@@ -177,17 +177,17 @@ const StorageScreen = ({
       megabytes={languageStorageSizes[item.languageID]}
       clearDownloads={() => {
         Alert.alert(
-          translations.storage.popups
-            .clear_all_downloaded_lessons_for_a_language_title,
-          translations.storage.popups
-            .clear_all_downloaded_lessons_for_a_language_message,
+          t.storage &&
+            t.storage.clear_all_downloaded_lessons_for_a_language_title,
+          t.storage &&
+            t.storage.clear_all_downloaded_lessons_for_a_language_message,
           [
             {
-              text: translations.general.cancel,
+              text: t.general && t.general.cancel,
               onPress: () => {}
             },
             {
-              text: translations.general.ok,
+              text: t.general && t.general.ok,
               onPress: () => deleteDownloadedLessons(item.languageID)
             }
           ]
@@ -213,19 +213,22 @@ const StorageScreen = ({
       <WahaButton
         type='filled'
         color={colors.red}
-        label={`${translations.storage.clear_all_downloaded_lessons_button_label} (${totalStorage} ${translations.storage.megabyte_label})`}
+        label={`${t.storage &&
+          t.storage
+            .clear_all_downloaded_lessons} (${totalStorage} ${t.storage &&
+          t.storage.megabyte})`}
         width={Dimensions.get('window').width - 40}
         onPress={() =>
           Alert.alert(
-            translations.storage.popups.clear_all_downloaded_lessons_title,
-            translations.storage.popups.clear_all_downloaded_lessons_message,
+            t.storage && t.storage.clear_all_downloaded_lessons_title,
+            t.storage && t.storage.clear_all_downloaded_lessons_message,
             [
               {
-                text: translations.general.cancel,
+                text: t.general && t.general.cancel,
                 onPress: () => {}
               },
               {
-                text: translations.general.ok,
+                text: t.general && t.general.ok,
                 onPress: () => deleteDownloadedLessons()
               }
             ]

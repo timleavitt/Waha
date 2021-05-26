@@ -40,7 +40,7 @@ const Stack = createStackNavigator()
 function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     activeGroup: activeGroupSelector(state),
     security: state.security,
@@ -67,7 +67,7 @@ const MainStack = ({
   navigation: { navigate, goBack, toggleDrawer },
   // Props passed from redux.
   isRTL,
-  translations,
+  t,
   font,
   activeGroup,
   security,
@@ -262,7 +262,7 @@ const MainStack = ({
         name='Groups'
         component={GroupsScreen}
         options={{
-          headerTitle: translations.groups.header,
+          headerTitle: t.groups && t.groups.groups_and_languages,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           }
@@ -306,7 +306,7 @@ const MainStack = ({
         name='Storage'
         component={StorageScreen}
         options={{
-          headerTitle: translations.storage.header,
+          headerTitle: t.storage && t.storage.storage,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -320,7 +320,8 @@ const MainStack = ({
         name='MobilizationTools'
         component={MobilizationToolsScreen}
         options={{
-          headerTitle: translations.mobilization_tools.header,
+          headerTitle:
+            t.mobilization_tools && t.mobilization_tools.mobilization_tools,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -334,7 +335,8 @@ const MainStack = ({
         name='MobilizationToolsUnlock'
         component={MobilizationToolsUnlockScreen}
         options={{
-          headerTitle: translations.mobilization_tools.header,
+          headerTitle:
+            t.mobilization_tools && t.mobilization_tools.mobilization_tools,
           headerStyle: {
             backgroundColor: colors.white
           },
@@ -348,7 +350,7 @@ const MainStack = ({
         name='SecurityMode'
         component={SecurityModeScreen}
         options={{
-          headerTitle: translations.security.header,
+          headerTitle: t.security && t.security.security,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -362,7 +364,7 @@ const MainStack = ({
         name='SecurityOnboardingSlides'
         component={SecurityOnboardingSlidesScreen}
         options={{
-          headerTitle: translations.security.header,
+          headerTitle: t.security && t.security.security,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -447,8 +449,7 @@ const MainStack = ({
         name='Information'
         component={InformationScreen}
         options={{
-          headerTitle:
-            translations.information && translations.information.header,
+          headerTitle: t.information && t.information.information,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -462,8 +463,7 @@ const MainStack = ({
         name='ContactUs'
         component={ContactUsScreen}
         options={{
-          headerTitle:
-            translations.contact_us && translations.contact_us.header,
+          headerTitle: t.contact_us && t.contact_us.contact_us,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },

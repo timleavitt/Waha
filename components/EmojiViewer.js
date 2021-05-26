@@ -24,7 +24,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -46,7 +46,7 @@ const EmojiViewer = ({
   activeDatabase,
   isRTL,
   font,
-  translations
+  t
 }) => {
   /** Renders an emoji for the emoji select <FlatList />. */
   const renderEmoji = ({ item }) => (
@@ -84,7 +84,7 @@ const EmojiViewer = ({
           { marginTop: 20 * scaleMultiplier }
         ]}
       >
-        {translations.add_edit_group.icon_form_label}
+        {t.add_edit_group && t.add_edit_group.avatar}
       </Text>
       <View style={styles.emojiListContainer}>
         <FlatList

@@ -34,7 +34,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     activeDatabase: activeDatabaseSelector(state),
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
@@ -69,7 +69,7 @@ const LessonsScreen = ({
   isRTL,
   activeDatabase,
   activeGroup,
-  translations,
+  t,
   font,
   downloadMedia,
   toggleComplete,
@@ -326,27 +326,27 @@ const LessonsScreen = ({
       <OptionsModal
         isVisible={showDownloadLessonModal}
         hideModal={() => setShowDownloadLessonModal(false)}
-        closeText={translations.general.cancel}
+        closeText={t.general && t.general.cancel}
       >
         <OptionsModalButton
-          label={translations.lessons.popups.download_lesson_button_label}
+          label={t.lessons && t.lessons.download_lesson}
           onPress={downloadLessonFromModal}
         />
       </OptionsModal>
       <OptionsModal
         isVisible={showDeleteLessonModal}
         hideModal={() => setShowDeleteLessonModal(false)}
-        closeText={translations.general.cancel}
+        closeText={t.general && t.general.cancel}
       >
         <OptionsModalButton
-          label={translations.lessons.popups.delete_lesson_button_label}
+          label={t.lessons && t.lessons.delete_lesson}
           onPress={deleteLessonFromModal}
         />
       </OptionsModal>
       <ShareModal
         isVisible={showShareModal}
         hideModal={() => setShowShareModal(false)}
-        closeText={translations.general.close}
+        closeText={t.general && t.general.close}
         lesson={activeLessonInModal}
         lessonType={getLessonType(activeLessonInModal)}
         set={thisSet}
@@ -354,9 +354,9 @@ const LessonsScreen = ({
       <MessageModal
         isVisible={showSetCompleteModal}
         hideModal={() => setShowSetCompleteModal(false)}
-        title={translations.general.popups.set_complete_title}
-        message={translations.general.popups.set_complete_message}
-        confirmText={translations.general.got_it}
+        title={t.general && t.general.set_complete_title}
+        message={t.general && t.general.set_complete_message}
+        confirmText={t.general && t.general.got_it}
         confirmOnPress={() => {
           setShowSetCompleteModal(false)
         }}

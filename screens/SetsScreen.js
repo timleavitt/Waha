@@ -30,7 +30,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     // For testing.
     languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes,
@@ -60,7 +60,7 @@ const SetsScreen = ({
   activeDatabase,
   isRTL,
   activeGroup,
-  translations,
+  t,
   font,
   languageCoreFilesCreatedTimes,
   globalGroupCounter,
@@ -73,10 +73,10 @@ const SetsScreen = ({
   useEffect(() => {
     setAddNewSetLabel(
       category === 'Foundational'
-        ? translations.sets.add_foundational_story_set_button_label
+        ? t.add_set && t.add_set.add_foundational_story_set
         : category === 'Topical'
-        ? translations.sets.add_topical_set_button_label
-        : translations.sets.add_mobilization_tool_button_label
+        ? t.add_set && t.add_set.add_topical_story_set
+        : t.add_set && t.add_set.add_mobilization_tool
     )
   }, [activeGroup])
 
@@ -294,7 +294,7 @@ const SetsScreen = ({
           colors.chateau
         )}
       >
-        {translations.mobilization_tools.no_mobilization_tools_content_text}
+        {t.add_set && t.add_set.add_mobilization_tool}
       </Text>
     </View>
   )
@@ -338,9 +338,9 @@ const SetsScreen = ({
       <MessageModal
         isVisible={showMTTabAddedSnackbar}
         hideModal={() => setShowMTTabAddedSnackbar(false)}
-        title={translations.passcode.popups.unlock_successful_title}
-        message={translations.passcode.popups.unlock_successful_message}
-        confirmText={translations.general.got_it}
+        title={t.general && t.general.unlock_successful_title}
+        message={t.general && t.general.unlock_successful_message}
+        confirmText={t.general && t.general.got_it}
         confirmOnPress={() => setShowMTTabAddedSnackbar(false)}
       >
         <Image

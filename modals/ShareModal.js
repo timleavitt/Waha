@@ -14,7 +14,7 @@ import OptionsModal from './OptionsModal'
 
 function mapStateToProps (state) {
   return {
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     downloads: state.downloads,
     activeGroup: activeGroupSelector(state)
   }
@@ -45,7 +45,7 @@ const ShareModal = ({
   lessonType,
   set,
   // Props passed from redux.
-  translations,
+  t,
   downloads,
   activeGroup
 }) => {
@@ -92,11 +92,11 @@ const ShareModal = ({
                 hideModal()
               })
             : Alert.alert(
-                translations.general.popups.share_undownloaded_lesson_title,
-                translations.general.popups.share_undownloaded_lesson_message,
+                t.general && t.general.share_undownloaded_lesson_title,
+                t.general && t.general.share_undownloaded_lesson_message,
                 [
                   {
-                    text: translations.general.ok,
+                    text: t.general && t.general.ok,
                     onPress: () => {}
                   }
                 ]
@@ -122,7 +122,7 @@ const ShareModal = ({
       closeText={closeText}
     >
       <OptionsModalButton
-        label={translations.general.share_app}
+        label={t.general && t.general.share_app}
         onPress={() => shareLessonContent(shareTypes.APP)}
       />
       {/* Include a "Share Text" button if a lesson has questions. If it has questions, then it also has Scripture text. */}
@@ -130,7 +130,7 @@ const ShareModal = ({
         <View>
           <WahaSeparator />
           <OptionsModalButton
-            label={translations.general.share_passage_text}
+            label={t.general && t.general.share_passage_text}
             onPress={() => shareLessonContent(shareTypes.TEXT)}
           />
         </View>
@@ -140,7 +140,7 @@ const ShareModal = ({
         <View>
           <WahaSeparator />
           <OptionsModalButton
-            label={translations.general.share_passage_audio}
+            label={t.general && t.general.share_passage_audio}
             onPress={() => shareLessonContent(shareTypes.AUDIO)}
           />
         </View>
@@ -152,7 +152,7 @@ const ShareModal = ({
           <View>
             <WahaSeparator />
             <OptionsModalButton
-              label={translations.general.share_video_link}
+              label={t.general && t.general.share_video_link}
               onPress={() => shareLessonContent(shareTypes.VIDEO)}
             />
           </View>

@@ -58,7 +58,7 @@ function mapStateToProps (state) {
     recentActiveGroup: state.database.recentActiveGroup,
     font: font,
     isRTL: isRTL,
-    translations: translations
+    t: t
   }
 }
 
@@ -108,7 +108,7 @@ const LoadingScreen = ({
   hasFetchedLanguageData,
   font,
   isRTL,
-  translations,
+  t,
   setIsInstallingLanguageInstance,
   setHasOnboarded,
   setTotalLanguageCoreFilesToDownload,
@@ -258,7 +258,7 @@ const LoadingScreen = ({
                 colors.tuna
               )}
             >
-              {translations.general.cancel}
+              {t.general && t.general.cancel}
             </Text>
           </TouchableOpacity>
         )}

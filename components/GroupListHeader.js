@@ -28,7 +28,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     groups: state.groups,
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
@@ -64,7 +64,7 @@ const GroupListHeader = ({
   activeDatabase,
   groups,
   activeGroup,
-  translations,
+  t,
   font,
   deleteGroup,
   deleteLanguageData,
@@ -136,15 +136,15 @@ const GroupListHeader = ({
         }}
         onPress={() =>
           Alert.alert(
-            translations.groups.popups.delete_language_title,
-            translations.groups.popups.delete_language_message,
+            t.groups && t.groups.delete_language_title,
+            t.groups && t.groups.delete_language_message,
             [
               {
-                text: translations.general.cancel,
+                text: t.general && t.general.cancel,
                 onPress: () => {}
               },
               {
-                text: translations.general.ok,
+                text: t.general && t.general.ok,
                 onPress: deleteLanguageInstance
               }
             ]

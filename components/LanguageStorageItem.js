@@ -16,7 +16,7 @@ function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -36,7 +36,7 @@ const LanguageStorageItem = ({
   // Props passed from redux.
   font,
   isRTL,
-  translations
+  t
 }) => (
   <View style={styles.languageStorageItemContainer}>
     <View
@@ -79,7 +79,7 @@ const LanguageStorageItem = ({
           colors.tuna
         )}
       >
-        {megabytes + ' ' + translations.storage.megabyte_label}
+        {megabytes + ' ' + t.storage && t.storage.megabyte}
       </Text>
       <Text
         style={[
@@ -96,12 +96,12 @@ const LanguageStorageItem = ({
           }
         ]}
       >
-        {translations.storage.storage_used_label}
+        {t.storage && t.storage.storage_used}
       </Text>
       <WahaButton
         type='outline'
         color={colors.red}
-        label={translations.storage.clear_button_label}
+        label={t.general && t.general.clear}
         width={92 * scaleMultiplier}
         onPress={clearDownloads}
         style={{ height: 45 * scaleMultiplier }}
