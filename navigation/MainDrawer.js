@@ -117,7 +117,7 @@ const MainDrawer = ({
    * @return {boolean} - Whether gestures should be enabled or not.
    */
   function getGestureEnabled (route) {
-    const routeName = getFocusedRouteNameFromRoute(route) ?? 'SetsTabs'
+    const routeName = getFocusedRouteNameFromRoute(route)
     if (routeName === 'SetsTabs') return true
     else return false
   }
