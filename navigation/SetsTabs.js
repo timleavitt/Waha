@@ -89,7 +89,7 @@ const SetsTabs = ({
     <Tab.Navigator
       // Set the initial route based on the category of the bookmarked set.
       initialRouteName={getBookmarkedTab()}
-      swipeEnabled={false}
+      swipeEnabled={true}
       // Improves performance according to docs.
       initialLayout={{ width: Dimensions.get('window').width }}
       tabBarOptions={{
