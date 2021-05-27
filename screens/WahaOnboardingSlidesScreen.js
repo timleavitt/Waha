@@ -118,7 +118,7 @@ const WahaOnboardingSlidesScreen = ({
           style={styles.image}
           source={{
             uri:
-              'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_2.gif?alt=media'
+              'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_1.gif?alt=media'
           }}
         />
       </View>
@@ -148,7 +148,7 @@ const WahaOnboardingSlidesScreen = ({
           style={styles.image}
           source={{
             uri:
-              'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_2.gif?alt=media'
+              'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_3.gif?alt=media'
           }}
         />
       </View>
