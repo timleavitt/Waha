@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system'
+// import LottieView from 'lottie-react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 import { FlatList, LogBox, StyleSheet, Text, View } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
@@ -297,6 +298,21 @@ const AddSetScreen = ({
             >
               {t.sets && t.sets.no_more_sets}
             </Text>
+            {/* <LottieView
+            style={{
+              width: Dimensions.get('window').width,
+              marginBottom: 30
+            }}
+            colorFilters={[
+              {
+                keypath: '*',
+                color: colors.tuna
+              }
+            ]}
+            autoPlay
+            loop
+            source={require('../assets/gifs/clouds.json')}
+          /> */}
           </View>
         )}
       />
