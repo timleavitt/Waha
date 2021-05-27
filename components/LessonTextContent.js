@@ -20,6 +20,10 @@ function mapStateToProps (state) {
   }
 }
 
+/*
+  A simple set of 3 components to display different parts of the lesson text.
+*/
+
 const HeaderBig = ({ text, font, isRTL, onLayout }) => (
   <View
     style={{
@@ -80,22 +84,22 @@ const StandardText = ({ text, font, isRTL }) => (
 )
 
 /**
- *
+ * Displays all of the text for the different lesson sections.
+ * @param {ref} lessonTextContentRef - The ref for the carousel component of the AlbumArtSwiper. Used to manually jump to specific pages.
+ * @param {Object} thisLesson - The object for the lesson that the user has selected to do.
+ * @param {string} lessonType - The type of the current lesson. See lessonTypes in constants.js.
+ * @param {Object} layouts - The heights of the text content and text window.
+ * @param {Function} onScroll - Function that triggers on every scroll event.
+ * @param {Object[]} sectionOffsets - Stores the different sections of the lesson text and their global scroll offset.
  */
 const LessonTextContent = ({
   // Props passed from a parent component.
+  lessonTextContentRef,
   thisLesson,
   lessonType,
-  lessonTextContentRef,
-  // setLessonTextContentHeight,
   layouts,
   onScroll,
-  // setTextWindowHeight,
-  isScrolling,
-  setIsScrolling,
   sectionOffsets,
-  // setSectionOffsets,
-  isFullyRendered,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
@@ -103,32 +107,29 @@ const LessonTextContent = ({
   t,
   isRTL
 }) => {
-  const setOffsets = (
-    sectionTitle,
-    sectionSubtitle,
-    isBigSection,
-    nativeEvent
-  ) => {
+  /**
+   * Adds a section and its offset in the sectionOffsets array.
+   * @param {string} sectionTitle
+   * @param {Object} nativeEvent
+   */
+  const setOffsets = (sectionTitle, nativeEvent) => {
     if (
       nativeEvent &&
-      !sectionOffsets.current.some(
-        section =>
-          section.title === sectionTitle && section.subtitle === sectionSubtitle
-      )
+      // Don't add duplicates.
+      !sectionOffsets.current.some(section => section.title === sectionTitle)
     ) {
       sectionOffsets.current = [
         ...sectionOffsets.current,
         {
           title: sectionTitle,
-          subtitle: sectionSubtitle,
-          isBigSection: isBigSection,
           globalOffset: nativeEvent.layout.y
-          // localOffset is set later.
         }
+        // Sort by the offsets so every section is in order.
       ].sort((a, b) => a.globalOffset - b.globalOffset)
     }
   }
 
+  /** Adds the text window height to the layouts object. */
   const onLayout = event => {
     if (event.nativeEvent)
       layouts.current = {
@@ -140,28 +141,23 @@ const LessonTextContent = ({
   return (
     <ScrollView
       ref={lessonTextContentRef}
-      showsVerticalScrollIndicator={false}
       onScroll={onScroll}
-      onContentSizeChange={
-        (width, height) =>
-          (layouts.current = {
-            ...layouts.current,
-            contentHeight: height
-          })
-        // setLessonTextContentHeight(height)
+      onContentSizeChange={(width, height) =>
+        (layouts.current = {
+          ...layouts.current,
+          contentHeight: height
+        })
       }
       onLayout={onLayout}
       removeClippedSubviews={false}
-      scrollEventThrottle={32}
-      onMomentumScrollEnd={() => setIsScrolling(false)}
-      onScrollEndDrag={() => setIsScrolling(false)}
+      scrollEventThrottle={256}
     >
       {!lessonType.includes('BookText') ? (
         <View>
-          {/* Fellowship header. */}
+          {/* Used to get the offset for the Fellowship section. */}
           <View
             onLayout={({ nativeEvent }) =>
-              setOffsets(t.play && t.play.fellowship, '', true, nativeEvent)
+              setOffsets(t.play && t.play.fellowship, nativeEvent)
             }
           />
           {/* Fellowship questions. */}
@@ -183,26 +179,15 @@ const LessonTextContent = ({
               </View>
             )
           )}
-          <HeaderBig
-            onLayout={() => {}}
-            font={font}
-            isRTL={isRTL}
-            text={t.play && t.play.story}
-          />
+          {/* Scripture passages. */}
           {thisLesson.scripture.map((scriptureChunk, index) => (
             <View
               key={index}
               onLayout={({ nativeEvent }) => {
-                var isBig = index === 0 ? true : false
-                setOffsets(
-                  t.play && t.play.story,
-                  scriptureChunk.header,
-                  isBig,
-                  nativeEvent
-                )
+                setOffsets(scriptureChunk.header, nativeEvent)
               }}
             >
-              <HeaderSmall
+              <HeaderBig
                 text={scriptureChunk.header}
                 font={font}
                 isRTL={isRTL}
@@ -214,36 +199,34 @@ const LessonTextContent = ({
               />
             </View>
           ))}
+          {/* Header for application section. */}
           <HeaderBig
+            onLayout={({ nativeEvent }) =>
+              setOffsets(t.play && t.play.application, nativeEvent)
+            }
             font={font}
             isRTL={isRTL}
             text={t.play && t.play.application}
           />
           {/* Application questions. */}
-          <View
-            onLayout={({ nativeEvent }) =>
-              setOffsets(t.play && t.play.application, '', true, nativeEvent)
-            }
-          >
-            {activeDatabase.questions[thisLesson.applicationType].map(
-              (question, index) => (
-                <View key={index}>
-                  <HeaderSmall
-                    text={
-                      t.play && t.play.question + ' ' + (index + 1).toString()
-                    }
-                    font={font}
-                    isRTL={isRTL}
-                  />
-                  <StandardText
-                    text={question + '\n'}
-                    font={font}
-                    isRTL={isRTL}
-                  />
-                </View>
-              )
-            )}
-          </View>
+          {activeDatabase.questions[thisLesson.applicationType].map(
+            (question, index) => (
+              <View key={index}>
+                <HeaderSmall
+                  text={
+                    t.play && t.play.question + ' ' + (index + 1).toString()
+                  }
+                  font={font}
+                  isRTL={isRTL}
+                />
+                <StandardText
+                  text={question + '\n'}
+                  font={font}
+                  isRTL={isRTL}
+                />
+              </View>
+            )
+          )}
         </View>
       ) : (
         <View style={{ paddingTop: 20 * scaleMultiplier }}>
@@ -260,10 +243,6 @@ const LessonTextContent = ({
     </ScrollView>
   )
 }
-const styles = StyleSheet.create({
-  sectionContainer: {
-    // paddingTop: 20 * scaleMultiplier
-  }
-})
+const styles = StyleSheet.create({})
 
 export default connect(mapStateToProps)(LessonTextContent)

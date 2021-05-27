@@ -58,7 +58,7 @@ function mapStateToProps (state) {
     recentActiveGroup: state.database.recentActiveGroup,
     font: font,
     isRTL: isRTL,
-    t: t
+    t: translations
   }
 }
 

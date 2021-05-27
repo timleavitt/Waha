@@ -448,24 +448,17 @@ const PlayScreen = ({
         })
       else if (chapter === chapters.STORY)
         lessonTextContentRef.current.scrollTo({
-          y: sectionOffsets.current[1].globalOffset,
+          y: sectionOffsets.current[1].globalOffset + 40 * scaleMultiplier,
           animated: true
         })
       else if (chapter === chapters.APPLICATION)
         lessonTextContentRef.current.scrollTo({
           y:
             sectionOffsets.current[sectionOffsets.current.length - 2]
-              .globalOffset,
+              .globalOffset +
+            40 * scaleMultiplier,
           animated: true
         })
-      // etc....
-      // var section = sectionOffsets.current.filter(
-      //   section => section.chapter === chapter
-      // )[0]
-      // lessonTextContentRef.current.scrollTo({
-      //   y: section.globalOffset + 3,
-      //   animated: true
-      // })
     }
 
     // If this lesson doesn't have any Story audio, swipe over to the text once we get to the Story chapter so the user can still read it.
@@ -909,78 +902,66 @@ const PlayScreen = ({
 
   return (
     <View style={styles.screen}>
-      <View style={styles.topHalfContainer}>
-        {/* {!lessonType.includes('BookText') && (
-          <PlayScreenTitle
-            text={thisLesson.title}
-            backgroundColor={colors.white}
-          />
-        )} */}
-        {/* {!lessonType.includes('BookText') && ( */}
-        <View style={styles.middleAreaContainer}>
-          {lessonType !== lessonTypes.VIDEO_ONLY && (
-            <Animated.View
-              style={{
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                opacity:
-                  lessonType === lessonTypes.BOOK ? 1 : albumArtSwiperOpacity,
-                zIndex:
-                  activeChapter === chapters.TRAINING
-                    ? middleAreaVisibility.HIDE
-                    : middleAreaVisibility.SHOW
-              }}
-            >
-              <PlayScreenSwiper
-                lessonTextContentRef={lessonTextContentRef}
-                iconName={thisSet.iconName}
-                thisLesson={thisLesson}
-                lessonType={lessonType}
-                playHandler={playHandler}
-                playFeedbackOpacity={playFeedbackOpacity}
-                playFeedbackZIndex={playFeedbackZIndex}
-                isMediaPlaying={isMediaPlaying}
-                // setSectionOffsets={setSectionOffsets}
-                sectionOffsets={sectionOffsets}
-                markLessonAsComplete={markLessonAsComplete}
-                isThisLessonComplete={isThisLessonComplete}
-              />
-            </Animated.View>
-          )}
-          {lessonType.includes('Video') && (
-            <Animated.View
-              style={{
-                position: 'absolute',
-                opacity: videoPlayerOpacity,
-                zIndex:
-                  activeChapter === chapters.TRAINING
-                    ? middleAreaVisibility.SHOW
-                    : middleAreaVisibility.HIDE
-              }}
-            >
-              <VideoPlayer
-                videoSource={
-                  chapterSources ? chapterSources[chapters.TRAINING] : null
-                }
-                videoRef={videoRef}
-                onVideoPlaybackStatusUpdate={onVideoPlaybackStatusUpdate}
-                setIsMediaPlaying={setIsMediaPlaying}
-                fullscreenStatus={fullscreenStatus}
-                activeChapter={activeChapter}
-                isMediaLoaded={isMediaLoaded}
-              />
-            </Animated.View>
-          )}
-        </View>
-        {/* )} */}
-        {/* {lessonType.includes('BookText') && (
-          <BookView thisLesson={thisLesson} />
-        )} */}
+      <View style={styles.middleAreaContainer}>
+        {lessonType !== lessonTypes.VIDEO_ONLY && (
+          <Animated.View
+            style={{
+              // Width/height instead of flex: 1 because of a PagerView bug.
+              width: '100%',
+              height: '100%',
+              position: 'absolute',
+              opacity:
+                lessonType === lessonTypes.BOOK ? 1 : albumArtSwiperOpacity,
+              zIndex:
+                activeChapter === chapters.TRAINING
+                  ? middleAreaVisibility.HIDE
+                  : middleAreaVisibility.SHOW
+            }}
+          >
+            <PlayScreenSwiper
+              lessonTextContentRef={lessonTextContentRef}
+              iconName={thisSet.iconName}
+              thisLesson={thisLesson}
+              lessonType={lessonType}
+              playHandler={playHandler}
+              playFeedbackOpacity={playFeedbackOpacity}
+              playFeedbackZIndex={playFeedbackZIndex}
+              isMediaPlaying={isMediaPlaying}
+              sectionOffsets={sectionOffsets}
+              markLessonAsComplete={markLessonAsComplete}
+              isThisLessonComplete={isThisLessonComplete}
+            />
+          </Animated.View>
+        )}
+        {lessonType.includes('Video') && (
+          <Animated.View
+            style={{
+              position: 'absolute',
+              opacity: videoPlayerOpacity,
+              zIndex:
+                activeChapter === chapters.TRAINING
+                  ? middleAreaVisibility.SHOW
+                  : middleAreaVisibility.HIDE
+            }}
+          >
+            <VideoPlayer
+              videoSource={
+                chapterSources ? chapterSources[chapters.TRAINING] : null
+              }
+              videoRef={videoRef}
+              onVideoPlaybackStatusUpdate={onVideoPlaybackStatusUpdate}
+              setIsMediaPlaying={setIsMediaPlaying}
+              fullscreenStatus={fullscreenStatus}
+              activeChapter={activeChapter}
+              isMediaLoaded={isMediaLoaded}
+            />
+          </Animated.View>
+        )}
       </View>
-      {/* Aside from the Book lesson type which has no media to play, we want to show the playback controls for controlling media. */}
+      {/* For any lessons except book lessons, show some audio controls. */}
       {lessonType !== lessonTypes.BOOK && (
         <SafeAreaView>
+          {/* Only lessons that have questions have separate chapters and require the chapter selector. */}
           {lessonType.includes('Questions') && (
             <ChapterSelector
               activeChapter={activeChapter}
@@ -1006,7 +987,6 @@ const PlayScreen = ({
           />
         </SafeAreaView>
       )}
-
       {/* Modals */}
       <ShareModal
         isVisible={showShareLessonModal}
@@ -1047,10 +1027,6 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     backgroundColor: colors.white
-  },
-  topHalfContainer: {
-    justifyContent: 'space-evenly',
-    flex: 1
   },
   middleAreaContainer: {
     width: '100%',

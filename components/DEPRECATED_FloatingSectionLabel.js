@@ -26,7 +26,7 @@ function mapStateToProps (state) {
 const FloatingSectionLabel = ({
   // Props passed from a parent component.
   section,
-  isFullyRendered,
+  // isFullyRendered,
   textAreaHeight,
   scrollBarSize,
   setFloatingSectionLabelHeight,
