@@ -75,8 +75,6 @@ const SecurityModeScreen = ({
       return t.security && t.security.five_minutes
     else if (security.timeoutDuration === 900000)
       return t.security && t.security.fifteen_minutes
-    else if (security.timeoutDuration === 1800000)
-      return t.security && t.security.thirty_minutes
     else if (security.timeoutDuration === 3600000)
       return t.security && t.security.one_hour
     else if (security.timeoutDuration === 0)

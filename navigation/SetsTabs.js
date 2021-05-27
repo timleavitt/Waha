@@ -1,5 +1,6 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import React from 'react'
+import { Dimensions } from 'react-native'
 import { connect } from 'react-redux'
 import { getSetInfo, scaleMultiplier } from '../constants'
 import {
@@ -89,6 +90,8 @@ const SetsTabs = ({
       // Set the initial route based on the category of the bookmarked set.
       initialRouteName={getBookmarkedTab()}
       swipeEnabled={true}
+      // Improves performance according to docs.
+      initialLayout={{ width: Dimensions.get('window').width }}
       tabBarOptions={{
         style: {
           backgroundColor: colors.aquaHaze

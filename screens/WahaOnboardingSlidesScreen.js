@@ -115,7 +115,7 @@ const WahaOnboardingSlidesScreen = ({
     >
       <View style={styles.imageContainer}>
         <Image
-          style={styles.image}
+          style={styles.imageContainer}
           source={{
             uri:
               'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_1.gif?alt=media'
@@ -262,7 +262,8 @@ const styles = StyleSheet.create({
     borderColor: colors.athens,
     aspectRatio: 1,
     overflow: 'hidden',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   image: {
     resizeMode: 'contain',

@@ -7,7 +7,6 @@ import {
 } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
-import PlayScreenTitle from './PlayScreenTitle'
 
 function mapStateToProps (state) {
   return {
@@ -36,7 +35,7 @@ const BookView = ({
       style={[
         StandardTypography(
           { font, isRTL },
-          'h4',
+          'h3',
           'Regular',
           'left',
           colors.shark
@@ -56,12 +55,6 @@ const BookView = ({
         data={thisLesson.text.split('\n')}
         renderItem={renderParagraph}
         keyExtractor={item => item}
-        ListHeaderComponent={
-          <PlayScreenTitle
-            text={thisLesson.title}
-            backgroundColor={colors.porcelain}
-          />
-        }
       />
     </View>
   )
@@ -69,11 +62,7 @@ const BookView = ({
 
 const styles = StyleSheet.create({
   bookViewContainer: {
-    borderRadius: 20,
-    backgroundColor: colors.porcelain,
-    borderWidth: 4,
-    borderColor: colors.chateau,
-    marginHorizontal: 10,
+    paddingHorizontal: 10,
     marginVertical: 10,
     flex: 1
   }

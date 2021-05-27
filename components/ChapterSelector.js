@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import { chapters, lessonTypes } from '../constants'
+import { chapters, gutterSize, lessonTypes } from '../constants'
 import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
 import ChapterButton from './ChapterButton'
 
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   chapterSelectorContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: 10
+    marginHorizontal: gutterSize
     // borderRadius: 20,
     // borderWidth: 2,
     // overflow: 'hidden'
