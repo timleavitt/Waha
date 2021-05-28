@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { StatusBar, View } from 'react-native'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
-import { lockLandscape, lockPortrait } from './constants'
+import { lockPortrait } from './constants'
 import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
 import { colors } from './styles/colors'
@@ -54,10 +54,9 @@ export default function App () {
   const setOrientation = async () => {
     var deviceType = await Device.getDeviceTypeAsync()
 
-    var orientation = await ScreenOrientation.getOrientationAsync()
-
     if (deviceType === Device.DeviceType.TABLET) {
-      lockLandscape()
+      console.log('unlocking')
+      ScreenOrientation.unlockAsync()
     } else {
       // Lock our orientation to portrait.
       lockPortrait(() => {})

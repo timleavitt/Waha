@@ -79,7 +79,8 @@ const GroupNameTextInput = ({
 const styles = StyleSheet.create({
   groupNameAreaContainer: {
     width: '100%',
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    maxWidth: 500
   },
   groupNameTextInputContainer: {
     backgroundColor: colors.white,

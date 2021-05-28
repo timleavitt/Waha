@@ -39,80 +39,82 @@ const LanguageStorageItem = ({
   isTablet,
   isRTL,
   t
-}) => (
-  <View style={styles.languageStorageItemContainer}>
-    <View
-      style={[
-        styles.languageStorageHeaderContainer,
-        { flexDirection: isRTL ? 'row-reverse' : 'row' }
-      ]}
-    >
-      <Text
-        style={StandardTypography(
-          { font, isRTL, isTablet },
-          'h3',
-          'Regular',
-          'left',
-          colors.chateau
-        )}
-      >
-        {languageName}
-      </Text>
-      <Image
-        style={styles.languageLogo}
-        source={{
-          uri: FileSystem.documentDirectory + languageID + '-header.png'
-        }}
-      />
-    </View>
-    <WahaSeparator />
-    <View
-      style={[
-        styles.mainAreaContainer,
-        { flexDirection: isRTL ? 'row-reverse' : 'row' }
-      ]}
-    >
-      <Text
-        style={StandardTypography(
-          { font, isRTL, isTablet },
-          'h3',
-          'Bold',
-          'left',
-          colors.tuna
-        )}
-      >
-        {megabytes + ' ' + t.storage && t.storage.megabyte}
-      </Text>
-      <Text
+}) => {
+  return (
+    <View style={styles.languageStorageItemContainer}>
+      <View
         style={[
-          StandardTypography(
+          styles.languageStorageHeaderContainer,
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
+        ]}
+      >
+        <Text
+          style={StandardTypography(
             { font, isRTL, isTablet },
             'h3',
             'Regular',
             'left',
-            colors.tuna
-          ),
-          {
-            flex: 1,
-            paddingHorizontal: 20
-          }
+            colors.chateau
+          )}
+        >
+          {languageName}
+        </Text>
+        <Image
+          style={styles.languageLogo}
+          source={{
+            uri: FileSystem.documentDirectory + languageID + '-header.png'
+          }}
+        />
+      </View>
+      <WahaSeparator />
+      <View
+        style={[
+          styles.mainAreaContainer,
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
         ]}
       >
-        {t.storage && t.storage.storage_used}
-      </Text>
-      <WahaButton
-        type='outline'
-        color={colors.red}
-        label={t.general && t.general.clear}
-        width={92 * scaleMultiplier}
-        onPress={clearDownloads}
-        style={{ height: 45 * scaleMultiplier }}
-        textStyle={{ fontFamily: font + '-Regular' }}
-      />
+        <Text
+          style={StandardTypography(
+            { font, isRTL, isTablet },
+            'h3',
+            'Bold',
+            'left',
+            colors.tuna
+          )}
+        >
+          {`${megabytes} ${t.storage && t.storage.megabyte}`}
+        </Text>
+        <Text
+          style={[
+            StandardTypography(
+              { font, isRTL, isTablet },
+              'h3',
+              'Regular',
+              'left',
+              colors.tuna
+            ),
+            {
+              flex: 1,
+              paddingHorizontal: 20
+            }
+          ]}
+        >
+          {t.storage && t.storage.storage_used}
+        </Text>
+        <WahaButton
+          type='outline'
+          color={colors.red}
+          label={t.general && t.general.clear}
+          width={92 * scaleMultiplier}
+          onPress={clearDownloads}
+          style={{ height: 45 * scaleMultiplier }}
+          textStyle={{ fontFamily: font + '-Regular' }}
+        />
+      </View>
+      <WahaSeparator />
     </View>
-    <WahaSeparator />
-  </View>
-)
+  )
+}
 
 const styles = StyleSheet.create({
   languageStorageItemContainer: {

@@ -121,19 +121,27 @@ const LessonTextContent = ({
    * @param {Object} nativeEvent
    */
   const setOffsets = (sectionTitle, nativeEvent) => {
-    if (
-      nativeEvent &&
-      // Don't add duplicates.
-      !sectionOffsets.current.some(section => section.title === sectionTitle)
-    ) {
-      sectionOffsets.current = [
-        ...sectionOffsets.current,
-        {
-          title: sectionTitle,
-          globalOffset: nativeEvent.layout.y
-        }
-        // Sort by the offsets so every section is in order.
-      ].sort((a, b) => a.globalOffset - b.globalOffset)
+    if (nativeEvent) {
+      const thisSection = {
+        title: sectionTitle,
+        globalOffset: nativeEvent.layout.y
+      }
+
+      // Find the index of this section (if it has already been added).
+      const indexOfThisSection = sectionOffsets.current.findIndex(
+        section => section.title === sectionTitle
+      )
+
+      // If section is already present, replace it so it has the most current global offset value. This is so that if the user rotates their tablet, the sectionOffsets will update with new global offset values.
+      if (indexOfThisSection > -1)
+        sectionOffsets.current[indexOfThisSection] = thisSection
+      // If section isn't present, add it to the array.
+      else sectionOffsets.current = [...sectionOffsets.current, thisSection]
+
+      // Always sort the array by global offset.
+      sectionOffsets.current = sectionOffsets.current.sort(
+        (a, b) => a.globalOffset - b.globalOffset
+      )
     }
   }
 
@@ -245,6 +253,12 @@ const LessonTextContent = ({
         </View>
       ) : (
         <View style={{ paddingTop: 20 * scaleMultiplier }}>
+          <HeaderSmall
+            text={thisLesson.title}
+            font={font}
+            isRTL={isRTL}
+            isTablet={isTablet}
+          />
           {thisLesson.text.split('\n').map((paragraph, index) => (
             <StandardText
               key={index}

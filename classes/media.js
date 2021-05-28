@@ -12,46 +12,53 @@ export class Media {
 
   load (source, shouldAutoPlay, activeChapter) {
     const media = activeChapter === chapters.TRAINING ? this.video : this.audio
-    return media.loadAsync(
-      { uri: source },
-      {
-        // Initial play status depends on whether we should autoplay or not.
-        shouldPlay: shouldAutoPlay ? true : false,
-        // Call the onPlaybackStatusUpdate function once every second.
-        progressUpdateIntervalMillis: 1000
-      }
-    )
+    if (media !== null)
+      return media.loadAsync(
+        { uri: source },
+        {
+          // Initial play status depends on whether we should autoplay or not.
+          shouldPlay: shouldAutoPlay ? true : false,
+          // Call the onPlaybackStatusUpdate function once every second.
+          progressUpdateIntervalMillis: 1000
+        }
+      )
   }
 
   play (activeChapter) {
     const media = activeChapter === chapters.TRAINING ? this.video : this.audio
-    return media.playAsync()
+    if (media !== null) return media.playAsync()
   }
 
   pause (activeChapter) {
     const media = activeChapter === chapters.TRAINING ? this.video : this.audio
-    return media.pauseAsync()
+    if (media !== null) return media.pauseAsync()
   }
 
   playFromLocation (location, isMediaPlaying, activeChapter) {
     const media = activeChapter === chapters.TRAINING ? this.video : this.audio
-    return media.setStatusAsync({
-      shouldPlay: isMediaPlaying ? true : false,
-      positionMillis: location
-    })
+    if (media !== null)
+      return media.setStatusAsync({
+        shouldPlay: isMediaPlaying ? true : false,
+        positionMillis: location
+      })
   }
 
   setAudioOnStatusUpdate (onStatusUpdate) {
-    this.audio.setOnPlaybackStatusUpdate(onStatusUpdate)
+    if (this.audio !== null)
+      this.audio.setOnPlaybackStatusUpdate(onStatusUpdate)
   }
 
   closeFullscreen () {
-    return this.video.dismissFullscreenPlayer()
+    if (this.video !== null) return this.video.dismissFullscreenPlayer()
+  }
+
+  openFullscreen () {
+    if (this.video !== null) return this.video.presentFullscreenPlayer()
   }
 
   unload () {
-    if (this.audio) this.audio.unloadAsync()
-    if (this.video) this.video.unloadAsync()
+    if (this.audio !== null) this.audio.unloadAsync()
+    if (this.video !== null) this.video.unloadAsync()
   }
 
   cleanup () {

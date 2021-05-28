@@ -125,11 +125,6 @@ export function toggleComplete (groupName, set, lessonIndex) {
       addedSet => addedSet.id === set.id
     )[0].progress
 
-    // Track analytics.
-    // if (!thisSetProgress.includes(lessonIndex)) {
-    //   logCompleteLesson(thisLesson, thisGroup.id)
-    // }
-
     if (
       !thisSetProgress.includes(lessonIndex) &&
       thisSetProgress.length === setLength - 1

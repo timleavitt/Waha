@@ -103,7 +103,7 @@ const LessonTextViewer = ({
       scrollPosition < currentSection.globalOffset ||
       scrollPosition > sectionOffsets.current[currentIndex + 1].globalOffset
     ) {
-      // Find the section that we're currently scrolling in by itereting through the sections and checking their offsets.
+      // Find the section that we're currently scrolling in by iterating through the sections and checking their offsets.
       var sectionIndex = -1
       do {
         sectionIndex += 1
@@ -118,6 +118,7 @@ const LessonTextViewer = ({
   useEffect(() => {
     if (
       lessonType.includes('Questions') &&
+      // Fellowship + Application + END + number of scripture passages
       sectionOffsets.current.length === thisLesson.scripture.length + 3
     )
       setCurrentSection(sectionOffsets.current[0])

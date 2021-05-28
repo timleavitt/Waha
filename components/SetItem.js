@@ -298,7 +298,9 @@ const SetItem = ({
         styles.setItemContainer,
         {
           flexDirection: isRTL ? 'row-reverse' : 'row',
-          height: itemHeights[font].SetItem
+          height: isTablet
+            ? itemHeights[font].SetItem + 15
+            : itemHeights[font].SetItem
         }
       ]}
       onPress={onSetSelect}

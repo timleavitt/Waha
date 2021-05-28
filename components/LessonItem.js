@@ -146,7 +146,9 @@ const LessonItem = ({
         styles.lessonItemContainer,
         {
           flexDirection: isRTL ? 'row-reverse' : 'row',
-          height: itemHeights[font].LessonItem
+          height: isTablet
+            ? itemHeights[font].LessonItem + 15
+            : itemHeights[font].LessonItem
         }
       ]}
     >

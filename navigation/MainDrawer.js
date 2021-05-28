@@ -132,9 +132,9 @@ const MainDrawer = ({
 
   /** useEffect function that adds a listener for listening to network changes. */
   useEffect(() => {
-    Device.getDeviceTypeAsync().then(type =>
+    Device.getDeviceTypeAsync().then(type => {
       setIsTablet(type === Device.DeviceType.TABLET)
-    )
+    })
 
     // Add a listener for connection status and update the redux state accordingly.
     const netInfoUnsubscribe = NetInfo.addEventListener(state => {

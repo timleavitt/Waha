@@ -12,7 +12,8 @@ import { colors } from '../styles/colors'
 
 function mapStateToProps (state) {
   return {
-    primaryColor: activeDatabaseSelector(state).primaryColor
+    primaryColor: activeDatabaseSelector(state).primaryColor,
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -32,7 +33,8 @@ const PlaybackControls = ({
   mediaProgress,
   playFromLocation,
   // Props passed from redux.
-  primaryColor
+  primaryColor,
+  isTablet
 }) => (
   <View style={styles.playbackControlsContainer}>
     <TouchableOpacity
@@ -42,24 +44,38 @@ const PlaybackControls = ({
     >
       <Icon
         name='skip-back-5'
-        size={69 * scaleMultiplier}
+        size={isTablet ? 89 * scaleMultiplier : 69 * scaleMultiplier}
         color={colors.tuna}
       />
     </TouchableOpacity>
     {isMediaLoaded ? (
       <TouchableOpacity
-        style={styles.playButtonContainer}
+        style={[
+          styles.playButtonContainer,
+          {
+            width: isTablet ? 130 * scaleMultiplier : 100 * scaleMultiplier,
+            height: isTablet ? 130 * scaleMultiplier : 100 * scaleMultiplier
+          }
+        ]}
         onPress={playHandler}
       >
         <Icon
           name={isMediaPlaying ? 'pause' : 'play'}
-          size={100 * scaleMultiplier}
+          size={isTablet ? 130 * scaleMultiplier : 100 * scaleMultiplier}
           color={primaryColor}
         />
       </TouchableOpacity>
     ) : (
       // Show a spinning activity indicator if the media is loading.
-      <View style={styles.playButtonContainer}>
+      <View
+        style={[
+          styles.playButtonContainer,
+          {
+            width: isTablet ? 130 * scaleMultiplier : 100 * scaleMultiplier,
+            height: isTablet ? 130 * scaleMultiplier : 100 * scaleMultiplier
+          }
+        ]}
+      >
         <ActivityIndicator size='large' color={colors.shark} />
       </View>
     )}
@@ -70,7 +86,7 @@ const PlaybackControls = ({
     >
       <Icon
         name='skip-forward-5'
-        size={69 * scaleMultiplier}
+        size={isTablet ? 89 * scaleMultiplier : 69 * scaleMultiplier}
         color={colors.tuna}
       />
     </TouchableOpacity>
@@ -86,8 +102,6 @@ const styles = StyleSheet.create({
     marginTop: -15
   },
   playButtonContainer: {
-    width: 100 * scaleMultiplier,
-    height: 100 * scaleMultiplier,
     alignItems: 'center',
     justifyContent: 'center'
   },

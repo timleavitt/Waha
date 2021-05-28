@@ -212,10 +212,7 @@ const PlayScreen = ({
   const sectionOffsets = useRef([
     {
       title: 'END',
-      subtitle: 'END',
-      isBigSection: false,
-      globalOffset: 1000000,
-      localOffset: 1000000
+      globalOffset: 1000000
     }
   ])
 
@@ -491,7 +488,7 @@ const PlayScreen = ({
 
     // If we're switching to anything but the Training chapter, fade in the <AlbumArtSwiper/> and fade out the <VideoPlayer/>. If the <AlbumArtSwiper/> is already present, this animation does nothing.
     if (activeChapter !== chapters.TRAINING) {
-      lockPortrait(() => {})
+      !isTablet && lockPortrait(() => {})
       Animated.parallel([
         Animated.timing(albumArtSwiperOpacity, {
           toValue: 1,
@@ -691,10 +688,13 @@ const PlayScreen = ({
   /** Handles the finishing of the Training chapter. */
   const onTrainingFinish = () => {
     // If we're in fullscreen, lock back to portrait orientation and close fullscreen.
-    if (fullscreenStatus.current === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT)
+    if (
+      fullscreenStatus.current === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
+    ) {
       // lockPortrait(() => videoRef.current.dismissFullscreenPlayer())
-      lockPortrait(() => media.closeFullscreen())
-
+      !isTablet && lockPortrait(() => {})
+      media.closeFullscreen()
+    }
     switch (lessonType) {
       // If we're in a standard DMC lesson, switch to the Application chapter after a short delay.
       case lessonTypes.STANDARD_DMC:
@@ -865,7 +865,7 @@ const PlayScreen = ({
    */
   const onBackButtonPress = async () => {
     // Lock to portrait orientaiton.
-    lockPortrait(() => {})
+    !isTablet && lockPortrait(() => {})
 
     // Unload all the media.
     // if (audioRef.current) await audioRef.current.unloadAsync()
@@ -953,11 +953,14 @@ const PlayScreen = ({
                 chapterSources ? chapterSources[chapters.TRAINING] : null
               }
               videoRef={videoRef}
+              media={media}
               onVideoPlaybackStatusUpdate={onVideoPlaybackStatusUpdate}
+              isMediaPlaying={isMediaPlaying}
               setIsMediaPlaying={setIsMediaPlaying}
               fullscreenStatus={fullscreenStatus}
               activeChapter={activeChapter}
               isMediaLoaded={isMediaLoaded}
+              isTablet={isTablet}
             />
           </Animated.View>
         )}
@@ -981,6 +984,7 @@ const PlayScreen = ({
             shouldThumbUpdate={shouldThumbUpdate}
             mediaLength={mediaLength}
             mediaProgress={mediaProgress}
+            isTablet={isTablet}
           />
           <PlaybackControls
             isMediaPlaying={isMediaPlaying}

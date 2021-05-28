@@ -17,9 +17,18 @@ const Scrubber = ({
   playFromLocation,
   shouldThumbUpdate,
   mediaLength,
-  mediaProgress
+  mediaProgress,
+  isTablet
 }) => (
-  <View style={styles.scrubberContainer}>
+  <View
+    style={[
+      styles.scrubberContainer,
+      {
+        marginTop: isTablet ? 20 : 10,
+        marginBottom: isTablet ? 10 : 0
+      }
+    ]}
+  >
     <View style={styles.sliderContainer}>
       <Slider
         value={mediaProgress}
@@ -47,8 +56,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-    marginTop: 10
+    width: '100%'
   },
   sliderContainer: {
     width: '100%'

@@ -52,7 +52,8 @@ function mapStateToProps (state) {
   return {
     groups: state.groups,
     database: state.database,
-    activeGroup: activeGroup
+    activeGroup: activeGroup,
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -462,7 +463,15 @@ const LanguageInstanceInstallScreen = ({
           </Text>
         </View>
       )}
-      <View style={styles.searchBarContainer}>
+      <View
+        style={[
+          styles.searchBarContainer,
+          {
+            width: Dimensions.get('window').width - 40,
+            maxWidth: 500
+          }
+        ]}
+      >
         <View style={styles.searchIconContainer}>
           <Icon
             name='search'
@@ -592,7 +601,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   searchBarContainer: {
-    width: Dimensions.get('window').width - 40,
     borderRadius: 30,
     borderWidth: 2,
     borderColor: colors.porcelain,

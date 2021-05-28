@@ -52,8 +52,8 @@ const PlayScreenTitle = ({
           colors.shark
         ),
         {
-          fontSize: 21 * scaleMultiplier,
-          paddingHorizontal: 20
+          fontSize: 21 * scaleMultiplier
+          // paddingHorizontal: 20
         }
       ]}
       marqueeDelay={2000}

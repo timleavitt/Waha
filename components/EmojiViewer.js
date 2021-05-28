@@ -116,7 +116,8 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     maxHeight: 300 * scaleMultiplier,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    maxWidth: 500
   },
   emojiListContainer: {
     alignItems: 'center',

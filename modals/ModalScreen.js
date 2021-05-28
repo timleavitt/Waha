@@ -124,7 +124,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.aquaHaze,
     flex: 1,
     borderTopLeftRadius: 15,
-    borderTopRightRadius: 15
+    borderTopRightRadius: 15,
+    alignItems: 'center'
   },
   headerContainer: {
     width: '100%',

@@ -76,7 +76,9 @@ const WahaButton = ({
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'row',
-      marginVertical: 20 * scaleMultiplier
+      marginVertical: 20 * scaleMultiplier,
+      maxWidth: 400,
+      alignSelf: 'center'
     },
     style
   ]
