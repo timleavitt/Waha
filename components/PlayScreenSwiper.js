@@ -138,6 +138,8 @@ const PlayScreenSwiper = ({
           thisLesson={thisLesson}
           lessonType={lessonType}
           sectionOffsets={sectionOffsets}
+          markLessonAsComplete={markLessonAsComplete}
+          isThisLessonComplete={isThisLessonComplete}
         />
       )}
     </View>

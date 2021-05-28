@@ -46,8 +46,8 @@ const LessonTextViewer = ({
   setSectionTitleText = null,
   sectionTitleOpacity = null,
   sectionTitleYTransform = null,
-  markLessonAsComplete = null,
-  isThisLessonComplete = null,
+  markLessonAsComplete,
+  isThisLessonComplete,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
