@@ -25,6 +25,7 @@ function mapStateToProps (state) {
   return {
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     security: state.security,
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state)
@@ -53,6 +54,7 @@ const PianoPasscodeSetScreen = ({
   // Props passed from redux.
   t,
   font,
+  isTablet,
   security,
   isRTL,
   activeGroup,
@@ -173,7 +175,7 @@ const PianoPasscodeSetScreen = ({
         <View style={styles.instructionTextContainer}>
           <Text
             style={StandardTypography(
-              { font, isRTL },
+              { font, isRTL, isTablet },
               'h2',
               'Bold',
               'center',

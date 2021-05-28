@@ -2,6 +2,7 @@ import { combineReducers } from 'redux'
 import { activeGroup } from './reducers/activeGroup'
 import { areMobilizationToolsUnlocked } from './reducers/areMobilizationToolsUnlocked'
 import { database } from './reducers/database'
+import { deviceInfo } from './reducers/deviceInfo'
 import { downloads } from './reducers/downloads'
 import { groups } from './reducers/groups'
 import { isInstallingLanguageInstance } from './reducers/isInstallingLanguageInstance'
@@ -10,6 +11,7 @@ import { network } from './reducers/network'
 import { popups } from './reducers/popups'
 import { security } from './reducers/security'
 import { storedDownloads } from './reducers/storedDownloads'
+
 /**
  * Combines all the different reducers together using the combineReducers redux function.
  */
@@ -24,5 +26,6 @@ export default rootReducer = combineReducers({
   security,
   mtUnlockAttempts,
   storedDownloads,
-  popups
+  popups,
+  deviceInfo
 })

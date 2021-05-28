@@ -24,7 +24,8 @@ function mapStateToProps (state) {
     downloads: state.downloads,
     t: activeDatabaseSelector(state).translations,
     isConnected: state.network.isConnected,
-    font: getLanguageFont(activeGroupSelector(state).language)
+    font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -65,6 +66,7 @@ const LessonItem = ({
   t,
   isConnected,
   font,
+  isTablet,
   removeDownload
 }) => {
   /** Keeps track of whether this lesson is downloaded or not. */
@@ -192,7 +194,7 @@ const LessonItem = ({
         >
           <Text
             style={StandardTypography(
-              { font, isRTL },
+              { font, isRTL, isTablet },
               'h4',
               'Bold',
               'left',
@@ -204,7 +206,7 @@ const LessonItem = ({
           </Text>
           <Text
             style={StandardTypography(
-              { font, isRTL },
+              { font, isRTL, isTablet },
               'd',
               'Regular',
               'left',

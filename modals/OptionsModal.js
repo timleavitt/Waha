@@ -13,6 +13,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -32,6 +33,7 @@ const OptionsModal = ({
   children,
   // Props passed from redux.
   font,
+  isTablet,
   isRTL
 }) => (
   <Modal
@@ -50,7 +52,7 @@ const OptionsModal = ({
       <TouchableOpacity onPress={hideModal} style={styles.closeButtonContainer}>
         <Text
           style={StandardTypography(
-            { font, isRTL },
+            { font, isRTL, isTablet },
             'h3',
             'Bold',
             'center',

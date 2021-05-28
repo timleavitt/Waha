@@ -24,7 +24,8 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     database: state.database,
     t: activeDatabaseSelector(state).translations,
-    font: getLanguageFont(activeGroupSelector(state).language)
+    font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -45,7 +46,8 @@ const StorageScreen = ({
   isRTL,
   database,
   t,
-  font
+  font,
+  isTablet
 }) => {
   /** Keeps track of the amount of storage each language's downloaded Story and Training chapter mp3s and mp4s take up. */
   const [languageStorageSizes, setLanguageSizes] = useState({})

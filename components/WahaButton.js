@@ -17,6 +17,7 @@ function mapStateToProps (state) {
   return activeGroupSelector(state)
     ? {
         font: getLanguageFont(activeGroupSelector(state).language),
+        isTablet: state.deviceInfo.isTablet,
         isRTL: activeDatabaseSelector(state).isRTL,
         activeGroup: activeGroupSelector(state)
       }
@@ -48,6 +49,7 @@ const WahaButton = ({
   extraComponent = null,
   // Props passed from redux.
   font = null,
+  isTablet = null,
   isRTL = null,
   activeGroup = null
 }) => {
@@ -118,7 +120,13 @@ const WahaButton = ({
   const labelStyle = [
     useDefaultFont
       ? SystemTypography(false, 'h3', 'Bold', 'center', color)
-      : StandardTypography({ font, isRTL }, 'h3', 'Bold', 'center', color),
+      : StandardTypography(
+          { font, isRTL, isTablet },
+          'h3',
+          'Bold',
+          'center',
+          color
+        ),
     { fontWeight: font ? null : 'bold' },
     textStyle
   ]

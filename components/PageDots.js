@@ -15,6 +15,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     primaryColor: activeDatabaseSelector(state).primaryColor
   }
 }
@@ -50,6 +51,7 @@ const PageDots = ({
   activeDatabase,
   isRTL,
   font,
+  isTablet,
   primaryColor
 }) => {
   // Array that holds the many dot components.

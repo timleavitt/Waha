@@ -6,7 +6,6 @@ import {
   Platform,
   StyleSheet,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View
 } from 'react-native'
 import {
@@ -86,7 +85,14 @@ const VideoPlayer = ({
   }, [deviceRotation])
 
   return (
-    <TouchableWithoutFeedback
+    <TouchableOpacity
+      activeOpacity={1}
+      style={{
+        width: '100%',
+        height: '100%',
+        paddingVertical: 20,
+        alignItems: 'center'
+      }}
       onPress={() => {
         // When the user taps on the video component and the video controls are not present, show them for a few seconds.
         if (!shouldShowVideoControls && isMediaLoaded) {
@@ -95,7 +101,14 @@ const VideoPlayer = ({
         }
       }}
     >
-      <View style={styles.videoContainer}>
+      <View
+        style={{
+          flex: 1,
+          aspectRatio: 16 / 9,
+          maxWidth: Dimensions.get('window').width,
+          maxHeight: Dimensions.get('window').width
+        }}
+      >
         <Video
           ref={videoRef}
           rate={1.0}
@@ -104,8 +117,10 @@ const VideoPlayer = ({
           resizeMode={Video.RESIZE_MODE_CONTAIN}
           style={{
             // Force a 16:9 aspect ratio.
-            width: Dimensions.get('window').width,
-            height: (Dimensions.get('window').width * 9) / 16
+            flex: 1
+            // width: '100%',
+            // height: '100%',
+            // aspectRatio: 9 / 16,
           }}
           onPlaybackStatusUpdate={onVideoPlaybackStatusUpdate}
           onFullscreenUpdate={({ fullscreenUpdate, status }) => {
@@ -154,20 +169,20 @@ const VideoPlayer = ({
           </View>
         )}
       </View>
-    </TouchableWithoutFeedback>
+    </TouchableOpacity>
   )
 }
 
 const styles = StyleSheet.create({
   videoContainer: {
-    height: Dimensions.get('window').width - 80,
-    width: Dimensions.get('window').width,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.shark
+    flex: 1,
+    aspectRatio: 9 / 16
   },
   videoControlsOverlayContainer: {
+    paddingVertical: 20,
     width: '100%',
     height: '100%',
     position: 'absolute',

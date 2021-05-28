@@ -22,6 +22,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     security: state.security,
     mtUnlockAttempts: state.mtUnlockAttempts,
     groups: state.groups,
@@ -59,6 +60,7 @@ const MobilizationToolsUnlockScreen = ({
   isRTL,
   t,
   font,
+  isTablet,
   security,
   mtUnlockAttempts,
   groups,
@@ -186,7 +188,7 @@ const MobilizationToolsUnlockScreen = ({
       <Text
         style={[
           StandardTypography(
-            { font, isRTL },
+            { font, isRTL, isTablet },
             'h3',
             'Regular',
             'center',
@@ -236,7 +238,7 @@ const MobilizationToolsUnlockScreen = ({
       <Text
         style={[
           StandardTypography(
-            { font, isRTL },
+            { font, isRTL, isTablet },
             'h3',
             'Regular',
             'center',

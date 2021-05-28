@@ -27,7 +27,9 @@ export const StandardTypography = (
   color
 ) => {
   // A font size modifier that makes all Arabic script a point smaller.
-  const fontSizeModifier = props.font === 'NotoSansArabic' ? -1 : 0
+  var fontSizeModifier = 0
+  fontSizeModifier += props.font === 'NotoSansArabic' ? -1 : 0
+  fontSizeModifier += props.isTablet ? 2 : 0
 
   // The options for font families.
   const families = {

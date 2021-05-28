@@ -12,6 +12,7 @@ function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     t: activeDatabaseSelector(state).translations
   }
 }
@@ -26,6 +27,7 @@ const GroupsScreenEditButton = ({
   // Props passed from redux.
   isRTL,
   font,
+  isTablet,
   t
 }) => {
   return (
@@ -33,7 +35,7 @@ const GroupsScreenEditButton = ({
       <Text
         style={[
           StandardTypography(
-            { font, isRTL },
+            { font, isRTL, isTablet },
             'h3',
             isEditing ? 'Bold' : 'Regular',
             'center',

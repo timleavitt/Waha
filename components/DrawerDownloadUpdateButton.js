@@ -16,6 +16,7 @@ function mapStateToProps (state) {
     t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     isConnected: state.network.isConnected,
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
   }
@@ -38,6 +39,7 @@ const DrawerDownloadUpdateButton = ({
   t,
   isRTL,
   font,
+  isTablet,
   isConnected,
   languageCoreFilesToUpdate
 }) => (
@@ -77,7 +79,7 @@ const DrawerDownloadUpdateButton = ({
         style={[
           { paddingHorizontal: 10 },
           StandardTypography(
-            { font, isRTL },
+            { font, isRTL, isTablet },
             'h3',
             'Bold',
             'center',

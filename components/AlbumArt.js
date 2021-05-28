@@ -21,8 +21,10 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     t: activeDatabaseSelector(state).translations,
-    isRTL: activeDatabaseSelector(state).isRTL
+    isRTL: activeDatabaseSelector(state).isRTL,
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -46,10 +48,23 @@ const AlbumArt = ({
   activeGroup,
   activeDatabase,
   font,
+  isTablet,
   t,
   isRTL
 }) => (
-  <View style={styles.albumArtContainer}>
+  <View
+    style={[
+      styles.albumArtContainer,
+      {
+        maxWidth: isTablet
+          ? Dimensions.get('window').width * 0.7
+          : Dimensions.get('window').width - gutterSize * 2,
+        maxHeight: isTablet
+          ? Dimensions.get('window').width * 0.7
+          : Dimensions.get('window').width - gutterSize * 2
+      }
+    ]}
+  >
     <TouchableHighlight
       style={styles.touchableContainer}
       onPress={playHandler}
@@ -90,9 +105,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
     flex: 1,
-    aspectRatio: 1,
-    maxWidth: Dimensions.get('window').width - gutterSize * 2,
-    maxHeight: Dimensions.get('window').width - gutterSize * 2
+    aspectRatio: 1
   },
   touchableContainer: {
     justifyContent: 'center',

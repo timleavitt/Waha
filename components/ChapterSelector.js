@@ -7,7 +7,8 @@ import ChapterButton from './ChapterButton'
 
 function mapStateToProps (state) {
   return {
-    primaryColor: activeDatabaseSelector(state).primaryColor
+    primaryColor: activeDatabaseSelector(state).primaryColor,
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -29,7 +30,8 @@ const ChapterSelector = ({
   lessonType,
   lessonID,
   // Props passed from redux.
-  primaryColor
+  primaryColor,
+  isTablet
 }) => (
   <View
     style={[styles.chapterSelectorContainer, { borderColor: primaryColor }]}
@@ -40,7 +42,7 @@ const ChapterSelector = ({
       lessonType={lessonType}
       changeChapter={changeChapter}
     />
-    <View style={{ width: 4 }} />
+    <View style={{ width: isTablet ? 8 : 4 }} />
     {/* <ChapterSeparator /> */}
     <ChapterButton
       chapter={chapters.STORY}
@@ -52,7 +54,7 @@ const ChapterSelector = ({
     />
     {/* For DMC lessons, we need an extra 'Training' chapter button. */}
     {lessonType === lessonTypes.STANDARD_DMC ? (
-      <View style={{ width: 4 }} />
+      <View style={{ width: isTablet ? 8 : 4 }} />
     ) : // <ChapterSeparator />
     null}
     {lessonType === lessonTypes.STANDARD_DMC ? (
@@ -65,7 +67,7 @@ const ChapterSelector = ({
         isVideoDownloaded={isVideoDownloaded}
       />
     ) : null}
-    <View style={{ width: 4 }} />
+    <View style={{ width: isTablet ? 8 : 4 }} />
     {/* <ChapterSeparator /> */}
     <ChapterButton
       chapter={chapters.APPLICATION}

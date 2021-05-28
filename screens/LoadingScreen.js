@@ -57,6 +57,7 @@ function mapStateToProps (state) {
     groups: state.groups,
     recentActiveGroup: state.database.recentActiveGroup,
     font: font,
+    isTablet,
     isRTL: isRTL,
     t: translations
   }
@@ -107,6 +108,7 @@ const LoadingScreen = ({
   recentActiveGroup,
   hasFetchedLanguageData,
   font,
+  isTablet,
   isRTL,
   t,
   setIsInstallingLanguageInstance,
@@ -251,7 +253,7 @@ const LoadingScreen = ({
             <Icon name='cancel' color={colors.tuna} size={50} />
             <Text
               style={StandardTypography(
-                { font, isRTL },
+                { font, isRTL, isTablet },
                 'h4',
                 'Bold',
                 'center',

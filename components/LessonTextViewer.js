@@ -17,6 +17,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
   }
@@ -51,6 +52,7 @@ const LessonTextViewer = ({
   activeGroup,
   activeDatabase,
   font,
+  isTablet,
   t,
   isRTL
 }) => {
@@ -77,10 +79,11 @@ const LessonTextViewer = ({
     if (
       currentSection &&
       currentSection.title === t.play.application &&
-      !isThisLessonComplete.current &&
-      (nativeEvent.contentOffset.y - currentSection.globalOffset) /
-        (layouts.current.contentHeight - currentSection.globalOffset) >
-        0.2
+      !isThisLessonComplete.current
+      // &&
+      // (nativeEvent.contentOffset.y - currentSection.globalOffset) /
+      //   (layouts.current.contentHeight - currentSection.globalOffset) >
+      //   0.2
     )
       markLessonAsComplete()
   }
@@ -113,7 +116,10 @@ const LessonTextViewer = ({
 
   /** useEffect function that sets the initial section once all of the sections have been added. */
   useEffect(() => {
-    if (sectionOffsets.current.length === thisLesson.scripture.length + 3)
+    if (
+      lessonType.includes('Questions') &&
+      sectionOffsets.current.length === thisLesson.scripture.length + 3
+    )
       setCurrentSection(sectionOffsets.current[0])
   }, [sectionOffsets.current])
 
@@ -144,7 +150,7 @@ const LessonTextViewer = ({
 
   /** useEffect function that animates the section title back in after it's been changed. */
   useEffect(() => {
-    if (currentSection !== null) {
+    if (currentSection !== null && sectionTitleYTransform) {
       sectionTitleYTransform.setValue(0)
       Animated.timing(sectionTitleOpacity, {
         toValue: 1,

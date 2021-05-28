@@ -27,7 +27,8 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state),
     t: activeDatabaseSelector(state).translations,
-    font: getLanguageFont(activeGroupSelector(state).language)
+    font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -59,6 +60,7 @@ const SetInfoModal = ({
   activeGroup,
   t,
   font,
+  isTablet,
   addSet
 }) => {
   /**
@@ -89,7 +91,7 @@ const SetInfoModal = ({
       >
         <Text
           style={StandardTypography(
-            { font, isRTL },
+            { font, isRTL, isTablet },
             'h4',
             'Bold',
             'left',
@@ -103,7 +105,7 @@ const SetInfoModal = ({
         {item.scripture && (
           <Text
             style={StandardTypography(
-              { font, isRTL },
+              { font, isRTL, isTablet },
               'p',
               'Regular',
               'left',

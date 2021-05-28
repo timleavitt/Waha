@@ -20,6 +20,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
   }
@@ -56,6 +57,7 @@ const PlayScreenSwiper = ({
   activeGroup,
   activeDatabase,
   font,
+  isTablet,
   t,
   isRTL
 }) => {
@@ -107,7 +109,7 @@ const PlayScreenSwiper = ({
           >
             <Text
               style={StandardTypography(
-                { font, isRTL },
+                { font, isRTL, isTablet },
                 'h2',
                 'Black',
                 'left',

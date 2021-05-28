@@ -14,6 +14,7 @@ function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     t: activeDatabaseSelector(state).translations
   }
 }
@@ -32,6 +33,7 @@ const AddNewGroupButton = ({
   // Props passed from redux.
   isRTL,
   font,
+  isTablet,
   t
 }) => {
   return (
@@ -58,7 +60,7 @@ const AddNewGroupButton = ({
         </View>
         <Text
           style={StandardTypography(
-            { font, isRTL },
+            { font, isRTL, isTablet },
             'h3',
             'Bold',
             'left',

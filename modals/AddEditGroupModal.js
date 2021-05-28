@@ -26,6 +26,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     activeGroup: activeGroupSelector(state),
     globalGroupCounter: state.database.globalGroupCounter,
     areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked
@@ -66,6 +67,7 @@ const AddEditGroupModal = ({
   isRTL,
   t,
   font,
+  isTablet,
   activeGroup,
   globalGroupCounter,
   areMobilizationToolsUnlocked,

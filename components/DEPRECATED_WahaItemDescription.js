@@ -12,6 +12,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state)
   }
@@ -22,6 +23,7 @@ const WahaItemDescription = ({
   text,
   // Props passed from redux.
   font,
+  isTablet,
   isRTL,
   activeGroup
 }) => {
@@ -37,7 +39,7 @@ const WahaItemDescription = ({
     >
       <Text
         style={StandardTypography(
-          { font, isRTL },
+          { font, isRTL, isTablet },
           'p',
           'Regular',
           'left',

@@ -20,7 +20,8 @@ function mapStateToProps (state) {
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     isRTL: activeDatabaseSelector(state).isRTL,
-    activeGroup: activeGroupSelector(state)
+    activeGroup: activeGroupSelector(state),
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -34,6 +35,7 @@ const SecurityOnboardingSlidesScreen = ({
   navigation: { setOptions, navigate, goBack },
   t,
   font,
+  isTablet,
   isRTL,
   activeGroup
 }) => {
@@ -62,7 +64,19 @@ const SecurityOnboardingSlidesScreen = ({
       title={t.security && t.security.onboarding_1_title}
       message={t.security && t.security.onboarding_1_message}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          {
+            maxWidth: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40,
+            maxHeight: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40
+          }
+        ]}
+      >
         <Image
           style={styles.image}
           source={require('../assets/onboardingImages/security_onboarding1.png')}
@@ -74,7 +88,19 @@ const SecurityOnboardingSlidesScreen = ({
       title={t.security && t.security.onboarding_2_title}
       message={t.security && t.security.onboarding_2_message}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          {
+            maxWidth: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40,
+            maxHeight: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40
+          }
+        ]}
+      >
         <Image
           style={styles.image}
           source={require('../assets/onboardingImages/security_onboarding2.png')}
@@ -86,7 +112,19 @@ const SecurityOnboardingSlidesScreen = ({
       title={t.security && t.security.onboarding_3_title}
       message={t.security && t.security.onboarding_3_message}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          {
+            maxWidth: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40,
+            maxHeight: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40
+          }
+        ]}
+      >
         <Image
           style={styles.image}
           source={require('../assets/onboardingImages/security_onboarding3.png')}
@@ -98,7 +136,19 @@ const SecurityOnboardingSlidesScreen = ({
       title={t.security && t.security.onboarding_4_title}
       message={t.security && t.security.onboarding_4_message}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          {
+            maxWidth: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40,
+            maxHeight: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40
+          }
+        ]}
+      >
         <Image
           style={styles.image}
           source={require('../assets/onboardingImages/security_onboarding4.png')}
@@ -139,7 +189,7 @@ const SecurityOnboardingSlidesScreen = ({
           >
             <Text
               style={StandardTypography(
-                { font, isRTL },
+                { font, isRTL, isTablet },
                 'h4',
                 'Bold',
                 'center',
@@ -189,8 +239,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flex: 1,
-    maxWidth: Dimensions.get('window').width - 40,
-    maxHeight: Dimensions.get('window').width - 40,
     borderRadius: 15,
     borderWidth: 2,
     borderColor: colors.athens,

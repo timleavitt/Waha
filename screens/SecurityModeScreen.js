@@ -24,6 +24,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     security: state.security
   }
 }
@@ -45,6 +46,7 @@ const SecurityModeScreen = ({
   isRTL,
   t,
   font,
+  isTablet,
   security,
   setSecurityEnabled,
   setTimeoutDuration
@@ -122,7 +124,7 @@ const SecurityModeScreen = ({
               >
                 <Text
                   style={StandardTypography(
-                    { font, isRTL },
+                    { font, isRTL, isTablet },
                     'h4',
                     'Regular',
                     'left',

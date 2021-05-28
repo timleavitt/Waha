@@ -18,12 +18,14 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     activeGroup: activeGroupSelector(state),
     primaryColor: activeDatabaseSelector(state).primaryColor,
     t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
     downloads: state.downloads,
-    isConnected: state.network.isConnected
+    isConnected: state.network.isConnected,
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -48,6 +50,7 @@ const ChapterButton = ({
   isVideoDownloaded = false,
   // Props passed from redux.
   font,
+  isTablet,
   activeGroup,
   primaryColor,
   t,
@@ -81,7 +84,7 @@ const ChapterButton = ({
 
   // The default text style.
   const defaultTextStyle = StandardTypography(
-    { font, isRTL },
+    { font, isRTL, isTablet },
     'p',
     'Bold',
     'center',
@@ -222,7 +225,13 @@ const ChapterButton = ({
 
   return (
     <TouchableOpacity
-      style={[styles.chapterButton, extraButtonStyle]}
+      style={[
+        styles.chapterButton,
+        extraButtonStyle,
+        {
+          paddingVertical: isTablet ? 16 : 8
+        }
+      ]}
       // Disable onPress (by making the onPress function empty and by disabling the touch effect) if the chapter button is DISABLED or DOWNLOADING.
       onPress={
         mode === chapterButtonModes.DISABLED ||
@@ -276,7 +285,6 @@ const ChapterButton = ({
 const styles = StyleSheet.create({
   chapterButton: {
     flex: 1,
-    paddingVertical: 8,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',

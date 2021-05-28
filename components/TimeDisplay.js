@@ -7,7 +7,8 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
-    font: getLanguageFont(activeGroupSelector(state).language)
+    font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -23,7 +24,8 @@ const TimeDisplay = ({
   time,
   side,
   // Props passed from redux.
-  font
+  font,
+  isTablet
 }) => {
   /**
    * Converts a time in milliseconds to a nicely formatted time in the format HH:MM:SS.

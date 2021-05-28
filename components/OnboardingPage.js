@@ -12,7 +12,8 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
-    font: getLanguageFont(activeGroupSelector(state).language)
+    font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -33,14 +34,15 @@ const OnboardingPage = ({
   children,
   // Props passed from redux.
   isRTL,
-  font
+  font,
+  isTablet
 }) => (
   <View style={styles.onboardingPageContainer}>
     <View style={styles.textContainer}>
       <Text
         style={[
           StandardTypography(
-            { font, isRTL },
+            { font, isRTL, isTablet },
             'h2',
             'Bold',
             'center',
@@ -54,7 +56,7 @@ const OnboardingPage = ({
       <View style={{ height: 15 * scaleMultiplier }} />
       <Text
         style={StandardTypography(
-          { font, isRTL },
+          { font, isRTL, isTablet },
           'h3',
           'Regular',
           'center',

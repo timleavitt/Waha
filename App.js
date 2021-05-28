@@ -1,16 +1,18 @@
 import { decode, encode } from 'base-64'
 import { Audio } from 'expo-av'
+import * as Device from 'expo-device'
 import * as Font from 'expo-font'
+import * as ScreenOrientation from 'expo-screen-orientation'
 import React, { useEffect, useState } from 'react'
 import { StatusBar, View } from 'react-native'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
-import { lockPortrait } from './constants'
+import { lockLandscape, lockPortrait } from './constants'
 import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
 import { colors } from './styles/colors'
 
-import('./ReactotronConfig').then(() => console.log('Reactotron Configured'))
+import('./ReactotronConfig').then(() => {})
 
 // These are only here because of some wack errors. Please do not delete.
 if (!global.btoa) {
@@ -35,8 +37,7 @@ export default function App () {
     // Load up all the fonts.
     loadFonts()
 
-    // Lock our orientation to portrait.
-    lockPortrait(() => {})
+    setOrientation()
 
     // Set up some config options for app audio.
     Audio.setAudioModeAsync({
@@ -49,6 +50,19 @@ export default function App () {
       playThroughEarpieceAndroid: false
     })
   }, [])
+
+  const setOrientation = async () => {
+    var deviceType = await Device.getDeviceTypeAsync()
+
+    var orientation = await ScreenOrientation.getOrientationAsync()
+
+    if (deviceType === Device.DeviceType.TABLET) {
+      lockLandscape()
+    } else {
+      // Lock our orientation to portrait.
+      lockPortrait(() => {})
+    }
+  }
 
   /**
    * Loads all of the fonts to be used across all languages in Waha.

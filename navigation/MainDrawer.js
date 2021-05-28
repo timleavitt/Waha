@@ -4,6 +4,7 @@ import {
   getFocusedRouteNameFromRoute,
   NavigationContainer
 } from '@react-navigation/native'
+import * as Device from 'expo-device'
 import * as FileSystem from 'expo-file-system'
 import firebase from 'firebase'
 import React, { useEffect } from 'react'
@@ -19,6 +20,7 @@ import {
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
+import { setIsTablet } from '../redux/actions/deviceInfoActions'
 import { addSet, deleteGroup } from '../redux/actions/groupsActions'
 import { updateConnectionStatus } from '../redux/actions/networkActions'
 import {
@@ -48,7 +50,8 @@ function mapStateToProps (state) {
     installedLanguageInstances: Object.keys(state.database).filter(
       key => key.length === 2
     ),
-    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -78,6 +81,9 @@ function mapDispatchToProps (dispatch) {
       dispatch(clearLanguageCoreFilesToUpdate()),
     addSet: (groupName, groupID, set) => {
       dispatch(addSet(groupName, groupID, set))
+    },
+    setIsTablet: isTablet => {
+      dispatch(setIsTablet(isTablet))
     }
   }
 }
@@ -101,6 +107,7 @@ const MainDrawer = ({
   groups,
   installedLanguageInstances,
   areMobilizationToolsUnlocked,
+  isTablet,
   updateConnectionStatus,
   storeLanguageData,
   storeLanguageSets,
@@ -109,7 +116,8 @@ const MainDrawer = ({
   deleteGroup,
   storeLanguageCoreFileCreatedTime,
   clearLanguageCoreFilesToUpdate,
-  addSet
+  addSet,
+  setIsTablet
 }) => {
   /**
    * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the SetsTabs navigator because this is the only spot we should be able to swipe to open the drawer.
@@ -124,6 +132,10 @@ const MainDrawer = ({
 
   /** useEffect function that adds a listener for listening to network changes. */
   useEffect(() => {
+    Device.getDeviceTypeAsync().then(type =>
+      setIsTablet(type === Device.DeviceType.TABLET)
+    )
+
     // Add a listener for connection status and update the redux state accordingly.
     const netInfoUnsubscribe = NetInfo.addEventListener(state => {
       updateConnectionStatus(state.isConnected)
@@ -365,10 +377,10 @@ const MainDrawer = ({
     <NavigationContainer>
       <Drawer.Navigator
         drawerPosition={isRTL ? 'right' : 'left'}
-        drawerType='back'
+        drawerType={'back'}
         drawerContent={props => <WahaDrawer {...props} />}
         drawerStyle={{
-          width: '80%'
+          width: isTablet ? '50%' : '80%'
         }}
         edgeWidth={75 * scaleMultiplier}
       >

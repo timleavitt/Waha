@@ -20,6 +20,7 @@ const LanguageItem = ({
   nativeName,
   localeName,
   font,
+  isTablet,
   logoSource,
   onPress,
   isSelected,

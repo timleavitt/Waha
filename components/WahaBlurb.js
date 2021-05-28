@@ -12,6 +12,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -25,6 +26,7 @@ const WahaBlurb = ({
   text,
   // Props passed from redux.
   font,
+  isTablet,
   isRTL
 }) => (
   <View
@@ -36,7 +38,7 @@ const WahaBlurb = ({
   >
     <Text
       style={StandardTypography(
-        { font, isRTL },
+        { font, isRTL, isTablet },
         'p',
         'Regular',
         'center',

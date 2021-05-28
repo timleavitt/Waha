@@ -13,6 +13,7 @@ function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     activeGroup: activeGroupSelector(state)
   }
 }
@@ -31,6 +32,7 @@ const DrawerItem = ({
   // Props passed from redux.
   isRTL,
   font,
+  isTablet,
   activeGroup
 }) => (
   <TouchableOpacity
@@ -45,7 +47,13 @@ const DrawerItem = ({
     </View>
     <Text
       style={[
-        StandardTypography({ font, isRTL }, 'h3', 'Bold', 'left', colors.shark),
+        StandardTypography(
+          { font, isRTL, isTablet },
+          'h3',
+          'Bold',
+          'left',
+          colors.shark
+        ),
         { paddingHorizontal: 10 }
       ]}
       numberOfLines={1}

@@ -30,7 +30,9 @@ function mapStateToProps (state) {
   return {
     t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
-    font: getLanguageFont(activeGroupSelector(state).language)
+    font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
+    isTablet: state.deviceInfo.isTablet
   }
 }
 
@@ -60,6 +62,7 @@ const WahaOnboardingSlidesScreen = ({
   t,
   isRTL,
   font,
+  isTablet,
   setHasOnboarded,
   editGroup,
   changeActiveGroup
@@ -113,7 +116,19 @@ const WahaOnboardingSlidesScreen = ({
       title={t.onboarding && t.onboarding.onboarding_1_title}
       message={t.onboarding && t.onboarding.onboarding_1_message}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          {
+            maxWidth: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40,
+            maxHeight: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40
+          }
+        ]}
+      >
         <Image
           style={styles.imageContainer}
           source={{
@@ -128,7 +143,19 @@ const WahaOnboardingSlidesScreen = ({
       title={t.onboarding && t.onboarding.onboarding_2_title}
       message={t.onboarding && t.onboarding.onboarding_2_message}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          {
+            maxWidth: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40,
+            maxHeight: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40
+          }
+        ]}
+      >
         <Image
           style={styles.image}
           source={{
@@ -143,7 +170,19 @@ const WahaOnboardingSlidesScreen = ({
       title={t.onboarding && t.onboarding.onboarding_3_title}
       message={t.onboarding && t.onboarding.onboarding_3_message}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          {
+            maxWidth: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40,
+            maxHeight: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40
+          }
+        ]}
+      >
         <Image
           style={styles.image}
           source={{
@@ -206,7 +245,7 @@ const WahaOnboardingSlidesScreen = ({
           >
             <Text
               style={StandardTypography(
-                { font, isRTL },
+                { font, isRTL, isTablet },
                 'h4',
                 'Bold',
                 'center',
@@ -255,8 +294,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flex: 1,
-    maxWidth: Dimensions.get('window').width - 40,
-    maxHeight: Dimensions.get('window').width - 40,
     borderRadius: 15,
     borderWidth: 2,
     borderColor: colors.athens,

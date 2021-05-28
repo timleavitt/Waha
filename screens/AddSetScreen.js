@@ -23,6 +23,7 @@ LogBox.ignoreLogs(['Animated: `useNativeDriver`', 'Warning: Cannot update'])
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
     activeDatabase: activeDatabaseSelector(state),
@@ -52,6 +53,7 @@ const AddSetScreen = ({
   },
   // Props passed from redux.
   font,
+  isTablet,
   t,
   isRTL,
   activeDatabase,
@@ -259,7 +261,7 @@ const AddSetScreen = ({
           style={styles.tagGroupContainer}
           tagStyle={styles.tagContainer}
           textStyle={StandardTypography(
-            { font, isRTL },
+            { font, isRTL, isTablet },
             'p',
             'Regular',
             'center',
@@ -270,7 +272,7 @@ const AddSetScreen = ({
             borderColor: primaryColor
           }}
           activeTextStyle={StandardTypography(
-            { font, isRTL },
+            { font, isRTL, isTablet },
             'p',
             'Regular',
             'center',
@@ -289,7 +291,7 @@ const AddSetScreen = ({
           <View style={{ width: '100%', marginVertical: 20 }}>
             <Text
               style={StandardTypography(
-                { font, isRTL },
+                { font, isRTL, isTablet },
                 'p',
                 'Regular',
                 'center',

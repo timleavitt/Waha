@@ -27,6 +27,7 @@ function mapStateToProps (state) {
     groups: state.groups,
     activeGroup: activeGroupSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     t: activeDatabaseSelector(state).translations
   }
 }
@@ -60,6 +61,7 @@ const GroupItem = ({
   groups,
   activeGroup,
   font,
+  isTablet,
   t,
   deleteGroup,
   changeActiveGroup

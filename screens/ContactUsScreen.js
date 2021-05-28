@@ -31,6 +31,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     t: activeDatabaseSelector(state).translations,
     primaryColor: activeDatabaseSelector(state).primaryColor
   }
@@ -43,6 +44,7 @@ const ContactUsScreen = ({
   activeDatabase,
   isRTL,
   font,
+  isTablet,
   t,
   primaryColor
 }) => {
@@ -140,7 +142,13 @@ const ContactUsScreen = ({
   var asteriskComponent = isRTL ? (
     <Text
       style={[
-        StandardTypography({ font, isRTL }, 'h3', 'Bold', 'left', colors.red)
+        StandardTypography(
+          { font, isRTL, isTablet },
+          'h3',
+          'Bold',
+          'left',
+          colors.red
+        )
       ]}
     >
       {'* '}
@@ -148,7 +156,13 @@ const ContactUsScreen = ({
   ) : (
     <Text
       style={[
-        StandardTypography({ font, isRTL }, 'h3', 'Bold', 'left', colors.red)
+        StandardTypography(
+          { font, isRTL, isTablet },
+          'h3',
+          'Bold',
+          'left',
+          colors.red
+        )
       ]}
     >
       {' *'}
@@ -166,7 +180,7 @@ const ContactUsScreen = ({
           <Text
             style={[
               StandardTypography(
-                { font, isRTL },
+                { font, isRTL, isTablet },
                 'h3',
                 'Bold',
                 'left',
@@ -193,7 +207,7 @@ const ContactUsScreen = ({
               spellCheck={false}
               style={[
                 StandardTypography(
-                  { font, isRTL },
+                  { font, isRTL, isTablet },
                   'h3',
                   'Regular',
                   'left',
@@ -231,7 +245,7 @@ const ContactUsScreen = ({
             <Text
               style={[
                 StandardTypography(
-                  { font, isRTL },
+                  { font, isRTL, isTablet },
                   'h3',
                   'Bold',
                   'left',
@@ -247,7 +261,7 @@ const ContactUsScreen = ({
             <Text
               style={[
                 StandardTypography(
-                  { font, isRTL },
+                  { font, isRTL, isTablet },
                   'h4',
                   'regular',
                   'left',
@@ -262,7 +276,7 @@ const ContactUsScreen = ({
             onChangeText={text => setMessageTextInput(text)}
             style={[
               StandardTypography(
-                { font, isRTL },
+                { font, isRTL, isTablet },
                 'h3',
                 'Regular',
                 'left',
@@ -294,7 +308,7 @@ const ContactUsScreen = ({
           <Text
             style={[
               StandardTypography(
-                { font, isRTL },
+                { font, isRTL, isTablet },
                 'h3',
                 'Regular',
                 'left',
@@ -312,7 +326,7 @@ const ContactUsScreen = ({
             <Text
               style={[
                 StandardTypography(
-                  { font, isRTL },
+                  { font, isRTL, isTablet },
                   'h3',
                   'Bold',
                   'left',
@@ -327,7 +341,7 @@ const ContactUsScreen = ({
               onChangeText={text => setReproductionStepsTextInput(text)}
               style={[
                 StandardTypography(
-                  { font, isRTL },
+                  { font, isRTL, isTablet },
                   'h3',
                   'Regular',
                   'left',

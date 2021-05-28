@@ -26,6 +26,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     primaryColor: activeDatabaseSelector(state).primaryColor,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     activeGroup: activeGroupSelector(state),
     t: activeDatabaseSelector(state).translations
   }
@@ -55,6 +56,7 @@ const SetItem = ({
   activeDatabase,
   primaryColor,
   font,
+  isTablet,
   activeGroup,
   t,
   addSet
@@ -316,7 +318,7 @@ const SetItem = ({
         <Text
           style={[
             StandardTypography(
-              { font, isRTL },
+              { font, isRTL, isTablet },
               'd',
               'Regular',
               'left',
@@ -334,7 +336,7 @@ const SetItem = ({
         <Text
           style={[
             StandardTypography(
-              { font, isRTL },
+              { font, isRTL, isTablet },
               'h3',
               'Black',
               'left',

@@ -89,7 +89,7 @@ const OnboardingSwiper = ({
                       colors.shark
                     )
                   : StandardTypography(
-                      { font, isRTL },
+                      { font, isRTL, isTablet },
                       'h2',
                       'Bold',
                       'center',
@@ -111,7 +111,7 @@ const OnboardingSwiper = ({
                       colors.chateau
                     )
                   : StandardTypography(
-                      { font, isRTL },
+                      { font, isRTL, isTablet },
                       'h3',
                       'Regular',
                       'center',

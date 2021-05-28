@@ -49,6 +49,7 @@ function mapStateToProps (state) {
     primaryColor: activeDatabaseSelector(state).primaryColor,
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
+    isTablet: state.deviceInfo.isTablet,
     isConnected: state.network.isConnected
   }
 }
@@ -116,6 +117,7 @@ const PlayScreen = ({
   primaryColor,
   isRTL,
   font,
+  isTablet,
   isConnected,
   toggleComplete,
   downloadMedia,
@@ -245,7 +247,7 @@ const PlayScreen = ({
         <Text
           style={[
             StandardTypography(
-              { font, isRTL },
+              { font, isRTL, isTablet },
               'h3',
               'Bold',
               'center',
@@ -936,6 +938,8 @@ const PlayScreen = ({
         {lessonType.includes('Video') && (
           <Animated.View
             style={{
+              width: '100%',
+              height: '100%',
               position: 'absolute',
               opacity: videoPlayerOpacity,
               zIndex:
