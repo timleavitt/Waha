@@ -13,7 +13,7 @@ import PianoKeyLabel from './PianoKeyLabel'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     security: state.security,
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state)
@@ -29,7 +29,7 @@ const PianoPasscodeDisplay = ({
   passcode,
   // Props passed from redux.
   font,
-  isTablet,
+
   security,
   isRTL,
   activeGroup

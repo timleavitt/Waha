@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import {
   chapters,
+  isTablet,
   lockLandscape,
   lockPortrait,
   scaleMultiplier
@@ -30,8 +31,7 @@ const VideoPlayer = ({
   setIsMediaPlaying,
   fullscreenStatus,
   activeChapter,
-  isMediaLoaded,
-  isTablet
+  isMediaLoaded
 }) => {
   /** Keeps track of whether to show the overlayed video controls or not. */
   const [shouldShowVideoControls, setShouldShowVideoControls] = useState(false)

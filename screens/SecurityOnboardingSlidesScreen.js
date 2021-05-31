@@ -7,7 +7,7 @@ import OnboardingPage from '../components/OnboardingPage'
 import PageDots from '../components/PageDots'
 import WahaBackButton from '../components/WahaBackButton'
 import WahaButton from '../components/WahaButton'
-import { scaleMultiplier } from '../constants'
+import { isTablet, scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -20,8 +20,7 @@ function mapStateToProps (state) {
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     isRTL: activeDatabaseSelector(state).isRTL,
-    activeGroup: activeGroupSelector(state),
-    isTablet: state.deviceInfo.isTablet
+    activeGroup: activeGroupSelector(state)
   }
 }
 
@@ -35,7 +34,7 @@ const SecurityOnboardingSlidesScreen = ({
   navigation: { setOptions, navigate, goBack },
   t,
   font,
-  isTablet,
+
   isRTL,
   activeGroup
 }) => {
@@ -189,7 +188,7 @@ const SecurityOnboardingSlidesScreen = ({
           >
             <Text
               style={StandardTypography(
-                { font, isRTL, isTablet },
+                { font, isRTL },
                 'h4',
                 'Bold',
                 'center',

@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     t: activeDatabaseSelector(state).translations,
     activeGroup: activeGroupSelector(state)
   }

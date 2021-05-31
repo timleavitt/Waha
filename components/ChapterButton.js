@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import {
   chapterButtonModes,
   chapters,
+  isTablet,
   lessonTypes,
   scaleMultiplier
 } from '../constants'
@@ -18,14 +19,13 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     activeGroup: activeGroupSelector(state),
     primaryColor: activeDatabaseSelector(state).primaryColor,
     t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
     downloads: state.downloads,
-    isConnected: state.network.isConnected,
-    isTablet: state.deviceInfo.isTablet
+    isConnected: state.network.isConnected
   }
 }
 
@@ -50,7 +50,7 @@ const ChapterButton = ({
   isVideoDownloaded = false,
   // Props passed from redux.
   font,
-  isTablet,
+
   activeGroup,
   primaryColor,
   t,
@@ -84,7 +84,7 @@ const ChapterButton = ({
 
   // The default text style.
   const defaultTextStyle = StandardTypography(
-    { font, isRTL, isTablet },
+    { font, isRTL },
     'p',
     'Bold',
     'center',

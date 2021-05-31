@@ -32,7 +32,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     // For testing.
     languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes,
     globalGroupCounter: state.database.globalGroupCounter,
@@ -63,7 +63,7 @@ const SetsScreen = ({
   activeGroup,
   t,
   font,
-  isTablet,
+
   languageCoreFilesCreatedTimes,
   globalGroupCounter,
   languageCoreFilesToUpdate,
@@ -271,7 +271,7 @@ const SetsScreen = ({
       >
         <Text
           style={StandardTypography(
-            { font, isRTL, isTablet },
+            { font, isRTL },
             'p',
             'Regular',
             'left',
@@ -289,7 +289,7 @@ const SetsScreen = ({
     <View style={{ width: '100%', height: 80 * scaleMultiplier, padding: 20 }}>
       <Text
         style={StandardTypography(
-          { font, isRTL, isTablet },
+          { font, isRTL },
           'p',
           'Regular',
           'center',

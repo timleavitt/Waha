@@ -16,8 +16,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
-    font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet
+    font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
 
@@ -38,14 +37,13 @@ const PlayScreenTitle = ({
   activeGroup,
   activeDatabase,
   isRTL,
-  font,
-  isTablet
+  font
 }) => (
   <View style={styles.titleContainer}>
     <TextTicker
       style={[
         StandardTypography(
-          { font, isRTL, isTablet },
+          { font, isRTL },
           'h3',
           'Black',
           'center',

@@ -15,7 +15,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
   }
@@ -35,7 +35,7 @@ const FloatingSectionLabel = ({
   activeGroup,
   activeDatabase,
   font,
-  isTablet,
+
   t,
   isRTL
 }) => (
@@ -60,7 +60,7 @@ const FloatingSectionLabel = ({
     >
       <Text
         style={StandardTypography(
-          { font, isRTL, isTablet },
+          { font, isRTL },
           'p',
           'Bold',
           'center',

@@ -8,7 +8,7 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { gutterSize, scaleMultiplier } from '../constants'
+import { gutterSize, isTablet, scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -21,10 +21,9 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     t: activeDatabaseSelector(state).translations,
-    isRTL: activeDatabaseSelector(state).isRTL,
-    isTablet: state.deviceInfo.isTablet
+    isRTL: activeDatabaseSelector(state).isRTL
   }
 }
 
@@ -48,7 +47,7 @@ const AlbumArt = ({
   activeGroup,
   activeDatabase,
   font,
-  isTablet,
+
   t,
   isRTL
 }) => (

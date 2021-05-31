@@ -71,6 +71,8 @@ export const scaleMultiplier =
 
 export const gutterSize = 15 * scaleMultiplier
 
+export const isTablet = Dimensions.get('window').width > 500 ? true : false
+
 /**
  * This object stores the default group names for every language instance. Upon installing a language instance, a group is automatically created with the corresponding group name below.
  * @export

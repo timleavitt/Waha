@@ -52,8 +52,7 @@ function mapStateToProps (state) {
   return {
     groups: state.groups,
     database: state.database,
-    activeGroup: activeGroup,
-    isTablet: state.deviceInfo.isTablet
+    activeGroup: activeGroup
   }
 }
 

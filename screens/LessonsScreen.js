@@ -35,8 +35,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     activeGroup: activeGroupSelector(state),
     t: activeDatabaseSelector(state).translations,
-    font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet
+    font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
 
@@ -72,7 +71,7 @@ const LessonsScreen = ({
   activeGroup,
   t,
   font,
-  isTablet,
+
   downloadMedia,
   toggleComplete,
   removeDownload

@@ -27,7 +27,7 @@ function mapStateToProps (state) {
   return {
     security: state.security,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     activeGroup: activeGroupSelector(state),
     t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
@@ -54,7 +54,7 @@ const PianoAppScreen = ({
   // Props passed from redux.
   security,
   font,
-  isTablet,
+
   activeGroup,
   t,
   isRTL,
@@ -125,7 +125,7 @@ const PianoAppScreen = ({
         <Text
           style={[
             StandardTypography(
-              { font, isRTL, isTablet },
+              { font, isRTL },
               'h1',
               'Bold',
               'center',
@@ -164,7 +164,7 @@ const PianoAppScreen = ({
             <View style={styles.recordButton}>
               <Text
                 style={StandardTypography(
-                  { font, isRTL, isTablet },
+                  { font, isRTL },
                   'h2',
                   'Regular',
                   'center',

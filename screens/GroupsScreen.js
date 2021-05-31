@@ -23,7 +23,7 @@ function mapStateToProps (state) {
     t: activeDatabaseSelector(state).translations,
     isConnected: state.network.isConnected,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     groups: state.groups,
     activeGroup: activeGroupSelector(state)
   }
@@ -41,7 +41,7 @@ const GroupsScreen = ({
   t,
   isConnected,
   font,
-  isTablet,
+
   groups,
   activeGroup
 }) => {

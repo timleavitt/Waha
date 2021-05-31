@@ -9,7 +9,7 @@ import * as FileSystem from 'expo-file-system'
 import firebase from 'firebase'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import { isTablet, scaleMultiplier } from '../constants'
 import db from '../firebase/db'
 import { appVersion } from '../modeSwitch'
 import { changeActiveGroup } from '../redux/actions/activeGroupActions'
@@ -50,8 +50,7 @@ function mapStateToProps (state) {
     installedLanguageInstances: Object.keys(state.database).filter(
       key => key.length === 2
     ),
-    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
-    isTablet: state.deviceInfo.isTablet
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked
   }
 }
 
@@ -107,7 +106,7 @@ const MainDrawer = ({
   groups,
   installedLanguageInstances,
   areMobilizationToolsUnlocked,
-  isTablet,
+
   updateConnectionStatus,
   storeLanguageData,
   storeLanguageSets,

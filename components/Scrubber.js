@@ -2,7 +2,7 @@ import Slider from '@react-native-community/slider'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import TimeDisplay from '../components/TimeDisplay'
-import { gutterSize } from '../constants'
+import { gutterSize, isTablet } from '../constants'
 import { colors } from '../styles/colors'
 
 /**
@@ -17,8 +17,7 @@ const Scrubber = ({
   playFromLocation,
   shouldThumbUpdate,
   mediaLength,
-  mediaProgress,
-  isTablet
+  mediaProgress
 }) => (
   <View
     style={[

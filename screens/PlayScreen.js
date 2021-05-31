@@ -23,6 +23,7 @@ import {
   chapters,
   getLessonInfo,
   gutterSize,
+  isTablet,
   lessonTypes,
   lockPortrait,
   scaleMultiplier
@@ -49,7 +50,7 @@ function mapStateToProps (state) {
     primaryColor: activeDatabaseSelector(state).primaryColor,
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     isConnected: state.network.isConnected
   }
 }
@@ -117,7 +118,7 @@ const PlayScreen = ({
   primaryColor,
   isRTL,
   font,
-  isTablet,
+
   isConnected,
   toggleComplete,
   downloadMedia,
@@ -244,7 +245,7 @@ const PlayScreen = ({
         <Text
           style={[
             StandardTypography(
-              { font, isRTL, isTablet },
+              { font, isRTL },
               'h3',
               'Bold',
               'center',
@@ -606,10 +607,8 @@ const PlayScreen = ({
       positionMillis / durationMillis > 0.5 &&
       !isThisLessonComplete.current &&
       activeChapter === completionChapter
-    ) {
-      console.log('beep')
+    )
       markLessonAsComplete()
-    }
 
     // Keep the isPlaying state in sync with the playback status while in fullscreen mode.
     if (
@@ -960,7 +959,6 @@ const PlayScreen = ({
               fullscreenStatus={fullscreenStatus}
               activeChapter={activeChapter}
               isMediaLoaded={isMediaLoaded}
-              isTablet={isTablet}
             />
           </Animated.View>
         )}
@@ -984,7 +982,6 @@ const PlayScreen = ({
             shouldThumbUpdate={shouldThumbUpdate}
             mediaLength={mediaLength}
             mediaProgress={mediaProgress}
-            isTablet={isTablet}
           />
           <PlaybackControls
             isMediaPlaying={isMediaPlaying}

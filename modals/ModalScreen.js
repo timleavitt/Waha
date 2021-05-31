@@ -18,8 +18,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state),
     t: activeDatabaseSelector(state).translations,
-    font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet
+    font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
 
@@ -48,8 +47,7 @@ const ModalScreen = ({
   isRTL,
   activeGroup,
   t,
-  font,
-  isTablet
+  font
 }) => (
   // Outer view is here because of some weird scrolling issues that occur when there's nested scrollable content inside the modal.
   <View>
@@ -101,7 +99,7 @@ const ModalScreen = ({
           <View style={styles.headerTitleContainer}>
             <Text
               style={StandardTypography(
-                { font, isRTL, isTablet },
+                { font, isRTL },
                 'h3',
                 'Bold',
                 'center',

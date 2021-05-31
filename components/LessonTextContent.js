@@ -15,7 +15,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
   }
@@ -25,7 +25,7 @@ function mapStateToProps (state) {
   A simple set of 3 components to display different parts of the lesson text.
 */
 
-const HeaderBig = ({ text, font, isRTL, isTablet, onLayout }) => (
+const HeaderBig = ({ text, font, isRTL, onLayout }) => (
   <View
     style={{
       marginBottom: 10 * scaleMultiplier,
@@ -35,13 +35,7 @@ const HeaderBig = ({ text, font, isRTL, isTablet, onLayout }) => (
   >
     <Text
       style={[
-        StandardTypography(
-          { font, isRTL, isTablet },
-          'h2',
-          'Black',
-          'left',
-          colors.tuna
-        )
+        StandardTypography({ font, isRTL }, 'h2', 'Black', 'left', colors.tuna)
       ]}
     >
       {text}
@@ -54,7 +48,7 @@ const HeaderSmall = ({ text, font, isRTL, isTablet }) => (
     <Text
       style={[
         StandardTypography(
-          { font, isRTL, isTablet },
+          { font, isRTL },
           'h3',
           'Regular',
           'left',
@@ -73,7 +67,7 @@ const StandardText = ({ text, font, isRTL, isTablet }) => (
     <Text
       style={[
         StandardTypography(
-          { font, isRTL, isTablet },
+          { font, isRTL },
           'h3',
           'Regular',
           'left',
@@ -111,7 +105,7 @@ const LessonTextContent = ({
   activeGroup,
   activeDatabase,
   font,
-  isTablet,
+
   t,
   isRTL
 }) => {
@@ -186,13 +180,11 @@ const LessonTextContent = ({
                   }
                   font={font}
                   isRTL={isRTL}
-                  isTablet={isTablet}
                 />
                 <StandardText
                   text={question + '\n'}
                   font={font}
                   isRTL={isRTL}
-                  isTablet={isTablet}
                 />
               </View>
             )
@@ -209,13 +201,11 @@ const LessonTextContent = ({
                 text={scriptureChunk.header}
                 font={font}
                 isRTL={isRTL}
-                isTablet={isTablet}
               />
               <StandardText
                 text={scriptureChunk.text}
                 font={font}
                 isRTL={isRTL}
-                isTablet={isTablet}
               />
             </View>
           ))}
@@ -227,7 +217,6 @@ const LessonTextContent = ({
             font={font}
             isRTL={isRTL}
             text={t.play && t.play.application}
-            isTablet={isTablet}
           />
           {/* Application questions. */}
           {activeDatabase.questions[thisLesson.applicationType].map(
@@ -239,13 +228,11 @@ const LessonTextContent = ({
                   }
                   font={font}
                   isRTL={isRTL}
-                  isTablet={isTablet}
                 />
                 <StandardText
                   text={question + '\n'}
                   font={font}
                   isRTL={isRTL}
-                  isTablet={isTablet}
                 />
               </View>
             )
@@ -253,19 +240,13 @@ const LessonTextContent = ({
         </View>
       ) : (
         <View style={{ paddingTop: 20 * scaleMultiplier }}>
-          <HeaderSmall
-            text={thisLesson.title}
-            font={font}
-            isRTL={isRTL}
-            isTablet={isTablet}
-          />
+          <HeaderSmall text={thisLesson.title} font={font} isRTL={isRTL} />
           {thisLesson.text.split('\n').map((paragraph, index) => (
             <StandardText
               key={index}
               font={font}
               isRTL={isRTL}
               text={paragraph + '\n'}
-              isTablet={isTablet}
             />
           ))}
         </View>

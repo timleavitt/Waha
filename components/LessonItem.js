@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import {
   getLessonInfo,
+  isTablet,
   itemHeights,
   lessonTypes,
   scaleMultiplier
@@ -24,8 +25,7 @@ function mapStateToProps (state) {
     downloads: state.downloads,
     t: activeDatabaseSelector(state).translations,
     isConnected: state.network.isConnected,
-    font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet
+    font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
 
@@ -66,7 +66,7 @@ const LessonItem = ({
   t,
   isConnected,
   font,
-  isTablet,
+
   removeDownload
 }) => {
   /** Keeps track of whether this lesson is downloaded or not. */
@@ -196,7 +196,7 @@ const LessonItem = ({
         >
           <Text
             style={StandardTypography(
-              { font, isRTL, isTablet },
+              { font, isRTL },
               'h4',
               'Bold',
               'left',
@@ -208,7 +208,7 @@ const LessonItem = ({
           </Text>
           <Text
             style={StandardTypography(
-              { font, isRTL, isTablet },
+              { font, isRTL },
               'd',
               'Regular',
               'left',

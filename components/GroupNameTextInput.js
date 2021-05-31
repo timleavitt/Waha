@@ -15,7 +15,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     t: activeDatabaseSelector(state).translations
   }
 }
@@ -37,13 +37,13 @@ const GroupNameTextInput = ({
   activeDatabase,
   isRTL,
   font,
-  isTablet,
+
   t
 }) => (
   <View style={styles.groupNameAreaContainer}>
     <Text
       style={StandardTypography(
-        { font, isRTL, isTablet },
+        { font, isRTL },
         'p',
         'Regular',
         'left',
@@ -57,7 +57,7 @@ const GroupNameTextInput = ({
       style={[
         styles.groupNameTextInputContainer,
         StandardTypography(
-          { font, isRTL, isTablet },
+          { font, isRTL },
           'h3',
           'Regular',
           'left',

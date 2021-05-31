@@ -1,12 +1,6 @@
+import LottieView from 'lottie-react-native'
 import React, { useRef, useState } from 'react'
-import {
-  Dimensions,
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native'
+import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import PagerView from 'react-native-pager-view'
 import { connect } from 'react-redux'
@@ -15,7 +9,7 @@ import GroupNameTextInput from '../components/GroupNameTextInput'
 import OnboardingPage from '../components/OnboardingPage'
 import PageDots from '../components/PageDots'
 import WahaButton from '../components/WahaButton'
-import { groupNames, scaleMultiplier } from '../constants'
+import { groupNames, isTablet, scaleMultiplier } from '../constants'
 import { changeActiveGroup } from '../redux/actions/activeGroupActions'
 import { setHasOnboarded } from '../redux/actions/databaseActions'
 import { editGroup } from '../redux/actions/groupsActions'
@@ -30,9 +24,7 @@ function mapStateToProps (state) {
   return {
     t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
-    font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
-    isTablet: state.deviceInfo.isTablet
+    font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
 
@@ -62,13 +54,15 @@ const WahaOnboardingSlidesScreen = ({
   t,
   isRTL,
   font,
-  isTablet,
+
   setHasOnboarded,
   editGroup,
   changeActiveGroup
 }) => {
   /** The ref for the pager view. Used to manually swipe pages. */
   const pagerRef = useRef()
+
+  console.log(isTablet)
 
   /** Ref for the group name text input. */
   const groupNameInputRef = useRef()
@@ -129,12 +123,12 @@ const WahaOnboardingSlidesScreen = ({
           }
         ]}
       >
-        <Image
-          style={styles.imageContainer}
-          source={{
-            uri:
-              'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_1.gif?alt=media'
-          }}
+        <LottieView
+          style={styles.image}
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/onboarding1.json')}
         />
       </View>
     </OnboardingPage>,
@@ -156,12 +150,12 @@ const WahaOnboardingSlidesScreen = ({
           }
         ]}
       >
-        <Image
+        <LottieView
           style={styles.image}
-          source={{
-            uri:
-              'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_2.gif?alt=media'
-          }}
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/onboarding2.json')}
         />
       </View>
     </OnboardingPage>,
@@ -183,12 +177,12 @@ const WahaOnboardingSlidesScreen = ({
           }
         ]}
       >
-        <Image
+        <LottieView
           style={styles.image}
-          source={{
-            uri:
-              'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/_assets%2Fonboarding_3.gif?alt=media'
-          }}
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/onboarding3.json')}
         />
       </View>
     </OnboardingPage>,
@@ -245,7 +239,7 @@ const WahaOnboardingSlidesScreen = ({
           >
             <Text
               style={StandardTypography(
-                { font, isRTL, isTablet },
+                { font, isRTL },
                 'h4',
                 'Bold',
                 'center',
@@ -303,9 +297,9 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   image: {
-    resizeMode: 'contain',
     width: '100%',
-    height: '100%'
+    height: '100%',
+    backgroundColor: colors.white
   },
   bottomControlsContainer: {
     alignItems: 'center',

@@ -6,14 +6,13 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import { isTablet, scaleMultiplier } from '../constants'
 import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 
 function mapStateToProps (state) {
   return {
-    primaryColor: activeDatabaseSelector(state).primaryColor,
-    isTablet: state.deviceInfo.isTablet
+    primaryColor: activeDatabaseSelector(state).primaryColor
   }
 }
 
@@ -33,8 +32,7 @@ const PlaybackControls = ({
   mediaProgress,
   playFromLocation,
   // Props passed from redux.
-  primaryColor,
-  isTablet
+  primaryColor
 }) => (
   <View style={styles.playbackControlsContainer}>
     <TouchableOpacity

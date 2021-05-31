@@ -57,7 +57,7 @@ function mapStateToProps (state) {
     groups: state.groups,
     recentActiveGroup: state.database.recentActiveGroup,
     font: font,
-    isTablet,
+
     isRTL: isRTL,
     t: translations
   }
@@ -108,7 +108,7 @@ const LoadingScreen = ({
   recentActiveGroup,
   hasFetchedLanguageData,
   font,
-  isTablet,
+
   isRTL,
   t,
   setIsInstallingLanguageInstance,
@@ -210,7 +210,7 @@ const LoadingScreen = ({
           ]}
           autoPlay
           loop
-          source={require('../assets/gifs/loading_animation.json')}
+          source={require('../assets/lotties/loading.json')}
         />
         <View style={styles.progressBarContainer}>
           {languageCoreFilesDownloadProgress ? (
@@ -253,7 +253,7 @@ const LoadingScreen = ({
             <Icon name='cancel' color={colors.tuna} size={50} />
             <Text
               style={StandardTypography(
-                { font, isRTL, isTablet },
+                { font, isRTL },
                 'h4',
                 'Bold',
                 'center',

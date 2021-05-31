@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native'
+import SnackBar from 'react-native-snackbar-component'
 import { connect } from 'react-redux'
 import WahaBackButton from '../components/WahaBackButton'
 import WahaBlurb from '../components/WahaBlurb'
@@ -24,7 +25,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+    showPasscodeSetSnackbar: state.popups.showPasscodeSetSnackbar,
     security: state.security
   }
 }
@@ -46,7 +47,7 @@ const SecurityModeScreen = ({
   isRTL,
   t,
   font,
-  isTablet,
+  showPasscodeSetSnackbar,
   security,
   setSecurityEnabled,
   setTimeoutDuration
@@ -124,7 +125,7 @@ const SecurityModeScreen = ({
               >
                 <Text
                   style={StandardTypography(
-                    { font, isRTL, isTablet },
+                    { font, isRTL },
                     'h4',
                     'Regular',
                     'left',
@@ -160,6 +161,17 @@ const SecurityModeScreen = ({
       <SecurityTimeoutPickerModal
         isVisible={showChangeTimeoutModal}
         hideModal={() => setShowChangeTimeoutModal(false)}
+      />
+      <SnackBar
+        visible={showPasscodeSetSnackbar}
+        textMessage={t.security && t.security.passcode_confirmation_title}
+        messageStyle={{
+          color: colors.white,
+          fontSize: 24 * scaleMultiplier,
+          fontFamily: font + '-Black',
+          textAlign: 'center'
+        }}
+        backgroundColor={colors.apple}
       />
     </View>
   )

@@ -15,7 +15,7 @@ import WahaSeparator from './WahaSeparator'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     isRTL: activeDatabaseSelector(state).isRTL,
     t: activeDatabaseSelector(state).translations
   }
@@ -36,7 +36,7 @@ const LanguageStorageItem = ({
   clearDownloads,
   // Props passed from redux.
   font,
-  isTablet,
+
   isRTL,
   t
 }) => {
@@ -50,7 +50,7 @@ const LanguageStorageItem = ({
       >
         <Text
           style={StandardTypography(
-            { font, isRTL, isTablet },
+            { font, isRTL },
             'h3',
             'Regular',
             'left',
@@ -75,7 +75,7 @@ const LanguageStorageItem = ({
       >
         <Text
           style={StandardTypography(
-            { font, isRTL, isTablet },
+            { font, isRTL },
             'h3',
             'Bold',
             'left',
@@ -87,7 +87,7 @@ const LanguageStorageItem = ({
         <Text
           style={[
             StandardTypography(
-              { font, isRTL, isTablet },
+              { font, isRTL },
               'h3',
               'Regular',
               'left',

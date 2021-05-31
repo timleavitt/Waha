@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import Icon from '../assets/fonts/icon_font_config'
 import {
   getSetInfo,
+  isTablet,
   itemHeights,
   scaleMultiplier,
   setItemModes
@@ -26,7 +27,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     primaryColor: activeDatabaseSelector(state).primaryColor,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     activeGroup: activeGroupSelector(state),
     t: activeDatabaseSelector(state).translations
   }
@@ -56,7 +57,7 @@ const SetItem = ({
   activeDatabase,
   primaryColor,
   font,
-  isTablet,
+
   activeGroup,
   t,
   addSet
@@ -320,7 +321,7 @@ const SetItem = ({
         <Text
           style={[
             StandardTypography(
-              { font, isRTL, isTablet },
+              { font, isRTL },
               'd',
               'Regular',
               'left',
@@ -338,7 +339,7 @@ const SetItem = ({
         <Text
           style={[
             StandardTypography(
-              { font, isRTL, isTablet },
+              { font, isRTL },
               'h3',
               'Black',
               'left',

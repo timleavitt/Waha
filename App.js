@@ -1,13 +1,12 @@
 import { decode, encode } from 'base-64'
 import { Audio } from 'expo-av'
-import * as Device from 'expo-device'
 import * as Font from 'expo-font'
 import * as ScreenOrientation from 'expo-screen-orientation'
 import React, { useEffect, useState } from 'react'
 import { StatusBar, View } from 'react-native'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
-import { lockPortrait } from './constants'
+import { isTablet, lockPortrait } from './constants'
 import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
 import { colors } from './styles/colors'
@@ -37,7 +36,7 @@ export default function App () {
     // Load up all the fonts.
     loadFonts()
 
-    setOrientation()
+    isTablet ? ScreenOrientation.unlockAsync() : lockPortrait(() => {})
 
     // Set up some config options for app audio.
     Audio.setAudioModeAsync({
@@ -50,18 +49,6 @@ export default function App () {
       playThroughEarpieceAndroid: false
     })
   }, [])
-
-  const setOrientation = async () => {
-    var deviceType = await Device.getDeviceTypeAsync()
-
-    if (deviceType === Device.DeviceType.TABLET) {
-      console.log('unlocking')
-      ScreenOrientation.unlockAsync()
-    } else {
-      // Lock our orientation to portrait.
-      lockPortrait(() => {})
-    }
-  }
 
   /**
    * Loads all of the fonts to be used across all languages in Waha.

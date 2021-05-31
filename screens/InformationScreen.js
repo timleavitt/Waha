@@ -25,7 +25,7 @@ function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     t: activeDatabaseSelector(state).translations
   }
 }
@@ -38,7 +38,7 @@ const InformationScreen = ({
   // Props passed from redux.
   isRTL,
   font,
-  isTablet,
+
   t
 }) => {
   /** Keeps track of whether the snackbar that pops up is visible or not.  */
@@ -74,7 +74,7 @@ const InformationScreen = ({
       >
         <Text
           style={StandardTypography(
-            { font, isRTL, isTablet },
+            { font, isRTL },
             'h3',
             'Bold',
             'left',
@@ -96,7 +96,7 @@ const InformationScreen = ({
       >
         <Text
           style={StandardTypography(
-            { font, isRTL, isTablet },
+            { font, isRTL },
             'h3',
             'Bold',
             'left',
@@ -125,7 +125,7 @@ const InformationScreen = ({
       >
         <Text
           style={StandardTypography(
-            { font, isRTL, isTablet },
+            { font, isRTL },
             'h3',
             'Bold',
             'left',
@@ -150,7 +150,7 @@ const InformationScreen = ({
         <View>
           <Text
             style={StandardTypography(
-              { font, isRTL, isTablet },
+              { font, isRTL },
               'h3',
               'Bold',
               'left',
@@ -161,7 +161,7 @@ const InformationScreen = ({
           </Text>
           <Text
             style={StandardTypography(
-              { font, isRTL, isTablet },
+              { font, isRTL },
               'h4',
               'Bold',
               'left',
@@ -183,7 +183,7 @@ const InformationScreen = ({
           <Text
             style={[
               StandardTypography(
-                { font, isRTL, isTablet },
+                { font, isRTL },
                 'd',
                 'Regular',
                 'center',
@@ -198,7 +198,7 @@ const InformationScreen = ({
           <Text
             style={[
               StandardTypography(
-                { font, isRTL, isTablet },
+                { font, isRTL },
                 'd',
                 'Regular',
                 'center',

@@ -29,8 +29,7 @@ function mapStateToProps (state) {
     groups: state.groups,
     activeGroup: activeGroupSelector(state),
     t: activeDatabaseSelector(state).translations,
-    font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet
+    font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
 
@@ -67,7 +66,7 @@ const GroupListHeader = ({
   activeGroup,
   t,
   font,
-  isTablet,
+
   deleteGroup,
   deleteLanguageData,
   removeDownload

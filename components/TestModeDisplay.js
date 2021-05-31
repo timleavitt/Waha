@@ -12,7 +12,7 @@ import { getLanguageFont, SystemTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -23,7 +23,7 @@ function mapStateToProps (state) {
 const TestModeDisplay = ({
   // Props passed from redux.
   font,
-  isTablet,
+
   isRTL
 }) => {
   return (

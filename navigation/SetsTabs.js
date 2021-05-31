@@ -19,7 +19,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     primaryColor: activeDatabaseSelector(state).primaryColor,
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
@@ -36,7 +36,7 @@ const SetsTabs = ({
   t,
   activeDatabase,
   font,
-  isTablet,
+
   primaryColor,
   isRTL,
   areMobilizationToolsUnlocked

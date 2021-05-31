@@ -1,14 +1,13 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import { chapters, gutterSize, lessonTypes } from '../constants'
+import { chapters, gutterSize, isTablet, lessonTypes } from '../constants'
 import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
 import ChapterButton from './ChapterButton'
 
 function mapStateToProps (state) {
   return {
-    primaryColor: activeDatabaseSelector(state).primaryColor,
-    isTablet: state.deviceInfo.isTablet
+    primaryColor: activeDatabaseSelector(state).primaryColor
   }
 }
 
@@ -30,8 +29,7 @@ const ChapterSelector = ({
   lessonType,
   lessonID,
   // Props passed from redux.
-  primaryColor,
-  isTablet
+  primaryColor
 }) => (
   <View
     style={[styles.chapterSelectorContainer, { borderColor: primaryColor }]}

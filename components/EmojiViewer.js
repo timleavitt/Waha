@@ -24,7 +24,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     t: activeDatabaseSelector(state).translations
   }
 }
@@ -47,7 +47,7 @@ const EmojiViewer = ({
   activeDatabase,
   isRTL,
   font,
-  isTablet,
+
   t
 }) => {
   /** Renders an emoji for the emoji select <FlatList />. */
@@ -77,7 +77,7 @@ const EmojiViewer = ({
       <Text
         style={[
           StandardTypography(
-            { font, isRTL, isTablet },
+            { font, isRTL },
             'p',
             'Regular',
             'left',

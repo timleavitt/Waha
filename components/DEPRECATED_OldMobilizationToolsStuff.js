@@ -99,7 +99,7 @@
 //     <View style={{ width: '100%', paddingHorizontal: 20 }}>
 //       <Text
 //         style={StandardTypography(
-//           { font, isRTL, isTablet },
+//           { font, isRTL },
 //           'h2',
 //           'Black',
 //           'left',
@@ -162,7 +162,7 @@
 //     >
 //       <Text
 //         style={StandardTypography(
-//           { font, isRTL, isTablet },
+//           { font, isRTL },
 //           'p',
 //           'Regular',
 //           'center',
@@ -204,7 +204,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     database: state.database
   }
 }
@@ -220,7 +220,7 @@ const GroupListHeaderMT = ({
   isRTL,
   t,
   font,
-  isTablet,
+
   database
 }) => {
   return (
@@ -279,7 +279,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     groups: state.groups,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
     activeGroup: activeGroupSelector(state)
   }
@@ -308,7 +308,7 @@ const GroupItemMT = ({
   isRTL,
   groups,
   font,
-  isTablet,
+
   areMobilizationToolsUnlocked,
   activeGroup,
   setShouldShowMobilizationToolsTab,

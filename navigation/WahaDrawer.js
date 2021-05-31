@@ -28,7 +28,7 @@ function mapStateToProps (state) {
     activeGroup: activeGroupSelector(state),
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     isConnected: state.network.isConnected,
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
   }
@@ -57,7 +57,7 @@ const WahaDrawer = ({
   activeGroup,
   t,
   font,
-  isTablet,
+
   isConnected,
   languageCoreFilesToUpdate,
   updateLanguageCoreFiles,
@@ -96,7 +96,7 @@ const WahaDrawer = ({
         </View>
         <Text
           style={StandardTypography(
-            { font, isRTL, isTablet },
+            { font, isRTL },
             'h2',
             'Black',
             'center',
@@ -138,7 +138,7 @@ const WahaDrawer = ({
         <Text
           style={[
             StandardTypography(
-              { font, isRTL, isTablet },
+              { font, isRTL },
               'p',
               'Regular',
               'left',

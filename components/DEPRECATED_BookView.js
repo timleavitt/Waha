@@ -11,7 +11,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
-    isTablet: state.deviceInfo.isTablet,
+
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -25,7 +25,7 @@ const BookView = ({
   thisLesson,
   // Props passed from redux.
   font,
-  isTablet,
+
   isRTL
 }) => {
   /**
@@ -36,7 +36,7 @@ const BookView = ({
     <Text
       style={[
         StandardTypography(
-          { font, isRTL, isTablet },
+          { font, isRTL },
           'h3',
           'Regular',
           'left',
