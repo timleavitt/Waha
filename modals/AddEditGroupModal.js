@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import EmojiViewer from '../components/EmojiViewer'
 import GroupAvatar from '../components/GroupAvatar'
@@ -89,42 +89,36 @@ const AddEditGroupModal = ({
     type === 'EditGroup' ? activeGroup.name === thisGroup.name : false
   )
 
+  const [isGroupNameBlank, setIsGroupNameBlank] = useState(
+    type === 'EditGroup' ? false : true
+  )
+
+  const [isGroupNameDuplicate, setIsGroupNameDuplicate] = useState(false)
+
+  useEffect(() => {
+    checkForDuplicate()
+    checkForBlank()
+  }, [groupNameInput])
+
   /**
    * Checks if a user-inputted group name is a duplicate of another group. The process for checking is different if we're editing vs. adding a group.
    * @return {boolean} - Whether the group name is a duplicate or not.
    */
   const checkForDuplicate = () => {
-    var isDuplicate = false
-
     // If we're adding a new group, simply check if the group name already exists in another group.
-    if (type === 'AddGroup') {
-      groups.forEach(group => {
-        if (group.name === groupNameInput) {
-          Alert.alert(
-            t.groups && t.groups.duplicate_group_name_title,
-            t.groups && t.groups.duplicate_group_name_message,
-            [{ text: t.general && t.general.ok, onPress: () => {} }]
-          )
-          isDuplicate = true
-        }
-      })
-      // If we're editing a group, check if any group has the same name but obvously don't count it as a duplicate for itself.
-    } else {
-      groups.forEach(group => {
-        if (
-          group.name === groupNameInput &&
-          thisGroup.name !== groupNameInput
-        ) {
-          Alert.alert(
-            t.groups && t.groups.duplicate_group_name_title,
-            t.groups && t.groups.duplicate_group_name_message,
-            [{ text: t.general && t.general.ok, onPress: () => {} }]
-          )
-          isDuplicate = true
-        }
-      })
-    }
-    return isDuplicate
+    if (type === 'AddGroup')
+      if (groups.some(group => group.name === groupNameInput))
+        setIsGroupNameDuplicate(true)
+      else setIsGroupNameDuplicate(false)
+    // If we're editing a group, check if any group has the same name but obvously don't count it as a duplicate for itself.
+    else if (
+      groups.some(
+        group =>
+          group.name === groupNameInput && thisGroup.name !== groupNameInput
+      )
+    )
+      setIsGroupNameDuplicate(true)
+    else setIsGroupNameDuplicate(false)
   }
 
   /**
@@ -132,15 +126,8 @@ const AddEditGroupModal = ({
    * @return {boolean} - Whether the group name is blank or not.
    */
   const checkForBlank = () => {
-    if (groupNameInput === '') {
-      Alert.alert(
-        t.groups && t.groups.blank_group_name_title,
-        t.groups && t.groups.blank_group_name_message,
-        [{ text: t.general && t.general.ok, onPress: () => {} }]
-      )
-      return true
-    }
-    return false
+    if (groupNameInput === '') setIsGroupNameBlank(true)
+    else setIsGroupNameBlank(false)
   }
 
   /** Creates a new group and sets it as the active group. */
@@ -187,15 +174,24 @@ const AddEditGroupModal = ({
       isVisible={isVisible}
       hideModal={hideModal}
       topRightComponent={
-        <TouchableOpacity
-          onPress={type === 'AddGroup' ? createGroupHandler : editGroupHandler}
-          style={{
-            width: 45 * scaleMultiplier,
-            height: 45 * scaleMultiplier
-          }}
-        >
-          <Icon name='check' size={40 * scaleMultiplier} color={colors.oslo} />
-        </TouchableOpacity>
+        !isGroupNameBlank &&
+        !isGroupNameDuplicate && (
+          <TouchableOpacity
+            onPress={
+              type === 'AddGroup' ? createGroupHandler : editGroupHandler
+            }
+            style={{
+              width: 45 * scaleMultiplier,
+              height: 45 * scaleMultiplier
+            }}
+          >
+            <Icon
+              name='check'
+              size={40 * scaleMultiplier}
+              color={colors.oslo}
+            />
+          </TouchableOpacity>
+        )
       }
       onCancelPress={() => {
         // Clear out the inputs when we close the modal.
@@ -230,6 +226,7 @@ const AddEditGroupModal = ({
       <GroupNameTextInput
         groupNameInput={groupNameInput}
         setGroupNameInput={setGroupNameInput}
+        isDuplicate={isGroupNameDuplicate}
       />
       <EmojiViewer emojiInput={emojiInput} setEmojiInput={setEmojiInput} />
     </ModalScreen>

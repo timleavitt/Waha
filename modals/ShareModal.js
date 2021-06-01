@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
-import React from 'react'
-import { Alert, Share, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Share, View } from 'react-native'
 import { connect } from 'react-redux'
 import OptionsModalButton from '../components/OptionsModalButton'
 import WahaSeparator from '../components/WahaSeparator'
@@ -24,7 +24,8 @@ const shareTypes = {
   APP: 1,
   TEXT: 2,
   AUDIO: 3,
-  VIDEO: 4
+  VIDEO: 4,
+  MOBILIZATION_TOOLS: 5
 }
 
 /**
@@ -49,6 +50,16 @@ const ShareModal = ({
   downloads,
   activeGroup
 }) => {
+  const [isLessonDownloaded, setIsLessonDownloaded] = useState(true)
+
+  useEffect(() => {
+    FileSystem.getInfoAsync(
+      FileSystem.documentDirectory + lesson.id + '.mp3'
+    ).then(({ exists }) => {
+      setIsLessonDownloaded(exists)
+    })
+  }, [isVisible])
+
   /**
    * Opens the share sheet to share a piece of content from a lesson.
    * @param {number} type - The type of content to share. See shareTypes at the top of this page.
@@ -81,32 +92,50 @@ const ShareModal = ({
         break
       // Share the Scripture audio for a lesson if it exists.
       case shareTypes.AUDIO:
-        FileSystem.getInfoAsync(
+        Sharing.shareAsync(
           FileSystem.documentDirectory + lesson.id + '.mp3'
-        ).then(({ exists }) => {
-          exists
-            ? Sharing.shareAsync(
-                FileSystem.documentDirectory + lesson.id + '.mp3'
-              ).then(() => {
-                logShareAudio(lesson, activeGroup.id)
-                hideModal()
-              })
-            : Alert.alert(
-                t.general && t.general.share_undownloaded_lesson_title,
-                t.general && t.general.share_undownloaded_lesson_message,
-                [
-                  {
-                    text: t.general && t.general.ok,
-                    onPress: () => {}
-                  }
-                ]
-              )
+        ).then(() => {
+          logShareAudio(lesson, activeGroup.id)
+          hideModal()
         })
+        // FileSystem.getInfoAsync(
+        //   FileSystem.documentDirectory + lesson.id + '.mp3'
+        // ).then(({ exists }) => {
+        //   exists
+        //     ? Sharing.shareAsync(
+        //         FileSystem.documentDirectory + lesson.id + '.mp3'
+        //       ).then(() => {
+        //         logShareAudio(lesson, activeGroup.id)
+        //         hideModal()
+        //       })
+        //     : Alert.alert(
+        //         t.general && t.general.share_undownloaded_lesson_title,
+        //         t.general && t.general.share_undownloaded_lesson_message,
+        //         [
+        //           {
+        //             text: t.general && t.general.ok,
+        //             onPress: () => {}
+        //           }
+        //         ]
+        //       )
+        // })
         break
       // Share a link to the video for this lesson if there is one.
       case shareTypes.VIDEO:
         Share.share({
           message: lesson.videoShareLink
+        }).then(() => {
+          hideModal()
+        })
+        break
+      case shareTypes.MOBILIZATION_TOOLS:
+        Share.share({
+          message: `${t.mobilization_tools &&
+            t.mobilization_tools.share_message_1}\n${t.mobilization_tools &&
+            t.mobilization_tools.share_message_2}\n${t.mobilization_tools &&
+            t.mobilization_tools.share_message_3}\n${t.mobilization_tools &&
+            t.mobilization_tools.share_message_4}\n${t.mobilization_tools &&
+            t.mobilization_tools.share_message_5}`
         }).then(() => {
           hideModal()
         })
@@ -136,15 +165,17 @@ const ShareModal = ({
         </View>
       ) : null}
       {/* Include a "Share Audio" button if a lesson has audio and it's not currently downloading. */}
-      {lessonType.includes('Audio') && !downloads[lesson.id] && (
-        <View>
-          <WahaSeparator />
-          <OptionsModalButton
-            label={t.general && t.general.share_passage_audio}
-            onPress={() => shareLessonContent(shareTypes.AUDIO)}
-          />
-        </View>
-      )}
+      {lessonType.includes('Audio') &&
+        !downloads[lesson.id] &&
+        isLessonDownloaded && (
+          <View>
+            <WahaSeparator />
+            <OptionsModalButton
+              label={t.general && t.general.share_passage_audio}
+              onPress={() => shareLessonContent(shareTypes.AUDIO)}
+            />
+          </View>
+        )}
       {/* Include a "Share Video" button if a lesson has video, the link to share it exists, and it's not currently downloading. */}
       {lessonType.includes('Video') &&
         lesson.videoShareLink &&
@@ -157,6 +188,15 @@ const ShareModal = ({
             />
           </View>
         )}
+      {/[a-z]{2}.3.[0-9]+.[0-9]+/.test(lesson.id) && (
+        <View>
+          <WahaSeparator />
+          <OptionsModalButton
+            label={t.general && t.general.share_mobilization_tools}
+            onPress={() => shareLessonContent(shareTypes.MOBILIZATION_TOOLS)}
+          />
+        </View>
+      )}
     </OptionsModal>
   )
 }

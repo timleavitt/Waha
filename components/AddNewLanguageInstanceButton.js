@@ -2,19 +2,21 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
+import { languages } from '../languages'
 import {
   activeDatabaseSelector,
   activeGroupSelector
 } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
-
 function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-
-    t: activeDatabaseSelector(state).translations
+    t: activeDatabaseSelector(state).translations,
+    installedLanguageInstances: Object.keys(state.database).filter(
+      key => key.length === 2
+    )
   }
 }
 
@@ -30,44 +32,46 @@ const AddNewLanguageInstanceButton = ({
   // Props passed from redux.
   isRTL,
   font,
-
+  installedLanguageInstances,
   t
 }) => {
   return (
-    <TouchableOpacity
-      style={[
-        styles.addNewLanguageButtonContainer,
-        {
-          flexDirection: isRTL ? 'row-reverse' : 'row'
-        }
-      ]}
-      onPress={() => {
-        // Navigate to the LanguageInstanceInstall screen so that the user can install another language instance.
-        navigate('SubsequentlLanguageInstanceInstall', {
-          // Send over the currently installed language instances so that we can filter those out from the options.
-          installedLanguageInstances: languageAndGroupData
-        })
-      }}
-    >
-      <View style={styles.iconContainer}>
-        <Icon
-          name='language-add'
-          size={40 * scaleMultiplier}
-          color={colors.chateau}
-        />
-      </View>
-      <Text
-        style={StandardTypography(
-          { font, isRTL },
-          'h3',
-          'Bold',
-          'left',
-          colors.chateau
-        )}
+    installedLanguageInstances.length !== languages.length && (
+      <TouchableOpacity
+        style={[
+          styles.addNewLanguageButtonContainer,
+          {
+            flexDirection: isRTL ? 'row-reverse' : 'row'
+          }
+        ]}
+        onPress={() => {
+          // Navigate to the LanguageInstanceInstall screen so that the user can install another language instance.
+          navigate('SubsequentlLanguageInstanceInstall', {
+            // Send over the currently installed language instances so that we can filter those out from the options.
+            installedLanguageInstances: languageAndGroupData
+          })
+        }}
       >
-        {t.groups && t.groups.new_language}
-      </Text>
-    </TouchableOpacity>
+        <View style={styles.iconContainer}>
+          <Icon
+            name='language-add'
+            size={40 * scaleMultiplier}
+            color={colors.chateau}
+          />
+        </View>
+        <Text
+          style={StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Bold',
+            'left',
+            colors.chateau
+          )}
+        >
+          {t.groups && t.groups.new_language}
+        </Text>
+      </TouchableOpacity>
+    )
   )
 }
 

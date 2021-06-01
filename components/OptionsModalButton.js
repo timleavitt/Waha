@@ -12,7 +12,6 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
-
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state)
   }

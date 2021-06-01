@@ -4,6 +4,7 @@ import {
   Clipboard,
   Platform,
   SafeAreaView,
+  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -13,6 +14,7 @@ import SnackBar from 'react-native-snackbar-component'
 import { connect } from 'react-redux'
 import WahaBackButton from '../components/WahaBackButton'
 import { scaleMultiplier } from '../constants'
+import { logShareApp } from '../LogEventFunctions'
 import { appVersion } from '../modeSwitch'
 import {
   activeDatabaseSelector,
@@ -25,7 +27,7 @@ function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-
+    activeGroup: activeGroupSelector(state),
     t: activeDatabaseSelector(state).translations
   }
 }
@@ -38,7 +40,7 @@ const InformationScreen = ({
   // Props passed from redux.
   isRTL,
   font,
-
+  activeGroup,
   t
 }) => {
   /** Keeps track of whether the snackbar that pops up is visible or not.  */
@@ -118,9 +120,10 @@ const InformationScreen = ({
                 openBrowser(
                   'https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294'
                 )
-            : openBrowser(
-                'https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
-              )
+            : () =>
+                openBrowser(
+                  'https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
+                )
         }
       >
         <Text
@@ -135,6 +138,37 @@ const InformationScreen = ({
           {t.information && t.information.rate_waha}
         </Text>
         <Icon name='launch' color={colors.tuna} size={25 * scaleMultiplier} />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.informationItem,
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
+        ]}
+        onPress={() =>
+          Share.share({
+            message:
+              'iOS: https://apps.apple.com/us/app/waha-discover-gods-story/id1530116294\n\nAndroid: https://play.google.com/store/apps/details?id=com.kingdomstrategies.waha'
+          }).then(() => {
+            logShareApp(activeGroup.id)
+          })
+        }
+      >
+        <Text
+          style={StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Bold',
+            'left',
+            colors.shark
+          )}
+        >
+          {t.general && t.general.share_app}
+        </Text>
+        <Icon
+          name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
+          color={colors.tuna}
+          size={25 * scaleMultiplier}
+        />
       </TouchableOpacity>
       <TouchableOpacity
         style={[

@@ -300,6 +300,10 @@ const PlayScreen = ({
     // Set the sources for the various chapters.
     setSources()
 
+    // Mark audiobook and book lessons as complete as soon as you enter into the play screen.
+    if (lessonType.includes('BookText') && !isThisLessonComplete.current)
+      markLessonAsComplete()
+
     // Update the navigation options.
     setOptions(getNavOptions())
   }, [])
