@@ -81,7 +81,9 @@ const PlayScreenSwiper = ({
         justifyContent: 'space-evenly',
         alignItems: 'center',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        // Background is set here because of some strange issues with the video player flashing during the transition to/from the Training chapter.
+        backgroundColor: colors.white
       }}
     >
       <PlayScreenTitle text={thisLesson.title} backgroundColor={colors.white} />
