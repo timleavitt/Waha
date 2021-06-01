@@ -258,14 +258,7 @@ export function downloadLanguageCoreFiles (language) {
 
       // Set the local storage path to download to and the name of the file. The format is simple: FileSystem/languageID-fileName.extension.
 
-      var localPath =
-        // useV1
-        //   ? `${FileSystem.documentDirectory}${language}-${fileName.slice(
-        //       0,
-        //       -3
-        //     )}.${fileExtension}`
-        //   :
-        `${FileSystem.documentDirectory}${language}-${fileName}.${fileExtension}`
+      var localPath = `${FileSystem.documentDirectory}${language}-${fileName}.${fileExtension}`
 
       // Create the download object. Uses url and localPath from above, an empty parameters object, and an empty callback function.
       download = FileSystem.createDownloadResumable(
@@ -286,9 +279,6 @@ export function downloadLanguageCoreFiles (language) {
         .then(metadata =>
           dispatch(
             storeLanguageCoreFileCreatedTime(
-              // useV1
-              //   ? `${language}-${fileName.slice(0, -3)}`
-              //   :
               `${language}- ${fileName}`,
               metadata.timeCreated
             )
@@ -385,9 +375,7 @@ export function updateLanguageCoreFiles () {
       var languageID = fileName.slice(0, 2)
 
       // Also because I'm a fool and didn't create a better system for distinguishing updated files. Will be fixed soon.
-      var shortenedFileName =
-        // useV1 ? fileName.slice(3) + '-v1' :
-        fileName.slice(3)
+      var shortenedFileName = fileName.slice(3)
 
       // Create the download object.
       var download

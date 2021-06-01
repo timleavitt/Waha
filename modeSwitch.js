@@ -11,5 +11,3 @@ export const analyticsMode = 'test'
 export const appVersion = '2.0.0'
 
 export const storageMode = 'prod'
-
-export const useV1 = true

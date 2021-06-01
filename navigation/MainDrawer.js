@@ -154,9 +154,6 @@ const MainDrawer = ({
           .getMetadata()
           .then(metadata =>
             storeLanguageCoreFileCreatedTime(
-              // useV1
-              //   ? `${language}-${fileName.slice(0, -3)}`
-              //   :
               `${language}- ${fileName}`,
               metadata.timeCreated
             )
@@ -271,33 +268,21 @@ const MainDrawer = ({
                   // If the created time of this core file has already been stored previously AND the created time of the core file in Firebase is different from the created time that's stored in redux...
                   if (
                     languageCoreFilesCreatedTimes[
-                      // useV1
-                      //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
-                      //   :
                       `${activeGroup.language}-${fileName}`
                     ] &&
                     timeCreated !==
                       languageCoreFilesCreatedTimes[
-                        // useV1
-                        //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
-                        //   :
                         `${activeGroup.language}-${fileName}`
                       ]
                   ) {
                     // Add the core file to our redux array of files to update, assuming that it hasn't already been added.
                     if (
                       !languageCoreFilesToUpdate.includes(
-                        // useV1
-                        //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
-                        //   :
                         `${activeGroup.language}-${fileName}`
                       )
                     ) {
                       console.log(`${fileName} needs to be replaced.\n`)
                       addLanguageCoreFileToUpdate(
-                        // useV1
-                        //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
-                        //   :
                         `${activeGroup.language}-${fileName}`
                       )
                     }
@@ -316,29 +301,17 @@ const MainDrawer = ({
                   // If it isn't downloaded...
                   if (
                     !contents.includes(
-                      // useV1
-                      //   ? `${activeGroup.language}-${fileName.slice(
-                      //       0,
-                      //       -3
-                      //     )}.${fileExtension}`
-                      //   :
                       `${activeGroup.language}-${fileName}.${fileExtension}`
                     )
                   ) {
                     // Add the core file to our redux array of files to download, assuming that it hasn't already been added.
                     if (
                       !languageCoreFilesToUpdate.includes(
-                        // useV1
-                        //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
-                        //   :
                         `${activeGroup.language}-${fileName}`
                       )
                     ) {
                       console.log(`${fileName} needs to be added.\n`)
                       addLanguageCoreFileToUpdate(
-                        // useV1
-                        //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
-                        //   :
                         `${activeGroup.language}-${fileName}`
                       )
                     }
