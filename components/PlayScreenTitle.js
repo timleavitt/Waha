@@ -1,7 +1,6 @@
-import { LinearGradient } from 'expo-linear-gradient'
+// import { LinearGradient } from 'expo-linear-gradient'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
-import TextTicker from 'react-native-text-ticker'
+import { StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
 import {
@@ -38,57 +37,71 @@ const PlayScreenTitle = ({
   activeDatabase,
   isRTL,
   font
-}) => (
-  <View style={styles.titleContainer}>
-    <TextTicker
-      style={[
-        StandardTypography(
-          { font, isRTL },
-          'h3',
-          'Black',
-          'center',
-          colors.shark
-        ),
-        {
-          fontSize: 21 * scaleMultiplier
-          // paddingHorizontal: 20
-        }
-      ]}
-      marqueeDelay={2000}
-      bounceSpeed={300}
-      isRTL={isRTL}
-      shouldAnimateTreshold={0}
-    >
-      {text}
-    </TextTicker>
-    <LinearGradient
-      colors={[backgroundColor, backgroundColor + '00']}
-      start={[0, 1]}
-      end={[1, 1]}
-      style={styles.leftGradient}
-    />
-    <View
-      style={[styles.leftGradientFiller, { backgroundColor: backgroundColor }]}
-    />
-    <LinearGradient
-      colors={[backgroundColor, backgroundColor + '00']}
-      start={[1, 0]}
-      end={[0, 0]}
-      style={styles.rightGradient}
-    />
-    <View
-      style={[styles.rightGradientFiller, { backgroundColor: backgroundColor }]}
-    />
-  </View>
-)
+}) => {
+  console.log(`${Date.now()} Title re-rendering.`)
+  return (
+    <View style={styles.titleContainer}>
+      {/* <View
+      style={{
+        // height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%'
+      }}
+    > */}
+      <Text
+        style={[
+          StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Black',
+            'center',
+            colors.shark
+          ),
+          {
+            fontSize: 21 * scaleMultiplier
+          }
+        ]}
+      >
+        {text}
+      </Text>
+      {/* </View> */}
+      {/* <LinearGradient
+        colors={[backgroundColor, backgroundColor + '00']}
+        start={[0, 1]}
+        end={[1, 1]}
+        style={styles.leftGradient}
+      />
+      <View
+        style={[
+          styles.leftGradientFiller,
+          { backgroundColor: backgroundColor }
+        ]}
+      />
+      <LinearGradient
+        colors={[backgroundColor, backgroundColor + '00']}
+        start={[1, 0]}
+        end={[0, 0]}
+        style={styles.rightGradient}
+      />
+      <View
+        style={[
+          styles.rightGradientFiller,
+          { backgroundColor: backgroundColor }
+        ]}
+      /> */}
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
   titleContainer: {
     // width: Dimensions.get('window').width,
     width: '100%',
+    // flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 15 * scaleMultiplier
+    alignItems: 'center'
+    // marginVertical: 15 * scaleMultiplier
   },
   rightGradient: {
     position: 'absolute',
