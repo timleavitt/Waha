@@ -183,7 +183,7 @@ const PlayScreen = ({
   const [videoPlayerOpacity, setVideoPlayerOpacity] = useState(
     new Animated.Value(0)
   )
-  const [albumArtSwiperOpacity, setAlbumArtSwiperOpacity] = useState(
+  const [playScreenSwiperOpacity, setPlayScreenSwiperOpacity] = useState(
     new Animated.Value(0)
   )
 
@@ -495,7 +495,7 @@ const PlayScreen = ({
     if (activeChapter !== chapters.TRAINING) {
       !isTablet && lockPortrait(() => {})
       Animated.parallel([
-        Animated.timing(albumArtSwiperOpacity, {
+        Animated.timing(playScreenSwiperOpacity, {
           toValue: 1,
           duration: 300,
           useNativeDriver: true
@@ -510,7 +510,7 @@ const PlayScreen = ({
     // If we're switching to the Training chapter, fade out the <AlbumArtSwiper /> and fade in the <VideoPlayer />.
     else {
       Animated.parallel([
-        Animated.timing(albumArtSwiperOpacity, {
+        Animated.timing(playScreenSwiperOpacity, {
           toValue: 0,
           duration: 300,
           useNativeDriver: true
@@ -916,7 +916,7 @@ const PlayScreen = ({
               height: '100%',
               position: 'absolute',
               opacity:
-                lessonType === lessonTypes.BOOK ? 1 : albumArtSwiperOpacity,
+                lessonType === lessonTypes.BOOK ? 1 : playScreenSwiperOpacity,
               zIndex:
                 activeChapter === chapters.TRAINING
                   ? middleAreaVisibility.HIDE
