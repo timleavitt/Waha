@@ -1,5 +1,4 @@
 import * as FileSystem from 'expo-file-system'
-// import LottieView from 'lottie-react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 import { FlatList, LogBox, StyleSheet, Text, View } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
@@ -194,7 +193,7 @@ const AddSetScreen = ({
           // Filter for Topical Story Sets that match the currently selected tag (if there is one).
           .filter(topicalAddedSet =>
             // If the selected tag is blank (meaning nothing has been selected) or 'All' is selected, show all the Topical Story Sets. Otherwise, filter by the selected tag.
-            selectedTag === '' || (selectedTag === t.general && t.general.all)
+            selectedTag === '' || selectedTag === t.general.all
               ? true
               : topicalAddedSet.tags.some(tag => selectedTag === tag)
           )
@@ -287,8 +286,17 @@ const AddSetScreen = ({
         ListFooterComponent={() => <WahaSeparator />}
         ListHeaderComponent={() => <WahaSeparator />}
         renderItem={renderSetItem}
+        contentContainerStyle={{
+          flexGrow: 1
+        }}
         ListEmptyComponent={() => (
-          <View style={{ width: '100%', marginVertical: 20 }}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
             <Text
               style={StandardTypography(
                 { font, isRTL },
@@ -300,21 +308,6 @@ const AddSetScreen = ({
             >
               {t.sets && t.sets.no_more_sets}
             </Text>
-            {/* <LottieView
-            style={{
-              width: Dimensions.get('window').width,
-              marginBottom: 30
-            }}
-            colorFilters={[
-              {
-                keypath: '*',
-                color: colors.tuna
-              }
-            ]}
-            autoPlay
-            loop
-            source={require('../assets/gifs/clouds.json')}
-          /> */}
           </View>
         )}
       />

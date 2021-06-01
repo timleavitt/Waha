@@ -500,31 +500,6 @@ const LanguageInstanceInstallScreen = ({
           sections={getLanguageData()}
           ItemSeparatorComponent={() => <WahaSeparator />}
           SectionSeparatorComponent={() => <WahaSeparator />}
-          ListEmptyComponent={
-            !searchTextInput && (
-              <View>
-                <View
-                  style={{
-                    width: '100%',
-                    marginBottom: 18 * scaleMultiplier
-                  }}
-                >
-                  <Text
-                    style={SystemTypography(
-                      false,
-                      'p',
-                      'Regular',
-                      'center',
-                      colors.chateau
-                    )}
-                  >
-                    {i18n.t('no_more_languages')}
-                  </Text>
-                </View>
-                <WahaSeparator />
-              </View>
-            )
-          }
           keyExtractor={item => item.wahaID}
           renderItem={({ item, section }) => renderLanguageItem(item, section)}
           renderSectionHeader={({ section }) => renderLanguageHeader(section)}
