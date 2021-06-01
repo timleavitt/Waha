@@ -38,7 +38,6 @@ const PlayScreenTitle = ({
   isRTL,
   font
 }) => {
-  console.log(`${Date.now()} Title re-rendering.`)
   return (
     <View style={styles.titleContainer}>
       {/* <View
