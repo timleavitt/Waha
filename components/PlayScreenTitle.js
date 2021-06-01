@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import React from 'react'
-import { Dimensions, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import TextTicker from 'react-native-text-ticker'
 import { connect } from 'react-redux'
 import { scaleMultiplier } from '../constants'
@@ -84,7 +84,8 @@ const PlayScreenTitle = ({
 
 const styles = StyleSheet.create({
   titleContainer: {
-    width: Dimensions.get('window').width,
+    // width: Dimensions.get('window').width,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 15 * scaleMultiplier
