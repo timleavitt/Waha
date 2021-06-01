@@ -8,7 +8,7 @@ import * as FileSystem from 'expo-file-system'
 import firebase from 'firebase'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { isTablet, scaleMultiplier } from '../constants'
+import { isTablet, scaleMultiplier, storageMode } from '../constants'
 import db from '../firebase/db'
 import { appVersion } from '../modeSwitch'
 import { changeActiveGroup } from '../redux/actions/activeGroupActions'
@@ -154,12 +154,11 @@ const MainDrawer = ({
           .getMetadata()
           .then(metadata =>
             storeLanguageCoreFileCreatedTime(
-              // For when file name includes "v1".
-              `${language}-${fileName.slice(0, -3)}`,
+              // useV1
+              //   ? `${language}-${fileName.slice(0, -3)}`
+              //   :
+              `${language}- ${fileName}`,
               metadata.timeCreated
-              // For when file name DOESN'T includes "v1".
-              // language + '-' + fileName,
-              // metadata.timeCreated
             )
           )
       })
@@ -201,7 +200,7 @@ const MainDrawer = ({
             }
           })
           .catch(error => {
-            console.log('Error retrieving data from Firestore.')
+            console.log('Error retrieving languages data from Firestore.')
           })
 
         // Fetch data from the Story Sets Firestore collection. Get all Story Sets of the current language.
@@ -226,7 +225,7 @@ const MainDrawer = ({
             }
           })
           .catch(error => {
-            console.log('Error retrieving data from Firestore.')
+            console.log('Error retrieving sets data from Firestore.')
           })
       }
     })
@@ -258,13 +257,10 @@ const MainDrawer = ({
               // Set the file extension for the core file we're currently checking.
               var fileExtension = fileName.includes('header') ? 'png' : 'mp3'
 
-              // PRODUCTION FIREBASE URL
-              // Always have this uncommented when it's time to build a new version.
-              var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${activeGroup.language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
-
-              // TEST FIREBASE URL
-              // Use this for test Firebase storage.
-              // var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-test-db.appspot.com/o/${activeGroup.language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
+              var url =
+                storageMode === 'test'
+                  ? `https://firebasestorage.googleapis.com/v0/b/waha-app-test-db.appspot.com/o/${activeGroup.language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
+                  : `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${activeGroup.language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
 
               // Check the timeCreated of this core file in Firebase storage.
               firebase
@@ -275,22 +271,34 @@ const MainDrawer = ({
                   // If the created time of this core file has already been stored previously AND the created time of the core file in Firebase is different from the created time that's stored in redux...
                   if (
                     languageCoreFilesCreatedTimes[
-                      `${activeGroup.language}-${fileName.slice(0, -3)}`
+                      // useV1
+                      //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
+                      //   :
+                      `${activeGroup.language}-${fileName}`
                     ] &&
                     timeCreated !==
                       languageCoreFilesCreatedTimes[
-                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        // useV1
+                        //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        //   :
+                        `${activeGroup.language}-${fileName}`
                       ]
                   ) {
                     // Add the core file to our redux array of files to update, assuming that it hasn't already been added.
                     if (
                       !languageCoreFilesToUpdate.includes(
-                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        // useV1
+                        //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        //   :
+                        `${activeGroup.language}-${fileName}`
                       )
                     ) {
                       console.log(`${fileName} needs to be replaced.\n`)
                       addLanguageCoreFileToUpdate(
-                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        // useV1
+                        //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        //   :
+                        `${activeGroup.language}-${fileName}`
                       )
                     }
                   }
@@ -308,21 +316,30 @@ const MainDrawer = ({
                   // If it isn't downloaded...
                   if (
                     !contents.includes(
-                      `${activeGroup.language}-${fileName.slice(
-                        0,
-                        -3
-                      )}.${fileExtension}`
+                      // useV1
+                      //   ? `${activeGroup.language}-${fileName.slice(
+                      //       0,
+                      //       -3
+                      //     )}.${fileExtension}`
+                      //   :
+                      `${activeGroup.language}-${fileName}.${fileExtension}`
                     )
                   ) {
                     // Add the core file to our redux array of files to download, assuming that it hasn't already been added.
                     if (
                       !languageCoreFilesToUpdate.includes(
-                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        // useV1
+                        //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        //   :
+                        `${activeGroup.language}-${fileName}`
                       )
                     ) {
                       console.log(`${fileName} needs to be added.\n`)
                       addLanguageCoreFileToUpdate(
-                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        // useV1
+                        //   ? `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        //   :
+                        `${activeGroup.language}-${fileName}`
                       )
                     }
                   }
@@ -333,7 +350,9 @@ const MainDrawer = ({
         }
       })
       .catch(error => {
-        console.log('Error retrieving data from Firestore.')
+        console.log(
+          'Error retrieving languages data from Firestore (in checking created times part).'
+        )
       })
 
     // Fetch data from the Story Sets Firestore collection. Get all Story Sets of the current language.
@@ -358,7 +377,7 @@ const MainDrawer = ({
         }
       })
       .catch(error => {
-        console.log('Error retrieving data from Firestore.')
+        console.log('Error retrieving sets data from Firestore.')
       })
   }, [Object.keys(downloads).length, activeGroup])
 
