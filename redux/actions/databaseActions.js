@@ -374,7 +374,7 @@ export function updateLanguageCoreFiles () {
       // This is here because I'm a fool and didn't automatically include the language ID in the file names in Firebase. Therefore, we have to remove the language ID here. Will be fixed soon.
       var languageID = fileName.slice(0, 2)
 
-      // Also because I'm a fool and didn't create a better system for distinguishing updated files. Will be fixed soon.
+      // The shortened file name is the file name without the language ID. So en-header.png would be header.png.
       var shortenedFileName = fileName.slice(3)
 
       // Create the download object.
@@ -385,7 +385,6 @@ export function updateLanguageCoreFiles () {
 
       // Set the firebase storage URL to download from. The file structure in firebase must be set up exactly right for this link to work.
 
-      // PRODUCTION URL
       var url =
         storageMode === 'test'
           ? `https://firebasestorage.googleapis.com/v0/b/waha-app-test-db.appspot.com/o/${languageID}%2Fother%2F${shortenedFileName}.${fileExtension}?alt=media`
