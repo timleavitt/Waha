@@ -41,10 +41,12 @@ import { colors } from '../styles/colors'
 import { SystemTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
+import hi from '../translations/hi.json'
 
 i18n.translations = {
   en,
-  ar
+  ar,
+  hi
 }
 
 function mapStateToProps (state) {
@@ -305,7 +307,8 @@ const LanguageInstanceInstallScreen = ({
     // If search text matches with a language family name, show the whole language family. If it doesn't, show the specific languages it matches with.
     const filterBySearch = languageFamily => {
       if (
-        languageFamily.i18nName
+        i18n
+          .t(languageFamily.i18nName)
           .toLowerCase()
           .includes(searchTextInput.toLowerCase())
       )

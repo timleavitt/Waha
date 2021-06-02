@@ -23,22 +23,8 @@ export const languages = [
         i18nName: 'english',
         brandName: 'Discovering God',
         logoSource:
-          'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/en%2Fother%2Fheader-v1.png?alt=media'
+          'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/en%2Fother%2Fheader.png?alt=media'
       }
-      // {
-      //   nativeName: 'Test Language',
-      //   wahaID: 'te',
-      //   i18nName: 'english',
-      //   logoSource:
-      //     'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/en%2Fother%2Fheader-v1.png?alt=media'
-      // },
-      // {
-      //   nativeName: 'Test Language 2',
-      //   wahaID: 'tt',
-      //   i18nName: 'english',
-      //   logoSource:
-      //     'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/en%2Fother%2Fheader-v1.png?alt=media'
-      // }
     ]
   },
   {
@@ -53,23 +39,24 @@ export const languages = [
         i18nName: 'gulf_arabic',
         brandName: 'طريق الواحة',
         logoSource:
-          'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ga%2Fother%2Fheader-v1.png?alt=media'
+          'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ga%2Fother%2Fheader.png?alt=media'
       }
-      // {
-      //   nativeName: 'Test',
-      //   wahaID: 'aa',
-      //   i18nName: 'test',
-      //   brandName: '',
-      //   logoSource:
-      //     'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ga%2Fother%2Fheader-v1.png?alt=media'
-      // }
-      // {
-      //   nativeName: 'FusHa',
-      //   wahaID: 'ar',
-      //   i18nName: 'fusha',
-      //   logoSource:
-      //     'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/ar%2Fother%2Fheader-v1.png?alt=media'
-      // }
     ]
   }
+  // {
+  //   i18Name: 'hindi',
+  //   languageCode: 'hi',
+  //   font: 'Roboto',
+  //   isRTL: false,
+  //   data: [
+  //     {
+  //       nativeName: 'हिन्दी',
+  //       wahaID: 'hi',
+  //       i18nName: 'hindi',
+  //       brandName: 'परमेश्वर को खोजना',
+  //       logoSource:
+  //         'https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/hi%2Fother%2Fheader.png?alt=media'
+  //     }
+  //   ]
+  // }
 ]

@@ -80,9 +80,7 @@ export const isTablet = Dimensions.get('window').width > 500 ? true : false
 export const groupNames = {
   en: 'Group 1',
   ga: 'المجموعة الأولى',
-  ar: 'المجموعة الأولى',
-  te: 'Group 1',
-  tt: 'Group 2'
+  hi: 'समूह 1'
 }
 
 /**

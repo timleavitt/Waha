@@ -27,10 +27,12 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
+import hi from '../translations/hi.json'
 
 i18n.translations = {
   en,
-  ar
+  ar,
+  hi
 }
 
 function mapStateToProps (state) {
