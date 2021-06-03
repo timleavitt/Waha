@@ -40,7 +40,6 @@ const GroupNameTextInput = ({
   font,
   t
 }) => {
-  console.log(isDuplicate)
   return (
     <View style={styles.groupNameAreaContainer}>
       <Text

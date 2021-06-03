@@ -1,17 +1,15 @@
 // import SvgUri from 'expo-svg-uri'
 import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
 import Icon from '../assets/fonts/icon_font_config'
 import {
-  getSetInfo,
   isTablet,
   itemHeights,
   scaleMultiplier,
   setItemModes
 } from '../constants'
-import MessageModal from '../modals/MessageModal'
 import { addSet } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
@@ -27,7 +25,6 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     primaryColor: activeDatabaseSelector(state).primaryColor,
     font: getLanguageFont(activeGroupSelector(state).language),
-
     activeGroup: activeGroupSelector(state),
     t: activeDatabaseSelector(state).translations
   }
@@ -46,36 +43,30 @@ function mapDispatchToProps (dispatch) {
  * @param {Object} thisSet - The object for the set to display.
  * @param {string} mode - The mode of the set item. The set item is rendered slightly different on all the different screens it's used in. See setItemModes in constants.js.
  * @param {Function} onSetSelect - A function to fire when the set item is pressed. Can be null to make the item non-pressable.
+ * @param {number} progressPercentage - The percentage of this set that has been completed.
  */
 const SetItem = ({
   // Props passed from a parent component.
   thisSet,
   mode,
   onSetSelect,
+  progressPercentage = null,
   // Props passed from redux.
   isRTL,
   activeDatabase,
   primaryColor,
   font,
-
   activeGroup,
   t,
   addSet
 }) => {
+  // console.log(`${Date.now()} Set ${thisSet.id} is re-rendering.`)
+
   /** Stores the dynamic primary icon portion of the SetItem component. This contains a unique SVG that represents the set and changes between modes. */
   const [primaryIcon, setPrimaryIcon] = useState()
 
   /** Stores the dynamic secondary icon portion of the SetItem component. This is a smaller icon on the opposite side from the primary icon and changes between modes as well. */
   const [secondaryIcon, setSecondaryIcon] = useState()
-
-  /** Keeps track of the user's progress through this set. */
-  const [thisSetProgress, setThisSetProgress] = useState(0)
-
-  /** Keeps track of whether this set is fully completed or not. */
-  const [fullyCompleted, setFullyCompleted] = useState(false)
-
-  /** Keeps track of whether the unlock modal is visible. */
-  const [showUnlockModal, setShowUnlockModal] = useState(false)
 
   /**
    * useEffect function that sets the dynamic primary and secondary icon components of the set item based on the screen prop. Updated whenever the active group or progress changes.
@@ -83,15 +74,16 @@ const SetItem = ({
   useEffect(() => {
     switch (mode) {
       case setItemModes.SETS_SCREEN:
-        updateThisSetProgress()
         // Primary icon for the SetItem on the Sets screen is a circular progress bar with the set's SVG inside.
         setPrimaryIcon(
           <View style={styles.primaryIconContainer}>
             <AnimatedCircularProgress
               size={78 * scaleMultiplier}
               width={7 * scaleMultiplier}
-              fill={thisSetProgress * 100}
-              tintColor={fullyCompleted ? primaryColor + '50' : primaryColor}
+              fill={progressPercentage * 100}
+              tintColor={
+                progressPercentage === 1 ? primaryColor + '50' : primaryColor
+              }
               rotation={0}
               backgroundColor={colors.white}
             >
@@ -107,7 +99,9 @@ const SetItem = ({
                     name={thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    color={fullyCompleted ? colors.chateau : colors.shark}
+                    color={
+                      progressPercentage === 1 ? colors.chateau : colors.shark
+                    }
                   />
                 </View>
               )}
@@ -116,7 +110,7 @@ const SetItem = ({
         )
         // Secondary icon for the SetItem on the Sets screen is a checkmark if the set is fully completed, a orange marker if this set is the bookmarked set, or nothing.
         setSecondaryIcon(
-          fullyCompleted ? (
+          progressPercentage === 1 ? (
             <View style={styles.secondaryIconContainer}>
               <Icon
                 name='check-outline'
@@ -142,15 +136,16 @@ const SetItem = ({
         )
         break
       case setItemModes.LESSONS_SCREEN:
-        updateThisSetProgress()
         // Primary icon for the SetItem on the Lessons screen is the same as on the Sets screen: a circular progress bar with the set's SVG inside.
         setPrimaryIcon(
           <View style={styles.primaryIconContainer}>
             <AnimatedCircularProgress
               size={78 * scaleMultiplier}
               width={7 * scaleMultiplier}
-              fill={thisSetProgress * 100}
-              tintColor={fullyCompleted ? primaryColor + '50' : primaryColor}
+              fill={progressPercentage * 100}
+              tintColor={
+                progressPercentage === 1 ? primaryColor + '50' : primaryColor
+              }
               rotation={0}
               backgroundColor={colors.white}
             >
@@ -166,7 +161,9 @@ const SetItem = ({
                     name={thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    color={fullyCompleted ? colors.chateau : colors.shark}
+                    color={
+                      progressPercentage === 1 ? colors.chateau : colors.shark
+                    }
                   />
                 </View>
               )}
@@ -237,61 +234,7 @@ const SetItem = ({
         setSecondaryIcon(<View style={styles.secondaryIconContainer} />)
         break
     }
-  }, [thisSetProgress, fullyCompleted, activeGroup])
-
-  /**
-   * Updates the thisSetProgress state.
-   */
-  const updateThisSetProgress = () => {
-    setThisSetProgress(
-      activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
-        .length / thisSet.lessons.length
-    )
-  }
-
-  /** useEffect function that updates whenever this set's progress changes and handles the changes appropriately. */
-  useEffect(() => {
-    // If this set is fully completed, set the fullyCompleted state to true. This makes the set components grayed out.
-    if (thisSetProgress === 1) setFullyCompleted(true)
-    else setFullyCompleted(false)
-
-    /* 
-    Next, we want to see if we need to automatically add the next set. The criteria for this happening is: 
-      1) The Foundational set after this one exists
-      2) This set is 85% or more complete
-      3) This set is Foundational
-      4) The Foundational set after this one hasn't already been added
-    */
-
-    // Firstly, we need to get the set after this one before we can do anything else.
-    var nextSet = activeDatabase.sets.filter(
-      dbSet =>
-        getSetInfo('category', dbSet.id) === 'Foundational' &&
-        getSetInfo('index', dbSet.id) === getSetInfo('index', thisSet.id) + 1
-    )[0]
-
-    // If all of the above criteria are met, add the next set and show a modal notifying the user.
-    if (nextSet) {
-      if (
-        thisSetProgress > 0.85 &&
-        getSetInfo('category', thisSet.id) === 'Foundational' &&
-        !activeGroup.addedSets.some(addedSet => addedSet.id === nextSet.id)
-      ) {
-        addSet(
-          activeGroup.name,
-          activeGroup.id,
-          activeDatabase.sets
-            .filter(set => getSetInfo('category', set.id) === 'Foundational')
-            .filter(
-              set =>
-                getSetInfo('index', set.id) ===
-                getSetInfo('index', thisSet.id) + 1
-            )[0]
-        )
-        setShowUnlockModal(true)
-      }
-    }
-  }, [thisSetProgress])
+  }, [progressPercentage, thisSet.id === activeGroup.setBookmark])
 
   return (
     <TouchableOpacity
@@ -325,7 +268,7 @@ const SetItem = ({
               'd',
               'Regular',
               'left',
-              fullyCompleted ? colors.chateau : colors.shark
+              progressPercentage === 1 ? colors.chateau : colors.shark
             ),
             {
               textAlignVertical: 'center',
@@ -343,7 +286,7 @@ const SetItem = ({
               'h3',
               'Black',
               'left',
-              fullyCompleted ? colors.chateau : colors.shark
+              progressPercentage === 1 ? colors.chateau : colors.shark
             ),
             {
               textAlignVertical: 'center',
@@ -356,24 +299,6 @@ const SetItem = ({
         </Text>
       </View>
       {secondaryIcon}
-      {/* Modals */}
-      <MessageModal
-        isVisible={showUnlockModal}
-        hideModal={() => setShowUnlockModal(false)}
-        title={t.general && t.general.new_story_set_unlocked_title}
-        message={t.general && t.general.new_story_set_unlocked_message}
-        confirmText={t.general && t.general.got_it}
-        confirmOnPress={() => setShowUnlockModal(false)}
-      >
-        <Image
-          source={require('../assets/gifs/new_set.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            resizeMode: 'contain'
-          }}
-        />
-      </MessageModal>
     </TouchableOpacity>
   )
 }
@@ -406,7 +331,17 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(SetItem)
+const areEqual = (prevProps, nextProps) => {
+  return (
+    prevProps.progressPercentage === nextProps.progressPercentage &&
+    prevProps.activeGroup.setBookmark === nextProps.activeGroup.setBookmark
+  )
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(React.memo(SetItem, areEqual))
 
 /* <SvgUri
 source={{

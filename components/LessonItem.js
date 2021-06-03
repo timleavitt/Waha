@@ -52,9 +52,9 @@ const LessonItem = ({
   // Props passed from a parent component.
   thisLesson,
   goToPlayScreen,
-  thisSetBookmark,
+  isBookmark,
+  isComplete,
   lessonType,
-  thisSetProgress,
   downloadedLessons,
   showDownloadLessonModal,
   showDeleteLessonModal,
@@ -66,28 +66,15 @@ const LessonItem = ({
   t,
   isConnected,
   font,
-
   removeDownload
 }) => {
+  // console.log(`${Date.now()} Lesson ${thisLesson.id} is re-rendering.`)
+
   /** Keeps track of whether this lesson is downloaded or not. */
   const [isFullyDownloaded, setIsFullyDownloaded] = useState(false)
 
   /** Keeps track of whether this lesson is currently downloading or not. */
   const [isDownloading, setIsDownloading] = useState(false)
-
-  /** Keeps track of whether this lesson is the bookmark for the set it's in. */
-  const [isBookmark, setIsBookmark] = useState(false)
-
-  /** Keeps track of whether this lesson is complete or not. */
-  const [isComplete, setIsComplete] = useState(false)
-
-  /** useEffect function that sets the isComplete and isBookmark state whenever the progress for the set that this lesson is in updates. */
-  useEffect(() => {
-    setIsComplete(
-      thisSetProgress.includes(getLessonInfo('index', thisLesson.id))
-    )
-    setIsBookmark(getLessonInfo('index', thisLesson.id) === thisSetBookmark)
-  }, [thisSetProgress])
 
   /** useEffect function that removes an active download from the downloads redux object after it finishes. */
   useEffect(() => {
@@ -264,7 +251,8 @@ const styles = StyleSheet.create({
 */
 const areEqual = (prevProps, nextProps) => {
   return (
-    prevProps.thisSetProgress === nextProps.thisSetProgress &&
+    prevProps.isBookmark === nextProps.isBookmark &&
+    prevProps.isComplete === nextProps.isComplete &&
     prevProps.downloads[prevProps.thisLesson.id] ===
       nextProps.downloads[nextProps.thisLesson.id] &&
     prevProps.downloads[prevProps.thisLesson.id + 'v'] ===

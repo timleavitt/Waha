@@ -91,25 +91,15 @@ export async function logCreateGroup (languageID, groupID, groupNumber) {
 }
 
 /**
- * Logs enabling the Mobilization Tools for a specific group.
+ * Logs unlocking the Mobilization Tools.
  * @export
  * @param {string} languageID - The ID of the active group's language.
- * @param {string} groupID - The ID of the group that is enabling the Mobilization Tools.
- * @param {number} groupNumber - The number of the group that is enabling the Mobilization Tools.
  */
-export async function logEnableMobilizationToolsForAGroup (
-  languageID,
-  groupID,
-  groupNumber
-) {
-  console.log(
-    `EnableMobilizationToolsForAGroup logged with languageID: ${languageID}, groupID: ${groupID}, and groupNumber: ${groupNumber}.`
-  )
+export async function logUnlockMobilizationTools (languageID) {
+  console.log(`UnlockMobilizationTools logged with languageID: ${languageID}.`)
   if (analyticsMode !== 'test')
-    await Analytics.logEvent('EnableMobilizationToolsForAGroup', {
-      languageID: languageID,
-      groupID: groupID,
-      groupNumber: groupNumber
+    await Analytics.logEvent('UnlockMobilizationTools', {
+      languageID: languageID
     })
 }
 

@@ -69,10 +69,6 @@ const VideoPlayer = ({
     }
   }, [])
 
-  useEffect(() => {
-    console.log(currentOrientation)
-  }, [currentOrientation])
-
   /** useEffect function that adds a device motion listener on iOS devices. This is so that the app can automatically enter fullscreen when the user rotates their phone. */
   useEffect(() => {
     if (Platform.OS === 'ios' && activeChapter === chapters.TRAINING)

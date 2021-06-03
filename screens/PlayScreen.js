@@ -28,11 +28,15 @@ import {
   lockPortrait,
   scaleMultiplier
 } from '../constants'
+import {
+  checkForAlmostCompleteSet,
+  checkForFullyCompleteSet
+} from '../functions/setProgressFunctions'
 import { logCompleteLesson } from '../LogEventFunctions'
 import MessageModal from '../modals/MessageModal'
 import ShareModal from '../modals/ShareModal'
 import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
-import { toggleComplete } from '../redux/actions/groupsActions'
+import { addSet, toggleComplete } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -65,6 +69,9 @@ function mapDispatchToProps (dispatch) {
     },
     removeDownload: lessonID => {
       dispatch(removeDownload(lessonID))
+    },
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
     }
   }
 }
@@ -118,11 +125,11 @@ const PlayScreen = ({
   primaryColor,
   isRTL,
   font,
-
   isConnected,
   toggleComplete,
   downloadMedia,
-  removeDownload
+  removeDownload,
+  addSet
 }) => {
   /*
     STATE
@@ -193,6 +200,9 @@ const PlayScreen = ({
   /** Keeps track of whether the various modals are visible. */
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
   const [showSetCompleteModal, setShowSetCompleteModal] = useState(false)
+  const [showNextSetUnlockedModal, setShowNextSetUnlockedModal] = useState(
+    false
+  )
 
   /** Keeps track of whether the audio and video files for this lesson are downloaded. */
   const [isAudioDownloaded, setIsAudioDownloaded] = useState(
@@ -226,6 +236,15 @@ const PlayScreen = ({
 
   /** Keeps track of whether this lesson was just completed. */
   const justCompleted = useRef(false)
+
+  const [addedSet, setAddedSet] = useState(
+    activeGroup.addedSets.filter(addedSet => addedSet.id === thisSet.id)[0]
+  )
+
+  useEffect(() => {
+    setAddedSet(activeGroup.addedSets.filter(set => set.id === thisSet.id)[0])
+    setOptions(getNavOptions())
+  }, [activeGroup.addedSets.filter(set => set.id === thisSet.id)[0]])
 
   /** Sets the navigation options for this screen. */
   const getNavOptions = () => ({
@@ -858,9 +877,6 @@ const PlayScreen = ({
 
     // Track analytics.
     logCompleteLesson(thisLesson, activeGroup.id)
-
-    // Update the navigation options since a check appears next to the header when a lesson is complete.
-    setOptions(getNavOptions())
   }
 
   /**
@@ -880,16 +896,24 @@ const PlayScreen = ({
 
     // Here is where any modals that appear after a lesson is completed for the first time should appear. This will be useful when the gamification update is implemented.
     if (justCompleted.current) {
-      // If completing this lesson completes the whole set, show a celebratory modal.
       if (
-        activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
-          .length /
-          (thisSet.lessons.length - 1) ===
-        1
+        // Check to see if we should automatically add the next Story Set if this set is now 85% or more of the way completed.
+        !checkForAlmostCompleteSet(
+          thisSet,
+          activeGroup.addedSets.filter(set => set.id === thisSet.id)[0],
+          activeGroup,
+          activeDatabase,
+          addSet,
+          setShowNextSetUnlockedModal
+        ) &&
+        // If completing this lesson completes the whole set, show a celebratory modal.
+        !checkForFullyCompleteSet(
+          thisSet,
+          activeGroup.addedSets.filter(set => set.id === thisSet.id)[0],
+          setShowSetCompleteModal
+        )
       )
-        setShowSetCompleteModal(true)
-      // Otherwise, just go back.
-      else goBack()
+        goBack()
     } else goBack()
   }
 
@@ -1018,6 +1042,26 @@ const PlayScreen = ({
       >
         <Image
           source={require('../assets/gifs/set_complete.gif')}
+          style={{
+            height: 200 * scaleMultiplier,
+            margin: 20,
+            resizeMode: 'contain'
+          }}
+        />
+      </MessageModal>
+      <MessageModal
+        isVisible={showNextSetUnlockedModal}
+        hideModal={() => setShowNextSetUnlockedModal(false)}
+        title={t.general && t.general.new_story_set_unlocked_title}
+        message={t.general && t.general.new_story_set_unlocked_message}
+        confirmText={t.general && t.general.got_it}
+        confirmOnPress={() => {
+          setShowNextSetUnlockedModal(false)
+          goBack()
+        }}
+      >
+        <Image
+          source={require('../assets/gifs/new_set.gif')}
           style={{
             height: 200 * scaleMultiplier,
             margin: 20,

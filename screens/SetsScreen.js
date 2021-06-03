@@ -80,13 +80,10 @@ const SetsScreen = ({
         ? t.sets && t.sets.add_topical_set
         : t.sets && t.sets.add_mobilization_tool
     )
-  }, [activeGroup])
+  }, [])
 
   /** Keeps track of all of the files the user has downloaded to the user's device. This is used to verify that all the required question set mp3s are downloaded for the sets that have been added. */
   const [downloadedFiles, setDownloadedFiles] = useState([])
-
-  /** Whether the snackbar that pops up upon unlocking the mobilization tools is visible or not.  */
-  const [showSnackbar, setShowSnackbar] = useState(false)
 
   /** useEffect function that sets the downloaded files state. It's also used to log some various information to the console for testing. */
   useEffect(() => {
@@ -306,13 +303,19 @@ const SetsScreen = ({
    * @param {Object} set - The object of the set to render.
    * @return {Component} - The setItem component.
    */
-  const renderSetItem = ({ item }) => (
-    <SetItem
-      thisSet={item}
-      mode={setItemModes.SETS_SCREEN}
-      onSetSelect={() => navigate('Lessons', { thisSet: item })}
-    />
-  )
+  const renderSetItem = ({ item }) => {
+    return (
+      <SetItem
+        thisSet={item}
+        mode={setItemModes.SETS_SCREEN}
+        onSetSelect={() => navigate('Lessons', { setID: item.id })}
+        progressPercentage={
+          activeGroup.addedSets.filter(addedSet => addedSet.id === item.id)[0]
+            .progress.length / item.lessons.length
+        }
+      />
+    )
+  }
 
   // We know the height of these items ahead of time so we can use getItemLayout to make our FlatList perform better.
   const getItemLayout = (data, index) => ({

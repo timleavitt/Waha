@@ -4,6 +4,7 @@ import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
 import WahaBackButton from '../components/WahaBackButton'
 import { scaleMultiplier } from '../constants'
+import { logUnlockMobilizationTools } from '../LogEventFunctions'
 import MessageModal from '../modals/MessageModal'
 import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
 import { addSet } from '../redux/actions/groupsActions'
@@ -22,7 +23,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
-
+    activeGroup: activeGroupSelector(state),
     security: state.security,
     mtUnlockAttempts: state.mtUnlockAttempts,
     groups: state.groups,
@@ -60,7 +61,7 @@ const MobilizationToolsUnlockScreen = ({
   isRTL,
   t,
   font,
-
+  activeGroup,
   security,
   mtUnlockAttempts,
   groups,
@@ -122,6 +123,7 @@ const MobilizationToolsUnlockScreen = ({
       setAreMobilizationToolsUnlocked(true)
       navigate('SetsTabs', { screen: 'MobilizationTools' })
       setTimeout(() => setShowMTTabAddedSnackbar(true), 1000)
+      logUnlockMobilizationTools(activeGroup.language)
     } else {
       setMTUnlockAttempts(mtUnlockAttempts + 1)
 
