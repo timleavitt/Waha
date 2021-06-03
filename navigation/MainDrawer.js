@@ -154,7 +154,7 @@ const MainDrawer = ({
           .getMetadata()
           .then(metadata =>
             storeLanguageCoreFileCreatedTime(
-              `${language}- ${fileName}`,
+              `${language}-${fileName}`,
               metadata.timeCreated
             )
           )

@@ -279,7 +279,7 @@ export function downloadLanguageCoreFiles (language) {
         .then(metadata =>
           dispatch(
             storeLanguageCoreFileCreatedTime(
-              `${language}- ${fileName}`,
+              `${language}-${fileName}`,
               metadata.timeCreated
             )
           )

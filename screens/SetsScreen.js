@@ -111,11 +111,11 @@ const SetsScreen = ({
     // console.log(`Language core files to update: ${languageCoreFilesToUpdate}\n`)
 
     // Log the language core file created times to the console.
-    // console.log(
-    //   `Language core files created times: ${JSON.stringify(
-    //     languageCoreFilesCreatedTimes
-    //   )}\n`
-    // )
+    console.log(
+      `Language core files created times: ${JSON.stringify(
+        languageCoreFilesCreatedTimes
+      )}\n`
+    )
   }, [])
 
   /**
