@@ -112,17 +112,6 @@ const MainDrawer = ({
   clearLanguageCoreFilesToUpdate,
   addSet
 }) => {
-  /**
-   * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the SetsTabs navigator because this is the only spot we should be able to swipe to open the drawer.
-   * @param {string} route - The route passed from the navigation component.
-   * @return {boolean} - Whether gestures should be enabled or not.
-   */
-  function getGestureEnabled (route) {
-    const routeName = getFocusedRouteNameFromRoute(route)
-    if (routeName === 'SetsTabs') return true
-    else return false
-  }
-
   /** useEffect function that adds a listener for listening to network changes. */
   useEffect(() => {
     // Add a listener for connection status and update the redux state accordingly.
@@ -354,6 +343,18 @@ const MainDrawer = ({
       })
   }, [Object.keys(downloads).length, activeGroup])
 
+  /**
+   * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the SetsTabs navigator because this is the only spot we should be able to swipe to open the drawer.
+   * @param {string} route - The route passed from the navigation component.
+   * @return {boolean} - Whether gestures should be enabled or not.
+   */
+  function getGestureEnabled (route) {
+    const routeName = getFocusedRouteNameFromRoute(route)
+
+    if (routeName === undefined) return security.securityEnabled ? false : true
+    else return routeName === 'SetsTabs' ? true : false
+  }
+
   return (
     <NavigationContainer>
       <Drawer.Navigator
@@ -364,6 +365,7 @@ const MainDrawer = ({
           width: isTablet ? '50%' : '80%'
         }}
         edgeWidth={75 * scaleMultiplier}
+        initialRouteName='MainStack'
       >
         <Drawer.Screen
           options={({ route }) => ({
