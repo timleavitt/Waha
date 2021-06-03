@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
-  Dimensions,
   FlatList,
   Image,
   StyleSheet,
@@ -50,6 +49,8 @@ const EmojiViewer = ({
 
   t
 }) => {
+  const [emojiViewerWidth, setEmojiViewerWidth] = useState(0)
+
   /** Renders an emoji for the emoji select <FlatList />. */
   const renderEmoji = ({ item }) => (
     <TouchableOpacity
@@ -88,15 +89,22 @@ const EmojiViewer = ({
       >
         {t.groups && t.groups.avatar}
       </Text>
-      <View style={styles.emojiListContainer}>
+      <View
+        style={styles.emojiListContainer}
+        onLayout={({ nativeEvent }) =>
+          setEmojiViewerWidth(nativeEvent.layout.width)
+        }
+      >
         <FlatList
+          horizontal={false}
           data={groupIcons}
           nestedScrollEnabled
           renderItem={renderEmoji}
           keyExtractor={item => item}
           numColumns={Math.floor(
-            (Dimensions.get('window').width - 50) / (50 * scaleMultiplier)
+            (emojiViewerWidth - 50) / (50 * scaleMultiplier)
           )}
+          key={Math.floor((emojiViewerWidth - 50) / (50 * scaleMultiplier))}
         />
       </View>
     </View>
