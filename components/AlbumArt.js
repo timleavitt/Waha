@@ -29,7 +29,6 @@ function mapStateToProps (state) {
 
 /**
  * A component that shows the album art for a lesson as well as the text on either side of it in a swipable carousel.
- * @param {ref} albumArtSwiperRef - The ref for the carousel component of the AlbumArtSwiper. Used to manually jump to specific pages.
  * @param {string} iconName - The name of the icon associated with the set this lesson is a part of.
  * @param {Function} playHandler - Plays/pauses a lesson. Needed because the user can tap on the album art pane to play/pause the lesson.
  * @param {number} playFeedbackOpacity - Opacity for the play/pause animation feedback that appears whenever the lesson is played or paused.

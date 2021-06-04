@@ -83,13 +83,10 @@ const MobilizationToolsScreen = ({
         >
           <TouchableOpacity
             style={{
-              paddingVertical: 10,
-              paddingHorizontal: 30,
               borderRadius: 15,
               // borderWidth: 1.5,
-              backgroundColor: colors.porcelain,
-              borderColor: colors.geyser,
-              borderBottomWidth: 4
+              // backgroundColor: colors.porcelain,
+              overflow: 'hidden'
             }}
             onPress={() => {
               setShowSnackbar(true)
@@ -108,28 +105,43 @@ const MobilizationToolsScreen = ({
               )
             }}
           >
-            <Text
-              style={StandardTypography(
-                { font, isRTL },
-                'h4',
-                'Regular',
-                'center',
-                colors.shark
-              )}
+            <View
+              style={{
+                paddingVertical: 10,
+                paddingHorizontal: 30,
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                // height: '100%',
+                // width: '100%',
+                backgroundColor: colors.porcelain,
+                borderBottomWidth: 4,
+                borderBottomColor: colors.geyser
+              }}
             >
-              {t.mobilization_tools && t.mobilization_tools.unlock_code}
-            </Text>
-            <Text
-              style={StandardTypography(
-                { font, isRTL },
-                'h1',
-                'Bold',
-                'center',
-                colors.shark
-              )}
-            >
-              2 8 1 8 2 0
-            </Text>
+              <Text
+                style={StandardTypography(
+                  { font, isRTL },
+                  'h4',
+                  'Regular',
+                  'center',
+                  colors.shark
+                )}
+              >
+                {t.mobilization_tools && t.mobilization_tools.unlock_code}
+              </Text>
+              <Text
+                style={StandardTypography(
+                  { font, isRTL },
+                  'h1',
+                  'Bold',
+                  'center',
+                  colors.shark
+                )}
+              >
+                2 8 1 8 2 0
+              </Text>
+            </View>
           </TouchableOpacity>
           <TouchableOpacity
             style={{

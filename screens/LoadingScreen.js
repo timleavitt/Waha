@@ -202,6 +202,7 @@ const LoadingScreen = ({
         <LottieView
           style={{
             width: Dimensions.get('window').width / 2,
+            maxWidth: 300,
             marginBottom: 30
           }}
           colorFilters={[

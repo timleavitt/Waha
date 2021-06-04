@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
     width: '100%',
     // flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
-    // marginVertical: 15 * scaleMultiplier
+    alignItems: 'center',
+    marginVertical: 15 * scaleMultiplier
   },
   rightGradient: {
     position: 'absolute',

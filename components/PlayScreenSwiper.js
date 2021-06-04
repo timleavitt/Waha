@@ -28,7 +28,7 @@ function mapStateToProps (state) {
 
 /**
  * A component that shows the album art for a lesson as well as the text on either side of it in a swipable carousel.
- * @param {ref} lessonTextContentRef - The ref for the carousel component of the AlbumArtSwiper. Used to manually jump to specific pages.
+ * @param {ref} lessonTextContentRef - The ref for the area that contains the lesson text. Used to jump to specific points when the active chapter changes.
  * @param {string} iconName - The name of the icon associated with the set this lesson is a part of.
  * @param {Object} thisLesson - The object for the lesson that the user has selected to do.
  * @param {string} lessonType - The type of the current lesson. See lessonTypes in constants.js.
@@ -42,6 +42,7 @@ function mapStateToProps (state) {
  */
 const PlayScreenSwiper = ({
   // Props passed from a parent component.
+  playScreenSwiperRef,
   lessonTextContentRef,
   iconName,
   thisLesson,
@@ -150,6 +151,7 @@ const PlayScreenSwiper = ({
   return (
     <View style={{ height: '100%', width: '100%' }}>
       <PagerView
+        ref={playScreenSwiperRef}
         style={{ flex: 1 }}
         initialPage={
           // The page order is reversed for RTL languages, so we need to start on the second page instead of the first page. Also, we want to start on the text page for book lessons since the user's only option is to read the text.
