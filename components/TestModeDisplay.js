@@ -32,7 +32,7 @@ const TestModeDisplay = ({
         backgroundColor: colors.red,
         paddingVertical: 5,
         borderRadius: 15,
-        marginHorizontal: 10
+        marginHorizontal: 20
       }}
     >
       {// dbMode === 'test' ||
@@ -45,7 +45,7 @@ const TestModeDisplay = ({
             }
           ]}
         >
-          test
+          TEST
         </Text>
       ) : null}
     </View>
