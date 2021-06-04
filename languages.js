@@ -44,7 +44,7 @@ export const languages = [
     ]
   }
   // {
-  //   i18Name: 'hindi',
+  //   i18nName: 'hindi',
   //   languageCode: 'hi',
   //   font: 'Roboto',
   //   isRTL: false,
