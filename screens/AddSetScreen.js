@@ -97,10 +97,11 @@ const AddSetScreen = ({
         activeDatabase.sets
           .filter(set => getSetInfo('category', set.id) === 'Topical')
           .forEach(topicalSet => {
-            topicalSet.tags.forEach(tag => {
-              // If we find a tag that hasn't been added yet, add it.
-              if (!tags.includes(tag)) tags.push(tag)
-            })
+            topicalSet.tags &&
+              topicalSet.tags.forEach(tag => {
+                // If we find a tag that hasn't been added yet, add it.
+                if (!tags.includes(tag)) tags.push(tag)
+              })
           })
         setTags(tags)
         break
