@@ -387,7 +387,7 @@ const LessonsScreen = ({
         closeText={t.general && t.general.cancel}
       >
         <OptionsModalButton
-          label={t.lessons && t.lessons.delete_lesson}
+          label={t.lessons && t.lessons.remove_download}
           onPress={deleteLessonFromModal}
         />
       </OptionsModal>
