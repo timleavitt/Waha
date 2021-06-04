@@ -55,10 +55,10 @@ const GroupsScreenEditButton = ({
 
 const styles = StyleSheet.create({
   editButtonContainer: {
-    width: 80,
     height: '100%',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingHorizontal: 20
   }
 })
 
