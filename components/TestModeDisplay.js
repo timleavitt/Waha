@@ -45,7 +45,7 @@ const TestModeDisplay = ({
             }
           ]}
         >
-          TEST
+          Test
         </Text>
       ) : null}
     </View>

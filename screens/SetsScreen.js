@@ -293,7 +293,7 @@ const SetsScreen = ({
           colors.chateau
         )}
       >
-        {t.sets && t.sets.add_mobilization_tool}
+        {t.sets && t.sets.no_mobilization_tools_content}
       </Text>
     </View>
   )
