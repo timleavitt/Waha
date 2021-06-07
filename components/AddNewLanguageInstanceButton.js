@@ -68,7 +68,7 @@ const AddNewLanguageInstanceButton = ({
             colors.chateau
           )}
         >
-          {t.groups && t.groups.new_language}
+          {t.groups && t.groups.add_language}
         </Text>
       </TouchableOpacity>
     )

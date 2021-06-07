@@ -154,7 +154,7 @@ const LanguageInstanceInstallScreen = ({
     setOptions(
       routeName === 'SubsequentlLanguageInstanceInstall'
         ? {
-            headerTitle: i18n.t('new_language')
+            headerTitle: i18n.t('add_language')
           }
         : null
     )
