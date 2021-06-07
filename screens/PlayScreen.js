@@ -665,6 +665,13 @@ const PlayScreen = ({
     } // If a Story chapter is still downloading or it isn't downloaded and can't start downloading, swipe to the text so the user can read the text while they're waiting for it to download.
     else if (isAudioDownloading.current)
       playScreenSwiperRef.current.setPage(isRTL ? 0 : 1)
+    else if (!isAudioDownloaded && !isConnected) {
+      playScreenSwiperRef.current.setPage(isRTL ? 0 : 1)
+      lessonTextContentRef.current.scrollTo({
+        y: sectionOffsets.current[1].globalOffset + 40 * scaleMultiplier,
+        animated: true
+      })
+    }
     // Otherwise, just change to the Story chapter.
     else changeChapter(chapters.STORY)
   }

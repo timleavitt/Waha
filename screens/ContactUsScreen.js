@@ -31,7 +31,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-
+    isConnected: state.network.isConnected,
     t: activeDatabaseSelector(state).translations,
     primaryColor: activeDatabaseSelector(state).primaryColor
   }
@@ -44,7 +44,7 @@ const ContactUsScreen = ({
   activeDatabase,
   isRTL,
   font,
-
+  isConnected,
   t,
   primaryColor
 }) => {
@@ -348,6 +348,7 @@ const ContactUsScreen = ({
             // Potential error states are if the email is invalid, the email is blank, or the message length is over 1000 characters.
             emailError ||
             emailTextInput === null ||
+            !isConnected ||
             messageTextInput.length > 1000
               ? 'inactive'
               : 'filled'
@@ -355,12 +356,13 @@ const ContactUsScreen = ({
           color={
             emailError ||
             emailTextInput === null ||
+            !isConnected ||
             messageTextInput.length > 1000
               ? colors.geyser
               : colors.apple
           }
           useDefaultFont={false}
-          label={isSubmitting ? '' : t.general && t.general.submit}
+          label={isSubmitting || !isConnected ? '' : t.general.submit}
           width={Dimensions.get('window').width / 3}
           onPress={submit}
           style={{
@@ -370,12 +372,16 @@ const ContactUsScreen = ({
             marginBottom: 20 * scaleMultiplier
           }}
           extraComponent={
-            // If we're in the middle of submitting, change the submit button to show an activity indicator.
-            isSubmitting ? (
-              <View>
-                <ActivityIndicator color={colors.white} />
-              </View>
-            ) : null
+            isConnected ? (
+              // If we're in the middle of submitting, change the submit button to show an activity indicator.
+              isSubmitting ? (
+                <View>
+                  <ActivityIndicator color={colors.white} />
+                </View>
+              ) : null
+            ) : (
+              <Icon name='cloud-slash' size={40} color={colors.chateau} />
+            )
           }
         />
       </ScrollView>
