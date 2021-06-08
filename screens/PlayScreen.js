@@ -989,8 +989,8 @@ const PlayScreen = ({
       <MessageModal
         isVisible={showSetCompleteModal}
         hideModal={() => setShowSetCompleteModal(false)}
-        title={t.general && t.general.set_complete_title}
-        message={t.general && t.general.set_complete_message}
+        title={t.sets && t.sets.set_complete_title}
+        message={t.sets && t.sets.set_complete_message}
         confirmText={t.general && t.general.got_it}
         confirmOnPress={() => {
           setShowSetCompleteModal(false)
@@ -1009,8 +1009,8 @@ const PlayScreen = ({
       <MessageModal
         isVisible={showNextSetUnlockedModal}
         hideModal={() => setShowNextSetUnlockedModal(false)}
-        title={t.general && t.general.new_story_set_unlocked_title}
-        message={t.general && t.general.new_story_set_unlocked_message}
+        title={t.sets && t.sets.new_story_set_unlocked_title}
+        message={t.sets && t.sets.new_story_set_unlocked_message}
         confirmText={t.general && t.general.got_it}
         confirmOnPress={() => {
           setShowNextSetUnlockedModal(false)

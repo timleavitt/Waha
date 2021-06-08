@@ -343,8 +343,12 @@ const SetsScreen = ({
       <MessageModal
         isVisible={showMTTabAddedSnackbar}
         hideModal={() => setShowMTTabAddedSnackbar(false)}
-        title={t.general && t.general.unlock_successful_title}
-        message={t.general && t.general.unlock_successful_message}
+        title={
+          t.mobilization_tools && t.mobilization_tools.unlock_successful_title
+        }
+        message={
+          t.mobilization_tools && t.mobilization_tools.unlock_successful_message
+        }
         confirmText={t.general && t.general.got_it}
         confirmOnPress={() => setShowMTTabAddedSnackbar(false)}
       >
