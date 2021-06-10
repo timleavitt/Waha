@@ -74,13 +74,18 @@ const LanguageStorageItem = ({
         ]}
       >
         <Text
-          style={StandardTypography(
-            { font, isRTL },
-            'h3',
-            'Bold',
-            'left',
-            colors.tuna
-          )}
+          style={[
+            StandardTypography(
+              { font, isRTL },
+              'h3',
+              'Bold',
+              'left',
+              colors.tuna
+            ),
+            {
+              flex: 1
+            }
+          ]}
         >
           {`${megabytes} ${t.storage && t.storage.megabyte}`}
         </Text>
@@ -94,7 +99,7 @@ const LanguageStorageItem = ({
               colors.tuna
             ),
             {
-              flex: 1,
+              flex: 3,
               paddingHorizontal: 20
             }
           ]}

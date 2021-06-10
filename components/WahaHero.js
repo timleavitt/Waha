@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   heroImage: {
     // height: 170 * scaleMultiplier,
-    width: '90%',
+    width: '80%',
     alignSelf: 'center'
   }
 })
