@@ -80,7 +80,7 @@ const SetsScreen = ({
         ? t.sets && t.sets.add_topical_set
         : t.sets && t.sets.add_mobilization_tool
     )
-  }, [activeGroup])
+  }, [activeGroup, activeDatabase.translations])
 
   /** Keeps track of all of the files the user has downloaded to the user's device. This is used to verify that all the required question set mp3s are downloaded for the sets that have been added. */
   const [downloadedFiles, setDownloadedFiles] = useState([])
