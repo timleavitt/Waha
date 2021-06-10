@@ -74,7 +74,7 @@ const WahaDrawer = ({
     setIsInstallingLanguageInstance(true)
 
     // Even though we're not fetching any Firebase data here, set this variable to true anyways just to allow the user to cancel the update if they want.
-    setHasFetchedLanguageData(true)
+    // setHasFetchedLanguageData(true)
 
     // Update the language core files.
     updateLanguageCoreFiles()
