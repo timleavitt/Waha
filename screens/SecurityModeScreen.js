@@ -88,7 +88,7 @@ const SecurityModeScreen = ({
     <View style={styles.screen}>
       {/* Inside a ScrollView in case a user's phone can't fit all of the controls on their screen. */}
       <ScrollView bounces={false}>
-        <WahaHero source={require('../assets/gifs/piano_unlock.gif')} />
+        <WahaHero source={require('../assets/lotties/security_mode.json')} />
         <WahaBlurb text={t.security && t.security.security_mode_blurb} />
         <WahaSeparator />
         <WahaItem title={t.security && t.security.security_mode}>

@@ -66,7 +66,7 @@ const MobilizationToolsScreen = ({
 
   return (
     <View style={styles.screen}>
-      <WahaHero source={require('../assets/gifs/unlock_mob_tools.gif')} />
+      <WahaHero source={require('../assets/lotties/mob_tools_unlocked.json')} />
       <WahaBlurb
         text={
           areMobilizationToolsUnlocked

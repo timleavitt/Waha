@@ -1,10 +1,10 @@
 import { Audio, Video } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
 import { useKeepAwake } from 'expo-keep-awake'
+import LottieView from 'lottie-react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import {
   Animated,
-  Image,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -997,13 +997,12 @@ const PlayScreen = ({
           goBack()
         }}
       >
-        <Image
-          source={require('../assets/gifs/set_complete.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            resizeMode: 'contain'
-          }}
+        <LottieView
+          style={{ width: '100%' }}
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/set_complete.json')}
         />
       </MessageModal>
       <MessageModal
@@ -1017,13 +1016,12 @@ const PlayScreen = ({
           goBack()
         }}
       >
-        <Image
-          source={require('../assets/gifs/new_set.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            resizeMode: 'contain'
-          }}
+        <LottieView
+          style={{ width: '100%' }}
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/new_set_unlocked.json')}
         />
       </MessageModal>
     </View>

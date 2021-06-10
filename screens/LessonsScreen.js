@@ -1,7 +1,8 @@
 import { useIsFocused } from '@react-navigation/native'
 import * as FileSystem from 'expo-file-system'
+import LottieView from 'lottie-react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, Image, StyleSheet, View } from 'react-native'
+import { Dimensions, StyleSheet, View } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { connect } from 'react-redux'
 import LessonItem from '../components/LessonItem'
@@ -14,7 +15,6 @@ import {
   getLessonInfo,
   itemHeights,
   lessonTypes,
-  scaleMultiplier,
   setItemModes
 } from '../constants'
 import {
@@ -409,14 +409,12 @@ const LessonsScreen = ({
           setShowSetCompleteModal(false)
         }}
       >
-        <Image
-          source={require('../assets/gifs/set_complete.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            // padding: 20,
-            resizeMode: 'contain'
-          }}
+        <LottieView
+          style={{ width: '100%' }}
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/set_complete.json')}
         />
       </MessageModal>
       <MessageModal
@@ -427,13 +425,12 @@ const LessonsScreen = ({
         confirmText={t.general && t.general.got_it}
         confirmOnPress={() => setShowNextSetUnlockedModal(false)}
       >
-        <Image
-          source={require('../assets/gifs/new_set.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            resizeMode: 'contain'
-          }}
+        <LottieView
+          style={{ width: '100%' }}
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/new_set_unlocked.json')}
         />
       </MessageModal>
     </View>

@@ -1,8 +1,8 @@
 import * as FileSystem from 'expo-file-system'
+import LottieView from 'lottie-react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 import {
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -352,13 +352,12 @@ const SetsScreen = ({
         confirmText={t.general && t.general.got_it}
         confirmOnPress={() => setShowMTTabAddedSnackbar(false)}
       >
-        <Image
-          source={require('../assets/gifs/unlock_mob_tools.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            resizeMode: 'contain'
-          }}
+        <LottieView
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/mob_tools_unlocked.json')}
+          style={{ width: '100%' }}
         />
       </MessageModal>
     </View>

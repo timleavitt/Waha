@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Image, Keyboard, StyleSheet, Text, View } from 'react-native'
+import { Keyboard, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
 import WahaBackButton from '../components/WahaBackButton'
 import { scaleMultiplier } from '../constants'
 import { logUnlockMobilizationTools } from '../LogEventFunctions'
-import MessageModal from '../modals/MessageModal'
 import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
 import { addSet } from '../redux/actions/groupsActions'
 import { setMTUnlockAttempts } from '../redux/actions/mtUnlockAttemptsActions'
@@ -225,30 +224,6 @@ const MobilizationToolsUnlockScreen = ({
       >
         {getTimeoutText()}
       </Text>
-      {/* Modals */}
-      <MessageModal
-        isVisible={unlockSuccessModal}
-        hideModal={() => {
-          setUnlockSuccessModal(false)
-          navigate('SetsTabs', { screen: 'MobilizationTools' })
-        }}
-        title='Mobilization Tools unlocked successfully!'
-        message=''
-        confirmText='Check it out'
-        confirmOnPress={() => {
-          setUnlockSuccessModal(false)
-          navigate('SetsTabs', { screen: 'MobilizationTools' })
-        }}
-      >
-        <Image
-          source={require('../assets/gifs/unlock_mob_tools.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            resizeMode: 'contain'
-          }}
-        />
-      </MessageModal>
     </View>
   )
 }
