@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { analyticsMode, reduxMode } from '../modeSwitch'
+import { analyticsMode, dbMode, reduxMode } from '../modeSwitch'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -35,8 +35,7 @@ const TestModeDisplay = ({
         marginHorizontal: 20
       }}
     >
-      {// dbMode === 'test' ||
-      reduxMode === 'test' || analyticsMode === 'test' ? (
+      {dbMode === 'test' || reduxMode === 'test' || analyticsMode === 'test' ? (
         <Text
           style={[
             SystemTypography(false, 'd', 'Bold', 'center', colors.white),

@@ -1,5 +1,5 @@
 // Determines which database the app draws from. 'test' uses the test database and 'prod' uses the production database.
-export const dbMode = 'prod'
+export const dbMode = 'test'
 
 // Determines what mode redux persistence is in. 'test' means that no redux data is persisted across app restarts and should be used only for testing. 'prod' means that some data is persisted across restarts. The app should always be build in 'prod' mode.
 export const reduxMode = 'prod'
