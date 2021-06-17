@@ -27,7 +27,7 @@ function mapStateToProps (state) {
     groups: state.groups,
     activeGroup: activeGroupSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-
+    primaryColor: activeDatabaseSelector(state).primaryColor,
     t: activeDatabaseSelector(state).translations
   }
 }
@@ -61,7 +61,7 @@ const GroupItem = ({
   groups,
   activeGroup,
   font,
-
+  primaryColor,
   t,
   deleteGroup,
   changeActiveGroup
@@ -229,7 +229,15 @@ const GroupItem = ({
     <View
       style={[
         styles.groupItemContainer,
-        { flexDirection: isRTL ? 'row-reverse' : 'row' }
+        {
+          flexDirection: isRTL ? 'row-reverse' : 'row',
+          borderLeftWidth: isRTL ? 0 : 5,
+          borderRightWidth: isRTL ? 5 : 0,
+          borderColor:
+            database[
+              groups.filter(item => item.name === thisGroup.name)[0].language
+            ].primaryColor
+        }
       ]}
     >
       {deleteButton}
