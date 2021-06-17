@@ -96,7 +96,7 @@ const GroupItem = ({
       }).start()
     } else if (!isEditing) {
       Animated.spring(leftIconXPos, {
-        toValue: isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
+        toValue: isRTL ? 24 * scaleMultiplier + 25 : -24 * scaleMultiplier - 25
       }).start()
     }
   }, [isEditing])
