@@ -75,7 +75,7 @@ const GroupItem = ({
   /** Keeps track of the animated position of the left icon of the group item component, in this case the delete button. */
   const [leftIconXPos, setLeftIconXPos] = useState(
     new Animated.Value(
-      isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
+      isRTL ? 24 * scaleMultiplier + 25 : -24 * scaleMultiplier - 25
     )
   )
 
@@ -83,7 +83,7 @@ const GroupItem = ({
   useEffect(() => {
     setLeftIconXPos(
       new Animated.Value(
-        isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
+        isRTL ? 24 * scaleMultiplier + 25 : -24 * scaleMultiplier - 25
       )
     )
   }, [isRTL])
