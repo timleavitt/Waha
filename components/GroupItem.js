@@ -160,11 +160,13 @@ const GroupItem = ({
               [
                 {
                   text: t.general && t.general.cancel,
-                  onPress: () => {}
+                  onPress: () => {},
+                  style: 'cancel'
                 },
                 {
                   text: t.general && t.general.ok,
-                  onPress: () => deleteGroup(thisGroup.name)
+                  onPress: () => deleteGroup(thisGroup.name),
+                  style: 'destructive'
                 }
               ]
             )

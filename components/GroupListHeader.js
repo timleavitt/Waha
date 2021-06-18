@@ -80,16 +80,17 @@ const GroupListHeader = ({
 
   /** useEffect function used to update the animated value of the left icon position. The default value must update whenever isRTL changes.*/
   useEffect(() => {
-    setLeftIconXPos(
-      new Animated.Value(
-        isRTL ? 25 * scaleMultiplier + 20 : -25 * scaleMultiplier - 20
+    if (activeGroup.language !== languageID)
+      setLeftIconXPos(
+        new Animated.Value(
+          isRTL ? 25 * scaleMultiplier + 20 : -25 * scaleMultiplier - 20
+        )
       )
-    )
-  }, [isRTL])
+  }, [activeGroup, isRTL])
 
   /** Animated the position of the trash icon whenever isEditing changes. This pushes the whole component over to the right. */
   useEffect(() => {
-    if (isEditing) {
+    if (isEditing && activeGroup.language !== languageID) {
       Animated.spring(leftIconXPos, {
         toValue: 0
       }).start()
@@ -98,7 +99,7 @@ const GroupListHeader = ({
         toValue: isRTL ? 25 * scaleMultiplier + 20 : -25 * scaleMultiplier - 20
       }).start()
     }
-  }, [isEditing])
+  }, [activeGroup, isEditing])
 
   /** Deletes an entire language instance. This involves deleting every group, every downloaded file, and all data stored in redux for a language instance. Triggered by pressing the trash can icon next to the langauge's name in editing mode. */
   const deleteLanguageInstance = () => {
@@ -129,12 +130,7 @@ const GroupListHeader = ({
   if (!(activeGroup.language === languageID))
     var trashButtonComponent = (
       <TouchableOpacity
-        style={{
-          marginHorizontal: 20,
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: 24 * scaleMultiplier
-        }}
+        style={styles.trashButtonContainer}
         onPress={() =>
           Alert.alert(
             t.groups && t.groups.delete_language_title,
@@ -142,11 +138,13 @@ const GroupListHeader = ({
             [
               {
                 text: t.general && t.general.cancel,
-                onPress: () => {}
+                onPress: () => {},
+                style: 'cancel'
               },
               {
                 text: t.general && t.general.ok,
-                onPress: deleteLanguageInstance
+                onPress: deleteLanguageInstance,
+                style: 'destructive'
               }
             ]
           )
@@ -157,7 +155,7 @@ const GroupListHeader = ({
     )
   // For the language instance that contains the active group, render an empty view for this button so the layout still lines up.
   else if (activeGroup.language === languageID)
-    var trashButtonComponent = <View style={{ height: '100%', width: 20 }} />
+    var trashButtonComponent = <View style={styles.trashButtonContainer} />
 
   return (
     <View
@@ -169,11 +167,15 @@ const GroupListHeader = ({
       <Animated.View
         style={{
           transform:
-            activeGroup.language === languageID
-              ? []
-              : [{ translateX: leftIconXPos }],
+            // activeGroup.language === languageID
+            //   ? []
+            //   :
+            [{ translateX: leftIconXPos }],
           flexDirection: isRTL ? 'row-reverse' : 'row',
-          flex: 1
+          flex: 1,
+          // width: '100%',
+          height: '100%',
+          alignItems: 'center'
         }}
       >
         {trashButtonComponent}
@@ -208,7 +210,7 @@ const GroupListHeader = ({
 const styles = StyleSheet.create({
   groupListHeaderContainer: {
     alignItems: 'center',
-    width: '100%',
+    // width: '100%',
     height: 40 * scaleMultiplier,
     backgroundColor: colors.aquaHaze
   },
@@ -217,6 +219,12 @@ const styles = StyleSheet.create({
     width: 120 * scaleMultiplier,
     height: 16.8 * scaleMultiplier,
     marginHorizontal: 20
+  },
+  trashButtonContainer: {
+    marginHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 24 * scaleMultiplier
   }
 })
 

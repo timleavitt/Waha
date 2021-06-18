@@ -184,11 +184,13 @@ const StorageScreen = ({
           [
             {
               text: t.general && t.general.cancel,
-              onPress: () => {}
+              onPress: () => {},
+              style: 'cancel'
             },
             {
               text: t.general && t.general.ok,
-              onPress: () => deleteDownloadedLessons(item.languageID)
+              onPress: () => deleteDownloadedLessons(item.languageID),
+              style: 'destructive'
             }
           ]
         )
@@ -225,11 +227,13 @@ const StorageScreen = ({
             [
               {
                 text: t.general && t.general.cancel,
-                onPress: () => {}
+                onPress: () => {},
+                style: 'cancel'
               },
               {
                 text: t.general && t.general.ok,
-                onPress: () => deleteDownloadedLessons()
+                onPress: () => deleteDownloadedLessons(),
+                style: 'destructive'
               }
             ]
           )

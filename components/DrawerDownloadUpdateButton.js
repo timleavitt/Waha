@@ -52,7 +52,8 @@ const DrawerDownloadUpdateButton = ({
         [
           {
             text: t.general && t.general.cancel,
-            onPress: () => {}
+            onPress: () => {},
+            style: 'cancel'
           },
           {
             text: t.general && t.general.ok,
