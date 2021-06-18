@@ -58,6 +58,9 @@ const LessonItem = ({
   downloadedLessons,
   showDownloadLessonModal,
   showDeleteLessonModal,
+  scriptureList,
+  isInInfoMode,
+  animationFinished,
   // Props passed from redux.
   primaryColor,
   isRTL,
@@ -69,7 +72,6 @@ const LessonItem = ({
   removeDownload
 }) => {
   // console.log(`${Date.now()} Lesson ${thisLesson.id} is re-rendering.`)
-
   /** Keeps track of whether this lesson is downloaded or not. */
   const [isFullyDownloaded, setIsFullyDownloaded] = useState(false)
 
@@ -133,7 +135,16 @@ const LessonItem = ({
         styles.lessonItemContainer,
         {
           flexDirection: isRTL ? 'row-reverse' : 'row',
-          height: isTablet
+          paddingVertical: isInInfoMode ? 10 : 0,
+          paddingLeft: 20,
+          // alignItems: isInInfoMode ? 'flex-start' : 'center',
+          alignItems: 'center',
+          minHeight: isTablet
+            ? itemHeights[font].LessonItem + 15
+            : itemHeights[font].LessonItem,
+          height: isInInfoMode
+            ? null
+            : isTablet
             ? itemHeights[font].LessonItem + 15
             : itemHeights[font].LessonItem
         }
@@ -142,7 +153,10 @@ const LessonItem = ({
       <TouchableOpacity
         style={[
           styles.touchableAreaContainer,
-          { flexDirection: isRTL ? 'row-reverse' : 'row' }
+          {
+            flexDirection: isRTL ? 'row-reverse' : 'row',
+            justifyContent: isRTL ? 'flex-end' : 'flex-start'
+          }
         ]}
         onPress={() =>
           goToPlayScreen({
@@ -182,64 +196,118 @@ const LessonItem = ({
           ]}
         >
           <Text
-            style={StandardTypography(
-              { font, isRTL },
-              'h4',
-              'Bold',
-              'left',
-              isComplete ? colors.chateau : colors.shark
-            )}
+            // adjustsFontSizeToFit
+            style={[
+              StandardTypography(
+                { font, isRTL },
+                'h4',
+                'Bold',
+                'left',
+                isComplete ? colors.chateau : colors.shark
+              ),
+              {
+                // flex: 1
+              }
+            ]}
             numberOfLines={2}
           >
             {thisLesson.title}
           </Text>
+          {/* <Text
+          // numberOfLines={2}
+          > */}
           <Text
-            style={StandardTypography(
-              { font, isRTL },
-              'd',
-              'Regular',
-              'left',
-              colors.chateau
-            )}
-            numberOfLines={1}
+            style={[
+              StandardTypography(
+                { font, isRTL },
+                'd',
+                'Regular',
+                'left',
+                colors.chateau
+              ),
+              {
+                // fontSize: 13 * scaleMultiplier,
+              }
+            ]}
+            // numberOfLines={1}
           >
             {getLessonInfo('subtitle', thisLesson.id)}
           </Text>
+          {/* {isInInfoMode && (
+            <Text
+              style={[
+                StandardTypography(
+                  { font, isRTL },
+                  'd',
+                  'Regular',
+                  'left',
+                  colors.tuna
+                ),
+                {
+                  fontSize: 13 * scaleMultiplier
+                }
+              ]}
+            >
+              {' '}
+              •{' '}
+            </Text>
+          )} */}
+          {isInInfoMode && (
+            <Text
+              style={StandardTypography(
+                { font, isRTL },
+                'd',
+                'Regular',
+                'left',
+                colors.chateau
+              )}
+              // numberOfLines={2}
+            >
+              {scriptureList}
+            </Text>
+          )}
+          {/* </Text> */}
         </View>
       </TouchableOpacity>
-      <DownloadStatusIndicator
-        isFullyDownloaded={isFullyDownloaded}
-        isDownloading={isDownloading}
-        showDeleteLessonModal={showDeleteLessonModal}
-        showDownloadLessonModal={showDownloadLessonModal}
-        lessonID={thisLesson.id}
-        lessonType={lessonType}
-      />
+      <View
+        style={{
+          width: 22 * scaleMultiplier + 40
+        }}
+      >
+        {!isInInfoMode && (
+          <DownloadStatusIndicator
+            isFullyDownloaded={isFullyDownloaded}
+            isDownloading={isDownloading}
+            showDeleteLessonModal={showDeleteLessonModal}
+            showDownloadLessonModal={showDownloadLessonModal}
+            lessonID={thisLesson.id}
+            lessonType={lessonType}
+          />
+        )}
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   lessonItemContainer: {
-    flexDirection: 'row',
     backgroundColor: colors.aquaHaze,
     flex: 1,
-    paddingLeft: 20
+    alignItems: 'center'
   },
   touchableAreaContainer: {
-    justifyContent: 'flex-start',
-    flexDirection: 'row',
-    alignContent: 'center',
+    alignItems: 'center',
     flex: 1
   },
   completeStatusContainer: {
     justifyContent: 'center',
+    alignItems: 'center',
     width: 24 * scaleMultiplier
   },
   titlesContainer: {
     flexDirection: 'column',
-    justifyContent: 'center',
-    flex: 1
+    flex: 1,
+    height: '100%'
   }
 })
 
@@ -260,7 +328,8 @@ const areEqual = (prevProps, nextProps) => {
     prevProps.downloadedLessons.includes(prevProps.thisLesson.id) ===
       nextProps.downloadedLessons.includes(nextProps.thisLesson.id) &&
     prevProps.downloadedLessons.includes(prevProps.thisLesson.id + 'v') ===
-      nextProps.downloadedLessons.includes(nextProps.thisLesson.id + 'v')
+      nextProps.downloadedLessons.includes(nextProps.thisLesson.id + 'v') &&
+    prevProps.isInInfoMode === nextProps.isInInfoMode
   )
 }
 

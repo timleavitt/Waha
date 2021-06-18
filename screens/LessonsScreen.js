@@ -112,6 +112,10 @@ const LessonsScreen = ({
   /** Keeps track of whether this lesson was just completed. */
   const justCompleted = useRef(false)
 
+  const [isInInfoMode, setIsInInfoMode] = useState(false)
+
+  const [animationFinished, setAnimationFinished] = useState(false)
+
   /** Keeps track of the progress of the set that we're displaying. */
   // const [thisSetProgress, setThisSetProgress] = useState([])
   // const [progressPercentage, setProgressPercentage] = useState(
@@ -315,26 +319,38 @@ const LessonsScreen = ({
   )
 
   /** Renders a lesson item. */
-  const renderLessonItem = ({ item }) => (
-    <LessonItem
-      thisLesson={item}
-      goToPlayScreen={goToPlayScreen}
-      isBookmark={addedSet.bookmark === getLessonInfo('index', item.id)}
-      lessonType={getLessonType(item)}
-      isComplete={addedSet.progress.includes(getLessonInfo('index', item.id))}
-      downloadedLessons={downloadedLessons}
-      showDownloadLessonModal={() => {
-        setActiveLessonInModal(item)
-        setModalLessonType(getLessonType(item))
-        setShowDownloadLessonModal(true)
-      }}
-      showDeleteLessonModal={() => {
-        setActiveLessonInModal(item)
-        setModalLessonType(getLessonType(item))
-        setShowDeleteLessonModal(true)
-      }}
-    />
-  )
+  const renderLessonItem = ({ item }) => {
+    if (item.scripture) {
+      var scriptureList = item.scripture[0].header
+
+      item.scripture.forEach((passage, index) => {
+        if (index !== 0) scriptureList += ', ' + passage.header
+      })
+    }
+    return (
+      <LessonItem
+        thisLesson={item}
+        goToPlayScreen={goToPlayScreen}
+        isBookmark={addedSet.bookmark === getLessonInfo('index', item.id)}
+        lessonType={getLessonType(item)}
+        isComplete={addedSet.progress.includes(getLessonInfo('index', item.id))}
+        downloadedLessons={downloadedLessons}
+        showDownloadLessonModal={() => {
+          setActiveLessonInModal(item)
+          setModalLessonType(getLessonType(item))
+          setShowDownloadLessonModal(true)
+        }}
+        showDeleteLessonModal={() => {
+          setActiveLessonInModal(item)
+          setModalLessonType(getLessonType(item))
+          setShowDeleteLessonModal(true)
+        }}
+        scriptureList={scriptureList}
+        isInInfoMode={isInInfoMode}
+        animationFinished={animationFinished}
+      />
+    )
+  }
 
   return (
     <View style={styles.screen}>
@@ -343,6 +359,9 @@ const LessonsScreen = ({
           thisSet={thisSet}
           mode={setItemModes.LESSONS_SCREEN}
           progressPercentage={addedSet.progress.length / thisSet.lessons.length}
+          setIsInInfoMode={setIsInInfoMode}
+          isInInfoMode={isInInfoMode}
+          setAnimationFinished={setAnimationFinished}
         />
       </View>
       <SwipeListView
@@ -368,6 +387,8 @@ const LessonsScreen = ({
         onLeftActionStatusChange={onLeftActionStatusChange}
         onRightActionStatusChange={onRightActionStatusChange}
         swipeGestureBegan={onLessonSwipeBegin}
+        disableRightSwipe={isInInfoMode}
+        disableLeftSwipe={isInInfoMode}
       />
 
       {/* Modals */}

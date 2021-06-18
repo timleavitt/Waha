@@ -1,6 +1,13 @@
 // import SvgUri from 'expo-svg-uri'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import {
+  Animated,
+  LayoutAnimation,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
 import Icon from '../assets/fonts/icon_font_config'
@@ -51,6 +58,8 @@ const SetItem = ({
   mode,
   onSetSelect,
   progressPercentage = null,
+  setIsInInfoMode = null,
+  isInInfoMode = null,
   // Props passed from redux.
   isRTL,
   activeDatabase,
@@ -62,11 +71,32 @@ const SetItem = ({
 }) => {
   // console.log(`${Date.now()} Set ${thisSet.id} is re-rendering.`)
 
+  useEffect(() => {
+    if (Platform.OS === 'android' && mode === setItemModes.LESSONS_SCREEN) {
+      if (UIManager.setLayoutAnimationEnabledExperimental) {
+        UIManager.setLayoutAnimationEnabledExperimental(true)
+      }
+    }
+  }, [])
+
   /** Stores the dynamic primary icon portion of the SetItem component. This contains a unique SVG that represents the set and changes between modes. */
   const [primaryIcon, setPrimaryIcon] = useState()
 
   /** Stores the dynamic secondary icon portion of the SetItem component. This is a smaller icon on the opposite side from the primary icon and changes between modes as well. */
   const [secondaryIcon, setSecondaryIcon] = useState()
+
+  const [iconRotation, setIconRotation] = useState(new Animated.Value(0))
+
+  useEffect(() => {
+    if (isInInfoMode)
+      Animated.spring(iconRotation, {
+        toValue: 1
+      }).start()
+    else
+      Animated.spring(iconRotation, {
+        toValue: 0
+      }).start()
+  }, [isInInfoMode])
 
   /**
    * useEffect function that sets the dynamic primary and secondary icon components of the set item based on the screen prop. Updated whenever the active group or progress changes.
@@ -171,7 +201,55 @@ const SetItem = ({
           </View>
         )
         // There is no secondary icon for the SetItem on the Lessons screen.
-        setSecondaryIcon(<View style={styles.secondaryIconContainer} />)
+        setSecondaryIcon(
+          <Animated.View
+            style={{
+              transform: [
+                {
+                  rotateZ: iconRotation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['0deg', '360deg']
+                  })
+                },
+                {
+                  // Keeps the rotation centered instead of around a pivot.
+                  translateX: 2.5 * scaleMultiplier
+                }
+                // {
+                //   translateY: 20 * scaleMultiplier
+                // }
+              ]
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                LayoutAnimation.configureNext(
+                  LayoutAnimation.Presets.easeInEaseOut
+                )
+                if (isInInfoMode) setIsInInfoMode(false)
+                else setIsInInfoMode(true)
+              }}
+              style={styles.secondaryIconContainer}
+            >
+              {isInInfoMode ? (
+                <Icon
+                  name='dropdown'
+                  size={35 * scaleMultiplier}
+                  color={primaryColor}
+                  style={{
+                    transform: [{ rotateX: '180deg' }]
+                  }}
+                />
+              ) : (
+                <Icon
+                  name='info'
+                  size={25 * scaleMultiplier}
+                  color={colors.tuna}
+                />
+              )}
+            </TouchableOpacity>
+          </Animated.View>
+        )
         break
       case setItemModes.ADD_SET_SCREEN:
         // Primary icon for the SetItem on the AddSet screen is a slightly altered version of the set's SVG without any progress shown.
@@ -234,7 +312,7 @@ const SetItem = ({
         setSecondaryIcon(<View style={styles.secondaryIconContainer} />)
         break
     }
-  }, [progressPercentage, thisSet.id === activeGroup.setBookmark])
+  }, [progressPercentage, thisSet.id === activeGroup.setBookmark, isInInfoMode])
 
   return (
     <TouchableOpacity
@@ -280,6 +358,7 @@ const SetItem = ({
           {thisSet.subtitle}
         </Text>
         <Text
+          adjustsFontSizeToFit
           style={[
             StandardTypography(
               { font, isRTL },
@@ -321,8 +400,9 @@ const styles = StyleSheet.create({
   },
   secondaryIconContainer: {
     justifyContent: 'center',
-    width: 30 * scaleMultiplier,
-    height: 30 * scaleMultiplier
+    alignItems: 'center',
+    width: 40 * scaleMultiplier,
+    height: 40 * scaleMultiplier
   },
   textContainer: {
     flex: 1,
@@ -334,7 +414,9 @@ const styles = StyleSheet.create({
 const areEqual = (prevProps, nextProps) => {
   return (
     prevProps.progressPercentage === nextProps.progressPercentage &&
-    prevProps.activeGroup.setBookmark === nextProps.activeGroup.setBookmark
+    prevProps.activeGroup.setBookmark === nextProps.activeGroup.setBookmark &&
+    prevProps.isInInfoMode === nextProps.isInInfoMode &&
+    prevProps.setIsInInfoMode === nextProps.setIsInInfoMode
   )
 }
 
