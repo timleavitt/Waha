@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  UIManager,
   View
 } from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
@@ -358,7 +359,6 @@ const SetItem = ({
           {thisSet.subtitle}
         </Text>
         <Text
-          adjustsFontSizeToFit
           style={[
             StandardTypography(
               { font, isRTL },
