@@ -253,6 +253,22 @@ const LessonItem = ({
             </Text>
           )} */}
           {isInInfoMode && (
+            <View style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}>
+              {/* {lessonType.includes('Audio') && (
+                <Icon name='volume' size={20} color={colors.chateau} />
+              )}
+              {lessonType.includes('Questions') && (
+                <Icon name='help' size={20} color={colors.chateau} />
+              )} */}
+              {lessonType.includes('Video') && (
+                <Icon name='video' size={20} color={colors.chateau} />
+              )}
+              {lessonType.includes('BookText') && (
+                <Icon name='description' size={20} color={colors.chateau} />
+              )}
+            </View>
+          )}
+          {isInInfoMode && thisLesson.scripture && (
             <Text
               style={StandardTypography(
                 { font, isRTL },
