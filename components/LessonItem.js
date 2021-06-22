@@ -135,7 +135,7 @@ const LessonItem = ({
         styles.lessonItemContainer,
         {
           flexDirection: isRTL ? 'row-reverse' : 'row',
-          paddingVertical: isInInfoMode ? 10 : 0,
+          paddingVertical: isInInfoMode ? (isTablet ? 20 : 10) : 0,
           paddingLeft: 20,
           // alignItems: isInInfoMode ? 'flex-start' : 'center',
           alignItems: 'center',
