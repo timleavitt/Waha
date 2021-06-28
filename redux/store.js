@@ -27,7 +27,8 @@ const blacklist =
         'isInstallingLanguageInstance',
         'mtUnlockAttempts',
         'storedDownloads',
-        'popups'
+        'popups',
+        'areMobilizationToolsUnlocked'
       ]
 
 // Congif object for the persisted reducer.

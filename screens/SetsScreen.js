@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native'
+import { CopilotStep } from 'react-native-copilot'
 import { connect } from 'react-redux'
 import SetItem from '../components/SetItem'
 import {
@@ -303,8 +304,21 @@ const SetsScreen = ({
    * @param {Object} set - The object of the set to render.
    * @return {Component} - The setItem component.
    */
-  const renderSetItem = ({ item }) => {
-    return (
+  const renderSetItem = ({ item, index }) => {
+    return index === 0 &&
+      getSetInfo('category', item.id) === 'MobilizationTools' ? (
+      <CopilotStep text='Start here (change later)' order={1} name='Story Set'>
+        <SetItem
+          thisSet={item}
+          mode={setItemModes.SETS_SCREEN}
+          onSetSelect={() => navigate('Lessons', { setID: item.id })}
+          progressPercentage={
+            activeGroup.addedSets.filter(addedSet => addedSet.id === item.id)[0]
+              .progress.length / item.lessons.length
+          }
+        />
+      </CopilotStep>
+    ) : (
       <SetItem
         thisSet={item}
         mode={setItemModes.SETS_SCREEN}
