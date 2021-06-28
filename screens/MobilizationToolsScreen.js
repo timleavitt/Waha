@@ -87,7 +87,13 @@ const MobilizationToolsScreen = ({
       {areMobilizationToolsUnlocked ? (
         <FlatList
           bounces={false}
-          data={groups}
+          data={groups
+            .sort((a, b) => a.groupID < b.groupID)
+            .sort(
+              (a, b) =>
+                database[a.language].installTime >
+                database[b.language].installTime
+            )}
           renderItem={renderGroupItem}
           style={{ width: '100%' }}
           ListHeaderComponent={() => (

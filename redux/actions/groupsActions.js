@@ -24,7 +24,14 @@ export const SET_SHOULD_SHOW_MOBILIZATION_TOOLS_TAB =
  * @param {number} groupNumber - The number this group is in relation to the total number of groups already created.
  * @return {Object} - Object to send to the reducer.
  */
-export function createGroup (groupName, language, emoji, groupID, groupNumber) {
+export function createGroup (
+  groupName,
+  language,
+  emoji,
+  shouldShowMobilizationToolsTab,
+  groupID,
+  groupNumber
+) {
   logCreateGroup(language, groupID, groupNumber)
   // console.log(groupID)
   return {
@@ -32,7 +39,8 @@ export function createGroup (groupName, language, emoji, groupID, groupNumber) {
     groupName,
     language,
     emoji,
-    groupID
+    groupID,
+    shouldShowMobilizationToolsTab
   }
 }
 
@@ -44,12 +52,18 @@ export function createGroup (groupName, language, emoji, groupID, groupNumber) {
  * @param {string} emoji - The name of the emoji for the group's avatar.
  * @return {Object} - Object to send to the reducer.
  */
-export function editGroup (oldGroupName, newGroupName, emoji) {
+export function editGroup (
+  oldGroupName,
+  newGroupName,
+  emoji,
+  shouldShowMobilizationToolsTab
+) {
   return {
     type: EDIT_GROUP,
     oldGroupName,
     newGroupName,
-    emoji
+    emoji,
+    shouldShowMobilizationToolsTab
   }
 }
 

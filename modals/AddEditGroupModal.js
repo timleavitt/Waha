@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  Dimensions,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
 import EmojiViewer from '../components/EmojiViewer'
 import GroupAvatar from '../components/GroupAvatar'
@@ -11,14 +18,15 @@ import { incrementGlobalGroupCounter } from '../redux/actions/databaseActions'
 import {
   createGroup,
   editGroup,
-  resetProgress
+  resetProgress,
+  setShouldShowMobilizationToolsTab
 } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
 } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
-import { getLanguageFont } from '../styles/typography'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
@@ -35,15 +43,46 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    editGroup: (oldGroupName, newGroupName, emoji) =>
-      dispatch(editGroup(oldGroupName, newGroupName, emoji)),
-    createGroup: (groupName, language, emoji, groupID, groupNumber) =>
-      dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
+    editGroup: (
+      oldGroupName,
+      newGroupName,
+      emoji,
+      shouldShowMobilizationToolsTab
+    ) =>
+      dispatch(
+        editGroup(
+          oldGroupName,
+          newGroupName,
+          emoji,
+          shouldShowMobilizationToolsTab
+        )
+      ),
+    createGroup: (
+      groupName,
+      language,
+      emoji,
+      shouldShowMobilizationToolsTab,
+      groupID,
+      groupNumber
+    ) =>
+      dispatch(
+        createGroup(
+          groupName,
+          language,
+          emoji,
+          shouldShowMobilizationToolsTab,
+          groupID,
+          groupNumber
+        )
+      ),
     changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName)),
     resetProgress: name => {
       dispatch(resetProgress(name))
     },
-    incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter())
+    incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter()),
+    setShouldShowMobilizationToolsTab: (groupName, toSet) => {
+      dispatch(setShouldShowMobilizationToolsTab(groupName, toSet))
+    }
   }
 }
 
@@ -67,7 +106,6 @@ const AddEditGroupModal = ({
   isRTL,
   t,
   font,
-
   activeGroup,
   globalGroupCounter,
   areMobilizationToolsUnlocked,
@@ -76,13 +114,16 @@ const AddEditGroupModal = ({
   changeActiveGroup,
   deleteGroup,
   resetProgress,
-  incrementGlobalGroupCounter
+  incrementGlobalGroupCounter,
+  setShouldShowMobilizationToolsTab
 }) => {
   /** Keeps track of the user input for the group name <TextInput />. */
   const [groupNameInput, setGroupNameInput] = useState('')
 
   /** Keeps track of the user selection for the group emoji. */
   const [emojiInput, setEmojiInput] = useState('default')
+
+  const [shouldShowMTTabInput, setShouldShowMTTabInput] = useState(false)
 
   /** If editing a group, keeps track of whether that group is the active group or not. */
   const [isActive, setIsActive] = useState(
@@ -140,6 +181,7 @@ const AddEditGroupModal = ({
       groupNameInput,
       languageID,
       emojiInput,
+      shouldShowMTTabInput,
       globalGroupCounter + 1,
       groups.length + 1
     )
@@ -163,7 +205,7 @@ const AddEditGroupModal = ({
     if (thisGroup.name === activeGroup.name) changeActiveGroup(groupNameInput)
 
     // Call editGroup() redux function.
-    editGroup(thisGroup.name, groupNameInput, emojiInput)
+    editGroup(thisGroup.name, groupNameInput, emojiInput, shouldShowMTTabInput)
 
     // Hide this modal.
     hideModal()
@@ -197,6 +239,7 @@ const AddEditGroupModal = ({
         // Clear out the inputs when we close the modal.
         setGroupNameInput('')
         setEmojiInput('default')
+        setShouldShowMTTabInput(false)
       }}
       onModalWillShow={
         type === 'AddGroup'
@@ -208,6 +251,7 @@ const AddEditGroupModal = ({
               // If we're editing a group, populate our state with the name and emoji of that group.
               setGroupNameInput(thisGroup.name)
               setEmojiInput(thisGroup.emoji)
+              setShouldShowMTTabInput(thisGroup.shouldShowMobilizationToolsTab)
             }
       }
       title={
@@ -228,6 +272,34 @@ const AddEditGroupModal = ({
         setGroupNameInput={setGroupNameInput}
         isDuplicate={isGroupNameDuplicate}
       />
+      {areMobilizationToolsUnlocked && (
+        <View
+          style={[
+            styles.shouldShowMTTabInputContainer,
+            { flexDirection: isRTL ? 'row-reverse' : 'row' }
+          ]}
+        >
+          <Text
+            style={StandardTypography(
+              { font, isRTL },
+              'h3',
+              'Regular',
+              'left',
+              colors.shark
+            )}
+          >
+            Show Mobilization Tab
+          </Text>
+          <Switch
+            trackColor={{ false: colors.chateau, true: colors.apple }}
+            thumbColor={colors.white}
+            ios_backgroundColor={colors.chateau}
+            onValueChange={() => setShouldShowMTTabInput(current => !current)}
+            value={shouldShowMTTabInput}
+            disabled={areMobilizationToolsUnlocked ? false : true}
+          />
+        </View>
+      )}
       <EmojiViewer emojiInput={emojiInput} setEmojiInput={setEmojiInput} />
     </ModalScreen>
   )
@@ -239,6 +311,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 20 * scaleMultiplier
+  },
+  shouldShowMTTabInputContainer: {
+    width: Dimensions.get('window').width - 40,
+    paddingHorizontal: 10,
+    height: 60 * scaleMultiplier,
+    maxWidth: 500,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: colors.athens,
+    backgroundColor: colors.white
   }
 })
 

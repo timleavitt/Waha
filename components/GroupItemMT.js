@@ -3,6 +3,7 @@ import { StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import { scaleMultiplier } from '../constants'
+import { setShouldShowMobilizationToolsTab } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector

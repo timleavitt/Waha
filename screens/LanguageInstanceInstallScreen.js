@@ -75,8 +75,24 @@ function mapDispatchToProps (dispatch) {
       dispatch(deleteLanguageData(languageInstanceID)),
     deleteGroup: groupName => dispatch(deleteGroup(groupName)),
     incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter()),
-    createGroup: (groupName, language, emoji, groupID, groupNumber) =>
-      dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
+    createGroup: (
+      groupName,
+      language,
+      emoji,
+      shouldShowMobilizationToolsTab,
+      groupID,
+      groupNumber
+    ) =>
+      dispatch(
+        createGroup(
+          groupName,
+          language,
+          emoji,
+          shouldShowMobilizationToolsTab,
+          groupID,
+          groupNumber
+        )
+      ),
     changeActiveGroup: name => {
       dispatch(changeActiveGroup(name))
     },
@@ -254,6 +270,7 @@ const LanguageInstanceInstallScreen = ({
             groupNames[selectedLanguage],
             selectedLanguage,
             'default',
+            true,
             database.globalGroupCounter,
             groups.length + 1
           )

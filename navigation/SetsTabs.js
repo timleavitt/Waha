@@ -42,7 +42,7 @@ const SetsTabs = ({
   areMobilizationToolsUnlocked
 }) => {
   // Only dispaly the Mobilization Tools tab if the Mobilization Tools have been unlocked.
-  var MobilizationToolsScreen = areMobilizationToolsUnlocked ? (
+  var MobilizationToolsScreen = activeGroup.shouldShowMobilizationToolsTab ? (
     <Tab.Screen
       name='MobilizationTools'
       component={SetsScreen}
