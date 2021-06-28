@@ -66,11 +66,13 @@ function mapDispatchToProps (dispatch) {
 const MainStack = ({
   // Props passed from navigation.
   navigation: { navigate, goBack, toggleDrawer },
+  // Props passed from copilot.
+  start,
+
   // Props passed from redux.
   isRTL,
   t,
   font,
-
   activeGroup,
   security,
   languageCoreFilesToUpdate,
@@ -479,4 +481,15 @@ const MainStack = ({
   )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MainStack)
+export default copilot({
+  overlay: 'svg',
+  animated: true,
+  labels: {
+    finish: false
+  },
+  tooltipComponent: Tooltip,
+  stepNumberComponent: () => <View />,
+  tooltipStyle: {
+    borderRadius: 10
+  }
+})(connect(mapStateToProps, mapDispatchToProps)(MainStack))
