@@ -86,6 +86,102 @@ const MobilizationToolsScreen = ({
     </View>
   )
 
+  const shareComponent = (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 25 * scaleMultiplier
+      }}
+    >
+      <View style={{ justifyContent: 'center' }}>
+        <TouchableOpacity
+          style={{
+            borderRadius: 15,
+            // borderWidth: 1.5,
+            // backgroundColor: colors.porcelain,
+            overflow: 'hidden'
+          }}
+          onPress={() => {
+            setShowSnackbar(true)
+            setTimeout(() => setShowSnackbar(false), 1500)
+            Clipboard.setString(
+              `${t.mobilization_tools &&
+                t.mobilization_tools.share_message_1}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_2}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_3}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_4}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_5}`
+            )
+          }}
+        >
+          <View
+            style={{
+              paddingVertical: 10,
+              paddingHorizontal: 30,
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              // height: '100%',
+              // width: '100%',
+              backgroundColor: colors.porcelain,
+              borderBottomWidth: 4,
+              borderBottomColor: colors.geyser
+            }}
+          >
+            <Text
+              style={StandardTypography(
+                { font, isRTL },
+                'h4',
+                'Regular',
+                'center',
+                colors.shark
+              )}
+            >
+              {t.mobilization_tools && t.mobilization_tools.unlock_code}
+            </Text>
+            <Text
+              style={StandardTypography(
+                { font, isRTL },
+                'h1',
+                'Bold',
+                'center',
+                colors.shark
+              )}
+            >
+              2 8 1 8 2 0
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'absolute',
+            right: -45 * scaleMultiplier
+          }}
+          onPress={() =>
+            Share.share({
+              message: `${t.mobilization_tools &&
+                t.mobilization_tools.share_message_1}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_2}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_3}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_4}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_5}`
+            })
+          }
+        >
+          <Icon
+            name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
+            color={colors.tuna}
+            size={30 * scaleMultiplier}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+
   return (
     <View style={styles.screen}>
       {!areMobilizationToolsUnlocked && topComponents}
@@ -104,105 +200,7 @@ const MobilizationToolsScreen = ({
           ListHeaderComponent={() => (
             <View>
               {topComponents}
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 25 * scaleMultiplier
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    borderRadius: 15,
-                    // borderWidth: 1.5,
-                    // backgroundColor: colors.porcelain,
-                    overflow: 'hidden'
-                  }}
-                  onPress={() => {
-                    setShowSnackbar(true)
-                    setTimeout(() => setShowSnackbar(false), 1500)
-                    Clipboard.setString(
-                      `${t.mobilization_tools &&
-                        t.mobilization_tools
-                          .share_message_1}\n${t.mobilization_tools &&
-                        t.mobilization_tools
-                          .share_message_2}\n${t.mobilization_tools &&
-                        t.mobilization_tools
-                          .share_message_3}\n${t.mobilization_tools &&
-                        t.mobilization_tools
-                          .share_message_4}\n${t.mobilization_tools &&
-                        t.mobilization_tools.share_message_5}`
-                    )
-                  }}
-                >
-                  <View
-                    style={{
-                      paddingVertical: 10,
-                      paddingHorizontal: 30,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexDirection: 'column',
-                      // height: '100%',
-                      // width: '100%',
-                      backgroundColor: colors.porcelain,
-                      borderBottomWidth: 4,
-                      borderBottomColor: colors.geyser
-                    }}
-                  >
-                    <Text
-                      style={StandardTypography(
-                        { font, isRTL },
-                        'h4',
-                        'Regular',
-                        'center',
-                        colors.shark
-                      )}
-                    >
-                      {t.mobilization_tools && t.mobilization_tools.unlock_code}
-                    </Text>
-                    <Text
-                      style={StandardTypography(
-                        { font, isRTL },
-                        'h1',
-                        'Bold',
-                        'center',
-                        colors.shark
-                      )}
-                    >
-                      2 8 1 8 2 0
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                    // position: 'absolute',
-                    // right: -35 * scaleMultiplier
-                  }}
-                  onPress={() =>
-                    Share.share({
-                      message: `${t.mobilization_tools &&
-                        t.mobilization_tools
-                          .share_message_1}\n${t.mobilization_tools &&
-                        t.mobilization_tools
-                          .share_message_2}\n${t.mobilization_tools &&
-                        t.mobilization_tools
-                          .share_message_3}\n${t.mobilization_tools &&
-                        t.mobilization_tools
-                          .share_message_4}\n${t.mobilization_tools &&
-                        t.mobilization_tools.share_message_5}`
-                    })
-                  }
-                >
-                  <Icon
-                    name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
-                    color={colors.tuna}
-                    size={30 * scaleMultiplier}
-                  />
-                </TouchableOpacity>
-              </View>
+              {shareComponent}
               <Text
                 style={[
                   StandardTypography(
