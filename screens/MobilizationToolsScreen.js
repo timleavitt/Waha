@@ -30,7 +30,6 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
-
     areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
     groups: state.groups
   }
@@ -220,7 +219,8 @@ const MobilizationToolsScreen = ({
                   }
                 ]}
               >
-                Show Mobilization Tab
+                {t.mobilization_tools &&
+                  t.mobilization_tools.show_mobilization_tab}
               </Text>
               <WahaSeparator />
             </View>

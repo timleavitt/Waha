@@ -290,7 +290,7 @@ const AddEditGroupModal = ({
               colors.shark
             )}
           >
-            Show Mobilization Tab
+            {t.mobilization_tools && t.mobilization_tools.show_mobilization_tab}
           </Text>
           <Switch
             trackColor={{ false: colors.chateau, true: colors.apple }}
