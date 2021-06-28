@@ -106,8 +106,7 @@ const styles = StyleSheet.create({
   groupNameAreaContainer: {
     width: '100%',
     paddingHorizontal: 20,
-    maxWidth: 500,
-    marginBottom: 20 * scaleMultiplier
+    maxWidth: 500
   },
   groupNameTextInputContainer: {
     backgroundColor: colors.white,

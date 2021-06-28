@@ -42,15 +42,17 @@ const SetsTabs = ({
   areMobilizationToolsUnlocked
 }) => {
   // Only dispaly the Mobilization Tools tab if the Mobilization Tools have been unlocked.
-  var MobilizationToolsScreen = activeGroup.shouldShowMobilizationToolsTab ? (
-    <Tab.Screen
-      name='MobilizationTools'
-      component={SetsScreen}
-      options={{
-        title: t.sets && t.sets.mobilization
-      }}
-    />
-  ) : null
+  var MobilizationToolsScreen =
+    activeGroup.shouldShowMobilizationToolsTab &&
+    areMobilizationToolsUnlocked ? (
+      <Tab.Screen
+        name='MobilizationTools'
+        component={SetsScreen}
+        options={{
+          title: t.sets && t.sets.mobilization
+        }}
+      />
+    ) : null
 
   // Create the Foundational screen component.
   var FoundationalScreen = (

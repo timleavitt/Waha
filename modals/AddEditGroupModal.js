@@ -123,7 +123,9 @@ const AddEditGroupModal = ({
   /** Keeps track of the user selection for the group emoji. */
   const [emojiInput, setEmojiInput] = useState('default')
 
-  const [shouldShowMTTabInput, setShouldShowMTTabInput] = useState(false)
+  const [shouldShowMTTabInput, setShouldShowMTTabInput] = useState(
+    areMobilizationToolsUnlocked ? false : true
+  )
 
   /** If editing a group, keeps track of whether that group is the active group or not. */
   const [isActive, setIsActive] = useState(
@@ -322,7 +324,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 10,
     borderColor: colors.athens,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
+    marginTop: 20 * scaleMultiplier
   }
 })
 

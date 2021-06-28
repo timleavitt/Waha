@@ -74,8 +74,8 @@ const MobilizationToolsScreen = ({
     return <GroupItemMT thisGroup={item} />
   }
 
-  return (
-    <View style={styles.screen}>
+  const topComponents = (
+    <View style={{ width: '100%' }}>
       <WahaHero source={require('../assets/lotties/mob_tools_unlocked.json')} />
       <WahaBlurb
         text={
@@ -84,6 +84,12 @@ const MobilizationToolsScreen = ({
             : t.mobilization_tools && t.mobilization_tools.blurb_pre_unlock
         }
       />
+    </View>
+  )
+
+  return (
+    <View style={styles.screen}>
+      {!areMobilizationToolsUnlocked && topComponents}
       {areMobilizationToolsUnlocked ? (
         <FlatList
           bounces={false}
@@ -98,6 +104,7 @@ const MobilizationToolsScreen = ({
           style={{ width: '100%' }}
           ListHeaderComponent={() => (
             <View>
+              {topComponents}
               <View
                 style={{
                   flexDirection: 'row',
