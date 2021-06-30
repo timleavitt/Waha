@@ -3,7 +3,7 @@ import { StyleSheet, Switch, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import { scaleMultiplier } from '../constants'
-import { setShouldShowMobilizationToolsTab } from '../redux/actions/groupsActions'
+import { editGroup } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -25,9 +25,20 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    setShouldShowMobilizationToolsTab: (groupName, toSet) => {
-      dispatch(setShouldShowMobilizationToolsTab(groupName, toSet))
-    },
+    editGroup: (
+      oldGroupName,
+      newGroupName,
+      emoji,
+      shouldShowMobilizationToolsTab
+    ) =>
+      dispatch(
+        editGroup(
+          oldGroupName,
+          newGroupName,
+          emoji,
+          shouldShowMobilizationToolsTab
+        )
+      ),
     addSet: (groupName, groupID, set) => {
       dispatch(addSet(groupName, groupID, set))
     }
@@ -49,7 +60,7 @@ const GroupItemMT = ({
 
   areMobilizationToolsUnlocked,
   activeGroup,
-  setShouldShowMobilizationToolsTab,
+  editGroup,
   addSet
 }) => {
   return (
@@ -102,8 +113,10 @@ const GroupItemMT = ({
           ios_backgroundColor={colors.chateau}
           onValueChange={() => {
             // Toggle the visibility of the Mobilization Tools tab for this group on or off.
-            setShouldShowMobilizationToolsTab(
+            editGroup(
               thisGroup.name,
+              thisGroup.name,
+              thisGroup.emoji,
               !thisGroup.shouldShowMobilizationToolsTab
             )
           }}

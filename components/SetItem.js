@@ -317,7 +317,7 @@ const SetItem = ({
 
   return (
     <TouchableOpacity
-      {...props.copilot}
+      // {...props.copilot}
       style={[
         styles.setItemContainer,
         {

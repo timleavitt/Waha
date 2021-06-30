@@ -19,7 +19,7 @@ import {
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
-import { addSet, deleteGroup } from '../redux/actions/groupsActions'
+import { addSet, deleteGroup, editGroup } from '../redux/actions/groupsActions'
 import { updateConnectionStatus } from '../redux/actions/networkActions'
 import {
   activeDatabaseSelector,
@@ -78,7 +78,21 @@ function mapDispatchToProps (dispatch) {
       dispatch(clearLanguageCoreFilesToUpdate()),
     addSet: (groupName, groupID, set) => {
       dispatch(addSet(groupName, groupID, set))
-    }
+    },
+    editGroup: (
+      oldGroupName,
+      newGroupName,
+      emoji,
+      shouldShowMobilizationToolsTab
+    ) =>
+      dispatch(
+        editGroup(
+          oldGroupName,
+          newGroupName,
+          emoji,
+          shouldShowMobilizationToolsTab
+        )
+      )
   }
 }
 
@@ -110,7 +124,8 @@ const MainDrawer = ({
   deleteGroup,
   storeLanguageCoreFileCreatedTime,
   clearLanguageCoreFilesToUpdate,
-  addSet
+  addSet,
+  editGroup
 }) => {
   /** useEffect function that adds a listener for listening to network changes. */
   useEffect(() => {
@@ -159,6 +174,15 @@ const MainDrawer = ({
         addSet(group.name, group.id, { id: group.language + '.3.2' })
       }
     })
+  }, [])
+
+  // (TEMP) Show the MT tab for every group.
+  useEffect(() => {
+    if (groups[0].shouldShowMobilizationToolsTab === undefined)
+      groups.forEach(group => {
+        if (group.shouldShowMobilizationToolsTab === undefined)
+          editGroup(group.name, group.name, group.emoji, true)
+      })
   }, [])
 
   /** useEffect function that checks for database updates for other installed languages besides the active one. */

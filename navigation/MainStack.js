@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { AppState, LogBox, View } from 'react-native'
+import { copilot } from 'react-native-copilot'
 import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import ScreenHeaderImage from '../components/ScreenHeaderImage'
@@ -68,7 +69,7 @@ const MainStack = ({
   navigation: { navigate, goBack, toggleDrawer },
   // Props passed from copilot.
   start,
-
+  copilotEvents,
   // Props passed from redux.
   isRTL,
   t,
@@ -91,6 +92,23 @@ const MainStack = ({
     return function cleanup () {
       AppState.removeEventListener('change', change => setAppState(change))
     }
+  }, [])
+
+  useEffect(() => {
+    // if (!props.hasFinishedCopilot) {
+    start()
+    copilotEvents.on('stop', () => {
+      if (!props.hasFinishedCopilot) {
+        props.navigation.navigate('LessonList', {
+          thisSet: props.activeDatabase.sets.filter(
+            set =>
+              getSetInfo('category', set.id) === 'foundational' &&
+              getSetInfo('index', set.id) === 1
+          )[0]
+        })
+      }
+    })
+    // }
   }, [])
 
   /** useEffect function that reacts to changes in app state changes. This is used to display the splash screen to hide the app preview in multitasking as well as keeping track of security mode timeouts. */
@@ -487,7 +505,7 @@ export default copilot({
   labels: {
     finish: false
   },
-  tooltipComponent: Tooltip,
+  // tooltipComponent: Tooltip,
   stepNumberComponent: () => <View />,
   tooltipStyle: {
     borderRadius: 10

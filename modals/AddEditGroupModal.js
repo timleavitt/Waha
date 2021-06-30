@@ -18,8 +18,7 @@ import { incrementGlobalGroupCounter } from '../redux/actions/databaseActions'
 import {
   createGroup,
   editGroup,
-  resetProgress,
-  setShouldShowMobilizationToolsTab
+  resetProgress
 } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
@@ -79,10 +78,7 @@ function mapDispatchToProps (dispatch) {
     resetProgress: name => {
       dispatch(resetProgress(name))
     },
-    incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter()),
-    setShouldShowMobilizationToolsTab: (groupName, toSet) => {
-      dispatch(setShouldShowMobilizationToolsTab(groupName, toSet))
-    }
+    incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter())
   }
 }
 
@@ -114,8 +110,7 @@ const AddEditGroupModal = ({
   changeActiveGroup,
   deleteGroup,
   resetProgress,
-  incrementGlobalGroupCounter,
-  setShouldShowMobilizationToolsTab
+  incrementGlobalGroupCounter
 }) => {
   /** Keeps track of the user input for the group name <TextInput />. */
   const [groupNameInput, setGroupNameInput] = useState('')
