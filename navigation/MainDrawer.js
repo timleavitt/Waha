@@ -178,11 +178,10 @@ const MainDrawer = ({
 
   // (TEMP) Show the MT tab for every group.
   useEffect(() => {
-    if (groups[0].shouldShowMobilizationToolsTab === undefined)
-      groups.forEach(group => {
-        if (group.shouldShowMobilizationToolsTab === undefined)
-          editGroup(group.name, group.name, group.emoji, true)
-      })
+    groups.forEach(group => {
+      if (group.shouldShowMobilizationToolsTab === undefined)
+        editGroup(group.name, group.name, group.emoji, true)
+    })
   }, [])
 
   /** useEffect function that checks for database updates for other installed languages besides the active one. */
