@@ -1,5 +1,6 @@
 export const SET_SHOW_MT_TAB_ADDED_SNACKBAR = 'SET_SHOW_MT_TAB_ADDED_SNACKBAR'
 export const SET_SHOW_PASSCODE_SET_SNACKBAR = 'SET_SHOW_PASSCODE_SET_SNACKBAR'
+
 /**
  * Sets whether the MTTabAdded Snackbar should be visible or not.
  * @export

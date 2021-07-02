@@ -1,3 +1,4 @@
+import LottieView from 'lottie-react-native'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
@@ -9,6 +10,7 @@ import {
   scaleMultiplier
 } from '../constants'
 import { removeDownload } from '../redux/actions/downloadActions'
+import { setShowTrailerHighlights } from '../redux/actions/persistedPopupsActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -25,7 +27,9 @@ function mapStateToProps (state) {
     downloads: state.downloads,
     t: activeDatabaseSelector(state).translations,
     isConnected: state.network.isConnected,
-    font: getLanguageFont(activeGroupSelector(state).language)
+    font: getLanguageFont(activeGroupSelector(state).language),
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
+    showTrailerHighlights: state.persistedPopups.showTrailerHighlights
   }
 }
 
@@ -33,6 +37,9 @@ function mapDispatchToProps (dispatch) {
   return {
     removeDownload: lessonID => {
       dispatch(removeDownload(lessonID))
+    },
+    setShowTrailerHighlights: toSet => {
+      dispatch(setShowTrailerHighlights(toSet))
     }
   }
 }
@@ -61,6 +68,8 @@ const LessonItem = ({
   scriptureList,
   isInInfoMode,
   animationFinished,
+  // Props passed from copilot.
+  copilot = null,
   // Props passed from redux.
   primaryColor,
   isRTL,
@@ -69,6 +78,9 @@ const LessonItem = ({
   t,
   isConnected,
   font,
+  areMobilizationToolsUnlocked,
+  showTrailerHighlights,
+  setShowTrailerHighlights,
   removeDownload
 }) => {
   // console.log(`${Date.now()} Lesson ${thisLesson.id} is re-rendering.`)
@@ -131,6 +143,7 @@ const LessonItem = ({
 
   return (
     <View
+      {...copilot}
       style={[
         styles.lessonItemContainer,
         {
@@ -158,7 +171,10 @@ const LessonItem = ({
             justifyContent: isRTL ? 'flex-end' : 'flex-start'
           }
         ]}
-        onPress={() =>
+        onPress={() => {
+          if (areMobilizationToolsUnlocked && showTrailerHighlights)
+            setShowTrailerHighlights(false)
+
           goToPlayScreen({
             thisLesson: thisLesson,
             isAudioAlreadyDownloaded: downloadedLessons.includes(thisLesson.id),
@@ -169,7 +185,7 @@ const LessonItem = ({
             lessonType: lessonType,
             downloadedLessons: downloadedLessons
           })
-        }
+        }}
       >
         <View style={styles.completeStatusContainer}>
           <Icon
@@ -284,6 +300,34 @@ const LessonItem = ({
           )}
           {/* </Text> */}
         </View>
+        {thisLesson.id.includes('3.1.1') &&
+          areMobilizationToolsUnlocked &&
+          showTrailerHighlights && (
+            <View
+              style={{
+                height: '100%',
+                position: 'absolute',
+                top: -15,
+                right: -25,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <LottieView
+                autoPlay
+                loop
+                colorFilters={[
+                  {
+                    keypath: 'hand 2',
+                    color: primaryColor
+                  }
+                ]}
+                resizeMode='cover'
+                style={{ height: '120%' }}
+                source={require('../assets/lotties/tap.json')}
+              />
+            </View>
+          )}
       </TouchableOpacity>
       <View
         style={{
@@ -313,7 +357,8 @@ const styles = StyleSheet.create({
   },
   touchableAreaContainer: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
+    overflow: 'visible'
   },
   completeStatusContainer: {
     justifyContent: 'center',
@@ -345,7 +390,8 @@ const areEqual = (prevProps, nextProps) => {
       nextProps.downloadedLessons.includes(nextProps.thisLesson.id) &&
     prevProps.downloadedLessons.includes(prevProps.thisLesson.id + 'v') ===
       nextProps.downloadedLessons.includes(nextProps.thisLesson.id + 'v') &&
-    prevProps.isInInfoMode === nextProps.isInInfoMode
+    prevProps.isInInfoMode === nextProps.isInInfoMode &&
+    prevProps.showTrailerHighlights === nextProps.showTrailerHighlights
   )
 }
 

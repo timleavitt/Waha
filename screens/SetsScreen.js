@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native'
-import { CopilotStep } from 'react-native-copilot'
 import { connect } from 'react-redux'
 import SetItem from '../components/SetItem'
 import {
@@ -18,6 +17,7 @@ import {
   setItemModes
 } from '../constants'
 import MessageModal from '../modals/MessageModal'
+import { setShowTrailerHighlights } from '../redux/actions/persistedPopupsActions'
 import { setShowMTTabAddedSnackbar } from '../redux/actions/popupsActions'
 import {
   activeDatabaseSelector,
@@ -38,7 +38,9 @@ function mapStateToProps (state) {
     languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes,
     globalGroupCounter: state.database.globalGroupCounter,
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate,
-    showMTTabAddedSnackbar: state.popups.showMTTabAddedSnackbar
+    showMTTabAddedSnackbar: state.popups.showMTTabAddedSnackbar,
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
+    showTrailerHighlights: state.persistedPopups.showTrailerHighlights
   }
 }
 
@@ -46,6 +48,9 @@ function mapDispatchToProps (dispatch) {
   return {
     setShowMTTabAddedSnackbar: toSet => {
       dispatch(setShowMTTabAddedSnackbar(toSet))
+    },
+    setShowTrailerHighlights: toSet => {
+      dispatch(setShowTrailerHighlights(toSet))
     }
   }
 }
@@ -64,12 +69,14 @@ const SetsScreen = ({
   activeGroup,
   t,
   font,
-
   languageCoreFilesCreatedTimes,
   globalGroupCounter,
   languageCoreFilesToUpdate,
   showMTTabAddedSnackbar,
-  setShowMTTabAddedSnackbar
+  areMobilizationToolsUnlocked,
+  showTrailerHighlights,
+  setShowMTTabAddedSnackbar,
+  setShowTrailerHighlights
 }) => {
   /** Keeps track of the text displayed on the add set button. Changes depending on what category we're in. */
   const [addNewSetLabel, setAddNewSetLabel] = useState('')
@@ -305,24 +312,38 @@ const SetsScreen = ({
    * @return {Component} - The setItem component.
    */
   const renderSetItem = ({ item, index }) => {
-    return index === 0 &&
-      getSetInfo('category', item.id) === 'MobilizationTools' ? (
-      <CopilotStep text='Start here (change later)' order={1} name='Story Set'>
-        <SetItem
-          thisSet={item}
-          mode={setItemModes.SETS_SCREEN}
-          onSetSelect={() => navigate('Lessons', { setID: item.id })}
-          progressPercentage={
-            activeGroup.addedSets.filter(addedSet => addedSet.id === item.id)[0]
-              .progress.length / item.lessons.length
-          }
-        />
-      </CopilotStep>
-    ) : (
+    return (
+      // index === 0 &&
+      //   getSetInfo('category', item.id) === 'MobilizationTools' ? (
+      //   <CopilotStep text='Start here (change later)' order={1} name='Set3.1'>
+      //     <SetItem
+      //       thisSet={item}
+      //       mode={setItemModes.SETS_SCREEN}
+      //       onSetSelect={() => navigate('Lessons', { setID: item.id })}
+      //       progressPercentage={
+      //         activeGroup.addedSets.filter(addedSet => addedSet.id === item.id)[0]
+      //           .progress.length / item.lessons.length
+      //       }
+      //     />
+      //   </CopilotStep>
+      // ) : (
       <SetItem
         thisSet={item}
         mode={setItemModes.SETS_SCREEN}
-        onSetSelect={() => navigate('Lessons', { setID: item.id })}
+        onSetSelect={() => {
+          console.log(areMobilizationToolsUnlocked)
+          console.log(showTrailerHighlights)
+          if (
+            areMobilizationToolsUnlocked &&
+            showTrailerHighlights &&
+            !item.id.includes('3.1')
+          ) {
+            console.log('working')
+            setShowTrailerHighlights(false)
+          }
+
+          navigate('Lessons', { setID: item.id })
+        }}
         progressPercentage={
           activeGroup.addedSets.filter(addedSet => addedSet.id === item.id)[0]
             .progress.length / item.lessons.length

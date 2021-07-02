@@ -1,4 +1,5 @@
 // import SvgUri from 'expo-svg-uri'
+import LottieView from 'lottie-react-native'
 import React, { useEffect, useState } from 'react'
 import {
   Animated,
@@ -34,7 +35,9 @@ function mapStateToProps (state) {
     primaryColor: activeDatabaseSelector(state).primaryColor,
     font: getLanguageFont(activeGroupSelector(state).language),
     activeGroup: activeGroupSelector(state),
-    t: activeDatabaseSelector(state).translations
+    t: activeDatabaseSelector(state).translations,
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
+    showTrailerHighlights: state.persistedPopups.showTrailerHighlights
   }
 }
 
@@ -61,6 +64,7 @@ const SetItem = ({
   progressPercentage = null,
   setIsInInfoMode = null,
   isInInfoMode = null,
+  copilot = null,
   // Props passed from redux.
   isRTL,
   activeDatabase,
@@ -68,6 +72,8 @@ const SetItem = ({
   font,
   activeGroup,
   t,
+  areMobilizationToolsUnlocked,
+  showTrailerHighlights,
   addSet
 }) => {
   // console.log(`${Date.now()} Set ${thisSet.id} is re-rendering.`)
@@ -317,7 +323,7 @@ const SetItem = ({
 
   return (
     <TouchableOpacity
-      // {...props.copilot}
+      {...copilot}
       style={[
         styles.setItemContainer,
         {
@@ -379,6 +385,35 @@ const SetItem = ({
         </Text>
       </View>
       {secondaryIcon}
+      {thisSet.id.includes('3.1') &&
+        mode === setItemModes.SETS_SCREEN &&
+        areMobilizationToolsUnlocked &&
+        showTrailerHighlights && (
+          <View
+            style={{
+              height: '100%',
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end'
+            }}
+          >
+            <LottieView
+              autoPlay
+              loop
+              colorFilters={[
+                {
+                  keypath: 'hand 2',
+                  color: primaryColor
+                }
+              ]}
+              resizeMode='cover'
+              style={{ height: '120%' }}
+              source={require('../assets/lotties/tap.json')}
+            />
+          </View>
+        )}
     </TouchableOpacity>
   )
 }
@@ -417,7 +452,10 @@ const areEqual = (prevProps, nextProps) => {
     prevProps.progressPercentage === nextProps.progressPercentage &&
     prevProps.activeGroup.setBookmark === nextProps.activeGroup.setBookmark &&
     prevProps.isInInfoMode === nextProps.isInInfoMode &&
-    prevProps.setIsInInfoMode === nextProps.setIsInInfoMode
+    prevProps.setIsInInfoMode === nextProps.setIsInInfoMode &&
+    prevProps.showTrailerHighlights === nextProps.showTrailerHighlights &&
+    prevProps.areMobilizationToolsUnlocked ===
+      nextProps.areMobilizationToolsUnlocked
   )
 }
 

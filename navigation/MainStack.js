@@ -43,7 +43,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
-
+    activeDatabase: activeDatabaseSelector(state),
     activeGroup: activeGroupSelector(state),
     security: state.security,
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
@@ -74,6 +74,7 @@ const MainStack = ({
   isRTL,
   t,
   font,
+  activeDatabase,
   activeGroup,
   security,
   languageCoreFilesToUpdate,
@@ -96,18 +97,16 @@ const MainStack = ({
 
   useEffect(() => {
     // if (!props.hasFinishedCopilot) {
-    start()
-    copilotEvents.on('stop', () => {
-      if (!props.hasFinishedCopilot) {
-        props.navigation.navigate('LessonList', {
-          thisSet: props.activeDatabase.sets.filter(
-            set =>
-              getSetInfo('category', set.id) === 'foundational' &&
-              getSetInfo('index', set.id) === 1
-          )[0]
-        })
-      }
-    })
+    // start()
+    // copilotEvents.on('stop', () => {
+    //   navigate('Lessons', {
+    //     setID: activeDatabase.sets.filter(
+    //       set =>
+    //         getSetInfo('category', set.id) === 'MobilizationTools' &&
+    //         getSetInfo('index', set.id) === 1
+    //     )[0].id
+    //   })
+    // })
     // }
   }, [])
 

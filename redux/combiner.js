@@ -8,6 +8,7 @@ import { groups } from './reducers/groups'
 import { isInstallingLanguageInstance } from './reducers/isInstallingLanguageInstance'
 import { mtUnlockAttempts } from './reducers/mtUnlockAttempts'
 import { network } from './reducers/network'
+import { persistedPopups } from './reducers/persistedPopups'
 import { popups } from './reducers/popups'
 import { security } from './reducers/security'
 import { storedDownloads } from './reducers/storedDownloads'
@@ -27,5 +28,6 @@ export default rootReducer = combineReducers({
   mtUnlockAttempts,
   storedDownloads,
   popups,
+  persistedPopups,
   deviceInfo
 })
