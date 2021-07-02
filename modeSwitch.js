@@ -1,5 +1,5 @@
 // Determines which database the app draws from. 'test' uses the test database and 'prod' uses the production database.
-export const dbMode = 'test'
+export const dbMode = 'prod'
 
 // Determines what mode redux persistence is in. 'test' means that no redux data is persisted across app restarts and should be used only for testing. 'prod' means that some data is persisted across restarts. The app should always be build in 'prod' mode.
 export const reduxMode = 'prod'
@@ -8,6 +8,6 @@ export const reduxMode = 'prod'
 export const analyticsMode = 'prod'
 
 // The current version of Waha. This is used to compare versions with the database and is also displayed in the navigation drawer.
-export const appVersion = '2.0.1'
+export const appVersion = '2.1.0'
 
 export const storageMode = 'prod'
