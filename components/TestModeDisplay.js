@@ -12,6 +12,7 @@ import { getLanguageFont, SystemTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
+
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -22,6 +23,7 @@ function mapStateToProps (state) {
 const TestModeDisplay = ({
   // Props passed from redux.
   font,
+
   isRTL
 }) => {
   return (
@@ -29,8 +31,8 @@ const TestModeDisplay = ({
       style={{
         backgroundColor: colors.red,
         paddingVertical: 5,
-        borderRadius: 20,
-        marginHorizontal: 10
+        borderRadius: 15,
+        marginHorizontal: 20
       }}
     >
       {dbMode === 'test' || reduxMode === 'test' || analyticsMode === 'test' ? (
@@ -42,7 +44,7 @@ const TestModeDisplay = ({
             }
           ]}
         >
-          test
+          Test
         </Text>
       ) : null}
     </View>

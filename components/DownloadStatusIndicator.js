@@ -160,7 +160,8 @@ const styles = StyleSheet.create({
   downloadStatusIndicatorContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    height: '100%'
   }
 })
 

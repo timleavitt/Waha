@@ -31,6 +31,7 @@ const OptionsModalButton = ({
   children = null,
   // Props passed from redux.
   font,
+
   isRTL,
   activeGroup
 }) => (

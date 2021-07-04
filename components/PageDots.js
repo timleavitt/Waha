@@ -15,6 +15,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
+
     primaryColor: activeDatabaseSelector(state).primaryColor
   }
 }
@@ -28,7 +29,7 @@ const Dot = ({ isActive, primaryColor }) => (
     style={{
       marginHorizontal: 5,
       backgroundColor: isActive ? colors.tuna : colors.chateau,
-      width: isActive ? 14 * scaleMultiplier : 7 * scaleMultiplier,
+      width: isActive ? 9 * scaleMultiplier : 7 * scaleMultiplier,
       height: isActive ? 9 * scaleMultiplier : 7 * scaleMultiplier,
       borderRadius: isActive ? 4.5 * scaleMultiplier : 3.5 * scaleMultiplier
     }}
@@ -50,6 +51,7 @@ const PageDots = ({
   activeDatabase,
   isRTL,
   font,
+
   primaryColor
 }) => {
   // Array that holds the many dot components.

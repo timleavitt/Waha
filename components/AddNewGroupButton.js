@@ -14,7 +14,8 @@ function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations
+
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -32,7 +33,8 @@ const AddNewGroupButton = ({
   // Props passed from redux.
   isRTL,
   font,
-  translations
+
+  t
 }) => {
   return (
     <View>
@@ -65,7 +67,7 @@ const AddNewGroupButton = ({
             colors.blue
           )}
         >
-          {translations.groups.new_group_button_label}
+          {t.groups && t.groups.new_group}
         </Text>
       </TouchableOpacity>
       <WahaSeparator />

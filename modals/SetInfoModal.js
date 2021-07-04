@@ -26,7 +26,7 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
@@ -57,8 +57,9 @@ const SetInfoModal = ({
   activeDatabase,
   isRTL,
   activeGroup,
-  translations,
+  t,
   font,
+
   addSet
 }) => {
   /**
@@ -119,7 +120,7 @@ const SetInfoModal = ({
 
   return (
     <ModalScreen
-      title={translations.add_set.header_set_details}
+      title={t.sets && t.sets.set_details}
       hideModal={hideModal}
       isVisible={isVisible}
     >
@@ -135,7 +136,7 @@ const SetInfoModal = ({
           hideModal()
         }}
         style={{ marginHorizontal: 20, marginVertical: 10 }}
-        label={translations.add_set.add_new_story_set_button_label}
+        label={t.sets && t.sets.add_new_story_set}
         extraComponent={
           <Icon
             style={{ marginHorizontal: 10 }}

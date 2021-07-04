@@ -27,7 +27,8 @@ function mapStateToProps (state) {
     groups: state.groups,
     activeGroup: activeGroupSelector(state),
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations
+    primaryColor: activeDatabaseSelector(state).primaryColor,
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -40,6 +41,12 @@ function mapDispatchToProps (dispatch) {
       dispatch(changeActiveGroup(name))
     }
   }
+}
+
+const animatedPositions = {
+  EDITING: 0,
+  ISRTL: 24 * scaleMultiplier + 25,
+  ISNOTRTL: -24 * scaleMultiplier - 25
 }
 
 /**
@@ -60,10 +67,15 @@ const GroupItem = ({
   groups,
   activeGroup,
   font,
-  translations,
+  primaryColor,
+  t,
   deleteGroup,
   changeActiveGroup
 }) => {
+  /** Keeps track of the components for the left button and the right icon of the group item. These get switched when isRTL is true. */
+  const [leftButton, setLeftButton] = useState(null)
+  const [rightIcon, setRightIcon] = useState(null)
+
   /** Keeps track of whether this group is the last group in a language instance. */
   const [
     isLastGroupInLanguageInstance,
@@ -71,46 +83,49 @@ const GroupItem = ({
   ] = useState(false)
 
   /** Keeps track of the animated position of the left icon of the group item component, in this case the delete button. */
-  const [leftIconXPos, setLeftIconXPos] = useState(
+  const [groupItemXPos, setGroupItemXPos] = useState(
     new Animated.Value(
-      isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
+      isEditing
+        ? animatedPositions.EDITING
+        : isRTL
+        ? animatedPositions.ISRTL
+        : animatedPositions.ISNOTRTL
     )
   )
 
-  /** useEffect function used to update the animated value of the left icon position. The default value must update whenever isRTL changes.*/
+  /** Animated the position of the delete icon whenever isEditing, isRTL, or isLastGroupInLanguageInstance changes. This pushes the whole component over to the right or left to reveal the hidden buttons. */
   useEffect(() => {
-    setLeftIconXPos(
-      new Animated.Value(
-        isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
-      )
-    )
-  }, [isRTL])
+    animateGroupItem()
+  }, [isEditing, isLastGroupInLanguageInstance, isRTL])
 
-  /** Animated the position of the delete icon whenever isEditing changes. This pushes the whole component over to the right. */
-  useEffect(() => {
-    if (isEditing) {
-      Animated.spring(leftIconXPos, {
-        toValue: 0
+  /** Animates the X position of the group item. */
+  const animateGroupItem = () => {
+    // If a group is the last in a language instance and isn't the active group, it should always stay in the non-edit-mode position.
+    if (isLastGroupInLanguageInstance && activeGroup.name !== thisGroup.name) {
+      Animated.spring(groupItemXPos, {
+        toValue: isRTL ? animatedPositions.ISRTL : animatedPositions.ISNOTRTL
       }).start()
-    } else if (!isEditing) {
-      Animated.spring(leftIconXPos, {
-        toValue: isRTL ? 24 * scaleMultiplier + 20 : -24 * scaleMultiplier - 20
-      }).start()
+      // Otherwise, animate the group item based off whether edit mode is active or not.
+    } else {
+      if (isEditing) {
+        Animated.spring(groupItemXPos, {
+          toValue: animatedPositions.EDITING
+        }).start()
+      } else if (!isEditing) {
+        Animated.spring(groupItemXPos, {
+          toValue: isRTL ? animatedPositions.ISRTL : animatedPositions.ISNOTRTL
+        }).start()
+      }
     }
-  }, [isEditing])
+  }
 
-  /**
-   * useEffect function that determines whether this group is the last in a language instance.
-   * @function
-   */
+  /** useEffect function that determines whether this group is the last in a language instance. */
   useEffect(() => {
     if (
       groups.filter(group => group.language === thisGroup.language).length === 1
-    ) {
+    )
       setIsLastGroupInLanguageInstance(true)
-    } else {
-      setIsLastGroupInLanguageInstance(false)
-    }
+    else setIsLastGroupInLanguageInstance(false)
   }, [isEditing, groups])
 
   /**
@@ -145,92 +160,106 @@ const GroupItem = ({
     } else return ''
   }
 
-  // Determine what to render for the delete button. This button shows up next to groups in editing mode if that group is able to be deleted. Exceptions are that you can't delete the active group and that you can't delete a group that's the last in a language instance.
-  if (activeGroup.name !== thisGroup.name && !isLastGroupInLanguageInstance) {
-    var deleteButton = (
-      <Animated.View style={{ transform: [{ translateX: leftIconXPos }] }}>
-        <TouchableOpacity
-          style={styles.minusButtonContainer}
-          onPress={() => {
-            Alert.alert(
-              translations.groups.popups.delete_group_title,
-              translations.groups.popups.delete_group_message,
-              [
-                {
-                  text: translations.general.cancel,
-                  onPress: () => {}
-                },
-                {
-                  text: translations.general.ok,
-                  onPress: () => deleteGroup(thisGroup.name)
-                }
-              ]
-            )
-          }}
+  /** useEffect function that sets the left and right buttons of the group item appropriately when necessary. */
+  useEffect(() => {
+    // Determine what to render for the delete button. This button shows up next to groups in editing mode if that group is able to be deleted. Exceptions are that you can't delete the active group and that you can't delete a group that's the last in a language instance.
+    if (activeGroup.name !== thisGroup.name && !isLastGroupInLanguageInstance)
+      setLeftButton(
+        <Animated.View style={{ transform: [{ translateX: groupItemXPos }] }}>
+          <TouchableOpacity
+            style={styles.minusButtonContainer}
+            onPress={() => {
+              Alert.alert(
+                t.groups && t.groups.delete_group_title,
+                t.groups && t.groups.delete_group_message,
+                [
+                  {
+                    text: t.general && t.general.cancel,
+                    onPress: () => {},
+                    style: 'cancel'
+                  },
+                  {
+                    text: t.general && t.general.ok,
+                    onPress: () => deleteGroup(thisGroup.name),
+                    style: 'destructive'
+                  }
+                ]
+              )
+            }}
+          >
+            <Icon
+              name='minus-filled'
+              size={24 * scaleMultiplier}
+              color={colors.red}
+            />
+          </TouchableOpacity>
+        </Animated.View>
+      )
+    else if (activeGroup.name === thisGroup.name)
+      setLeftButton(
+        <Animated.View
+          style={[
+            styles.minusButtonContainer,
+            {
+              transform: [{ translateX: groupItemXPos }]
+            }
+          ]}
         >
-          <Icon
-            name='minus-filled'
-            size={24 * scaleMultiplier}
-            color={colors.red}
-          />
-        </TouchableOpacity>
-      </Animated.View>
-    )
-  } else if (activeGroup.name === thisGroup.name) {
-    var deleteButton = (
-      <Animated.View
-        style={[
-          styles.minusButtonContainer,
-          {
-            transform: [{ translateX: leftIconXPos }]
-          }
-        ]}
-      >
-        <Icon name='check' size={24 * scaleMultiplier} color={colors.blue} />
-      </Animated.View>
-    )
-  } else if (isLastGroupInLanguageInstance) {
-    var deleteButton = (
-      <View
-        style={{
-          // Make the width such that the group avatar/text doesn't change position in editing mode. This width makes up for the padding that is lost in editing mode.
-          width: 20
-        }}
-      />
-    )
-  }
-
-  // Determine what to render for the 'right' button. This button highlights the active group with a blue checkmark while in regular mode and switches to a right arrow for all groups while in edit mode.
-  if (isEditing) {
-    var rightButton = (
-      <View style={styles.iconContainer}>
-        <Icon
-          name={isRTL ? 'arrow-left' : 'arrow-right'}
-          size={36 * scaleMultiplier}
-          color={colors.chateau}
+          <Icon name='check' size={24 * scaleMultiplier} color={colors.blue} />
+        </Animated.View>
+      )
+    else if (isLastGroupInLanguageInstance)
+      setLeftButton(
+        <View
+          style={{
+            // Make the width such that the group avatar/text doesn't change position in editing mode. This width makes up for the padding that is lost in editing mode.
+            width: 24 * scaleMultiplier + 40
+          }}
         />
-      </View>
-    )
-  } else if (activeGroup.name === thisGroup.name) {
-    var rightButton = (
-      <View style={styles.iconContainer}>
-        <Icon name='check' size={24 * scaleMultiplier} color={colors.blue} />
-      </View>
-    )
-  } else {
-    var rightButton = (
-      <View style={[styles.iconContainer, { width: 24 * scaleMultiplier }]} />
-    )
-  }
+      )
+
+    // Determine what to render for the 'right' button. This button highlights the active group with a blue checkmark while in regular mode and switches to a right arrow for all groups while in edit mode.
+    if (isEditing)
+      setRightIcon(
+        <View style={styles.iconContainer}>
+          <Icon
+            name={isRTL ? 'arrow-left' : 'arrow-right'}
+            size={36 * scaleMultiplier}
+            color={colors.chateau}
+          />
+        </View>
+      )
+    else if (activeGroup.name === thisGroup.name)
+      setRightIcon(
+        <View style={styles.iconContainer}>
+          <Icon name='check' size={24 * scaleMultiplier} color={colors.blue} />
+        </View>
+      )
+    else
+      setRightIcon(
+        <View style={[styles.iconContainer, { width: 24 * scaleMultiplier }]} />
+      )
+  }, [isEditing, activeGroup, isLastGroupInLanguageInstance])
 
   return (
     <View
       style={[
         styles.groupItemContainer,
-        { flexDirection: isRTL ? 'row-reverse' : 'row' }
+        {
+          flexDirection: isRTL ? 'row-reverse' : 'row',
+          borderLeftWidth: isRTL ? 0 : 5,
+          borderRightWidth: isRTL ? 5 : 0,
+          borderColor:
+            groups.filter(item => item.name === thisGroup.name).length !== 0
+              ? database[
+                  groups.filter(item => item.name === thisGroup.name)[0]
+                    .language
+                ].primaryColor
+              : null
+        }
       ]}
     >
-      {deleteButton}
+      {leftButton}
       <TouchableOpacity
         style={[
           styles.touchableAreaContainer,
@@ -249,11 +278,7 @@ const GroupItem = ({
             justifyContent: 'flex-start',
             alignItems: 'center',
             flex: 1,
-            transform:
-              isLastGroupInLanguageInstance &&
-              activeGroup.name !== thisGroup.name
-                ? []
-                : [{ translateX: leftIconXPos }]
+            transform: [{ translateX: groupItemXPos }]
           }}
         >
           <GroupAvatar
@@ -309,7 +334,7 @@ const GroupItem = ({
             )}
           </View>
         </Animated.View>
-        {rightButton}
+        {rightIcon}
       </TouchableOpacity>
     </View>
   )

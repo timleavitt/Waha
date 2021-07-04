@@ -67,7 +67,6 @@ const TimeDisplay = ({
           'd',
           'Regular',
           'center',
-          // Different font color depending on whether it shows the current time or the total time of the current media on the Play Screen.
           side === 'left' ? colors.shark : colors.chateau
         )}
       >

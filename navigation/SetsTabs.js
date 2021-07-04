@@ -1,5 +1,6 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import React from 'react'
+import { Dimensions } from 'react-native'
 import { connect } from 'react-redux'
 import { getSetInfo, scaleMultiplier } from '../constants'
 import {
@@ -16,8 +17,9 @@ const Tab = createMaterialTopTabNavigator()
 function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
+
     primaryColor: activeDatabaseSelector(state).primaryColor,
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
@@ -31,23 +33,26 @@ function mapStateToProps (state) {
 const SetsTabs = ({
   // Props passed from redux.
   activeGroup,
-  translations,
+  t,
   activeDatabase,
   font,
+
   primaryColor,
   isRTL,
   areMobilizationToolsUnlocked
 }) => {
   // Only dispaly the Mobilization Tools tab if the Mobilization Tools have been unlocked.
-  var MobilizationToolsScreen = areMobilizationToolsUnlocked ? (
-    <Tab.Screen
-      name='MobilizationTools'
-      component={SetsScreen}
-      options={{
-        title: translations.sets.mobilization_tools_sets_tab_label
-      }}
-    />
-  ) : null
+  var MobilizationToolsScreen =
+    activeGroup.shouldShowMobilizationToolsTab &&
+    areMobilizationToolsUnlocked ? (
+      <Tab.Screen
+        name='MobilizationTools'
+        component={SetsScreen}
+        options={{
+          title: t.sets && t.sets.mobilization
+        }}
+      />
+    ) : null
 
   // Create the Foundational screen component.
   var FoundationalScreen = (
@@ -55,7 +60,7 @@ const SetsTabs = ({
       name='Foundational'
       component={SetsScreen}
       options={{
-        title: translations.sets.foundational_story_sets_tab_label
+        title: t.sets && t.sets.foundations
       }}
     />
   )
@@ -66,7 +71,7 @@ const SetsTabs = ({
       name='Topical'
       component={SetsScreen}
       options={{
-        title: translations.sets.topical_sets_tab_label
+        title: t.sets && t.sets.topics
       }}
     />
   )
@@ -89,6 +94,8 @@ const SetsTabs = ({
       // Set the initial route based on the category of the bookmarked set.
       initialRouteName={getBookmarkedTab()}
       swipeEnabled={true}
+      // Improves performance according to docs.
+      initialLayout={{ width: Dimensions.get('window').width }}
       tabBarOptions={{
         style: {
           backgroundColor: colors.aquaHaze

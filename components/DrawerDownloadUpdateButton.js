@@ -13,9 +13,10 @@ function mapStateToProps (state) {
   return {
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
+
     isConnected: state.network.isConnected,
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
   }
@@ -35,9 +36,10 @@ const DrawerDownloadUpdateButton = ({
   // Props passed from redux.
   activeGroup,
   activeDatabase,
-  translations,
+  t,
   isRTL,
   font,
+
   isConnected,
   languageCoreFilesToUpdate
 }) => (
@@ -45,15 +47,16 @@ const DrawerDownloadUpdateButton = ({
     style={styles.drawerDownloadUpdateButtonContainer}
     onPress={() => {
       Alert.alert(
-        translations.general.popups.download_update_title,
-        translations.general.popups.download_update_message,
+        t.general && t.general.download_update_title,
+        t.general && t.general.download_update_message,
         [
           {
-            text: translations.general.cancel,
-            onPress: () => {}
+            text: t.general && t.general.cancel,
+            onPress: () => {},
+            style: 'cancel'
           },
           {
-            text: translations.general.ok,
+            text: t.general && t.general.ok,
             onPress: updateHandler
           }
         ]
@@ -85,7 +88,7 @@ const DrawerDownloadUpdateButton = ({
           )
         ]}
       >
-        {translations.general.download_update_button_label}
+        {t.general && t.general.download_update}
       </Text>
       {isConnected ? (
         <View style={styles.iconContainer}>
@@ -111,19 +114,18 @@ const DrawerDownloadUpdateButton = ({
 const styles = StyleSheet.create({
   drawerDownloadUpdateButtonContainer: {
     overflow: 'hidden',
-    borderRadius: 20,
+    borderRadius: 15,
     marginHorizontal: 5,
     marginTop: 5,
-    marginBottom: 0,
-    height: 50 * scaleMultiplier
+    marginBottom: 0
+    // height: 50 * scaleMultiplier
   },
   innerContainer: {
     justifyContent: 'flex-end',
-    width: '100%',
-    height: '100%',
     alignItems: 'center',
     borderBottomWidth: 4,
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
+    paddingVertical: 10 * scaleMultiplier
   },
   iconContainer: {
     width: 50 * scaleMultiplier,

@@ -1,5 +1,12 @@
-import React, { useState } from 'react'
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import {
+  Dimensions,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native'
 import { connect } from 'react-redux'
 import EmojiViewer from '../components/EmojiViewer'
 import GroupAvatar from '../components/GroupAvatar'
@@ -18,14 +25,15 @@ import {
   activeGroupSelector
 } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
-import { getLanguageFont } from '../styles/typography'
+import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
     groups: state.groups,
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
+
     activeGroup: activeGroupSelector(state),
     globalGroupCounter: state.database.globalGroupCounter,
     areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked
@@ -34,10 +42,38 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    editGroup: (oldGroupName, newGroupName, emoji) =>
-      dispatch(editGroup(oldGroupName, newGroupName, emoji)),
-    createGroup: (groupName, language, emoji, groupID, groupNumber) =>
-      dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
+    editGroup: (
+      oldGroupName,
+      newGroupName,
+      emoji,
+      shouldShowMobilizationToolsTab
+    ) =>
+      dispatch(
+        editGroup(
+          oldGroupName,
+          newGroupName,
+          emoji,
+          shouldShowMobilizationToolsTab
+        )
+      ),
+    createGroup: (
+      groupName,
+      language,
+      emoji,
+      shouldShowMobilizationToolsTab,
+      groupID,
+      groupNumber
+    ) =>
+      dispatch(
+        createGroup(
+          groupName,
+          language,
+          emoji,
+          shouldShowMobilizationToolsTab,
+          groupID,
+          groupNumber
+        )
+      ),
     changeActiveGroup: groupName => dispatch(changeActiveGroup(groupName)),
     resetProgress: name => {
       dispatch(resetProgress(name))
@@ -64,7 +100,7 @@ const AddEditGroupModal = ({
   // Props passed from redux.
   groups,
   isRTL,
-  translations,
+  t,
   font,
   activeGroup,
   globalGroupCounter,
@@ -82,47 +118,45 @@ const AddEditGroupModal = ({
   /** Keeps track of the user selection for the group emoji. */
   const [emojiInput, setEmojiInput] = useState('default')
 
+  const [shouldShowMTTabInput, setShouldShowMTTabInput] = useState(
+    areMobilizationToolsUnlocked ? false : true
+  )
+
   /** If editing a group, keeps track of whether that group is the active group or not. */
   const [isActive, setIsActive] = useState(
     type === 'EditGroup' ? activeGroup.name === thisGroup.name : false
   )
+
+  const [isGroupNameBlank, setIsGroupNameBlank] = useState(
+    type === 'EditGroup' ? false : true
+  )
+
+  const [isGroupNameDuplicate, setIsGroupNameDuplicate] = useState(false)
+
+  useEffect(() => {
+    checkForDuplicate()
+    checkForBlank()
+  }, [groupNameInput])
 
   /**
    * Checks if a user-inputted group name is a duplicate of another group. The process for checking is different if we're editing vs. adding a group.
    * @return {boolean} - Whether the group name is a duplicate or not.
    */
   const checkForDuplicate = () => {
-    var isDuplicate = false
-
     // If we're adding a new group, simply check if the group name already exists in another group.
-    if (type === 'AddGroup') {
-      groups.forEach(group => {
-        if (group.name === groupNameInput) {
-          Alert.alert(
-            translations.add_edit_group.popups.duplicate_group_name_title,
-            translations.add_edit_group.popups.duplicate_group_name_message,
-            [{ text: translations.general.ok, onPress: () => {} }]
-          )
-          isDuplicate = true
-        }
-      })
-      // If we're editing a group, check if any group has the same name but obvously don't count it as a duplicate for itself.
-    } else {
-      groups.forEach(group => {
-        if (
-          group.name === groupNameInput &&
-          thisGroup.name !== groupNameInput
-        ) {
-          Alert.alert(
-            translations.add_edit_group.popups.duplicate_group_name_title,
-            translations.add_edit_group.popups.duplicate_group_name_message,
-            [{ text: translations.general.ok, onPress: () => {} }]
-          )
-          isDuplicate = true
-        }
-      })
-    }
-    return isDuplicate
+    if (type === 'AddGroup')
+      if (groups.some(group => group.name === groupNameInput))
+        setIsGroupNameDuplicate(true)
+      else setIsGroupNameDuplicate(false)
+    // If we're editing a group, check if any group has the same name but obvously don't count it as a duplicate for itself.
+    else if (
+      groups.some(
+        group =>
+          group.name === groupNameInput && thisGroup.name !== groupNameInput
+      )
+    )
+      setIsGroupNameDuplicate(true)
+    else setIsGroupNameDuplicate(false)
   }
 
   /**
@@ -130,15 +164,8 @@ const AddEditGroupModal = ({
    * @return {boolean} - Whether the group name is blank or not.
    */
   const checkForBlank = () => {
-    if (groupNameInput === '') {
-      Alert.alert(
-        translations.add_edit_group.popups.blank_group_name_title,
-        translations.add_edit_group.popups.blank_group_name_message,
-        [{ text: translations.general.ok, onPress: () => {} }]
-      )
-      return true
-    }
-    return false
+    if (groupNameInput === '') setIsGroupNameBlank(true)
+    else setIsGroupNameBlank(false)
   }
 
   /** Creates a new group and sets it as the active group. */
@@ -151,6 +178,7 @@ const AddEditGroupModal = ({
       groupNameInput,
       languageID,
       emojiInput,
+      shouldShowMTTabInput,
       globalGroupCounter + 1,
       groups.length + 1
     )
@@ -174,7 +202,7 @@ const AddEditGroupModal = ({
     if (thisGroup.name === activeGroup.name) changeActiveGroup(groupNameInput)
 
     // Call editGroup() redux function.
-    editGroup(thisGroup.name, groupNameInput, emojiInput)
+    editGroup(thisGroup.name, groupNameInput, emojiInput, shouldShowMTTabInput)
 
     // Hide this modal.
     hideModal()
@@ -185,20 +213,30 @@ const AddEditGroupModal = ({
       isVisible={isVisible}
       hideModal={hideModal}
       topRightComponent={
-        <TouchableOpacity
-          onPress={type === 'AddGroup' ? createGroupHandler : editGroupHandler}
-          style={{
-            width: 45 * scaleMultiplier,
-            height: 45 * scaleMultiplier
-          }}
-        >
-          <Icon name='check' size={40 * scaleMultiplier} color={colors.oslo} />
-        </TouchableOpacity>
+        !isGroupNameBlank &&
+        !isGroupNameDuplicate && (
+          <TouchableOpacity
+            onPress={
+              type === 'AddGroup' ? createGroupHandler : editGroupHandler
+            }
+            style={{
+              width: 45 * scaleMultiplier,
+              height: 45 * scaleMultiplier
+            }}
+          >
+            <Icon
+              name='check'
+              size={40 * scaleMultiplier}
+              color={colors.oslo}
+            />
+          </TouchableOpacity>
+        )
       }
       onCancelPress={() => {
         // Clear out the inputs when we close the modal.
         setGroupNameInput('')
         setEmojiInput('default')
+        setShouldShowMTTabInput(false)
       }}
       onModalWillShow={
         type === 'AddGroup'
@@ -210,12 +248,13 @@ const AddEditGroupModal = ({
               // If we're editing a group, populate our state with the name and emoji of that group.
               setGroupNameInput(thisGroup.name)
               setEmojiInput(thisGroup.emoji)
+              setShouldShowMTTabInput(thisGroup.shouldShowMobilizationToolsTab)
             }
       }
       title={
         type === 'AddGroup'
-          ? translations.add_edit_group.header_add
-          : translations.add_edit_group.header_edit
+          ? t.groups && t.groups.new_group
+          : t.groups && t.groups.edit_group
       }
     >
       <View style={styles.groupAvatarContainer}>
@@ -228,7 +267,36 @@ const AddEditGroupModal = ({
       <GroupNameTextInput
         groupNameInput={groupNameInput}
         setGroupNameInput={setGroupNameInput}
+        isDuplicate={isGroupNameDuplicate}
       />
+      {areMobilizationToolsUnlocked && (
+        <View
+          style={[
+            styles.shouldShowMTTabInputContainer,
+            { flexDirection: isRTL ? 'row-reverse' : 'row' }
+          ]}
+        >
+          <Text
+            style={StandardTypography(
+              { font, isRTL },
+              'h3',
+              'Regular',
+              'left',
+              colors.shark
+            )}
+          >
+            {t.mobilization_tools && t.mobilization_tools.show_mobilization_tab}
+          </Text>
+          <Switch
+            trackColor={{ false: colors.chateau, true: colors.apple }}
+            thumbColor={colors.white}
+            ios_backgroundColor={colors.chateau}
+            onValueChange={() => setShouldShowMTTabInput(current => !current)}
+            value={shouldShowMTTabInput}
+            disabled={areMobilizationToolsUnlocked ? false : true}
+          />
+        </View>
+      )}
       <EmojiViewer emojiInput={emojiInput} setEmojiInput={setEmojiInput} />
     </ModalScreen>
   )
@@ -240,6 +308,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 20 * scaleMultiplier
+  },
+  shouldShowMTTabInputContainer: {
+    width: Dimensions.get('window').width - 40,
+    paddingHorizontal: 10,
+    height: 60 * scaleMultiplier,
+    maxWidth: 500,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: colors.athens,
+    backgroundColor: colors.white,
+    marginTop: 20 * scaleMultiplier
   }
 })
 

@@ -1,13 +1,12 @@
 {
-  "welcome": "Hello and welcome!",
-  "selectLanguage": "Please select your language.",
-  "noMoreLanguages": "No more languages are available to add",
-  "ok": "OK",
-  "addLanguage": "Add Language",
-  "newLanguage": "New Language",
-  "fetchErrorTitle": "Sorry, there was a problem during fetching.",
-  "fetchErrorMessage": "Please check your connection and try again.",
-  "english": "English",
+  "add_language": "Add Language",
   "arabic": "Arabic",
-  "gulfArabic": "Gulf Arabic"
+  "english": "English",
+  "fetch_error_message": "Please check your connection and try again.",
+  "fetch_error_title": "Sorry, there was a problem during fetching.",
+  "gulf_arabic": "Gulf Arabic",
+  "hindi": "Hindi",
+  "ok": "OK",
+  "select_language": "Please select your language. ",
+  "welcome": "Hello and welcome!"
 }

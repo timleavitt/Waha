@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
-  Dimensions,
   FlatList,
   Image,
   StyleSheet,
@@ -24,7 +23,8 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations
+
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -46,8 +46,11 @@ const EmojiViewer = ({
   activeDatabase,
   isRTL,
   font,
-  translations
+
+  t
 }) => {
+  const [emojiViewerWidth, setEmojiViewerWidth] = useState(0)
+
   /** Renders an emoji for the emoji select <FlatList />. */
   const renderEmoji = ({ item }) => (
     <TouchableOpacity
@@ -84,17 +87,24 @@ const EmojiViewer = ({
           { marginTop: 20 * scaleMultiplier }
         ]}
       >
-        {translations.add_edit_group.icon_form_label}
+        {t.groups && t.groups.avatar}
       </Text>
-      <View style={styles.emojiListContainer}>
+      <View
+        style={styles.emojiListContainer}
+        onLayout={({ nativeEvent }) =>
+          setEmojiViewerWidth(nativeEvent.layout.width)
+        }
+      >
         <FlatList
+          horizontal={false}
           data={groupIcons}
           nestedScrollEnabled
           renderItem={renderEmoji}
           keyExtractor={item => item}
           numColumns={Math.floor(
-            (Dimensions.get('window').width - 50) / (50 * scaleMultiplier)
+            (emojiViewerWidth - 50) / (50 * scaleMultiplier)
           )}
+          key={Math.floor((emojiViewerWidth - 50) / (50 * scaleMultiplier))}
         />
       </View>
     </View>
@@ -114,7 +124,8 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     maxHeight: 300 * scaleMultiplier,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    maxWidth: 500
   },
   emojiListContainer: {
     alignItems: 'center',

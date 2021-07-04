@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { AppState, LogBox, View } from 'react-native'
+import { copilot } from 'react-native-copilot'
 import { connect } from 'react-redux'
 import GroupAvatar from '../components/GroupAvatar'
 import ScreenHeaderImage from '../components/ScreenHeaderImage'
@@ -40,8 +41,9 @@ const Stack = createStackNavigator()
 function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
+    activeDatabase: activeDatabaseSelector(state),
     activeGroup: activeGroupSelector(state),
     security: state.security,
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
@@ -65,10 +67,14 @@ function mapDispatchToProps (dispatch) {
 const MainStack = ({
   // Props passed from navigation.
   navigation: { navigate, goBack, toggleDrawer },
+  // Props passed from copilot.
+  start,
+  copilotEvents,
   // Props passed from redux.
   isRTL,
-  translations,
+  t,
   font,
+  activeDatabase,
   activeGroup,
   security,
   languageCoreFilesToUpdate,
@@ -87,6 +93,21 @@ const MainStack = ({
     return function cleanup () {
       AppState.removeEventListener('change', change => setAppState(change))
     }
+  }, [])
+
+  useEffect(() => {
+    // if (!props.hasFinishedCopilot) {
+    // start()
+    // copilotEvents.on('stop', () => {
+    //   navigate('Lessons', {
+    //     setID: activeDatabase.sets.filter(
+    //       set =>
+    //         getSetInfo('category', set.id) === 'MobilizationTools' &&
+    //         getSetInfo('index', set.id) === 1
+    //     )[0].id
+    //   })
+    // })
+    // }
   }, [])
 
   /** useEffect function that reacts to changes in app state changes. This is used to display the splash screen to hide the app preview in multitasking as well as keeping track of security mode timeouts. */
@@ -247,7 +268,8 @@ const MainStack = ({
         component={PlayScreen}
         options={{
           headerStyle: {
-            backgroundColor: colors.white
+            backgroundColor: colors.white,
+            elevation: 0
           },
           headerTitleStyle: {
             color: colors.chateau,
@@ -261,7 +283,7 @@ const MainStack = ({
         name='Groups'
         component={GroupsScreen}
         options={{
-          headerTitle: translations.groups.header,
+          headerTitle: t.groups && t.groups.groups_and_languages,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           }
@@ -305,7 +327,7 @@ const MainStack = ({
         name='Storage'
         component={StorageScreen}
         options={{
-          headerTitle: translations.storage.header,
+          headerTitle: t.storage && t.storage.storage,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -319,7 +341,8 @@ const MainStack = ({
         name='MobilizationTools'
         component={MobilizationToolsScreen}
         options={{
-          headerTitle: translations.mobilization_tools.header,
+          headerTitle:
+            t.mobilization_tools && t.mobilization_tools.mobilization_tools,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -333,7 +356,8 @@ const MainStack = ({
         name='MobilizationToolsUnlock'
         component={MobilizationToolsUnlockScreen}
         options={{
-          headerTitle: translations.mobilization_tools.header,
+          headerTitle:
+            t.mobilization_tools && t.mobilization_tools.mobilization_tools,
           headerStyle: {
             backgroundColor: colors.white
           },
@@ -347,7 +371,7 @@ const MainStack = ({
         name='SecurityMode'
         component={SecurityModeScreen}
         options={{
-          headerTitle: translations.security.header,
+          headerTitle: t.security && t.security.security,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -361,7 +385,7 @@ const MainStack = ({
         name='SecurityOnboardingSlides'
         component={SecurityOnboardingSlidesScreen}
         options={{
-          headerTitle: translations.security.header,
+          headerTitle: t.security && t.security.security,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -446,8 +470,7 @@ const MainStack = ({
         name='Information'
         component={InformationScreen}
         options={{
-          headerTitle:
-            translations.information && translations.information.header,
+          headerTitle: t.information && t.information.information,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -461,8 +484,7 @@ const MainStack = ({
         name='ContactUs'
         component={ContactUsScreen}
         options={{
-          headerTitle:
-            translations.contact_us && translations.contact_us.header,
+          headerTitle: t.contact_us && t.contact_us.contact_us,
           headerStyle: {
             backgroundColor: colors.aquaHaze
           },
@@ -476,4 +498,15 @@ const MainStack = ({
   )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MainStack)
+export default copilot({
+  overlay: 'svg',
+  animated: true,
+  labels: {
+    finish: false
+  },
+  // tooltipComponent: Tooltip,
+  stepNumberComponent: () => <View />,
+  tooltipStyle: {
+    borderRadius: 10
+  }
+})(connect(mapStateToProps, mapDispatchToProps)(MainStack))

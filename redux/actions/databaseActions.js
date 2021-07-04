@@ -23,6 +23,7 @@ export const SET_RECENT_ACTIVE_GROUP = 'SET_RECENT_ACTIVE_GROUP'
 import * as FileSystem from 'expo-file-system'
 import firebase from 'firebase'
 import i18n from 'i18n-js'
+import { storageMode } from '../../constants'
 import { logInstallLanguage } from '../../LogEventFunctions'
 import { setIsInstallingLanguageInstance } from './isInstallingLanguageInstanceActions'
 import { storeDownloads } from './storedDownloadsActions'
@@ -39,7 +40,7 @@ export function incrementGlobalGroupCounter () {
 }
 
 /**
- * Stores the langauge data for a language instance in redux. This includes the display name, the bible ID, whether this language is RTL, the primary color of this language instance, the list of core files to download, the questions for every question set, and all the app translations.
+ * Stores the langauge data for a language instance in redux. This includes the display name, the bible ID, whether this language is RTL, the primary color of this language instance, the list of core files to download, the questions for every question set, and all the app t.
  * @export
  * @param {Object} languageData - All the data for a language.
  * @param {string} languageaInstanceID - The ID of the language instance that we're storing data for.
@@ -246,29 +247,18 @@ export function downloadLanguageCoreFiles (language) {
 
       // Set the file extension based on what type of file we're downloading. Every language core file is an mp3 except for the header image which is a png.
 
-      // For when file name includes "v1".
       var fileExtension = fileName.includes('header') ? 'png' : 'mp3'
-
-      // For when file name DOESN'T includes "v1".
-      // var fileExtension = fileName === 'header' ? 'png' : 'mp3'
 
       // Set the firebase storage URL to download from. The file structure in firebase must be set up exactly right for this link to work.
 
-      // PRODUCTION URL
-      var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
-
-      // TEST URL
-      // var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-test-db.appspot.com/o/${language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
+      var url =
+        storageMode === 'test'
+          ? `https://firebasestorage.googleapis.com/v0/b/waha-app-test-db.appspot.com/o/${language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
+          : `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
 
       // Set the local storage path to download to and the name of the file. The format is simple: FileSystem/languageID-fileName.extension.
 
-      // For when file name includes "v1".
-      var localPath = `${
-        FileSystem.documentDirectory
-      }${language}-${fileName.slice(0, -3)}.${fileExtension}`
-
-      // For when file name DOESN'T includes "v1".
-      // var localPath = `${FileSystem.documentDirectory}${language}-${fileName}.${fileExtension}`
+      var localPath = `${FileSystem.documentDirectory}${language}-${fileName}.${fileExtension}`
 
       // Create the download object. Uses url and localPath from above, an empty parameters object, and an empty callback function.
       download = FileSystem.createDownloadResumable(
@@ -289,12 +279,8 @@ export function downloadLanguageCoreFiles (language) {
         .then(metadata =>
           dispatch(
             storeLanguageCoreFileCreatedTime(
-              // For when file name includes "v1".
-              `${language}-${fileName.slice(0, -3)}`,
+              `${language}-${fileName}`,
               metadata.timeCreated
-              // For when file name DOESN'T includes "v1".
-              // language + '-' + fileName,
-              // metadata.timeCreated
             )
           )
         )
@@ -388,8 +374,8 @@ export function updateLanguageCoreFiles () {
       // This is here because I'm a fool and didn't automatically include the language ID in the file names in Firebase. Therefore, we have to remove the language ID here. Will be fixed soon.
       var languageID = fileName.slice(0, 2)
 
-      // Also because I'm a fool and didn't create a better system for distinguishing updated files. Will be fixed soon.
-      var shortenedFileName = fileName.slice(3) + '-v1'
+      // The shortened file name is the file name without the language ID. So en-header.png would be header.png.
+      var shortenedFileName = fileName.slice(3)
 
       // Create the download object.
       var download
@@ -399,11 +385,10 @@ export function updateLanguageCoreFiles () {
 
       // Set the firebase storage URL to download from. The file structure in firebase must be set up exactly right for this link to work.
 
-      // PRODUCTION URL
-      var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${languageID}%2Fother%2F${shortenedFileName}.${fileExtension}?alt=media`
-
-      // TEST URL
-      // var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-test-db.appspot.com/o/${languageID}%2Fother%2F${shortenedFileName}.${fileExtension}?alt=media`
+      var url =
+        storageMode === 'test'
+          ? `https://firebasestorage.googleapis.com/v0/b/waha-app-test-db.appspot.com/o/${languageID}%2Fother%2F${shortenedFileName}.${fileExtension}?alt=media`
+          : `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${languageID}%2Fother%2F${shortenedFileName}.${fileExtension}?alt=media`
 
       // Set the local storage path to download to and the name of the file. The format is simple: "FileSystem/languageID-localFileName.extension".
       var localPath = `${FileSystem.documentDirectory}${fileName}.${fileExtension}`

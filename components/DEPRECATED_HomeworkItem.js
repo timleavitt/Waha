@@ -91,6 +91,7 @@ function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
+
     activeGroup: activeGroupSelector(state)
   }
 }

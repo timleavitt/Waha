@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import { chapters, lessonTypes } from '../constants'
+import { chapters, gutterSize, isTablet, lessonTypes } from '../constants'
 import { activeDatabaseSelector } from '../redux/reducers/activeGroup'
 import ChapterButton from './ChapterButton'
 
@@ -40,7 +40,7 @@ const ChapterSelector = ({
       lessonType={lessonType}
       changeChapter={changeChapter}
     />
-    <View style={{ width: 4 }} />
+    <View style={{ width: isTablet ? 8 : 4 }} />
     {/* <ChapterSeparator /> */}
     <ChapterButton
       chapter={chapters.STORY}
@@ -52,7 +52,7 @@ const ChapterSelector = ({
     />
     {/* For DMC lessons, we need an extra 'Training' chapter button. */}
     {lessonType === lessonTypes.STANDARD_DMC ? (
-      <View style={{ width: 4 }} />
+      <View style={{ width: isTablet ? 8 : 4 }} />
     ) : // <ChapterSeparator />
     null}
     {lessonType === lessonTypes.STANDARD_DMC ? (
@@ -65,7 +65,7 @@ const ChapterSelector = ({
         isVideoDownloaded={isVideoDownloaded}
       />
     ) : null}
-    <View style={{ width: 4 }} />
+    <View style={{ width: isTablet ? 8 : 4 }} />
     {/* <ChapterSeparator /> */}
     <ChapterButton
       chapter={chapters.APPLICATION}
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   chapterSelectorContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: 10
+    marginHorizontal: gutterSize
     // borderRadius: 20,
     // borderWidth: 2,
     // overflow: 'hidden'

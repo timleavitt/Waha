@@ -15,7 +15,8 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations
+
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -30,54 +31,82 @@ const GroupNameTextInput = ({
   // Props passed from a parent component.
   groupNameInput,
   setGroupNameInput,
-  groupNameInputRef,
+  groupNameInputRef = null,
+  isDuplicate = false,
   // Props passed from redux.
   activeGroup,
   activeDatabase,
   isRTL,
   font,
-  translations
-}) => (
-  <View style={styles.groupNameAreaContainer}>
-    <Text
-      style={StandardTypography(
-        { font, isRTL },
-        'p',
-        'Regular',
-        'left',
-        colors.chateau
-      )}
-    >
-      {translations.add_edit_group.group_name_form_label}
-    </Text>
-    <TextInput
-      ref={groupNameInputRef}
-      style={[
-        styles.groupNameTextInputContainer,
-        StandardTypography(
+  t
+}) => {
+  return (
+    <View style={styles.groupNameAreaContainer}>
+      <Text
+        style={StandardTypography(
           { font, isRTL },
-          'h3',
+          'p',
           'Regular',
           'left',
-          colors.shark
-        )
-      ]}
-      onChangeText={text => setGroupNameInput(text)}
-      value={groupNameInput}
-      autoCapitalize='words'
-      autoCorrect={false}
-      placeholder={translations.add_edit_group.group_name_form_placeholder}
-      placeholderTextColor={colors.chateau}
-      maxLength={50}
-      returnKeyType='done'
-    />
-  </View>
-)
+          colors.chateau
+        )}
+      >
+        {t.groups && t.groups.group_name}
+      </Text>
+      <View
+        style={{
+          flexDirection: isRTL ? 'row-reverse' : 'row',
+          width: '100%',
+          alignItems: 'center'
+        }}
+      >
+        <TextInput
+          ref={groupNameInputRef}
+          style={[
+            styles.groupNameTextInputContainer,
+            StandardTypography(
+              { font, isRTL },
+              'h3',
+              'Regular',
+              'left',
+              colors.shark
+            )
+          ]}
+          onChangeText={text => setGroupNameInput(text)}
+          value={groupNameInput}
+          autoCapitalize='words'
+          autoCorrect={false}
+          placeholder={t.groups && t.groups.group_name_here}
+          placeholderTextColor={colors.chateau}
+          maxLength={50}
+          returnKeyType='done'
+        />
+        {isDuplicate && (
+          <View
+            style={{
+              width: 50 * scaleMultiplier,
+              height: 50 * scaleMultiplier,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Icon
+              name='cancel'
+              color={colors.red}
+              size={45 * scaleMultiplier}
+            />
+          </View>
+        )}
+      </View>
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
   groupNameAreaContainer: {
     width: '100%',
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    maxWidth: 500
   },
   groupNameTextInputContainer: {
     backgroundColor: colors.white,
@@ -88,7 +117,8 @@ const styles = StyleSheet.create({
     height: 50 * scaleMultiplier,
     fontSize: 18 * scaleMultiplier,
     marginTop: 5,
-    alignItems: 'center'
+    alignItems: 'center',
+    flex: 1
   }
 })
 

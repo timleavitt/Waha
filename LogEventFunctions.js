@@ -1,5 +1,4 @@
 import * as Analytics from 'expo-firebase-analytics'
-import * as StoreReview from 'expo-store-review'
 import { getLessonInfo, getSetInfo } from './constants'
 import { analyticsMode } from './modeSwitch'
 
@@ -35,9 +34,9 @@ export async function logCompleteLesson (lesson, groupID) {
     `CompleteLesson logged with lessonID: ${lesson.id} and groupID: ${groupID}.`
   )
   // If the lesson that is completed is the very first one, then request that the user submit a review on the App Store/Play Store.
-  if (lesson.id.includes('1.1.1') && lesson.id.length === 8) {
-    StoreReview.requestReview()
-  }
+  // if (lesson.id.includes('1.1.1') && lesson.id.length === 8) {
+  //   StoreReview.requestReview()
+  // }
   if (analyticsMode !== 'test')
     await Analytics.logEvent('CompleteLesson', {
       languageID: getLessonInfo('language', lesson.id),
@@ -92,25 +91,15 @@ export async function logCreateGroup (languageID, groupID, groupNumber) {
 }
 
 /**
- * Logs enabling the Mobilization Tools for a specific group.
+ * Logs unlocking the Mobilization Tools.
  * @export
  * @param {string} languageID - The ID of the active group's language.
- * @param {string} groupID - The ID of the group that is enabling the Mobilization Tools.
- * @param {number} groupNumber - The number of the group that is enabling the Mobilization Tools.
  */
-export async function logEnableMobilizationToolsForAGroup (
-  languageID,
-  groupID,
-  groupNumber
-) {
-  console.log(
-    `EnableMobilizationToolsForAGroup logged with languageID: ${languageID}, groupID: ${groupID}, and groupNumber: ${groupNumber}.`
-  )
+export async function logUnlockMobilizationTools (languageID) {
+  console.log(`UnlockMobilizationTools logged with languageID: ${languageID}.`)
   if (analyticsMode !== 'test')
-    await Analytics.logEvent('EnableMobilizationToolsForAGroup', {
-      languageID: languageID,
-      groupID: groupID,
-      groupNumber: groupNumber
+    await Analytics.logEvent('UnlockMobilizationTools', {
+      languageID: languageID
     })
 }
 

@@ -20,9 +20,10 @@ function mapStateToProps (state) {
   return {
     database: state.database,
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isConnected: state.network.isConnected,
     font: getLanguageFont(activeGroupSelector(state).language),
+
     groups: state.groups,
     activeGroup: activeGroupSelector(state)
   }
@@ -37,9 +38,10 @@ const GroupsScreen = ({
   // Props passed from redux.
   database,
   isRTL,
-  translations,
+  t,
   isConnected,
   font,
+
   groups,
   activeGroup
 }) => {

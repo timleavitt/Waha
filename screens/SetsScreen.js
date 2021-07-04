@@ -1,8 +1,8 @@
 import * as FileSystem from 'expo-file-system'
+import LottieView from 'lottie-react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 import {
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -17,6 +17,7 @@ import {
   setItemModes
 } from '../constants'
 import MessageModal from '../modals/MessageModal'
+import { setShowTrailerHighlights } from '../redux/actions/persistedPopupsActions'
 import { setShowMTTabAddedSnackbar } from '../redux/actions/popupsActions'
 import {
   activeDatabaseSelector,
@@ -30,13 +31,16 @@ function mapStateToProps (state) {
     activeDatabase: activeDatabaseSelector(state),
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
+
     // For testing.
     languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes,
     globalGroupCounter: state.database.globalGroupCounter,
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate,
-    showMTTabAddedSnackbar: state.popups.showMTTabAddedSnackbar
+    showMTTabAddedSnackbar: state.popups.showMTTabAddedSnackbar,
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
+    showTrailerHighlights: state.persistedPopups.showTrailerHighlights
   }
 }
 
@@ -44,6 +48,9 @@ function mapDispatchToProps (dispatch) {
   return {
     setShowMTTabAddedSnackbar: toSet => {
       dispatch(setShowMTTabAddedSnackbar(toSet))
+    },
+    setShowTrailerHighlights: toSet => {
+      dispatch(setShowTrailerHighlights(toSet))
     }
   }
 }
@@ -60,31 +67,31 @@ const SetsScreen = ({
   activeDatabase,
   isRTL,
   activeGroup,
-  translations,
+  t,
   font,
   languageCoreFilesCreatedTimes,
   globalGroupCounter,
   languageCoreFilesToUpdate,
   showMTTabAddedSnackbar,
-  setShowMTTabAddedSnackbar
+  areMobilizationToolsUnlocked,
+  showTrailerHighlights,
+  setShowMTTabAddedSnackbar,
+  setShowTrailerHighlights
 }) => {
   /** Keeps track of the text displayed on the add set button. Changes depending on what category we're in. */
   const [addNewSetLabel, setAddNewSetLabel] = useState('')
   useEffect(() => {
     setAddNewSetLabel(
       category === 'Foundational'
-        ? translations.sets.add_foundational_story_set_button_label
+        ? t.sets && t.sets.add_foundational_set
         : category === 'Topical'
-        ? translations.sets.add_topical_set_button_label
-        : translations.sets.add_mobilization_tool_button_label
+        ? t.sets && t.sets.add_topical_set
+        : t.sets && t.sets.add_mobilization_tool
     )
-  }, [activeGroup])
+  }, [activeGroup, activeDatabase.translations])
 
   /** Keeps track of all of the files the user has downloaded to the user's device. This is used to verify that all the required question set mp3s are downloaded for the sets that have been added. */
   const [downloadedFiles, setDownloadedFiles] = useState([])
-
-  /** Whether the snackbar that pops up upon unlocking the mobilization tools is visible or not.  */
-  const [showSnackbar, setShowSnackbar] = useState(false)
 
   /** useEffect function that sets the downloaded files state. It's also used to log some various information to the console for testing. */
   useEffect(() => {
@@ -294,7 +301,7 @@ const SetsScreen = ({
           colors.chateau
         )}
       >
-        {translations.mobilization_tools.no_mobilization_tools_content_text}
+        {t.sets && t.sets.no_mobilization_tools_content}
       </Text>
     </View>
   )
@@ -304,13 +311,46 @@ const SetsScreen = ({
    * @param {Object} set - The object of the set to render.
    * @return {Component} - The setItem component.
    */
-  const renderSetItem = ({ item }) => (
-    <SetItem
-      thisSet={item}
-      mode={setItemModes.SETS_SCREEN}
-      onSetSelect={() => navigate('Lessons', { thisSet: item })}
-    />
-  )
+  const renderSetItem = ({ item, index }) => {
+    return (
+      // index === 0 &&
+      //   getSetInfo('category', item.id) === 'MobilizationTools' ? (
+      //   <CopilotStep text='Start here (change later)' order={1} name='Set3.1'>
+      //     <SetItem
+      //       thisSet={item}
+      //       mode={setItemModes.SETS_SCREEN}
+      //       onSetSelect={() => navigate('Lessons', { setID: item.id })}
+      //       progressPercentage={
+      //         activeGroup.addedSets.filter(addedSet => addedSet.id === item.id)[0]
+      //           .progress.length / item.lessons.length
+      //       }
+      //     />
+      //   </CopilotStep>
+      // ) : (
+      <SetItem
+        thisSet={item}
+        mode={setItemModes.SETS_SCREEN}
+        onSetSelect={() => {
+          console.log(areMobilizationToolsUnlocked)
+          console.log(showTrailerHighlights)
+          if (
+            areMobilizationToolsUnlocked &&
+            showTrailerHighlights &&
+            !item.id.includes('3.1')
+          ) {
+            console.log('working')
+            setShowTrailerHighlights(false)
+          }
+
+          navigate('Lessons', { setID: item.id })
+        }}
+        progressPercentage={
+          activeGroup.addedSets.filter(addedSet => addedSet.id === item.id)[0]
+            .progress.length / item.lessons.length
+        }
+      />
+    )
+  }
 
   // We know the height of these items ahead of time so we can use getItemLayout to make our FlatList perform better.
   const getItemLayout = (data, index) => ({
@@ -338,18 +378,21 @@ const SetsScreen = ({
       <MessageModal
         isVisible={showMTTabAddedSnackbar}
         hideModal={() => setShowMTTabAddedSnackbar(false)}
-        title={translations.passcode.popups.unlock_successful_title}
-        message={translations.passcode.popups.unlock_successful_message}
-        confirmText={translations.general.got_it}
+        title={
+          t.mobilization_tools && t.mobilization_tools.unlock_successful_title
+        }
+        message={
+          t.mobilization_tools && t.mobilization_tools.unlock_successful_message
+        }
+        confirmText={t.general && t.general.got_it}
         confirmOnPress={() => setShowMTTabAddedSnackbar(false)}
       >
-        <Image
-          source={require('../assets/gifs/unlock_mob_tools.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            resizeMode: 'contain'
-          }}
+        <LottieView
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/mob_tools_unlocked.json')}
+          style={{ width: '100%' }}
         />
       </MessageModal>
     </View>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   Clipboard,
+  FlatList,
   Platform,
   Share,
   StyleSheet,
@@ -10,6 +11,7 @@ import {
 } from 'react-native'
 import SnackBar from 'react-native-snackbar-component'
 import { connect } from 'react-redux'
+import GroupItemMT from '../components/GroupItemMT'
 import WahaBackButton from '../components/WahaBackButton'
 import WahaBlurb from '../components/WahaBlurb'
 import WahaHero from '../components/WahaHero'
@@ -22,12 +24,11 @@ import {
 } from '../redux/reducers/activeGroup'
 import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
-
 function mapStateToProps (state) {
   return {
     database: state.database,
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
     groups: state.groups
@@ -43,8 +44,9 @@ const MobilizationToolsScreen = ({
   // Props passed from redux.
   database,
   isRTL,
-  translations,
+  t,
   font,
+
   areMobilizationToolsUnlocked,
   groups
 }) => {
@@ -62,39 +64,70 @@ const MobilizationToolsScreen = ({
     })
   }, [])
 
-  return (
-    <View style={styles.screen}>
-      <WahaHero source={require('../assets/gifs/unlock_mob_tools.gif')} />
+  // /**
+  //  * Renders the GroupItemMT component used for the Groups SectionList item.
+  //  * @param {Object} group - The object for the group to render.
+  //  * @return {Component} - The GroupItemMT component.
+  //  */
+  function renderGroupItem ({ item }) {
+    return <GroupItemMT thisGroup={item} />
+  }
+
+  const topComponents = (
+    <View style={{ width: '100%' }}>
+      <WahaHero source={require('../assets/lotties/mob_tools_unlocked.json')} />
       <WahaBlurb
         text={
           areMobilizationToolsUnlocked
-            ? translations.mobilization_tools.mobilization_tools_vision
-            : translations.mobilization_tools.mobilization_tools_pre_unlock
+            ? t.mobilization_tools && t.mobilization_tools.blurb_post_unlock
+            : t.mobilization_tools && t.mobilization_tools.blurb_pre_unlock
         }
       />
-      {areMobilizationToolsUnlocked ? (
-        <View
+    </View>
+  )
+
+  const shareComponent = (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 25 * scaleMultiplier
+      }}
+    >
+      <View style={{ justifyContent: 'center' }}>
+        <TouchableOpacity
           style={{
-            flexDirection: 'row',
-            alignItems: 'center'
+            borderRadius: 15,
+            // borderWidth: 1.5,
+            // backgroundColor: colors.porcelain,
+            overflow: 'hidden'
+          }}
+          onPress={() => {
+            setShowSnackbar(true)
+            setTimeout(() => setShowSnackbar(false), 1500)
+            Clipboard.setString(
+              `${t.mobilization_tools &&
+                t.mobilization_tools.share_message_1}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_2}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_3}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_4}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_5}`
+            )
           }}
         >
-          <TouchableOpacity
+          <View
             style={{
               paddingVertical: 10,
               paddingHorizontal: 30,
-              borderRadius: 20,
-              // borderWidth: 1.5,
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              // height: '100%',
+              // width: '100%',
               backgroundColor: colors.porcelain,
-              borderColor: colors.geyser,
-              borderBottomWidth: 4
-            }}
-            onPress={() => {
-              setShowSnackbar(true)
-              setTimeout(() => setShowSnackbar(false), 1500)
-              Clipboard.setString(
-                `${translations.mobilization_tools.mobilization_tools_share_message_1}\n${translations.mobilization_tools.mobilization_tools_share_message_2}\n${translations.mobilization_tools.mobilization_tools_share_message_3}\n${translations.mobilization_tools.mobilization_tools_share_message_4}\n${translations.mobilization_tools.mobilization_tools_share_message_5}`
-              )
+              borderBottomWidth: 4,
+              borderBottomColor: colors.geyser
             }}
           >
             <Text
@@ -106,7 +139,7 @@ const MobilizationToolsScreen = ({
                 colors.shark
               )}
             >
-              {translations.mobilization_tools.unlock_code_label}
+              {t.mobilization_tools && t.mobilization_tools.unlock_code}
             </Text>
             <Text
               style={StandardTypography(
@@ -119,32 +152,89 @@ const MobilizationToolsScreen = ({
             >
               2 8 1 8 2 0
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'absolute',
-              right: -35 * scaleMultiplier
-            }}
-            onPress={() =>
-              Share.share({
-                message: `${translations.mobilization_tools.mobilization_tools_share_message_1}\n${translations.mobilization_tools.mobilization_tools_share_message_2}\n${translations.mobilization_tools.mobilization_tools_share_message_3}\n${translations.mobilization_tools.mobilization_tools_share_message_4}\n${translations.mobilization_tools.mobilization_tools_share_message_5}`
-              })
-            }
-          >
-            <Icon
-              name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
-              color={colors.tuna}
-              size={30 * scaleMultiplier}
-            />
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'absolute',
+            right: -45 * scaleMultiplier
+          }}
+          onPress={() =>
+            Share.share({
+              message: `${t.mobilization_tools &&
+                t.mobilization_tools.share_message_1}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_2}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_3}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_4}\n${t.mobilization_tools &&
+                t.mobilization_tools.share_message_5}`
+            })
+          }
+        >
+          <Icon
+            name={Platform.OS === 'ios' ? 'share-ios' : 'share-android'}
+            color={colors.tuna}
+            size={30 * scaleMultiplier}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+
+  return (
+    <View style={styles.screen}>
+      {!areMobilizationToolsUnlocked && topComponents}
+      {areMobilizationToolsUnlocked ? (
+        <FlatList
+          bounces={false}
+          data={groups
+            .sort((a, b) => a.groupID < b.groupID)
+            .sort(
+              (a, b) =>
+                database[a.language].installTime >
+                database[b.language].installTime
+            )}
+          renderItem={renderGroupItem}
+          style={{ width: '100%' }}
+          ListHeaderComponent={() => (
+            <View>
+              {topComponents}
+              {shareComponent}
+              <Text
+                style={[
+                  StandardTypography(
+                    { font, isRTL },
+                    'h2',
+                    'Bold',
+                    'left',
+                    colors.shark
+                  ),
+                  {
+                    paddingHorizontal: 20,
+                    marginBottom: 10,
+                    fontSize: 22 * scaleMultiplier
+                  }
+                ]}
+              >
+                {t.mobilization_tools &&
+                  t.mobilization_tools.show_mobilization_tab}
+              </Text>
+              <WahaSeparator />
+            </View>
+          )}
+          keyExtractor={item => item.name}
+          ListFooterComponent={() => <WahaSeparator />}
+          ItemSeparatorComponent={() => <WahaSeparator />}
+        />
       ) : (
         <View style={{ width: '100%' }}>
           <WahaSeparator />
           <WahaItem
-            title={translations.mobilization_tools.unlock_mt_button_label}
+            title={
+              t.mobilization_tools &&
+              t.mobilization_tools.unlock_mobilization_tools
+            }
             onPress={() => navigate('MobilizationToolsUnlock')}
           >
             <Icon
@@ -158,10 +248,7 @@ const MobilizationToolsScreen = ({
       )}
       <SnackBar
         visible={showSnackbar}
-        textMessage={
-          translations.information &&
-          translations.information.copied_to_clipboard
-        }
+        textMessage={t.general && t.general.copied_to_clipboard}
         messageStyle={{
           color: colors.white,
           fontSize: 24 * scaleMultiplier,

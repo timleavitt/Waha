@@ -13,6 +13,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
+
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -32,6 +33,7 @@ const OptionsModal = ({
   children,
   // Props passed from redux.
   font,
+
   isRTL
 }) => (
   <Modal
@@ -45,7 +47,7 @@ const OptionsModal = ({
     propagateSwipe={true}
     useNativeDriver
   >
-    <View>
+    <View style={{ alignItems: 'center' }}>
       <View style={styles.childrenContainer}>{children}</View>
       <TouchableOpacity onPress={hideModal} style={styles.closeButtonContainer}>
         <Text
@@ -66,12 +68,15 @@ const OptionsModal = ({
 
 const styles = StyleSheet.create({
   childrenContainer: {
+    width: '100%',
+    maxWidth: 500,
     backgroundColor: colors.white,
     borderRadius: 20,
     marginVertical: 10
   },
   closeButtonContainer: {
     width: '100%',
+    maxWidth: 500,
     height: 70 * scaleMultiplier,
     justifyContent: 'center',
     backgroundColor: colors.white,

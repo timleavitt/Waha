@@ -2,6 +2,7 @@ import Slider from '@react-native-community/slider'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import TimeDisplay from '../components/TimeDisplay'
+import { gutterSize, isTablet } from '../constants'
 import { colors } from '../styles/colors'
 
 /**
@@ -18,7 +19,15 @@ const Scrubber = ({
   mediaLength,
   mediaProgress
 }) => (
-  <View style={styles.scrubberContainer}>
+  <View
+    style={[
+      styles.scrubberContainer,
+      {
+        marginTop: isTablet ? 20 : 10,
+        marginBottom: isTablet ? 10 : 0
+      }
+    ]}
+  >
     <View style={styles.sliderContainer}>
       <Slider
         value={mediaProgress}
@@ -41,12 +50,12 @@ const Scrubber = ({
 
 const styles = StyleSheet.create({
   scrubberContainer: {
-    paddingHorizontal: 8,
+    // Padding here and on timeInfoContainer are different per platform because the slider on Android has 10px of padding by default while on iOS it has 0.
+    paddingHorizontal: Platform.OS === 'ios' ? gutterSize : 0,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-    marginTop: 10
+    width: '100%'
   },
   sliderContainer: {
     width: '100%'
@@ -55,7 +64,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    paddingHorizontal: 3
+    paddingHorizontal: Platform.OS === 'ios' ? 5 : 15
   }
 })
 

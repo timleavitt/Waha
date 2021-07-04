@@ -26,8 +26,9 @@ function mapStateToProps (state) {
     primaryColor: activeDatabaseSelector(state).primaryColor,
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
+
     isConnected: state.network.isConnected,
     languageCoreFilesToUpdate: state.database.languageCoreFilesToUpdate
   }
@@ -54,8 +55,9 @@ const WahaDrawer = ({
   primaryColor,
   isRTL,
   activeGroup,
-  translations,
+  t,
   font,
+
   isConnected,
   languageCoreFilesToUpdate,
   updateLanguageCoreFiles,
@@ -72,7 +74,7 @@ const WahaDrawer = ({
     setIsInstallingLanguageInstance(true)
 
     // Even though we're not fetching any Firebase data here, set this variable to true anyways just to allow the user to cancel the update if they want.
-    setHasFetchedLanguageData(true)
+    // setHasFetchedLanguageData(true)
 
     // Update the language core files.
     updateLanguageCoreFiles()
@@ -116,17 +118,19 @@ const WahaDrawer = ({
         <View style={{ width: '100%', height: 5 }} />
         <DrawerItem
           icon='group'
-          label={translations.groups.header}
+          label={t.groups && t.groups.groups_and_languages}
           onPress={() => navigate('Groups')}
         />
         <DrawerItem
           icon='security'
-          label={translations.security.header}
+          label={t.security && t.security.security}
           onPress={() => navigate('SecurityMode')}
         />
         <DrawerItem
           icon='boat'
-          label={translations.mobilization_tools.header}
+          label={
+            t.mobilization_tools && t.mobilization_tools.mobilization_tools
+          }
           onPress={() => navigate('MobilizationTools')}
         />
         <View style={{ width: '100%', height: 5 }} />
@@ -147,22 +151,22 @@ const WahaDrawer = ({
             }
           ]}
         >
-          {translations.general.other}
+          {t.general && t.general.other}
         </Text>
         <DrawerItem
           icon='storage'
-          label={translations.storage.header}
+          label={t.storage && t.storage.storage}
           onPress={() => navigate('Storage')}
         />
         <DrawerItem
           icon='email'
-          label={translations.contact_us && translations.contact_us.header}
+          label={t.contact_us && t.contact_us.contact_us}
           onPress={() => navigate('ContactUs')}
         />
         <DrawerItem
           icon='info'
           onPress={() => navigate('Information')}
-          label={translations.information && translations.information.header}
+          label={t.information && t.information.information}
         />
       </ScrollView>
       <AddEditGroupModal

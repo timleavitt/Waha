@@ -15,8 +15,9 @@ import WahaSeparator from './WahaSeparator'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
+
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -35,82 +36,85 @@ const LanguageStorageItem = ({
   clearDownloads,
   // Props passed from redux.
   font,
+
   isRTL,
-  translations
-}) => (
-  <View style={styles.languageStorageItemContainer}>
-    <View
-      style={[
-        styles.languageStorageHeaderContainer,
-        { flexDirection: isRTL ? 'row-reverse' : 'row' }
-      ]}
-    >
-      <Text
-        style={StandardTypography(
-          { font, isRTL },
-          'h3',
-          'Regular',
-          'left',
-          colors.chateau
-        )}
-      >
-        {languageName}
-      </Text>
-      <Image
-        style={styles.languageLogo}
-        source={{
-          uri: FileSystem.documentDirectory + languageID + '-header.png'
-        }}
-      />
-    </View>
-    <WahaSeparator />
-    <View
-      style={[
-        styles.mainAreaContainer,
-        { flexDirection: isRTL ? 'row-reverse' : 'row' }
-      ]}
-    >
-      <Text
-        style={StandardTypography(
-          { font, isRTL },
-          'h3',
-          'Bold',
-          'left',
-          colors.tuna
-        )}
-      >
-        {megabytes + ' ' + translations.storage.megabyte_label}
-      </Text>
-      <Text
+  t
+}) => {
+  return (
+    <View style={styles.languageStorageItemContainer}>
+      <View
         style={[
-          StandardTypography(
+          styles.languageStorageHeaderContainer,
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
+        ]}
+      >
+        <Text
+          style={StandardTypography(
             { font, isRTL },
             'h3',
             'Regular',
             'left',
-            colors.tuna
-          ),
-          {
-            flex: 1,
-            paddingHorizontal: 20
-          }
+            colors.chateau
+          )}
+        >
+          {languageName}
+        </Text>
+        <Image
+          style={styles.languageLogo}
+          source={{
+            uri: FileSystem.documentDirectory + languageID + '-header.png'
+          }}
+        />
+      </View>
+      <WahaSeparator />
+      <View
+        style={[
+          styles.mainAreaContainer,
+          { flexDirection: isRTL ? 'row-reverse' : 'row' }
         ]}
       >
-        {translations.storage.storage_used_label}
-      </Text>
-      <WahaButton
-        type='outline'
-        color={colors.red}
-        label={translations.storage.clear_button_label}
-        width={92 * scaleMultiplier}
-        onPress={clearDownloads}
-        style={{ height: 45 * scaleMultiplier }}
-        textStyle={{ fontFamily: font + '-Regular' }}
-      />
+        <Text
+          style={StandardTypography(
+            { font, isRTL },
+            'h3',
+            'Bold',
+            'left',
+            colors.tuna
+          )}
+        >
+          {`${megabytes} ${t.storage && t.storage.megabyte}`}
+        </Text>
+        <Text
+          style={[
+            StandardTypography(
+              { font, isRTL },
+              'h3',
+              'Regular',
+              'left',
+              colors.tuna
+            ),
+            {
+              flex: 1,
+              paddingHorizontal: 20
+            }
+          ]}
+        >
+          {t.storage && t.storage.storage_used}
+        </Text>
+        <WahaButton
+          type='outline'
+          color={colors.red}
+          label={t.general && t.general.clear}
+          width={92 * scaleMultiplier}
+          onPress={clearDownloads}
+          style={{ height: 45 * scaleMultiplier }}
+          textStyle={{ fontFamily: font + '-Regular' }}
+        />
+      </View>
+      <WahaSeparator />
     </View>
-    <WahaSeparator />
-  </View>
-)
+  )
+}
 
 const styles = StyleSheet.create({
   languageStorageItemContainer: {

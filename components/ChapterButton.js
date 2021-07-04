@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import {
   chapterButtonModes,
   chapters,
+  isTablet,
   lessonTypes,
   scaleMultiplier
 } from '../constants'
@@ -18,9 +19,10 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
+
     activeGroup: activeGroupSelector(state),
     primaryColor: activeDatabaseSelector(state).primaryColor,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
     downloads: state.downloads,
     isConnected: state.network.isConnected
@@ -48,9 +50,10 @@ const ChapterButton = ({
   isVideoDownloaded = false,
   // Props passed from redux.
   font,
+
   activeGroup,
   primaryColor,
-  translations,
+  t,
   isRTL,
   downloads,
   isConnected
@@ -60,8 +63,11 @@ const ChapterButton = ({
 
   /** Keeps track of the icon name, button style, text style, and icon color for the chapter button. Updates whenever the mode changes. */
   const [iconName, setIconName] = useState('')
-  const [extraButtonStyle, setExtraButtonStyle] = useState({})
-  const [textStyle, setTextStyle] = useState({})
+  const [extraButtonStyle, setExtraButtonStyle] = useState({
+    borderColor: colors.porcelain,
+    backgroundColor: colors.athens
+  })
+  const [textStyle, setTextStyle] = useState({ color: primaryColor })
   const [iconColor, setIconColor] = useState(primaryColor)
 
   /** Keeps track of the download progress for the piece of media associated with the chapter button's chapter. */
@@ -70,10 +76,10 @@ const ChapterButton = ({
   // The names of the chapters. 'Filler' is there to line up this array with the chapters enum since the enum starts at 1.
   const chapterNames = [
     'Filler',
-    translations.play.fellowship,
-    translations.play.story,
-    translations.play.training,
-    translations.play.application
+    t.play && t.play.fellowship,
+    t.play && t.play.story,
+    t.play && t.play.training,
+    t.play && t.play.application
   ]
 
   // The default text style.
@@ -219,7 +225,13 @@ const ChapterButton = ({
 
   return (
     <TouchableOpacity
-      style={[styles.chapterButton, extraButtonStyle]}
+      style={[
+        styles.chapterButton,
+        extraButtonStyle,
+        {
+          paddingVertical: isTablet ? 16 : 8
+        }
+      ]}
       // Disable onPress (by making the onPress function empty and by disabling the touch effect) if the chapter button is DISABLED or DOWNLOADING.
       onPress={
         mode === chapterButtonModes.DISABLED ||
@@ -273,11 +285,10 @@ const ChapterButton = ({
 const styles = StyleSheet.create({
   chapterButton: {
     flex: 1,
-    paddingVertical: 8,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
+    borderRadius: 15,
     borderWidth: 2,
     paddingHorizontal: 3
     // borderTopWidth: 2,

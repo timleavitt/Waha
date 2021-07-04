@@ -1,16 +1,24 @@
 // import SvgUri from 'expo-svg-uri'
+import LottieView from 'lottie-react-native'
 import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import {
+  Animated,
+  LayoutAnimation,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  UIManager,
+  View
+} from 'react-native'
 import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { connect } from 'react-redux'
 import Icon from '../assets/fonts/icon_font_config'
 import {
-  getSetInfo,
+  isTablet,
   itemHeights,
   scaleMultiplier,
   setItemModes
 } from '../constants'
-import MessageModal from '../modals/MessageModal'
 import { addSet } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
@@ -27,7 +35,9 @@ function mapStateToProps (state) {
     primaryColor: activeDatabaseSelector(state).primaryColor,
     font: getLanguageFont(activeGroupSelector(state).language),
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations
+    t: activeDatabaseSelector(state).translations,
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
+    showTrailerHighlights: state.persistedPopups.showTrailerHighlights
   }
 }
 
@@ -44,35 +54,56 @@ function mapDispatchToProps (dispatch) {
  * @param {Object} thisSet - The object for the set to display.
  * @param {string} mode - The mode of the set item. The set item is rendered slightly different on all the different screens it's used in. See setItemModes in constants.js.
  * @param {Function} onSetSelect - A function to fire when the set item is pressed. Can be null to make the item non-pressable.
+ * @param {number} progressPercentage - The percentage of this set that has been completed.
  */
 const SetItem = ({
   // Props passed from a parent component.
   thisSet,
   mode,
   onSetSelect,
+  progressPercentage = null,
+  setIsInInfoMode = null,
+  isInInfoMode = null,
+  copilot = null,
   // Props passed from redux.
   isRTL,
   activeDatabase,
   primaryColor,
   font,
   activeGroup,
-  translations,
+  t,
+  areMobilizationToolsUnlocked,
+  showTrailerHighlights,
   addSet
 }) => {
+  // console.log(`${Date.now()} Set ${thisSet.id} is re-rendering.`)
+
+  useEffect(() => {
+    if (Platform.OS === 'android' && mode === setItemModes.LESSONS_SCREEN) {
+      if (UIManager.setLayoutAnimationEnabledExperimental) {
+        UIManager.setLayoutAnimationEnabledExperimental(true)
+      }
+    }
+  }, [])
+
   /** Stores the dynamic primary icon portion of the SetItem component. This contains a unique SVG that represents the set and changes between modes. */
   const [primaryIcon, setPrimaryIcon] = useState()
 
   /** Stores the dynamic secondary icon portion of the SetItem component. This is a smaller icon on the opposite side from the primary icon and changes between modes as well. */
   const [secondaryIcon, setSecondaryIcon] = useState()
 
-  /** Keeps track of the user's progress through this set. */
-  const [thisSetProgress, setThisSetProgress] = useState(0)
+  const [iconRotation, setIconRotation] = useState(new Animated.Value(0))
 
-  /** Keeps track of whether this set is fully completed or not. */
-  const [fullyCompleted, setFullyCompleted] = useState(false)
-
-  /** Keeps track of whether the unlock modal is visible. */
-  const [showUnlockModal, setShowUnlockModal] = useState(false)
+  useEffect(() => {
+    if (isInInfoMode)
+      Animated.spring(iconRotation, {
+        toValue: 1
+      }).start()
+    else
+      Animated.spring(iconRotation, {
+        toValue: 0
+      }).start()
+  }, [isInInfoMode])
 
   /**
    * useEffect function that sets the dynamic primary and secondary icon components of the set item based on the screen prop. Updated whenever the active group or progress changes.
@@ -80,15 +111,16 @@ const SetItem = ({
   useEffect(() => {
     switch (mode) {
       case setItemModes.SETS_SCREEN:
-        updateThisSetProgress()
         // Primary icon for the SetItem on the Sets screen is a circular progress bar with the set's SVG inside.
         setPrimaryIcon(
           <View style={styles.primaryIconContainer}>
             <AnimatedCircularProgress
               size={78 * scaleMultiplier}
               width={7 * scaleMultiplier}
-              fill={thisSetProgress * 100}
-              tintColor={fullyCompleted ? primaryColor + '50' : primaryColor}
+              fill={progressPercentage * 100}
+              tintColor={
+                progressPercentage === 1 ? primaryColor + '50' : primaryColor
+              }
               rotation={0}
               backgroundColor={colors.white}
             >
@@ -104,7 +136,9 @@ const SetItem = ({
                     name={thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    color={fullyCompleted ? colors.chateau : colors.shark}
+                    color={
+                      progressPercentage === 1 ? colors.chateau : colors.shark
+                    }
                   />
                 </View>
               )}
@@ -113,7 +147,7 @@ const SetItem = ({
         )
         // Secondary icon for the SetItem on the Sets screen is a checkmark if the set is fully completed, a orange marker if this set is the bookmarked set, or nothing.
         setSecondaryIcon(
-          fullyCompleted ? (
+          progressPercentage === 1 ? (
             <View style={styles.secondaryIconContainer}>
               <Icon
                 name='check-outline'
@@ -139,15 +173,16 @@ const SetItem = ({
         )
         break
       case setItemModes.LESSONS_SCREEN:
-        updateThisSetProgress()
         // Primary icon for the SetItem on the Lessons screen is the same as on the Sets screen: a circular progress bar with the set's SVG inside.
         setPrimaryIcon(
           <View style={styles.primaryIconContainer}>
             <AnimatedCircularProgress
               size={78 * scaleMultiplier}
               width={7 * scaleMultiplier}
-              fill={thisSetProgress * 100}
-              tintColor={fullyCompleted ? primaryColor + '50' : primaryColor}
+              fill={progressPercentage * 100}
+              tintColor={
+                progressPercentage === 1 ? primaryColor + '50' : primaryColor
+              }
               rotation={0}
               backgroundColor={colors.white}
             >
@@ -163,7 +198,9 @@ const SetItem = ({
                     name={thisSet.iconName}
                     width={70 * scaleMultiplier}
                     height={70 * scaleMultiplier}
-                    color={fullyCompleted ? colors.chateau : colors.shark}
+                    color={
+                      progressPercentage === 1 ? colors.chateau : colors.shark
+                    }
                   />
                 </View>
               )}
@@ -171,7 +208,55 @@ const SetItem = ({
           </View>
         )
         // There is no secondary icon for the SetItem on the Lessons screen.
-        setSecondaryIcon(<View style={styles.secondaryIconContainer} />)
+        setSecondaryIcon(
+          <Animated.View
+            style={{
+              transform: [
+                {
+                  rotateZ: iconRotation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['0deg', '360deg']
+                  })
+                },
+                {
+                  // Keeps the rotation centered instead of around a pivot.
+                  translateX: 2.5 * scaleMultiplier
+                }
+                // {
+                //   translateY: 20 * scaleMultiplier
+                // }
+              ]
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                LayoutAnimation.configureNext(
+                  LayoutAnimation.Presets.easeInEaseOut
+                )
+                if (isInInfoMode) setIsInInfoMode(false)
+                else setIsInInfoMode(true)
+              }}
+              style={styles.secondaryIconContainer}
+            >
+              {isInInfoMode ? (
+                <Icon
+                  name='dropdown'
+                  size={35 * scaleMultiplier}
+                  color={primaryColor}
+                  style={{
+                    transform: [{ rotateX: '180deg' }]
+                  }}
+                />
+              ) : (
+                <Icon
+                  name='info'
+                  size={25 * scaleMultiplier}
+                  color={colors.tuna}
+                />
+              )}
+            </TouchableOpacity>
+          </Animated.View>
+        )
         break
       case setItemModes.ADD_SET_SCREEN:
         // Primary icon for the SetItem on the AddSet screen is a slightly altered version of the set's SVG without any progress shown.
@@ -234,69 +319,18 @@ const SetItem = ({
         setSecondaryIcon(<View style={styles.secondaryIconContainer} />)
         break
     }
-  }, [thisSetProgress, fullyCompleted, activeGroup])
-
-  /**
-   * Updates the thisSetProgress state.
-   */
-  const updateThisSetProgress = () => {
-    setThisSetProgress(
-      activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
-        .length / thisSet.lessons.length
-    )
-  }
-
-  /** useEffect function that updates whenever this set's progress changes and handles the changes appropriately. */
-  useEffect(() => {
-    // If this set is fully completed, set the fullyCompleted state to true. This makes the set components grayed out.
-    if (thisSetProgress === 1) setFullyCompleted(true)
-    else setFullyCompleted(false)
-
-    /* 
-    Next, we want to see if we need to automatically add the next set. The criteria for this happening is: 
-      1) The Foundational set after this one exists
-      2) This set is 85% or more complete
-      3) This set is Foundational
-      4) The Foundational set after this one hasn't already been added
-    */
-
-    // Firstly, we need to get the set after this one before we can do anything else.
-    var nextSet = activeDatabase.sets.filter(
-      dbSet =>
-        getSetInfo('category', dbSet.id) === 'Foundational' &&
-        getSetInfo('index', dbSet.id) === getSetInfo('index', thisSet.id) + 1
-    )[0]
-
-    // If all of the above criteria are met, add the next set and show a modal notifying the user.
-    if (nextSet) {
-      if (
-        thisSetProgress > 0.85 &&
-        getSetInfo('category', thisSet.id) === 'Foundational' &&
-        !activeGroup.addedSets.some(addedSet => addedSet.id === nextSet.id)
-      ) {
-        addSet(
-          activeGroup.name,
-          activeGroup.id,
-          activeDatabase.sets
-            .filter(set => getSetInfo('category', set.id) === 'Foundational')
-            .filter(
-              set =>
-                getSetInfo('index', set.id) ===
-                getSetInfo('index', thisSet.id) + 1
-            )[0]
-        )
-        setShowUnlockModal(true)
-      }
-    }
-  }, [thisSetProgress])
+  }, [progressPercentage, thisSet.id === activeGroup.setBookmark, isInInfoMode])
 
   return (
     <TouchableOpacity
+      {...copilot}
       style={[
         styles.setItemContainer,
         {
           flexDirection: isRTL ? 'row-reverse' : 'row',
-          height: itemHeights[font].SetItem
+          height: isTablet
+            ? itemHeights[font].SetItem + 15
+            : itemHeights[font].SetItem
         }
       ]}
       onPress={onSetSelect}
@@ -320,7 +354,7 @@ const SetItem = ({
               'd',
               'Regular',
               'left',
-              fullyCompleted ? colors.chateau : colors.shark
+              progressPercentage === 1 ? colors.chateau : colors.shark
             ),
             {
               textAlignVertical: 'center',
@@ -338,7 +372,7 @@ const SetItem = ({
               'h3',
               'Black',
               'left',
-              fullyCompleted ? colors.chateau : colors.shark
+              progressPercentage === 1 ? colors.chateau : colors.shark
             ),
             {
               textAlignVertical: 'center',
@@ -351,24 +385,35 @@ const SetItem = ({
         </Text>
       </View>
       {secondaryIcon}
-      {/* Modals */}
-      <MessageModal
-        isVisible={showUnlockModal}
-        hideModal={() => setShowUnlockModal(false)}
-        title={translations.general.popups.new_story_set_unlocked_title}
-        message={translations.general.popups.new_story_set_unlocked_message}
-        confirmText={translations.general.got_it}
-        confirmOnPress={() => setShowUnlockModal(false)}
-      >
-        <Image
-          source={require('../assets/gifs/new_set.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            resizeMode: 'contain'
-          }}
-        />
-      </MessageModal>
+      {thisSet.id.includes('3.1') &&
+        mode === setItemModes.SETS_SCREEN &&
+        areMobilizationToolsUnlocked &&
+        showTrailerHighlights && (
+          <View
+            style={{
+              height: '100%',
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end'
+            }}
+          >
+            <LottieView
+              autoPlay
+              loop
+              colorFilters={[
+                {
+                  keypath: 'hand 2',
+                  color: primaryColor
+                }
+              ]}
+              resizeMode='cover'
+              style={{ height: '120%' }}
+              source={require('../assets/lotties/tap.json')}
+            />
+          </View>
+        )}
     </TouchableOpacity>
   )
 }
@@ -391,8 +436,9 @@ const styles = StyleSheet.create({
   },
   secondaryIconContainer: {
     justifyContent: 'center',
-    width: 30 * scaleMultiplier,
-    height: 30 * scaleMultiplier
+    alignItems: 'center',
+    width: 40 * scaleMultiplier,
+    height: 40 * scaleMultiplier
   },
   textContainer: {
     flex: 1,
@@ -401,7 +447,22 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(SetItem)
+const areEqual = (prevProps, nextProps) => {
+  return (
+    prevProps.progressPercentage === nextProps.progressPercentage &&
+    prevProps.activeGroup.setBookmark === nextProps.activeGroup.setBookmark &&
+    prevProps.isInInfoMode === nextProps.isInInfoMode &&
+    prevProps.setIsInInfoMode === nextProps.setIsInInfoMode &&
+    prevProps.showTrailerHighlights === nextProps.showTrailerHighlights &&
+    prevProps.areMobilizationToolsUnlocked ===
+      nextProps.areMobilizationToolsUnlocked
+  )
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(React.memo(SetItem, areEqual))
 
 /* <SvgUri
 source={{

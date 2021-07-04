@@ -19,7 +19,8 @@ const blacklist =
         'security',
         'storedDownloads',
         'popups',
-        'activeGroup'
+        'activeGroup',
+        'persistedPopups'
       ]
     : // In prod mode, we want only a few specific reducers to be NOT persisted.
       [

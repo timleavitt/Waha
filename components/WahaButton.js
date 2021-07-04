@@ -17,6 +17,7 @@ function mapStateToProps (state) {
   return activeGroupSelector(state)
     ? {
         font: getLanguageFont(activeGroupSelector(state).language),
+
         isRTL: activeDatabaseSelector(state).isRTL,
         activeGroup: activeGroupSelector(state)
       }
@@ -68,13 +69,15 @@ const WahaButton = ({
   const outerContainerStyle = [
     {
       overflow: 'hidden',
-      borderRadius: 20,
+      borderRadius: 15,
       height: 65 * scaleMultiplier,
       width: width,
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'row',
-      marginVertical: 20 * scaleMultiplier
+      marginVertical: 20 * scaleMultiplier,
+      maxWidth: 400,
+      alignSelf: 'center'
     },
     style
   ]
@@ -93,7 +96,7 @@ const WahaButton = ({
   const outlineButtonStyle = [
     innerContainerStyle,
     {
-      borderRadius: 20,
+      borderRadius: 15,
       height: 65 * scaleMultiplier,
       width: width,
       flexDirection: 'row',

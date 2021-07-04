@@ -1,5 +1,6 @@
+import LottieView from 'lottie-react-native'
 import React from 'react'
-import { Image, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { scaleMultiplier } from '../constants'
 import { colors } from '../styles/colors'
 import WahaSeparator from './WahaSeparator'
@@ -13,10 +14,16 @@ const WahaHero = ({
   source
 }) => {
   return (
-    <View style={{ width: '100%' }}>
+    <View
+      style={{
+        width: '100%',
+        backgroundColor: colors.white,
+        alignItems: 'center'
+      }}
+    >
       <WahaSeparator />
       <View style={styles.imageContainer}>
-        <Image style={styles.heroImage} source={source} />
+        <LottieView style={styles.heroImage} autoPlay loop source={source} />
       </View>
       <WahaSeparator />
     </View>
@@ -25,14 +32,14 @@ const WahaHero = ({
 
 const styles = StyleSheet.create({
   imageContainer: {
-    backgroundColor: colors.white,
     width: '100%',
+    maxWidth: 600 * scaleMultiplier,
     justifyContent: 'center',
     alignItems: 'center'
   },
   heroImage: {
-    resizeMode: 'contain',
-    height: 170 * scaleMultiplier,
+    // height: 170 * scaleMultiplier,
+    width: '80%',
     alignSelf: 'center'
   }
 })

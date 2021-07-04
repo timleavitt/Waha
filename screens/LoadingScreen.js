@@ -27,10 +27,12 @@ import { colors } from '../styles/colors'
 import { getLanguageFont, StandardTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
+import hi from '../translations/hi.json'
 
 i18n.translations = {
   en,
-  ar
+  ar,
+  hi
 }
 
 function mapStateToProps (state) {
@@ -57,8 +59,9 @@ function mapStateToProps (state) {
     groups: state.groups,
     recentActiveGroup: state.database.recentActiveGroup,
     font: font,
+
     isRTL: isRTL,
-    translations: translations
+    t: translations
   }
 }
 
@@ -107,8 +110,9 @@ const LoadingScreen = ({
   recentActiveGroup,
   hasFetchedLanguageData,
   font,
+
   isRTL,
-  translations,
+  t,
   setIsInstallingLanguageInstance,
   setHasOnboarded,
   setTotalLanguageCoreFilesToDownload,
@@ -198,6 +202,7 @@ const LoadingScreen = ({
         <LottieView
           style={{
             width: Dimensions.get('window').width / 2,
+            maxWidth: 300,
             marginBottom: 30
           }}
           colorFilters={[
@@ -208,7 +213,7 @@ const LoadingScreen = ({
           ]}
           autoPlay
           loop
-          source={require('../assets/gifs/loading_animation.json')}
+          source={require('../assets/lotties/loading.json')}
         />
         <View style={styles.progressBarContainer}>
           {languageCoreFilesDownloadProgress ? (
@@ -258,7 +263,7 @@ const LoadingScreen = ({
                 colors.tuna
               )}
             >
-              {translations.general.cancel}
+              {t.general && t.general.cancel}
             </Text>
           </TouchableOpacity>
         )}

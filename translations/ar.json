@@ -1,13 +1,12 @@
 {
-  "welcome": "أهلاً ومرحباً",
-  "selectLanguage": "فضلاً اختر لغتك",
-  "noMoreLanguages": "لا مزيد من اللغات المتاحة للإضافة",
-  "ok": "حسناً",
-  "addLanguage": "إضافة لغة",
-  "newLanguage": "لغة جديدة",
-  "fetchErrorTitle": "عفواً، حدثت مشكلة.",
-  "fetchErrorMessage": "يرجى التحقق من اتصالك وإعادة المحاولة مرة أخرى",
-  "english": "اللغة الإنجليزية",
+  "add_language": "إضافة لغة",
   "arabic": "عربى",
-  "gulfArabic": "الخليج العربي"
+  "english": "اللغة الإنجليزية",
+  "fetch_error_message": "يرجى التحقق من اتصالك وإعادة المحاولة مرة أخرى",
+  "fetch_error_title": "عفواً، حدثت مشكلة.",
+  "gulf_arabic": "الخليج العربي",
+  "hindi": "هندي",
+  "ok": "حسناً",
+  "select_language": "فضلاً اختر لغتك",
+  "welcome": "أهلاً ومرحباً"
 }

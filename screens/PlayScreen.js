@@ -1,11 +1,10 @@
 import { Audio, Video } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
 import { useKeepAwake } from 'expo-keep-awake'
-import React, { useRef, useState } from 'react'
+import LottieView from 'lottie-react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Animated,
-  Dimensions,
-  Image,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -13,27 +12,31 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
-import { useEffect } from 'react/cjs/react.development'
-import AlbumArtSwiper from '../components/AlbumArtSwiper'
-import BookView from '../components/BookView'
+import { Media } from '../classes/media'
 import ChapterSelector from '../components/ChapterSelector'
 import PlaybackControls from '../components/PlaybackControls'
-import PlayScreenTitle from '../components/PlayScreenTitle'
+import PlayScreenSwiper from '../components/PlayScreenSwiper'
 import Scrubber from '../components/Scrubber'
 import VideoPlayer from '../components/VideoPlayer'
 import WahaBackButton from '../components/WahaBackButton'
 import {
   chapters,
   getLessonInfo,
+  gutterSize,
+  isTablet,
   lessonTypes,
   lockPortrait,
   scaleMultiplier
 } from '../constants'
+import {
+  checkForAlmostCompleteSet,
+  checkForFullyCompleteSet
+} from '../functions/setProgressFunctions'
 import { logCompleteLesson } from '../LogEventFunctions'
 import MessageModal from '../modals/MessageModal'
 import ShareModal from '../modals/ShareModal'
 import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
-import { toggleComplete } from '../redux/actions/groupsActions'
+import { addSet, toggleComplete } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -46,11 +49,12 @@ function mapStateToProps (state) {
     database: state.database,
     activeGroup: activeGroupSelector(state),
     activeDatabase: activeDatabaseSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     downloads: state.downloads,
     primaryColor: activeDatabaseSelector(state).primaryColor,
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
+
     isConnected: state.network.isConnected
   }
 }
@@ -65,6 +69,9 @@ function mapDispatchToProps (dispatch) {
     },
     removeDownload: lessonID => {
       dispatch(removeDownload(lessonID))
+    },
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
     }
   }
 }
@@ -113,7 +120,7 @@ const PlayScreen = ({
   database,
   activeGroup,
   activeDatabase,
-  translations,
+  t,
   downloads,
   primaryColor,
   isRTL,
@@ -121,7 +128,8 @@ const PlayScreen = ({
   isConnected,
   toggleComplete,
   downloadMedia,
-  removeDownload
+  removeDownload,
+  addSet
 }) => {
   /*
     STATE
@@ -139,8 +147,9 @@ const PlayScreen = ({
   })
 
   /** State for the audio and video refs. */
-  const audioRef = useRef(new Audio.Sound())
   const videoRef = useRef(null)
+
+  const [media, setMedia] = useState(new Media(new Audio.Sound()))
 
   /** Stores the length of the current media file in ms. */
   const [mediaLength, setMediaLength] = useState(null)
@@ -161,12 +170,13 @@ const PlayScreen = ({
   const shouldThumbUpdate = useRef(false)
 
   /** Keeps track of the current fullscreen status for videos. */
-  const [fullscreenStatus, setFullscreenStatus] = useState(
-    Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS
-  )
+  const fullscreenStatus = useRef(Video.FULLSCREEN_UPDATE_PLAYER_DID_DISMISS)
 
   /** Keeps track of the currently playing chapter. Options are 'fellowship', 'story', 'training', or 'application'. */
   const [activeChapter, setActiveChapter] = useState(null)
+
+  /** Keeps track of the chapter that should trigger a lesson as complete when getting 50% or more through it. */
+  const [completionChapter, setCompletionChapter] = useState(null)
 
   /** Keeps track of the sources for the various chapters used to load their audio. */
   const [chapterSources, setChapterSources] = useState(null)
@@ -179,16 +189,19 @@ const PlayScreen = ({
   const [videoPlayerOpacity, setVideoPlayerOpacity] = useState(
     new Animated.Value(0)
   )
-  const [albumArtSwiperOpacity, setAlbumArtSwiperOpacity] = useState(
+  const [playScreenSwiperOpacity, setPlayScreenSwiperOpacity] = useState(
     new Animated.Value(0)
   )
 
-  /** Ref for the AlbumArtSwiper component. */
-  const albumArtSwiperRef = useRef()
+  /** Ref for the PlayScreenSwiper component. */
+  const playScreenSwiperRef = useRef()
 
   /** Keeps track of whether the various modals are visible. */
   const [showShareLessonModal, setShowShareLessonModal] = useState(false)
   const [showSetCompleteModal, setShowSetCompleteModal] = useState(false)
+  const [showNextSetUnlockedModal, setShowNextSetUnlockedModal] = useState(
+    false
+  )
 
   /** Keeps track of whether the audio and video files for this lesson are downloaded. */
   const [isAudioDownloaded, setIsAudioDownloaded] = useState(
@@ -197,6 +210,21 @@ const PlayScreen = ({
   const [isVideoDownloaded, setIsVideoDownloaded] = useState(
     isVideoAlreadyDownloaded
   )
+
+  /** Keeps track of whether the audio and video files for this lesson are currently downloading. */
+  const isAudioDownloading = useRef(false)
+  const isVideoDownloading = useRef(false)
+
+  /** Ref for the lesson text content ScrollView. */
+  const lessonTextContentRef = useRef(null)
+
+  /** Keeps track of the scroll positions of the different lesson sections. Includes END at the beginning because we need an upper bound to make checking the positions possible. */
+  const sectionOffsets = useRef([
+    {
+      title: 'END',
+      globalOffset: 1000000
+    }
+  ])
 
   /** Keeps track of whether this lesson is complete or not. */
   const isThisLessonComplete = useRef(
@@ -207,6 +235,17 @@ const PlayScreen = ({
 
   /** Keeps track of whether this lesson was just completed. */
   const justCompleted = useRef(false)
+
+  /** Keeps track of the information for this set from redux which includes the progress of this set. */
+  const [addedSet, setAddedSet] = useState(
+    activeGroup.addedSets.filter(addedSet => addedSet.id === thisSet.id)[0]
+  )
+
+  /** useEffect function that updates the added set local state whenever it changes in redux. */
+  useEffect(() => {
+    setAddedSet(activeGroup.addedSets.filter(set => set.id === thisSet.id)[0])
+    setOptions(getNavOptions())
+  }, [activeGroup.addedSets.filter(set => set.id === thisSet.id)[0]])
 
   /** Sets the navigation options for this screen. */
   const getNavOptions = () => ({
@@ -224,13 +263,16 @@ const PlayScreen = ({
           )}
         </View>
         <Text
-          style={StandardTypography(
-            { font, isRTL },
-            'h3',
-            'Bold',
-            'center',
-            colors.chateau
-          )}
+          style={[
+            StandardTypography(
+              { font, isRTL },
+              'h3',
+              'Bold',
+              'center',
+              colors.chateau
+            ),
+            { marginHorizontal: 2 }
+          ]}
         >
           {getLessonInfo('subtitle', thisLesson.id)}
         </Text>
@@ -240,7 +282,7 @@ const PlayScreen = ({
       ? () => <WahaBackButton onPress={onBackButtonPress} />
       : () => (
           <TouchableOpacity
-            style={{ marginHorizontal: 5 }}
+            style={{ marginHorizontal: gutterSize }}
             onPress={() => setShowShareLessonModal(true)}
           >
             <Icon
@@ -253,7 +295,7 @@ const PlayScreen = ({
     headerLeft: isRTL
       ? () => (
           <TouchableOpacity
-            style={{ marginHorizontal: 5 }}
+            style={{ marginHorizontal: gutterSize }}
             onPress={() => setShowShareLessonModal(true)}
           >
             <Icon
@@ -278,15 +320,18 @@ const PlayScreen = ({
     // Set the sources for the various chapters.
     setSources()
 
+    // Mark audiobook and book lessons as complete as soon as you enter into the play screen.
+    if (lessonType.includes('BookText') && !isThisLessonComplete.current)
+      markLessonAsComplete()
+
     // Update the navigation options.
     setOptions(getNavOptions())
-
-    // Cleanup function that unloads any audio or video upon exiting the screen.
-    return async function cleanup () {
-      if (audioRef.current) await audioRef.current.unloadAsync()
-      if (videoRef.current) await videoRef.current.unloadAsync()
-    }
   }, [])
+
+  /** useEffect function that adds video to the media object if this lesson has video. */
+  useEffect(() => {
+    if (videoRef.current) media.addVideo(videoRef.current)
+  }, [videoRef.current])
 
   /** Downloads any necessary files for this lesson if they aren't downloaded/downloading already. */
   const downloadLessonFiles = () => {
@@ -374,7 +419,7 @@ const PlayScreen = ({
     chapterSources && setStartingChapter()
   }, [chapterSources])
 
-  /** Sets the starting chapter for the lesson. */
+  /** Sets the starting chapter and completion chapter for the lesson. */
   const setStartingChapter = () => {
     switch (lessonType) {
       // For standard lessons, we always start at Fellowship.
@@ -382,14 +427,17 @@ const PlayScreen = ({
       case lessonTypes.STANDARD_DMC:
       case lessonTypes.STANDARD_NO_AUDIO:
         setActiveChapter(chapters.FELLOWSHIP)
+        setCompletionChapter(chapters.APPLICATION)
         break
       // For video-only lessons, start on Training which is the chapter that plays the video.
       case lessonTypes.VIDEO_ONLY:
         setActiveChapter(chapters.TRAINING)
+        setCompletionChapter(chapters.TRAINING)
         break
       // For audiobook lessons, start on Story which contains the audio for the audiobook.
       case lessonTypes.AUDIOBOOK:
         setActiveChapter(chapters.STORY)
+        setCompletionChapter(chapters.STORY)
         break
     }
   }
@@ -398,15 +446,48 @@ const PlayScreen = ({
    * Updates the active chapter.
    * @param {number} chapter - The chapter to switch to.
    */
-  const changeChapter = chapter => {
+  const changeChapter = async chapter => {
+    if (!isMediaLoaded) return
+    /* Pause audio or video before changing chapters. This is here because of some jank android-only error where the onPlaybackStatusUpdate function was being called continuously when switching from the Training chapter to a different chapter, even when media wasn't loaded, which caused the app to constantly switch between being loaded and not loaded. Pausing the audio or video before switching fixes this issue. */
+    if (isMediaPlaying && isMediaLoaded) {
+      // if (activeChapter === chapters.TRAINING) videoRef.current.pauseAsync()
+      // else audioRef.current.pauseAsync()
+      media.pause(activeChapter)
+    }
+
     // Switch to the new chapter if it's different from the currently active chapter and the current media is loaded.
-    if (chapter !== activeChapter && isMediaLoaded) setActiveChapter(chapter)
+    if (chapter !== activeChapter) setActiveChapter(chapter)
     // If we're "changing" to our currently active chapter, start it over at the beginning.
     else playFromLocation(0)
 
+    // Scroll the text to the appropriate position.
+    if (
+      lessonTextContentRef.current !== null &&
+      sectionOffsets.current.length === thisLesson.scripture.length + 3
+    ) {
+      if (chapter === chapters.FELLOWSHIP)
+        lessonTextContentRef.current.scrollTo({
+          y: sectionOffsets.current[0].globalOffset,
+          animated: true
+        })
+      else if (chapter === chapters.STORY)
+        lessonTextContentRef.current.scrollTo({
+          y: sectionOffsets.current[1].globalOffset + 40 * scaleMultiplier,
+          animated: true
+        })
+      else if (chapter === chapters.APPLICATION)
+        lessonTextContentRef.current.scrollTo({
+          y:
+            sectionOffsets.current[sectionOffsets.current.length - 2]
+              .globalOffset +
+            40 * scaleMultiplier,
+          animated: true
+        })
+    }
+
     // If this lesson doesn't have any Story audio, swipe over to the text once we get to the Story chapter so the user can still read it.
     if (chapter === chapters.STORY && !thisLesson.hasAudio)
-      albumArtSwiperRef.current.snapToItem(2)
+      playScreenSwiperRef.current.setPage(isRTL ? 0 : 1)
   }
 
   /** useEffect function that calls the onChapterChange function whenever the active chapter changes.  */
@@ -420,17 +501,19 @@ const PlayScreen = ({
     shouldThumbUpdate.current = false
 
     // Unload any existing media.
-    if (audioRef.current) await audioRef.current.unloadAsync()
-    if (videoRef.current) await videoRef.current.unloadAsync()
+    media.unload()
+
+    // Set isMediaLoaded to be false.
+    setIsMediaLoaded(false)
 
     // Set our thumb position back to the start.
     setMediaProgress(0)
 
     // If we're switching to anything but the Training chapter, fade in the <AlbumArtSwiper/> and fade out the <VideoPlayer/>. If the <AlbumArtSwiper/> is already present, this animation does nothing.
     if (activeChapter !== chapters.TRAINING) {
-      lockPortrait(() => {})
+      !isTablet && lockPortrait(() => {})
       Animated.parallel([
-        Animated.timing(albumArtSwiperOpacity, {
+        Animated.timing(playScreenSwiperOpacity, {
           toValue: 1,
           duration: 300,
           useNativeDriver: true
@@ -445,7 +528,7 @@ const PlayScreen = ({
     // If we're switching to the Training chapter, fade out the <AlbumArtSwiper /> and fade in the <VideoPlayer />.
     else {
       Animated.parallel([
-        Animated.timing(albumArtSwiperOpacity, {
+        Animated.timing(playScreenSwiperOpacity, {
           toValue: 0,
           duration: 300,
           useNativeDriver: true
@@ -467,23 +550,9 @@ const PlayScreen = ({
    * @param source - The source URI of the media to load.
    */
   const loadMedia = async source => {
-    var media =
-      activeChapter === chapters.TRAINING ? videoRef.current : audioRef.current
-
-    await media
-      .loadAsync(
-        { uri: source },
-        {
-          // Initial play status depends on whether we should autoplay or not.
-          shouldPlay: shouldAutoPlay ? true : false,
-          // Call the onPlaybackStatusUpdate function once every second.
-          progressUpdateIntervalMillis: 1000
-        }
-      )
+    media
+      .load(source, shouldAutoPlay, activeChapter)
       .then(playbackStatus => {
-        // Set the onPlaybackStatusUpdate function for this media.
-        media.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate)
-
         // Set the length of this media. Used for the <Scrubber/>.
         setMediaLength(playbackStatus.durationMillis)
 
@@ -505,6 +574,22 @@ const PlayScreen = ({
   */
 
   /**
+   * Acts as an in-between function to make sure that the playback statuses of audio and video aren't overwriting each other.
+   */
+  const onAudioPlaybackStatusUpdate = playbackStatus => {
+    if (activeChapter !== chapters.TRAINING)
+      onPlaybackStatusUpdate(playbackStatus)
+  }
+
+  /**
+   * Acts as an in-between function to make sure that the playback statuses of audio and video aren't overwriting each other.
+   */
+  const onVideoPlaybackStatusUpdate = playbackStatus => {
+    if (activeChapter === chapters.TRAINING)
+      onPlaybackStatusUpdate(playbackStatus)
+  }
+
+  /**
    * Updates on every api call to the audio object as well as every second. Covers the automatic switch of one chapter to the next and marking a lesson as complete at the finish of the last chapter.
    * @param {Object} playbackStatus - The playback status object passed from the media reference. Includes information like load status, progress, play status, and more.
    */
@@ -514,30 +599,28 @@ const PlayScreen = ({
     positionMillis,
     durationMillis,
     didJustFinish,
+    uri,
     error
   }) => {
     // Set isLoaded state to true once media loads.
     if (isLoaded) setIsMediaLoaded(true)
-    else setIsMediaLoaded(false)
 
     // If we should update the thumb, update it to the newest value.
-    if (shouldThumbUpdate.current) setMediaProgress(positionMillis)
+    if (shouldThumbUpdate.current && positionMillis)
+      setMediaProgress(positionMillis)
 
-    if (positionMillis / durationMillis > 0.5 && !isThisLessonComplete.current)
-      if (
-        (lessonType.includes('Questions') &&
-          activeChapter === chapters.APPLICATION) ||
-        (lessonType === lessonTypes.VIDEO_ONLY &&
-          activeChapter === chapters.TRAINING) ||
-        (lessonType === lessonTypes.AUDIOBOOK &&
-          activeChapter === chapters.STORY)
-      )
-        markLessonAsComplete()
+    // Mark a lesson as complete if we get at least halfway through its completion chapter and it's not already complete.
+    if (
+      positionMillis / durationMillis > 0.5 &&
+      !isThisLessonComplete.current &&
+      activeChapter === completionChapter
+    )
+      markLessonAsComplete()
 
-    // Keep the play button status in sync with the play status while in fullscreen mode.
+    // Keep the isPlaying state in sync with the playback status while in fullscreen mode.
     if (
       activeChapter === chapters.TRAINING &&
-      fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
+      fullscreenStatus.current === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
     ) {
       if (isPlaying) setIsMediaPlaying(true)
       else if (!isPlaying) setIsMediaPlaying(false)
@@ -568,19 +651,27 @@ const PlayScreen = ({
     }
   }
 
-  /** useEffect function that refreshes the onPlaybackStatusUpdate function whenever the download status or fullscreen status of the lesson changes since both of those are used throughout the chapter finish handler functions below. */
+  /** useEffect function that refreshes the onPlaybackStatusUpdate function whenever the active chapter, loaded state, and playing state change, since those are used throughout the chapter finish handler functions below. */
   useEffect(() => {
-    audioRef.current.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate)
-  }, [Object.keys(downloads).length])
+    media.setAudioOnStatusUpdate(onAudioPlaybackStatusUpdate)
+  }, [activeChapter, isMediaLoaded, isMediaPlaying])
 
   /** Handles the finishing of the Fellowship chapter. */
   const onFellowshipFinish = () => {
-    // If the lesson has no story audio, change to the Story chapter and swipe over to the scripture text so the user can still read it.
+    // If the lesson has no story audio, change to the Story chapter and swipe over to the text so the user can still read it.
     if (!thisLesson.hasAudio) {
       changeChapter(chapters.STORY)
-      albumArtSwiperRef.current.snapToItem(2)
-    } // If a Story chapter is still downloading or it isn't downloaded and can't start downloading, swipe to the Scripture text so the user can read the text while they're waiting for it to download.
-    else if (downloads[thisLesson.id]) albumArtSwiperRef.current.snapToItem(2)
+      playScreenSwiperRef.current.setPage(isRTL ? 0 : 1)
+    } // If a Story chapter is still downloading or it isn't downloaded and can't start downloading, swipe to the text so the user can read the text while they're waiting for it to download.
+    else if (isAudioDownloading.current)
+      playScreenSwiperRef.current.setPage(isRTL ? 0 : 1)
+    else if (!isAudioDownloaded && !isConnected) {
+      playScreenSwiperRef.current.setPage(isRTL ? 0 : 1)
+      lessonTextContentRef.current.scrollTo({
+        y: sectionOffsets.current[1].globalOffset + 40 * scaleMultiplier,
+        animated: true
+      })
+    }
     // Otherwise, just change to the Story chapter.
     else changeChapter(chapters.STORY)
   }
@@ -594,43 +685,31 @@ const PlayScreen = ({
         break
       // If we're in a standard DMC lesson, there's a Training chapter between Story and Application, so switch to that after a brief delay.
       case lessonTypes.STANDARD_DMC:
-        if (!downloads[thisLesson.id + 'v']) {
+        if (!downloads[thisLesson.id + 'v'])
           setTimeout(() => changeChapter(chapters.TRAINING), 1000)
-        }
         break
-      // If we're in an audiobook lesson, the Story chapter is the only chapter, so once we finish it, we can mark it as complete.
-      // case lessonTypes.AUDIOBOOK:
-      //   if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id))) {
-      //     updateCompleteStatus()
-      //   }
-      //   break
     }
   }
 
   /** Handles the finishing of the Training chapter. */
   const onTrainingFinish = () => {
     // If we're in fullscreen, lock back to portrait orientation and close fullscreen.
-    if (fullscreenStatus === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT)
-      lockPortrait(() => videoRef.current.dismissFullscreenPlayer())
-
+    if (
+      fullscreenStatus.current === Video.FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
+    ) {
+      !isTablet && lockPortrait(() => {})
+      media.closeFullscreen()
+    }
     switch (lessonType) {
       // If we're in a standard DMC lesson, switch to the Application chapter after a short delay.
       case lessonTypes.STANDARD_DMC:
         setTimeout(() => changeChapter(chapters.APPLICATION), 500)
         break
-      // If we're in a video only lesson, the Training chapter is the only chapter, so we can mark the lesson as complete once it's finished.
-      // case lessonTypes.VIDEO_ONLY:
-      //   if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id)))
-      //     setTimeout(() => updateCompleteStatus(), 1000)
-      //   break
     }
   }
 
   /** Handles the finishing of the Application chapter. */
-  const onApplicationFinish = () => {
-    // if (!thisSetProgress.includes(getLessonInfo('index', thisLesson.id)))
-    //   updateCompleteStatus()
-  }
+  const onApplicationFinish = () => {}
 
   /*
     PLAYBACK CONTROL
@@ -640,10 +719,6 @@ const PlayScreen = ({
   const playHandler = () => {
     // If we're still loading, don't try and do anything with the media.
     if (!isMediaLoaded) return
-
-    // Decide if we're playing/pausing the audio or the video.
-    const media =
-      activeChapter === chapters.TRAINING ? videoRef.current : audioRef.current
 
     // Switch play button over to the opposite of its current state.
     setIsMediaPlaying(currentStatus => !currentStatus)
@@ -663,8 +738,7 @@ const PlayScreen = ({
       })
     ]).start(() => setPlayFeedbackZIndex(0))
 
-    // Play or pause the media.
-    isMediaPlaying ? media.pauseAsync() : media.playAsync()
+    isMediaPlaying ? media.pause(activeChapter) : media.play(activeChapter)
   }
 
   /**
@@ -678,53 +752,24 @@ const PlayScreen = ({
     shouldThumbUpdate.current = false
     setMediaProgress(value)
 
-    const media =
-      activeChapter === chapters.TRAINING ? videoRef.current : audioRef.current
-
-    media
-      .setStatusAsync({
-        shouldPlay: isMediaPlaying ? true : false,
-        positionMillis: value
-      })
-      .then(() => {
-        shouldThumbUpdate.current = true
-      })
+    media.playFromLocation(value, isMediaPlaying, activeChapter).then(() => {
+      shouldThumbUpdate.current = true
+    })
   }
 
   /*
     DOWNLOADS
   */
 
-  /** useEffect function that removes a download record from the download tracker redux object once it's finished. Removes audio and video download records when necessary. */
+  /** useEffect function that checks a lesson's downloaded/downloading status. */
   useEffect(() => {
-    switch (lessonType) {
-      case lessonTypes.STANDARD_DBS:
-        if (downloads[thisLesson.id] && downloads[thisLesson.id].progress === 1)
-          removeDownload(thisLesson.id)
-        break
-      case lessonTypes.STANDARD_DMC:
-        if (
-          downloads[thisLesson.id] &&
-          downloads[thisLesson.id + 'v'] &&
-          downloads[thisLesson.id].progress === 1 &&
-          downloads[thisLesson.id + 'v'].progress === 1
-        ) {
-          removeDownload(thisLesson.id)
-          removeDownload(thisLesson.id + 'v')
-        }
-        break
-      case lessonTypes.VIDEO_ONLY:
-        if (
-          downloads[thisLesson.id + 'v'] &&
-          downloads[thisLesson.id + 'v'].progress === 1
-        )
-          removeDownload(thisLesson.id + 'v')
-        break
-    }
-  }, [downloads[thisLesson.id], downloads[thisLesson.id + 'v']])
+    // Checks whether a lesson's audio or video is currently downloading.
+    if (downloads[thisLesson.id]) isAudioDownloading.current = true
+    else isAudioDownloading.current = false
+    if (downloads[thisLesson.id + 'v']) isVideoDownloading.current = true
+    else isVideoDownloading.current = false
 
-  /** useEffect function that checks if the lesson is fully downloaded whenever a download is added/removed from the redux downloads tracker. */
-  useEffect(() => {
+    // Checks whether a lesson's audio or video is downloaded.
     FileSystem.readDirectoryAsync(FileSystem.documentDirectory).then(
       contents => {
         if (contents.includes(thisLesson.id + '.mp3'))
@@ -735,6 +780,37 @@ const PlayScreen = ({
       }
     )
   }, [Object.keys(downloads).length])
+
+  /** useEffect function that removes a download record from the download tracker redux object once it's finished. Removes audio and video download records when necessary. */
+  useEffect(() => {
+    switch (lessonType) {
+      case lessonTypes.STANDARD_DBS:
+        if (
+          isAudioDownloading.current &&
+          downloads[thisLesson.id].progress === 1
+        )
+          removeDownload(thisLesson.id)
+        break
+      case lessonTypes.STANDARD_DMC:
+        if (
+          isAudioDownloading.current &&
+          isVideoDownloading.current &&
+          downloads[thisLesson.id].progress === 1 &&
+          downloads[thisLesson.id + 'v'].progress === 1
+        ) {
+          removeDownload(thisLesson.id)
+          removeDownload(thisLesson.id + 'v')
+        }
+        break
+      case lessonTypes.VIDEO_ONLY:
+        if (
+          isVideoDownloading.current &&
+          downloads[thisLesson.id + 'v'].progress === 1
+        )
+          removeDownload(thisLesson.id + 'v')
+        break
+    }
+  }, [downloads[thisLesson.id], downloads[thisLesson.id + 'v']])
 
   /*
     MISC
@@ -757,30 +833,43 @@ const PlayScreen = ({
 
     // Track analytics.
     logCompleteLesson(thisLesson, activeGroup.id)
-
-    // Update the navigation options since a check appears next to the header when a lesson is complete.
-    setOptions(getNavOptions())
   }
 
   /**
    * Gets called when the user pressed the back button. Shows any necessary modals before going back as well.
    */
-  const onBackButtonPress = () => {
+  const onBackButtonPress = async () => {
     // Lock to portrait orientaiton.
-    lockPortrait(() => {})
+    !isTablet && lockPortrait(() => {})
+
+    // Unload all the media.
+    // if (audioRef.current) await audioRef.current.unloadAsync()
+    // if (videoRef.current) await videoRef.current.unloadAsync()
+    // audioRef.current = null
+    // videoRef.current = null
+    media.unload()
+    media.cleanup()
 
     // Here is where any modals that appear after a lesson is completed for the first time should appear. This will be useful when the gamification update is implemented.
     if (justCompleted.current) {
-      // If completing this lesson completes the whole set, show a celebratory modal.
       if (
-        activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
-          .length /
-          (thisSet.lessons.length - 1) ===
-        1
+        // Check to see if we should automatically add the next Story Set if this set is now 85% or more of the way completed.
+        !checkForAlmostCompleteSet(
+          thisSet,
+          activeGroup.addedSets.filter(set => set.id === thisSet.id)[0],
+          activeGroup,
+          activeDatabase,
+          addSet,
+          setShowNextSetUnlockedModal
+        ) &&
+        // If completing this lesson completes the whole set, show a celebratory modal.
+        !checkForFullyCompleteSet(
+          thisSet,
+          activeGroup.addedSets.filter(set => set.id === thisSet.id)[0],
+          setShowSetCompleteModal
+        )
       )
-        setShowSetCompleteModal(true)
-      // Otherwise, just go back.
-      else goBack()
+        goBack()
     } else goBack()
   }
 
@@ -798,71 +887,71 @@ const PlayScreen = ({
 
   return (
     <View style={styles.screen}>
-      <View style={styles.topHalfContainer}>
-        {!lessonType.includes('BookText') && (
-          <PlayScreenTitle
-            text={thisLesson.title}
-            backgroundColor={colors.white}
-          />
+      <View style={styles.middleAreaContainer}>
+        {lessonType !== lessonTypes.VIDEO_ONLY && (
+          <Animated.View
+            style={{
+              // Width/height instead of flex: 1 because of a PagerView bug.
+              width: '100%',
+              height: '100%',
+              position: 'absolute',
+              opacity:
+                lessonType === lessonTypes.BOOK ? 1 : playScreenSwiperOpacity,
+              zIndex:
+                activeChapter === chapters.TRAINING
+                  ? middleAreaVisibility.HIDE
+                  : middleAreaVisibility.SHOW
+            }}
+          >
+            <PlayScreenSwiper
+              playScreenSwiperRef={playScreenSwiperRef}
+              lessonTextContentRef={lessonTextContentRef}
+              iconName={thisSet.iconName}
+              thisLesson={thisLesson}
+              lessonType={lessonType}
+              playHandler={playHandler}
+              playFeedbackOpacity={playFeedbackOpacity}
+              playFeedbackZIndex={playFeedbackZIndex}
+              isMediaPlaying={isMediaPlaying}
+              sectionOffsets={sectionOffsets}
+              markLessonAsComplete={markLessonAsComplete}
+              isThisLessonComplete={isThisLessonComplete}
+            />
+          </Animated.View>
         )}
-        {!lessonType.includes('BookText') && (
-          <View style={styles.middleAreaContainer}>
-            {lessonType.includes('Questions') && (
-              <Animated.View
-                style={{
-                  position: 'absolute',
-                  opacity: albumArtSwiperOpacity,
-                  zIndex:
-                    activeChapter === chapters.TRAINING
-                      ? middleAreaVisibility.HIDE
-                      : middleAreaVisibility.SHOW
-                }}
-              >
-                <AlbumArtSwiper
-                  albumArtSwiperRef={albumArtSwiperRef}
-                  iconName={thisSet.iconName}
-                  thisLesson={thisLesson}
-                  playHandler={playHandler}
-                  playFeedbackOpacity={playFeedbackOpacity}
-                  playFeedbackZIndex={playFeedbackZIndex}
-                  isMediaPlaying={isMediaPlaying}
-                />
-              </Animated.View>
-            )}
-            {lessonType.includes('Video') && (
-              <Animated.View
-                style={{
-                  position: 'absolute',
-                  opacity: videoPlayerOpacity,
-                  zIndex:
-                    activeChapter === chapters.TRAINING
-                      ? middleAreaVisibility.SHOW
-                      : middleAreaVisibility.HIDE
-                }}
-              >
-                <VideoPlayer
-                  videoSource={
-                    chapterSources ? chapterSources[chapters.TRAINING] : null
-                  }
-                  videoRef={videoRef}
-                  onPlaybackStatusUpdate={onPlaybackStatusUpdate}
-                  setIsMediaPlaying={setIsMediaPlaying}
-                  fullscreenStatus={fullscreenStatus}
-                  setFullScreenStatus={status => setFullscreenStatus(status)}
-                  activeChapter={activeChapter}
-                  isMediaLoaded={isMediaLoaded}
-                />
-              </Animated.View>
-            )}
-          </View>
-        )}
-        {lessonType.includes('BookText') && (
-          <BookView thisLesson={thisLesson} />
+        {lessonType.includes('Video') && (
+          <Animated.View
+            style={{
+              width: '100%',
+              height: '100%',
+              position: 'absolute',
+              opacity: videoPlayerOpacity,
+              zIndex:
+                activeChapter === chapters.TRAINING
+                  ? middleAreaVisibility.SHOW
+                  : middleAreaVisibility.HIDE
+            }}
+          >
+            <VideoPlayer
+              videoSource={
+                chapterSources ? chapterSources[chapters.TRAINING] : null
+              }
+              videoRef={videoRef}
+              media={media}
+              onVideoPlaybackStatusUpdate={onVideoPlaybackStatusUpdate}
+              isMediaPlaying={isMediaPlaying}
+              setIsMediaPlaying={setIsMediaPlaying}
+              fullscreenStatus={fullscreenStatus}
+              activeChapter={activeChapter}
+              isMediaLoaded={isMediaLoaded}
+            />
+          </Animated.View>
         )}
       </View>
-      {/* Aside from the Book lesson type which has no media to play, we want to show the playback controls for controlling media. */}
+      {/* For any lessons except book lessons, show some audio controls. */}
       {lessonType !== lessonTypes.BOOK && (
         <SafeAreaView>
+          {/* Only lessons that have questions have separate chapters and require the chapter selector. */}
           {lessonType.includes('Questions') && (
             <ChapterSelector
               activeChapter={activeChapter}
@@ -888,34 +977,57 @@ const PlayScreen = ({
           />
         </SafeAreaView>
       )}
-
       {/* Modals */}
       <ShareModal
         isVisible={showShareLessonModal}
         hideModal={() => setShowShareLessonModal(false)}
-        closeText={translations.general.close}
+        closeText={t.general && t.general.close}
         lesson={thisLesson}
         lessonType={lessonType}
         set={thisSet}
       />
       <MessageModal
         isVisible={showSetCompleteModal}
-        hideModal={() => setShowSetCompleteModal(false)}
-        title={translations.general.popups.set_complete_title}
-        message={translations.general.popups.set_complete_message}
-        confirmText={translations.general.got_it}
+        hideModal={() => {
+          setShowSetCompleteModal(false)
+          goBack()
+        }}
+        title={t.sets && t.sets.set_complete_title}
+        message={t.sets && t.sets.set_complete_message}
+        confirmText={t.general && t.general.got_it}
         confirmOnPress={() => {
           setShowSetCompleteModal(false)
           goBack()
         }}
       >
-        <Image
-          source={require('../assets/gifs/set_complete.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            resizeMode: 'contain'
-          }}
+        <LottieView
+          style={{ width: '100%' }}
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/set_complete.json')}
+        />
+      </MessageModal>
+      <MessageModal
+        isVisible={showNextSetUnlockedModal}
+        hideModal={() => {
+          setShowNextSetUnlockedModal(false)
+          goBack()
+        }}
+        title={t.sets && t.sets.new_story_set_unlocked_title}
+        message={t.sets && t.sets.new_story_set_unlocked_message}
+        confirmText={t.general && t.general.got_it}
+        confirmOnPress={() => {
+          setShowNextSetUnlockedModal(false)
+          goBack()
+        }}
+      >
+        <LottieView
+          style={{ width: '100%' }}
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/new_set_unlocked.json')}
         />
       </MessageModal>
     </View>
@@ -930,13 +1042,9 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: colors.white
   },
-  topHalfContainer: {
-    justifyContent: 'space-evenly',
-    flex: 1
-  },
   middleAreaContainer: {
     width: '100%',
-    height: Dimensions.get('window').width - 80,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
   }

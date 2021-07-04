@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Alert, Image, Keyboard, StyleSheet, Text, View } from 'react-native'
+import { Keyboard, StyleSheet, Text, View } from 'react-native'
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input'
 import { connect } from 'react-redux'
 import WahaBackButton from '../components/WahaBackButton'
 import { scaleMultiplier } from '../constants'
-import MessageModal from '../modals/MessageModal'
+import { logUnlockMobilizationTools } from '../LogEventFunctions'
 import { setAreMobilizationToolsUnlocked } from '../redux/actions/areMobilizationToolsUnlockedActions'
 import { addSet } from '../redux/actions/groupsActions'
 import { setMTUnlockAttempts } from '../redux/actions/mtUnlockAttemptsActions'
@@ -20,8 +20,9 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
+    activeGroup: activeGroupSelector(state),
     security: state.security,
     mtUnlockAttempts: state.mtUnlockAttempts,
     groups: state.groups,
@@ -57,8 +58,9 @@ const MobilizationToolsUnlockScreen = ({
   navigation: { navigate, setOptions, goBack },
   // Props passed from redux.
   isRTL,
-  translations,
+  t,
   font,
+  activeGroup,
   security,
   mtUnlockAttempts,
   groups,
@@ -90,6 +92,8 @@ const MobilizationToolsUnlockScreen = ({
   /** Keeps track of whether the unlock success modal is visible. */
   const [unlockSuccessModal, setUnlockSuccessModal] = useState(false)
 
+  const [pinInputColor, setPinInputColor] = useState(colors.chateau)
+
   /**
    * useEffect function that updates every time the passcode input changes. If the user gets to 5 attempts without unlocking successfully, the app will lock them out from attempting to unlock again for 30 minutes.
    */
@@ -105,6 +109,10 @@ const MobilizationToolsUnlockScreen = ({
       return /[a-z]{2}.3.[0-9]+/.test(set.id)
     })
 
+  useEffect(() => {
+    pinRef.current.focus()
+  }, [])
+
   /**
    * Checks if the passcode the user enters is correct. If it is, show the success modal. If not, add one to the attempts tracker and show an alert that the code is incorrect.
    */
@@ -112,49 +120,21 @@ const MobilizationToolsUnlockScreen = ({
     if (fullPasscode === '281820') {
       Keyboard.dismiss()
       setAreMobilizationToolsUnlocked(true)
-      // setUnlockSuccessModal(true)
-      // navigate('MTUnlockSuccessful')
-
-      // Object.keys(database).forEach(key => {
-      //   // Go through each language.
-      //   if (key.length === 2) {
-      //     // If the language has MT content...
-      //     if (checkForMTContent(key)) {
-      //       // Get the first 2 MT Sets.
-      //       var mobToolsSet1 = database[key].sets.filter(set =>
-      //         /[a-z]{2}.3.1/.test(set.id)
-      //       )[0]
-
-      //       var mobToolsSet2 = database[key].sets.filter(set =>
-      //         /[a-z]{2}.3.2/.test(set.id)
-      //       )[0]
-
-      //       // Add the 2 MT Sets to every group in the language.
-      //       groups
-      //         .filter(group => group.language === key)
-      //         .forEach(group => {
-      //           addSet(group.name, group.id, mobToolsSet1)
-      //           addSet(group.name, group.id, mobToolsSet2)
-      //         })
-      //     }
-      //   }
-      // })
       navigate('SetsTabs', { screen: 'MobilizationTools' })
       setTimeout(() => setShowMTTabAddedSnackbar(true), 1000)
+      logUnlockMobilizationTools(activeGroup.language)
     } else {
       setMTUnlockAttempts(mtUnlockAttempts + 1)
-      // Make the input component "shake" when they enter in a wrong code.
-      pinRef.current.shake().then(() => setPasscode(''))
-      Alert.alert(
-        translations.passcode.popups.unlock_unsucessful_title,
-        translations.passcode.popups.unlock_unsucessful_message,
-        [
-          {
-            text: translations.general.ok,
-            onPress: () => {}
-          }
-        ]
-      )
+
+      // Turn the pin input red for a second to further indicate that the passcode entered was incorrect.
+      setPinInputColor(colors.red)
+      setTimeout(() => setPinInputColor(colors.chateau), 500)
+
+      // Make the pin input "shake" when they enter in a wrong code.
+      pinRef.current.shake().then(() => {
+        setPasscode('')
+        pinRef.current.focus()
+      })
     }
   }
 
@@ -164,17 +144,14 @@ const MobilizationToolsUnlockScreen = ({
    */
   const getTimeoutText = () => {
     if (Date.now() - security.mtUnlockTimeout < 0)
-      return (
-        translations.passcode.too_many_attempts_label +
-        ' ' +
-        Math.round((security.mtUnlockTimeout - Date.now()) / 60000) +
-        ' ' +
-        translations.passcode.minutes_label
-      )
+      return `${t.mobilization_tools &&
+        t.mobilization_tools.too_many_attempts} ${Math.round(
+        (security.mtUnlockTimeout - Date.now()) / 60000
+      )} ${t.mobilization_tools && t.mobilization_tools.minutes}.`
     else if (mtUnlockAttempts === 3)
-      return translations.passcode.two_attempt_remaining_label
+      return t.mobilization_tools && t.mobilization_tools.two_attempts_remaining
     else if (mtUnlockAttempts === 4)
-      return translations.passcode.one_attempt_remaining_label
+      return t.mobilization_tools && t.mobilization_tools.one_attempt_remaining
     else return ''
   }
 
@@ -196,7 +173,7 @@ const MobilizationToolsUnlockScreen = ({
           }
         ]}
       >
-        {translations.passcode.enter_passcode_text}
+        {t.mobilization_tools && t.mobilization_tools.enter_code}
       </Text>
       <SmoothPinCodeInput
         ref={pinRef}
@@ -219,7 +196,7 @@ const MobilizationToolsUnlockScreen = ({
         cellSize={50 * scaleMultiplier}
         cellStyle={{
           borderRadius: 25,
-          borderColor: colors.chateau,
+          borderColor: pinInputColor,
           borderWidth: 2,
           marginLeft: 3,
           marginRight: 3
@@ -247,30 +224,6 @@ const MobilizationToolsUnlockScreen = ({
       >
         {getTimeoutText()}
       </Text>
-      {/* Modals */}
-      <MessageModal
-        isVisible={unlockSuccessModal}
-        hideModal={() => {
-          setUnlockSuccessModal(false)
-          navigate('SetsTabs', { screen: 'MobilizationTools' })
-        }}
-        title='Mobilization Tools unlocked successfully!'
-        message=''
-        confirmText='Check it out'
-        confirmOnPress={() => {
-          setUnlockSuccessModal(false)
-          navigate('SetsTabs', { screen: 'MobilizationTools' })
-        }}
-      >
-        <Image
-          source={require('../assets/gifs/unlock_mob_tools.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            resizeMode: 'contain'
-          }}
-        />
-      </MessageModal>
     </View>
   )
 }

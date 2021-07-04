@@ -1,14 +1,17 @@
 import { decode, encode } from 'base-64'
 import { Audio } from 'expo-av'
 import * as Font from 'expo-font'
+import * as ScreenOrientation from 'expo-screen-orientation'
 import React, { useEffect, useState } from 'react'
 import { StatusBar, View } from 'react-native'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
-import { lockPortrait } from './constants'
+import { isTablet, lockPortrait } from './constants'
 import Root from './navigation/Root'
 import { persistor, store } from './redux/store'
 import { colors } from './styles/colors'
+
+import('./ReactotronConfig').then(() => {})
 
 // These are only here because of some wack errors. Please do not delete.
 if (!global.btoa) {
@@ -33,8 +36,7 @@ export default function App () {
     // Load up all the fonts.
     loadFonts()
 
-    // Lock our orientation to portrait.
-    lockPortrait(() => {})
+    isTablet ? ScreenOrientation.unlockAsync() : lockPortrait(() => {})
 
     // Set up some config options for app audio.
     Audio.setAudioModeAsync({

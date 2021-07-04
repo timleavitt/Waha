@@ -22,7 +22,8 @@ LogBox.ignoreLogs(['Animated: `useNativeDriver`', 'Warning: Cannot update'])
 function mapStateToProps (state) {
   return {
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations,
+
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL,
     activeDatabase: activeDatabaseSelector(state),
     activeGroup: activeGroupSelector(state),
@@ -51,7 +52,8 @@ const AddSetScreen = ({
   },
   // Props passed from redux.
   font,
-  translations,
+
+  t,
   isRTL,
   activeDatabase,
   activeGroup,
@@ -83,27 +85,28 @@ const AddSetScreen = ({
   useEffect(() => {
     switch (category) {
       case 'Foundational':
-        setHeaderTitle(translations.add_set.header_foundational)
+        setHeaderTitle(t.sets && t.sets.add_foundational_set)
         break
       case 'Topical':
-        setHeaderTitle(translations.add_set.header_topical)
+        setHeaderTitle(t.sets && t.sets.add_topical_set)
 
         // Start off array of tags with the 'All' label since we always display that option.
-        var tags = [translations.add_set.all_tag_label]
+        var tags = [t.general && t.general.all]
 
         // Go through each Topical Story Set and add all the various tags to our tag array.
         activeDatabase.sets
           .filter(set => getSetInfo('category', set.id) === 'Topical')
           .forEach(topicalSet => {
-            topicalSet.tags.forEach(tag => {
-              // If we find a tag that hasn't been added yet, add it.
-              if (!tags.includes(tag)) tags.push(tag)
-            })
+            topicalSet.tags &&
+              topicalSet.tags.forEach(tag => {
+                // If we find a tag that hasn't been added yet, add it.
+                if (!tags.includes(tag)) tags.push(tag)
+              })
           })
         setTags(tags)
         break
       case 'MobilizationTools':
-        setHeaderTitle(translations.add_set.header_mt)
+        setHeaderTitle(t.sets && t.sets.add_mobilization_tool)
         break
     }
   }, [])
@@ -191,8 +194,7 @@ const AddSetScreen = ({
           // Filter for Topical Story Sets that match the currently selected tag (if there is one).
           .filter(topicalAddedSet =>
             // If the selected tag is blank (meaning nothing has been selected) or 'All' is selected, show all the Topical Story Sets. Otherwise, filter by the selected tag.
-            selectedTag === '' ||
-            selectedTag === translations.add_set.all_tag_label
+            selectedTag === '' || selectedTag === t.general.all
               ? true
               : topicalAddedSet.tags.some(tag => selectedTag === tag)
           )
@@ -285,8 +287,17 @@ const AddSetScreen = ({
         ListFooterComponent={() => <WahaSeparator />}
         ListHeaderComponent={() => <WahaSeparator />}
         renderItem={renderSetItem}
+        contentContainerStyle={{
+          flexGrow: 1
+        }}
         ListEmptyComponent={() => (
-          <View style={{ width: '100%', marginVertical: 20 }}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
             <Text
               style={StandardTypography(
                 { font, isRTL },
@@ -296,7 +307,7 @@ const AddSetScreen = ({
                 colors.chateau
               )}
             >
-              {translations.add_set.no_more_sets_text}
+              {t.sets && t.sets.no_more_sets}
             </Text>
           </View>
         )}
@@ -304,7 +315,7 @@ const AddSetScreen = ({
       {/* Modals */}
       <SnackBar
         visible={showSnackbar}
-        textMessage={translations.add_set.set_added_message}
+        textMessage={t.sets && t.sets.set_added}
         messageStyle={{
           color: colors.white,
           fontSize: 24 * scaleMultiplier,

@@ -8,7 +8,7 @@ import * as FileSystem from 'expo-file-system'
 import firebase from 'firebase'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { scaleMultiplier } from '../constants'
+import { isTablet, scaleMultiplier, storageMode } from '../constants'
 import db from '../firebase/db'
 import { appVersion } from '../modeSwitch'
 import { changeActiveGroup } from '../redux/actions/activeGroupActions'
@@ -19,7 +19,7 @@ import {
   storeLanguageData,
   storeLanguageSets
 } from '../redux/actions/databaseActions'
-import { addSet, deleteGroup } from '../redux/actions/groupsActions'
+import { addSet, deleteGroup, editGroup } from '../redux/actions/groupsActions'
 import { updateConnectionStatus } from '../redux/actions/networkActions'
 import {
   activeDatabaseSelector,
@@ -37,7 +37,7 @@ function mapStateToProps (state) {
     database: state.database,
     activeDatabase: activeDatabaseSelector(state),
     isConnected: state.network.isConnected,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     activeGroup: activeGroupSelector(state),
     security: state.security,
     languageCoreFilesCreatedTimes: state.database.languageCoreFilesCreatedTimes,
@@ -78,7 +78,21 @@ function mapDispatchToProps (dispatch) {
       dispatch(clearLanguageCoreFilesToUpdate()),
     addSet: (groupName, groupID, set) => {
       dispatch(addSet(groupName, groupID, set))
-    }
+    },
+    editGroup: (
+      oldGroupName,
+      newGroupName,
+      emoji,
+      shouldShowMobilizationToolsTab
+    ) =>
+      dispatch(
+        editGroup(
+          oldGroupName,
+          newGroupName,
+          emoji,
+          shouldShowMobilizationToolsTab
+        )
+      )
   }
 }
 
@@ -91,7 +105,7 @@ const MainDrawer = ({
   database,
   activeDatabase,
   isConnected,
-  translations,
+  t,
   activeGroup,
   security,
   languageCoreFilesCreatedTimes,
@@ -101,6 +115,7 @@ const MainDrawer = ({
   groups,
   installedLanguageInstances,
   areMobilizationToolsUnlocked,
+
   updateConnectionStatus,
   storeLanguageData,
   storeLanguageSets,
@@ -109,19 +124,9 @@ const MainDrawer = ({
   deleteGroup,
   storeLanguageCoreFileCreatedTime,
   clearLanguageCoreFilesToUpdate,
-  addSet
+  addSet,
+  editGroup
 }) => {
-  /**
-   * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the SetsTabs navigator because this is the only spot we should be able to swipe to open the drawer.
-   * @param {string} route - The route passed from the navigation component.
-   * @return {boolean} - Whether gestures should be enabled or not.
-   */
-  function getGestureEnabled (route) {
-    const routeName = getFocusedRouteNameFromRoute(route) ?? 'SetsTabs'
-    if (routeName === 'SetsTabs') return true
-    else return false
-  }
-
   /** useEffect function that adds a listener for listening to network changes. */
   useEffect(() => {
     // Add a listener for connection status and update the redux state accordingly.
@@ -153,12 +158,8 @@ const MainDrawer = ({
           .getMetadata()
           .then(metadata =>
             storeLanguageCoreFileCreatedTime(
-              // For when file name includes "v1".
-              `${language}-${fileName.slice(0, -3)}`,
+              `${language}-${fileName}`,
               metadata.timeCreated
-              // For when file name DOESN'T includes "v1".
-              // language + '-' + fileName,
-              // metadata.timeCreated
             )
           )
       })
@@ -172,6 +173,14 @@ const MainDrawer = ({
         addSet(group.name, group.id, { id: group.language + '.3.1' })
         addSet(group.name, group.id, { id: group.language + '.3.2' })
       }
+    })
+  }, [])
+
+  // (TEMP) Show the MT tab for every group.
+  useEffect(() => {
+    groups.forEach(group => {
+      if (group.shouldShowMobilizationToolsTab === undefined)
+        editGroup(group.name, group.name, group.emoji, true)
     })
   }, [])
 
@@ -200,7 +209,7 @@ const MainDrawer = ({
             }
           })
           .catch(error => {
-            console.log('Error retrieving data from Firestore.')
+            console.log('Error retrieving languages data from Firestore.')
           })
 
         // Fetch data from the Story Sets Firestore collection. Get all Story Sets of the current language.
@@ -225,7 +234,7 @@ const MainDrawer = ({
             }
           })
           .catch(error => {
-            console.log('Error retrieving data from Firestore.')
+            console.log('Error retrieving sets data from Firestore.')
           })
       }
     })
@@ -248,6 +257,7 @@ const MainDrawer = ({
             // Set shouldWrite to true. This way, when we fetch data for the Story Sets for this language, we know we're safe to write to redux.
             shouldWrite = true
 
+            // console.log(t.groups)
             // Store our language info in redux.
             storeLanguageData(doc.data(), activeGroup.language)
 
@@ -256,13 +266,10 @@ const MainDrawer = ({
               // Set the file extension for the core file we're currently checking.
               var fileExtension = fileName.includes('header') ? 'png' : 'mp3'
 
-              // PRODUCTION FIREBASE URL
-              // Always have this uncommented when it's time to build a new version.
-              var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${activeGroup.language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
-
-              // TEST FIREBASE URL
-              // Use this for test Firebase storage.
-              // var url = `https://firebasestorage.googleapis.com/v0/b/waha-app-test-db.appspot.com/o/${activeGroup.language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
+              var url =
+                storageMode === 'test'
+                  ? `https://firebasestorage.googleapis.com/v0/b/waha-app-test-db.appspot.com/o/${activeGroup.language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
+                  : `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${activeGroup.language}%2Fother%2F${fileName}.${fileExtension}?alt=media`
 
               // Check the timeCreated of this core file in Firebase storage.
               firebase
@@ -273,22 +280,22 @@ const MainDrawer = ({
                   // If the created time of this core file has already been stored previously AND the created time of the core file in Firebase is different from the created time that's stored in redux...
                   if (
                     languageCoreFilesCreatedTimes[
-                      `${activeGroup.language}-${fileName.slice(0, -3)}`
+                      `${activeGroup.language}-${fileName}`
                     ] &&
                     timeCreated !==
                       languageCoreFilesCreatedTimes[
-                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        `${activeGroup.language}-${fileName}`
                       ]
                   ) {
                     // Add the core file to our redux array of files to update, assuming that it hasn't already been added.
                     if (
                       !languageCoreFilesToUpdate.includes(
-                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        `${activeGroup.language}-${fileName}`
                       )
                     ) {
                       console.log(`${fileName} needs to be replaced.\n`)
                       addLanguageCoreFileToUpdate(
-                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        `${activeGroup.language}-${fileName}`
                       )
                     }
                   }
@@ -306,21 +313,18 @@ const MainDrawer = ({
                   // If it isn't downloaded...
                   if (
                     !contents.includes(
-                      `${activeGroup.language}-${fileName.slice(
-                        0,
-                        -3
-                      )}.${fileExtension}`
+                      `${activeGroup.language}-${fileName}.${fileExtension}`
                     )
                   ) {
                     // Add the core file to our redux array of files to download, assuming that it hasn't already been added.
                     if (
                       !languageCoreFilesToUpdate.includes(
-                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        `${activeGroup.language}-${fileName}`
                       )
                     ) {
                       console.log(`${fileName} needs to be added.\n`)
                       addLanguageCoreFileToUpdate(
-                        `${activeGroup.language}-${fileName.slice(0, -3)}`
+                        `${activeGroup.language}-${fileName}`
                       )
                     }
                   }
@@ -331,7 +335,9 @@ const MainDrawer = ({
         }
       })
       .catch(error => {
-        console.log('Error retrieving data from Firestore.')
+        console.log(
+          'Error retrieving languages data from Firestore (in checking created times part).'
+        )
       })
 
     // Fetch data from the Story Sets Firestore collection. Get all Story Sets of the current language.
@@ -356,20 +362,33 @@ const MainDrawer = ({
         }
       })
       .catch(error => {
-        console.log('Error retrieving data from Firestore.')
+        console.log('Error retrieving sets data from Firestore.')
       })
   }, [Object.keys(downloads).length, activeGroup])
+
+  /**
+   * Determines whether a screen should be able to access the navigation drawer via gesture. Should only return true on the SetsTabs navigator because this is the only spot we should be able to swipe to open the drawer.
+   * @param {string} route - The route passed from the navigation component.
+   * @return {boolean} - Whether gestures should be enabled or not.
+   */
+  function getGestureEnabled (route) {
+    const routeName = getFocusedRouteNameFromRoute(route)
+
+    if (routeName === undefined) return security.securityEnabled ? false : true
+    else return routeName === 'SetsTabs' ? true : false
+  }
 
   return (
     <NavigationContainer>
       <Drawer.Navigator
         drawerPosition={isRTL ? 'right' : 'left'}
-        drawerType='back'
+        drawerType={'back'}
         drawerContent={props => <WahaDrawer {...props} />}
         drawerStyle={{
-          width: '80%'
+          width: isTablet ? '50%' : '80%'
         }}
         edgeWidth={75 * scaleMultiplier}
+        initialRouteName='MainStack'
       >
         <Drawer.Screen
           options={({ route }) => ({

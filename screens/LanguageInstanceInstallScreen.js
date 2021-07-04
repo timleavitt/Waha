@@ -41,10 +41,12 @@ import { colors } from '../styles/colors'
 import { SystemTypography } from '../styles/typography'
 import ar from '../translations/ar.json'
 import en from '../translations/en.json'
+import hi from '../translations/hi.json'
 
 i18n.translations = {
   en,
-  ar
+  ar,
+  hi
 }
 
 function mapStateToProps (state) {
@@ -73,8 +75,24 @@ function mapDispatchToProps (dispatch) {
       dispatch(deleteLanguageData(languageInstanceID)),
     deleteGroup: groupName => dispatch(deleteGroup(groupName)),
     incrementGlobalGroupCounter: () => dispatch(incrementGlobalGroupCounter()),
-    createGroup: (groupName, language, emoji, groupID, groupNumber) =>
-      dispatch(createGroup(groupName, language, emoji, groupID, groupNumber)),
+    createGroup: (
+      groupName,
+      language,
+      emoji,
+      shouldShowMobilizationToolsTab,
+      groupID,
+      groupNumber
+    ) =>
+      dispatch(
+        createGroup(
+          groupName,
+          language,
+          emoji,
+          shouldShowMobilizationToolsTab,
+          groupID,
+          groupNumber
+        )
+      ),
     changeActiveGroup: name => {
       dispatch(changeActiveGroup(name))
     },
@@ -152,7 +170,7 @@ const LanguageInstanceInstallScreen = ({
     setOptions(
       routeName === 'SubsequentlLanguageInstanceInstall'
         ? {
-            headerTitle: i18n.t('newLanguage')
+            headerTitle: i18n.t('add_language')
           }
         : null
     )
@@ -252,6 +270,7 @@ const LanguageInstanceInstallScreen = ({
             groupNames[selectedLanguage],
             selectedLanguage,
             'default',
+            true,
             database.globalGroupCounter,
             groups.length + 1
           )
@@ -277,12 +296,16 @@ const LanguageInstanceInstallScreen = ({
         setIsFetchingFirebaseData(false)
         deleteLanguageData(selectedLanguage)
 
-        Alert.alert(i18n.t('fetchErrorTitle'), i18n.t('fetchErrorMessage'), [
-          {
-            text: i18n.t('ok'),
-            onPress: () => {}
-          }
-        ])
+        Alert.alert(
+          i18n.t('fetch_error_title'),
+          i18n.t('fetch_error_message'),
+          [
+            {
+              text: i18n.t('ok'),
+              onPress: () => {}
+            }
+          ]
+        )
       })
   }
 
@@ -301,7 +324,8 @@ const LanguageInstanceInstallScreen = ({
     // If search text matches with a language family name, show the whole language family. If it doesn't, show the specific languages it matches with.
     const filterBySearch = languageFamily => {
       if (
-        languageFamily.i18nName
+        i18n
+          .t(languageFamily.i18nName)
           .toLowerCase()
           .includes(searchTextInput.toLowerCase())
       )
@@ -454,11 +478,19 @@ const LanguageInstanceInstallScreen = ({
               colors.shark
             )}
           >
-            {i18n.t('selectLanguage')}
+            {i18n.t('select_language')}
           </Text>
         </View>
       )}
-      <View style={styles.searchBarContainer}>
+      <View
+        style={[
+          styles.searchBarContainer,
+          {
+            width: Dimensions.get('window').width - 40,
+            maxWidth: 500
+          }
+        ]}
+      >
         <View style={styles.searchIconContainer}>
           <Icon
             name='search'
@@ -488,31 +520,6 @@ const LanguageInstanceInstallScreen = ({
           sections={getLanguageData()}
           ItemSeparatorComponent={() => <WahaSeparator />}
           SectionSeparatorComponent={() => <WahaSeparator />}
-          ListEmptyComponent={
-            !searchTextInput && (
-              <View>
-                <View
-                  style={{
-                    width: '100%',
-                    marginBottom: 18 * scaleMultiplier
-                  }}
-                >
-                  <Text
-                    style={SystemTypography(
-                      false,
-                      'p',
-                      'Regular',
-                      'center',
-                      colors.chateau
-                    )}
-                  >
-                    {i18n.t('noMoreLanguages')}
-                  </Text>
-                </View>
-                <WahaSeparator />
-              </View>
-            )
-          }
           keyExtractor={item => item.wahaID}
           renderItem={({ item, section }) => renderLanguageItem(item, section)}
           renderSectionHeader={({ section }) => renderLanguageHeader(section)}
@@ -540,7 +547,7 @@ const LanguageInstanceInstallScreen = ({
                 ? ''
                 : routeName === 'InitialLanguageInstanceInstall'
                 ? 'Continue'
-                : i18n.t('addLanguage') + ' '
+                : i18n.t('add_language') + ' '
               : ''
           }
           style={{
@@ -588,7 +595,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   searchBarContainer: {
-    width: Dimensions.get('window').width - 40,
     borderRadius: 30,
     borderWidth: 2,
     borderColor: colors.porcelain,

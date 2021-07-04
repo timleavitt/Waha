@@ -1,4 +1,7 @@
-import { SET_SHOW_MT_TAB_ADDED_SNACKBAR } from '../actions/popupsActions'
+import {
+  SET_SHOW_MT_TAB_ADDED_SNACKBAR,
+  SET_SHOW_PASSCODE_SET_SNACKBAR
+} from '../actions/popupsActions'
 
 /**
  * The popups reducer stores various states for any modals or snackbars that need to be triggered globally. This state is persisted across app restarts.
@@ -16,6 +19,11 @@ export function popups (
       return {
         ...state,
         showMTTabAddedSnackbar: params.toSet
+      }
+    case SET_SHOW_PASSCODE_SET_SNACKBAR:
+      return {
+        ...state,
+        showPasscodeSetSnackbar: params.toSet
       }
     default:
       return state

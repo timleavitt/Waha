@@ -27,8 +27,9 @@ function mapStateToProps (state) {
   return {
     security: state.security,
     font: getLanguageFont(activeGroupSelector(state).language),
+
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isRTL: activeDatabaseSelector(state).isRTL
   }
 }
@@ -53,8 +54,9 @@ const PianoAppScreen = ({
   // Props passed from redux.
   security,
   font,
+
   activeGroup,
-  translations,
+  t,
   isRTL,
   setIsMuted,
   setIsTimedOut
@@ -132,7 +134,7 @@ const PianoAppScreen = ({
             { paddingHorizontal: 10 }
           ]}
         >
-          {translations.security.game_screen_title}
+          {t.security && t.security.game_screen_title}
         </Text>
       </View>
       <View>

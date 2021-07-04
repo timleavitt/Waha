@@ -20,6 +20,7 @@ const LanguageItem = ({
   nativeName,
   localeName,
   font,
+
   logoSource,
   onPress,
   isSelected,

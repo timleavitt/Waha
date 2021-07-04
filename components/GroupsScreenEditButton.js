@@ -12,7 +12,8 @@ function mapStateToProps (state) {
   return {
     isRTL: activeDatabaseSelector(state).isRTL,
     font: getLanguageFont(activeGroupSelector(state).language),
-    translations: activeDatabaseSelector(state).translations
+
+    t: activeDatabaseSelector(state).translations
   }
 }
 
@@ -26,7 +27,8 @@ const GroupsScreenEditButton = ({
   // Props passed from redux.
   isRTL,
   font,
-  translations
+
+  t
 }) => {
   return (
     <TouchableOpacity style={styles.editButtonContainer} onPress={onPress}>
@@ -45,9 +47,7 @@ const GroupsScreenEditButton = ({
           }
         ]}
       >
-        {isEditing
-          ? translations.groups.done_button_label
-          : translations.groups.edit_button_label}
+        {isEditing ? t.general && t.general.done : t.general && t.general.edit}
       </Text>
     </TouchableOpacity>
   )
@@ -55,10 +55,10 @@ const GroupsScreenEditButton = ({
 
 const styles = StyleSheet.create({
   editButtonContainer: {
-    width: 80,
     height: '100%',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingHorizontal: 20
   }
 })
 

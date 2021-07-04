@@ -1,13 +1,16 @@
+import LottieView from 'lottie-react-native'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import {
   getLessonInfo,
+  isTablet,
   itemHeights,
   lessonTypes,
   scaleMultiplier
 } from '../constants'
 import { removeDownload } from '../redux/actions/downloadActions'
+import { setShowTrailerHighlights } from '../redux/actions/persistedPopupsActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -22,9 +25,11 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state),
     downloads: state.downloads,
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     isConnected: state.network.isConnected,
-    font: getLanguageFont(activeGroupSelector(state).language)
+    font: getLanguageFont(activeGroupSelector(state).language),
+    areMobilizationToolsUnlocked: state.areMobilizationToolsUnlocked,
+    showTrailerHighlights: state.persistedPopups.showTrailerHighlights
   }
 }
 
@@ -32,6 +37,9 @@ function mapDispatchToProps (dispatch) {
   return {
     removeDownload: lessonID => {
       dispatch(removeDownload(lessonID))
+    },
+    setShowTrailerHighlights: toSet => {
+      dispatch(setShowTrailerHighlights(toSet))
     }
   }
 }
@@ -51,41 +59,36 @@ const LessonItem = ({
   // Props passed from a parent component.
   thisLesson,
   goToPlayScreen,
-  thisSetBookmark,
+  isBookmark,
+  isComplete,
   lessonType,
-  thisSetProgress,
   downloadedLessons,
   showDownloadLessonModal,
   showDeleteLessonModal,
+  scriptureList,
+  isInInfoMode,
+  animationFinished,
+  // Props passed from copilot.
+  copilot = null,
   // Props passed from redux.
   primaryColor,
   isRTL,
   activeGroup,
   downloads,
-  translations,
+  t,
   isConnected,
   font,
+  areMobilizationToolsUnlocked,
+  showTrailerHighlights,
+  setShowTrailerHighlights,
   removeDownload
 }) => {
+  // console.log(`${Date.now()} Lesson ${thisLesson.id} is re-rendering.`)
   /** Keeps track of whether this lesson is downloaded or not. */
   const [isFullyDownloaded, setIsFullyDownloaded] = useState(false)
 
   /** Keeps track of whether this lesson is currently downloading or not. */
   const [isDownloading, setIsDownloading] = useState(false)
-
-  /** Keeps track of whether this lesson is the bookmark for the set it's in. */
-  const [isBookmark, setIsBookmark] = useState(false)
-
-  /** Keeps track of whether this lesson is complete or not. */
-  const [isComplete, setIsComplete] = useState(false)
-
-  /** useEffect function that sets the isComplete and isBookmark state whenever the progress for the set that this lesson is in updates. */
-  useEffect(() => {
-    setIsComplete(
-      thisSetProgress.includes(getLessonInfo('index', thisLesson.id))
-    )
-    setIsBookmark(getLessonInfo('index', thisLesson.id) === thisSetBookmark)
-  }, [thisSetProgress])
 
   /** useEffect function that removes an active download from the downloads redux object after it finishes. */
   useEffect(() => {
@@ -140,20 +143,38 @@ const LessonItem = ({
 
   return (
     <View
+      {...copilot}
       style={[
         styles.lessonItemContainer,
         {
           flexDirection: isRTL ? 'row-reverse' : 'row',
-          height: itemHeights[font].LessonItem
+          paddingVertical: isInInfoMode ? (isTablet ? 20 : 10) : 0,
+          paddingLeft: 20,
+          // alignItems: isInInfoMode ? 'flex-start' : 'center',
+          alignItems: 'center',
+          minHeight: isTablet
+            ? itemHeights[font].LessonItem + 15
+            : itemHeights[font].LessonItem,
+          height: isInInfoMode
+            ? null
+            : isTablet
+            ? itemHeights[font].LessonItem + 15
+            : itemHeights[font].LessonItem
         }
       ]}
     >
       <TouchableOpacity
         style={[
           styles.touchableAreaContainer,
-          { flexDirection: isRTL ? 'row-reverse' : 'row' }
+          {
+            flexDirection: isRTL ? 'row-reverse' : 'row',
+            justifyContent: isRTL ? 'flex-end' : 'flex-start'
+          }
         ]}
-        onPress={() =>
+        onPress={() => {
+          if (areMobilizationToolsUnlocked && showTrailerHighlights)
+            setShowTrailerHighlights(false)
+
           goToPlayScreen({
             thisLesson: thisLesson,
             isAudioAlreadyDownloaded: downloadedLessons.includes(thisLesson.id),
@@ -164,7 +185,7 @@ const LessonItem = ({
             lessonType: lessonType,
             downloadedLessons: downloadedLessons
           })
-        }
+        }}
       >
         <View style={styles.completeStatusContainer}>
           <Icon
@@ -191,64 +212,163 @@ const LessonItem = ({
           ]}
         >
           <Text
-            style={StandardTypography(
-              { font, isRTL },
-              'h4',
-              'Bold',
-              'left',
-              isComplete ? colors.chateau : colors.shark
-            )}
+            // adjustsFontSizeToFit
+            style={[
+              StandardTypography(
+                { font, isRTL },
+                'h4',
+                'Bold',
+                'left',
+                isComplete ? colors.chateau : colors.shark
+              ),
+              {
+                // flex: 1
+              }
+            ]}
             numberOfLines={2}
           >
             {thisLesson.title}
           </Text>
+          {/* <Text
+          // numberOfLines={2}
+          > */}
           <Text
-            style={StandardTypography(
-              { font, isRTL },
-              'd',
-              'Regular',
-              'left',
-              colors.chateau
-            )}
-            numberOfLines={1}
+            style={[
+              StandardTypography(
+                { font, isRTL },
+                'd',
+                'Regular',
+                'left',
+                colors.chateau
+              ),
+              {
+                // fontSize: 13 * scaleMultiplier,
+              }
+            ]}
+            // numberOfLines={1}
           >
             {getLessonInfo('subtitle', thisLesson.id)}
           </Text>
+          {/* {isInInfoMode && (
+            <Text
+              style={[
+                StandardTypography(
+                  { font, isRTL },
+                  'd',
+                  'Regular',
+                  'left',
+                  colors.tuna
+                ),
+                {
+                  fontSize: 13 * scaleMultiplier
+                }
+              ]}
+            >
+              {' '}
+              •{' '}
+            </Text>
+          )} */}
+          {isInInfoMode && (
+            <View style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}>
+              {/* {lessonType.includes('Audio') && (
+                <Icon name='volume' size={20} color={colors.chateau} />
+              )}
+              {lessonType.includes('Questions') && (
+                <Icon name='help' size={20} color={colors.chateau} />
+              )} */}
+              {lessonType.includes('Video') && (
+                <Icon name='video' size={20} color={colors.chateau} />
+              )}
+              {lessonType.includes('BookText') && (
+                <Icon name='description' size={20} color={colors.chateau} />
+              )}
+            </View>
+          )}
+          {isInInfoMode && thisLesson.scripture && (
+            <Text
+              style={StandardTypography(
+                { font, isRTL },
+                'd',
+                'Regular',
+                'left',
+                colors.chateau
+              )}
+              // numberOfLines={2}
+            >
+              {scriptureList}
+            </Text>
+          )}
+          {/* </Text> */}
         </View>
+        {thisLesson.id.includes('3.1.1') &&
+          areMobilizationToolsUnlocked &&
+          showTrailerHighlights && (
+            <View
+              style={{
+                height: '100%',
+                position: 'absolute',
+                top: -15,
+                right: -25,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <LottieView
+                autoPlay
+                loop
+                colorFilters={[
+                  {
+                    keypath: 'hand 2',
+                    color: primaryColor
+                  }
+                ]}
+                resizeMode='cover'
+                style={{ height: '120%' }}
+                source={require('../assets/lotties/tap.json')}
+              />
+            </View>
+          )}
       </TouchableOpacity>
-      <DownloadStatusIndicator
-        isFullyDownloaded={isFullyDownloaded}
-        isDownloading={isDownloading}
-        showDeleteLessonModal={showDeleteLessonModal}
-        showDownloadLessonModal={showDownloadLessonModal}
-        lessonID={thisLesson.id}
-        lessonType={lessonType}
-      />
+      <View
+        style={{
+          width: 22 * scaleMultiplier + 40
+        }}
+      >
+        {!isInInfoMode && (
+          <DownloadStatusIndicator
+            isFullyDownloaded={isFullyDownloaded}
+            isDownloading={isDownloading}
+            showDeleteLessonModal={showDeleteLessonModal}
+            showDownloadLessonModal={showDownloadLessonModal}
+            lessonID={thisLesson.id}
+            lessonType={lessonType}
+          />
+        )}
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   lessonItemContainer: {
-    flexDirection: 'row',
     backgroundColor: colors.aquaHaze,
     flex: 1,
-    paddingLeft: 20
+    alignItems: 'center'
   },
   touchableAreaContainer: {
-    justifyContent: 'flex-start',
-    flexDirection: 'row',
-    alignContent: 'center',
-    flex: 1
+    alignItems: 'center',
+    flex: 1,
+    overflow: 'visible'
   },
   completeStatusContainer: {
     justifyContent: 'center',
+    alignItems: 'center',
     width: 24 * scaleMultiplier
   },
   titlesContainer: {
     flexDirection: 'column',
-    justifyContent: 'center',
-    flex: 1
+    flex: 1,
+    height: '100%'
   }
 })
 
@@ -260,7 +380,8 @@ const styles = StyleSheet.create({
 */
 const areEqual = (prevProps, nextProps) => {
   return (
-    prevProps.thisSetProgress === nextProps.thisSetProgress &&
+    prevProps.isBookmark === nextProps.isBookmark &&
+    prevProps.isComplete === nextProps.isComplete &&
     prevProps.downloads[prevProps.thisLesson.id] ===
       nextProps.downloads[nextProps.thisLesson.id] &&
     prevProps.downloads[prevProps.thisLesson.id + 'v'] ===
@@ -268,7 +389,9 @@ const areEqual = (prevProps, nextProps) => {
     prevProps.downloadedLessons.includes(prevProps.thisLesson.id) ===
       nextProps.downloadedLessons.includes(nextProps.thisLesson.id) &&
     prevProps.downloadedLessons.includes(prevProps.thisLesson.id + 'v') ===
-      nextProps.downloadedLessons.includes(nextProps.thisLesson.id + 'v')
+      nextProps.downloadedLessons.includes(nextProps.thisLesson.id + 'v') &&
+    prevProps.isInInfoMode === nextProps.isInInfoMode &&
+    prevProps.showTrailerHighlights === nextProps.showTrailerHighlights
   )
 }
 

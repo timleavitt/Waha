@@ -13,6 +13,7 @@ import PianoPasscodeDisplay from '../components/PianoPasscodeDisplay'
 import WahaBackButton from '../components/WahaBackButton'
 import WahaButton from '../components/WahaButton'
 import { logEnableSecurityMode } from '../LogEventFunctions'
+import { setShowPasscodeSetSnackbar } from '../redux/actions/popupsActions'
 import { setCode, setSecurityEnabled } from '../redux/actions/securityActions'
 import {
   activeDatabaseSelector,
@@ -23,7 +24,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     security: state.security,
     isRTL: activeDatabaseSelector(state).isRTL,
@@ -34,7 +35,9 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
   return {
     setSecurityEnabled: toSet => dispatch(setSecurityEnabled(toSet)),
-    setCode: code => dispatch(setCode(code))
+    setCode: code => dispatch(setCode(code)),
+    setShowPasscodeSetSnackbar: toSet =>
+      dispatch(setShowPasscodeSetSnackbar(toSet))
   }
 }
 
@@ -51,32 +54,30 @@ const PianoPasscodeSetScreen = ({
     params: { passcode } = { passcode: null }
   },
   // Props passed from redux.
-  translations,
+  t,
   font,
   security,
   isRTL,
   activeGroup,
   setSecurityEnabled,
-  setCode
+  setCode,
+  setShowPasscodeSetSnackbar
 }) => {
   /** Keeps track of the passcode that the user is entering into the piano. */
   const [localPasscode, setLocalPasscode] = useState('')
 
   /** The text to display above the piano telling the user what to do. */
   const instructionText = {
-    PianoPasscodeSet: translations.security.choose_key_order_label,
-    PianoPasscodeSetConfirm: translations.security.confirm_key_order_label,
-    PianoPasscodeChange: translations.security.choose_new_key_order_label,
-    PianoPasscodeChangeConfirm:
-      translations.security.confirm_new_key_order_label
+    PianoPasscodeSet: t.security && t.security.choose_passcode,
+    PianoPasscodeSetConfirm: t.security && t.security.confirm_passcode,
+    PianoPasscodeChange: t.security && t.security.choose_passcode,
+    PianoPasscodeChangeConfirm: t.security && t.security.confirm_passcode
   }
 
   /** useEffect function that sets the navigation options for this screen. */
   useEffect(() => {
     setOptions({
-      title: routeName.includes('Set')
-        ? translations.security.header_set_key_order
-        : translations.security.header_change_key_order,
+      title: t.security && t.security.security,
       headerRight: isRTL
         ? () => (
             <WahaBackButton
@@ -115,11 +116,13 @@ const PianoPasscodeSetScreen = ({
         case 'PianoPasscodeSetConfirm':
           // If passcodes match, pop up an alert, log it, set security enabled, set the passcode in redux, and go back.
           if (localPasscode === passcode) {
-            Alert.alert(
-              translations.security.popups.key_order_set_confirmation_title,
-              translations.security.popups.key_order_set_confirmation_message,
-              [{ text: translations.general.ok, onPress: () => {} }]
-            )
+            // Alert.alert(
+            //   t.security && t.security.passcode_confirmation_title,
+            //   t.security && t.security.passcode_confirmation_message,
+            //   [{ text: t.general && t.general.ok, onPress: () => {} }]
+            // )
+            setShowPasscodeSetSnackbar(true)
+            setTimeout(() => setShowPasscodeSetSnackbar(false), 2000)
             // Log the enabling of Security Mode in Firebase analytics.
             logEnableSecurityMode(activeGroup.id)
 
@@ -131,9 +134,9 @@ const PianoPasscodeSetScreen = ({
           } // Otherwise, show an alert that the passcodes don't match.
           else {
             Alert.alert(
-              translations.security.popups.no_match_title,
-              translations.security.popups.no_match_message,
-              [{ text: translations.general.ok, onPress: () => {} }]
+              t.security && t.security.no_match_title,
+              t.security && t.security.no_match_message,
+              [{ text: t.general && t.general.ok, onPress: () => {} }]
             )
             goBack()
           }
@@ -148,11 +151,13 @@ const PianoPasscodeSetScreen = ({
         case 'PianoPasscodeChangeConfirm':
           // If passcodes match, pop up an alert, set the passcode in redux, and go back.
           if (localPasscode === passcode) {
-            Alert.alert(
-              translations.security.popups.key_order_set_confirmation_title,
-              translations.security.popups.key_order_set_confirmation_message,
-              [{ text: translations.general.ok, onPress: () => {} }]
-            )
+            // Alert.alert(
+            //   t.security && t.security.passcode_confirmation_title,
+            //   t.security && t.security.passcode_confirmation_message,
+            //   [{ text: t.general && t.general.ok, onPress: () => {} }]
+            // )
+            setShowPasscodeSetSnackbar(true)
+            setTimeout(() => setShowPasscodeSetSnackbar(false), 2000)
             setSecurityEnabled(true)
             setCode(localPasscode)
             goBack()
@@ -160,9 +165,9 @@ const PianoPasscodeSetScreen = ({
           } // Otherwise, show an alert that the passcodes don't match.
           else {
             Alert.alert(
-              translations.security.popups.no_match_title,
-              translations.security.popups.no_match_message,
-              [{ text: translations.general.ok, onPress: () => {} }]
+              t.security && t.security.no_match_title,
+              t.security && t.security.no_match_message,
+              [{ text: t.general && t.general.ok, onPress: () => {} }]
             )
             goBack()
           }
@@ -191,7 +196,7 @@ const PianoPasscodeSetScreen = ({
           type='outline'
           onPress={() => setLocalPasscode('')}
           color={colors.red}
-          label={translations.security.clear_button_label}
+          label={t.general && t.general.clear}
           width={Dimensions.get('window').width / 3}
           style={{ marginVertical: 0 }}
         />

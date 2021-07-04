@@ -1,6 +1,9 @@
+import { useIsFocused } from '@react-navigation/native'
 import * as FileSystem from 'expo-file-system'
-import React, { useCallback, useEffect, useState } from 'react'
-import { Dimensions, Image, StyleSheet, View } from 'react-native'
+import LottieView from 'lottie-react-native'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { Dimensions, StyleSheet, View } from 'react-native'
+import { copilot, CopilotStep } from 'react-native-copilot'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { connect } from 'react-redux'
 import LessonItem from '../components/LessonItem'
@@ -13,14 +16,17 @@ import {
   getLessonInfo,
   itemHeights,
   lessonTypes,
-  scaleMultiplier,
   setItemModes
 } from '../constants'
+import {
+  checkForAlmostCompleteSet,
+  checkForFullyCompleteSet
+} from '../functions/setProgressFunctions'
 import MessageModal from '../modals/MessageModal'
 import OptionsModal from '../modals/OptionsModal'
 import ShareModal from '../modals/ShareModal'
 import { downloadMedia, removeDownload } from '../redux/actions/downloadActions'
-import { toggleComplete } from '../redux/actions/groupsActions'
+import { addSet, toggleComplete } from '../redux/actions/groupsActions'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -34,7 +40,7 @@ function mapStateToProps (state) {
     isRTL: activeDatabaseSelector(state).isRTL,
     activeDatabase: activeDatabaseSelector(state),
     activeGroup: activeGroupSelector(state),
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language)
   }
 }
@@ -49,6 +55,9 @@ function mapDispatchToProps (dispatch) {
     },
     removeDownload: lessonID => {
       dispatch(removeDownload(lessonID))
+    },
+    addSet: (groupName, groupID, set) => {
+      dispatch(addSet(groupName, groupID, set))
     }
   }
 }
@@ -62,19 +71,25 @@ const LessonsScreen = ({
   navigation: { goBack, setOptions, navigate },
   route: {
     // Props passed from previous screen.
-    params: { thisSet }
+    params: { setID }
   },
+  // Props passed from copilot.
+  start,
+  copilotEvents,
   // Props passed from redux.
   downloads,
   isRTL,
   activeDatabase,
   activeGroup,
-  translations,
+  t,
   font,
   downloadMedia,
   toggleComplete,
-  removeDownload
+  removeDownload,
+  addSet
 }) => {
+  const isFocused = useIsFocused()
+
   /** Keeps track of what lessons are downloaded to the file system. */
   const [downloadedLessons, setDownloadedLessons] = useState([])
 
@@ -90,14 +105,40 @@ const LessonsScreen = ({
   const [showShareModal, setShowShareModal] = useState(false)
   const [showSetCompleteModal, setShowSetCompleteModal] = useState(false)
 
-  /** Keeps track of the progress of the set that we're displaying. */
-  const [thisSetProgress, setThisSetProgress] = useState([])
+  const [thisSet, setThisSet] = useState(
+    activeDatabase.sets.filter(set => set.id === setID)[0]
+  )
 
-  /** Keeps track of the bookmark for the set that we're displaying. */
-  const [thisSetBookmark, setThisSetBookmark] = useState(1)
+  const [addedSet, setAddedSet] = useState(
+    activeGroup.addedSets.filter(addedSet => addedSet.id === thisSet.id)[0]
+  )
+
+  /** Keeps track of whether this lesson was just completed. */
+  const justCompleted = useRef(false)
+
+  const [isInInfoMode, setIsInInfoMode] = useState(false)
+
+  const [animationFinished, setAnimationFinished] = useState(false)
+
+  /** Keeps track of the progress of the set that we're displaying. */
+  // const [thisSetProgress, setThisSetProgress] = useState([])
+  // const [progressPercentage, setProgressPercentage] = useState(
+  //   activeGroup.addedSets.filter(addedSet => addedSet.id === thisSet.id)[0]
+  //     .progressPercentage
+  // )
+
+  // const [progressArray, setProgressArray] = useState()
+
+  // /** Keeps track of the bookmark for the set that we're displaying. */
+  // const [thisSetBookmark, setThisSetBookmark] = useState(1)
 
   /** Used to refresh the downloaded lessons. */
   const [refreshDownloadedLessons, setRefreshDownloadedLessons] = useState(
+    false
+  )
+
+  /** Keeps track of whether the unlock modal is visible. */
+  const [showNextSetUnlockedModal, setShowNextSetUnlockedModal] = useState(
     false
   )
 
@@ -112,6 +153,22 @@ const LessonsScreen = ({
         ? () => {}
         : () => <WahaBackButton onPress={() => goBack()} />
     })
+  }, [])
+
+  useEffect(() => {
+    // setTimeout(() => start(), 500)
+    // copilotEvents.on('stop', () => {
+    //   goToPlayScreen({
+    //     thisLesson: thisLesson,
+    //     isAudioAlreadyDownloaded: false,
+    //     isVideoAlreadyDownloaded: downloadedLessons.includes(
+    //       thisLesson.id + 'v'
+    //     ),
+    //     isAlreadyDownloading: isDownloading,
+    //     lessonType: lessonType,
+    //     downloadedLessons: downloadedLessons
+    //   })
+    // })
   }, [])
 
   /** useEffect function that checks which lessons are downloaded to the file system whenever the downloads redux object changes or when we manually refresh. */
@@ -133,15 +190,25 @@ const LessonsScreen = ({
       })
   }, [Object.keys(downloads).length, refreshDownloadedLessons])
 
-  /** useEffect function that updates the set progress and set bookmark state whenever whenever the progress updates or the set bookmark updates in redux. */
+  /** useEffect functino that updates the addedSet state whenever it changes in redux. */
   useEffect(() => {
-    setThisSetProgress(
-      activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].progress
-    )
-    setThisSetBookmark(
-      activeGroup.addedSets.filter(set => set.id === thisSet.id)[0].bookmark
-    )
-  }, [activeGroup.addedSets, activeGroup.setBookmark])
+    setAddedSet(activeGroup.addedSets.filter(set => set.id === thisSet.id)[0])
+  }, [activeGroup.addedSets.filter(set => set.id === thisSet.id)[0]])
+
+  /** useEffect function that updates whenever this set's progress changes and handles the changes appropriately. */
+  useEffect(() => {
+    if (isFocused && justCompleted.current) {
+      checkForAlmostCompleteSet(
+        thisSet,
+        addedSet,
+        activeGroup,
+        activeDatabase,
+        addSet,
+        setShowNextSetUnlockedModal
+      )
+      checkForFullyCompleteSet(thisSet, addedSet, setShowSetCompleteModal)
+    }
+  }, [addedSet.progress])
 
   /**
    * Gets the type of a specific lesson. See lessonTypes in constants.js. While every lesson's type stays constant, this information isn't stored in the database for single source of truth reasons.
@@ -214,18 +281,19 @@ const LessonsScreen = ({
   }, [])
 
   /** Check if a lesson is fully complete or not. */
-  const checkForFullyComplete = () => {
-    if (
-      thisSetProgress.length === thisSet.lessons.length - 1 &&
-      !thisSetProgress.includes(getLessonInfo('index', activeLessonInModal.id))
-    )
-      setShowSetCompleteModal(true)
-  }
+  // const checkForFullyComplete = () => {
+  //   if (
+  //     !addedSet.progress.includes(
+  //       getLessonInfo('index', activeLessonInModal.id)
+  //     )
+  //   )
+  //     checkForFullyCompleteSet(thisSet, addedSet, setShowSetCompleteModal)
+  // }
 
   /** Renders the backdrop for the lesson item. This appears when the user swipes the lesson. */
   const renderLessonSwipeBackdrop = (data, rowMap) => (
     <LessonSwipeBackdrop
-      isComplete={thisSetProgress.includes(
+      isComplete={addedSet.progress.includes(
         getLessonInfo('index', data.item.id)
       )}
       toggleComplete={() => {
@@ -234,7 +302,7 @@ const LessonsScreen = ({
           thisSet,
           getLessonInfo('index', data.item.id)
         )
-        checkForFullyComplete()
+        justCompleted.current = true
         rowMap[getLessonInfo('index', data.item.id)].closeRow()
       }}
       showShareModal={() => {
@@ -248,7 +316,7 @@ const LessonsScreen = ({
   const onLeftActionStatusChange = useCallback(data => {
     if (!isRTL && data.isActivated) {
       toggleComplete(activeGroup.name, thisSet, parseInt(data.key))
-      checkForFullyComplete()
+      justCompleted.current = true
     } else if (isRTL && data.isActivated) setShowShareModal(true)
   }, [])
 
@@ -256,7 +324,7 @@ const LessonsScreen = ({
   const onRightActionStatusChange = useCallback(data => {
     if (isRTL && data.isActivated) {
       toggleComplete(activeGroup.name, thisSet, parseInt(data.key))
-      checkForFullyComplete()
+      justCompleted.current = true
     } else if (!isRTL && data.isActivated) setShowShareModal(true)
   }, [])
 
@@ -271,31 +339,80 @@ const LessonsScreen = ({
   )
 
   /** Renders a lesson item. */
-  const renderLessonItem = ({ item }) => (
-    <LessonItem
-      thisLesson={item}
-      goToPlayScreen={goToPlayScreen}
-      thisSetBookmark={thisSetBookmark}
-      lessonType={getLessonType(item)}
-      thisSetProgress={thisSetProgress}
-      downloadedLessons={downloadedLessons}
-      showDownloadLessonModal={() => {
-        setActiveLessonInModal(item)
-        setModalLessonType(getLessonType(item))
-        setShowDownloadLessonModal(true)
-      }}
-      showDeleteLessonModal={() => {
-        setActiveLessonInModal(item)
-        setModalLessonType(getLessonType(item))
-        setShowDeleteLessonModal(true)
-      }}
-    />
-  )
+  const renderLessonItem = ({ item }) => {
+    if (item.scripture) {
+      var scriptureList = item.scripture[0].header
+
+      item.scripture.forEach((passage, index) => {
+        if (index !== 0) scriptureList += ', ' + passage.header
+      })
+    }
+    return getLessonInfo('subtitle', item.id) === '3.1.1' ? (
+      <CopilotStep
+        text='Watch the trailer now (change later)'
+        order={2}
+        name='Lesson3.1.1'
+      >
+        <LessonItem
+          thisLesson={item}
+          goToPlayScreen={goToPlayScreen}
+          isBookmark={addedSet.bookmark === getLessonInfo('index', item.id)}
+          lessonType={getLessonType(item)}
+          isComplete={addedSet.progress.includes(
+            getLessonInfo('index', item.id)
+          )}
+          downloadedLessons={downloadedLessons}
+          showDownloadLessonModal={() => {
+            setActiveLessonInModal(item)
+            setModalLessonType(getLessonType(item))
+            setShowDownloadLessonModal(true)
+          }}
+          showDeleteLessonModal={() => {
+            setActiveLessonInModal(item)
+            setModalLessonType(getLessonType(item))
+            setShowDeleteLessonModal(true)
+          }}
+          scriptureList={scriptureList}
+          isInInfoMode={isInInfoMode}
+          animationFinished={animationFinished}
+        />
+      </CopilotStep>
+    ) : (
+      <LessonItem
+        thisLesson={item}
+        goToPlayScreen={goToPlayScreen}
+        isBookmark={addedSet.bookmark === getLessonInfo('index', item.id)}
+        lessonType={getLessonType(item)}
+        isComplete={addedSet.progress.includes(getLessonInfo('index', item.id))}
+        downloadedLessons={downloadedLessons}
+        showDownloadLessonModal={() => {
+          setActiveLessonInModal(item)
+          setModalLessonType(getLessonType(item))
+          setShowDownloadLessonModal(true)
+        }}
+        showDeleteLessonModal={() => {
+          setActiveLessonInModal(item)
+          setModalLessonType(getLessonType(item))
+          setShowDeleteLessonModal(true)
+        }}
+        scriptureList={scriptureList}
+        isInInfoMode={isInInfoMode}
+        animationFinished={animationFinished}
+      />
+    )
+  }
 
   return (
     <View style={styles.screen}>
       <View style={{ height: itemHeights[font].SetItem, width: '100%' }}>
-        <SetItem thisSet={thisSet} mode={setItemModes.LESSONS_SCREEN} />
+        <SetItem
+          thisSet={thisSet}
+          mode={setItemModes.LESSONS_SCREEN}
+          progressPercentage={addedSet.progress.length / thisSet.lessons.length}
+          setIsInInfoMode={setIsInInfoMode}
+          isInInfoMode={isInInfoMode}
+          setAnimationFinished={setAnimationFinished}
+        />
       </View>
       <SwipeListView
         data={thisSet.lessons}
@@ -320,33 +437,35 @@ const LessonsScreen = ({
         onLeftActionStatusChange={onLeftActionStatusChange}
         onRightActionStatusChange={onRightActionStatusChange}
         swipeGestureBegan={onLessonSwipeBegin}
+        disableRightSwipe={isInInfoMode}
+        disableLeftSwipe={isInInfoMode}
       />
 
       {/* Modals */}
       <OptionsModal
         isVisible={showDownloadLessonModal}
         hideModal={() => setShowDownloadLessonModal(false)}
-        closeText={translations.general.cancel}
+        closeText={t.general && t.general.cancel}
       >
         <OptionsModalButton
-          label={translations.lessons.popups.download_lesson_button_label}
+          label={t.lessons && t.lessons.download_lesson}
           onPress={downloadLessonFromModal}
         />
       </OptionsModal>
       <OptionsModal
         isVisible={showDeleteLessonModal}
         hideModal={() => setShowDeleteLessonModal(false)}
-        closeText={translations.general.cancel}
+        closeText={t.general && t.general.cancel}
       >
         <OptionsModalButton
-          label={translations.lessons.popups.delete_lesson_button_label}
+          label={t.lessons && t.lessons.remove_download}
           onPress={deleteLessonFromModal}
         />
       </OptionsModal>
       <ShareModal
         isVisible={showShareModal}
         hideModal={() => setShowShareModal(false)}
-        closeText={translations.general.close}
+        closeText={t.general && t.general.close}
         lesson={activeLessonInModal}
         lessonType={getLessonType(activeLessonInModal)}
         set={thisSet}
@@ -354,21 +473,35 @@ const LessonsScreen = ({
       <MessageModal
         isVisible={showSetCompleteModal}
         hideModal={() => setShowSetCompleteModal(false)}
-        title={translations.general.popups.set_complete_title}
-        message={translations.general.popups.set_complete_message}
-        confirmText={translations.general.got_it}
+        title={t.sets && t.sets.set_complete_title}
+        message={t.sets && t.sets.set_complete_message}
+        confirmText={t.general && t.general.got_it}
         confirmOnPress={() => {
           setShowSetCompleteModal(false)
         }}
       >
-        <Image
-          source={require('../assets/gifs/set_complete.gif')}
-          style={{
-            height: 200 * scaleMultiplier,
-            margin: 20,
-            // padding: 20,
-            resizeMode: 'contain'
-          }}
+        <LottieView
+          style={{ width: '100%' }}
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/set_complete.json')}
+        />
+      </MessageModal>
+      <MessageModal
+        isVisible={showNextSetUnlockedModal}
+        hideModal={() => setShowNextSetUnlockedModal(false)}
+        title={t.sets && t.sets.new_story_set_unlocked_title}
+        message={t.sets && t.sets.new_story_set_unlocked_message}
+        confirmText={t.general && t.general.got_it}
+        confirmOnPress={() => setShowNextSetUnlockedModal(false)}
+      >
+        <LottieView
+          style={{ width: '100%' }}
+          autoPlay
+          loop
+          resizeMode='cover'
+          source={require('../assets/lotties/new_set_unlocked.json')}
         />
       </MessageModal>
     </View>
@@ -383,4 +516,14 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(LessonsScreen)
+export default copilot({
+  overlay: 'svg',
+  animated: true,
+  labels: {
+    finish: false
+  },
+  stepNumberComponent: () => <View />,
+  tooltipStyle: {
+    borderRadius: 10
+  }
+})(connect(mapStateToProps, mapDispatchToProps)(LessonsScreen))

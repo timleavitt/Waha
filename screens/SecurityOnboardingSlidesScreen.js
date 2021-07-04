@@ -7,7 +7,7 @@ import OnboardingPage from '../components/OnboardingPage'
 import PageDots from '../components/PageDots'
 import WahaBackButton from '../components/WahaBackButton'
 import WahaButton from '../components/WahaButton'
-import { scaleMultiplier } from '../constants'
+import { isTablet, scaleMultiplier } from '../constants'
 import {
   activeDatabaseSelector,
   activeGroupSelector
@@ -17,7 +17,7 @@ import { getLanguageFont, StandardTypography } from '../styles/typography'
 
 function mapStateToProps (state) {
   return {
-    translations: activeDatabaseSelector(state).translations,
+    t: activeDatabaseSelector(state).translations,
     font: getLanguageFont(activeGroupSelector(state).language),
     isRTL: activeDatabaseSelector(state).isRTL,
     activeGroup: activeGroupSelector(state)
@@ -32,8 +32,9 @@ const numPages = 4
 const SecurityOnboardingSlidesScreen = ({
   // Props passed from navigation.
   navigation: { setOptions, navigate, goBack },
-  translations,
+  t,
   font,
+
   isRTL,
   activeGroup
 }) => {
@@ -59,10 +60,22 @@ const SecurityOnboardingSlidesScreen = ({
   const pages = [
     <OnboardingPage
       key='1'
-      title={translations.security.popups.onboarding_1_title}
-      message={translations.security.popups.onboarding_1_message}
+      title={t.security && t.security.onboarding_1_title}
+      message={t.security && t.security.onboarding_1_message}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          {
+            maxWidth: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40,
+            maxHeight: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40
+          }
+        ]}
+      >
         <Image
           style={styles.image}
           source={require('../assets/onboardingImages/security_onboarding1.png')}
@@ -71,10 +84,22 @@ const SecurityOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='2'
-      title={translations.security.popups.onboarding_2_title}
-      message={translations.security.popups.onboarding_2_message}
+      title={t.security && t.security.onboarding_2_title}
+      message={t.security && t.security.onboarding_2_message}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          {
+            maxWidth: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40,
+            maxHeight: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40
+          }
+        ]}
+      >
         <Image
           style={styles.image}
           source={require('../assets/onboardingImages/security_onboarding2.png')}
@@ -83,10 +108,22 @@ const SecurityOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='3'
-      title={translations.security.popups.onboarding_3_title}
-      message={translations.security.popups.onboarding_3_message}
+      title={t.security && t.security.onboarding_3_title}
+      message={t.security && t.security.onboarding_3_message}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          {
+            maxWidth: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40,
+            maxHeight: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40
+          }
+        ]}
+      >
         <Image
           style={styles.image}
           source={require('../assets/onboardingImages/security_onboarding3.png')}
@@ -95,10 +132,22 @@ const SecurityOnboardingSlidesScreen = ({
     </OnboardingPage>,
     <OnboardingPage
       key='4'
-      title={translations.security.popups.onboarding_4_title}
-      message={translations.security.popups.onboarding_4_message}
+      title={t.security && t.security.onboarding_4_title}
+      message={t.security && t.security.onboarding_4_message}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={[
+          styles.imageContainer,
+          {
+            maxWidth: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40,
+            maxHeight: isTablet
+              ? Dimensions.get('window').width * 0.7
+              : Dimensions.get('window').width - 40
+          }
+        ]}
+      >
         <Image
           style={styles.image}
           source={require('../assets/onboardingImages/security_onboarding4.png')}
@@ -146,13 +195,13 @@ const SecurityOnboardingSlidesScreen = ({
                 colors.shark
               )}
             >
-              {translations.general.skip}
+              {t.general && t.general.skip}
             </Text>
           </TouchableOpacity>
         </View>
         <View style={{ width: 20 }} />
         <WahaButton
-          label={translations.general.continue}
+          label={t.general && t.general.continue}
           onPress={
             // This button goes to the next page or finishes onboarding if we're on the last page.
             isRTL
@@ -189,9 +238,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flex: 1,
-    maxWidth: Dimensions.get('window').width - 40,
-    maxHeight: Dimensions.get('window').width - 40,
-    borderRadius: 20,
+    borderRadius: 15,
     borderWidth: 2,
     borderColor: colors.athens,
     aspectRatio: 1,
