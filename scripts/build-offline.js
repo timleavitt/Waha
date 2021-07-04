@@ -3,39 +3,14 @@
 import db from '../firebase/db';
 import languages from '../languages';
 import { getAssetInfo } from '../assetInfo';
+import { requestPromise, spawnPromise } from './util';
 import "firebase/firestore";
 
 const fs = require('fs');
-const { exec, spawn } = require("child_process");
-const https = require('https');
 
 const bundledLanguages = process.argv.slice(2);
 process.env.BUNDLED_LANGUAGES = bundledLanguages.join(',');
-
-// Helper function to do an HTTP request and return a promise for its completion
-// from https://gist.github.com/ktheory/df3440b01d4b9d3197180d5254d7fb65 (modified slightly)
-const requestPromise = ((urlOptions, data) => {
-    return new Promise((resolve, reject) => {
-      const req = https.request(urlOptions,
-        (res) => {
-          let body = '';
-          res.on('data', (chunk) => (body += chunk.toString()));
-          res.on('error', reject);
-          res.on('end', () => {
-            if (res.statusCode >= 200 && res.statusCode <= 299) {
-              resolve({statusCode: res.statusCode, headers: res.headers, body: body});
-            } else {
-              reject('Request failed. status: ' + res.statusCode + ', body: ' + body);
-            }
-          });
-        });
-      req.on('error', reject);
-      if (data) {
-        req.write(data, 'binary');
-      }
-      req.end();
-    });
-  });
+const releaseChannel = "offline-"+process.env.BUNDLED_LANGUAGES.replace(',','');
 
 Promise.all(bundledLanguages.map((value, _, array) => {
     // Determine full list of assets to download
@@ -112,34 +87,21 @@ Promise.all(bundledLanguages.map((value, _, array) => {
         }));
     })
     return Promise.all(fileDownloads);
+}).then(_ => {
+    // Publish to update assets
+    return spawnPromise("expo", ["publish",
+        "--release-channel",releaseChannel]);
+}).then(_ => {
+    // Run APK build
+    return spawnPromise("expo", ["build:android",
+        "-t","apk",
+        "--release-channel",releaseChannel]);
 }).then(
     _ => {
-        // Run APK build
-        // TODO: Is it possible to do this locally?
-        console.log('Running APK build');
-        const releaseChannel = "offline-"+process.env.BUNDLED_LANGUAGES.replace(',','');
-        const build = spawn("expo",["build:android","-t","apk","--release-channel",releaseChannel],{
-            shell: true
-        });
-
-        build.stdout.on("data", data => {
-            console.log(`${data}`);
-        });
-
-        build.stderr.on("data", data => {
-            console.error(`${data}`);
-        });
-
-        build.on('error', (error) => {
-            console.error(`ERROR: ${error.message}`);
-        });
-
-        build.on("close", code => {
-            console.log(`Child process exited with code ${code}`);
-            process.exit(code);
-        });
+        process.exit(0);
     },
     (error) => {
+        // Handle all the errors here.
         console.error(error);
         process.exit(1);
     }
