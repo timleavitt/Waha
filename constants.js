@@ -2,6 +2,7 @@ import * as ScreenOrientation from 'expo-screen-orientation'
 import i18n from 'i18n-js'
 import { Dimensions, PixelRatio } from 'react-native'
 import { languages } from './languages'
+import { getAssetInfo } from './assetInfo'
 
 /**
  * This file contains a bunch of constants and a few miscellaneous functions that are used globally throughout Waha.
@@ -142,18 +143,8 @@ export const getLessonInfo = (type, lessonID) => {
       }
       break
     case 'audioSource':
-      return `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${
-        idComponents[0]
-      }%2Fsets%2F${idComponents[1] +
-        '.' +
-        idComponents[2]}%2F${lessonID}.mp3?alt=media`
-      break
     case 'videoSource':
-      return `https://firebasestorage.googleapis.com/v0/b/waha-app-db.appspot.com/o/${
-        idComponents[0]
-      }%2Fsets%2F${idComponents[1] + '.' + idComponents[2]}%2F${lessonID +
-        'v'}.mp4?alt=media`
-      break
+      return getAssetInfo(type, lessonID);
   }
 }
 

@@ -5,7 +5,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "build-offline": "node -r esm scripts/build-offline.js"
   },
   "dependencies": {
     "@react-native-community/art": "^1.2.0",
