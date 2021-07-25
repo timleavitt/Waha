@@ -17,3 +17,4 @@ firebase/testConfig.js
 firebase/prodConfig.js
 firebase/google-services.json
 firebase/GoogleService-Info.plist
+scripts/service-account.json

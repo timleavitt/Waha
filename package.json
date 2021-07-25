@@ -72,6 +72,7 @@
     "@babel/core": "~7.9.0",
     "babel-preset-expo": "8.3.0",
     "better-docs": "^2.3.2",
+    "firebase-admin": "^9.10.0",
     "reactotron-react-native": "^5.0.0"
   },
   "private": true
