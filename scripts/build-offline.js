@@ -31,7 +31,11 @@ if (fs.existsSync(targetDirectory)) {
 }
 fs.mkdirSync(targetDirectory);
 
+const assetListFile = fs.createWriteStream('./assets/downloaded/master-list.js');
+assetListFile.write('module.exports = [');
+
 const bundle = firestore.bundle(releaseChannel);
+
 Promise.all(bundledLanguages.map((value, _, array) => {
     // Determine full list of assets to download
     const lang = languages.find(lang => lang.languageCode == value);
@@ -81,6 +85,7 @@ Promise.all(bundledLanguages.map((value, _, array) => {
 }).then(files => {
     // Write bundle to file
     const file = `./assets/downloaded/all.firebase-bundle`;
+    assetListFile.write(`\r\n\trequire('../.${file}')`);
     fs.writeFile(file, bundle.build(),  "binary", function(err) {
         if (err) {
             throw err;
@@ -101,12 +106,15 @@ Promise.all(bundledLanguages.map((value, _, array) => {
             const file = fs.createWriteStream(localFileName);
             file.write(buffer);
             file.close();
+            assetListFile.write(`,\r\n\trequire('../.${localFileName}')`);
         },reason => {
             console.log('WARN: Failed to download ' + remoteFileName);
         }));
     })
     return Promise.all(fileDownloads);
 }).then(_ => {
+    assetListFile.write('];');
+    assetListFile.close();
     // Publish to update assets
     return spawnPromise("expo", ["publish",
         "--release-channel",releaseChannel]);
